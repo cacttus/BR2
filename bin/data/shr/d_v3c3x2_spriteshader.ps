@@ -1,0 +1,50 @@
+#include "d_global_ps.sh"
+
+//Tex is the atlas.
+uniform sampler2D _ufTexture0;
+
+in vec3 _v3Out;
+in vec3 _c3Out;
+in vec2 _x2Out;
+in vec3 _n3Out;
+
+
+void main() {
+    vec4 tex = texture(_ufTexture0, vec2(_x2Out));
+    float ta = tex.w;
+
+    //C3Out.x is the occlusion dimmed value.
+    vec4 shadColor = vec4(_c3Out.y, _c3Out.y, _c3Out.y, 1);
+    vec4 vColor = tex * shadColor * _c3Out.x;
+
+	vColor.r = clamp(vColor.r, 0, 1);
+	vColor.g = clamp(vColor.g, 0, 1);
+	vColor.b = clamp(vColor.b, 0, 1);
+	vColor.w = ta;
+    vColor.b += clamp(_c3Out.x * 0.0000001, 0, 0.00000001);
+    
+	float planedp = dot(_n3Out, _v3Out);
+
+	_gPositionOut = vec4(_v3Out, 0);
+	_gColorOut = vColor;
+	_gNormalOut = vec4(_n3Out, planedp);//Flat
+	_gPlaneOut = vec4(_n3Out, planedp);
+	_gPickOut = _ufPickId;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

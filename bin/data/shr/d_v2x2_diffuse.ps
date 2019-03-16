@@ -1,0 +1,32 @@
+//GUI Shader
+#include "d_global_ps.sh"
+
+uniform sampler2D _ufTexture0;
+
+in vec3 _v3Out;
+in vec2 _x2Out;
+
+void main() {
+	 _gColorOut = texture(_ufTexture0, vec2(_x2Out));
+	if(_gColorOut.a <= ALPHA_MASK) {
+		discard;
+    }
+
+	_gPositionOut = vec4(_v3Out, 0);
+	_gNormalOut = vec4(0,0,0,0);//Flat Shade
+	_gPlaneOut = vec4(0,0,0,0);
+    _gPickOut = _ufPickId;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

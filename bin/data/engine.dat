@@ -1,0 +1,130 @@
+############################################################
+# Engine Configuration
+# Notepad++ > Language > Python
+# F2 debug draw
+# Save screenshot = F9
+# F3 - disable face culling
+############################################################
+UseGLMapBuffer N #Performance. Use glMapBuffer instead of glBufferData when copying data to GPU. Default N.
+StartFullscreen N # Start Game in fullscreen mode. - F11 -  default N
+DefaultScreenWidth 800 # Default Screen width Default 800
+DefaultScreenHeight 600 # Default Screen h Default 600
+ForceAspectRatio Y # Don't change this. force aspect ratio to be that of screen. This will change the Height of the window.   Default Y
+EnableRuntimeErrorChecking N #OpenGL Runtime Error Checking, Will decrease performance if enabled. Always enabled in Debug mode.  default N, 
+EnableLogging Y #Enable/Disable Logging  default Y
+ShowConsole Y #Show console (runtime Build) Default N
+GpuDeviceName "AMD Radeon (TM) R7 370 Series%\\.\DISPLAY1"
+FontBakedCharSize 40 #default 64
+FontBitmapSize 1024 #default 2048e
+DefaultFieldOfView 64.734 #default field of view in degrees from 20 - 179.  default 64.734
+ColorSpace SRGB
+EnableMSAA N   #not supported on all cards.
+MSAASamples 8 #most cards only support 8 of these
+NumTextQuads 2048 #How much text can be rendered.  default 1024  **Obsolete with new Ui 2/21/18**
+ModelThumbSize 128 #default 256
+
+MaxPointLights 32        #Must match df_ps_structs.sh
+MaxDirLights 4           #Must match df_ps_structs.sh
+MaxCubeShadowSamples 4   #Must match df_ps_structs.sh
+MaxFrustShadowSamples 4  #Must match df_ps_structs.sh
+
+##############################################################
+# Shadows & Lighting & Rendering
+#Objects Cast Shadows
+EnableObjectShadows yes
+#Enable terrain cast shadows - expensive
+EnableTerrainShadows yes
+#Shadow Map Resolution (power of 2) 256 512 1024 2048 4096, (greater powers seem to be unsupported by the gpu)
+ShadowMapResolution 1024 #$4096 #4096 #512 #4096 #256 #4096
+#Max Shadow Map Light Influencesp
+#Note: This MUST match the base define MAX_LIGHT_SAMPLES in the shader source file "d_base_fn.sh"
+#Note: This is also bounded by GL_MAX_TEXTURE_IMAGE_UNITS
+#TODO: add the bounds here
+ShadowMapMaxInfluences 16
+MaxPointLightShadowDistance 100.0f  
+
+#####################
+#DEBUG ONLY
+BreakOnOpenGLError Y
+BreakOnSDLError N
+
+
+##############################################################
+# Network
+#Network client timeout on server. 300=5 min
+#ClientTimeoutInSeconds 300
+#TcpClientPort 46298
+#TcpServerPort 46297
+#Improves network performance at the cost of possibly getting invalid packets.
+#TcpDisablePacketCrcValidation no
+#FUTURE:
+#Performance: maximum packets data limit per frame (KB)
+#MaxPacketDataPerFrame 40
+#Maximum incoming/outgoing buffers
+# Software is the application's buffer which can be very large if needed
+#MaxSoftwareOutgoingBufferSizeBytes 17520
+#MaxSoftwareIncomingBufferSizeBytes 17520
+# Hardware buffers might have an OS limitation.
+#MaxHardwareOutgoingBufferSizeBytes 17520
+#MaxHardwareIncomingBufferSizeBytes 17520
+#Connection timeout when waiting to find a server.
+#ClientConnectTimeoutSeconds 4
+
+#############################################################
+# Gllobs / BVH
+
+#Maximum Pick Distance (meters)
+#MaxPickDistance 2000
+
+
+#Maximum number of shadow box lights : TODO:
+#This should be limited by available GPU memory & shadowbox size
+#MaxShadowLights 3
+#Enable/disbable screen space anti-aliasing. Second parameter is number of Samples and must be 4, 8, 16, 32x
+#NOTE: you could run out of video memory if you set this too high!
+#EnableMSAA no 4
+#Enable/disable texture anisotropic filtering 2,4,8,16
+#EnableAnisotropicFiltering yes 4
+#enable/disabler screen space ambient occlusion
+#EnableSSAO yes
+#Color Space (SRGB, Linear)
+#  SRGB may not be supported by the system.  In which case Linear color space will be used.
+
+#Enable / Diable Bloom effect
+#EnableBloom yes
+#Bloom amount
+#BloomAmount 100.0
+
+##############################################################
+# Debug/Logging
+
+
+
+
+#print shader source on error
+
+#Show / Hide Debugging Console (F2)
+#ShowConsole no #Unused/Deprecated No need - hotkey F2
+#Skip Title - debug mode only
+#SkipTitle no
+
+
+
+###############################################################
+# Fonts
+#Font resolution -- FontBitmapSize / CharSize = size of a base char in pixels.
+
+ 
+##############################################################
+# Key Bindings
+#KeyBind W I 
+#KeyBind S J 
+#KeyBind A K 
+#KeyBind D L 
+
+
+
+
+
+
+

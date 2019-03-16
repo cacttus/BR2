@@ -1,0 +1,18 @@
+//cube map shadows
+//derek page
+//20160426
+
+#version 330 core
+//**1/23/18 changed this to use R32F
+
+in vec3 _v3Out;
+
+uniform vec3 _ufShadowLightPos;
+
+out vec3 _oDepth;
+
+void main()
+{
+    _oDepth.r = length(_v3Out - _ufShadowLightPos);
+    _oDepth.g = _oDepth.b = 1;//Alpha
+}

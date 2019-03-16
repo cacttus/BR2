@@ -1,0 +1,14 @@
+#version 430
+uniform sampler2D _ufTexture0;
+
+in vec2 _x2Out;
+in vec4 _c4Out;
+
+layout(location = 0) out vec4 _gColorOut; 
+//out vec4 gColorOut; 
+
+void main(){
+	vec4 tx = texture(_ufTexture0, vec2(_x2Out));
+    
+    _gColorOut = tx * _c4Out;
+}

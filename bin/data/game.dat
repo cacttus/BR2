@@ -1,0 +1,189 @@
+#Sprite File - Derek - 2017
+# Notepad++ Style: Language > S > Shell 
+########################################################################
+VER "0.02"  #file version
+
+########################################################################
+#Config
+########################################################################
+#DEBUG
+CF_ENABLE_DBG Y #enable debug mode
+CF_SKT Y #skip title and jump in to game Default N
+CF_NEW Y #Generate new grid each time. Default N
+CF_GM 0 #If D_NEW is set.  Debug Generate Mode.  0 = Disable 1 = flat, 2 = random, 3 hill. Default 0
+CF_00 N #If D_NEW is set. Generate only grid 0,0 (speeds up debaug). Default N
+CF_SEED 9 #Debug seed. Default 0 (turn off).
+CF_BLOCK N # render the world as blocks. Default N
+CF_GRID_LIMIT_32BIT 2000 #max number of grids. Don't change or you may run out of memory.  Default: 2000
+CF_GRID_LIMIT_64BIT 10000 #max number of grids. Don't change or you may run out of memory.  Default: 2000
+CF_MAX_GRIDS_GEN_ASYNC 8 #Maximum number of grids that can be generated at once.
+
+########################################################################
+#MOBS
+########################################################################
+#MOB  name  file
+MOB_BPATH "C:\Users\squid\Desktop\APP\blender-2.78a-windows64\blender.exe" #Blender Executable Path
+MOB_PYCON ".\dev\mob_export.py" #Python Conversion Sciprt
+MOB_BMDIR ".\dev" #Blender Modles Directory with .blend files.
+MOB_MOBDIR ".\mob" #Mob dir
+MOB_MOBBINDIR ".\mbi" #Mobb dir
+#Note this depends on mobmaker Note: placement can also be on diagonal RLBTAFXYZW, XYZW are the diagonals, T, B, S, X, s, e, v, c
+# MOB [name]        [Box Fit ]  [Type ID]  [placement]             [Frioendly name]
+#MOB "hand_curs_01" " x, x, x"         1     "n,T,v            "   "Hand"
+#MOB "parent_test"  " x, x, x"         2     "n,T,v            "   ""
+MOB "cuddles_01b"   " x, x, x"         3     "n,T,v            "   "Cuddles"
+#MOB "house_2"      " x, x, x"         4     "n,T,v            "   ""
+MOB "appletree"     " x, x, x"         5     "n,T,v            "   "Apple Tree"
+MOB "apple"         " x, x, x"         6     "n,T,v            "   "Apple"
+MOB "banana_0"      " x, x, x"         7     "n,T,v            "   "Banana"
+MOB "skeledug"      " x, x, x"         8     "n,T,v            "   "Skeledug"
+MOB "Tall_Lamp"     ".5, 1,.5"         9     "n,T,s            "   "Lamp"
+MOB "bush_0"        ".5,.5,.5"        10     "n,T,v            "   "Bush"
+MOB "grave_0"       ".5,.5,.5"        11     "n,T,s,B,s,S,s,X,s"   "Grave"
+MOB "chest_0"       ".75,.75,.75"     12     "n,T,c            "   "Chest"
+MOB "coin_0"        " x ,x, x"        13     "n,T,v            "   "Coin"
+MOB "gem_0"         " x ,x, x"        14     "n,T,v            "   "Gem"
+MOB "coin_1"        " x ,x, x"        15     "n,T,v            "   "Coin2"
+MOB "box_norm"      " x ,x, x"        16     "n,T,v            "   "Mystery Box"
+MOB "box_glass"     " x ,x, x"        17     "n,T,v            "   "Glass Box"
+MOB "bubble_0"      " x ,x, x"        18     "n,T,v            "   "Bubble Set"
+MOB "gem_1"         " x ,x, x"        19     "n,T,v            "   "TP Gem"
+MOB "select_0"      " x ,x, x"        20     "n,T,v            "   "Select"
+MOB "hover_1"       " x ,x, x"        21     "n,T,v            "   "Hover"
+MOB "house_0"       " 1 ,1, 1"        22     "n,T,v            "   "House0"
+MOB "fence_0"       " 1 ,1, 1"        23     "n,T,v            "   "Fence0"
+
+#MOB "mt_test\mt_test.mob"
+
+########################################################################
+#SPRITES
+########################################################################
+#Masks and Blank Tile.   Make sure your masks come first because their linear offest must be less than 255 
+
+#SPR "name",             duration(Sec),  loop(Y/N), Random(Y/N)  "image1" "image2" ..
+SPR "tx-blank"             0             N          N           "mt64_blank.png"
+SPR "tx-dirt"              0             N          N           "mt64_dirt.png" 
+SPR "tx-grass"             0             N          N           "mt64_grass.png" 
+SPR "tx-grass-dirt-side"   0             N          N           "mt64_grass_dirt_side.png" 
+
+########################################################################
+#Base Tiles
+########################################################################
+#rainforest 1750 - 2000 mm
+#subtropical 750 and 1,270
+#tundra 15 - 25cm
+#TIL ["name"]     [Matter] [index] [minmax temp] [min/max prec] [minmax depth] [minmax light]   [Rarity] [Top] [Side (optional)] [Bot (optional)]
+TIL "t-grass"         S      0          0  30         75 150         -i  i          0.4  0.8       1.0    "tx-grass" "tx-grass-dirt-side" "tx-dirt"
+TIL "t-dirt"          S      1         -i   i         -i   i         -i  i          0.0  1.0       1.0    "tx-dirt" 
+
+######################################################################################
+#Morph Tiles
+######################################################################################
+# Tiles morph into each other based on parameters.
+# Temperature (c), Precip(cm), Depth (m), Sunlight [0,1],    Rarity [0,1] 1 = Common
+MT_BEG "bt-grass"   
+MT_TIL "t-grass"             
+MT_END
+
+################################################################
+# WALKERS
+################################################################
+#For a more seamless world, set all walkers "Locale" to World "W"
+#So walkers can represent pressure, temperature and erosion "extremes" 
+WK_BEG "Plains" # begin walker, name
+WK_TYPE tile    # type: cave, tile
+WK_LOCALE W	    # locality [Locality: glob or lair G/L or Walker --- we should specify this.]
+WK_BRANCH 0 1   # max child branches
+WK_HOP 100 500	# volume global hop count
+#WK_PRESSURE_ADD 0 500  #pressure is actually "meters under ground"
+#WK_TEMP_ADD -30 30
+#How to modify densiites.  0 = set to zero, 1 = set to 1
+#1 = create, 0 = destroy
+WK_DV_0 0.0
+WK_DV_1 1.0
+WK_MT
+
+#movement left, right, down, up, back, front 
+#movement [probability] [min] [max]
+WK_MOVE_P 0.25 0.25 0.07 0.07 0.25 0.25  
+
+#Min/ max movement along axes RELATIVE to start position.
+WK_MINMAX_X -i i
+WK_MINMAX_Y -5 5
+WK_MINMAX_Z -i i
+
+WK_END				# end walker definition
+
+#Carves out "caves" in the terrain.
+#WK_BEG "Cave"      
+#WK_TYPE cave			
+#WK_LOCALE W		
+#WK_BRANCH 1 5 
+#WK_HOP 100 200	      
+#WK_END
+
+################################################################
+#  Lairs
+################################################################
+#Plains
+LA_BEG "Plains"   #name must be unique
+LA_CLIMATE  10 25     75 200      0.6 0.7      -5 i  #Temp min/max, precip min/max sunlight min/max depth min/max
+
+#LA_PRIORITY 1 # 0 to X Lower priority is higher where 0 is the highest.
+LA_DEFAULT T  #default if we don't select anything else
+#LA_PROB 10 10 # % probability of spawning and dying
+
+#Biome Tiles (BT_TIL)
+#[name]              [Default(T/F)] [min qty %] [max qty %]
+LA_TILE "bt-grass" 	    T            0           0        
+
+#Walker
+#LA_WALKER ["name"] [min [0-x]] [max [min-x]]
+LA_WALKER "Plains" 0 5
+#LA_WALKER "Cave" 0 2
+
+#Noise func
+#        [octaves] [offset]  [persistence] [scale]
+LA_FUNC_SOLID 4         3.03      1.67          0.002
+LA_END
+
+##Tundra
+#LA_BEG "Tundra"
+#LA_SUN  0.0 1.0
+#LA_TEMP -30 5
+#LA_PRECIP 200 400  #CM precipitation (annual)
+#LA_PRIORITY 2 
+#LA_DEFAULT F
+#LA_POS -i 0 -i   i i i 
+#LA_PROB 10 10 
+#
+#LA_TILE "bt-snow" 	    T   0   80        
+#LA_TILE "bt-dirt" 	    F   0   7        
+#LA_TILE "bt-grass" 	    F   0   13    
+#
+#LA_WALKER "PressureAndTemp" 0 5
+#LA_WALKER "Cave" 0 3
+#
+#LA_FUNC_SOLID  5   3.03  1.67  0.0091
+#LA_FUNC_LIQUID 10 
+#LA_END
+#
+##Swamp
+#LA_BEG "Arid"
+#LA_TEMP -30 5
+#LA_PRECIP 200 400  #CM precipitation (annual)
+#LA_PRIORITY 1 
+#LA_DEFAULT F
+#LA_POS -i 0 -i   i i i 
+#LA_PROB 10 10 
+#
+#LA_TILE "bt-snow" 	    T   0   80        
+#LA_TILE "bt-dirt" 	    F   0   7        
+#LA_TILE "bt-grass" 	    F   0   13    
+#
+#LA_WALKER "PressureAndTemp" 0 5
+#LA_WALKER "Cave" 0 3
+#
+#LA_FUNC_SOLID  5   3.03  1.67  0.0091
+#LA_FUNC_LIQUID 10 
+#LA_END

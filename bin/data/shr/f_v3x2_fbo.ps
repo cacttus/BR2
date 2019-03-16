@@ -1,0 +1,14 @@
+#version 330 core
+
+uniform sampler2D _ufTexture0;
+in vec2 _tcoordOut;
+out vec4 _vColorOut;
+
+void main()
+{
+	vec4 diffuseTex = texture(_ufTexture0, vec2(_tcoordOut));
+
+	diffuseTex.w = 1.0f;
+	
+	_vColorOut = diffuseTex;
+}

@@ -1,0 +1,53 @@
+#version 330 core
+
+layout(location = 0) out vec4 _gColorOut;
+layout(location = 1) out uint _gPickOut;
+
+uniform uint _ufPickId;
+in float _fGsDist;
+smooth in float _fSide;
+uniform float _t01;
+#define M_PI 3.1415926535897932384626433832795
+
+//dist2(x) / r2 * M_2_PI + dt
+float affect2(float d) {
+//This is from the "wave" program 2008
+    float radius = 24;
+    float time = (cos(_t01*M_PI*2 + d/radius * M_PI*2) + 1.0f) / 2.0f;
+    time *= (sin(_t01*M_PI*2 + d/radius * M_PI*2) + 1.0f) / 2.0f;
+
+    return time;
+}
+void main() {
+   // float fr = mod(_fGsDist, 12.219194) / 12.219194;
+  //  vec4 s = spectrumSelect(fr);
+ //   float blend = (sin(_t01) + 1.0f) / 2.0f * fr;
+
+    //blend distance is disatnce that the grid blends.
+    float fBlendDist = 80.0f;//This can be a uniform
+    float d = clamp(1.0f - clamp(_fGsDist / fBlendDist, 0,1 ) + 0.3f, 0, 1.0) ;
+    
+    d *= pow(1.0f - _fSide,4) * clamp( affect2(_fGsDist) + 0.4f, 0.0f, 1.0f);// * clamp(_t01+0.3f, 0.3f, 1.0f);//pow 1-_fSide makes the lines horizontally 'smooth'
+
+   // _gColorOut = mix(vec4(0.9399,0.9592,0.98199, d), vec4(0.6399,0.7592,0.88199, d), blend);
+    
+	_gColorOut = vec4(0.9399,0.9592,0.98199, d);//this can be a uniform
+    _gPickOut = _ufPickId;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

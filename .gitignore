@@ -1,0 +1,15 @@
+tmp
+lib
+.vs
+bin/data/games/
+bin/data/cache/
+bin/bottle_x64_d.exe
+bin/bottle_x64_d.ilk
+bin/bottle_x64_d.pdb
+bin/bottle_x64_r.exe
+bin/bottle_x64_r.iobj
+bin/bottle_x64_r.ipdb
+bin/bottle_x64_r.pdb
+core.vcxproj.user
+bottle.vcxproj.user
+

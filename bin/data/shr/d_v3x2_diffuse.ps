@@ -1,0 +1,36 @@
+#include "d_global_ps.sh"
+
+uniform sampler2D _ufTexture0;
+uniform sampler2D _ufTexture1;
+
+
+in vec3 _v3Out;
+in vec2 _x2Out;
+
+
+void main() {
+	_gColorOut = texture(_ufTexture0, vec2(_x2Out));
+	if(_gColorOut.a <= ALPHA_MASK) {
+		discard;
+    }
+    _gColorOut.rgb *= _ufDiffuseColor.a;//intensity
+
+    _gNormalOut =  vec4(0,1,0, _ufMirrorPower); 
+    _gPositionOut = vec4(_v3Out, _ufSpecHardness);    
+    _gPlaneOut = vec4(_ufSpecColor.xyz, _ufSpecIntensity);    
+    
+    _gPickOut = _ufPickId;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

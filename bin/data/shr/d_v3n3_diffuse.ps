@@ -1,0 +1,35 @@
+#include "d_global_ps.sh"
+
+in vec3 _v3Out;
+in vec3 _n3Out;
+
+void main() {
+	 _gColorOut = _ufDiffuseColor;
+
+	float planedp = dot(_n3Out, _v3Out);
+
+	_gPositionOut = vec4(_v3Out, 0);
+
+	    
+    _gNormalOut =  vec4(_n3Out, _ufMirrorPower); 
+    _gPositionOut = vec4(_v3Out, _ufSpecHardness);    
+    _gPlaneOut = vec4(_ufSpecColor.xyz, _ufSpecIntensity);    
+    
+    _gPickOut = _ufPickId;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

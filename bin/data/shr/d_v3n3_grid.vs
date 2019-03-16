@@ -1,0 +1,17 @@
+#version 330 core
+
+layout(location = 0) in vec3 _v301;
+layout(location = 1) in vec3 _n301;
+
+out vec3 _v3Vs;
+out vec3 _n3Vs;
+
+
+void main() {
+	
+    _n3Vs = _n301;
+    
+    _v3Vs = _v301;//_ufProj * _ufView * vec4(_v301,1);
+
+	//gl_Position =  _v4Vs;	
+}

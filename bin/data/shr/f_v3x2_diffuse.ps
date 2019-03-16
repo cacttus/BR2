@@ -1,0 +1,25 @@
+#version 430
+
+uniform sampler2D _ufTexture0;
+
+in vec2 _x2Out;
+out vec4 _gColorOut;
+
+void main() {
+	 _gColorOut = texture(_ufTexture0, vec2(_x2Out));
+	if(_gColorOut.a <=0.01f) {//ALPHA_MASK
+		discard;
+    }
+	_gColorOut.r = clamp(_gColorOut.r, 0, 1);
+	_gColorOut.g = clamp(_gColorOut.g, 0, 1);
+	_gColorOut.b = clamp(_gColorOut.b, 0, 1);
+}
+
+
+
+
+
+
+
+
+

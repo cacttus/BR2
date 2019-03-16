@@ -1,0 +1,31 @@
+
+//Note: pick shader is not deferred
+#version 330 core
+
+
+layout(location = 0) out vec3 _fragColorOut;
+
+in vec2 _tcoordOut;
+
+uniform samplerCube _ufTexture0; // Color
+
+#define MAX_SAMPLES 3
+
+//This shader doesn't work and it's not used 2/24/18
+
+void main() {
+    vec4 result = texture(_ufTexture0, vec3(_tcoordOut.x, _tcoordOut.y, 0));
+    float bca = result.a;
+    vec2 tex_offset = 1.0 / textureSize(_ufTexture0, 0); 
+
+    for(int j = -MAX_SAMPLES; j <= MAX_SAMPLES; ++j) {
+        for(int i = -MAX_SAMPLES; i <= MAX_SAMPLES; ++i) {
+            vec2 uv = _tcoordOut + vec2(tex_offset.x * i, tex_offset.y * j);
+            result += texture(_ufTexture0, vec3(uv.x, uv.y, 0));
+        }
+    }
+    
+    result /= float(MAX_SAMPLES * MAX_SAMPLES);
+
+	_fragColorOut = result.xyz;
+}

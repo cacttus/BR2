@@ -1,0 +1,50 @@
+#include "d_global_ps.sh"
+
+//Tex is the atlas.
+uniform sampler2D _ufTexture0;
+//uniform sampler2D _ufTexture1;
+
+in vec3 _v3Out;
+in vec2 _x2Out;
+in vec3 _n3Out;
+
+
+void main() {
+    vec4 tex = texture(_ufTexture0, vec2(_x2Out));
+    if(tex.a <= ALPHA_MASK) {
+		discard;
+    }
+
+    tex.rgb *= _ufDiffuseColor.a;
+
+    //mat3 mLightMatrix = getLightMatrix(_n3Out, _v3Out);
+    //vec3 tex_normal = normalize(texture(_ufTexture1, _x2Out).xzy * 2.0f - 1.0f);
+	//vec3 bump_normal = normalize(mLightMatrix * tex_normal); // ** NOTE: XZY ** For bump maps.
+    vec3 bump_normal = _n3Out;
+    
+    _gPositionOut.xyz = _v3Out;
+    _gPositionOut.w = _ufSpecHardness;
+	_gColorOut = tex;
+    _gNormalOut.xyz = bump_normal;
+    _gNormalOut.w = _ufMirrorPower;
+    _gPlaneOut = vec4(_ufSpecColor.xyz, _ufSpecIntensity);
+    _gPickOut = _ufPickId;
+        
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

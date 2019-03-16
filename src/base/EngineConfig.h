@@ -1,0 +1,110 @@
+/**
+*
+*    @file EngineConfig.h
+*    @date May 8, 2017
+*    @author Derek Page
+*
+*    © 2017 
+*
+*
+*/
+#pragma once
+#ifndef __ENGINECONFIG_14942867052644616215_H__
+#define __ENGINECONFIG_14942867052644616215_H__
+
+#include "../base/BaseHeader.h"
+#include "../display/DisplayHeader.h"
+
+namespace Game {
+/**
+*    @class EngineConfig
+*    @brief
+*
+*/
+class EngineConfig {
+    friend class EngineConfigFile;
+  //  bool _bEnableGpuDebugLogging = true;
+    bool _bEnableLogging = true;
+    bool _bUseGLMapBuffer = false;
+    bool _bStartFullscreen = false;
+    int _iDefaultScreenWidth = 800;
+    int _iDefaultScreenHeight = 600;
+    bool _bForceAspectRatio = true;
+    t_string _strGpuDeviceName;
+    float _fDefaultFieldOfView  = 64.734;
+    float _fMaxPickDistance = 2000;
+    ColorSpace::e _eColorSpace = ColorSpace::e::SRGB;
+    //bool _bPrintShaderSourceOnError = true;
+    int _iBakedCharSize = 64;
+    int _iFontBitmapSize = 2048;
+    int _iMaxPointLights = 32;
+    int _iMaxDirLights = 32;
+    int _iFullscreenWidth = 0;
+    int _iFullscreenHeight = 0;
+    bool _bEnableRuntimeErrorChecking = true;
+#ifdef _DEBUG
+    bool _bEnableDebugErrorChecking = true;
+#else
+    bool _bEnableDebugErrorChecking = false;
+#endif
+    bool _bEnableMsaa = false;
+    int32_t _iMsaaSamples = 4;
+    bool _bSaveFrameTexture = false;
+    int _iSaveFrameTextureMod = 10;
+    bool _bBreakOnSDLError = false;
+    bool _bBreakOnOpenGLError = false;
+    int32_t _iNumTextQuads = 1024;
+    bool _bShowConsole = false;
+    bool _bEnableObjectShadows = true;
+    bool _bEnableTerrainShadows = false;
+    int32_t _iShadowMapResolution = 256;
+    int32_t _iShadowMapMaxInfluences = 3;
+    float _fMaxPointLightShadowDistance = 200.0f;
+    int _iMaxFrustShadowSamples = 4;
+    int _iMaxCubeShadowSamples = 4;
+    int _iModelThumbSize = 256;
+public:
+    bool getEnableMsaa() { return _bEnableMsaa;}
+    int32_t getMsaaSamples() { return _iMsaaSamples; }
+    bool getEnableLogging           () { return       _bEnableLogging           ; }
+    bool getUseGLMapBuffer          () { return       _bUseGLMapBuffer          ; }
+    bool getStartFullscreen         () { return       _bStartFullscreen         ; }
+    int getDefaultScreenWidth       () { return      _iDefaultScreenWidth       ; }
+    int getDefaultScreenHeight      () { return      _iDefaultScreenHeight      ; }
+    bool getForceAspectRatio        () { return       _bForceAspectRatio        ; }
+    t_string getGpuDeviceName       () { return      _strGpuDeviceName          ; }
+    float getDefaultFieldOfView     () { return       _fDefaultFieldOfView      ; }
+    float getMaxPickDistance        () { return       _fMaxPickDistance         ; }
+    ColorSpace::e getColorSpace     () { return       _eColorSpace              ; }
+    int32_t getNumTextQuads         () { return       _iNumTextQuads            ; }
+    bool& getEnableRuntimeErrorChecking() { return _bEnableRuntimeErrorChecking; }
+    bool& getEnableDebugErrorChecking() { return _bEnableDebugErrorChecking; }
+    int getBakedCharSize () { return _iBakedCharSize  ; }
+    int getFontBitmapSize() { return _iFontBitmapSize ; }
+    int getMaxPointLights() { return _iMaxPointLights; }
+    int getMaxDirLights() { return _iMaxDirLights; }
+    bool getSaveFrameTexture() { return _bSaveFrameTexture; }
+    int getSaveFrameTextureMod() { return _iSaveFrameTextureMod; }
+    bool getBreakOnSDLError() { return _bBreakOnSDLError; }
+    bool getBreakOnOpenGLError() { return _bBreakOnOpenGLError; }
+    bool getShowConsole() { return _bShowConsole; }
+    bool getEnableObjectShadows() { return _bEnableObjectShadows; }
+    bool getEnableTerrainShadows() { return _bEnableTerrainShadows; }
+    int32_t getShadowMapResolution() {return _iShadowMapResolution;}
+    int32_t getShadowMapMaxInfluences() {return _iShadowMapMaxInfluences;}
+    float getMaxPointLightShadowDistance() { return _fMaxPointLightShadowDistance; }
+    //void setEnableRuntimeErrorChecking(bool b) { _bEnableRuntimeErrorChecking = b; }//For convenience to speed up debugging
+    int getMaxFrustShadowSamples() {return _iMaxFrustShadowSamples ; }
+    int     getMaxCubeShadowSamples() { return _iMaxCubeShadowSamples; }
+    int getFullscreenWidth () { return _iFullscreenWidth ; }
+    int getFullscreenHeight() { return _iFullscreenHeight; }
+    int getModelThumbSize() { return _iModelThumbSize; }
+};
+
+
+
+}//ns Game
+
+
+
+#endif

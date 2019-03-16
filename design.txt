@@ -1,0 +1,69 @@
+https://www.samnoble.co.uk/2014/11/30/visual-studio-crashes-and-a-corrupted-cs-file/
+
+TODO: objects don't get destroyed when grid gets destroyed
+
+
+--Alpha Release
+Click Axe button
+	Gather Material from Tree by holding
+	Show particles.
+	Play sound
+Click UI wall to go to build mode
+	Click Wall type
+
+Monsters - roam around.
+	click to fire at monster
+		launch ob
+
+
+---Design (from fohe)---
+Digger, Breather, Boomer, Swimer
+Wood, Dirt, Stone, 
+Collect tiles when built on
+collect rooms spaces
+Expansivness is numb er of built tiel sover number of rooms
+only useful types
+player can buy different skin packs for walls but they have no use game wise
+Tiny Wall Big Wall Tower
+
+----Todo list---
+Walls
+Player click - 
+	Message "not enugh material"
+	Message " can't construct wall in thin air" if no floro exists.
+	Hold 1,2,3
+		Cosntruct wall(grid quad)
+			Check surrounding quads)
+				empty? make plane.  Otherwise make no plane.
+				is top wall? crenellate
+	Destroy wall - 
+		Destroy the TOP wall ( gravity)
+			*Bottom plane of wall hits  anything that thing is destroyed or dies.
+
+	*When a thing dies it gets a ghost sprite.
+
+	Walls can also be used for dirt and stuff.
+
+	To climb walls a player needs a ladder or a stairs
+		*Wall decorations - Torches, Ladder
+
+Levels
+Shadows
+Particles
+World Saving
+Models
+	Deers, Horses
+	Digger, Breather, Boomer, Swimer
+	Torch
+	Ladder
+	Door
+	Ghost Sprite
+AI Behavior
+	Passive
+	Enemy 
+	Friendly 
+	Update Pathfinding for Ladders & doors
+Day/Nigght effects
+	Logic - Creature spawn during day/night changes.
+Monster Capture
+Tile graphic sprite with number indicating build prevalence.

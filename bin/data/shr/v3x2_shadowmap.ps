@@ -1,0 +1,18 @@
+
+#version 330 core
+uniform sampler2D _ufTexture0;
+
+in vec3 _v3Out;
+in vec2 _x2Out;
+
+uniform vec3 _ufShadowLightPos;
+
+out vec3 _oDepth;
+
+void main()
+{
+    vec4 c = texture(_ufTexture0, _x2Out);
+    _oDepth.r = length(_v3Out.xyz - _ufShadowLightPos);
+    
+    _oDepth.g = _oDepth.b = c.w;//Alpha
+}

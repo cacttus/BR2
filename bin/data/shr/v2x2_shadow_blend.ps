@@ -1,0 +1,35 @@
+
+//Note: pick shader is not deferred
+#version 330 core
+
+//**1/23/18 changed this to use R32F
+in vec2 _tcoordOut;
+out float fragColor;
+
+uniform samplerCube _ufTextureId_i0;
+
+uniform vec3 _ufBoxView;
+uniform vec3 _ufBoxUp;
+
+void main()
+{
+
+    vec3 right = normalize(cross(_ufBoxView, _ufBoxUp));
+    vec3 fSampPos = right * _tcoordOut.x + _ufBoxUp * _tcoordOut.y;
+    
+    //samp += texture(_ufTextureId_i0, _tcoordOut - vec2(2,0));
+    //samp += texture(_ufTextureId_i0, _tcoordOut - vec2(1,0));
+    //samp += texture(_ufTextureId_i0, _tcoordOut            );
+    //samp += texture(_ufTextureId_i0, _tcoordOut + vec2(1,0));
+    //samp += texture(_ufTextureId_i0, _tcoordOut + vec2(2,0));
+    //                                              
+    //samp += texture(_ufTextureId_i0, _tcoordOut - vec2(0,2));
+    //samp += texture(_ufTextureId_i0, _tcoordOut - vec2(0,1));
+    //samp += texture(_ufTextureId_i0, _tcoordOut            );
+    //samp += texture(_ufTextureId_i0, _tcoordOut + vec2(0,1));
+    //samp += texture(_ufTextureId_i0, _tcoordOut + vec2(0,2));
+    //
+    //samp /= 10.0f;
+
+	fragColor = texture(_ufTextureId_i0, fSampPos, 0).r;
+}

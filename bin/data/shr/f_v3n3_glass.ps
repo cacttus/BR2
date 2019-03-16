@@ -1,0 +1,25 @@
+#include "d_global_ps.sh"
+
+uniform sampler2D _ufTexture0;//diffuse 
+uniform sampler2D _ufTexture1;//bump 
+
+in vec3 _v3Out;
+
+in vec3 _n3Out;
+
+void main() {
+
+    _gColorOut.rgb = _ufDiffuseColor.rgb * _ufDiffuseColor.a;//intensity
+     
+    //Light Matrix transforms the normal from texure space into world space
+    
+	mat3 mLightMatrix = getLightMatrix(_n3Out, _v3Out);
+    vec3 tex_normal = _n3Out;
+	vec3 bump_normal = normalize(mLightMatrix * tex_normal); // ** NOTE: XZY ** For bump maps.
+    
+    _gNormalOut =  vec4(bump_normal, _ufMirrorPower); 
+    _gPositionOut = vec4(_v3Out, _ufSpecHardness);    
+    _gPlaneOut = vec4(_ufSpecColor.xyz, _ufSpecIntensity);
+    _gPickOut = _ufPickId;
+}
+

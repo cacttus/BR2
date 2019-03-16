@@ -1,0 +1,39 @@
+#version 330 core
+
+layout(location = 0) out vec4 _gColorOut;
+layout(location = 1) out uint _gPickOut;
+
+in float _fGsDist;
+smooth in float _fSide;
+uniform float _t01;
+
+#define M_PI 3.1415926535897932384626433832795
+float affect2(float d) {
+    float radius = 24;
+    float time = (cos(_t01*M_PI*2 + d/radius * M_PI*2) + 1.0f) / 2.0f;
+    time *= (sin(_t01*M_PI*2 + d/radius * M_PI*2) + 1.0f) / 2.0f;
+    return time;
+}
+void main() {
+
+    float d = clamp( affect2(_fGsDist) + 0.4f, 0.0f, 1.0f);
+	_gColorOut = vec4(0.9399,0.9592,0.98199, d);//this can be a uniform
+    _gPickOut = 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

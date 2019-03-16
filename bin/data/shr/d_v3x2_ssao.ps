@@ -1,0 +1,70 @@
+/*
+*	Dmc Pixel Shader
+*	4 7 2014
+*	BT pixel shader 
+*	20141109
+*   Deferred 20160515
+*/
+#include "d_hdr_base.sh"
+#include "df_ps_structs.sh"
+#include "df_light_eq.sh"
+
+// - SAMPLERS -
+uniform sampler2D _ufTexture0;//position
+uniform sampler2D _ufTexture1;//color
+uniform sampler2D _ufTexture2;//normals
+uniform sampler2D _ufTexture3;//spec
+
+in vec4 _vertexOut;
+in vec2 _tcoordOut;
+
+//Note: with the new system we're outputting to another texture for forward rendering)
+layout(location = 0) out vec4 g_fragColorOut;
+
+void main() {
+
+    //TODO: texelFetch() for MSAA
+	vec4 tex0  = sample2d(_ufTexture0, _tcoordOut);//Pos
+    vec4 tex1  = sample2d_hdr(_ufTexture1, _tcoordOut, g_deferredParams._fHdrSampleExp);//Color
+	vec4 tex2  = sample2d(_ufTexture2, _tcoordOut); //Normal
+	vec4 tex3  = sample2d(_ufTexture3, _tcoordOut);//Plane, &c
+    
+    vec3 fragPos 	  = tex0.xyz;
+    vec4 fragColor    = tex1;
+	vec3 fragNormal   = tex2.xyz; 
+	vec3 vSpecColor   = tex3.xyz;
+
+    float fSpecHardness = tex0.w;
+    float fMirrorPower = tex2.w;
+    float fSpecIntensity = tex3.w;
+
+    g_fragColorOut = lightFragment(fragPos, fragColor, fragNormal, vSpecColor, fSpecHardness, fMirrorPower, fSpecIntensity);
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+#version 330 core
+
+layout(location = 0) out vec4 _gColorOut;
+layout(location = 1) out uint _gPickOut;
+
+uniform sampler2D _ufTexture0;
+
+in vec2 _x2Out;
+in vec4 _c4Out;
+in vec2 _v2Out;
+
+uniform vec4 _ufClip;
+uniform uint _ufPickId;
+
+void main(){
+    if(_v2Out.x < _ufClip.x 
+       || _v2Out.y < _ufClip.y 
+       || _v2Out.x > _ufClip.z 
+       || _v2Out.y > _ufClip.w) { 
+       discard; 
+   }
+	vec4 tx = texture(_ufTexture0, vec2(_x2Out));
+    if(tx.a < 0.001){
+		discard;
+	} 
+
+    _gColorOut = tx * _c4Out;
+
+    _gPickOut = _ufPickId;
+}
