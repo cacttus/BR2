@@ -1,6 +1,6 @@
-tmp
-lib
-.vs
+tmp/
+lib/
+.vs/
 bin/data/games/
 bin/data/cache/
 bin/bottle_x64_d.exe
