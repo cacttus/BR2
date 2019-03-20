@@ -202,7 +202,7 @@ t_string ShaderMaker::getShaderNameFromFileNames(std::vector<t_string>& vecFiles
 
     return progName;
 }
-t_string ShaderMaker::getGeneralErrorsAsString()
+t_string ShaderMaker::getGeneralErrorsAsString(bool clear)
 {
     if (_vecGeneralErrors.size() == 0) {
         return "";
@@ -216,6 +216,10 @@ t_string ShaderMaker::getGeneralErrorsAsString()
         ret += "\n";
     }
     ret += "\n\n";
+
+	if (clear) {
+		_vecGeneralErrors.clear();
+	}
     return ret;
 }
 bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>& vecSubProgs, std::shared_ptr<ShaderBase> sp) {

@@ -378,11 +378,15 @@ void AppRunner::printHelpfulDebug() {
 void AppRunner::runApp(std::vector<t_string>& args, char* windowTitle, std::shared_ptr<RoomBase> rb) {
     _tvInitStartTime = Gu::getMicroSeconds();
 
-    //**Must come first.
+	//Root the engine FIRST so we can find the EngineConfig.dat
+	FileSystem::setExecutablePath(args[0]);
+	t_string a = FileSystem::getCurrentDirectory();
+	FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
+	t_string b = FileSystem::getCurrentDirectory();
+
+    //**Must come first before other logic
     Gu::initGlobals(rb);
     {
-        FileSystem::setExecutablePath(args[0]);
-
         initSDL(windowTitle);
         
         //Must set this to the depth size we support.

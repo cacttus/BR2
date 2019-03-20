@@ -273,6 +273,11 @@ t_string FileSystem::getCurrentDirectory() {
     t_string cwd = t_string(buf);
     return cwd;
 }
+void FileSystem::setCurrentDirectory(t_string str) {
+	//DO NOT LOG HERE
+	_chdir(str.c_str());
+}
+
 bool FileSystem::isFile(t_string fileOrDirPath) {
     //https://stackoverflow.com/questions/146924/how-can-i-tell-if-a-given-path-is-a-directory-or-a-file-c-c
     struct stat s;

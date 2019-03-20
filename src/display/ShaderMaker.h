@@ -68,7 +68,7 @@ protected:
     void getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vector<t_string>& __out_ log);
     t_string getShaderNameFromFileNames(std::vector<t_string>& vecFiles);
     void fullyQualifyFiles(std::vector<t_string>& vecFiles);
-    t_string getGeneralErrorsAsString();
+    t_string getGeneralErrorsAsString(bool clear=true);
     std::shared_ptr<ShaderSubProgram> preloadShaderSubProgram(DiskLoc loc);
     std::shared_ptr<ShaderBase> makeProgram(std::vector<std::shared_ptr<ShaderSubProgram>>& vecpsp, t_string& programName);
     bool validateSubProgram(std::shared_ptr<ShaderSubProgram> prog, std::shared_ptr<ShaderBase> psp);

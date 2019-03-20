@@ -44,19 +44,28 @@ void BaseDataFile::loadAndParse(t_string&loc)
     // - Load and parse
     uint32_t _iFileSize;
 
-    FileSystem::SDLFileRead(loc, _fileData, _iFileSize, true);
-    //fb = FileSystem::loadFile(loc);
+	if (FileSystem::SDLFileRead(loc, _fileData, _iFileSize, true) != 0) {
+		t_string st = FileSystem::getCurrentDirectory();
 
-    //if(!fb->ptr())
-   //     throw new Exception("Failed to load file.",__LINE__,__FILE__);
-   // _fileData = fb->ptr();
-    ptr = _fileData;
-    parse(_fileData);
+		//File not found.
+		Gu::debugBreak();
 
-    FileSystem::SDLFileFree(_fileData);
+	}
+	else {
 
-    // - Execute actions after load
-    postLoad();
+		//fb = FileSystem::loadFile(loc);
+
+		//if(!fb->ptr())
+	   //     throw new Exception("Failed to load file.",__LINE__,__FILE__);
+	   // _fileData = fb->ptr();
+		ptr = _fileData;
+		parse(_fileData);
+
+		FileSystem::SDLFileFree(_fileData);
+
+		// - Execute actions after load
+		postLoad();
+	}
 }
 void BaseDataFile::save(t_string& loc)
 {

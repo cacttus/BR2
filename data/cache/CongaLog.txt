@@ -1,0 +1,485 @@
+[.....0][22:30:43:094][INF]  
+[.....1][22:30:43:100][INF]  ==========================================================================================
+[.....2][22:30:43:105][INF]  ============ Logger Init 3/19/2019 22:30:43:105============
+[.....3][22:30:43:108][INF]  
+[.....4][22:30:43:111][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....5][22:30:43:140][INF]  1 Displays:  (apprunner.cpp : 130)
+[.....6][22:30:43:144][INF]    Display 0: 1920x1080, 60hz  (apprunner.cpp : 145)
+[.....7][22:30:43:456][ERR]  SDL: No OpenGL context has been made current  (oglerr.cpp : 26)
+[14] Game::DebugHelper::getCallStack
+[13] Game::DebugHelper::getStackTrace
+[12] Game::Logger::addStackTrace
+[11] Game::Logger::logError
+[10] Game::OglErr::checkSDLErr
+[9] Game::AppRunner::makeWindow
+[8] Game::AppRunner::initSDL
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[.....8][22:30:43:460][ERR]  We are not making the window icon because there's an error somewhere in SDL here.  (apprunner.cpp : 188)
+[13] Game::DebugHelper::getCallStack
+[12] Game::DebugHelper::getStackTrace
+[11] Game::Logger::addStackTrace
+[10] Game::Logger::logError
+[9] Game::AppRunner::makeWindow
+[8] Game::AppRunner::initSDL
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[.....9][22:30:43:467][ERR]  Failed to get OpenGL Shade version.  (apprunner.cpp : 290)
+[13] Game::DebugHelper::getCallStack
+[12] Game::DebugHelper::getStackTrace
+[11] Game::Logger::addStackTrace
+[10] Game::Logger::logError
+[9] Game::AppRunner::getOpenGLVersion
+[8] Game::AppRunner::initSDL
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....10][22:30:43:473][INF]  OpenGL config profile 0 didn't work. Trying next profile.  (apprunner.cpp : 103)
+[....11][22:30:43:031][ERR]  SDL: No OpenGL context has been made current  (oglerr.cpp : 26)
+[14] Game::DebugHelper::getCallStack
+[13] Game::DebugHelper::getStackTrace
+[12] Game::Logger::addStackTrace
+[11] Game::Logger::logError
+[10] Game::OglErr::checkSDLErr
+[9] Game::AppRunner::makeWindow
+[8] Game::AppRunner::initSDL
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....12][22:30:43:039][ERR]  We are not making the window icon because there's an error somewhere in SDL here.  (apprunner.cpp : 188)
+[13] Game::DebugHelper::getCallStack
+[12] Game::DebugHelper::getStackTrace
+[11] Game::Logger::addStackTrace
+[10] Game::Logger::logError
+[9] Game::AppRunner::makeWindow
+[8] Game::AppRunner::initSDL
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....13][22:30:43:061][INF]  
+   OpenGL version 3.3.
+   GLSL version:          3.30
+   Graphics unit:         Intel(R) UHD Graphics 620
+   Graphics unit Vendor:  Intel
+  (apprunner.cpp : 312)
+[....14][22:30:43:070][INF]  Screen BPP    : 24  (apprunner.cpp : 346)
+[....15][22:30:43:076][INF]  Swap Interval : 1  (apprunner.cpp : 347)
+[....16][22:30:43:080][INF]  Initial Window Size   : 800x600  (apprunner.cpp : 349)
+[....17][22:30:43:085][INF]  Draw Size     : 800x600  (apprunner.cpp : 351)
+[....18][22:30:43:089][INF]  SDL_GL_DOUBLEBUFFER: 1  (apprunner.cpp : 355)
+[....19][22:30:43:093][INF]  SDL_GL_BUFFER_SIZE: 32  (apprunner.cpp : 357)
+[....20][22:30:43:096][INF]  SDL_GL_DEPTH_SIZE: 24  (apprunner.cpp : 360)
+[....21][22:30:43:101][INF]  SDL_GL_STENCIL_SIZE: 8  (apprunner.cpp : 362)
+[....22][22:30:43:105][INF]  SDL_GL_ACCELERATED_VISUAL: 1  (apprunner.cpp : 364)
+[....23][22:30:43:109][INF]  SDL_GL_RED_SIZE: 8  (apprunner.cpp : 367)
+[....24][22:30:43:113][INF]  SDL_GL_GREEN_SIZE: 8  (apprunner.cpp : 369)
+[....25][22:30:43:118][INF]  SDL_GL_BLUE_SIZE: 8  (apprunner.cpp : 371)
+[....26][22:30:43:122][INF]  SDL_GL_ALPHA_SIZE: 8  (apprunner.cpp : 373)
+[....27][22:30:43:126][INF]  Creating GL Context  (apprunner.cpp : 395)
+[....28][22:30:43:129][INF]  GLContext - Loading GL Functions.  (glcontext.cpp : 122)
+[....29][22:30:43:134][INF]  GLContext - Making Vtx Formats.  (glcontext.cpp : 125)
+[....30][22:30:43:138][INF]  GLContext - Creating Managers.  (glcontext.cpp : 128)
+[....31][22:30:43:142][INF]  GLContext - Building Package  (glcontext.cpp : 45)
+[....32][22:30:43:145][INF]  Reading File C:\git\bottle-world\.\bin\bottle_x64_d.exe  (bufferedfile.cpp : 264)
+[....33][22:30:43:165][INF]  Exe is not packed.  (package.cpp : 81)
+[....34][22:30:43:172][INF]  GLContext - Creating TexCache  (glcontext.cpp : 48)
+[....35][22:30:43:183][INF]  GLContext - Creating Party  (glcontext.cpp : 54)
+[....36][22:30:43:188][INF]  GLContext - Creating Sequencer  (glcontext.cpp : 56)
+[....37][22:30:43:193][INF]  GLContext - Creating Fingers  (glcontext.cpp : 58)
+[....38][22:30:43:196][INF]  GLContext - Creating FpsMeter  (glcontext.cpp : 61)
+[....39][22:30:43:201][INF]  GLContext - Creating FrameSync  (glcontext.cpp : 63)
+[....40][22:30:43:205][INF]  GLContext - Creating SoundCache  (glcontext.cpp : 66)
+[....41][22:30:44:408][INF]  GLContext - Creating ShaderMaker & base shaders  (glcontext.cpp : 68)
+[....42][22:30:44:413][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....43][22:30:44:417][INF]  Processing Shader: f_v3x2_diffuse-f_v3x2_diffuse  (shadermaker.cpp : 131)
+[....44][22:30:44:431][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....45][22:31:07:238][INF]  
+------------------------------
+ShaderMaker: Processing 3 files.  (shadermaker.cpp : 126)
+[....46][22:31:07:244][INF]  Processing Shader: f_v3n3_normals-f_v3n3_normals-f_v3n3_normals  (shadermaker.cpp : 131)
+[....47][22:31:07:249][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....48][22:31:09:269][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....49][22:31:09:274][INF]  Processing Shader: v2x2_shadow_blend-v2x2_shadow_blend  (shadermaker.cpp : 131)
+[....50][22:31:09:279][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.vs' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....51][22:31:09:254][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....52][22:31:09:258][INF]  Processing Shader: v3x2_depth_of_field-v3x2_depth_of_field  (shadermaker.cpp : 131)
+[....53][22:31:09:264][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.vs' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.ps' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.vs' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....54][22:31:09:474][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....55][22:31:09:478][INF]  Processing Shader: v3x2_smooth_gen-v3x2_smooth_gen  (shadermaker.cpp : 131)
+[....56][22:31:09:484][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.vs' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.ps' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.vs' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.ps' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.vs' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....57][22:31:09:131][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....58][22:31:09:137][INF]  Processing Shader: v3_shadowmap-v3_shadowmap  (shadermaker.cpp : 131)
+[....59][22:31:09:142][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.vs' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.ps' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.vs' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.ps' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.vs' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.ps' was not found.
+>> Shader source file './data/shr/v3_shadowmap.vs' was not found.
+>> Shader source file './data/shr/v3_shadowmap.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....60][22:31:09:404][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....61][22:31:09:409][INF]  Processing Shader: v3x2_shadowmap-v3x2_shadowmap  (shadermaker.cpp : 131)
+[....62][22:31:09:416][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.vs' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.ps' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.vs' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.ps' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.vs' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.ps' was not found.
+>> Shader source file './data/shr/v3_shadowmap.vs' was not found.
+>> Shader source file './data/shr/v3_shadowmap.ps' was not found.
+>> Shader source file './data/shr/v3x2_shadowmap.vs' was not found.
+>> Shader source file './data/shr/v3x2_shadowmap.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[....63][22:31:14:482][INF]  
+------------------------------
+ShaderMaker: Processing 2 files.  (shadermaker.cpp : 126)
+[....64][22:31:14:487][INF]  Processing Shader: d_v3n3x2_diffuse-d_v3n3x2_diffuse  (shadermaker.cpp : 131)
+[....65][22:31:14:493][ERR]  
+
+[  General Errors  ]
+>> Shader source file './data/shr/f_v3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/f_v3x2_diffuse.ps' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.vs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.gs' was not found.
+>> Shader source file './data/shr/f_v3n3_normals.ps' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.vs' was not found.
+>> Shader source file './data/shr/v2x2_shadow_blend.ps' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.vs' was not found.
+>> Shader source file './data/shr/v3x2_depth_of_field.ps' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.vs' was not found.
+>> Shader source file './data/shr/v3x2_smooth_gen.ps' was not found.
+>> Shader source file './data/shr/v3_shadowmap.vs' was not found.
+>> Shader source file './data/shr/v3_shadowmap.ps' was not found.
+>> Shader source file './data/shr/v3x2_shadowmap.vs' was not found.
+>> Shader source file './data/shr/v3x2_shadowmap.ps' was not found.
+>> Shader source file './data/shr/d_v3n3x2_diffuse.vs' was not found.
+>> Shader source file './data/shr/d_v3n3x2_diffuse.ps' was not found.
+
+
+  (shadermaker.cpp : 261)
+[17] Game::DebugHelper::getCallStack
+[16] Game::DebugHelper::getStackTrace
+[15] Game::Logger::addStackTrace
+[14] Game::Logger::logError
+[13] Game::ShaderMaker::checkForErrors
+[12] Game::ShaderMaker::makeShader
+[11] Game::ShaderMaker::initialize
+[10] Game::GLContext::createManagers
+[9] Game::GLContext::load
+[8] Game::Gu::createGLContext
+[7] Game::AppRunner::runApp
+[6] main
+[5] invoke_main
+[4] __scrt_common_main_seh
+[3] __scrt_common_main
+[2] mainCRTStartup
+[1] BaseThreadInitThunk
+[0] RtlUserThreadStart
+
+[.....0][22:36:31:412][INF]  
+[.....1][22:36:31:427][INF]  ==========================================================================================
+[.....2][22:36:31:435][INF]  ============ Logger Init 3/19/2019 22:36:31:435============
+[.....3][22:36:31:440][INF]  
+[.....4][22:36:31:447][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:41:01:193][INF]  
+[.....1][22:41:01:198][INF]  ==========================================================================================
+[.....2][22:41:01:204][INF]  ============ Logger Init 3/19/2019 22:41:01:203============
+[.....3][22:41:01:210][INF]  
+[.....4][22:41:01:215][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:42:28:501][INF]  
+[.....1][22:42:28:506][INF]  ==========================================================================================
+[.....2][22:42:29:000][INF]  ============ Logger Init 3/19/2019 22:42:29:000============
+[.....3][22:42:29:007][INF]  
+[.....4][22:42:29:013][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:42:39:107][INF]  
+[.....1][22:42:39:113][INF]  ==========================================================================================
+[.....2][22:42:39:118][INF]  ============ Logger Init 3/19/2019 22:42:39:117============
+[.....3][22:42:39:123][INF]  
+[.....4][22:42:39:128][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:43:55:119][INF]  
+[.....1][22:43:55:126][INF]  ==========================================================================================
+[.....2][22:43:55:132][INF]  ============ Logger Init 3/19/2019 22:43:55:132============
+[.....3][22:43:55:137][INF]  
+[.....4][22:43:55:141][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:45:03:166][INF]  
+[.....1][22:45:03:173][INF]  ==========================================================================================
+[.....2][22:45:03:190][INF]  ============ Logger Init 3/19/2019 22:45:03:190============
+[.....3][22:45:03:197][INF]  
+[.....4][22:45:03:202][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:45:07:444][INF]  
+[.....1][22:45:07:450][INF]  ==========================================================================================
+[.....2][22:45:07:456][INF]  ============ Logger Init 3/19/2019 22:45:07:456============
+[.....3][22:45:07:461][INF]  
+[.....4][22:45:07:466][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:45:18:289][INF]  
+[.....1][22:45:18:296][INF]  ==========================================================================================
+[.....2][22:45:18:303][INF]  ============ Logger Init 3/19/2019 22:45:18:303============
+[.....3][22:45:18:308][INF]  
+[.....4][22:45:18:313][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:46:00:336][INF]  
+[.....1][22:46:00:342][INF]  ==========================================================================================
+[.....2][22:46:00:347][INF]  ============ Logger Init 3/19/2019 22:46:00:347============
+[.....3][22:46:00:353][INF]  
+[.....4][22:46:00:357][INF]  Operating System:  Windows 8, No service pack, Workstation
+[.....0][22:48:31:334][INF]  
+[.....1][22:48:31:340][INF]  ==========================================================================================
+[.....2][22:48:31:346][INF]  ============ Logger Init 3/19/2019 22:48:31:346============
+[.....3][22:48:31:353][INF]  
+[.....4][22:48:31:359][INF]  Operating System:  Windows 8, No service pack, Workstation

@@ -3,6 +3,7 @@
 /.vs/
 /bin/data/games/
 /bin/data/cache/
+/bin/data/mbi/
 /bin/bottle_x64_d.exe
 *.ilk
 /bin/bottle_x64_r.exe
@@ -10,4 +11,5 @@
 *.ipdb
 *.pdb
 *.user
+UpgradeLog.htm
 
