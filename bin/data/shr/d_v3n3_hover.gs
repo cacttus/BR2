@@ -1,4 +1,5 @@
-#version 330 core
+#include "glsl_version.sh"
+
 
 //Each triangle has 2 edges tri = 3 * 2 quad * 2 edge = 3 * 2 * 2 = 12
 layout(points) in;

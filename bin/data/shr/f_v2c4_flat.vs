@@ -1,5 +1,6 @@
 
-#version 330 core
+#include "glsl_version.sh"
+
 layout(location = 0)in vec2 _v201; //_vertex;
 layout(location = 1)in vec4 _c401; //_color;
 out vec4 _colorOut;

@@ -1,4 +1,5 @@
-#version 330 core
+#include "glsl_version.sh"
+
 
 layout(location = 0) in vec3 _v301;
 layout(location = 1) in vec3 _c301;

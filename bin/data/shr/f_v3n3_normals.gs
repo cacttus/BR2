@@ -1,4 +1,5 @@
-#version 330 core
+#include "glsl_version.sh"
+
 
 layout(triangles) in;
 layout(line_strip, max_vertices=6) out;

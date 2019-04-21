@@ -1,4 +1,5 @@
-#version 330 core
+#include "glsl_version.sh"
+
 
 #include "df_skin.sh"
 
