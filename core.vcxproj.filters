@@ -19,6 +19,9 @@
     <Filter Include="world">
       <UniqueIdentifier>{d183dc85-d161-4843-97fc-e4b517077f4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{8c41e6ff-1c1c-446d-96c5-6a07c0260954}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\BaseBase.h">
