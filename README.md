@@ -1,4 +1,4 @@
-# bottle-world
+# Bottle World
 This is a game + engine that grew out of Dwarf Conga into a behemoth.  It is too complicated for its own good.  
 But if you're interested in making games from sand then come read this conflated dragon of a program.
 
