@@ -23,6 +23,8 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
+//Needed to get the main window handle so we can set the main window handle.
+#include <SDL_syswm.h>
 
 //Include for SDL_Mixer which also includes ffmpeg..yikes
 //#include "../../../SDL2_mixer-2.0.1/SDL_mixer.h"

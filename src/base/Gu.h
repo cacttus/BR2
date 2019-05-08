@@ -46,7 +46,7 @@ public:
 	static std::shared_ptr<Package> getPackage();
     static void checkErrorsDbg();
     static void checkErrorsRt();
-    static void initGlobals(std::shared_ptr<RoomBase> rb);
+    static void initGlobals(std::shared_ptr<RoomBase> rb, std::vector<std::string>& args);
     static void deleteGlobals();
     static void createGLContext(std::shared_ptr<RoomBase> rb);
     static std::shared_ptr<Logger> getLogger() { return _pLogger;  }

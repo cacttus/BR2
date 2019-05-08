@@ -92,32 +92,29 @@ public:
     t_string getLogPath() { return _logDir; }
 };
 
-// - Log Macros
-#define BroLogDebug(...) \
-Gu::getLogger()->logDebug( \
-TStr(__VA_ARGS__),__LINE__,__FILE__ )
-#define BroLogInfo(...) \
-Gu::getLogger()->logInfo( \
-TStr(__VA_ARGS__),__LINE__,__FILE__ )
-#define BroLogWarn(...) \
-Gu::getLogger()->logWarn( \
-TStr(__VA_ARGS__),__LINE__,__FILE__, NULL )
-#define BroLogError(...) \
-Gu::getLogger()->logError( \
-TStr(__VA_ARGS__),__LINE__,__FILE__, NULL )
-#define BroLogErrorEx(astr,aex) \
-Gu::getLogger()->logError( \
-TStr(astr),__LINE__,__FILE__, aex )
-#define BroLogWarnCycle(...)\
-Gu::getLogger()->logWarnCycle(\
-TStr(__VA_ARGS__), __LINE__, __FILE__, NULL, 60)
-#define BroLogErrorCycle(...)\
-Gu::getLogger()->logErrorCycle(\
-TStr(__VA_ARGS__), __LINE__, __FILE__, NULL, 60)
-
-
-
 }//ns game
+ // - Log Macros
+#define BroLogDebug(...) \
+Game::Gu::getLogger()->logDebug( \
+Game::TStr(__VA_ARGS__),__LINE__,__FILE__ )
+#define BroLogInfo(...) \
+Game::Gu::getLogger()->logInfo( \
+Game::TStr(__VA_ARGS__),__LINE__,__FILE__ )
+#define BroLogWarn(...) \
+Game::Gu::getLogger()->logWarn( \
+Game::TStr(__VA_ARGS__),__LINE__,__FILE__, NULL )
+#define BroLogError(...) \
+Game::Gu::getLogger()->logError( \
+Game::TStr(__VA_ARGS__),__LINE__,__FILE__, NULL )
+#define BroLogErrorEx(astr,aex) \
+Game::Gu::getLogger()->logError( \
+Game::TStr(astr),__LINE__,__FILE__, aex )
+#define BroLogWarnCycle(...)\
+Game::Gu::getLogger()->logWarnCycle(\
+Game::TStr(__VA_ARGS__), __LINE__, __FILE__, NULL, 60)
+#define BroLogErrorCycle(...)\
+Game::Gu::getLogger()->logErrorCycle(\
+Game::TStr(__VA_ARGS__), __LINE__, __FILE__, NULL, 60)
 
 #define SetLoggerColor_Error() ConsoleColorRed()
 #define SetLoggerColor_Info() ConsoleColorGray()

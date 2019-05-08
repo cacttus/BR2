@@ -10,10 +10,10 @@
 
 //So esprima doesn't work, simply (i=0;i<5;x++) alert(x); doesn't give an error like it should.
 //#include "./../core/src/ext/esprima.h"
-
+//**TODO Move this crap to AppRunner
 
 int main(int argc, char** argv) {
-    
+
     Game::DebugHelper::debugHeapBegin(false);
     {
         //Game::DebugHelper::setBreakAlloc(221975);

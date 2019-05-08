@@ -16,6 +16,7 @@
 #include "../display/DisplayHeader.h"
 
 namespace Game {
+
 /**
 *    @class EngineConfig
 *    @brief
@@ -88,6 +89,10 @@ public:
     bool getBreakOnSDLError() { return _bBreakOnSDLError; }
     bool getBreakOnOpenGLError() { return _bBreakOnOpenGLError; }
     bool getShowConsole() { return _bShowConsole; }
+    void setShowConsole(bool b) 
+    { 
+        _bShowConsole = b; 
+    }
     bool getEnableObjectShadows() { return _bEnableObjectShadows; }
     bool getEnableTerrainShadows() { return _bEnableTerrainShadows; }
     int32_t getShadowMapResolution() {return _iShadowMapResolution;}
@@ -99,6 +104,11 @@ public:
     int getFullscreenWidth () { return _iFullscreenWidth ; }
     int getFullscreenHeight() { return _iFullscreenHeight; }
     int getModelThumbSize() { return _iModelThumbSize; }
+
+    EngineConfig() {}
+    virtual ~EngineConfig() {
+
+    }
 };
 
 

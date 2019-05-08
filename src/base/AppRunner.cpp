@@ -178,7 +178,15 @@ void AppRunner::makeWindow(char* windowTitle)
     _pWindow = SDL_CreateWindow(sstitle, x, y, w, h, flags);
     OglErr::checkSDLErr();
 
-
+    //For the WPF app container we need to set the window handle to be the top window
+    //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.mainwindowhandle?view=netframework-4.8
+    SDL_SysWMinfo wmInfo;
+    SDL_VERSION(&wmInfo.version);
+    SDL_GetWindowWMInfo(_pWindow, &wmInfo);
+    HWND hwnd = wmInfo.info.win.window;
+    SetActiveWindow(hwnd);
+    
+    //Fullscreen nonsense
     if (bFullscreen) {
         SDL_SetWindowFullscreen(_pWindow, SDL_WINDOW_FULLSCREEN);
     }
@@ -379,7 +387,7 @@ void AppRunner::runApp(std::vector<t_string>& args, char* windowTitle, std::shar
     _tvInitStartTime = Gu::getMicroSeconds();
 
     //**Must come first.
-    Gu::initGlobals(rb);
+    Gu::initGlobals(rb, args);
     {
         FileSystem::setExecutablePath(args[0]);
 

@@ -65,7 +65,38 @@ bool Gu::is64Bit() {
     //WTF
     BroThrowNotImplementedException();
 }
-void Gu::initGlobals(std::shared_ptr<RoomBase> rb) {
+void parsearg(std::string key, std::string value) {
+    if (key == "--show-console") {
+        Gu::getEngineConfig()->setShowConsole( Game::TypeConv::strToBool(value) );
+        BroLogInfo("Overriding show console window: ", value);
+    }
+    else {
+        BroLogError("Unrecognized parameter '", key, "' value ='", value, "'");
+    }
+}
+//**TODO Move this crap to AppRunner
+void parsearg(std::string arg) {
+    bool isvalue = false;
+    std::string key = "";
+    std::string value = "";
+    //**TODO Move this crap to AppRunner
+
+    for (int i = 0; i < arg.length(); ++i) {
+        if (arg[i] == '=') {
+            isvalue = true;
+        }
+        else if (isvalue) {
+            value += arg[i];
+        }
+        else {
+            key += arg[i];
+        }
+        //**TODO Move this crap to AppRunner
+    }
+    parsearg(key, value);
+}
+
+void Gu::initGlobals(std::shared_ptr<RoomBase> rb, std::vector<std::string>& args) {
     //Try to create teh cache dir.
     //Make sure to check this on IOS
     FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
@@ -77,6 +108,10 @@ void Gu::initGlobals(std::shared_ptr<RoomBase> rb) {
     ef.loadAndParse(rb->getConfigPath());
     Gu::_pEngineConfig = ef.getConfig();
 
+    //Override EngineConfig
+    for (std::string arg : args) {
+        parsearg(arg);
+    }
 
     if (Gu::getEngineConfig()->getEnableLogging() == false) {
         getLogger()->disableLogger();
