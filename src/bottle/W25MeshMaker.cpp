@@ -687,8 +687,8 @@ void W25MeshConf::makeMesh() {
     int t0[3];  // Triangle indexes in v4, later converted to v8
     int t1[3];
     int cx[4]; //Cross v indexes
-    W25Sc::e t0tc; //triangle configuration
-    W25Sc::e t1tc;
+    W25Sc::e t0tc = W25Sc::e::Empty; //triangle configuration
+    W25Sc::e t1tc = W25Sc::e::Empty;
     W25Sc::e t0vc = W25Sc::e::A;
     W25Sc::e t1vc = W25Sc::e::A;
     /*

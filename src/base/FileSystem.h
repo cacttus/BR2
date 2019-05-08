@@ -50,6 +50,7 @@ public:
 
     STATIC time_t getFileModifyTime(t_string& location);
     STATIC t_string getCurrentDirectory();
+	STATIC void setCurrentDirectory(t_string str);
 
     STATIC bool deleteFile(t_string filename);
     STATIC bool deleteAllFiles(t_string dir, std::vector<t_string>& vecFileExts);

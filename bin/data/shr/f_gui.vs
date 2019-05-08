@@ -1,4 +1,5 @@
-#version 330 core
+#include "glsl_version.sh"
+
 
 layout(location = 0) in vec4 _v401;//rect
 layout(location = 1) in vec4 _v402;//clip

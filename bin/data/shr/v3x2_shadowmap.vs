@@ -1,7 +1,7 @@
 //cube map shadows
 //derek page
 //20160426
-#version 330 core
+#version 430
 #include "df_skin.sh"
 layout(location = 0)in vec3 _v301;
 layout(location = 1)in vec2 _x201;

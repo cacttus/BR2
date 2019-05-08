@@ -1,5 +1,6 @@
 //GUI Shader
-#version 330 core
+#include "glsl_version.sh"
+
 
 layout(location = 0) in vec2 _v201;
 layout(location = 1) in vec2 _x201;

@@ -213,7 +213,7 @@ void ShaderCompiler::loadSourceData(t_string& location, std::shared_ptr<Buffered
         sourceData = NULL;
         _loadStatus = ShaderStatus::e::FileNotFound;
         BroLogError("Shader Source File not found : ", location);
-      //  BroLogError(" CWD: ", Gu::getPackage()::getCurrentDirectory());
+        BroLogError(" CWD: ", FileSystem::getCurrentDirectory());
         return;
     }
 

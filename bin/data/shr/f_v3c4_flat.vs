@@ -1,5 +1,6 @@
 
-#version 430
+#include "glsl_version.sh"
+
 layout(location = 0)in vec3 _v301; //_vertex;
 layout(location = 1)in vec4 _c401; //_color;
 

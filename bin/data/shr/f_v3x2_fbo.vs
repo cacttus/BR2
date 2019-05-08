@@ -1,5 +1,4 @@
-#version 330 core
-
+#include "glsl_version.sh"
 
 //20151122
 //20161127
