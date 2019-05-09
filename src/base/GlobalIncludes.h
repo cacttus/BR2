@@ -111,10 +111,33 @@
 //#endif
 #include "../ext/lodepng.h"
 
-//wctombs_s fucking
 #ifdef _WIN32
+//wctombs_s fucking
 #pragma warning(disable:4996)
+//not all control paths return a value - must be an error.
+#pragma warning(error:4715)
+//'==': operator has no effect; did you intend '='?
+#pragma warning(error:4553)
+////Disable "throw list" warning
+//#pragma warning( disable:4290 ) 
+////Disable warning C4091: 'typedef ': ignored on left of '' when no variable is declared
+//#pragma warning( disable:4091 ) 
+//// - Disable "nonstandard enum extension"
+//#pragma warning( disable:4482 )
+////Disable the annoying "unsafe mix of bool and bool" when comparing a bool to true.
+//#pragma warning( disable:4805 )
+////warning C4996: 'wcstombs': This function or variable may be unsafe. Consider using wcstombs_s instead.
+////Microsoft's recommendation is'nt cross-platform
+//#pragma warning( disable:4996 )
+
 #include <Windows.h>
+//#include <Windows.h>
+//#include <ws2tcpip.h>
+#include <winsock2.h>
+
+//
+//#pragma comment(lib, "ws2_32.lib")
+//#pragma comment(lib, "wsock32.lib")
 #endif
 
 //#define CC_REF_LEAK_DETECTION 1

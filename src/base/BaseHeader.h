@@ -26,44 +26,6 @@ namespace Game {
 #define BRO_OS_WINDOWS 1
 #endif
 
-//Win specific stuff.
-#ifdef BRO_OS_WINDOWS
-//Allow compat profile.
-#define COMPATIBILITY_PROFILE_ENABLED
-//**TODO: only include these in the given network *.cpp file.
-
-//not all control paths return a value - must be an error.
-#pragma warning(error:4715)
-
-//'==': operator has no effect; did you intend '='?
-#pragma warning(error:4553)
-
-////Disable "throw list" warning
-//#pragma warning( disable:4290 ) 
-//
-////Disable warning C4091: 'typedef ': ignored on left of '' when no variable is declared
-//#pragma warning( disable:4091 ) 
-//
-//// - Disable "nonstandard enum extension"
-//#pragma warning( disable:4482 )
-//
-////Disable the annoying "unsafe mix of bool and bool" when comparing a bool to true.
-//#pragma warning( disable:4805 )
-//
-////warning C4996: 'wcstombs': This function or variable may be unsafe. Consider using wcstombs_s instead.
-////Microsoft's recommendation is'nt cross-platform
-//#pragma warning( disable:4996 )
-
-//#define WIN32_LEAN_AND_MEAN
-//#define WIN32_EXTRA_LEAN
-//#include <Windows.h>
-//#include <winsock2.h>
-//#include <ws2tcpip.h>
-//
-//#pragma comment(lib, "ws2_32.lib")
-//#pragma comment(lib, "wsock32.lib")
-#endif
-
 #define OVERRIDES virtual 
 #define MUST_OVERRIDE virtual
 #define VIRTUAL virtual
@@ -123,7 +85,6 @@ namespace Game {
 // - The application runtime environment.
 #define NotImplementedException() Exception("The method is not implemented.",__LINE__,__FILE__)
 #define DeprecatedException() Exception("The method has been deprecated and removed.  Please see the method notes to use the correct replacement.",__LINE__,__FILE__)
-
 
 #define MaxStaticStringBufferSize 16384
 
@@ -194,7 +155,7 @@ class EngineConfig;
 class EngineConfigFile;
 class TreeNode;
 class Package;
-
+class Crc32;
 
 template < class Tx >
 class DynamicBuffer;
@@ -211,7 +172,7 @@ typedef uint64_t t_timeval;
 typedef t_string DiskLoc;
 typedef int32_t t_date;            // - Date information [m][d][y1][y2] = [8][27][198][7]
 typedef int64_t t_datetime;        // - A Date + the time.[m][d][y1][y2][h][m][s][ms]
-typedef t_uint32 t_time;
+typedef uint32_t t_time;
 typedef std::vector<char> ByteBuffer;
 typedef GameMemory PureMemory;//Pure memory without a VPtr
 typedef PureMemory GpuMemory; //Pure memory without a VPtr

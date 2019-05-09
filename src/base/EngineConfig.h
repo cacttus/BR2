@@ -64,6 +64,8 @@ class EngineConfig {
     int _iMaxFrustShadowSamples = 4;
     int _iMaxCubeShadowSamples = 4;
     int _iModelThumbSize = 256;
+    int _iMaxHardwareIncomingBufferSizeBytes = 8192;
+    int _iMaxHardwareOutgoingBufferSizeBytes = 8192;
 public:
     bool getEnableMsaa() { return _bEnableMsaa;}
     int32_t getMsaaSamples() { return _iMsaaSamples; }
@@ -89,10 +91,7 @@ public:
     bool getBreakOnSDLError() { return _bBreakOnSDLError; }
     bool getBreakOnOpenGLError() { return _bBreakOnOpenGLError; }
     bool getShowConsole() { return _bShowConsole; }
-    void setShowConsole(bool b) 
-    { 
-        _bShowConsole = b; 
-    }
+    void setShowConsole(bool b) { _bShowConsole = b; }
     bool getEnableObjectShadows() { return _bEnableObjectShadows; }
     bool getEnableTerrainShadows() { return _bEnableTerrainShadows; }
     int32_t getShadowMapResolution() {return _iShadowMapResolution;}
@@ -104,7 +103,8 @@ public:
     int getFullscreenWidth () { return _iFullscreenWidth ; }
     int getFullscreenHeight() { return _iFullscreenHeight; }
     int getModelThumbSize() { return _iModelThumbSize; }
-
+    int getMaxHardwareIncomingBufferSizeBytes() { return  _iMaxHardwareIncomingBufferSizeBytes; }
+    int getMaxHardwareOutgoingBufferSizeBytes() { return  _iMaxHardwareOutgoingBufferSizeBytes; }
     EngineConfig() {}
     virtual ~EngineConfig() {
 

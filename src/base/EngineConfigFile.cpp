@@ -20,8 +20,8 @@ EngineConfigFile::~EngineConfigFile()
 ///////////////////////////////////////////////////////////////////
 
 
-void EngineConfigFile::pkp(std::vector<t_string>& tokens){
-    int iind=1;
+void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
+    int iind = 1;
 
     //
     //Note: Don't put any OpenGL stuff in here.  It comes BEFORE we load the context.
@@ -49,12 +49,12 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens){
         _pConfig->_iDefaultScreenWidth = TypeConv::strToUint(getCleanToken(tokens, iind));
     }
     else if (lcmp(tokens[0], "DefaultScreenHeight", 2)) {
-        _pConfig->_iDefaultScreenHeight= TypeConv::strToUint(getCleanToken(tokens, iind));
+        _pConfig->_iDefaultScreenHeight = TypeConv::strToUint(getCleanToken(tokens, iind));
     }
     else if (lcmp(tokens[0], "EnableRuntimeErrorChecking", 2)) {
 
         _pConfig->_bEnableRuntimeErrorChecking = TypeConv::strToBool(getCleanToken(tokens, iind));
-        if(Gu::isDebug()){
+        if (Gu::isDebug()) {
             BroLogDebug("Runtime error checking is turned on by default in debug build.");
             _pConfig->_bEnableRuntimeErrorChecking = true;
         }
@@ -76,28 +76,28 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens){
         _pConfig->_fDefaultFieldOfView = TypeConv::strToFloat(getCleanToken(tokens, iind));
     }
     else if (lcmp(tokens[0], "ColorSpace", 2)) {
-         t_string csp = getCleanToken(tokens, iind);
-         if(StringUtil::equalsi(csp, "SRGB")){
-             _pConfig->_eColorSpace = ColorSpace::e::SRGB;
-         }
-         else if (StringUtil::equalsi(csp, "Linear")) {
-             _pConfig->_eColorSpace = ColorSpace::e::Linear;
-         }
-         else  {
-             BroLogWarn("Unkown color space ", csp, " defaulting to linear.");
-             _pConfig->_eColorSpace = ColorSpace::e::Linear;
-         }
+        t_string csp = getCleanToken(tokens, iind);
+        if (StringUtil::equalsi(csp, "SRGB")) {
+            _pConfig->_eColorSpace = ColorSpace::e::SRGB;
+        }
+        else if (StringUtil::equalsi(csp, "Linear")) {
+            _pConfig->_eColorSpace = ColorSpace::e::Linear;
+        }
+        else {
+            BroLogWarn("Unkown color space ", csp, " defaulting to linear.");
+            _pConfig->_eColorSpace = ColorSpace::e::Linear;
+        }
     }
     else if (lcmp(tokens[0], "FontBitmapSize", 2)) {
         _pConfig->_iFontBitmapSize = TypeConv::strToInt(getCleanToken(tokens, iind));
-        if(_pConfig->_iFontBitmapSize <5 || _pConfig->_iFontBitmapSize > 99999) {
+        if (_pConfig->_iFontBitmapSize < 5 || _pConfig->_iFontBitmapSize > 99999) {
             BroLogWarn(tokens[0], " invalid.  Defaulting to 1024");
             _pConfig->_iFontBitmapSize = 1024;
         }
     }
     else if (lcmp(tokens[0], "FontBakedCharSize", 2)) {
         _pConfig->_iBakedCharSize = TypeConv::strToInt(getCleanToken(tokens, iind));
-        if (_pConfig->_iBakedCharSize <5 || _pConfig->_iBakedCharSize > 999) {
+        if (_pConfig->_iBakedCharSize < 5 || _pConfig->_iBakedCharSize > 999) {
             BroLogWarn(tokens[0], " was <5 ro > 999.  Defaulting to 64");
             _pConfig->_iBakedCharSize = 64;
         }
@@ -134,30 +134,21 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens){
     }
     else if (lcmp(tokens[0], "MSAASamples", 2)) {
         _pConfig->_iMsaaSamples = TypeConv::strToInt(getCleanToken(tokens, iind));
-        if (_pConfig->_iMsaaSamples < 0) { 
-            _pConfig->_iMsaaSamples = 2; 
+        if (_pConfig->_iMsaaSamples < 0) {
+            _pConfig->_iMsaaSamples = 2;
         }
     }
-    else if(lcmp(tokens[0], "NumTextQuads", 2)) {
+    else if (lcmp(tokens[0], "NumTextQuads", 2)) {
         _pConfig->_iNumTextQuads = TypeConv::strToInt(getCleanToken(tokens, iind));
-        if(_pConfig->_iNumTextQuads <=256) {
+        if (_pConfig->_iNumTextQuads <= 256) {
             BroLogWarn(tokens[0], " Too small, set to 256.");
             _pConfig->_iNumTextQuads = 256;
         }
-        if(_pConfig->_iNumTextQuads > 16384) {
+        if (_pConfig->_iNumTextQuads > 16384) {
             BroLogWarn(tokens[0], " Too large.  Set to 16384.");
             _pConfig->_iNumTextQuads = 16384;
         }
     }
-//    else if (lcmp(tokens[0], "RenderWithoutFbo", 2)) {
-//        _pConfig->_bRenderWithoutFbo = TypeConv::strToBool(getCleanToken(tokens, iind));
-//#ifndef COMPATIBILITY_PROFILE_ENABLED
-//        if(_pConfig->_bRenderWithoutFbo == true) {
-//            BroLogWarn("Inline raster debugging is not supported in this build.  Change back
-//            _pConfig->_bRenderWithoutFbo = false;
-//        }
-//#endif
-//    }
     else if (lcmp(tokens[0], "BreakOnSDLError", 2)) {
         _pConfig->_bBreakOnSDLError = TypeConv::strToBool(getCleanToken(tokens, iind));
     }
@@ -173,16 +164,25 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens){
         if (_pConfig->_iModelThumbSize > 4192) _pConfig->_iModelThumbSize = 4192;
 
     }
-    
+    else if (lcmp(tokens[0], "MaxHardwareIncomingBufferSizeBytes", 2)) {
+        _pConfig->_iMaxHardwareIncomingBufferSizeBytes = TypeConv::strToInt(getCleanToken(tokens, iind));
+        if (_pConfig->_iMaxHardwareIncomingBufferSizeBytes < 1) _pConfig->_iMaxHardwareIncomingBufferSizeBytes = 1;
+        if (_pConfig->_iMaxHardwareIncomingBufferSizeBytes > 9999999) _pConfig->_iMaxHardwareIncomingBufferSizeBytes = 9999999;
+    }
+    else if (lcmp(tokens[0], "MaxHardwareOutgoingBufferSizeBytes", 2)) {
+        _pConfig->_iMaxHardwareOutgoingBufferSizeBytes = TypeConv::strToInt(getCleanToken(tokens, iind));
+        if (_pConfig->_iMaxHardwareOutgoingBufferSizeBytes < 1) _pConfig->_iMaxHardwareOutgoingBufferSizeBytes = 1;
+        if (_pConfig->_iMaxHardwareOutgoingBufferSizeBytes > 9999999) _pConfig->_iMaxHardwareOutgoingBufferSizeBytes = 9999999;
+    }
     else {
         BroLogError("Unrecognized engine config token '", tokens[0], "'");
         Gu::debugBreak();
     }
 }
-void EngineConfigFile::preLoad(){
+void EngineConfigFile::preLoad() {
     _pConfig = std::make_shared<EngineConfig>();
 }
-void EngineConfigFile::postLoad(){
+void EngineConfigFile::postLoad() {
 }
 
 

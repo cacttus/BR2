@@ -1,0 +1,8 @@
+debug
+release
+.vs
+sourcegen.ncb
+sourcegen.suo
+sourcegen/Debug
+sourcegen/Release
+sourcegen/sourcegen.vcxproj.user

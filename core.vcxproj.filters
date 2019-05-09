@@ -555,6 +555,78 @@
     <ClInclude Include="src\math\ConvexAlgorithms.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="src\net\NetworkManager.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetHeader.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\DBManager.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\DBMySql.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetClient.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetIncludes.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetServer.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetworkInfo.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetworkObject.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetworkUtils.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NetworkWorker.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\NonBlockingSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Packet.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\PacketMakerBase.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Serializable.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\ServerSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\SqlTest.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\VirtualClient.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\WorkingPacket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\ClientSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\Database.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\DBAdmin.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net\DBHeader.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Crc32.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BaseDataFile.cpp">
@@ -1015,6 +1087,66 @@
     </ClCompile>
     <ClCompile Include="src\math\ConvexAlgorithms.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetworkManager.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\DBMySql.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetClient.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetServer.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetworkInfo.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetworkObject.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetworkUtils.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NetworkWorker.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\NonBlockingSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\Packet.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\PacketMakerBase.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\Serializable.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\ServerSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\SqlTest.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\VirtualClient.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\WorkingPacket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\ClientSocket.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\DBAdmin.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\net\DBManager.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Crc32.cpp">
+      <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

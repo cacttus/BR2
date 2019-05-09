@@ -35,7 +35,7 @@ namespace Game {
 
     typedef std::string t_string;
 
-//typedef int8_t      t_char8;    
+typedef int8_t      t_char8;    
 typedef uint16_t    t_ushort16;
 typedef int16_t     t_short16;
 typedef uint16_t    t_uint16;
@@ -55,7 +55,7 @@ typedef char                t_char;
 typedef long                t_long;
 typedef unsigned long       t_ulong;
 
-typedef t_uint64 t_timeval;
+typedef uint64_t t_timeval;
 // - Max and min component sizes for integeral types.
 // call COMP_MAX<Tx>::m();        to get max size
 template < class Tx > class COMP_MAX;
