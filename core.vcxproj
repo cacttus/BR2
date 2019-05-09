@@ -67,6 +67,7 @@
     <ClInclude Include="src\base\SoundCache.h" />
     <ClInclude Include="src\base\StackInfo.h" />
     <ClInclude Include="src\base\Stopwatch.h" />
+    <ClInclude Include="src\base\StreamBuffer.h" />
     <ClInclude Include="src\base\StringUtil.h" />
     <ClInclude Include="src\base\TouchInfo.h" />
     <ClInclude Include="src\base\TreeNode.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="src\base\SoundCache.cpp" />
     <ClCompile Include="src\base\StackInfo.cpp" />
     <ClCompile Include="src\base\Stopwatch.cpp" />
+    <ClCompile Include="src\base\StreamBuffer.cpp" />
     <ClCompile Include="src\base\StringUtil.cpp" />
     <ClCompile Include="src\base\TouchInfo.cpp" />
     <ClCompile Include="src\base\TreeNode.cpp" />

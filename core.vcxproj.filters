@@ -627,6 +627,9 @@
     <ClInclude Include="src\base\Crc32.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\StreamBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BaseDataFile.cpp">
@@ -1146,6 +1149,9 @@
       <Filter>net</Filter>
     </ClCompile>
     <ClCompile Include="src\base\Crc32.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\StreamBuffer.cpp">
       <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>

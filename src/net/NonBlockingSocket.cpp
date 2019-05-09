@@ -23,7 +23,7 @@ NonBlockingSocket::NonBlockingSocket(NetworkWorker* pwn) :
     
     t_ulong recvBufSize = Gu::getEngineConfig()->getMaxHardwareIncomingBufferSizeBytes();
     t_ulong sendBufSize = Gu::getEngineConfig()->getMaxHardwareOutgoingBufferSizeBytes();
-    t_ulong maxSize = max(recvBufSize, sendBufSize);
+    t_ulong maxSize = BroMax(recvBufSize, sendBufSize);
     _scratchBuffer._alloca(maxSize);
 }
 NonBlockingSocket::~NonBlockingSocket()

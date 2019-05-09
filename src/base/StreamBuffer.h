@@ -13,7 +13,7 @@
 #define __GROWBUFFERBASE_14681206432405686591_H__
 
 #include "../base/BaseHeader.h"
-#include "../library/IOBase.h"
+#include "../base/IOBase.h"
 
 namespace Game {
 /**
