@@ -14,22 +14,26 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
-namespace GameHostTestWPF
+namespace GameHost
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         private System.Windows.Forms.Panel _panel;
         private Process _process;
+        private GameServer _objGameServer = new GameServer(); // Proteus.PacketMakerTcp _objPacketMakerTcp = new Proteus.PacketMakerTcp();
+        private System.Windows.Forms.Timer _objServerPollTimer;
 
         public MainWindow()
         {
             InitializeComponent();
             _panel = new System.Windows.Forms.Panel();
             windowsFormsHost1.Child = _panel;
+
         }
         public override void BeginInit()
         {
@@ -55,35 +59,48 @@ namespace GameHostTestWPF
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
+            Proteus.Proteus.Initialize("GameHostLog");
+
             BeginHost();
+
         }
 
         private void BeginHost()
         {
             try
             {
+                string file = "";
+#if DEBUG
+                file =  @".\bottle_x64_d.exe";
+#else
+                file =  @".\bottle_x64_r.exe";
+#endif
+
+
                 _process = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = @"c:\git\bottle-world\bin\bottle_x64_d.exe",
+                        FileName = file,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
-                        WorkingDirectory = @"c:\git\bottle-world\bin\",
-                        Arguments = "--show-console=false"
+                        WorkingDirectory = @".\",
+                        Arguments = "--show-console=false --game-host=true"
                     }
                 };
 
                 _process.OutputDataReceived += (sender, args) =>
                 {
-                    Dispatcher.BeginInvoke((Action)(() => {
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
                         _txtOutput.AppendText(args.Data + Environment.NewLine);
                     }));
                 };
                 _process.ErrorDataReceived += (sender, args) =>
                 {
-                    Dispatcher.BeginInvoke((Action)(() => {
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
                         _txtOutput.AppendText(args.Data + Environment.NewLine);
                     }));
                 };
@@ -93,22 +110,33 @@ namespace GameHostTestWPF
                 _process.Start();
                 _process.BeginOutputReadLine();
 
+                //See updateWindowHandleForGamehost() in AppRunner
                 while (_process.MainWindowHandle == IntPtr.Zero)
                 {
                     System.Threading.Thread.Sleep(1);
                 }
-                //_process.WaitForInputIdle();
-                SetParent(_process.MainWindowHandle, _panel.Handle);
-                // remove control box
-                int style = GetWindowLong(_process.MainWindowHandle, GWL_STYLE);
-                style = style & ~WS_CAPTION & ~WS_THICKFRAME;
-                SetWindowLong(_process.MainWindowHandle, GWL_STYLE, style);
+
+                MainWindow that = this;
+                bool? c = _objGameServer.Connect(true, ()=> {
+
+                    //Run on UI thread
+                    that.Dispatcher.BeginInvoke((Action)(() => {
+                        //Per MSDN "You must use the Refresh method to refresh the Process object to get the current main window handle if it has changed."
+                        _process.Refresh();
+                        SetParent(_process.MainWindowHandle, _panel.Handle);
+                        // remove control box
+                        int style = GetWindowLong(_process.MainWindowHandle, GWL_STYLE);
+                        style = style & ~WS_CAPTION & ~WS_THICKFRAME;
+                        SetWindowLong(_process.MainWindowHandle, GWL_STYLE, style);
+
+                        // resize embedded application & refresh
+                        ResizeEmbeddedApp();
+                    }));
+ 
+                });
 
 
-
-
-                // resize embedded application & refresh
-                ResizeEmbeddedApp();
+ 
 
             }
             catch (Exception ex)
@@ -118,9 +146,46 @@ namespace GameHostTestWPF
         }
         private void LogError(string x)
         {
+            Proteus.Globals.Logger.LogError(x);
             _txtOutput.AppendText(x + Environment.NewLine);
         }
 
+        private void PollServer()
+        {
+            if (_objGameServer != null)
+            {
+                if (_objGameServer.IsConnected())
+                {
+                    string data = _objGameServer.Recv();
+                    if (String.IsNullOrEmpty(data) == false)
+                    {
+                        int n = 0;
+                        n++;
+                        //            PacketType pt = SpartanGlobals.GetPacketType(ref data);
+                        //            HandlePacketData(objAgent, pt, ref data);
+                    }
+
+                }
+            }
+            //for (int iAgent = 0; iAgent < Agents.Count; iAgent++)
+            //{
+            //    objAgent = Agents[iAgent];
+            //    try
+            //    {
+            //        if (!objAgent.IsConnected())
+            //            continue;
+
+            //        originaldata = objAgent.Recv();
+            //        data = originaldata;
+
+            //        if (String.IsNullOrEmpty(data) == false)
+            //        {
+            //            //Do stuff
+            //            PacketType pt = SpartanGlobals.GetPacketType(ref data);
+            //            HandlePacketData(objAgent, pt, ref data);
+            //        }
+            //    }
+        }
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             base.OnClosing(e);
@@ -146,6 +211,11 @@ namespace GameHostTestWPF
             return size;
         }
 
-
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _process.Kill();
+            _process.WaitForExit();
+            _process.Dispose();
+        }
     }
 }

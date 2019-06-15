@@ -14,7 +14,7 @@
 #include "../math/Vec3x.h"
 #include "../math/Quaternion.h"
 #include "../base/TypeConv.h"
-namespace Game {;
+namespace Game {
 /**
 *    @class Matrix3x3
 *    @brief A 3x3 Matrix.

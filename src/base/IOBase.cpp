@@ -1,7 +1,7 @@
 #include "../base/IOBase.h"
 #include "../base/TStr.h"
 
-namespace Game {;
+namespace Game {
 void IOBase<char>::readVec3(vec3& val)
 {
     int32_t readSiz;

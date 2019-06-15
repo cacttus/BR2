@@ -19,7 +19,7 @@
 #include "../math/Box3x.h"
 #include "../math/BitHacks.h"
 #include "../math/Vec3Basis.h"
-namespace Game {;
+namespace Game {
 class Alg {
 public:
 // legendary 1/sqrt(x), from quake 3 et al

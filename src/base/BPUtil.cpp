@@ -1,7 +1,7 @@
 #include "../base/BPUtil.h"
 #include "../base/TypeConv.h"
 
-namespace Game {;
+namespace Game {
 
 // +----------------------------- EXTENSION
 // +----------------------------- EXTENSION

@@ -17,7 +17,7 @@
 //#include "../library/LibraryHeader.h"
 #include "../base/BufParser.h"
 
-namespace Game {;
+namespace Game {
 /**
 *    @class BaseDataFile
 *    @brief Base class for data files.

@@ -18,7 +18,7 @@
 #include "../model/BaseNode.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {;
+namespace Game {
 /**
 *    @class MeshSpec
 *    @brief Describes a geometry mesh.

@@ -1,5 +1,5 @@
 //#include "ScreenProps.h"
 //
-//namespace Game {;
+//namespace Game {
 //
 //}//ns game

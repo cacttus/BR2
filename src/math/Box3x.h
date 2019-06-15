@@ -23,7 +23,7 @@
 #include "../math/Plane3.h"
 #include "../math/RaycastHit.h"
 
-namespace Game {; 
+namespace Game { 
 
 /**
 *    @class Box3x

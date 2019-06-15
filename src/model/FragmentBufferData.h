@@ -15,7 +15,7 @@
 #include "../model/ModelHeader.h"
 #include "../base/Allocator.h"
 
-namespace Game {;
+namespace Game {
 /**
 *    @class FragmentBufferData
 *    @brief Fragment Buffer Data.

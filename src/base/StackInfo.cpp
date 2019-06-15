@@ -6,7 +6,7 @@
 ////#include "../base/OperatingSystemHeader.h"
 //
 //
-//namespace Game {;
+//namespace Game {
 //
 //
 //}//ns game

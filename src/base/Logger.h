@@ -20,7 +20,7 @@
 //#include "../base/StringWrapper.h"
 //Note don't put more #includes here as we include this in globals.h
 
-namespace Game {;
+namespace Game {
 /**
 *    @class Logger
 *    @brief Logs information to a text file.

@@ -136,6 +136,7 @@ public:
     virtual void idle(t_timeval ms) override;
     virtual t_string getIconFullPath() override;
     virtual t_string getConfigPath() override;
+    virtual void serverPacketReceived(std::shared_ptr<Packet> pack) override;
 
     bool loadOrCreateGame(t_string);
     virtual t_string getEnvTexturePath() override { return "tex/env1_huge.png"; }

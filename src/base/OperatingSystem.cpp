@@ -3,7 +3,7 @@
 #include "../base/BaseAll.h"
 #include "../base/OperatingSystem.h"
 
-namespace Game {;
+namespace Game {
 int32_t OperatingSystem::getNumberOfProcessors()
 {
 #ifdef BRO_OS_WINDOWS
@@ -410,7 +410,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title)
 //#endif
 //    CheckOsErrorsDbg();
 //}
-//t_int64 OperatingSystem::getTickCount64()
+//t_int64 Gu::getMilliSeconds()
 //{
 //    t_int64 ret;
 //    std::chrono::nanoseconds ns = std::chrono::high_resolution_clock::now().time_since_epoch();

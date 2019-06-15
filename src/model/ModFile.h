@@ -14,7 +14,7 @@
 //
 //#include "../base/PoundFile.h"
 //
-//namespace Game {;
+//namespace Game {
 //class ModelLoadInfo;
 //class ModelLoadInfoPart;
 ///**

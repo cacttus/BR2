@@ -15,7 +15,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {;
+namespace Game {
 
 /**
 *    @class Hash

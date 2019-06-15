@@ -1,7 +1,7 @@
 #include "../base/BufParser.h"
 #include "../base/Exception.h"
 
-namespace Game {;
+namespace Game {
 
 
 //// - Specify a codewriter class.

@@ -4,7 +4,7 @@
 #include "../display/Viewport.h"
 #include "../base/Gu.h"
 
-namespace Game {;
+namespace Game {
 CameraNode::CameraNode(std::shared_ptr<Viewport> ppViewport) : PhysicsNode(nullptr),
 _pViewport(ppViewport){
     _vWorldUp.construct(0,1,0);

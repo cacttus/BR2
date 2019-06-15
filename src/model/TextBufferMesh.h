@@ -17,7 +17,7 @@
 #include "../display/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
-namespace Game {;
+namespace Game {
 class VaoDataGeneric;
 class TextBufferMesh : public VirtualMemory {
 protected:

@@ -1,7 +1,7 @@
 #include "../display/Viewport.h"
 #include "../display/DisplayHeader.h"
 
-namespace Game {;
+namespace Game {
 Viewport::Viewport(
     int32_t w, 
     int32_t h, 

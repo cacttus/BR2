@@ -15,7 +15,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace Game {;
+namespace Game {
 /**
 *    @class GpuComputeSync
 *    @brief Stores information pertaining to the dispatching of computes to the compute shader system 

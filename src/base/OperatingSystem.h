@@ -15,7 +15,7 @@
 #include "../base/OperatingSystemHeader.h"
 #include "../base/BaseHeader.h"
 
-namespace Game {;
+namespace Game {
 
 /**
 *    @class OperatingSystem

@@ -7,7 +7,7 @@
 #include "../display/TexCache.h"
 #include "../display/RenderSettings.h"  
 
-namespace Game {;
+namespace Game {
 Material::Material(t_string name) {
     _strName = name;
     _v4Spec.construct(1, 1, 1, 1);

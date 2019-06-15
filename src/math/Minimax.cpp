@@ -2,7 +2,7 @@
 #include "../math/Minimax.h"
 #include "../math/Random.h"
 //
-namespace Game {; 
+namespace Game { 
 
 float MpFloat::next(){
     checkWasSet();

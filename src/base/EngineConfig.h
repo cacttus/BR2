@@ -66,6 +66,12 @@ class EngineConfig {
     int _iModelThumbSize = 256;
     int _iMaxHardwareIncomingBufferSizeBytes = 8192;
     int _iMaxHardwareOutgoingBufferSizeBytes = 8192;
+    int _iMaxSoftwareIncomingBufferSizeBytes = 8192;
+    int _iMaxSoftwareOutgoingBufferSizeBytes = 8192;
+    bool _bGameHostAttached = false; // if we are running in an WPF engine wrapper
+    int _iGameHostTimeoutMs = 60000;
+    int _iGameHostPort = 44244;
+
 public:
     bool getEnableMsaa() { return _bEnableMsaa;}
     int32_t getMsaaSamples() { return _iMsaaSamples; }
@@ -92,6 +98,12 @@ public:
     bool getBreakOnOpenGLError() { return _bBreakOnOpenGLError; }
     bool getShowConsole() { return _bShowConsole; }
     void setShowConsole(bool b) { _bShowConsole = b; }
+    
+    void setGameHostAttached(bool b) { _bGameHostAttached = b; }
+    bool getGameHostAttached() { return _bGameHostAttached; }
+    int getGameHostTimeoutMs() { return _iGameHostTimeoutMs; }
+    int getGameHostPort() { return _iGameHostPort;  }
+
     bool getEnableObjectShadows() { return _bEnableObjectShadows; }
     bool getEnableTerrainShadows() { return _bEnableTerrainShadows; }
     int32_t getShadowMapResolution() {return _iShadowMapResolution;}
@@ -105,6 +117,9 @@ public:
     int getModelThumbSize() { return _iModelThumbSize; }
     int getMaxHardwareIncomingBufferSizeBytes() { return  _iMaxHardwareIncomingBufferSizeBytes; }
     int getMaxHardwareOutgoingBufferSizeBytes() { return  _iMaxHardwareOutgoingBufferSizeBytes; }
+    int getMaxSoftwareIncomingBufferSizeBytes() { return  _iMaxSoftwareIncomingBufferSizeBytes; }
+    int getMaxSoftwareOutgoingBufferSizeBytes() { return  _iMaxSoftwareOutgoingBufferSizeBytes; }
+
     EngineConfig() {}
     virtual ~EngineConfig() {
 

@@ -6,6 +6,7 @@
 #include "../base/Gu.h"
 #include "../base/EngineConfig.h"
 #include "../base/Stopwatch.h"
+#include "../base/Net.h"
 
 #include "../math/MathAll.h"
 
@@ -64,6 +65,9 @@ void Engine::init() {
 
     //Gui
     Gu::getContext()->getGui()->init();
+
+    //Net
+    _pNet = std::make_shared<Net>();
 
     //Make Room
     _pRoomBase->setup(_pViewport, _pContext);
@@ -173,6 +177,8 @@ void Engine::step(int w, int h)
             _pipeBits.set(_ePipeBit);
         }
     }
+
+    _pNet->update();
 
     _pContext->setLoopState(EngineLoopState::SyncBegin);
     _pContext->getFrameSync()->syncBegin();

@@ -75,7 +75,7 @@ public:
     
     static int loadSound(std::string path, int& iChannels, int& iSampleRate,
         int16_t*& pData, int& nSamples, int& iDataLenBytes);
-    static std::vector<t_string> argsToVectorOfString(int argc, char** argv);
+    static std::vector<t_string> argsToVectorOfString(int argc, char** argv, char delimiter = '=');
     //Use Random.h
     //static float frand(); //returns 0,1
     //static float frand1(); //returns -1,1

@@ -14,7 +14,7 @@
 //
 //#include "../base/DynamicBuffer.h"
 //
-//namespace Game {;
+//namespace Game {
 ///**
 //*    @class MemFile
 //*    @brief A file loaded into Memory that we can write to dynamically. (that is

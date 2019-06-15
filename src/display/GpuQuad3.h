@@ -14,7 +14,7 @@
 
 #include "../display/displayheader.h"
 #include "../math/MathHeader.h"
-namespace Game {;
+namespace Game {
 /**
 *    @class GpuQuad3 
 *    @brief

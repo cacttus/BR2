@@ -42,6 +42,8 @@ private:
     PipeBit::e _ePipeBit = PipeBit::e::Full;
     std::bitset<8> _pipeBits;
 
+    std::shared_ptr<Net> _pNet;
+
     uint32_t _iLastWidth = 0;
     uint32_t _iLastHeight = 0;
     uint32_t _iFullscreenToggleWidth  = 0;

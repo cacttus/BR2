@@ -70,8 +70,12 @@ void parsearg(std::string key, std::string value) {
         Gu::getEngineConfig()->setShowConsole( Game::TypeConv::strToBool(value) );
         BroLogInfo("Overriding show console window: ", value);
     }
+    else if (key == "--game-host") {
+        Gu::getEngineConfig()->setGameHostAttached(Game::TypeConv::strToBool(value));
+        BroLogInfo("Overriding game host: ", value);
+    }
     else {
-        BroLogError("Unrecognized parameter '", key, "' value ='", value, "'");
+        BroLogWarn("Unrecognized parameter '", key, "' value ='", value, "'");
     }
 }
 //**TODO Move this crap to AppRunner
@@ -80,7 +84,7 @@ void parsearg(std::string arg) {
     std::string key = "";
     std::string value = "";
     //**TODO Move this crap to AppRunner
-
+    
     for (int i = 0; i < arg.length(); ++i) {
         if (arg[i] == '=') {
             isvalue = true;
@@ -110,6 +114,7 @@ void Gu::initGlobals(std::shared_ptr<RoomBase> rb, std::vector<std::string>& arg
 
     //Override EngineConfig
     for (std::string arg : args) {
+        //TODO: skip arg 0 (app)
         parsearg(arg);
     }
 
@@ -481,10 +486,16 @@ bool Gu::isDebug() {
     return false;
 #endif
 }
-std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv) {
+std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
+    int squot = 0 , dquot = 0;
+
+    //todo - fix the delimiter thing
     std::vector<t_string> ret;
     for (int i = 0; i < argc; ++i) {
+
         t_string str(argv[i]);
+
+
         ret.push_back(str);
     }
     return ret;

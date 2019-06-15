@@ -7,7 +7,7 @@
 //#include "../display/TextBoss.h"
 //#include "../display/Viewport.h"
 //
-//namespace Game {;
+//namespace Game {
 //TextBoss::TextBoss(std::shared_ptr<GLContext> pc) : _pContext(pc) {
 //    _currentRenderColor = vec4(1, 1, 1, 1);
 //    _fCachedBakedFontSize = (float)_pContext->getConfig()->getBakedCharSize();//float)Gu::getBakedFontCharSize();;

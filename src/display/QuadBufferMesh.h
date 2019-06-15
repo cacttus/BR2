@@ -16,7 +16,7 @@
 #include "../display/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
-namespace Game {;
+namespace Game {
 /**
 *   @class QuadBufferMesh
 *   @brief Manages an array of quads for modification and reflection back to the GPU.

@@ -4,7 +4,7 @@
 //#include "../model/JointList.h"
 //
 //
-//namespace Game {;
+//namespace Game {
 ////void Articulation::makeJointIdsContiguousAndZeroBased()
 ////{
 ////

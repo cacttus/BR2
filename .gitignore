@@ -13,3 +13,7 @@
 *.user
 UpgradeLog.htm
 
+/bin/.vs/bottle_x64_d/v15
+/bin/logs
+/bin
+/x64

@@ -1,7 +1,7 @@
 #include "../base/BaseAll.h"
 #include "../math/MathAll.h"
 
-namespace Game {;
+namespace Game {
 
 Matrix4x4 Matrix3x3::getMat4()
 {

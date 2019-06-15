@@ -18,7 +18,7 @@
 #include "../math/Minimax.h"
 #include "../math/Algorithm.h"
 
-namespace Game {;
+namespace Game {
 
 //#define _USE_C_RAND
 

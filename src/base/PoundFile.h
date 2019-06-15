@@ -17,7 +17,7 @@
 //#include "../base/BufParser.h"
 #include "../base/BaseDataFile.h"
 #include "../math/MathAll.h"
-namespace Game {;
+namespace Game {
 /**
 *    @class PoundFile
 *    @brief

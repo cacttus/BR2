@@ -13,7 +13,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../base/BufParserHeader.h"
-namespace Game {;
+namespace Game {
 
 class CodeWriter;
 

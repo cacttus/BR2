@@ -66,6 +66,12 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "EnableLogging", 2)) {
         _pConfig->_bEnableLogging = TypeConv::strToBool(getCleanToken(tokens, iind));
     }
+    else if (lcmp(tokens[0], "GameHostTimeoutMs", 2)) {
+        _pConfig->_iGameHostTimeoutMs = TypeConv::strToInt(getCleanToken(tokens, iind));
+    }
+    else if (lcmp(tokens[0], "GameHostPort", 2)) {
+        _pConfig->_iGameHostPort = TypeConv::strToInt(getCleanToken(tokens, iind));
+    }
     else if (lcmp(tokens[0], "ForceAspectRatio", 2)) {
         _pConfig->_bForceAspectRatio = TypeConv::strToBool(getCleanToken(tokens, iind));
     }
@@ -173,6 +179,16 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
         _pConfig->_iMaxHardwareOutgoingBufferSizeBytes = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (_pConfig->_iMaxHardwareOutgoingBufferSizeBytes < 1) _pConfig->_iMaxHardwareOutgoingBufferSizeBytes = 1;
         if (_pConfig->_iMaxHardwareOutgoingBufferSizeBytes > 9999999) _pConfig->_iMaxHardwareOutgoingBufferSizeBytes = 9999999;
+    }
+    else if (lcmp(tokens[0], "MaxSoftwareIncomingBufferSizeBytes", 2)) {
+        _pConfig->_iMaxSoftwareIncomingBufferSizeBytes = TypeConv::strToInt(getCleanToken(tokens, iind));
+        if (_pConfig->_iMaxSoftwareIncomingBufferSizeBytes < 1) _pConfig->_iMaxSoftwareIncomingBufferSizeBytes = 1;
+        if (_pConfig->_iMaxSoftwareIncomingBufferSizeBytes > 9999999) _pConfig->_iMaxSoftwareIncomingBufferSizeBytes = 9999999;
+    }
+    else if (lcmp(tokens[0], "MaxSoftwareOutgoingBufferSizeBytes", 2)) {
+        _pConfig->_iMaxSoftwareOutgoingBufferSizeBytes = TypeConv::strToInt(getCleanToken(tokens, iind));
+        if (_pConfig->_iMaxSoftwareOutgoingBufferSizeBytes < 1) _pConfig->_iMaxSoftwareOutgoingBufferSizeBytes = 1;
+        if (_pConfig->_iMaxSoftwareOutgoingBufferSizeBytes > 9999999) _pConfig->_iMaxSoftwareOutgoingBufferSizeBytes = 9999999;
     }
     else {
         BroLogError("Unrecognized engine config token '", tokens[0], "'");

@@ -4,7 +4,7 @@
 #include "../base/Gu.h"
 #include "../base/FileSystem.h"
 
-namespace Game {;
+namespace Game {
 bool BaseDataFile::lcmp(t_string& tok0, const char* ch, int32_t validateArgCount)
 {
     bool ret;

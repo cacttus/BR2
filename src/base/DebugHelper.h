@@ -13,7 +13,7 @@
 #define __DEBUGHELPER_280862031362642290319991_H__
 
 #include "../base/BaseHeader.h"
-namespace Game {;
+namespace Game {
 //class StackMod {
 //public:
 //    t_string name;

@@ -18,7 +18,7 @@
 
 #include "../math/Vec3x.h"
 
-namespace Game {;
+namespace Game {
 
 /**
 *    @class Line3f

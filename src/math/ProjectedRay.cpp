@@ -2,7 +2,7 @@
 #include "../base/BaseAll.h"
 #include "../math/MathAll.h"
 
-namespace Game {;
+namespace Game {
 
 
 vec3 ProjectedRay::getHitPoint(PlaneHit& ph) const

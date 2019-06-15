@@ -2,7 +2,7 @@
 //#include "../math/Algorithm.h"
 
 #include "../math/MathAll.h"
-namespace Game {;
+namespace Game {
 
 /**
 *    @fn convex_axis_t

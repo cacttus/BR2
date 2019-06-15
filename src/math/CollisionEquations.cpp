@@ -10,7 +10,7 @@
 //#include "../physics/SphericalVolume.h"
 //#include "../physics/TriangleMeshVolume.h"
 
-namespace Game {;
+namespace Game {
 
 CollisionResult::e CollisionEquations::sat_axis_box_t_fast(
     const float& v0, const float& c0, const float& r0,

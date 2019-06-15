@@ -57,8 +57,7 @@ void AppRunner::initSDL(char* windowTitle)
 
     //You have to call this in order to initialize the SDL pointer before anyhing
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1) {
-        BroLogError("SDL could not be initialized: ", SDL_GetError());
-        exit(-1);
+        exitApp(TStr("SDL could not be initialized: ", SDL_GetError()) , -1);
     }
 
     checkVideoCard();
@@ -88,7 +87,7 @@ void AppRunner::initSDL(char* windowTitle)
         //This must be called before creating the window because this sets SDL's PixelFormatDescritpro
         setWindowAndOpenGLFlags(profs[iProf]);
         makeWindow(windowTitle);
-        makeGLContext();
+        initGLContext();
 
         int ver, subver, shad_ver, shad_subver;
         getOpenGLVersion(ver, subver, shad_ver, shad_subver);
@@ -112,11 +111,66 @@ void AppRunner::initSDL(char* windowTitle)
     loadCheckProc();
     OglErr::checkSDLErr();
 
-    makeAudio();
+    initAudio();
     OglErr::checkSDLErr();
 
     loadCheckProc();
     OglErr::checkSDLErr();
+
+    initNet();
+    OglErr::checkSDLErr();
+
+    if (Gu::getEngineConfig()->getGameHostAttached()) {
+        updateWindowHandleForGamehost();
+        attachToGameHost();
+    }
+
+}
+void AppRunner::attachToGameHost() {
+    int GameHostPort = Gu::getEngineConfig()->getGameHostPort();
+
+    IPaddress ip;
+
+
+    if (SDLNet_ResolveHost(&ip, NULL, GameHostPort) == -1) {
+        exitApp(TStr("SDLNet_ResolveHost: ", SDLNet_GetError()) , -1);
+    }
+
+    _server_tcpsock = SDLNet_TCP_Open(&ip);
+    if (!_server_tcpsock) {
+        exitApp(TStr("SDLNet_TCP_Open:", SDLNet_GetError()) , -1);
+    }
+    
+    //Wait a few, then exit if we don't get a response.
+    t_timeval t0 = Gu::getMilliSeconds();
+
+    while (true) 
+    {
+        int timeout = Gu::getEngineConfig()->getGameHostTimeoutMs();
+
+        if (Gu::getMilliSeconds() - t0 > timeout) {
+            exitApp(TStr("Failed to connect to game host, timeout ", timeout, "ms exceeded.") , -1);
+            break;//Unreachable, but just in case.
+        }
+        
+        _gameHostSocket = SDLNet_TCP_Accept(_server_tcpsock);
+        if (_gameHostSocket) {
+            char data[512];
+
+            //while(SDLNet_TCP_Recv(_gameHostSocket, data, 512) <= 0) {
+            //    //DebugBreak();
+            //    int n = 0;
+            //    n++;
+            //}
+            //DebugBreak();
+
+            // communicate over new_tcpsock
+            break;
+        }
+        else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+    }
 
 }
 void AppRunner::checkVideoCard(){
@@ -178,14 +232,7 @@ void AppRunner::makeWindow(char* windowTitle)
     _pWindow = SDL_CreateWindow(sstitle, x, y, w, h, flags);
     OglErr::checkSDLErr();
 
-    //For the WPF app container we need to set the window handle to be the top window
-    //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.mainwindowhandle?view=netframework-4.8
-    SDL_SysWMinfo wmInfo;
-    SDL_VERSION(&wmInfo.version);
-    SDL_GetWindowWMInfo(_pWindow, &wmInfo);
-    HWND hwnd = wmInfo.info.win.window;
-    SetActiveWindow(hwnd);
-    
+
     //Fullscreen nonsense
     if (bFullscreen) {
         SDL_SetWindowFullscreen(_pWindow, SDL_WINDOW_FULLSCREEN);
@@ -198,6 +245,18 @@ void AppRunner::makeWindow(char* windowTitle)
   //  Gu::SDLTrySetWindowIcon(_pWindow, "./data-dc/tex/tx64-icon.png");//_pRoomBase->getIconFullPath());
 #endif
 
+}
+void AppRunner::updateWindowHandleForGamehost() {
+#ifdef _WINDOWS_
+    //For the WPF app container we need to set the window handle to be the top window
+    //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.mainwindowhandle?view=netframework-4.8
+    SDL_SysWMinfo wmInfo;
+    SDL_VERSION(&wmInfo.version);
+    SDL_GetWindowWMInfo(_pWindow, &wmInfo);
+    HWND hwnd = wmInfo.info.win.window;
+    HWND old = GetActiveWindow();
+    SetActiveWindow(hwnd);
+#endif
 }
 void AppRunner::setWindowAndOpenGLFlags(GLProfile& prof){
     //Attribs
@@ -238,11 +297,10 @@ void AppRunner::setWindowAndOpenGLFlags(GLProfile& prof){
    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, _pGlState->gl_multisamplebuffers);
    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
 }
-void AppRunner::makeGLContext() {
+void AppRunner::initGLContext() {
     _context = SDL_GL_CreateContext(_pWindow);
     if (!_context) {
-        BroLogError("SDL_GL_CreateContext() error", SDL_GetError());
-        quit(2);
+        exitApp(TStr("SDL_GL_CreateContext() error", SDL_GetError()), 2);
     }
 
 
@@ -336,7 +394,7 @@ void AppRunner::checkForOpenGlMinimumVersion(int required_version, int required_
 
 }
 
-SDL_bool AppRunner::makeAudio() {
+SDL_bool AppRunner::initAudio() {
     //AUDIO
     if (SDL_AudioInit(NULL) < 0)
     {
@@ -345,6 +403,15 @@ SDL_bool AppRunner::makeAudio() {
     }
 
     return SDL_TRUE;
+}
+
+void AppRunner::initNet() {
+    BroLogInfo("Initializing SDL Net");
+    if (SDLNet_Init() == -1) {
+        exitApp(TStr("SDL Net could not be initialized: ", SDL_GetError()) , -1);
+    }
+
+
 }
 
 void AppRunner::printHelpfulDebug() {
@@ -393,7 +460,7 @@ void AppRunner::runApp(std::vector<t_string>& args, char* windowTitle, std::shar
 	t_string b = FileSystem::getCurrentDirectory();
 
     //**Must come first before other logic
-    Gu::initGlobals(rb);
+    Gu::initGlobals(rb, args);
     {
         initSDL(windowTitle);
         
@@ -523,12 +590,9 @@ void AppRunner::runGameLoop(std::shared_ptr<RoomBase> rb)
     bool done = false;
     int w, h;
 
-
-
 #ifdef __WINDOWS__
     SDL_ShowCursor(SDL_DISABLE);
 #endif
-
 
     SDL_GL_GetDrawableSize(_pWindow, &w, &h);
     
@@ -596,8 +660,12 @@ void AppRunner::runGameLoop(std::shared_ptr<RoomBase> rb)
 
     //quit(0);
 }
-void AppRunner::quit(int rc)
+void AppRunner::exitApp(t_string error, int rc)
 {
+    OperatingSystem::showErrorDialog(TStr(error, SDLNet_GetError()));
+
+    Gu::debugBreak();
+
     if (_context)
     {
         /* SDL_GL_MakeCurrent(0, NULL); *//* doesn't do anything */
@@ -611,7 +679,9 @@ void AppRunner::quit(int rc)
     }
     SDL_DestroyWindow(_pWindow);
 
+    SDLNet_Quit();
     SDL_Quit();
+    
 
     // delete _pGlState;
 

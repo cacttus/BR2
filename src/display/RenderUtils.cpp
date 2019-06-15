@@ -15,7 +15,7 @@
 #include "../model/UtilMeshPickBox.h"
 #include "../model/UtilMeshInline.h"
 
-namespace Game {;
+namespace Game {
 
 void RenderUtils::setLineWidth(float width)
 {

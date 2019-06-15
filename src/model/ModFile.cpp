@@ -2,7 +2,7 @@
 //#include "../model/ModelLoadInfo.h"
 //#include "../base/Logger.h"
 //
-//namespace Game {;
+//namespace Game {
 //
 //ModelLoadInfo* ModFile::getModelLoadInfo()
 //{

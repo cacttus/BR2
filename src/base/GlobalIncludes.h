@@ -26,6 +26,8 @@
 //Needed to get the main window handle so we can set the main window handle.
 #include <SDL_syswm.h>
 
+#include <SDL_net.h>
+
 //Include for SDL_Mixer which also includes ffmpeg..yikes
 //#include "../../../SDL2_mixer-2.0.1/SDL_mixer.h"
 
@@ -133,7 +135,8 @@
 #include <Windows.h>
 //#include <Windows.h>
 //#include <ws2tcpip.h>
-#include <winsock2.h>
+//Reinclude if we can't get sdl net to work
+//#include <winsock2.h>
 
 //
 //#pragma comment(lib, "ws2_32.lib")

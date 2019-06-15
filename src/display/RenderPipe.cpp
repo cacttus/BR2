@@ -22,7 +22,7 @@
 #include "../model/VertexFormat.h"
 
 
-namespace Game {;
+namespace Game {
 //////////////////////////////////////////////////////////////////////////
 RenderPipe::RenderPipe(std::shared_ptr<GLContext> pContext) : _pContext(pContext){
     _vClear = vec4(0,0,0,1);

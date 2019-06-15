@@ -9,7 +9,7 @@
 //#include "../math/Quad2x.h"
 //#include "../math/Quad3x.h"
 
-namespace Game {;
+namespace Game {
 // - CONSTRUCTOR/ DESTRUCTOR
 FrustumBase::FrustumBase(std::shared_ptr<Viewport> pv, float fov) : _pViewportRef(pv)
 {

@@ -38,18 +38,25 @@ private:
     SDL_AudioSpec _audioSpec;
     SDL_Renderer* _pRenderer = nullptr;
 
+    // accept a connection coming in on server_tcpsock
+    TCPsocket _gameHostSocket;//Send and receive data
+    TCPsocket _server_tcpsock;//Accept connections
+
+
     void makeWindow(char* windowTitle);
-    void makeGLContext();
+    void initGLContext();
     void setWindowAndOpenGLFlags(GLProfile& prof);
     void checkSDLErrors();
-    void doShowError(t_string err, Exception* e);
-    SDL_bool makeAudio();
+    void doShowError(t_string err, Exception* e=nullptr);
+    SDL_bool initAudio();
+    void initNet();
     void initSDL(char* windowTitle);
     void printHelpfulDebug();
     bool handleEvents(SDL_Event * event);
     //static int eventFilter(void* data, SDL_Event* ev);
     void runGameLoop(std::shared_ptr<RoomBase> rb);
-    void quit(int rc);
+    void exitApp(t_string error, int rc);
+   // void exitApp(int rc);
     void doAnnoyingSoundTest();
     void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
     void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
@@ -57,6 +64,8 @@ private:
     bool argMatch(std::vector<t_string>& args,t_string arg, int32_t iCount);
     bool runCommands(std::vector<t_string>& args);
     void checkVideoCard();
+    void updateWindowHandleForGamehost();
+    void attachToGameHost();
 public:
     void runApp(std::vector<t_string>& args, char* windowTitle, std::shared_ptr<RoomBase> rb);
 };

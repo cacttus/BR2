@@ -1,9 +1,9 @@
-#include "StreamBuffer.h"
-
+#include "../base/StreamBuffer.h"
+#include "../base/TStr.h"
 
 namespace Game {
 //////////////////////////////////////////////////////////////////////////
-StreamBuffer::StreamBuffer(t_int32 chunkSizeBytes) :
+StreamBuffer::StreamBuffer(int32_t chunkSizeBytes) :
     _iChunkSizeBytes(chunkSizeBytes)
 {
     AssertOrThrow2(_iChunkSizeBytes > 0);
@@ -20,11 +20,11 @@ void StreamBuffer::clear()
 }
 RetCode StreamBuffer::write(
     const char* bytes
-    , t_memsize len
-    , t_int32 offset_in
+    , size_t len
+    , int32_t offset_in
 )
 {
-    t_memsize offset;
+    size_t offset;
 
     AssertOrThrow2((offset_in >= 0) || (offset_in == -1));
 
@@ -43,9 +43,9 @@ RetCode StreamBuffer::write(
 }
 RetCode StreamBuffer::read(
     char* buf
-    , t_memsize len
+    , size_t len
     , t_long buflen
-    , t_int32 offset //Offset in BUF.
+    , int32_t offset //Offset in BUF.
 )
 {
     AssertOrThrow2(_data.count() >= (offset + len));
@@ -60,27 +60,30 @@ RetCode StreamBuffer::read(
 }
 void StreamBuffer::checkToGrow()
 {
-    if (!_data.isAllocated())
+    if (!_data.isAllocated()) {
         _data._alloca(_iChunkSizeBytes);
+    }
 
     //If we are less than the current add count, then this means we're allocating
     // a new set of data WHEN we are FULL - we don't pre-allocate the next batch until we actually need it.
     // If you want to pre-allocate the next batch of memory right when the GrowBufferBase is at it's limit
     // change this comparison to <=
-    while (_data.count() < _iAddCountBytes)
-        _data.grow((t_int32)_iChunkSizeBytes);
+    while (_data.count() < _iAddCountBytes) {
+        _data.grow((int32_t)_iChunkSizeBytes);
+    }
 }
 void StreamBuffer::checkToShrink()
 {
-    if (!_data.isAllocated())
+    if (!_data.isAllocated()) {
         _data._alloca(_iChunkSizeBytes);
+    }
 
     //If we are less than the current add count, then this means we're allocating
     // a new set of data WHEN we are FULL - we don't pre-allocate the next batch until we actually need it.
     // If you want to pre-allocate the next batch of memory right when the GrowBufferBase is at it's limit
     // change this comparison to <=
-    t_int32 m1 = _data.count() / _iChunkSizeBytes;
-    t_memsize m2 = _data.count() / _iAddCountBytes;
+    int32_t m1 = _data.count() / _iChunkSizeBytes;
+    size_t m2 = _data.count() / _iAddCountBytes;
 
     if (m1 > m2 && m2 > 0)
     {
@@ -88,7 +91,7 @@ void StreamBuffer::checkToShrink()
     }
 }
 
-mm_allocator<char>* StreamBuffer::getData()
+Allocator<char>* StreamBuffer::getData()
 {
     return &_data;
 }
@@ -100,7 +103,7 @@ void StreamBuffer::shiftOutFirstByte()
         _iAddCountBytes--;
     }
 }
-void StreamBuffer::next(t_memsize nBytesToAdd)
+void StreamBuffer::next(size_t nBytesToAdd)
 {
     _iAddCountBytes += nBytesToAdd;
     checkToGrow();

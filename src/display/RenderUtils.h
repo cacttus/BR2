@@ -16,7 +16,7 @@
 #include "../display/DisplayHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {;
+namespace Game {
 /**
 *    @class RenderUtils
 *    @brief    This class supplies some basic utility functions to render default

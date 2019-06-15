@@ -17,48 +17,48 @@
 
 namespace Game {
 /**
-*    @calss
-*    @brief Stream Buffer.  Grows/shrinks
-*   ADDS - to the end
-*    REMOVES - freom the beginning
+*    @class StreamBuffer
+*    @brief Stream Buffer.  Grows/shrinks.
+*    ADDS - To the end.
+*    REMOVES - From the beginning.
 */
-class StreamBuffer : public IOBase {
+class StreamBuffer : public IOBase<char> {
 private:
-    t_memsize _iAddCountBytes; // bytes in the buffer
-    t_memsize _iChunkSizeBytes; // Amount to allocate when running out of room
-    mm_allocator<char> _data;
+    size_t _iAddCountBytes; // bytes in the buffer
+    size_t _iChunkSizeBytes; // Amount to allocate when running out of room
+    Allocator<char> _data;
 
     void checkToGrow();
     void checkToShrink();
     //void checkToGrowOrShrink();
 
 protected:
-    t_memsize getAddedByteCount() { return _iAddCountBytes; }
+    size_t getAddedByteCount() { return _iAddCountBytes; }
 
 public:
 
-    StreamBuffer(t_int32 chunkSize = 512);
-    OVERRIDES ~StreamBuffer() OVERRIDE;
+    StreamBuffer(int32_t chunkSize = 512);
+    virtual ~StreamBuffer() override;
 
     t_bool getIsEmpty() { return _iAddCountBytes == 0; }
 
     void copyFrom(StreamBuffer* rhs);
-    MUST_OVERRIDE RetCode write(
+    virtual RetCode write(
         const char* bytes
-        , t_memsize len
-        , t_int32 offset = -1
-    ) OVERRIDE;
-    MUST_OVERRIDE RetCode read(
+        , size_t len
+        , int32_t offset = -1
+    );
+    virtual RetCode read(
         char* buf
-        , t_memsize len
+        , size_t len
         , t_long buflen = -1
-        , t_int32 offset = -1
-    ) OVERRIDE;
+        , int32_t offset = -1
+    );
 
     virtual void clear();
-    mm_allocator<char>* getData();
+    Allocator<char>* getData();
     void shiftOutFirstByte();
-    void next(t_memsize allocCount);
+    void next(size_t allocCount);
     t_string toString();
 };
 

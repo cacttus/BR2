@@ -2,7 +2,7 @@
 //#include "../library/MemFile.h"
 //#include "../library/DiskFile.h"
 //#include "../library/FileSystem.h"
-//namespace Game {;
+//namespace Game {
 ////////////////////////////////////////////////////////////////////////////
 //MemFile::MemFile(int32_t iChunkSize) :
 //    DynamicBuffer(iChunkSize),

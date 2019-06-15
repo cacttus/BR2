@@ -14,7 +14,7 @@
 #include "../base/MachineTypes.h"
 #include "../base/Exception.h"
 #include "../base/TypeCast.h"
-namespace Game {;
+namespace Game {
 
 #define frameStampToStr(x) uint64ToStr(x)
 

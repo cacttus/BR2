@@ -75,7 +75,7 @@
 #include "../math/Matrix3x3.h"
 #include "../base/TypeConv.h"
 
-namespace Game {;
+namespace Game {
 
 /**
 *    @stuct Matrix4x4

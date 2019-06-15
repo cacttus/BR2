@@ -15,7 +15,7 @@
 
 #include "../display/DisplayHeader.h"
 
-namespace Game {;
+namespace Game {
 
 // - This enum tells the window what to do with the rendering viewport
 //    when the size changes.

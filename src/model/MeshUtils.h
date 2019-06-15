@@ -15,7 +15,7 @@
 #include "../base/BaseHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {;
+namespace Game {
 // MESH TYPE IN @c MeshCreator
 namespace MeshGenType { typedef enum { MGA_CONE, MGA_SPHERE, MGA_CIRCLE, MGA_BOX, MGA_C2BB2S,  MGA_PLANE_2_SIDE, MGA_CROSS_2_SIDE }e; }
 

@@ -16,7 +16,7 @@
 //#include "../base/BaseHeader.h"
 //#include "../model/ModelHeader.h"
 //
-//namespace Game {;
+//namespace Game {
 //
 ///**
 //*    @class Articulation

@@ -15,7 +15,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../display/ScreenProps.h"
-namespace Game {;
+namespace Game {
 /**
 *    @class Viewport
 *    @brief Viewport class.

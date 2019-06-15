@@ -14,7 +14,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {;
+namespace Game {
 
 /**
 *    @class TreeNode

@@ -148,9 +148,9 @@
     <OutDir>.\bin</OutDir>
     <IntDir>tmp\bottle\debug64</IntDir>
     <TargetName>bottle_x64_d</TargetName>
-    <IncludePath>.\packages\sdl2.2.0.5\build\native\include;$(IncludePath)</IncludePath>
-    <LibraryPath>.\lib;.\packages\sdl2.2.0.5\build\native\lib\x64\dynamic;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>.\packages\sdl2.redist.2.0.5\build\native\bin\x64\dynamic;$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH);</ExecutablePath>
+    <IncludePath>C:\git\bottle-world\sdl\SDL2_net-2.0.1\;C:\git\bottle-world\sdl\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\lib;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH);</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -165,8 +165,8 @@
     <OutDir>.\bin</OutDir>
     <IntDir>tmp\bottle\release64</IntDir>
     <TargetName>bottle_x64_r</TargetName>
-    <IncludePath>.\packages\sdl2.2.0.5\build\native\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\lib;.\lib;.\packages\sdl2.2.0.5\build\native\lib\x64\dynamic;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\git\bottle-world\sdl\SDL2_net-2.0.1\;C:\git\bottle-world\sdl\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -201,7 +201,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;core_x64_d.lib;opengl32.lib;winmm.lib;imm32.lib;version.lib;Dbghelp.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2_net.lib;core_x64_d.lib;opengl32.lib;winmm.lib;imm32.lib;version.lib;Dbghelp.lib;ws2_32.lib;Setupapi.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>
       </OptimizeReferences>
       <EnableCOMDATFolding>
@@ -251,7 +251,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;core_x64_r.lib;opengl32.lib;winmm.lib;imm32.lib;version.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2_net.lib;core_x64_r.lib;opengl32.lib;winmm.lib;imm32.lib;version.lib;Dbghelp.lib;ws2_32.lib;Setupapi.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

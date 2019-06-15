@@ -1,7 +1,7 @@
 #include "../model/VertexTypes.h"
 
 
-namespace Game {;
+namespace Game {
 
 std::shared_ptr<VertexFormat> v_v2c4x2::_pVertexFormat = nullptr;
 std::shared_ptr<VertexFormat> v_v3c4x2::_pVertexFormat = nullptr;

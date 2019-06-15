@@ -50,6 +50,8 @@ public:
     virtual t_string getModelsTextDir() = 0; // MOB dir 
     virtual t_string getModelsBinDir() = 0; // MBI DIr
     virtual t_string getEnvTexturePath() = 0;
+
+    virtual void serverPacketReceived(std::shared_ptr<Packet> temp) = 0;
 };
 
 }//ns Game

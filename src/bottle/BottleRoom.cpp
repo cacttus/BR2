@@ -34,6 +34,9 @@
 #include "../world/PhysicsNode.h"
 #include "../world/Manifold.h"
 
+//#include "../net/NetHeader.h"
+//#include "../net/Packet.h"
+
 #include "../bottle/WorldObj.h"
 #include "../bottle/BottleRoom.h"
 #include "../bottle/World25.h"
@@ -683,6 +686,11 @@ t_string BottleRoom::getConfigPath() {
 t_string BottleRoom::getAssetsDir() {
     return "./data/";
 }
+void BottleRoom::serverPacketReceived(std::shared_ptr<Packet> pack) {
+    //todo
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 WorldSelect::WorldSelect(BottleRoom* cr) : _pCongaRoom(cr) {
 
@@ -845,6 +853,8 @@ void WorldSelect::drawText() {
     //    }
     //}
 }
+
+
 
 
 

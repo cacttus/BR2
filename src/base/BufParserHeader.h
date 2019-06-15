@@ -18,7 +18,7 @@
 
 #include "BPUtil.h"
 
-namespace Game {;
+namespace Game {
 
 typedef enum {
     ptr_begin, // beginning of file

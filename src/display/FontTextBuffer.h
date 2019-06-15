@@ -14,7 +14,7 @@
 
 #include "../display/DisplayHeader.h"
 #include "../math/MathAll.h"
-namespace Game {;
+namespace Game {
 /**
 *    @class FontTextBuffer
 *    @brief

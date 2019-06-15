@@ -5,7 +5,7 @@
 //#include "../math/Vector3.h"
 //#include "../math/Vector4.h"
 
-namespace Game {;
+namespace Game {
 IboData::IboData(std::shared_ptr<GLContext> ctx, size_t iElementSize) :
 GpuBufferData(ctx, GL_ELEMENT_ARRAY_BUFFER, iElementSize)
 {

@@ -13,7 +13,7 @@
 
 #include "../math/Plane3.h"
 #include "../math/Matrix3x3.h"
-namespace Game {;
+namespace Game {
 
 
 /**

@@ -15,7 +15,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathHeader.h"
 
-namespace Game {;
+namespace Game {
 
 /**
 *    @class String

@@ -17,7 +17,7 @@
 #include "../base/RetCode.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-namespace Game {;
+namespace Game {
 /**
 *   @class IOBase
 *   @brief Abstract class to derive file classes from, this class supports basic static file operations.

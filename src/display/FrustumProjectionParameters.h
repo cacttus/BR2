@@ -16,7 +16,7 @@
 #include "../display/DisplayHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {;
+namespace Game {
 /**
 *    @class FrustumProjectionParameters
 *    @brief Fill this class out for the frustum to create its volume

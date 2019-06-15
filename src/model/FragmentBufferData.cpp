@@ -1,7 +1,7 @@
 #include "../model/FragmentBufferData.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {;
+namespace Game {
 //////////////////////////////////////////////////////////////////////////
 FragmentBufferData::FragmentBufferData(std::shared_ptr<VertexFormat> vft) :  _pVertexFormat(vft)
 {

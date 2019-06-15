@@ -15,7 +15,7 @@
 //#include "../base/BaseHeader.h"
 //#include "../model/ModelHeader.h"
 //#include "../model/MeshSpec.h"
-//namespace Game {;
+//namespace Game {
 ///**
 //*    @class MeshSpecHierarchy
 //*    @brief Contains a list of roots which point to hierarchies of meshes.

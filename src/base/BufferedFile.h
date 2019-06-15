@@ -8,7 +8,7 @@
 #include "../base/Allocator.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-namespace Game {;
+namespace Game {
 
 /**
 *    @class BufferedFile
