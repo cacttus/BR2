@@ -51,7 +51,7 @@ namespace Proteus
             IAsyncResult res = Socket.BeginSend(b, 0, b.Length, System.Net.Sockets.SocketFlags.None, SendCallback, Socket);
             bool success = res.AsyncWaitHandle.WaitOne(timeout, true);
             if (success == false)
-                Globals.Logger.LogError("Failed to send data.", true);
+                Logger.LogError("Failed to send data.", true);
         }
         private void SendCallback(IAsyncResult ar)
         {
@@ -61,7 +61,7 @@ namespace Proteus
             s.EndSend(ar, out errcode);
 
             if (errcode != System.Net.Sockets.SocketError.Success)
-                Globals.Logger.LogError(" SEND GOT ERROR: " + errcode.ToString());
+                Logger.LogError(" SEND GOT ERROR: " + errcode.ToString());
 
             //??
             int n = 0;
@@ -142,7 +142,7 @@ namespace Proteus
             int bytesGot = stateObj.sock.EndReceive(ar, out errcode);
 
             if (errcode != System.Net.Sockets.SocketError.Success)
-                Globals.Logger.LogError("RCV GOT ERROR: " + errcode.ToString());
+                Logger.LogError("RCV GOT ERROR: " + errcode.ToString());
 
             string buf = System.Text.Encoding.ASCII.GetString(stateObj.buf, 0, bytesGot);
 

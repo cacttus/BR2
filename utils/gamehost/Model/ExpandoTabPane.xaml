@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="GameHost.ExpandoTabPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
+        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+             xmlns:local="clr-namespace:GameHost"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Border Name="_objOuterBorder"
+            Grid.Row="0" Grid.Column="0"
+            SnapsToDevicePixels="True"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            BorderBrush="{DynamicResource IW_ToolWindowBorderBrushOuter}"
+            BorderThickness="1"
+            CornerRadius="2">
+        <Border
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                SnapsToDevicePixels="True"
+                BorderBrush="{DynamicResource IW_ToolWindowBorderBrushInner}"
+                BorderThickness="1"
+                CornerRadius="2">
+            <Grid 
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Name="_objMainGrid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <StackPanel Name="_objTabContainer" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+                        <TabControl Name="_objTabControl"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+
+                        </TabControl>
+                        <!--<dragablz:TabablzControl Name="_objTabControl"  
+                                         ShowDefaultCloseButton="False"  ShowDefaultAddButton="False" 
+                                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                    <dragablz:TabablzControl.InterTabController>
+                        <dragablz:InterTabController />
+                    </dragablz:TabablzControl.InterTabController>
+                    <TabItem Header="One" >
+                    </TabItem>
+
+                </dragablz:TabablzControl>-->
+
+                    </StackPanel>
+                </Grid>
+
+                <!-- Popout button-->
+                <StackPanel Grid.Row="0" 
+                    Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top">
+                    <Button x:Name="_btnPopOut" Click="_btnPopOut_Click" Margin="0,4,4,0" Width="20" Height="20">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="VectorSquare" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </StackPanel>
+
+                    </Button>
+                    <Button x:Name="_btnClose" Click="_btnClose_Click" Margin="0,4,4,0" Width="20" Height="20">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Close" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </StackPanel>
+
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+
+        </Border>
+    </Border>
+
+
+
+</UserControl>

@@ -132,7 +132,7 @@ namespace Proteus
         {
 
             // Next add dependencies.
-            Globals.Logger.LogInfo("Building project dependency tree..");
+            Logger.LogInfo("Building project dependency tree..");
             foreach (BuildTarget objTaret in targets)
             {
                 //Force add the object at root in case it has no deps.

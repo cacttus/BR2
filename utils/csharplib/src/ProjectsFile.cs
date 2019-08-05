@@ -41,7 +41,7 @@ namespace Proteus
             string[] values = BuildUtils.SplitValues(line, '=');
             if (values.Length != 2)
             {
-                Globals.Logger.LogError("Line " + intLineNumber + ": Invalid token in projects file '" + line + "'. Ignoring..");
+                Logger.LogError("Line " + intLineNumber + ": Invalid token in projects file '" + line + "'. Ignoring..");
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace Proteus
 
             if (String.IsNullOrEmpty(value))
             {
-                Globals.Logger.LogError("Line " + intLineNumber + ":Invalid value in projects file '" + line + "'. Ignoring..");
+                Logger.LogError("Line " + intLineNumber + ":Invalid value in projects file '" + line + "'. Ignoring..");
                 return;
             }
 
@@ -183,12 +183,12 @@ namespace Proteus
 
                 case "outputdirectorybin":
                     if (String.IsNullOrEmpty(curTarget.ProjectOverrideDirBin) == false)
-                        Globals.Logger.LogWarn("Project bin dir is already set. Setting a second time.");
+                        Logger.LogWarn("Project bin dir is already set. Setting a second time.");
                     curTarget.ProjectOverrideDirBin = value;
                     break;
                 case "outputdirectorylib":
                     if (String.IsNullOrEmpty(curTarget.ProjectOverrideDirLib) == false)
-                        Globals.Logger.LogWarn("Project lib dir is already set. Setting a second time.");
+                        Logger.LogWarn("Project lib dir is already set. Setting a second time.");
                     curTarget.ProjectOverrideDirLib = value;
                     break;
 
@@ -208,11 +208,11 @@ namespace Proteus
                 // *** GLOBALS
                 case "vssolutionname":
                     if (!String.IsNullOrEmpty(GlobalConfig.VsSolutionName))
-                        Globals.Logger.LogWarn("VS Solution name was already set to " + GlobalConfig.VsSolutionName + ", setting to " + value);
+                        Logger.LogWarn("VS Solution name was already set to " + GlobalConfig.VsSolutionName + ", setting to " + value);
                     GlobalConfig.VsSolutionName = value;
                     break;
                 default:
-                    Globals.Logger.LogError("Line " + intLineNumber + ": Invalid token '" + value + "' in key '" + key + "'. Ignoring..");
+                    Logger.LogError("Line " + intLineNumber + ": Invalid token '" + value + "' in key '" + key + "'. Ignoring..");
                     break;
             }
 

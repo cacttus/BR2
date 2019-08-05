@@ -77,7 +77,7 @@ namespace Proteus
 
             if (hostEntry == null)
             {
-                Globals.Logger.LogError("Failed to find host enrty for computer name:" + ServerName, true);
+                Logger.LogError("Failed to find host enrty for computer name:" + ServerName, true);
             }
 
             for (int n = 0; n < hostEntry.AddressList.Length; n++)
@@ -90,7 +90,7 @@ namespace Proteus
 
             if (ip == null)
             {
-                Globals.Logger.LogError("Failed to find ip address for computer host:" + ServerName, true);
+                Logger.LogError("Failed to find ip address for computer host:" + ServerName, true);
             }
 
             MySocket = new System.Net.Sockets.Socket(
@@ -119,7 +119,7 @@ namespace Proteus
             if (IsConnected() == false)
                 return;
 
-            Globals.Logger.LogInfo("Disconnnecting..");
+            Logger.LogInfo("Disconnnecting..");
 
             try
             {
@@ -127,9 +127,9 @@ namespace Proteus
             }
             catch (System.Net.Sockets.SocketException se)
             {
-                Globals.Logger.LogInfo("Trying to disconnect we got " + se.ToString());
+                Logger.LogInfo("Trying to disconnect we got " + se.ToString());
             }
-            Globals.Logger.LogInfo("Disconnnected..");
+            Logger.LogInfo("Disconnnected..");
         }
         public void Send(string buf, int iTimeout = NetworkSettings.DefaultSendAndRecvTimeout)
         {
@@ -163,7 +163,7 @@ namespace Proteus
                     NetworkObjectState = NetworkObjectState.Connected;
                     break;
                 default:
-                    Globals.Logger.LogError("Error Invalid packet Header: Buf Data: " + rawData);
+                    Logger.LogError("Error Invalid packet Header: Buf Data: " + rawData);
                     sndBuf = NetworkUtils.PackPacketType(NetworkPacketType.Error);
                     Send(sndBuf);
                     break;
@@ -202,7 +202,7 @@ namespace Proteus
                 
                 DoHandshake();
 
-                Globals.Logger.LogInfo("Connected to " + ag.ServerName);
+                Logger.LogInfo("Connected to " + ag.ServerName);
 
                 lock (ag._objConnectLockObject)
                 {
@@ -214,11 +214,11 @@ namespace Proteus
                 if (se.SocketErrorCode == System.Net.Sockets.SocketError.ConnectionRefused)
                 {
                     //Swallow - The agent is not running.
-                    Globals.Logger.LogInfo("  Agent " + ServerName + " is not running.");
+                    Logger.LogInfo("  Agent " + ServerName + " is not running.");
                 }
                 if (se.SocketErrorCode == System.Net.Sockets.SocketError.TimedOut)
                 {
-                    Globals.Logger.LogInfo("  Agent " + ServerName + " timed out.");
+                    Logger.LogInfo("  Agent " + ServerName + " timed out.");
                 }
                 lock (ag._objConnectLockObject)
                 {

@@ -143,7 +143,7 @@ namespace Proteus
 
             if (hostEntry == null)
             {
-                Globals.Logger.LogError("Failed to find host enrty for computer name:" + machineName);
+                Logger.LogError("Failed to find host enrty for computer name:" + machineName);
             }
 
             for (int n = 0; n < hostEntry.AddressList.Length; n++)
@@ -156,7 +156,7 @@ namespace Proteus
 
             if (ip == null)
             {
-                Globals.Logger.LogError("Failed to find ip address for computer host:" + machineName);
+                Logger.LogError("Failed to find ip address for computer host:" + machineName);
             }
 
             return ip;
@@ -229,7 +229,7 @@ namespace Proteus
             }
             catch (Exception ex)
             {
-                Globals.Logger.LogError(ex.ToString(),false);
+                Logger.LogError(ex.ToString(),false);
             }
             return ContentHtml;
         }

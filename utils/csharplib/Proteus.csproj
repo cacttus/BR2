@@ -109,10 +109,6 @@
     <Compile Include="src\SourceFile.cs" />
     <Compile Include="src\BuildUtils.cs" />
     <Compile Include="src\StringUtils.cs" />
-    <Compile Include="src\TrexClient.cs" />
-    <Compile Include="src\TrexServer.cs" />
-    <Compile Include="src\TrexUtils.cs" />
-    <Compile Include="src\TrexVirtualClient.cs" />
     <Compile Include="src\WpfUtils.cs" />
   </ItemGroup>
   <ItemGroup>

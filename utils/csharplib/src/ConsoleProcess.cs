@@ -130,7 +130,7 @@ namespace Proteus
             {
                 if ((System.Environment.TickCount - tA) > timeout)
                 {
-                    Globals.Logger.LogWarn("Timeout exceeded for concoel porocess.");
+                    Logger.LogWarn("Timeout exceeded for concoel porocess.");
                     break;
                 }
                 System.Windows.Forms.Application.DoEvents();
@@ -242,7 +242,7 @@ namespace Proteus
             }
             catch (Exception ex)
             {
-                Globals.Logger.LogError(ex.ToString());
+                Logger.LogError(ex.ToString());
                 FinishExecuting("Failed to get process name from string.", false);
                 return;
             }
@@ -301,7 +301,7 @@ namespace Proteus
             }
             catch (Exception ex)
             {
-                Globals.Logger.LogError(ex.ToString());
+                Logger.LogError(ex.ToString());
                 strOutput += ex.ToString();
             }
             

@@ -35,7 +35,7 @@ namespace Proteus
             }
 
             if (objValue == null)
-                Globals.Logger.LogError("Failed to convert combobox item to button or comboboxitem type.", true);
+                Logger.LogError("Failed to convert combobox item to button or comboboxitem type.", true);
 
             string cont = Convert.ToString(objValue);
 
@@ -69,7 +69,7 @@ namespace Proteus
                 }
                 catch (Exception ex)
                 {
-                    Globals.Logger.LogError("Error findni tab\n" + ex.ToString());
+                    Logger.LogError("Error findni tab\n" + ex.ToString());
                 }
             }
 
@@ -116,7 +116,7 @@ namespace Proteus
             }
             catch (Exception ex)
             {
-                Globals.Logger.LogError("Error enabling /disabling tab\n" + ex.ToString());
+                Logger.LogError("Error enabling /disabling tab\n" + ex.ToString());
             }
             
             return ret;

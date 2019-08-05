@@ -71,7 +71,7 @@ namespace Proteus
 
         //    if (!System.IO.File.Exists(_strCacheRoot))
         //    {
-        //        Globals.Logger.LogError("Could not find cache file at " + _strCacheRoot + "\n Build will not use cache.");
+        //        Logger.LogError("Could not find cache file at " + _strCacheRoot + "\n Build will not use cache.");
         //        return;
         //    }
         //    Byte[] data = System.IO.File.ReadAllBytes(_strCacheRoot);
@@ -83,7 +83,7 @@ namespace Proteus
         //        if (strHeader != "BC")
         //        {
         //            // fail silently
-        //            Globals.Logger.LogError("Invalid file format for cache file " + _strCacheRoot + " ", false);
+        //            Logger.LogError("Invalid file format for cache file " + _strCacheRoot + " ", false);
         //            _enumLoadStatus = LoadStatus.Error;
         //            return;
         //        }

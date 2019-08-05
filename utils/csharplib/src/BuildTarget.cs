@@ -198,7 +198,7 @@ namespace Proteus
             {
                 if (String.IsNullOrEmpty(psd))
                 {
-                    Globals.Logger.LogWarn("Project source directory for '" + TargetName + "' is empty or not specified.  Ignore this warning if the project has no source files (i.e. it is purely an executable).");
+                    Logger.LogWarn("Project source directory for '" + TargetName + "' is empty or not specified.  Ignore this warning if the project has no source files (i.e. it is purely an executable).");
                 }
                 else
                 {
@@ -319,7 +319,7 @@ namespace Proteus
             }
             else if (linkerFlags.Contains("/LTCG:PGOPTIMIZE"))
             {
-                Globals.Logger.LogWarn("PGOPTIMIZE specified but no PGINSTRUMENT is specified - result will fail at link time.");
+                Logger.LogWarn("PGOPTIMIZE specified but no PGINSTRUMENT is specified - result will fail at link time.");
             }
 
 
@@ -359,7 +359,7 @@ namespace Proteus
                 if (cf.Trim() == "/Fd")
                 {
                     if (!strObjName.EndsWith(".obj"))
-                        Globals.Logger.LogError("Failure - filename does not end with obj. ", true);
+                        Logger.LogError("Failure - filename does not end with obj. ", true);
                     string strPdb = strObjName.Replace(".obj", ".pdb");
                     r += cf + BuildUtils.Enquote(strPdb) + " ";
                 }

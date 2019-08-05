@@ -114,7 +114,7 @@ namespace Proteus
             // fileLoc must be an absolute path.
             if (!System.IO.Path.IsPathRooted(fileLoc))
             {
-                Globals.Logger.LogWarn("Path is not rooted.");
+                Logger.LogWarn("Path is not rooted.");
                 return objReturnedList;
             }
 
@@ -136,7 +136,7 @@ namespace Proteus
                     }
                     else
                     {
-                        Globals.Logger.LogError("Header parse error in file " + fileLoc + " File may be invalid, skipping.");
+                        Logger.LogError("Header parse error in file " + fileLoc + " File may be invalid, skipping.");
                         return objReturnedList;
                     }
 
@@ -156,14 +156,14 @@ namespace Proteus
             string ext = System.IO.Path.GetExtension(astrHeaderFileName);
             if (!_lstHeaderFileExtensions.Contains(ext.ToLower()))
             {
-                Globals.Logger.LogWarn("Found include that wasn't a .h file: " + astrHeaderFileName + "\n In FIle: " + astrSourceFileName + "\n");
+                Logger.LogWarn("Found include that wasn't a .h file: " + astrHeaderFileName + "\n In FIle: " + astrSourceFileName + "\n");
                 return;
             }
 
             string headerFilePath;
             if (!TryGetHeaderFilePath(astrHeaderFileName, astrSourceFilePath, aobjBuildTarget, out headerFilePath))
             {
-                Globals.Logger.LogWarn("Header file could not be found at path: " + headerFilePath);
+                Logger.LogWarn("Header file could not be found at path: " + headerFilePath);
                 return;
             }
 

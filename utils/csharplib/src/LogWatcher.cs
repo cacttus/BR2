@@ -71,7 +71,7 @@ namespace Proteus
            // _maxBufferSize = maxBufferSizeInMemory;
             if (!System.IO.File.Exists(strPath))
             {
-                Globals.Logger.LogError(
+                Logger.LogError(
                     "[LogWatcher] - Log file at path '"
                     + strPath
                     + "' does not exist (yet). "

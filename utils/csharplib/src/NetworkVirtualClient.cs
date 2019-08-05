@@ -36,7 +36,7 @@ namespace Proteus
 
             if (string.IsNullOrEmpty(ret) == false)
             {
-                Globals.Logger.LogInfo("Got packet " + ret);
+                Logger.LogInfo("Got packet " + ret);
                 NetworkPacketType pt = NetworkUtils.UnpackPacketType(ref ret);
                 ParseReceivedData(pt, ret);
             }
@@ -58,12 +58,12 @@ namespace Proteus
 
             if (Socket == null)
             {
-                Globals.Logger.LogInfo("Failed to send data: Socket was null");
+                Logger.LogInfo("Failed to send data: Socket was null");
                 return;
             }
             if (!IsConnected())
             {
-                Globals.Logger.LogInfo("Failed to send data: Server was not connected");
+                Logger.LogInfo("Failed to send data: Server was not connected");
                 return;
             }
             _objPacketMaker.SendPacket(str, iTimeout);
@@ -97,7 +97,7 @@ namespace Proteus
 
                     break;
                 default:
-                    Globals.Logger.LogError("Error Invalid packet Header: Buf Data: " + rawData);
+                    Logger.LogError("Error Invalid packet Header: Buf Data: " + rawData);
                     sndBuf = NetworkUtils.PackPacketType(NetworkPacketType.Error);
                     Send(sndBuf);
                     break;

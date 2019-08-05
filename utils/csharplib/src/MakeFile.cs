@@ -35,13 +35,13 @@ namespace Proteus
             BuildTarget bt = target.Item;
             List<BuildStep> objLinkObjects = new List<BuildStep>();
 
-            Globals.Logger.LogInfo("Gathering " + bt.TargetName);
+            Logger.LogInfo("Gathering " + bt.TargetName);
             bt.GatherSource();
 
-            Globals.Logger.LogInfo("Compiling " + bt.TargetName);
+            Logger.LogInfo("Compiling " + bt.TargetName);
             CompileTarget(bt, ref objLinkObjects);
 
-            Globals.Logger.LogInfo("Linking " + bt.TargetName);
+            Logger.LogInfo("Linking " + bt.TargetName);
             LinkTarget(bt, objLinkObjects);
         }
         private void ProjectDepsDelegate(ItemNode<BuildTarget> nodde)

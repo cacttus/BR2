@@ -36,10 +36,10 @@ namespace Proteus
         {
             System.Threading.EventWaitHandle wh = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.ManualReset);
 
-            Globals.Logger.LogInfo("Setting up...");
+            Logger.LogInfo("Setting up...");
             ListenForConnections();
 
-            Globals.Logger.LogInfo("Setup complete...");
+            Logger.LogInfo("Setup complete...");
             while (true)
             {
                 try
@@ -50,7 +50,7 @@ namespace Proteus
                 }
                 catch (System.Net.Sockets.SocketException e)
                 {
-                    Globals.Logger.LogInfo(" [Sockets] Error: " + e.ToString());
+                    Logger.LogInfo(" [Sockets] Error: " + e.ToString());
                 }
 
                 Update();
@@ -81,20 +81,20 @@ namespace Proteus
             {
                 if (ex.ErrorCode == 10048)
                 {
-                    Globals.Logger.LogWarn("Got an excpetion that we are using more than one address for port " 
+                    Logger.LogWarn("Got an excpetion that we are using more than one address for port " 
                         + _intReceivePort + "  it is not usually preritted.");
                     throw ex;
                 }
             }
 
-            Globals.Logger.LogInfo("Client is listening on port:" + _intReceivePort.ToString());
+            Logger.LogInfo("Client is listening on port:" + _intReceivePort.ToString());
         }
         private void AcceptConnections()
         {
             if (Listener.Pending())
             {
                 NetworkVirtualClient st = CreateNewClient(Listener.AcceptSocket(), _intClientIdGenerator++);
-                Globals.Logger.LogInfo("Accepted new Connection from " + st.ClientName);
+                Logger.LogInfo("Accepted new Connection from " + st.ClientName);
                 
                 VirtualClients.Add(st);
             }
@@ -132,7 +132,7 @@ namespace Proteus
             //Update dropped
             foreach (NetworkVirtualClient ac in _objDroppedClients)
             {
-                Globals.Logger.LogWarn("Dropping client " + ac.ClientName);
+                Logger.LogWarn("Dropping client " + ac.ClientName);
                 VirtualClients.Remove(ac);
             }
             _objDroppedClients.Clear();

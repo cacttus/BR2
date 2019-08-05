@@ -84,7 +84,7 @@ namespace Proteus
                 System.Windows.Forms.MessageBoxIcon.Exclamation,
                 System.Windows.Forms.MessageBoxDefaultButton.Button1
                 );
-            Globals.Logger.LogError(msg);
+            Logger.LogError(msg);
         }
     }
 }

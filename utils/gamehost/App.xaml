@@ -1,26 +1,978 @@
-﻿<Application x:Class="GameHost.App"
+﻿<Application x:Class="MaterialMahApps.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:GameHost"
-             StartupUri="MainWindow.xaml">
+             xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
+             xmlns:dockablz="http://dragablz.net/winfx/xaml/dockablz"
+            xmlns:local="clr-namespace:GameHost"
+             
+             StartupUri="Model/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+
+                <!-- MahApps -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-
-                <!-- accent resource -->
-                <!-- change "Cobalt" to the accent color you want -->
-
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Cobalt.xaml" />
-
-                <!-- theme resource -->
-                <!-- change "BaseLight" to the theme you want -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
-                <!-- Accent and AppTheme setting -->
+
+                <!--Dragablz-->
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/themes/mahapps.xaml" />
+
+                <!-- Material Design -->
+                <!--ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" /-->
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+                <!-- This is causing MahApps.iconpack to not show icons -->
+                <!--ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" /-->
+
+                <!--**SEE THIS
+                https://www.materialpalette.com/
+                **-->
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MahAppsTabablzControlStyle}" />
+
+            <!--Krita Colors-->
+            <!--Colors-->
+            <SolidColorBrush x:Key="IW_AccentColor" Color="#41B1E1" />
+
+            <SolidColorBrush x:Key="IW_TitlebarBrush" Color="#414141"/>
+            <SolidColorBrush x:Key="IW_TitlebarForegroundBrush" Color="#9EAEAE"/>
+            <SolidColorBrush x:Key="IW_TitlebarButtonBrush" Color="{Binding Color, Source={StaticResource IW_AccentColor}}"/>
+
+            <SolidColorBrush x:Key="IW_ToolbarButtonBrush" Color="#3B3B3B"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonForegroundBrush" Color="#CACACA"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonHighlightBrush" Color="#53728E"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonHighlightForegroundBrush" Color="#EBEBEB"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonDisabledForegroundBrush" Color="#7A7A71"/>
+            <SolidColorBrush x:Key="IW_ToolbarHorizontalSeparatorBrush" Color="#888888"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonOuterBorderBrush" Color="#333333"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonInnerBorderBrush" Color="#5C5C5C"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonPressedBrush" Color="#3B3B3B"/>
+            <SolidColorBrush x:Key="IW_ToolbarButtonIconColor" Color="#CACACA" />
+
+            <SolidColorBrush x:Key="IW_ToolWindowBorderBrushOuter" Color="#333333"/>
+            <SolidColorBrush x:Key="IW_ToolWindowBorderBrushInner" Color="#5F5F5F"/>
+            <SolidColorBrush x:Key="IW_ToolWindowBackgroundBrush" Color="#474747"/>
+            <SolidColorBrush x:Key="IW_ToolWindowTitlebarButtonBrush" Color="{Binding Color, Source={StaticResource IW_AccentColor}}"/>
+            <SolidColorBrush x:Key="IW_ToolWindowTitlebarForegroundBrush" Color="#C8C8C8"/>
+            <LinearGradientBrush x:Key="IW_ToolbarButtonHighlightGradientBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#4F4F4F" Offset="0"/>
+                <GradientStop Color="#434343" Offset="1"/>
+            </LinearGradientBrush>
+
+            <SolidColorBrush x:Key="IW_SubMenuPopupBorderBrush" Color="#2C2C2C"/>
+
+            <SolidColorBrush x:Key="IW_SubMenuItemForegroundBrush" Color="#C8C8C8"/>
+            <SolidColorBrush x:Key="IW_SubMenuItemBackgroundBrush" Color="#3C3C3C"/>
+            <SolidColorBrush x:Key="IW_SubMenuItemHighlightBrush" Color="#53728E"/>
+            <SolidColorBrush x:Key="IW_SubMenuItemDisabledForegroundBrush" Color="#7A7A71"/>
+
+            <SolidColorBrush x:Key="IW_TextboxForegroundBrush" Color="#C7C7C7"/>
+            <SolidColorBrush x:Key="IW_TextboxBackgroundBrush" Color="#494949"/>
+            <!--383838-->
+
+            <SolidColorBrush x:Key="IW_ContentAreaBackgroundBrush"  Color="#474747"/>
+            <SolidColorBrush x:Key="IW_ContentAreaForegroundBrush"  Color="{Binding Color, Source={StaticResource IW_TitlebarForegroundBrush}}"/>
+            <SolidColorBrush x:Key="IW_MenuSeparatorBrush"  Color="#2E2E2E"/>
+            <SolidColorBrush x:Key="IW_DisabledForegroundColor" Color="#888888"/>
+            <SolidColorBrush x:Key="IW_TransparentBrush" Color="#00000000"/>
+
+            <SolidColorBrush x:Key="IW_GroupBoxBackgroundBrush" Color="#494949"/>
+
+            <SolidColorBrush x:Key="IW_ButtonIconColor" Color="{Binding Color, Source={StaticResource IW_ToolWindowBorderBrushOuter}}" />
+            <SolidColorBrush x:Key="IW_ButtonHighlightForegroundBrush" Color="#BEBEBE"/>
+            <SolidColorBrush x:Key="IW_ButtonHighlightBackgroundBrush" Color="#4B4B4B"/>
+
+
+            <!-- -->
+
+            <!-- all fonts are ROBOTO -->
+            <Style TargetType="{x:Type Control}">
+                <Setter Property="FontFamily" Value="Roboto"/>
+            </Style>
+
+            <!--MAIN MENU-->
+            <!--MAIN MENU-->
+            <!--MAIN MENU-->
+            <!--MAIN MENU-->
+            <!-- good menu reference we'ere trying to achieve -->
+            <!-- https://stackoverflow.com/questions/34888636/change-background-color-of-menuitem-on-mouseover -->
+
+
+            <!-- Background -->
+            <Style x:Key="IW_TitleBarStyle" TargetType="Menu">
+                <Setter Property="FontFamily" Value="Roboto"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Foreground" Value="{DynamicResource IW_TitlebarForegroundBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource IW_TitlebarBrush}"/>
+            </Style>
+
+            <!-- Main menu Styles-->
+            <Style  x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
+                <Setter Property="FontFamily" Value="Roboto"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Foreground" Value="{DynamicResource IW_ToolbarButtonForegroundBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource IW_ToolbarButtonBrush}"/>
+                <Setter Property="Padding" Value="0"/>
+                <Style.Triggers>
+                    <Trigger Property="IsHighlighted" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource IW_ToolbarButtonHighlightBrush}"></Setter>
+                        <Setter Property="Foreground" Value="{DynamicResource IW_ToolbarButtonHighlightForegroundBrush}"></Setter>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="{DynamicResource IW_ToolbarButtonDisabledForegroundBrush}"></Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <!-- End Main Menu Styles-->
+
+            <!-- Label -->
+            <Style x:Key="{x:Type Label}" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Roboto"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="{DynamicResource IW_TextboxForegroundBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource IW_TextboxBackgroundBrush}"/>
+            </Style>
+
+
+            <!-- Panel Global-->
+            <Style x:Key="{x:Type StackPanel}" TargetType="{x:Type StackPanel}">
+                <Setter Property="Background" Value="{DynamicResource IW_GroupBoxBackgroundBrush}"/>
+            </Style>
+            <Style x:Key="{x:Type DockPanel}" TargetType="{x:Type DockPanel}">
+                <Setter Property="Background" Value="{DynamicResource IW_TitlebarBrush}"/>
+            </Style>
+            <!--<Style x:Key="{x:Type Grid}" TargetType="{x:Type Grid}">
+                <Setter Property="Background" Value="{DynamicResource IW_TransparentBrush}"/>
+            </Style>-->
+
+            <!-- Text Box -->
+            <Style x:Key="{x:Type TextBox}" TargetType="{x:Type TextBox}">
+                <Setter Property="FontFamily" Value="Roboto"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="{DynamicResource IW_TextboxForegroundBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource IW_TextboxBackgroundBrush}"/>
+            </Style>
+
+            <!-- Flat toolbar Button -->
+            <!-- This is a transparent button and "meshes' with the toolbar below-->
+            <Style x:Key="IW_ToolbarButtonFlatStyle" TargetType="{x:Type Button}" >
+                <Setter Property="RenderOptions.EdgeMode" Value="Aliased"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="Margin" Value="1,3,1,3"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border 
+                                x:Name="ThaOuterBorder"
+                                BorderThickness="1"  
+                                    BorderBrush="{DynamicResource IW_TransparentBrush}"
+                                    Background="{DynamicResource IW_TransparentBrush}"
+                                    CornerRadius="3">
+                                <Border 
+                                    x:Name="ThaInnerBorder"
+                                    BorderThickness="1"  
+                                        BorderBrush="{DynamicResource IW_TransparentBrush}"
+                                        Background="{DynamicResource IW_TransparentBrush}"
+                                        CornerRadius="3">
+                                    <Grid Background="{DynamicResource IW_TransparentBrush}" x:Name="ThaGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <ContentPresenter 
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch" 
+                                            Name="ThaContent"/>
+
+                                        <Label x:Name="ThaLabel"
+                                               Content="{TemplateBinding Content}"
+                                               FontSize="12"
+                                               Background="{DynamicResource IW_TransparentBrush}"
+                                               Padding="0"
+                                               Margin="0"/>
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="ThaInnerBorder" Property="Background" Value="{DynamicResource IW_ToolbarButtonPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ThaOuterBorder" Property="BorderBrush" Value="{DynamicResource IW_ToolbarButtonOuterBorderBrush}" />
+                                    <Setter TargetName="ThaInnerBorder" Property="BorderBrush" Value="{DynamicResource IW_ToolbarButtonInnerBorderBrush}" />
+                                    <Setter TargetName="ThaOuterBorder" Property="Background" Value="{DynamicResource IW_ToolbarButtonHighlightGradientBrush}"/>
+
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--Global Button-->
+            <Style x:Key="{x:Type Button}" TargetType="{x:Type Button}" >
+                <Setter Property="MinWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
+                <Setter Property="MinHeight" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
+                <Setter Property="RenderOptions.EdgeMode" Value="Aliased"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border 
+                                BorderThickness="1"  
+                                    Background="{DynamicResource IW_ToolbarButtonOuterBorderBrush}"
+                                    CornerRadius="3">
+                                <Border 
+                                    x:Name="ThaInnerBorder"
+                                    BorderThickness="1"  
+                                        Background="{DynamicResource IW_ToolbarButtonInnerBorderBrush}"
+                                        CornerRadius="3">
+                                    <Grid Background="{DynamicResource IW_TitlebarBrush}" x:Name="ThaGrid"
+                                        RenderOptions.EdgeMode="Unspecified"
+
+                                        >
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Name="ThaContent"/>
+                                        <Label x:Name="ThaLabel"
+                                               Content="{TemplateBinding Content}"
+                                               FontSize="12"
+                                               Background="{DynamicResource IW_TransparentBrush}"
+                                               Padding="0"
+                                               Margin="0"
+                                               />
+
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="ThaInnerBorder" Property="Background" Value="{DynamicResource IW_ToolbarButtonPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ThaGrid" Property="Background" Value="{DynamicResource IW_ToolbarButtonHighlightGradientBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
+            <!--GroupBox Global-->
+            <Style x:Key="{x:Type GroupBox}" TargetType="{x:Type GroupBox}" >
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+                <!-- TopLeft, TopRight, BottomLeft, and BottomRight-->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type GroupBox}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0" DockPanel.Dock="Left"  HorizontalAlignment="Left">
+                                    <DockPanel.LayoutTransform>
+                                        <TranslateTransform X="0" Y="5"/>
+                                    </DockPanel.LayoutTransform>
+                                    <Border  
+                                         Background="{DynamicResource IW_GroupBoxBackgroundBrush}"
+                                   BorderBrush = "{DynamicResource IW_ToolbarButtonOuterBorderBrush}"
+                                    BorderThickness="1,1,1,0"  
+                                    CornerRadius="3,3,0,0">
+                                        <Border 
+                                        BorderBrush = "{DynamicResource IW_ToolbarButtonInnerBorderBrush}"
+                                        BorderThickness="1,1,1,0"  
+                                        CornerRadius="3,3,0,0">
+                                            <DockPanel Margin="0">
+                                                <ContentPresenter 
+                                                HorizontalAlignment="Stretch" 
+                                                    VerticalAlignment="Stretch" 
+                                                    Name="ThaContent" ContentSource="Header"
+                                                Margin="0
+                                                ">
+                                                    <ContentPresenter.Resources>
+                                                        <Style TargetType="{x:Type TextBlock}" >
+                                                            <Setter Property="FontFamily" Value="Roboto"/>
+                                                            <Setter Property="FontSize" Value="12"/>
+                                                            <Setter Property="Foreground" Value="{DynamicResource IW_SubMenuItemForegroundBrush}" />
+                                                            <Setter Property="Margin" Value="10,6,10,6" />
+                                                            <Setter Property="Padding" Value="0" />
+                                                        </Style>
+                                                    </ContentPresenter.Resources>
+                                                </ContentPresenter>
+                                            </DockPanel>
+                                        </Border>
+                                    </Border>
+                                </DockPanel>
+                                <Border  
+                                    Grid.Row="1"
+                                    Background="{DynamicResource IW_GroupBoxBackgroundBrush}"
+                                    
+                                     BorderBrush = "{DynamicResource IW_ToolbarButtonOuterBorderBrush}"
+                                    BorderThickness="1,1,1,1"  
+                                    CornerRadius="0,3,3,3">
+                                    <Border 
+                                        BorderBrush = "{DynamicResource IW_ToolbarButtonInnerBorderBrush}"
+                                        BorderThickness="1,1,1,0"  
+                                        CornerRadius="0,3,3,3">
+
+                                        <StackPanel Margin="10,6,10,6" >
+                                            <StackPanel.Resources>
+                                                <Style TargetType="{x:Type Control}">
+                                                    <Setter Property="Margin" Value="0,10,0,0"/>
+                                                </Style>
+                                            </StackPanel.Resources>
+                                            <ContentPresenter Grid.Row="1" Margin="4"  >
+                                                <!--<ContentPresenter.Resources>
+                                                    <Style TargetType="{x:Type StackPanel}" >
+                                                        <Setter Property="Background" Value="{DynamicResource I}" />
+                                                    </Style>
+                                                </ContentPresenter.Resources>-->
+                                            </ContentPresenter>
+                                        </StackPanel>
+                                    </Border>
+                                </Border>
+
+                            </Grid>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--ScrollViewer for a MenuItem (copied from microsoft)-->
+            <!--   https://docs.microsoft.com/en-us/dotnet/framework/wpf/controls/menu-styles-and-templates -->
+            <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
+            <Style x:Key="MenuScrollViewer" TargetType="{x:Type ScrollViewer}" BasedOn="{x:Null}">
+                <Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                            <Grid SnapsToDevicePixels="True" Background="{DynamicResource IW_SubMenuItemBackgroundBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Border Grid.Row="1" Grid.Column="0">
+                                    <ScrollContentPresenter Margin="{TemplateBinding Padding}" />
+                                </Border>
+                                <RepeatButton Style="{StaticResource MenuScrollButton}"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Command="{x:Static ScrollBar.LineUpCommand}"
+                                    CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                    Focusable="False">
+                                    <RepeatButton.Visibility>
+                                        <MultiBinding FallbackValue="Visibility.Collapsed"
+                                            Converter="{StaticResource MenuScrollingVisibilityConverter}"
+                                            ConverterParameter="0">
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ComputedVerticalScrollBarVisibility" />
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="VerticalOffset" />
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ExtentHeight" />
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ViewportHeight" />
+                                        </MultiBinding>
+                                    </RepeatButton.Visibility>
+                                    <Path Fill="{StaticResource {x:Static SystemColors.MenuTextBrushKey}}"  Data="{StaticResource UpArrow}" />
+                                </RepeatButton>
+                                <RepeatButton Style="{StaticResource MenuScrollButton}"
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Command="{x:Static ScrollBar.LineDownCommand}"
+                                        CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Focusable="False">
+                                    <RepeatButton.Visibility>
+                                        <MultiBinding FallbackValue="Visibility.Collapsed" Converter="{StaticResource MenuScrollingVisibilityConverter}" ConverterParameter="100">
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ComputedVerticalScrollBarVisibility" />
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="VerticalOffset" />
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ExtentHeight" />
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ViewportHeight" />
+                                        </MultiBinding>
+                                    </RepeatButton.Visibility>
+                                    <Path Fill="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}" Data="{StaticResource DownArrow}" />
+                                </RepeatButton>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--End MenuScrollViewer -->
+
+            <!--Begin Submenu Header-->
+            <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}"
+                 TargetType="{x:Type MenuItem}">
+                <Border x:Name="Border" BorderThickness="1" Background="{DynamicResource IW_SubMenuItemBackgroundBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--TextBlock x:Name="InputGestureText"
+                                 Grid.Column="2"
+                                 Text="{TemplateBinding InputGestureText}"
+                                 Margin="5,2,2,2"
+                                 DockPanel.Dock="Right" /-->
+
+                        <ContentPresenter x:Name="ContentPresenter"  
+                                                  Content="{TemplateBinding Header}" 
+                                                  ContentSource="Header" 
+                                                  Margin="{TemplateBinding Padding}" 
+                                                  RecognizesAccessKey="True" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" >
+                            <ContentPresenter.Resources>
+                                <Style TargetType="{x:Type TextBlock}" >
+                                    <Setter Property="FontFamily" Value="Roboto"/>
+                                    <Setter Property="FontSize" Value="16"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource IW_SubMenuItemForegroundBrush}" />
+                                    <Setter Property="Margin" Value="12,8,12,8" />
+                                    <Setter Property="Padding" Value="0" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+
+                        <Popup x:Name="Popup"
+                                 Placement="Right"
+                                 HorizontalOffset="-4"
+                                 IsOpen="{TemplateBinding IsSubmenuOpen}"
+                                 AllowsTransparency="True"
+                                 Focusable="False"
+                                 PopupAnimation="Fade">
+                            <Border x:Name="SubmenuBorder"
+                                    SnapsToDevicePixels="True"
+                                    Background="{DynamicResource IW_SubMenuItemBackgroundBrush}"
+                                    BorderThickness="1"
+                                    BorderBrush="{DynamicResource IW_SubMenuPopupBorderBrush}">
+                                <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </Border>
+
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsHighlighted"  Value="true">
+                        <Setter Property="Background"  TargetName="Border" Value="{DynamicResource IW_SubMenuItemHighlightBrush_Color}">
+                        </Setter>
+                    </Trigger>
+
+                    <Trigger Property="IsEnabled"  Value="false">
+                        <Setter Property="Foreground" Value="{DynamicResource IW_SubMenuItemDisabledForegroundBrush}">
+                        </Setter>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <!--End Submenu HEader-->
+
+            <!-- Begin Submenu Item-->
+            <ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
+                <Border x:Name="Border" BorderThickness="1"  Background="{DynamicResource IW_SubMenuItemBackgroundBrush}">
+                    <Grid Background="{DynamicResource IW_SubMenuItemBackgroundBrush}" x:Name="MenuGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ContentPresenter x:Name="HeaderHost"
+                                          ContentSource="Header" 
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Stretch"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          RecognizesAccessKey="True" >
+                            <ContentPresenter.Resources>
+                                <Style TargetType="{x:Type TextBlock}" >
+                                    <Setter Property="FontFamily" Value="Roboto"/>
+                                    <Setter Property="FontSize" Value="16"/>
+                                    <Setter Property="Margin" Value="12,8,12,8" />
+                                    <Setter Property="Padding" Value="0" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                    </Grid>
+                </Border>
+
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsHighlighted" Value="True">
+                        <Setter Property="Background" TargetName="MenuGrid" Value="{DynamicResource IW_SubMenuItemHighlightBrush}"/>
+                        <Setter Property="Background" TargetName="Border" Value="{DynamicResource IW_SubMenuItemHighlightBrush}"/>
+                    </Trigger>
+                    <!--<Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" TargetName="Border" Value="#{StaticResource WindowTitleColorBrushLight}"/>
+                    </Trigger>-->
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="TextBlock.Foreground" TargetName="HeaderHost" Value="{DynamicResource IW_SubMenuItemDisabledForegroundBrush}"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="True">
+                        <Setter Property="TextBlock.Foreground" TargetName="HeaderHost" Value="{DynamicResource IW_SubMenuItemForegroundBrush}"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <!-- End Submenu Item-->
+
+            <!-- Top Level Menu Header Style-->
+            <ControlTemplate  x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+
+                <Border x:Name="Border" Padding="17,0,17,0" 
+                                    BorderThickness="0" 
+                                    Background="{DynamicResource IW_ToolbarButtonBrush}" >
+                    <Grid VerticalAlignment="Stretch">
+                        <ContentPresenter x:Name="ContentPresenter"  
+                                                  Content="{TemplateBinding Header}" 
+                                                  ContentSource="Header" 
+                                                  Margin="{TemplateBinding Padding}" 
+                                                  RecognizesAccessKey="True" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                          VerticalAlignment="Stretch"/>
+                        <Popup x:Name="Popup"
+                             Placement="Bottom"
+                             IsOpen="{TemplateBinding IsSubmenuOpen}"
+                             AllowsTransparency="True"
+                             Focusable="False"
+                             PopupAnimation="Fade">
+                            <Border x:Name="SubmenuBorder"
+                                    SnapsToDevicePixels="True"
+                                    BorderThickness="1"
+                                    Background="{DynamicResource IW_SubMenuPopupBorderBrush}"
+                                    BorderBrush="{DynamicResource IW_SubMenuPopupBorderBrush}">
+                                <ScrollViewer CanContentScroll="True"  Style="{StaticResource MenuScrollViewer}">
+                                    <StackPanel IsItemsHost="True" 
+                                                Orientation="Vertical"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </Border>
+
+            </ControlTemplate>
+            <!-- End Top Level Header STyle-->
+
+            <!-- Begin Menu Separator -->
+            <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+                <Setter Property="Height" Value="1" />
+                <Setter Property="Margin" Value="0,4,0,4" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Separator}">
+                            <Grid Background="{DynamicResource IW_SubMenuItemBackgroundBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Border BorderThickness="1" Background="{DynamicResource IW_SubMenuItemBackgroundBrush}"
+                                        BorderBrush="{DynamicResource IW_MenuSeparatorBrush}">
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!-- End MEnu Separator         -->
+
+            <Style TargetType="Menu" >
+                <Setter Property="Background" Value="{DynamicResource IW_TitlebarBrush}"/>
+            </Style>
+
+            <Style TargetType="TreeView" >
+                <Setter Property="Background" Value="{DynamicResource IW_ContentAreaBackgroundBrush}"/>
+            </Style>
+
+            <Style x:Key="IW_WindowTitleStyle" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Roboto" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Foreground" Value="{DynamicResource IW_TitlebarBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource IW_TitlebarForegroundBrush}"/>
+            </Style>
+
+            <!-- IW Local styles -->
+            <!-- Tool Window Styles -->
+            <!-- Begin Dockable Toolwindow Button (minimize / close) style-->
+
+            <Style x:Key="IW_ToolWindowTitlebarTextStyle" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Roboto" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Margin" Value="0,-5,0,0" />
+                <Setter Property="Foreground" Value="{DynamicResource IW_ToolWindowTitlebarForegroundBrush}"/>
+            </Style>
+
+            <!-- Flat button (Titlebar x and [])-->
+            <Style x:Key="IW_ToolWindowTitlebarButtonStyle" TargetType="{x:Type Button}" 
+                   BasedOn="{StaticResource MetroFlatButton}">
+                <!-- MetroFlatButton  MetroCircleButtonStyle-->
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <!-- This here forces buttons to be square-->
+                <Setter Property="MinWidth" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
+                <Setter Property="MinHeight" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
+                <Setter Property="RenderOptions.EdgeMode" Value="Aliased"/>
+
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="DockPanel.Dock" Value="Right" />
+                <Setter Property="Background" Value="{DynamicResource IW_ToolWindowTitlebarButtonBrush}" />
+
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource IW_ToolbarButtonHighlightBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource IW_ToolbarButtonHighlightForegroundBrush}"/>
+
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <!-- end it-->
+
+            <!-- Drop Shadow
+            https://stackoverflow.com/questions/2831062/wpf-drop-shadow
+            -->
+            <!-- Working Reference
+            https://github.com/ButchersBoy/Dragablz/blob/master/Dragablz/Themes/MahApps.xaml
+            -->
+            <!--Begin Dockable Tool Window Steyle-->
+            <Style TargetType="{x:Type dragablz:HeaderedDragablzItem}" x:Key="MahAppsToolDragablzItemStyleCustom">
+                <Style.Setters>
+                    <Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type dragablz:HeaderedDragablzItem}" >
+
+                                <Grid Margin="{TemplateBinding Margin}" 
+                                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+
+                                    <!--this brush has no color-->
+                                    <Border BorderBrush="#50000000"
+                                            BorderThickness="1"
+                                            CornerRadius="2" >
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="10" ShadowDepth="5" Direction="315"/>
+                                        </Border.Effect>
+                                    </Border>
+                                    <!-- make other border transparent-->
+                                    <!--****WINDOW BACKGROUND***-->
+                                    <Border
+                                        SnapsToDevicePixels="True"
+                                        BorderBrush="{DynamicResource IW_ToolWindowBorderBrushOuter}"
+                                        BorderThickness="1"
+                                        CornerRadius="2">
+                                        <Border
+                                            SnapsToDevicePixels="True"
+                                            BorderBrush="{DynamicResource IW_ToolWindowBorderBrushInner}"
+                                            BorderThickness="1"
+                                            CornerRadius="2">
+
+                                            <DockPanel VerticalAlignment="Stretch" 
+                                                       HorizontalAlignment="Stretch" 
+                                                       Background="{DynamicResource IW_ToolWindowBackgroundBrush}" >
+
+                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="20"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <!--Thumb comes behind because lower controls are on top and we need the buttons on top but we need
+                                                    the backgrounds to be transparetn so the thumb gets clicked.-->
+                                                    <Thumb Grid.Row="0"
+                                                           HorizontalAlignment="Stretch" 
+                                                            VerticalContentAlignment="Stretch" 
+                                                            x:Name="PART_Thumb"
+                                                            Style="{StaticResource MahAppsInvisibleThumbStyle}"  />
+
+                                                    <!-- Titlebar-->
+                                                    <DockPanel Grid.Row="0" IsHitTestVisible="False">
+                                                        <Grid IsHitTestVisible="False">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="2"/>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="5"/>
+                                                            </Grid.RowDefinitions>
+
+                                                            <!--Bar?-->
+                                                            <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" IsHitTestVisible="False"/>
+
+
+                                                            <!-- Title bar -->
+                                                            <!-- **Don't style this initial dockpanel it breaks dragging-->
+                                                            <DockPanel Grid.Row="1" HorizontalAlignment="Stretch"  IsHitTestVisible="True">
+                                                                <!-- close button-->
+                                                                <Button 
+                                                                x:Name="ToolWindow_CloseButton"
+                                                                Command="{x:Static dockablz:Layout.CloseFloatingItem}"
+                                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                                Style="{StaticResource IW_ToolWindowTitlebarButtonStyle}">
+                                                                    <Path  
+                                                                Data="M 10.009,1.704 L 8.331,0.026 5.03,3.327 1.703,0 0,1.704 3.326,5.031 0.025,8.332 1.703,10.009 5.004,6.708 8.305,10.009 10.009,8.305 6.708,5.005"
+                                                                SnapsToDevicePixels="True"
+                                                                Fill="{DynamicResource IW_ButtonIconColor}" />
+                                                                </Button>
+                                                                <!-- close button-->
+
+                                                                <!-- Unfloat Button-->
+                                                                <Button 
+                                                                    Name="ToolWindow_UnfloatButton"
+                                                                    DockPanel.Dock="Right"
+                                                                Command="{x:Static dockablz:Layout.UnfloatItemCommand}"
+                                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                                Style="{StaticResource IW_ToolWindowTitlebarButtonStyle}" >
+                                                                    <Path 
+                                                                  SnapsToDevicePixels="True"
+                                                                Fill="{DynamicResource IW_ButtonIconColor}" 
+                                                                Data="M 19 19 H 5 V 5 h 7 V 3 H 5 C 3.89 3 3 3.9 3 5 v 14 c 0 1.1 0.89 2 2 2 h 14 c 1.1 0 2 -0.9 2 -2 v -7 h -2 v 7 z M 14 3 v 2 h 3.59 L 7.76 14.83 9.17 16.24 19 6.41 V 10 h 2 V 3 h -7 z" />
+                                                                </Button>
+                                                                <!-- Unfloat-->
+
+                                                                <!-- MAximize Buton-->
+                                                                <Button 
+                                                                    Name="ToolWindow_MaximizeButton"
+                                                                    DockPanel.Dock="Right"
+                                                                Command="{x:Static dockablz:Layout.MaximiseFloatingItem}"
+                                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                                Style="{StaticResource IW_ToolWindowTitlebarButtonStyle}">
+                                                                    <Path 
+                                                                  Data="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z"
+                                                                  SnapsToDevicePixels="True"
+                                                                  Fill="{DynamicResource IW_ButtonIconColor}" />
+                                                                </Button>
+                                                                <!-- Maximize buto-->
+
+                                                                <!-- Restore Button-->
+                                                                <Button 
+                                                                    Name="ToolWindow_RestoreButton"
+                                                                    DockPanel.Dock="Right"
+                                                                Command="{x:Static dockablz:Layout.RestoreFloatingItem}"
+                                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                                Style="{StaticResource IW_ToolWindowTitlebarButtonStyle}" >
+                                                                    <Path 
+                                                                  Data="F1M0,10L0,3 3,3 3,0 10,0 10,2 4,2 4,3 7,3 7,6 6,6 6,5 1,5 1,10z M1,10L7,10 7,7 10,7 10,2 9,2 9,6 6,6 6,9 1,9z"
+                                                                  SnapsToDevicePixels="True"
+                                                                  Fill="{DynamicResource IW_ButtonIconColor}" />
+                                                                </Button>
+                                                                <!-- Restore Button-->
+
+                                                                <!-- TITLE TEXT-->
+                                                                <ContentPresenter 
+                                                                      Content="{TemplateBinding HeaderContent}"                                                               
+                                                                      ContentTemplate="{TemplateBinding HeaderContentTemplate}" 
+                                                                      ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}"
+                                                                      HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                                      ContentTemplateSelector="{TemplateBinding HeaderContentTemplateSelector}"                                                          
+                                                                      SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"   
+                                                                      IsHitTestVisible="False">
+                                                                    <ContentPresenter.Resources>
+                                                                        <Style TargetType="{x:Type Control}" >
+                                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                                            <Setter Property="Padding" Value="0,5,0,0" />
+                                                                            <Setter Property="Margin" Value="0" />
+                                                                        </Style>
+                                                                    </ContentPresenter.Resources>
+                                                                </ContentPresenter>
+
+                                                            </DockPanel>
+                                                            <!-- end title bar-->
+
+                                                            <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" IsHitTestVisible="False"/>
+                                                        </Grid>
+                                                    </DockPanel>
+
+
+                                                    <!-- Window Content -->
+                                                    <ContentPresenter 
+                                                            Grid.Row="1"
+                                                            Content="{TemplateBinding ContentControl.Content}"
+                                                            ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" 
+                                                            ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" 
+                                                            HorizontalAlignment="Stretch" 
+                                                            VerticalAlignment="Stretch"
+                                                            SnapsToDevicePixels="True"
+                                                            Margin="5"/>
+                                                </Grid>
+                                            </DockPanel>
+
+                                        </Border>
+                                    </Border>
+                                    <!-- little bit of spacing after titlebar-->
+
+                                    <!-- Draggable Window Size thumbs-->
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness.Left}"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), 
+                                        RelativeSource={RelativeSource TemplatedParent}, 
+                                        Converter={StaticResource EqualityToBooleanConverter}, 
+                                        ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="Left"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Stretch"
+                                   Cursor="SizeWE"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Height="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="Top"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Top"
+                                   Cursor="SizeNS"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Width="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="Right"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Stretch"
+                                   Cursor="SizeWE"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Height="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="Bottom"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Bottom"
+                                   Cursor="SizeNS"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Width="5"
+                                   Height="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="TopLeft"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Cursor="SizeNWSE"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Width="5"
+                                   Height="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="TopRight"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Cursor="SizeNESW"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Width="5"
+                                   Height="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="BottomRight"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   Cursor="SizeNWSE"
+                                   />
+                                    <Thumb Style="{StaticResource MahAppsInvisibleThumbStyle}"
+                                   Width="5"
+                                   Height="5"
+                                   IsEnabled="{Binding Path=(dockablz:Layout.FloatingItemState), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualityToBooleanConverter}, ConverterParameter={x:Static WindowState.Normal}}"
+                                   dragablz:DragablzItem.SizeGrip="BottomLeft"                                   
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Bottom"
+                                   Cursor="SizeNESW"
+                                   />
+
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+                <Style.Triggers>
+                    <Trigger Property="dockablz:Layout.FloatingItemState" Value="Maximized">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Canvas.Left" Value="0" />
+                        <Setter Property="Canvas.Top" Value="0" />
+                        <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dockablz:Layout}}, Path=ActualWidth}" />
+                        <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type dockablz:Layout}}, Path=ActualHeight}" />
+                    </Trigger>
+
+                </Style.Triggers>
+            </Style>
+            <!--End dockable style -->
+
+
+            <!--End dockable style -->
+
+            <!--
+            <Style x:Key="TrapezoidDragableTabItemStyle"  TargetType="{x:Type local:DragablzItem}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="Background" Value="{StaticResource TabItem.Static.Background}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource TabItem.Static.Border}"/>
+                <Setter Property="Margin" Value="0 0 0 0"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type local:DragablzItem}">
+                            <Grid x:Name="templateRoot" SnapsToDevicePixels="true" Margin="0 1 0 -1">
+                                <local:Trapezoid x:Name="Trapezoid" 
+                                         BorderBrush="{TemplateBinding BorderBrush}" 
+                                         Background="{TemplateBinding Background}"                                          
+                                         PenThickness="2"
+                                         Margin="0 0 0 0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                                                  Margin="{TemplateBinding Control.Padding}"
+                                                  x:Name="contentPresenter" />
+                                        <Thumb Grid.Column="0" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" 
+                                       x:Name="PART_Thumb"
+                                       Style="{StaticResource InvisibleThumbStyle}" />
+                                        <Button Grid.Column="1"
+                                        Style="{StaticResource CloseItemCommandButtonStyle}"                                        
+                                        Command="{x:Static local:TabablzControl.CloseItemCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}">
+                                            <Button.Visibility>
+                                                <MultiBinding Converter="{StaticResource ShowDefaultCloseButtonConverter}">
+                                                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:TabablzControl}}" Path="ShowDefaultCloseButton" />
+                                                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:TabablzControl}}" Path="FixedHeaderCount" />
+                                                    <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="LogicalIndex" />
+                                                </MultiBinding>
+                                            </Button.Visibility>
+                                        </Button>
+                                    </Grid>
+                                </local:Trapezoid>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="local:TabablzControl.IsWrappingTabItem" Value="True">
+                                    <Setter TargetName="contentPresenter" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.Header}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource TabItem.Selected.Background}" TargetName="Trapezoid"/>
+                                    <Setter Property="LongBasePenBrush" Value="{StaticResource TabItem.Selected.Background}" TargetName="Trapezoid"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
+
+
+-->
+
+
+
+
+
+
+
+
+
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
+

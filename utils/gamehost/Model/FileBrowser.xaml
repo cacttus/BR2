@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="GameHost.FileBrowser"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GameHost"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+             mc:Ignorable="d" Height="24.787">
+    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LastChildFill="True">
+        <DockPanel  Margin="0,2,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LastChildFill="True" >
+            <Button x:Name="btnSelect" 
+                    Click="btnSelect_Click" Margin="2,2,2,2" 
+                     HorizontalAlignment="Right"  VerticalAlignment="Top" >
+                <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" LastChildFill="True">
+                    <iconPacks:PackIconMaterialLight Kind="Folder" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center" Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                </DockPanel>
+
+            </Button>
+            <TextBox x:Name="_txtPath"
+                    TextAlignment="Left"
+                    PreviewTextInput="_txtPath_PreviewTextInput" HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" Height="23" TextChanged="_txtPath_TextChanged" KeyUp="_txtPath_KeyUp"/>
+
+
+
+
+        </DockPanel>
+
+    </DockPanel>
+</UserControl>

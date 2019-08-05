@@ -11,18 +11,16 @@ namespace Proteus
 
         public const string DefaultLogDirectory = ".\\logs";
 
-        public static Logger Logger;
-
         public static void InitializeGlobals(string LogFileName, string LogFileDir = Globals.DefaultLogDirectory)
         {
-            Logger = new Logger(LogFileName,LogFileDir);
+            Logger.InitLogger(LogFileName,LogFileDir);
 
             NetworkSettings.Init();
         }
 
         public static void Throw(string str)
         {
-            Globals.Logger.LogError(str, true);
+            Logger.LogError(str, true);
         }
         public static void ThrowIf(bool condition, string str)
         {

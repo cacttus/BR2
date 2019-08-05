@@ -1,0 +1,30 @@
+﻿<Controls:MetroContentControl x:Class="GameHost.About"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:GameHost"
+                              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                              mc:Ignorable="d"
+         Height="356.276" Width="500.976">
+
+    <StackPanel Orientation="Vertical" Margin="0,0,0,-3">
+        <TextBox Margin="10,4,7,0"   Text="GameHost ™"/>
+        <TextBox Margin="10,4,7,0"   Text="Created By: Derek and Ronelle Page"/>
+        <TextBox Margin="10,4,10,0"   Text="© 2018 Armor Monkey Games"/>
+        <TextBox Margin="10,10,10,0" HorizontalAlignment="Center"  Text="MIT License "/>
+        <TextBox Margin="10,10,10,0"   Text="THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." 
+                 Height="118" FontSize="12px" TextWrapping="Wrap" 
+                 HorizontalAlignment="Stretch"/>
+        
+        
+        <Button Background="White" Margin="81,30,86,10" Width="94"  x:Name="btnOK" Click="btnOK_Click" >
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="Check" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Controls:MetroContentControl>

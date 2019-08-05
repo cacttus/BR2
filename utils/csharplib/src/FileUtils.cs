@@ -280,7 +280,7 @@ namespace Proteus
                             
                         }
                         else
-                            Globals.Logger.LogWarn("Could not delete remote file. path=" + remotePath + ", not found.");
+                            Logger.LogWarn("Could not delete remote file. path=" + remotePath + ", not found.");
                     }
 
                     System.IO.File.Copy(localPath, remotePath);

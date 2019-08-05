@@ -50,11 +50,11 @@ namespace Proteus
                     ((EnvDTE.TextSelection)dte2.ActiveDocument.Selection).GotoLine(fileLine, true);
                 }
                 else
-                    Globals.Logger.LogError("Could not get DTE for the given solution.");
+                    Logger.LogError("Could not get DTE for the given solution.");
             }
             catch (Exception e)
             {
-                Globals.Logger.LogError("Exception getting DTE:\n " + e.ToString());
+                Logger.LogError("Exception getting DTE:\n " + e.ToString());
 
             }
         }
@@ -71,11 +71,11 @@ namespace Proteus
                     dte2.ExecuteCommand(strCommand);
                 }
                 else
-                    Globals.Logger.LogError("Could not get DTE for the given solution.");
+                    Logger.LogError("Could not get DTE for the given solution.");
             }
             catch (Exception e)
             {
-                Globals.Logger.LogError("Exception getting DTE:\n " + e.ToString());
+                Logger.LogError("Exception getting DTE:\n " + e.ToString());
             }
         }
 

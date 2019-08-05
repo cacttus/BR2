@@ -105,13 +105,13 @@ namespace Proteus
             // The packet had no footer.
             if ((strPacket.Length - PacketCrcSizeBytes) < 0)
             {
-                Globals.Logger.LogError("RCV INvalid - Packet had no footer:" + strPacket);
+                Logger.LogError("RCV INvalid - Packet had no footer:" + strPacket);
                 return false;
             }
 
             if (!NetworkUtils.UnpackAndCheckCrc32(ref strPacket))
             {
-                Globals.Logger.LogError("Packet CRC32 Failed: " + strPacket);
+                Logger.LogError("Packet CRC32 Failed: " + strPacket);
                 return false;
             }
 

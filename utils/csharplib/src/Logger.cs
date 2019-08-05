@@ -5,19 +5,25 @@ using System.Text;
 
 namespace Proteus
 {
-    public class Logger
+    public static class Logger
     {
+        #region Members
+        public static String LogFilePath { get; private set; }
+        public static string LogDir { get; private set; }//20151017 changed tehse to private.
+
+        private static bool _bInitialized = false;
         private const int NumDaysToKeepOldLogs = 4;
         private static Object _objLoggerLockObject = new Object();
+        #endregion
 
-        public String LogFilePath { get; private set; }
-        public string LogDir { get; private set; }//20151017 changed tehse to private.
-
-        public Logger(string logFileName, string LogDirectory, bool moveOldLogs = true, bool cleanOldLogs = true)
+        #region Constructor
+        public static void InitLogger(string logFileName, string LogDirectory, bool moveOldLogs = true, bool cleanOldLogs = true)
         {
             //path must be rooted or else we end up logging all over the place.
             if (System.IO.Path.IsPathRooted(LogDirectory) == false)
+            {
                 LogDirectory = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), LogDirectory);
+            }
             LogDir = LogDirectory;
             LogFilePath = System.IO.Path.Combine(LogDirectory, logFileName);
 
@@ -30,7 +36,7 @@ namespace Proteus
 
             if (!System.IO.File.Exists(LogFilePath))
             {
-                using(System.IO.FileStream fs = System.IO.File.Create(LogFilePath) )
+                using (System.IO.FileStream fs = System.IO.File.Create(LogFilePath))
                 {
                     fs.Close();
                     fs.Dispose();
@@ -38,12 +44,17 @@ namespace Proteus
             }
             LogInfo(output);
             LogInfo("Logfile Created at " + LogFilePath);
+
+            _bInitialized = true;
         }
+        #endregion
 
         #region Public: Methods
-       
-        public void LogInfo(string text)
+
+        public static void LogInfo(string text)
         {
+            CheckInitialized();
+
             lock (_objLoggerLockObject)
             {
                 SyncWriteFile(GetHeader() + " " + text + "\r\n");
@@ -53,8 +64,9 @@ namespace Proteus
                 System.Console.ForegroundColor = ConsoleColor.White;
             }
         }
-        public void LogWarn(string text)
+        public static void LogWarn(string text)
         {
+            CheckInitialized();
             lock (_objLoggerLockObject)
             {
                 SyncWriteFile(GetHeader() + " " + text + "\r\n");
@@ -64,8 +76,9 @@ namespace Proteus
                 System.Console.ForegroundColor = ConsoleColor.White;
             }
         }
-        public void LogError(string text, bool bThrow = false, bool bWriteToEventLog = false)
+        public static void LogError(string text, bool bThrow = false, bool bWriteToEventLog = false)
         {
+            CheckInitialized();
             lock (_objLoggerLockObject)
             {
                 SyncWriteFile(GetHeader() + " " + text + "\r\n");
@@ -89,11 +102,18 @@ namespace Proteus
 
         #region Private: Methods
 
-        private string GetHeader()
+        private static void CheckInitialized()
+        {
+            if (_bInitialized == false)
+            {
+                throw new Exception("Logger was not initialized.");
+            }
+        }
+        private static string GetHeader()
         {
             return BuildUtils.DateTimeString(DateTime.Now, true);
         }
-        private void SyncWriteFile(string text)
+        private static void SyncWriteFile(string text)
         {
             int tA = System.Environment.TickCount;
             while (true)

@@ -1,0 +1,220 @@
+﻿<Controls:MetroWindow x:Class="GameHost.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        Title="Engine Game Host"
+        xmlns:local="clr-namespace:GameHost"
+        Height="532.356" Width="800" 
+        ContentRendered="MetroWindow_ContentRendered" AllowDrop="True">
+
+    <!-- Window Title-->
+    <Controls:MetroWindow.TitleTemplate>
+        <DataTemplate>
+            <DockPanel Background="{StaticResource IW_TitlebarBrush}">
+                <TextBlock Text="{TemplateBinding Content}"
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center"
+                   Margin="8 4 8 4"
+                   FontWeight="Normal"
+                   FontSize="20"
+                   Foreground="{StaticResource IW_TitlebarForegroundBrush}"
+                   Background="{StaticResource IW_TitlebarBrush}"
+                   FontFamily="Roboto"  />
+                <Button Name="_btnOpenInExplorer" Click="_btnOpenInExplorer_Click" Width="30" HorizontalAlignment="Left" 
+                        Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="Folder" 
+                                            VerticalAlignment="Stretch" 
+                                            HorizontalAlignment="Center" 
+                                            Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+            </DockPanel>
+        </DataTemplate>
+    </Controls:MetroWindow.TitleTemplate>
+
+    <Controls:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Image Margin="4,4,4,4" Stretch="Uniform" Source="pack://application:,,/Resources/icon.png" />
+        </DataTemplate>
+    </Controls:MetroWindow.IconTemplate>
+
+    <Grid Name="_objMainGrid">
+        <Grid Name="_objContentGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="24"/>
+            </Grid.RowDefinitions>
+
+            <!-- Menu -->
+            <Menu Grid.Row="0" Padding="0" Margin="0"  
+                  Style="{StaticResource IW_TitleBarStyle}">
+                <MenuItem Header="_File" >
+                    <MenuItem Header="New" Name="mnuNew" Click="mnuNew_Click" />
+                    <MenuItem Header="Open" Name="mnuOpen" Click="_mnuOpen_Click" />
+                    <MenuItem Header="Open In Explorer"  Name="_mnuOpenInExplorer" Click="_mnuOpenInExplorer_Click" />
+
+                    <Separator />
+                    <MenuItem Header="Save" Name="_mnuSave" Click="Save" />
+                    <MenuItem Header="Save As" Name="_mnuSaveAs" Click="SaveAs" />
+                    <MenuItem Header="Recent Files" Name="_mnuRecentFiles"  />
+                    <MenuItem Header="Close Projet" Name="_mnuCloseProject" Click="CloseCurrentProject"  />
+                    <Separator />
+                    <MenuItem Header="Exit" Name="_mnuExit" Click="_mnuExit_Click"/>
+                </MenuItem>
+                <MenuItem Header="Edit" Name="_mnuEdit">
+                    <MenuItem Header="Undo" Name="_mnuUndo" Click="_mnuUndo_Click" IsEnabled="False"  />
+                    <MenuItem Header="Redo" Name="_mnuRedo" Click="_mnuRedo_Click" IsEnabled="False" />
+                    <MenuItem Header="Preferences" Name="_mnuPrefs" Click="Prefs_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Window" Name="_mnuWindow" >
+                    <MenuItem Header="Maps" Name="_mnuMaps" Click="_mnuMaps_Click" />
+                    <MenuItem Header="Images" Name="_mnuImages" Click="_mnuImages_Click"/>
+                    <MenuItem Header="Sprites" Name="_mnuSprites" Click="_mnuSprites_Click" />
+                    <MenuItem Header="Tile Editor" Name="_mnuTileEditor" Click="_mnuTileEditor_Click"   />
+                    <MenuItem Header="Folder Browser" Name="_mnuFolderBrowser" Click="_mnuFolderBrowser_Click" />
+                    <MenuItem Header="Toolbar" Name="_mnuShowToolbar" Click="_mnuShowToolbar_Click" />
+                </MenuItem>
+                <MenuItem Header="_Help"  >
+                    <MenuItem Header="About" Name="_mnuAbout" Click="_mnuAbout_Click" />
+                    <MenuItem Header="TestMessageBox" Click="MenuItem_Click" />
+                    <MenuItem Header="mnuTestProgressWindow" Click="MenuItem_Click_2"  />
+                </MenuItem>
+            </Menu>
+
+            <!--Separator-->
+            <DockPanel Grid.Row="1" Background="{DynamicResource IW_ToolbarHorizontalSeparatorBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="1"/>
+            <!--Separator-->
+
+            <DockPanel Grid.Row="2"  Margin="0" >
+                <Button Name="_btnNew" Click="_btnNew_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="FilePlus" 
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+                <Button Name="_btnOpen" Click="_btnOpen_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="Folder" 
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+                <Button Name="_btnSave" Click="_btnSave_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="ContentSave" 
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Height="16"
+                                                Width="16"
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"
+                                                Margin="0"
+                                                Padding="0"/>
+                    </Grid>
+                </Button>
+                <Button Name="_btnSaveAll" Click="_btnSaveAll_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="ContentSaveAll" 
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+                <!-- Spacer -->
+                <DockPanel Width="10" VerticalAlignment="Stretch" Background="{DynamicResource IW_TransparentBrush}"/>
+                <!-- Spacer -->
+                <Button Name="_btnUndo" Click="_btnUndo_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="UndoVariant" 
+                                                  RenderOptions.EdgeMode="Unspecified"
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+                <Button Name="_btnRedo" Click="_btnRedo_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconMaterialLight Kind="RedoVariant" 
+                                                  RenderOptions.EdgeMode="Unspecified"
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+                <!-- Spacer -->
+                <DockPanel Width="10" VerticalAlignment="Stretch" Background="{DynamicResource IW_TransparentBrush}"/>
+                <!-- Spacer -->
+
+                <Button Name="_btnPreferences" Click="_btnPreferences_Click" Width="30" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}">
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <iconPacks:PackIconOcticons Kind="Tools" 
+                                                  RenderOptions.EdgeMode="Unspecified"
+                                                VerticalAlignment="Stretch" 
+                                                HorizontalAlignment="Center" 
+                                                Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                    </Grid>
+                </Button>
+
+                <Button Name="_btnDump" HorizontalAlignment="Left" Style="{DynamicResource IW_ToolbarButtonFlatStyle}" >
+                    <!-- Text Button -->
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                        <Viewbox
+                          Margin="0"
+                          VerticalAlignment="Stretch"
+                          Height="Auto">
+                            <Label Content="Hey Dude" Margin="0" Padding="0" Background="{DynamicResource IW_TransparentBrush}"/>
+                        </Viewbox>
+                    </Grid>
+                </Button>
+            </DockPanel>
+
+            <!--Separator-->
+            <DockPanel Grid.Row="3" Background="{DynamicResource IW_ToolbarHorizontalSeparatorBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="1"/>
+            
+            <!--Separator-->
+            <local:ExpandoTabPane Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="_objExpandoPaneRoot">
+
+            </local:ExpandoTabPane>
+            
+            
+            <!--Main Content for Tool Windows -->
+            <dockablz:Layout 
+                Grid.Row ="4" 
+                DockPanel.Dock="Right" 
+                VerticalAlignment="Stretch" 
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch"
+                PreviewQueryContinueDrag="_obj_PreviewQueryContinueDrag"
+
+                FloatingItemHeaderMemberPath="Header" 
+                FloatingItemDisplayMemberPath="Content" 
+                FloatingItemsSource="{Binding Windows}"
+                FloatingItemContainerStyle="{DynamicResource MahAppsToolDragablzItemStyleCustom}"
+                Name="_objFloatLayout" >
+                <dockablz:Layout.FloatingItems>
+                </dockablz:Layout.FloatingItems>
+
+
+            </dockablz:Layout>
+
+            <!--Status Bar-->
+            <TextBox Grid.Row="5" Height="23" TextWrapping="Wrap" Text="Status" VerticalAlignment="Bottom" x:Name="_txtStatus"/>
+
+        </Grid>
+
+    </Grid>
+
+</Controls:MetroWindow>

@@ -62,7 +62,7 @@ namespace Proteus
             //Drop all agents and die.
             if (_eBuildStatus == BuildStatus.CompileErrorLimitReached)
             {
-                Globals.Logger.LogError("[Organizer] Compile error limit of " + BuildConfig.CompilerMaxErrorLimit + " reached. Aborting compilation");
+                Logger.LogError("[Organizer] Compile error limit of " + BuildConfig.CompilerMaxErrorLimit + " reached. Aborting compilation");
             }
         }
         public void StopBuild()
@@ -106,7 +106,7 @@ namespace Proteus
                 {
                     if (_objStepTree.GetNodeCount() == 0)
                     {
-                        Globals.Logger.LogInfo("[Organizer] Build complete.");
+                        Logger.LogInfo("[Organizer] Build complete.");
                         _eBuildStatus = BuildStatus.Complete;
                     }
                 }
@@ -166,9 +166,9 @@ namespace Proteus
         }
         public void LoadFilesAndCreateHierarchy()
         {
-            Globals.Logger.LogInfo("[Organizer] Loading " + _strMakeFilePath);
+            Logger.LogInfo("[Organizer] Loading " + _strMakeFilePath);
             string[] makeLines = System.IO.File.ReadAllLines(_strMakeFilePath);
-            Globals.Logger.LogInfo("[Organizer] Loading " + _strDepFilePath);
+            Logger.LogInfo("[Organizer] Loading " + _strDepFilePath);
             string[] depLines = System.IO.File.ReadAllLines(_strDepFilePath);
 
             if (makeLines.Length != depLines.Length)
@@ -176,7 +176,7 @@ namespace Proteus
                                + "  Check your code to ensure the number of lines "
                                + " in each file is the same and each command corresponds to the same command in each file.");
 
-            Globals.Logger.LogInfo("[Organizer] Parsing");
+            Logger.LogInfo("[Organizer] Parsing");
 
             for (int n = 0; n < depLines.Length; n++)
             {
@@ -185,7 +185,7 @@ namespace Proteus
                 _objStepNumberToBuildStep.Add(bs.StepNumber, bs);
             }
 
-            Globals.Logger.LogInfo("[Organizer] Building build tree..");
+            Logger.LogInfo("[Organizer] Building build tree..");
             MakeBuildStepTree();
         }
         private BuildStep GetStepById(int id)

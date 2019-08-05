@@ -123,23 +123,23 @@ namespace Proteus
         {
             if (BuildConfigInitialized==true)
             {
-                Globals.Logger.LogInfo("BuildConfig was already initialized..returning.");
+                Logger.LogInfo("BuildConfig was already initialized..returning.");
                 return;
             }
 
             if (string.IsNullOrEmpty(BuildConfigFilePath))
-                Globals.Logger.LogError("Failed to load config.  the /o switch is required which tells the build where to find your project config file. Ex. /o\".\\dir\\build.cfg\".  To use a coordinator configuration specify a UNC path with \\CoordinatorMachineName\\c$\\.. ", true);
+                Logger.LogError("Failed to load config.  the /o switch is required which tells the build where to find your project config file. Ex. /o\".\\dir\\build.cfg\".  To use a coordinator configuration specify a UNC path with \\CoordinatorMachineName\\c$\\.. ", true);
 
             string cfgPath = System.IO.Path.Combine(BuildConfigFilePath, BuildConfigFileName);
 
             if (!System.IO.File.Exists(cfgPath))
             {
-                Globals.Logger.LogWarn("First file exist failed");
+                Logger.LogWarn("First file exist failed");
                 System.IO.FileInfo fi = new System.IO.FileInfo(cfgPath);
                 fi.Refresh();
                 if (!fi.Exists)
                 {
-                    Globals.Logger.LogError("IsAdmin = " 
+                    Logger.LogError("IsAdmin = " 
                         + IsAdministrator().ToString() 
                         + "Could not find build config file '"
                         + BuildConfigFileName
@@ -165,7 +165,7 @@ namespace Proteus
                     throw new Exception("Branch root directory '" + BranchRootDirectory + "' does not exist.  Please update branch root in 'build.cfg' in the build files folder. Note: The root must NOT be a UNC path if UNC is enabled in the build.cfg. ");
           //  }
           //  else
-         //       Globals.Logger.LogWarn("*Warning:UNC paths were not specified. Distributed build will fail. Set UseUncRootPath=\"true\" in build.cfg to use UNC paths.");
+         //       Logger.LogWarn("*Warning:UNC paths were not specified. Distributed build will fail. Set UseUncRootPath=\"true\" in build.cfg to use UNC paths.");
 
             BuildConfigInitialized = true;
         }
@@ -178,7 +178,7 @@ namespace Proteus
             string[] values = BuildUtils.SplitValues(line,'=');;
             if(values.Length!=2)
             {
-                Globals.Logger.LogWarn("Invalid value '" + line + "' encountered in config file. Ignoring.");
+                Logger.LogWarn("Invalid value '" + line + "' encountered in config file. Ignoring.");
                 return;
             }
 
@@ -205,7 +205,7 @@ namespace Proteus
                 case "processorquerytimeout": ProcessorQueryTimeout = System.Convert.ToInt32(value); break;
                 case "usedependencycache": UseDependencyCache = (value.ToLower()=="yes") || (System.Convert.ToBoolean(value)==true); break;
                 default:
-                    Globals.Logger.LogWarn("Invalid value '" + line + "' encountered in config file. Ignoring.");
+                    Logger.LogWarn("Invalid value '" + line + "' encountered in config file. Ignoring.");
                     break;
             }
         }
@@ -279,7 +279,7 @@ namespace Proteus
                     CompilerMaxErrorLimit = Convert.ToInt32(temp);
                     if (CompilerMaxErrorLimit <= 0)
                     {
-                        Globals.Logger.LogWarn("[BuildConfig] invalid error limit found:" + temp + ", setting to default of 1.");
+                        Logger.LogWarn("[BuildConfig] invalid error limit found:" + temp + ", setting to default of 1.");
                         CompilerMaxErrorLimit = 1;
                     }
                 }
@@ -288,7 +288,7 @@ namespace Proteus
                     BuildProcessesAreAttachedToUI = Convert.ToBoolean(temp);
                 }
                 else 
-                    Globals.Logger.LogWarn("[BuildConfig] Possible unrecognized switch " + arg + " not recognized.");
+                    Logger.LogWarn("[BuildConfig] Possible unrecognized switch " + arg + " not recognized.");
 
             }
 

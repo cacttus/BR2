@@ -1,0 +1,63 @@
+﻿<local:ToolWindowBase x:Class="GameHost.PreferencesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:GameHost"
+                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:xs="clr-namespace:Xceed.Wpf.Toolkit.Core;assembly=Xceed.Wpf.Toolkit"
+        xmlns:xs2="clr-namespace:Xceed.Wpf.AvalonDock.Themes.Controls;assembly=Xceed.Wpf.AvalonDock.Themes.Aero"
+        mc:Ignorable="d"
+        
+        Title="PreferencesWindow" Height="470.435" Width="298.57">
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Margin="0" >
+            <GroupBox Header="Recent Files" Padding="10,10,10,10" >
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top">
+
+                    <Button x:Name="_btnClearRecentFiles"  Margin="10" Content="Clear Recent Files" 
+                            HorizontalAlignment="Left"  VerticalAlignment="Top" Width="136" Height="29" Click="_btnClearRecentFiles_Click"/>
+
+                    <CheckBox x:Name="_chkLoadLastFile" Content="Load Last File When Open" HorizontalAlignment="Left"  VerticalAlignment="Top" Checked="_chkLoadLastFile_Checked"/>
+                    <Label x:Name="_lblAutoLoadFilePath" Content="(none)" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+                    <Label x:Name="_lblAutoLoadFilePath_Copy" Content="Last File:" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Backups" Padding="10,10,10,10" >
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                    <CheckBox x:Name="_chkAutoSaveBackups" 
+                  Content="Auto Save Backups" HorizontalAlignment="Left" 
+                   VerticalAlignment="Top" Checked="_chkAutoSaveBackups_Checked" 
+                          Unchecked="_chkAutoSaveBackups_Checked"/>
+                    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,6,10,6">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Label x:Name="_lblBackupCount" Content="# Files To Keep"/>
+                            <Controls:NumericUpDown x:Name="_nudBackupCount" ValueChanged="_nudBackupCount_ValueChange"
+                                                    Maximum="9999" Value="25" Minimum="1" Width="133"/>
+                        </StackPanel>
+                        <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Label x:Name="_lblBackupPath" Content="Backup Path:" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Label>
+                            <local:FileBrowser x:Name="_objFilePicker" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Label x:Name="_lblbackupminutes1" Content="Backup Every"/>
+                            <Controls:NumericUpDown x:Name="_nudBackupTimeMinutes"
+                                 Maximum="9999" Value="15" Minimum="1" 
+                                 ValueChanged="_nudBackupCount_ValueChange" Width="89"/>
+                            <Label x:Name="_lblbackupminutes2" Content="Minutes"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <CheckBox Content="Backup On Save" IsChecked="true"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <local:ToolWindowButtons ShowCancelNo="False"/>
+
+
+
+        </StackPanel>
+    </ScrollViewer>
+</local:ToolWindowBase>

@@ -1,0 +1,85 @@
+﻿<local:ToolWindowBase x:Class="GameHost.CollectionEditor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:GameHost"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        VerticalAlignment="Stretch" 
+        HorizontalAlignment="Stretch"
+        Title="Resources" MinHeight="59" MinWidth="184" Padding="0" Margin="0" Width="131">
+    <Grid Margin="0,0,24,0" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" Margin="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Row="0" Grid.Column="0" x:Name="_txtFilter" HorizontalAlignment="Stretch" 
+                 TextWrapping="Wrap" Text="Filter" Margin="0" Foreground="Gray"
+                 FontStyle="Italic" VerticalAlignment="Top" GotKeyboardFocus="TextBox_GotKeyboardFocus" 
+                     TextChanged="_txtFilter_TextChanged" LostFocus="_txtFilter_LostFocus" />
+            <Button Grid.Row="0" Grid.Column="1" Content="X" FontWeight="ExtraBold" Background="#FFF7F7F7" x:Name="_btnClearFilter"  Click="_btnClearFilter_Click"/>
+        </Grid>
+        
+        <Border Grid.Row="1"   BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ScrollViewer >
+                <ScrollViewer.Resources>
+                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">10</sys:Double>
+                </ScrollViewer.Resources>
+                <WrapPanel Orientation="Horizontal"  >
+                    <ItemsControl Name="ItemsControl" ItemsSource="{Binding}" >
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="2" BorderBrush="LightGray" Margin="3,3,3,3"  Width="90"  Tag="{Binding }">
+                                    <Grid PreviewMouseLeftButtonDown="Grid_PreviewMouseLeftButtonDown">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="20" />
+                                        </Grid.RowDefinitions>
+                                        <Image Grid.Row="0" Source="{Binding BitmapImage}" />
+                                        <TextBlock Grid.Row="1" Text="{Binding Name}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </WrapPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!--Controls at bottom-->
+        <StackPanel Grid.Row="2"   Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Name="_objAddEditControlsPanel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Row="0" Grid.Column="0" Width="30" Background="White" x:Name="btnAdd"  Margin="4,0,4,0" HorizontalAlignment="Left" Click="btnAdd_Click" >
+                    <iconPacks:PackIconMaterial Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                </Button>
+                <Button Grid.Row="0" Grid.Column="1" Width="30" Background="White"  x:Name="btnEdit"  Margin="4,0,4,0" HorizontalAlignment="Left" Click="btnEdit_Click">
+                    <iconPacks:PackIconMaterial Kind="Pencil" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                </Button>
+                <Button Grid.Row="0" Grid.Column="2" Width="30" Background="White"  x:Name="btnRemove"  Margin="4,0,4,0" HorizontalAlignment="Left" Click="btnRemove_Click">
+                    <iconPacks:PackIconMaterial Kind="Minus" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                </Button>
+                <Button Grid.Row="0" Grid.Column="3" Width="30" Background="White"  x:Name="_btnRefresh"  Margin="4,0,4,0" HorizontalAlignment="Right" Click="_btnRefresh_Click" >
+                    <iconPacks:PackIconMaterial Kind="Refresh" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource IW_ToolbarButtonIconColor}"/>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</local:ToolWindowBase>

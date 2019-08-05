@@ -14,7 +14,7 @@ namespace Proteus
         }
         public void LoadBuildTargets()
         {
-            Globals.Logger.LogInfo("Loading projects..");
+            Logger.LogInfo("Loading projects..");
             string path = System.IO.Path.Combine(BuildConfig.BuildConfigFilePath, BuildConfig.ProjectsFileName);
             if (!System.IO.File.Exists(path))
                 throw new Exception("Failed to load projects file from path '" + path + "'.");
