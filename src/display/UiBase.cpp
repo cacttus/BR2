@@ -129,7 +129,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
     //    return DimUnit::e::Initial;
     //}
     else {
-        Gui2d::error(TStr("Invalid layout unit ", str));
+        Gui2d::error( Stz "Invalid layout unit " + str);
         bSuccess = false;
         return UiDimUnit::e::Pixel;
     }
@@ -191,7 +191,7 @@ void uDim::setSize(std::string str) {
     float fs;
     if (UiParser::parseSize(str, fs, eunit)) {
         if (eunit == UiDimUnit::e::Percent && ((fs < 0) || (fs > 100))) {
-            Gui2d::error(TStr("Dim %units were not within 0/100", fs));
+            Gui2d::error( Stz "Dim %units were not within 0/100" + fs);
         }
         _units = fs;
         _eDimUnit = eunit;

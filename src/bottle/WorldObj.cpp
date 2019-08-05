@@ -107,7 +107,7 @@ vec3 WorldObj::parseBoxFit(std::string strBox) {
         for (int i = 0; i < 3; ++i) {
             s[i] = StringUtil::trim(s[i]);
         }
-        if (!StringUtil::equalsi(s[0], TStr("x"))) {
+        if (!StringUtil::equalsi(s[0], "x")) {
             if (TypeConv::strToFloat(s[0], tmp)) {
                 vBoxFit.x = tmp;
             }
@@ -115,7 +115,7 @@ vec3 WorldObj::parseBoxFit(std::string strBox) {
                 err = true;
             }
         }
-        if (!StringUtil::equalsi(s[1], TStr("x"))) {
+        if (!StringUtil::equalsi(s[1], "x")) {
             if (TypeConv::strToFloat(s[2], tmp)) {
                 vBoxFit.y = tmp;
             }
@@ -123,7 +123,7 @@ vec3 WorldObj::parseBoxFit(std::string strBox) {
                 err = true;
             }
         }
-        if (!StringUtil::equalsi(s[2], TStr("x"))) {
+        if (!StringUtil::equalsi(s[2], "x")) {
             if (TypeConv::strToFloat(s[2], tmp)) {
                 vBoxFit.z = tmp;
             }
@@ -134,7 +134,7 @@ vec3 WorldObj::parseBoxFit(std::string strBox) {
     }
 
     if (err) {
-        BroLogError("Failed to parse boxfit", strBox);
+        BroLogError("Failed to parse boxfit" + strBox);
         Gu::debugBreak();
     }
     return vBoxFit;

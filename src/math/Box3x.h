@@ -853,8 +853,9 @@ FORCE_INLINE void Box3x<Tx>::closestPoint(const Vec3x<Tx>& point, Vec3f& __out_ 
 
         closestPt = avg.distance2(point);
     }
-    else
-        BroThrowException("There were more than 4 points in the cube distance equation.  This is impossible.  Feel free to slap me.");
+    else {
+       // BroThrowException("There were more than 4 points in the cube distance equation.");
+    }
 }
 /**
 *    @fn

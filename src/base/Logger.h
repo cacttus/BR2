@@ -94,27 +94,24 @@ public:
 
 }//ns game
  // - Log Macros
-#define BroLogDebug(...) \
-Game::Gu::getLogger()->logDebug( \
-Game::TStr(__VA_ARGS__),__LINE__,__FILE__ )
-#define BroLogInfo(...) \
-Game::Gu::getLogger()->logInfo( \
-Game::TStr(__VA_ARGS__),__LINE__,__FILE__ )
-#define BroLogWarn(...) \
-Game::Gu::getLogger()->logWarn( \
-Game::TStr(__VA_ARGS__),__LINE__,__FILE__, NULL )
-#define BroLogError(...) \
-Game::Gu::getLogger()->logError( \
-Game::TStr(__VA_ARGS__),__LINE__,__FILE__, NULL )
-#define BroLogErrorEx(astr,aex) \
-Game::Gu::getLogger()->logError( \
-Game::TStr(astr),__LINE__,__FILE__, aex )
-#define BroLogWarnCycle(...)\
-Game::Gu::getLogger()->logWarnCycle(\
-Game::TStr(__VA_ARGS__), __LINE__, __FILE__, NULL, 60)
-#define BroLogErrorCycle(...)\
-Game::Gu::getLogger()->logErrorCycle(\
-Game::TStr(__VA_ARGS__), __LINE__, __FILE__, NULL, 60)
+#define BroLogDebug(x) Game::Gu::getLogger()->logDebug(Stz x,__LINE__,__FILE__ )
+#define BroLogInfo(x) Game::Gu::getLogger()->logInfo(Stz x,__LINE__,__FILE__ )
+#define BroLogWarn(x) Game::Gu::getLogger()->logWarn(Stz x,__LINE__,__FILE__, NULL )
+#define BroLogError(x) Game::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL )
+
+#define BroLogErrorOnce(x) \
+{ \
+static bool _logged = false; \
+if(_logged == false) { \
+_logged = true; \
+Game::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL ); \
+} \
+} 
+
+#define BroLogErrorEx(x, aex) \
+Game::Gu::getLogger()->logError(x,__LINE__,__FILE__, aex )
+#define BroLogWarnCycle(x) Game::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, NULL, 60)
+#define BroLogErrorCycle(x) Game::Gu::getLogger()->logErrorCycle(Stz x, __LINE__, __FILE__, NULL, 60)
 
 #define SetLoggerColor_Error() ConsoleColorRed()
 #define SetLoggerColor_Info() ConsoleColorGray()

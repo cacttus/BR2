@@ -34,16 +34,16 @@ void AppRunner::doShowError(t_string err, Exception* e)
     //    SyncDisable();
     if (e != nullptr)
     {
-        OperatingSystem::showErrorDialog(TStr(e->what()), err);
+        OperatingSystem::showErrorDialog(e->what() + err);
     }
     else
     {
-        OperatingSystem::showErrorDialog(TStr("No Error Message"), err);
+        OperatingSystem::showErrorDialog("No Error Message" + err);
     }
     // Runtime Error
 
     //Do not log a second time!
-    //BroLogError(err, e->what());
+    //BroLogError(err+ e->what());
 
     //Don't destroy engine in error msg.
     //destroyEngineAndExit();
@@ -57,7 +57,7 @@ void AppRunner::initSDL(char* windowTitle)
 
     //You have to call this in order to initialize the SDL pointer before anyhing
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) == -1) {
-        exitApp(TStr("SDL could not be initialized: ", SDL_GetError()) , -1);
+        exitApp(Stz "SDL could not be initialized: " + SDL_GetError() , -1);
     }
 
     checkVideoCard();
@@ -99,7 +99,7 @@ void AppRunner::initSDL(char* windowTitle)
             break;
         }
         else {
-            BroLogInfo("OpenGL config profile ", iProf, " didn't work. Trying next profile.");
+            BroLogInfo("OpenGL config profile " + iProf + " didn't work. Trying next profile.");
             SDL_DestroyWindow(_pWindow);
             _pWindow = nullptr;
         }
@@ -133,12 +133,12 @@ void AppRunner::attachToGameHost() {
 
 
     if (SDLNet_ResolveHost(&ip, NULL, GameHostPort) == -1) {
-        exitApp(TStr("SDLNet_ResolveHost: ", SDLNet_GetError()) , -1);
+        exitApp(std::string("") + "SDLNet_ResolveHost: "+ SDLNet_GetError() , -1);
     }
 
     _server_tcpsock = SDLNet_TCP_Open(&ip);
     if (!_server_tcpsock) {
-        exitApp(TStr("SDLNet_TCP_Open:", SDLNet_GetError()) , -1);
+        exitApp(std::string("") + "SDLNet_TCP_Open:" + SDLNet_GetError(), -1);
     }
     
     //Wait a few, then exit if we don't get a response.
@@ -149,7 +149,7 @@ void AppRunner::attachToGameHost() {
         int timeout = Gu::getEngineConfig()->getGameHostTimeoutMs();
 
         if (Gu::getMilliSeconds() - t0 > timeout) {
-            exitApp(TStr("Failed to connect to game host, timeout ", timeout, "ms exceeded.") , -1);
+            exitApp( Stz "Failed to connect to game host, timeout "+ timeout+ "ms exceeded." , -1);
             break;//Unreachable, but just in case.
         }
         
@@ -181,7 +181,7 @@ void AppRunner::checkVideoCard(){
 
     SDL_Init(SDL_INIT_VIDEO);
     int nDisplays = SDL_GetNumVideoDisplays();
-    BroLogInfo(nDisplays, " Displays:");
+    BroLogInfo(nDisplays + " Displays:");
 
 
     // Get current display mode of all displays.
@@ -191,12 +191,12 @@ void AppRunner::checkVideoCard(){
 
         if (should_be_zero != 0){
             // In case of error...
-            BroLogInfo("  Could not get display mode for video display #%d: %s", i);
+            BroLogInfo("  Could not get display mode for video display #%d: %s"+ i);
             OglErr::checkSDLErr();
         }
         else{
             // On success, print the current display mode.
-            BroLogInfo("  Display ", i, ": ", current.w, "x", current.h, ", ",current.refresh_rate,"hz");
+            BroLogInfo("  Display "+ i+ ": "+ current.w+ "x"+ current.h+ ", "+current.refresh_rate+"hz");
             OglErr::checkSDLErr();
 
         }
@@ -217,13 +217,19 @@ void AppRunner::makeWindow(char* windowTitle)
     x = 0, y = 0, w = 320, h = 480, flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
     sstitle = "";
 #elif BRO_OS_WINDOWS
+
+    int render_system = SDL_WINDOW_OPENGL;
+    if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::e::Vulkan) {
+        render_system = SDL_WINDOW_VULKAN;
+    }
+
     if (bFullscreen) {
         x = 0; y = 0;
         w = 1920; h = 1080;
-        flags = SDL_WINDOW_OPENGL;
+        flags = render_system;
     }
     else {
-        x = 100, y = 100, w = 800, h = 600, flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+        x = 100, y = 100, w = 800, h = 600, flags = SDL_WINDOW_SHOWN | render_system | SDL_WINDOW_RESIZABLE;
     }
     sstitle = windowTitle;
 #endif
@@ -300,7 +306,7 @@ void AppRunner::setWindowAndOpenGLFlags(GLProfile& prof){
 void AppRunner::initGLContext() {
     _context = SDL_GL_CreateContext(_pWindow);
     if (!_context) {
-        exitApp(TStr("SDL_GL_CreateContext() error", SDL_GetError()), 2);
+        exitApp( Stz "SDL_GL_CreateContext() error"+ SDL_GetError(), 2);
     }
 
 
@@ -336,7 +342,7 @@ void AppRunner::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
     if (glver.length() > 0) {
         sv = StringUtil::split(glver, '.');
         if (sv.size() < 2) {
-            BroThrowException("Failed to get OpenGL version. Got '", glver, "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
+            BroThrowException("Failed to get OpenGL version. Got '" + glver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
         }
         ver = TypeConv::strToInt(sv[0]);
         subver = TypeConv::strToInt(sv[1]);
@@ -347,7 +353,7 @@ void AppRunner::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
     if (glslver.length() > 0) {
         sv = StringUtil::split(glslver, '.');
         if (sv.size() < 2) {
-            BroThrowException("Failed to get OpenGL Shade version. Got '", glslver, "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
+            BroThrowException("Failed to get OpenGL Shade version. Got '" + glslver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
         }
         shad_ver = TypeConv::strToInt(sv[0]);
         shad_subver = TypeConv::strToInt(sv[1]);
@@ -358,7 +364,7 @@ void AppRunner::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
 }
 void AppRunner::checkForOpenGlMinimumVersion(int required_version, int required_subversion)
 {
-    t_string rver = TStr("", required_version, ".", required_subversion);
+    t_string rver = Stz ""+ required_version+ "."+ required_subversion;
 
     //GLint iMajor, iMinor;
     //glGetIntegerv(GL_MAJOR_VERSION, &iMajor);
@@ -371,22 +377,22 @@ void AppRunner::checkForOpenGlMinimumVersion(int required_version, int required_
     t_string renderer = t_string((char*)glGetString(GL_RENDERER));
 
     BroLogInfo("\n"
-        , "   OpenGL version ", ver, ".", subver, ".\n"
-        , "   GLSL version:          ", shad_ver, ".", shad_subver, "\n"
-        , "   Graphics unit:         ", renderer, "\n"
-        , "   Graphics unit Vendor:  ", vendor, "\n"
+        + "   OpenGL version " + ver + "." + subver + ".\n"
+        + "   GLSL version:          "+ shad_ver + "." + shad_subver + "\n"
+        + "   Graphics unit:         "+ renderer + "\n"
+        + "   Graphics unit Vendor:  "+ vendor + "\n"
     );
 
     if (ver < required_version || (ver >= required_subversion && subver < required_subversion)) {
-        BroThrowException("\n"
-            , "The game could not find the latest version of OpenGL Shading Language.\n\n"
-            , "Possible Problems could be:\n\n"
-            , "   1) The primary graphics card is incorrect,\n\n"
-            , "   2) The graphics driver is out of date,\n\n"
-            , "   3) Your Graphics card is old.\n\n"
-            , " This application requires OpenGL version ", rver, ".\n"
-            , " The system has detected OpenGL version ", ver, ".", subver, ".\n"
-            , " Update your graphics driver by going to www.nvidia.com, www.ati.com or www.intel.com.\n\n"
+        BroThrowException(Stz "\n"
+            + "The game could not find the latest version of OpenGL Shading Language.\n\n"
+            + "Possible Problems could be:\n\n"
+            + "   1) The primary graphics card is incorrect,\n\n"
+            + "   2) The graphics driver is out of date,\n\n"
+            + "   3) Your Graphics card is old.\n\n"
+            + " This application requires OpenGL version " + rver + ".\n"
+            + " The system has detected OpenGL version " + ver + "." + subver + ".\n"
+            + " Update your graphics driver by going to www.nvidia.com, www.ati.com or www.intel.com.\n\n"
 
         );
     }
@@ -408,7 +414,7 @@ SDL_bool AppRunner::initAudio() {
 void AppRunner::initNet() {
     BroLogInfo("Initializing SDL Net");
     if (SDLNet_Init() == -1) {
-        exitApp(TStr("SDL Net could not be initialized: ", SDL_GetError()) , -1);
+        exitApp(Stz "SDL Net could not be initialized: "+ SDL_GetError() , -1);
     }
 
 
@@ -418,34 +424,34 @@ void AppRunner::printHelpfulDebug() {
     int dw, dh;
     SDL_DisplayMode mode;
     SDL_GetCurrentDisplayMode(0, &mode);
-    BroLogInfo("Screen BPP    : ", SDL_BITSPERPIXEL(mode.format));
-    BroLogInfo("Swap Interval : ", SDL_GL_GetSwapInterval());
+    BroLogInfo("Screen BPP    : "+ SDL_BITSPERPIXEL(mode.format));
+    BroLogInfo("Swap Interval : " + SDL_GL_GetSwapInterval());
     SDL_GetWindowSize(_pWindow, &dw, &dh);
-    BroLogInfo("Initial Window Size   : ", dw, "x", dh);
+    BroLogInfo("Initial Window Size   : " + dw + "x" + dh);
     SDL_GL_GetDrawableSize(_pWindow, &dw, &dh);
-    BroLogInfo("Draw Size     : ", dw, "x", dh);
+    BroLogInfo("Draw Size     : " + dw + "x" + dh);
     
     int tmp=0;
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &tmp);
-    BroLogInfo("SDL_GL_DOUBLEBUFFER: ", tmp);
+    BroLogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &tmp);
-    BroLogInfo("SDL_GL_BUFFER_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_BUFFER_SIZE: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
 
-    BroLogInfo("SDL_GL_DEPTH_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_DEPTH_SIZE: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &tmp);
-    BroLogInfo("SDL_GL_STENCIL_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_STENCIL_SIZE: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &tmp);
-    BroLogInfo("SDL_GL_ACCELERATED_VISUAL: ", tmp);
+    BroLogInfo("SDL_GL_ACCELERATED_VISUAL: " + tmp);
 
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &tmp);
-    BroLogInfo("SDL_GL_RED_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_RED_SIZE: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &tmp);
-    BroLogInfo("SDL_GL_GREEN_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_GREEN_SIZE: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &tmp);
-    BroLogInfo("SDL_GL_BLUE_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_BLUE_SIZE: " + tmp);
     SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &tmp);
-    BroLogInfo("SDL_GL_ALPHA_SIZE: ", tmp);
+    BroLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
 
     OglErr::checkSDLErr();
 }
@@ -487,7 +493,7 @@ void AppRunner::runApp(std::vector<t_string>& args, char* windowTitle, std::shar
 }
 void SignalHandler(int signal)
 {
-    BroThrowException("VC Access Violation. signal=", signal, "  This shouldn't work in release build.");
+    BroThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
 }
 void AppRunner::runGameLoopTryCatch(std::shared_ptr<RoomBase> rb){
     typedef void(*SignalHandlerPointer)(int);
@@ -603,9 +609,9 @@ void AppRunner::runGameLoop(std::shared_ptr<RoomBase> rb)
 
     //Print the setup time.
     t_string str = "";
-    str = TStr(str, "\r\n======================================================\r\n");
-    str = TStr(str, "  **Total initialization time: ", MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2), " seconds\r\n");
-    str = TStr(str, "======================================================\r\n");
+    str = str+ "\r\n======================================================\r\n";
+    str = str+ "  **Total initialization time: "+ MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2)+ " seconds\r\n";
+    str = str+ "======================================================\r\n";
     BroLogInfo(str);
 
 
@@ -662,7 +668,7 @@ void AppRunner::runGameLoop(std::shared_ptr<RoomBase> rb)
 }
 void AppRunner::exitApp(t_string error, int rc)
 {
-    OperatingSystem::showErrorDialog(TStr(error, SDLNet_GetError()));
+    OperatingSystem::showErrorDialog(error+ SDLNet_GetError());
 
     Gu::debugBreak();
 

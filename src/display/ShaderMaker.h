@@ -59,7 +59,7 @@ protected:
    void deleteShader(std::shared_ptr<ShaderBase> prog);
 
    // void initialize();
-    void addGeneralError(t_string str) { str = TStr("error: ", str, "\r\n"); _vecGeneralErrors.push_back(str); }
+   void addGeneralError(t_string str);
     void parseAttributes(std::shared_ptr<ShaderBase> sb);
     void parseUniforms(std::shared_ptr<ShaderBase> sb);
     void removeDuplicateSourceFiles(std::vector<t_string>& vecFiles);

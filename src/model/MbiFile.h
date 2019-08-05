@@ -29,7 +29,7 @@ public:
 private:
     std::vector<std::shared_ptr<ModelSpec>> _vecModels;
     void parseErr(t_string str, bool bDebugBreak, bool bFatal);
-     std::shared_ptr<BufferedFile> _pFile = nullptr;
+     std::shared_ptr<BinaryFile> _pFile = nullptr;
     t_string _fileLoc;
     void postLoad();
 public:

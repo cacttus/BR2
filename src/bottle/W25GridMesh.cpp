@@ -80,7 +80,8 @@ void W25GridMesh::updateTopology() {
             sendMeshToGpu();
         }
 #ifdef _DEBUG
-        BroLogDebug(_pGrid->getGridPos().toString(), " -> Redo ", _setTopoMod.size(), (_setTopoMod.size() == 1 && (*_setTopoMod.begin()==nullptr)) ? " grids " : " cells: ", (Gu::getMicroSeconds() - tv) / 1000, "ms");
+        BroLogDebug(_pGrid->getGridPos().toString() + " -> Redo " + _setTopoMod.size() +
+           ( (_setTopoMod.size() == 1 && (*_setTopoMod.begin()==nullptr)) ? " grids " : " cells: " )+ (Gu::getMicroSeconds() - tv) / 1000 + "ms");
 #endif
         _setTopoMod.clear();
     }

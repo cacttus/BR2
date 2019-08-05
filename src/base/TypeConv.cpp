@@ -33,7 +33,7 @@ bool TypeConv::strToBool(t_string& s1, bool bThrowIfInvalid)
         return false;
 
     if(bThrowIfInvalid) {
-        BroThrowException("Invalid boolean cast, tried to cast ", s1, " to boolean."); 
+        BroThrowException("Invalid boolean cast, tried to cast " + s1 + " to boolean.");
     }
 
     return false;
@@ -44,7 +44,7 @@ long TypeConv::strToLong(t_string& s) {
         ret = std::stol(s);
     }
     catch (const std::invalid_argument& ia) {
-        BroLogError("strToLong: Invalid parameter", s, ". ex: ", ia.what());
+        BroLogError("strToLong: Invalid parameter" + s + ". ex: " + ia.what());
 
         throw ia;
     }
@@ -55,7 +55,7 @@ bool TypeConv::strToInt(t_string& s, int32_t& out) {
         out = std::stoi(s);
     }
     catch (const std::invalid_argument& ia) {
-        BroLogError("strToInt: Invalid parameter", s, ". ex: ", ia.what());
+        BroLogError("strToInt: Invalid parameter" + s + ". ex: " + ia.what());
         return false;
     }
     return true;
@@ -66,7 +66,7 @@ int32_t TypeConv::strToInt(t_string& s) {
         ret = std::stoi(s);
     }
     catch (const std::invalid_argument& ia) {
-        BroLogError("strToInt: Invalid argument '", s, "'. ex: ", ia.what());
+        BroLogError("strToInt: Invalid argument '" + s + "'. ex: " + ia.what());
 
         throw ia;
     }
@@ -78,7 +78,7 @@ float TypeConv::strToFloat(t_string& s) {
         ret = std::stof(s);
     }
     catch (const std::invalid_argument& ia) {
-        BroLogError("strToFloat: Invalid argument '", s, "'. ex: ", ia.what());
+        BroLogError("strToFloat: Invalid argument '" + s + "'. ex: " + ia.what());
 
         throw ia;
     }
@@ -90,7 +90,7 @@ uint32_t TypeConv::strToUint(t_string& s) {
         ret = (uint32_t)std::stoi(s);
     }
     catch (const std::invalid_argument& ia) {
-        BroLogError("strToUint: Invalid argument ", s, "'. ex: ", ia.what());
+        BroLogError("strToUint: Invalid argument " + s + "'. ex: " + ia.what());
 
         throw ia;
     }
@@ -102,7 +102,7 @@ double TypeConv::strToDouble(t_string& s) {
         ret = std::stod(s);
     }
     catch (const std::invalid_argument& ia) {
-        BroLogError("strToDouble: Invalid argument '", s, "'.");
+        BroLogError("strToDouble: Invalid argument '" + s + "'.");
 
         throw ia;
         return 0;

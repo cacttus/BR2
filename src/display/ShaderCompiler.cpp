@@ -1,6 +1,6 @@
 #include "../base/BaseAll.h"
 #include "../base/DiskFile.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../display/ShaderCompiler.h"
 #include "../display/ShaderMaker.h"
 #include "../display/ShaderSubProgram.h"
@@ -28,7 +28,7 @@ void ShaderCompiler::loadSource(std::shared_ptr<ShaderSubProgram> pSubProg)
     // - First try to load the srouce
     try
     {
-        BroLogDebug("Loading source for Shader ", pSubProg->getSourceLocation());
+        BroLogDebug("Loading source for Shader " + pSubProg->getSourceLocation());
         loadSource_r(pSubProg, pSubProg->getSourceLocation(), pSubProg->getSourceLines(), greatestModifyTime);
     }
     catch (Exception* e)
@@ -64,14 +64,14 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, t_
     {
         pSubProg->setStatus(ShaderStatus::e::CompileError);
         Gu::debugBreak();
-        BroThrowException("Could not find shader file or #include file, ", location);
+        BroThrowException("Could not find shader file or #include file, " + location);
     }
     // - Store the greater modify time for shader cache.
     modTime = Gu::getPackage()->getFileModifyTime((t_string)location);
     greatestModifyTime = MathUtils::broMax(modTime, greatestModifyTime);
 
     // - Load all source bytes
-    std::shared_ptr<BufferedFile> bf = std::make_shared<BufferedFile>();
+    std::shared_ptr<BinaryFile> bf = std::make_shared<BinaryFile>();
     //Allocator<char> data;
     loadSourceData(location, bf);
 
@@ -85,7 +85,7 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, t_
 
     //Helps Identify files.
     t_string slashslash = "//-------------------------------------------------";
-    t_string nameHdr = TStr("//           ", FileSystem::getFileNameFromPath(location));
+    t_string nameHdr = Stz "//           " + FileSystem::getFileNameFromPath(location);
     addSourceLineAt(0, lines, slashslash);
     addSourceLineAt(0, lines, nameHdr);
     addSourceLineAt(0, lines, slashslash);
@@ -208,12 +208,12 @@ ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<t_string>& li
 
     return _includes;
 }
-void ShaderCompiler::loadSourceData(t_string& location, std::shared_ptr<BufferedFile> __out_ sourceData) {
+void ShaderCompiler::loadSourceData(t_string& location, std::shared_ptr<BinaryFile> __out_ sourceData) {
     if(!Gu::getPackage()->fileExists(location)){
         sourceData = NULL;
         _loadStatus = ShaderStatus::e::FileNotFound;
-        BroLogError("Shader Source File not found : ", location);
-        BroLogError(" CWD: ", FileSystem::getCurrentDirectory());
+        BroLogError("Shader Source File not found : " + location);
+        BroLogError(" CWD: " + FileSystem::getCurrentDirectory());
         return;
     }
 
@@ -222,7 +222,7 @@ void ShaderCompiler::loadSourceData(t_string& location, std::shared_ptr<Buffered
     //DiskFile::readAllBytes(location, sourceData);
 
 }
-void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BufferedFile> data, std::vector<t_string>& out_lines)
+void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std::vector<t_string>& out_lines)
 {
 
     // - Parse file into lines
@@ -285,7 +285,7 @@ void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BufferedFile> data, st
 */
 void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg)
 {
-    BroLogInfo("Compiling shader ", pSubProg->getSourceLocation());
+    BroLogInfo("Compiling shader " + pSubProg->getSourceLocation());
 
     //DOWNCAST:
    // GLstd::shared_ptr<ShaderSubProgram> shader = dynamic_cast<GLstd::shared_ptr<ShaderSubProgram>>(pSubProg);

@@ -23,7 +23,7 @@ void OglErr::checkSDLErr() {
     //Do SDL errors here as well
     const char* c;
     while ((c = SDL_GetError()) != nullptr && *c != 0) {
-        BroLogError("SDL: ", c);
+        BroLogError("SDL: " + c);
         if(Gu::getEngineConfig()->getBreakOnSDLError() == true) { 
             Gu::debugBreak();
         }
@@ -33,15 +33,15 @@ void OglErr::checkSDLErr() {
 }
 t_string OglErr::glErrToStr(GLenum err) {
     switch(err) { 
-		case 0     : return TStr( "GL_NO_ERROR         ");      		
-		case 0x0500: return TStr( "GL_INVALID_ENUM     ");  		
-		case 0x0501: return TStr( "GL_INVALID_VALUE    ");   	
-		case 0x0502: return TStr( "GL_INVALID_OPERATION");       
-		case 0x0503: return TStr( "GL_STACK_OVERFLOW   ");    	
-		case 0x0504: return TStr( "GL_STACK_UNDERFLOW  ");     	
-		case 0x0505: return TStr( "GL_OUT_OF_MEMORY    ");   
+		case 0     : return  "GL_NO_ERROR         ";      		
+		case 0x0500: return  "GL_INVALID_ENUM     ";  		
+		case 0x0501: return  "GL_INVALID_VALUE    ";   	
+		case 0x0502: return  "GL_INVALID_OPERATION";       
+		case 0x0503: return  "GL_STACK_OVERFLOW   ";    	
+		case 0x0504: return  "GL_STACK_UNDERFLOW  ";     	
+		case 0x0505: return  "GL_OUT_OF_MEMORY    ";   
     }
-    return TStr(" *GL Error code not recognized.");
+    return " *GL Error code not recognized.";
 }
 bool OglErr::handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak){
 
@@ -58,7 +58,7 @@ bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bD
     // This isn't the Application log it's the hardware log on the card.
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {
-        BroLogError("GL Error: ", glErrToStr(err), " (", (int)err, ")");
+        BroLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
         if (Gu::getEngineConfig()->getBreakOnOpenGLError() == true) {
             if (bDoNotBreak == false) {
                 Gu::debugBreak();
@@ -154,24 +154,24 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
             t_string strType = glDebugGetMessageType(types[iMsg]);
             t_string strSev = glDebugGetMessageSeverity(severities[iMsg]);
 
-            strMsg = TStr("GPU LOG\r\n ID: ", StringUtil::toHex(id, true), "\r\n Msg: ", strMsg);
+            strMsg = "GPU LOG\r\n ID: "+ StringUtil::toHex(id, true)+ "\r\n Msg: "+ strMsg;
 
             GLenum severity = severities[iMsg];
             GLenum type = types[iMsg];
             if (type == GL_DEBUG_TYPE_ERROR)
             {
                 t_string _strStackInfo = DebugHelper::getStackTrace();
-                BroLogError(strMsg, "\r\n", _strStackInfo);
+                BroLogError(strMsg+ "\r\n" + _strStackInfo);
             }
             else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
             {
                 t_string _strStackInfo = DebugHelper::getStackTrace();
-                BroLogInfo(strMsg, "\r\n", _strStackInfo);
+                BroLogInfo(strMsg + "\r\n" + _strStackInfo);
             }
             else
             {
                 t_string _strStackInfo = DebugHelper::getStackTrace();
-                BroLogWarn(strMsg, "\r\n", _strStackInfo);
+                BroLogWarn(strMsg + "\r\n" + _strStackInfo);
             }
 
             currPos = currPos + lengths[iMsg];
@@ -181,39 +181,39 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
 t_string OglErr::glDebugGetErrorSource(int eCode) {
     switch (eCode)
     {
-    case GL_DEBUG_SOURCE_API: return TStr(" SOURCE API"); break;
-    case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return TStr(" WINDOW SYSTEM"); break;
-    case GL_DEBUG_SOURCE_SHADER_COMPILER: return TStr(" SHADER COMPILER"); break;
-    case GL_DEBUG_SOURCE_THIRD_PARTY: return TStr(" THIRD PARTY"); break;
-    case GL_DEBUG_SOURCE_APPLICATION: return TStr(" APPLICATION"); break;
-    case GL_DEBUG_SOURCE_OTHER: return TStr(" OTHER"); break;
+    case GL_DEBUG_SOURCE_API: return " SOURCE API"; break;
+    case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return (" WINDOW SYSTEM"); break;
+    case GL_DEBUG_SOURCE_SHADER_COMPILER: return (" SHADER COMPILER"); break;
+    case GL_DEBUG_SOURCE_THIRD_PARTY: return (" THIRD PARTY"); break;
+    case GL_DEBUG_SOURCE_APPLICATION: return (" APPLICATION"); break;
+    case GL_DEBUG_SOURCE_OTHER: return (" OTHER"); break;
     }
-    return TStr("*No Enum*");
+    return ("*No Enum*");
 }
 t_string OglErr::glDebugGetMessageType(int eCode) {
     switch (eCode)
     {
-    case GL_DEBUG_TYPE_ERROR: return TStr(" ERROR"); break;
-    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return TStr(" DEPRECATED"); break;
-    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return TStr(" UNDEFINED BEHAVIOR"); break;
-    case GL_DEBUG_TYPE_PORTABILITY: return TStr(" PORTABILITY"); break;
-    case GL_DEBUG_TYPE_PERFORMANCE: return TStr(" PERFORMANCE"); break;
-    case GL_DEBUG_TYPE_MARKER: return TStr(" MARKER"); break;
-    case GL_DEBUG_TYPE_PUSH_GROUP: return TStr(" PUSH GRP"); break;
-    case GL_DEBUG_TYPE_POP_GROUP: return TStr(" POP GRP"); break;
-    case GL_DEBUG_TYPE_OTHER: return TStr(" OTHER"); break;
+    case GL_DEBUG_TYPE_ERROR: return (" ERROR"); break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return (" DEPRECATED"); break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return (" UNDEFINED BEHAVIOR"); break;
+    case GL_DEBUG_TYPE_PORTABILITY: return (" PORTABILITY"); break;
+    case GL_DEBUG_TYPE_PERFORMANCE: return (" PERFORMANCE"); break;
+    case GL_DEBUG_TYPE_MARKER: return (" MARKER"); break;
+    case GL_DEBUG_TYPE_PUSH_GROUP: return (" PUSH GRP"); break;
+    case GL_DEBUG_TYPE_POP_GROUP: return (" POP GRP"); break;
+    case GL_DEBUG_TYPE_OTHER: return (" OTHER"); break;
     }
-    return TStr("*No Enum*");
+    return ("*No Enum*");
 }
 t_string OglErr::glDebugGetMessageSeverity(int eCode) {
     switch (eCode)
     {
-    case GL_DEBUG_SEVERITY_HIGH: return TStr(" HIGH"); break;
-    case GL_DEBUG_SEVERITY_MEDIUM: return TStr(" MEDIUM"); break;
-    case GL_DEBUG_SEVERITY_LOW: return TStr(" LOW"); break;
-    case GL_DEBUG_SEVERITY_NOTIFICATION: return TStr(" NOTE"); break;
+    case GL_DEBUG_SEVERITY_HIGH: return (" HIGH"); break;
+    case GL_DEBUG_SEVERITY_MEDIUM: return (" MEDIUM"); break;
+    case GL_DEBUG_SEVERITY_LOW: return (" LOW"); break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: return (" NOTE"); break;
     }
-    return TStr("*No Enum*");
+    return ("*No Enum*");
 }
 
 

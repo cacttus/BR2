@@ -108,7 +108,7 @@ void VertexFormat::addComponent(GLenum type, int componentCount, int size, Verte
     for(std::pair<int, std::shared_ptr<VertexComponent>> p : _vecComponents){
         std::shared_ptr<VertexComponent> comp = p.second;
         if(comp->getUserType() == eUserType){
-            BroLogError("Duplicate Vertex component '",getUserTypeName(eUserType),"' for Vertex Type '", getName(), "'.");
+            BroLogError("Duplicate Vertex component '" + getUserTypeName(eUserType) + "' for Vertex Type '" + getName() + "'.");
             Gu::debugBreak();
         }
     }
@@ -246,20 +246,20 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
 }
 t_string VertexFormat::getUserTypeName(VertexUserType::e eUserType){
     switch (eUserType) {
-    case VertexUserType::e::c4_01: return TStr("Color4f"); break;
-    case VertexUserType::e::v2_01: return TStr("Position2f"); break;
-    case VertexUserType::e::v3_01: return TStr("Position3f"); break;
-    case VertexUserType::e::n3_01: return TStr("Normal3f"); break;
-    case VertexUserType::e::x2_01: return TStr("Texcoord2f"); break;
-    case VertexUserType::e::u2_01: return TStr("Unsigned_Int_2"); break;
+    case VertexUserType::e::c4_01: return ("Color4f"); break;
+    case VertexUserType::e::v2_01: return ("Position2f"); break;
+    case VertexUserType::e::v3_01: return ("Position3f"); break;
+    case VertexUserType::e::n3_01: return ("Normal3f"); break;
+    case VertexUserType::e::x2_01: return ("Texcoord2f"); break;
+    case VertexUserType::e::u2_01: return ("Unsigned_Int_2"); break;
     case VertexUserType::e::v4_01:
     case VertexUserType::e::v4_02:
     case VertexUserType::e::v4_03:
-    return TStr("Position4f"); break;
+    return ("Position4f"); break;
     };
 
     Gu::debugBreak();
-    return TStr("Unknown User Type.");
+    return ("Unknown User Type.");
 }
 int VertexFormat::matchTypeForShaderType(std::shared_ptr<VertexFormat> shaderType){
     //return 0 if this type won't work for the shader.

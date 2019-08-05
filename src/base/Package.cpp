@@ -3,7 +3,7 @@
 #include "../base/FileSystem.h"
 #include "../base/Package.h"
 #include "../base/StringUtil.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 
 
 namespace Game {
@@ -63,7 +63,7 @@ Package::~Package() {
 }
 void Package::build(std::string exeLoc) {
 	_strExeLoc = exeLoc;
-	std::shared_ptr<BufferedFile> fb = std::make_shared<BufferedFile>();
+	std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
     loadExe(fb);
 
 	int32_t tmp;
@@ -84,7 +84,7 @@ void Package::build(std::string exeLoc) {
 
     tmp = (int32_t)fb->getData().count() - 8;
 	_iExeLenBytes = parseInt32(fb, tmp);
-	BroLogInfo("ExeLen: ",_iExeLenBytes );
+	BroLogInfo("ExeLen: " + _iExeLenBytes );
 
 	//Start parsing at the end fo the exe
 	int32_t iByteIdx = _iExeLenBytes;
@@ -92,7 +92,7 @@ void Package::build(std::string exeLoc) {
 	// 8 bytes, table length (total) and num entries
 	_iTableLenBytes = parseInt32(fb, iByteIdx);
 	int32_t iNumEntries = parseInt32(fb, iByteIdx);
-    BroLogInfo("Num Entries: ", iNumEntries);
+    BroLogInfo("Num Entries: " + iNumEntries);
 
 	for (int32_t iEntry = 0; iEntry < iNumEntries; ++iEntry) {
 		FileEntry* fe = new FileEntry();
@@ -103,7 +103,7 @@ void Package::build(std::string exeLoc) {
 		_vecEntries.push_back(fe);
 	}
 }
-bool Package::getFile(std::string fileLoc, std::shared_ptr<BufferedFile> fb, bool bAddNull) {
+bool Package::getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
 	if(fb==nullptr){
         BroLogError("Buffered file was nullptr, no file was read.  Make sur to initialize fb.");
         Gu::debugBreak();
@@ -116,13 +116,13 @@ bool Package::getFile(std::string fileLoc, std::shared_ptr<BufferedFile> fb, boo
         return loadPackedFile(fileLoc, fb, bAddNull);
     }
 }
-bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BufferedFile> fb, bool bAddNull){
+bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull){
     //Open executable with fstream
     //then seek to the file, copy file contents to buffer, exit.
     FileEntry* fe = getEntry(fileLoc);
     if (fe == nullptr) {
 
-        BroThrowException("Failed to get file entry for ", fileLoc);
+        BroThrowException("Failed to get file entry for " + fileLoc);
     }
     std::fstream fs;
     fs.open(_strExeLoc.c_str(), std::ios::in | std::ios::binary);
@@ -145,13 +145,13 @@ bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BufferedFile> 
 
     return true;
 }
-int32_t Package::parseInt32(std::shared_ptr<BufferedFile> fb, int32_t& off) {
+int32_t Package::parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off) {
     int32_t ret;
     ret = *((int32_t*)(fb->getData().ptr() + off));
     off += sizeof(int32_t);
     return ret;
 }
-std::string Package::parseStr(std::shared_ptr<BufferedFile> fb, int32_t& off) {
+std::string Package::parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off) {
     int32_t iCount = parseInt32(fb, off);
 
     char* tmp = new char[iCount + 1];
@@ -176,22 +176,22 @@ Package::FileEntry* Package::getEntry(std::string fileLoc) {
     }
     return nullptr;
 }
-bool Package::loadExe(std::shared_ptr<BufferedFile> fb) {
+bool Package::loadExe(std::shared_ptr<BinaryFile> fb) {
     return fb->loadFromDisk(_strExeLoc);
 }
 t_string Package::debugPrint() {
     t_string ret;
-    ret += TStr("Files:\r\n");
+    ret += "Files:\r\n";
     for (FileEntry* fe : _vecEntries) {
-        ret += TStr("  Loc:", fe->_strLoc);
-        ret += TStr("  Off:", fe->_iOff  );
-        ret += TStr(" Size: ", fe->_iSize);
-        std::shared_ptr<BufferedFile> tmp = std::make_shared<BufferedFile>();
+        ret += "  Loc:"+ fe->_strLoc;
+        ret += "  Off:"+ fe->_iOff  ;
+        ret += " Size: "+ fe->_iSize;
+        std::shared_ptr<BinaryFile> tmp = std::make_shared<BinaryFile>();
         if (getFile(fe->_strLoc, tmp)) {
-            ret += TStr(" Data: ", tmp->toString());
+            ret += " Data: "+ tmp->toString();
         }
         else {
-            ret += TStr(" ERROR getting file data.");
+            ret += " ERROR getting file data.";
         }
 
     }

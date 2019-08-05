@@ -103,8 +103,8 @@ public:
     static void flipImage20161206(uint8_t* image, int width, int height);
     static bool parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shared_ptr<Img32>>& ret, bool vFlip = true);
 
-    void serialize(std::shared_ptr<BufferedFile> bf);
-    void deserialize(std::shared_ptr<BufferedFile> fb);
+    void serialize(std::shared_ptr<BinaryFile> bf);
+    void deserialize(std::shared_ptr<BinaryFile> fb);
 };
 
 

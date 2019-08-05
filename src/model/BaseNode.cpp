@@ -1,6 +1,6 @@
 #include "../model/BaseNode.h"
 #include "../base/Hash.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
@@ -33,7 +33,7 @@ BaseSpec::~BaseSpec() {
     //_pBox = nullptr;
 }
 
-void BaseSpec::serialize(std::shared_ptr<BufferedFile> fb) {
+void BaseSpec::serialize(std::shared_ptr<BinaryFile> fb) {
     fb->writeString(std::move(_strName));
     fb->writeString(std::move(_strParentName));
     fb->writeInt32(std::move((int32_t)_eParentType));
@@ -42,7 +42,7 @@ void BaseSpec::serialize(std::shared_ptr<BufferedFile> fb) {
     fb->writeVec3(std::move(_pBox->_min));
     fb->writeVec3(std::move(_pBox->_max));
 }
-void BaseSpec::deserialize(std::shared_ptr<BufferedFile> fb) {
+void BaseSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
     fb->readString(std::move(_strName));
     _iNameHashed = STRHASH(_strName);
     fb->readString(std::move(_strParentName));
@@ -102,7 +102,7 @@ Hash32 BaseNode::getSpecNameHashed() {
 void BaseNode::init() {
     //Nodes now need to be initialized due to shared_ptr constructors not having this ptr
     if (_bInitialized == true) {
-        BroLogWarnCycle(getSpecName(), "..Node already initializd..errors will result");
+        BroLogWarnCycle(getSpecName() + "..Node already initializd..errors will result");
     }
     _bInitialized = true;
 }

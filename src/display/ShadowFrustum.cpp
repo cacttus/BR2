@@ -274,7 +274,7 @@ void ShadowFrustum::createFbo()
 
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
-        BroThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: ", status);
+        BroThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
         Gu::checkErrorsRt();
     }
 

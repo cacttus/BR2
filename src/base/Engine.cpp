@@ -27,7 +27,6 @@
 #include "../model/VaoDataGeneric.h"
 #include "../model/VboData.h"
 
-
 //#include "SDL_shaders_gles2.h"
 
 namespace Game {
@@ -46,7 +45,6 @@ Engine::~Engine()
 ///////////////////////////////////////////////////////////////////
 
 void Engine::init() {
-    _pContext->setWindowViewport2(_pViewport);
     _pipeBits.set();
 
     _pRenderPipe = std::make_shared<RenderPipe>(_pContext);
@@ -82,19 +80,19 @@ void Engine::init() {
     if(_pRoomBase->getForceAspectRatio()){
         SDL_DisplayMode dm;
         if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
-            BroLogError("SDL_GetDesktopDisplayMode failed: ", SDL_GetError());
+            BroLogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
         }
         else {
             float ar = (float)dm.h / (float)dm.w;
             int newHeight = (int)((float)_iLastWidth * ar);
             if(newHeight != _iLastHeight){
-                BroLogInfo("Adjusting window dims from ", _iLastWidth, " x ", _iLastHeight, " to ", _iLastWidth, " x ", newHeight);
+                BroLogInfo("Adjusting window dims from " + _iLastWidth + " x " + _iLastHeight + " to " + _iLastWidth + " x " + newHeight);
                 _iLastHeight = newHeight;
             }
         }
     }
 
-    BroLogInfo("Setting window size to, ", _iLastWidth, " x " , _iLastHeight);
+    BroLogInfo("Setting window size to, " + _iLastWidth + " x " + _iLastHeight);
     SDL_SetWindowSize(_pWindow, _iLastWidth, _iLastHeight);
     updateWidthHeight(_iLastWidth, _iLastHeight, true);
 

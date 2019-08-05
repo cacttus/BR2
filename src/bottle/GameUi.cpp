@@ -55,7 +55,7 @@ void GameUi::constructUI(std::shared_ptr<BottleRoom> r) {
         Gu::getContext()->getGui()->getTex()->compile();
 
         //_pWorldEditState->init();
-        BroLogInfo("Finished..", (uint32_t)(Gu::getMicroSeconds() - t0) / 1000, "ms");
+        BroLogInfo("Finished.." + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
     }
 }
 void GameUi::clearDebugText(){
@@ -508,7 +508,7 @@ std::shared_ptr<UiWindow> GameUi::createAssetWindow() {
             ));
         }
         else {
-            BroLogError("Failed to find asset '", ws->getMobName(), "'");
+            BroLogError("Failed to find asset '" + ws->getMobName() + "'");
             Gu::debugBreak();
         }
     }

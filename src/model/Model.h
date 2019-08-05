@@ -70,8 +70,8 @@ public:
     void animate(float ct, std::shared_ptr<KeyFrame> pNext, mat4& mOut);
   //KeyframeDataType::e getDataType() { return _eDataType;}
    // KeyframeInterpolation::e getInterpolation() { return _eInterpolation; }
-    void deserialize( std::shared_ptr<BufferedFile> fb);
-    void serialize( std::shared_ptr<BufferedFile> fb);
+    void deserialize( std::shared_ptr<BinaryFile> fb);
+    void serialize( std::shared_ptr<BinaryFile> fb);
 };
 
 /**
@@ -99,8 +99,8 @@ public:
     void addKeyFrame(int iTime, mat4& m);
     void addKeyFrame(int iTime, vec3& p, quat& r, vec3& s);
     void animate( std::shared_ptr<Animator> tl, mat4& mOut);
-    void deserialize( std::shared_ptr<BufferedFile> fb);
-    void serialize( std::shared_ptr<BufferedFile> fb);
+    void deserialize( std::shared_ptr<BinaryFile> fb);
+    void serialize( std::shared_ptr<BinaryFile> fb);
 };
 /**
 *    @class ActionGroup
@@ -125,8 +125,8 @@ public:
     void scaleKeys();
     float getEndTime() { return _fEndTime; }
     bool isValid();
-    void deserialize( std::shared_ptr<BufferedFile> fb);
-    void serialize( std::shared_ptr<BufferedFile> fb);
+    void deserialize( std::shared_ptr<BinaryFile> fb);
+    void serialize( std::shared_ptr<BinaryFile> fb);
 };
 
 /**
@@ -211,8 +211,8 @@ public:
     int32_t getBoneId() { return _iBoneId; }
  //   std::set<Hash32>* getActions() { return &_setActions; }
     std::vector<std::shared_ptr<BoneSpec>>& getChildren() { return _vecChildren; }
-    virtual void deserialize( std::shared_ptr<BufferedFile> bf) override;
-    virtual void serialize( std::shared_ptr<BufferedFile> bf) override;
+    virtual void deserialize( std::shared_ptr<BinaryFile> bf) override;
+    virtual void serialize( std::shared_ptr<BinaryFile> bf) override;
 };
 
 //. BoneSpec or  BoneSpec, or et..
@@ -272,8 +272,8 @@ public:
 
     bool tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens);
     //std::set<Hash32>* getActions() {  return &_setActions; }
-    virtual void deserialize( std::shared_ptr<BufferedFile> fb) override;
-    virtual void serialize( std::shared_ptr<BufferedFile> fb) override;
+    virtual void deserialize( std::shared_ptr<BinaryFile> fb) override;
+    virtual void serialize( std::shared_ptr<BinaryFile> fb) override;
 };
 
 class ArmatureNode : public BaseNode {
@@ -314,8 +314,8 @@ public:
     std::vector<std::shared_ptr<MeshSpec>>& getMeshes() { return _vecMeshes; }
     std::vector<std::shared_ptr<Armature>>& getArmatures() { return _vecArmatures; }
     std::vector<std::shared_ptr<ActionGroup>>& getActionGroups() { return _vecActionGroups; }
-    virtual void deserialize( std::shared_ptr<BufferedFile> bf) override;
-    virtual void serialize( std::shared_ptr<BufferedFile> bf) override;
+    virtual void deserialize( std::shared_ptr<BinaryFile> bf) override;
+    virtual void serialize( std::shared_ptr<BinaryFile> bf) override;
     std::shared_ptr<ActionGroup> getAction(Hash32 actionNameHash);
     std::shared_ptr<Armature> getArmatureById(int32_t armId);
     std::map<Hash32, std::shared_ptr<Armature>>& getArmatureMapOrdered() { return _mapArmaturesOrdered; }

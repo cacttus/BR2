@@ -62,7 +62,7 @@ t_string DateTime::dateTimeToStr(t_datetime d)
 {
     t_string dt = dateToStr(getDatePart(d));
     t_string tm = timeToStr(getTimePart(d));
-    t_string ret = TStr(dt, " ", tm);
+    t_string ret = Stz dt + " " + tm;
 
     return ret;
 }
@@ -70,7 +70,7 @@ t_string DateTime::dateTimeToStrNoDelim(t_datetime d)
 {
     t_string dt = dateToStrNoSlash(getDatePart(d));
     t_string tm = timeToStrNoDelim(getTimePart(d));
-    t_string ret = TStr(dt, tm);
+    t_string ret = Stz dt + tm;
 
     return ret;
 }
@@ -129,7 +129,7 @@ t_time DateTime::strToTime(t_string& time, char separator)
 
     if (vals.size() < 4)
     {
-        BroLogWarn("Time had not 4 components: ", time);
+        BroLogWarn("Time had not 4 components: "+ time);
     }
     hb = TypeConv::strToInt(vals[0]);
     mm = TypeConv::strToInt(vals[1]);
@@ -168,7 +168,7 @@ t_datetime DateTime::strToDateTime(const t_string& szDateTime)
 
     if (str.size() == 0 || str.size() == 1)
     {
-        BroLogWarn("Date time could not be converted, value: ", szDateTime);
+        BroLogWarn("Date time could not be converted, value: "+ szDateTime);
         return getDateTime();
     }
 

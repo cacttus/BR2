@@ -43,8 +43,7 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
     _pContext->chkErrRt();
 
     if (binBufSz == 0 || binBufSz > MemSize::e::MEMSZ_GIG2) {
-        BroThrowException(
-            "Shader program binary was 0 or exceeded ", MemSize::e::MEMSZ_GIG2, " bytes; actual: ", binBufSz);
+        BroThrowException("Shader program binary was 0 or exceeded " + MemSize::e::MEMSZ_GIG2 + " bytes; actual: " + binBufSz);
     }
 
     GLProgramBinary* b = new GLProgramBinary(this, binBufSz);
@@ -55,7 +54,7 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
     if (binBufSz != outLen)
     {
         delete b;
-        throw new Exception("GPU reported incorrect program size and returned a program with a different size.", __LINE__, __FILE__);
+        BroThrowException("GPU reported incorrect program size and returned a program with a different size.");
     }
 
     //Critical: set compile time.
@@ -105,7 +104,7 @@ bool ShaderCache::loadBinaryToGpu(std::shared_ptr<ShaderBase> prog, GLProgramBin
     std::vector<t_string> inf;
     prog->getProgramErrorLog(inf);
     for (size_t i = 0; i < inf.size(); ++i) {
-        BroLogWarn("   ", inf[i]);
+        BroLogWarn("   " + inf[i]);
     }
 
     //validate program.
@@ -134,7 +133,7 @@ bool ShaderCache::loadBinaryToGpu(std::shared_ptr<ShaderBase> prog, GLProgramBin
     GLenum e = glGetError();
     if (e != GL_NO_ERROR)
     {
-        BroLogWarn("[ShaderCache, GL error ", StringUtil::toHex(e, true), " , program was not valid after loading to GPU.  See log above.");
+        BroLogWarn("[ShaderCache, GL error " + StringUtil::toHex(e, true) + " , program was not valid after loading to GPU.  See log above.");
         return false;
     }
 
@@ -190,7 +189,7 @@ GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName)
 
         // if we're too big - freak out
         if ((binSz < 0) || (binSz > MemSize::e::MEMSZ_GIG2)){
-            BroLogError("Invalid shader binary file size '", binSz, "', recompiling binary.");
+            BroLogError("Invalid shader binary file size '" + binSz + "', recompiling binary.");
             pbin = nullptr;
         }
         else {
@@ -212,7 +211,7 @@ GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName)
     {
         //fail silently
 
-        BroLogError("Failed to load program binary ", binaryName, ex->what());
+        BroLogError("Failed to load program binary " + binaryName + ex->what());
         if (pbin){
             delete pbin;
         }
@@ -228,7 +227,7 @@ void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin)
     t_string binaryName = getBinaryNameFromProgramName(programName);
     t_string binPath = FileSystem::getPathFromPath(binaryName);
 
-    BroLogInfo(" Shader program Bin path = ", binPath);
+    BroLogInfo(" Shader program Bin path = " + binPath);
 
     try
     {
@@ -243,7 +242,7 @@ void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin)
     }
     catch (Exception* ex)
     {
-        BroLogError("Failed to save program binary ", binaryName, ex->what());
+        BroLogError("Failed to save program binary " + binaryName + ex->what());
     }
 
 }

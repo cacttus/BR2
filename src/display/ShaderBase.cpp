@@ -202,7 +202,7 @@ void ShaderBase::setUf(t_string name, void* value, GLint count, bool bIgnore) {
     std::shared_ptr<ShaderUniform> uf = getUniformByName(name);
     if (uf == nullptr) {
         if (bIgnore == false) {
-            BroLogWarnCycle("Shader uniform '", name, "' could not be found for shader ", getProgramName(), "");
+            BroLogWarnCycle("Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
         }
     }
     else {
@@ -222,7 +222,7 @@ void ShaderBase::verifyBound() {
             na = _pContext->getShaderMaker()->getShaderNameForId(prog);
             nb = _pContext->getShaderMaker()->getShaderNameForId(getGlId());
 
-            BroLogError("Invalid shader was bound. '", na, "' was bound, but we expected '", nb, "'.");
+            BroLogError("Invalid shader was bound. '" + na + "' was bound, but we expected '" + nb + "'.");
         }
     }
 
@@ -238,13 +238,13 @@ void ShaderBase::verifyBound() {
             //    setUf("_ufTexture0", (void*)&iNullPickId);
             //}
             else{
-                BroLogWarnCycle("Uniform ", uf.second->getName(), " was not set for shader ", getProgramName());
+                BroLogWarnCycle("Uniform " + uf.second->getName() + " was not set for shader " + getProgramName());
             }
         }
     }
     for (std::pair<Hash32, std::shared_ptr<ShaderUniformBlock>> uf : _vecUniformBlocks) {
         if (uf.second->hasBeenSet() == false) {
-            BroLogWarnCycle("Uniform Block ", uf.second->getName(), " was not set for shader ", getProgramName());
+            BroLogWarnCycle("Uniform Block " + uf.second->getName() + " was not set for shader " + getProgramName());
         }
     }
 }
@@ -254,7 +254,7 @@ void ShaderBase::setProgramName(t_string name) {
 }
 void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
     //Uniform should be "_ufTexturen"
-    t_string ufName = TStr("_ufTexture", iChannel);
+    t_string ufName = Stz "_ufTexture"+ iChannel;
 
     //TODDO: add some error checking ehre to make sure we're not trying
    //to bind too many textures more than GL_MAX_TEXTURE_UNITS
@@ -312,16 +312,16 @@ void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDr
      //Do not unbind so we keep the uniforms.
 }
 t_string ShaderBase::debugGetUniformValues() {
-    t_string str = TStr("\r\n");
+    t_string str = "\r\n";
 
     for (std::pair<Hash32, std::shared_ptr<ShaderUniform>> uf : _vecUniforms) {
-        str += TStr("Uniform '", uf.second->getName(), "':\r\n");
+        str += "Uniform '" + uf.second->getName() + "':\r\n";
         if (uf.second->hasBeenSet() == false) {
-            str += TStr(" was not set.\r\n");
+            str += " was not set.\r\n";
             // Gu::debugBreak();
         }
         else {
-            str += TStr(" ", uf.second->debugGetUniformValueAsString(), " \r\n");
+            str += " "+ uf.second->debugGetUniformValueAsString()+ " \r\n";
 
         }
     }
@@ -457,13 +457,13 @@ void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync
 void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z) {
 
     if (x > _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]) {
-        BroThrowException("[Compute] X group greater than max work group GPU can handle which is ", _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]);
+        BroThrowException("[Compute] X group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]);
     }
     if (y > _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]) {
-        BroThrowException("[Compute] Y group greater than max work group GPU can handle which is ", _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]);
+        BroThrowException("[Compute] Y group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]);
     }
     if (z > _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]) {
-        BroThrowException("[Compute] Z group greater than max work group GPU can handle which is ", _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
+        BroThrowException("[Compute] Z group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
     }
 
     if ((x == 0) || (y == 0) || (z == 0)) {
@@ -486,12 +486,12 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
     
     if (blockIndex < 0) {
         BroLogError(
-            "BIND FAILED: uniform buffer name: ", shaderBufferName
-            , " .Binding Block Shader Id ", getGlId()
-            , " shader name (may be invalid) ", getProgramName()
-            , " block idx ", blockIndex
-            , " ssbo idx: ", shaderSsboIndex
-            , "\r\n"
+            "BIND FAILED: uniform buffer name: " + shaderBufferName
+            + " .Binding Block Shader Id " + getGlId()
+            + " shader name (may be invalid) " + getProgramName()
+            + " block idx " + blockIndex
+            + " ssbo idx: " + shaderSsboIndex
+            + "\r\n"
         );
     }
 

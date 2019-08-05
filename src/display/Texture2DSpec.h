@@ -77,8 +77,8 @@ public:
     bool getTextureDataFromGpu(std::shared_ptr<Img32>  __out_ image);
     static bool getTextureDataFromGpu(std::shared_ptr<Img32>  __out_ image, GLuint iGLTexId);
 
-    void serialize( std::shared_ptr<BufferedFile> fb);
-    void deserialize( std::shared_ptr<BufferedFile> fb);
+    void serialize( std::shared_ptr<BinaryFile> fb);
+    void deserialize( std::shared_ptr<BinaryFile> fb);
 };
 
 

@@ -211,7 +211,7 @@
 ////        }
 ////        else
 ////        {
-////            if(b_eof)
+////            if(_bEof)
 ////            {
 ////                if(tokens.size() >=2)
 ////                    pkp(tokens[0],tokens[1],nKd);// - Parse the given token buffer

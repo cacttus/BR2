@@ -72,7 +72,7 @@ public:
 
 
     static void SDLFileFree(char*& pOutData);
-    static int SDLFileRead(std::string fname, char*& pOutData, uint32_t& _iOutSizeBytes, bool addNull = false);
+    static int SDLFileRead(std::string fname, char*& pOutData, int64_t& _iOutSizeBytes, bool addNull = false);
     static int SDLFileWrite(std::string fname, char* pData, uint32_t _iDataSizeBytes);
     static std::string getFilePath(std::string name);
 

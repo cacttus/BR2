@@ -86,7 +86,7 @@ class MtFont : public MtTexPatch {
     float _fScaleForPixelHeight;//return value of stbtt_ScaleForPixelHeight\
     
 
-    std::shared_ptr<BufferedFile> _pFontBuffer;// STB:  "Load" a font file from a memory buffer (you have to keep the buffer loaded)
+    std::shared_ptr<BinaryFile> _pFontBuffer;// STB:  "Load" a font file from a memory buffer (you have to keep the buffer loaded)
     bool _bInitialized = false;
     //GLuint _texture = 0;
     float fontSizeToFontScale(float fontSz);

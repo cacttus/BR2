@@ -22,24 +22,12 @@
     <Filter Include="net">
       <UniqueIdentifier>{8c41e6ff-1c1c-446d-96c5-6a07c0260954}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ext\pugixml">
+      <UniqueIdentifier>{62d7e319-c7ce-4c60-a744-cbee3617c05f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\base\BaseDataFile.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\BaseHeader.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\BPUtil.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\BufferedFile.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\BufParser.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\BufParserHeader.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\BuildConfig.h">
@@ -561,20 +549,32 @@
     <ClInclude Include="src\base\Net.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="src\ext\pugixml\pugixml.hpp">
+      <Filter>ext\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ext\pugixml\pugiconfig.hpp">
+      <Filter>ext\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\XmlFile.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\BinaryFile.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\TextDataFile.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\TextConfigFile.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\TextParser.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\StringExtensions.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\base\BaseDataFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\BPUtil.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\BufferedFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\BufParser.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\DateTime.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -1029,6 +1029,27 @@
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\Net.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ext\pugixml\pugixml.cpp">
+      <Filter>ext\pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\XmlFile.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\BinaryFile.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\TextDataFile.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\TextConfigFile.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\TextParser.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\StringExtensions.cpp">
       <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>

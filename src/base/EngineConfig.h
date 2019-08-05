@@ -42,6 +42,9 @@ class EngineConfig {
     int _iMaxDirLights = 32;
     int _iFullscreenWidth = 0;
     int _iFullscreenHeight = 0;
+
+    RenderSystem::e _eRenderSystem = RenderSystem::OpenGL;
+
     bool _bEnableRuntimeErrorChecking = true;
 #ifdef _DEBUG
     bool _bEnableDebugErrorChecking = true;
@@ -119,6 +122,8 @@ public:
     int getMaxHardwareOutgoingBufferSizeBytes() { return  _iMaxHardwareOutgoingBufferSizeBytes; }
     int getMaxSoftwareIncomingBufferSizeBytes() { return  _iMaxSoftwareIncomingBufferSizeBytes; }
     int getMaxSoftwareOutgoingBufferSizeBytes() { return  _iMaxSoftwareOutgoingBufferSizeBytes; }
+
+    RenderSystem::e getRenderSystem() { return _eRenderSystem; }
 
     EngineConfig() {}
     virtual ~EngineConfig() {

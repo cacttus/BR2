@@ -84,7 +84,7 @@ private:
     void clearVertexCache();
     //vec3 readVec3(t_string tok);
     //vec2 readVec2(t_string tok);
-    //void loadObjFileContents(BufferedFile& pBufferedFile);
+    //void loadObjFileContents(BinaryFile& pBufferedFile);
    // void parseGeom(t_string& tok);
     void parseFace(MobFile* pMobFile, t_string t0, t_string t1, t_string t2);
     int32_t parseFaceComponent(MobFile* pMobFile,t_string& tok, int32_t& strlind, int32_t iComponent);

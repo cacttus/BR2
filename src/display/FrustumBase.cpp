@@ -594,7 +594,7 @@ mat4 FrustumBase::getProjectionMatrix(){
 }
 void FrustumBase::setFov(float fov){
     if(fov>179 || fov < 1){
-        BroLogWarn("Frustum FOV ",fov," was invalid, setting to valid number");
+        BroLogWarn("Frustum FOV " + fov + " was invalid, setting to valid number");
         fov = 45;
     }
     tan_fov_2 = tanf(MathUtils::degToRad(fov / 2.0f));

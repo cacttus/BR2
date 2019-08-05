@@ -35,7 +35,7 @@ void MobFile::pkp(std::vector<t_string>& tokens) {
             _pCurModDataLoad->_strModName = getCleanToken(tokens, iind);
             _pCurModDataLoad->_fVersion = TypeConv::strToFloat(getCleanToken(tokens, iind));
             if (_fVersion != _pCurModDataLoad->_fVersion) {
-                BroLogError("Mob file verion mismatch got ", _pCurModDataLoad->_fVersion, ", but wanted ", _fVersion, ".");
+                BroLogError("Mob file verion mismatch got " + _pCurModDataLoad->_fVersion + ", but wanted " + _fVersion + ".");
                 Gu::debugBreak();
             }
         }
@@ -157,7 +157,7 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
     }
     else if (mb->lcmp(tokens[0], "act_end", 3)) { //I.E. the motion
         if (_pCurActionKeys == nullptr) {
-            mb->parseErr(TStr("Action was null."));
+            mb->parseErr("Action was null.");
         }
         else {
             _pCurActionKeys = nullptr;
@@ -174,7 +174,7 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
     //}
     else if (mb->lcmp(tokens[0], "kf", 4)) {
         if (_pCurActionKeys == nullptr) {
-            mb->parseErr(TStr("Action was null."));
+            mb->parseErr(("Action was null."));
         }
         else {
             //Parse crap
@@ -205,7 +205,7 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
 
             }
             else {
-                mb->parseErr(TStr("Invalid keyframe type '", strType, "'"));
+                mb->parseErr( Stz"Invalid keyframe type '"+ strType+ "'");
                 Gu::debugBreak();
             }
 
@@ -291,7 +291,7 @@ ParentType::e MobFile::parseParentType(t_string strParentType){
         return ParentType::e::None;
     }
     else {
-        parseErr(TStr("Invalid parent type '" + strParentType));
+        parseErr(Stz "Invalid parent type '" + strParentType);
         return ParentType::e::None;
     }
 
@@ -323,7 +323,7 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<t_string>& tokens) {
         }
         _pCurMeshData->setName(strName);
         if (StringUtil::equals(strName, strParent)) {
-            mb->parseErr(TStr("Mesh node '", strName, "' parent of itself"));
+            mb->parseErr(Stz "Mesh node '"+ strName+ "' parent of itself");
         }
         else {
             _pCurMeshData->setParentName(strParent);
@@ -419,7 +419,6 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
     }
     else if (pMobFile->lcmp(tokens[0], "vw")) {
 
-
         int32_t iArmCount = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
         VertexWeightMob vw;
         for (int iarm = 0; iarm < iArmCount; ++iarm) {
@@ -471,7 +470,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
             _ePhysicsShapeType = PhysicsShapeType::e::Hull;
         }
         else {
-            pMobFile->parseErr(TStr("Physics shape '", strBody, "' not supported."));
+            pMobFile->parseErr(Stz "Physics shape '"+ strBody+ "' not supported.");
         }
     }
     else if (pMobFile->lcmp(tokens[0], "mpt_hide_render", 2)) {
@@ -731,7 +730,7 @@ int32_t MeshSpecData::addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni)
     return newIndex;
 }
 std::shared_ptr<MeshSpec> MeshSpecData::makeSpec(MobFile* mb) {
-    BroLogInfo("Adding mesh part '", _strName, "'");
+    BroLogInfo("Adding mesh part '" + _strName + "'");
 
     std::shared_ptr<PhysicsShape> pShape = makePhysicsShapeForSpec();
     std::shared_ptr<VertexFormat> fmt = getVertexFormatForSpec(mb);
@@ -776,7 +775,7 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
         return v_v3::getVertexFormat();
     }
     else {
-        mb->parseErr(TStr("Invalid vertex format for mesh."), true, false);
+        mb->parseErr( "Invalid vertex format for mesh.", true, false);
         return v_v3::getVertexFormat();
     }
 }
@@ -801,7 +800,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
                 mat->addTextureBinding(pTex, TextureChannel::e::Channel0, TextureType::e::Color, _pMatData->_fDiffuseTexInfluence);
             }
             else {
-                BroLogError("Texture image file ", _pMatData->_strDiffuseTex, " not found!");
+                BroLogError("Texture image file " + _pMatData->_strDiffuseTex + " not found!");
                 Gu::debugBreak();
             }
         }
@@ -812,7 +811,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
                 mat->addTextureBinding(pTex, TextureChannel::e::Channel1, TextureType::e::Normal, _pMatData->_fNormalTexInfluence);
             }
             else {
-                BroLogError("Texture image file ", _pMatData->_strNormalTex, " not found!");
+                BroLogError("Texture image file " + _pMatData->_strNormalTex + " not found!");
                 Gu::debugBreak();
             }
         }
@@ -863,7 +862,7 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
             _vecMeshIndexes[iInd + 1] = _vecMeshIndexes[iInd + 2];
             _vecMeshIndexes[iInd + 2] = t;
         }
-        BroLogInfo("..Done. ", (uint32_t)(Gu::getMicroSeconds() - t0) / 1000, "ms");
+        BroLogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
 
     }
     if(_bCalcNormals){
@@ -904,7 +903,7 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
         }
 
 
-        BroLogInfo("..Done. ", (uint32_t)(Gu::getMicroSeconds() - t0) / 1000, "ms");
+        BroLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
     }
     if (_bSwapUvs) {
         t0 = Gu::getMicroSeconds();
@@ -914,7 +913,7 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
             _vecMeshVerts[iInd].x.u() = _vecMeshVerts[iInd].x.v();
             _vecMeshVerts[iInd].x.v() = t;
         }
-        BroLogInfo("..Done. ", (uint32_t)(Gu::getMicroSeconds() - t0) / 1000, "ms");
+        BroLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
     }
 
     BroLogInfo("Copying Vertex Format...");
@@ -1035,7 +1034,7 @@ void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId
                 if (iJointId == -1 || fWeight < 0) {
                     int i = 0;
                     i++;
-                    mb->parseErr(TStr("While Parsing: ", mb->getFileLoc(), ": Input joint ID was negative at line ", mb->getCurrentParseLine()));
+                    mb->parseErr(Stz "While Parsing: "+ mb->getFileLoc()+ ": Input joint ID was negative at line "+ mb->getCurrentParseLine());
                 }
                 it->second.insert(std::make_pair(iJointId, fWeight));
             }

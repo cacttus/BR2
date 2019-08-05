@@ -86,21 +86,21 @@ t_string WorldMaker::makeGridFileName(t_string strGameName, t_string strWorldNam
     //int32_t z = _viPos.z;
 
     //TEST:
-    t_string fmt = TStr(
-        "%+0", c_iGlobDigits, "d",
-        "%+0", c_iGlobDigits, "d",
-        "%+0", c_iGlobDigits, "d"
-    );
+    t_string fmt = Stz
+        "%+0" + c_iGlobDigits + "d" +
+        "%+0" + c_iGlobDigits + "d" +
+        "%+0" + c_iGlobDigits + "d"
+        ;
     //"%+09d%+09d%+09d.g"
 
     snprintf(buf, 256, fmt.c_str(), ix, iy, iz);
 
-    #ifdef __APPLE__
+#ifdef __APPLE__
     //TODO: - apple won't let us save here
     BroThrowException("Save dir for apple wasn't set.  Not an error, just put this in.");
-    #elif __WINDOWS__
+#elif __WINDOWS__
     //    saveDir = "./data-dc";
-    #endif
+#endif
 
     t_string ddir = getWorldGridsDir(strGameName, strWorldName);
 
@@ -108,12 +108,12 @@ t_string WorldMaker::makeGridFileName(t_string strGameName, t_string strWorldNam
 
     FileSystem::createDirectoryRecursive(ddir);
 
-    fmt = TStr(ddir, "/", buf, ".g");
+    fmt = ddir + "/" + buf + ".g";
 
     return fmt;
 
 }
-t_string WorldMaker::getWorldGridsDir(t_string strGameName, t_string strWorldName){
+t_string WorldMaker::getWorldGridsDir(t_string strGameName, t_string strWorldName) {
     if (StringUtil::isEmpty(strGameName)) {
         BroThrowException("Game name was not selected.");
     }
@@ -137,7 +137,7 @@ std::shared_ptr<WorldGrid> WorldMaker::loadGrid(ivec3(v)) {
     return loadGridFromFile(strFileName);
 
 }
-std::shared_ptr<WorldGrid> WorldMaker::loadGridFromFile(t_string strFileNamePath){
+std::shared_ptr<WorldGrid> WorldMaker::loadGridFromFile(t_string strFileNamePath) {
     ivec3 vPos;
     std::shared_ptr<WorldGrid> pg = nullptr;
     if (FileSystem::fileExists(strFileNamePath)) {
@@ -149,8 +149,8 @@ std::shared_ptr<WorldGrid> WorldMaker::loadGridFromFile(t_string strFileNamePath
         t_string strFile = FileSystem::getFileNameFromPath(strFileNamePath);
         t_string i0 = strFile.substr(0, c_iGlobDigits);
         t_string i1 = strFile.substr(c_iGlobDigits, c_iGlobDigits);
-        t_string i2 = strFile.substr(c_iGlobDigits*2, c_iGlobDigits);
-        vPos.construct(TypeConv::strToInt(i0),TypeConv::strToInt(i1),TypeConv::strToInt(i2));
+        t_string i2 = strFile.substr(c_iGlobDigits * 2, c_iGlobDigits);
+        vPos.construct(TypeConv::strToInt(i0), TypeConv::strToInt(i1), TypeConv::strToInt(i2));
 
         pg = std::make_shared<WorldGrid>(_pWorld25, vPos, false);
         pg->initSync();
@@ -210,20 +210,20 @@ void WorldMaker::makeNewWorld() {
         vv.push_back(ivec3(xx,yy,zz));
     }*/
 
-    vv.push_back(ivec3(0,0,0));
+    vv.push_back(ivec3(0, 0, 0));
 
     std::shared_ptr<WorldGrid> pg;
 
     _pCurrentLair = _mapLairSpecs.begin()->second;
 
     AssertOrThrow2(_pCurrentLair != nullptr);
-    
+
     Tile25Spec* tileGrass = _pWorld25->getSpriteBucket()->getTileByName("t-grass");
-    if(tileGrass==nullptr){
+    if (tileGrass == nullptr) {
         //not found
         Gu::debugBreak();
     }
-    for(ivec3 v : vv){
+    for (ivec3 v : vv) {
         WipGrid* wg = new WipGrid(v, this->_pCurrentLair, 0);
         wg->clear(tileGrass);
 
@@ -242,12 +242,12 @@ void WorldMaker::makeNewWorld() {
 
 
 }
-void WorldMaker::loadAllGrids(std::set<std::shared_ptr<WorldGrid>>& __out_ grids){
+void WorldMaker::loadAllGrids(std::set<std::shared_ptr<WorldGrid>>& __out_ grids) {
     t_string gridsDir = getWorldGridsDir(_pWorld25->getRoom()->getGameName(), _pWorld25->getWorldName());
     std::vector<t_string> files;
 
     FileSystem::getAllFiles(gridsDir, files);
-    for(t_string file : files){
+    for (t_string file : files) {
         std::shared_ptr<WorldGrid> pg = loadGridFromFile(file);
         grids.insert(pg);
     }

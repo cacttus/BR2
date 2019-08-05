@@ -13,7 +13,7 @@
 #define __OBJECTFILE_1462849533491139354_H__
 
 #include "../base/BaseHeader.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 namespace Game {
@@ -58,17 +58,17 @@ class ObjectFile : public VirtualMemoryShared<ObjectFile> {
     int32_t findCachedVertex(int32_t vi, int32_t xi, int32_t ni);
     void addCachedVertex(int32_t newIndex, int32_t vi, int32_t xi, int32_t ni);
     void clearVertexCache();
-    vec3 readVec3(BufferedFile& pBufFile);
-    vec2 readVec2(BufferedFile& pBufFile);
-    void loadObjFileContents(BufferedFile& pBufferedFile);
-    void parseGeom(BufferedFile& pBufferedFile, t_string& tok);
-    void parseFace(BufferedFile& pBufferedFile, t_string& tok);
+    vec3 readVec3(BinaryFile& pBufFile);
+    vec2 readVec2(BinaryFile& pBufFile);
+    void loadObjFileContents(BinaryFile& pBufferedFile);
+    void parseGeom(BinaryFile& pBufferedFile, t_string& tok);
+    void parseFace(BinaryFile& pBufferedFile, t_string& tok);
     int32_t parseFaceComponent(t_string& tok, int32_t& strlind, int32_t iComponent);
     void addFaceVertex(int32_t iVertex, int32_t iTCoord, int32_t iNormal);
     void addCurrentSpec();
     void copySpecFragments(std::shared_ptr<MeshSpec> pSpec);
     int32_t addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni);
-    mat4 parseMat4(BufferedFile& bf);
+    mat4 parseMat4(BinaryFile& bf);
 
 public:
     void load(t_string& strFilePath, bool flipWinding);

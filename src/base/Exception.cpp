@@ -9,7 +9,7 @@ Exception::Exception(t_string c, int line, const char* file, bool bLogError ) {
     _msg = c;
     _file = file;
     if(bLogError) {
-        t_string err = TStr(c.c_str(), " ", file, ":", line);
+        t_string err = c + " " + file + ":" + line;
         BroLogError(err);
     }
 

@@ -47,7 +47,7 @@ void GameFile::save(t_string loc, std::shared_ptr<World25> pw) {
 
     DiskFile df;
     df.openForWrite(loc);
-    df.writeTextLine(TStr("#Game File "));
+    df.writeTextLine("#Game File ");
 
     AssertOrThrow2(pw->getWorldMaker() != nullptr);
     //AssertOrThrow2(pw->getDungeonMaker()->getCurrentLair() != nullptr);
@@ -56,13 +56,13 @@ void GameFile::save(t_string loc, std::shared_ptr<World25> pw) {
   //  if (ls == nullptr) {
   //      parseErr(TStr("Error saving, lair was null"), true, true);
   //  }
-    df.writeTextLine(TStr("g_beg"));
+    df.writeTextLine("g_beg");
    // df.writeTextLine(TStr("g_lair \"", ls->getName(), "\""));
     if (StringUtil::isEmpty(pw->getWorldName())) {
-        parseErr(TStr("Error saving, cur world was null"), true, false);
+        parseErr("Error saving, cur world was null", true, false);
     }
-    df.writeTextLine(TStr("g_world \"", pw->getWorldName(), "\""));
-    df.writeTextLine(TStr("g_end"));
+    df.writeTextLine(Stz "g_world \""+ pw->getWorldName()+ "\"");
+    df.writeTextLine("g_end");
     //df.writeTextLine(TStr("#Derek Page ", dateTimeToStr(getDateTime())));
     ////sprite image size
     //df.writeTextLine(TStr("isw ", _pSpriteSpec->getSize().x));

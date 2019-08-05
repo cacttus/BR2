@@ -63,8 +63,8 @@ public:
     }
     void setParentName(t_string str, ParentType::e ee) { _strParentName = str; setParentType(ee); }
     t_string getParentName() { return _strParentName; }
-    virtual void serialize(std::shared_ptr<BufferedFile> fb);
-    virtual void deserialize(std::shared_ptr<BufferedFile> fb);
+    virtual void serialize(std::shared_ptr<BinaryFile> fb);
+    virtual void deserialize(std::shared_ptr<BinaryFile> fb);
 
 };
 

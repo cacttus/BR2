@@ -44,8 +44,9 @@ void ShaderUniform::copyUniformData(void* pData, GLint count)
     if (count == -1) {
         static bool bAlreadyLogged = false;
         if (_iArraySize>1 && bAlreadyLogged == false) {
-            BroLogWarn(getName(), 
-                " NOTE: There are ", _iArraySize, " elements in the uniform array '",getName(),"', and you did not explicitly set the count. Setting count to 1");
+            BroLogWarn(getName() +
+                " NOTE: There are " + _iArraySize + " elements in the uniform array '" + getName() + 
+                "', and you did not explicitly set the count. Setting count to 1");
             bAlreadyLogged = true;
             Gu::debugBreak();
         }        
@@ -73,25 +74,25 @@ void ShaderUniform::validate()
 }
 t_string ShaderUniform::debugGetUniformValueAsString() {
     switch (_systemType) {
-    case OpenGLShaderVarType::e::GpuInt1:   return TStr((*((int32_t*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuInt2:   return TStr((*((ivec2*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuInt3:   return TStr((*((ivec3*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuInt4:   return TStr((*((ivec4*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuInt1:   return Stz ((*((int32_t*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuInt2:   return Stz ((*((ivec2*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuInt3:   return Stz ((*((ivec3*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuInt4:   return Stz ((*((ivec4*)_pStorage->ptr()))); break;
 
-    case OpenGLShaderVarType::e::GpuUint1:  return TStr((*((uint32_t*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuUint2:  return TStr((*((uvec2*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuUint3:  return TStr((*((uvec3*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuUint4:  return TStr((*((uvec4*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuUint1:  return Stz ((*((uint32_t*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuUint2:  return Stz ((*((uvec2*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuUint3:  return Stz ((*((uvec3*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuUint4:  return Stz ((*((uvec4*)_pStorage->ptr()))); break;
 
-    case OpenGLShaderVarType::e::GpuFloat1: return TStr((*((float*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuFloat2: return TStr((*((vec2*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuFloat3: return TStr((*((vec3*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuFloat4: return TStr((*((vec4*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuFloat1: return Stz ((*((float*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuFloat2: return Stz ((*((vec2*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuFloat3: return Stz ((*((vec3*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuFloat4: return Stz ((*((vec4*)_pStorage->ptr()))); break;
         // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
-    case OpenGLShaderVarType::e::GpuMat3:   return TStr((*((mat3*)_pStorage->ptr()))); break;
-    case OpenGLShaderVarType::e::GpuMat4:   return TStr((*((mat4*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuMat3:   return Stz ((*((mat3*)_pStorage->ptr()))); break;
+    case OpenGLShaderVarType::e::GpuMat4:   return Stz ((*((mat4*)_pStorage->ptr()))); break;
     default: 
-        return TStr("Type string conversion ", (int)_systemType, " not supported.");
+        return Stz "Type string conversion " + (int)_systemType + " not supported.";
 
     }
 }
@@ -227,7 +228,7 @@ void ShaderUniform::bindUniformFast() {
     //Not ven un ivorm arrays can be null..
     if (value == nullptr) {
         if (getIgnore() == false) {
-            BroLogWarn("Shader Uniform variable ", getName(), " value was not set");
+            BroLogWarn("Shader Uniform variable " + getName() + " value was not set");
         }
         else {
             return;
@@ -255,8 +256,8 @@ void ShaderUniform::bindUniformFast() {
         case OpenGLShaderVarType::e::GpuMat4:   _pContext->glUniformMatrix4fv( _glLocation, count, GL_FALSE, (GLfloat*)value); break;
 
         default:
-            BroLogError("Uniform type binding method has not been implemented for uniform ", getName(),
-                " of type ", ShaderMaker::systemTypeToSTring(_systemType), " (", _systemType, ") ");
+            BroLogError("Uniform type binding method has not been implemented for uniform " + getName() +
+                " of type " + ShaderMaker::systemTypeToSTring(_systemType) + " (" + _systemType + ") ");
             Gu::debugBreak();
             break;
     }
@@ -310,7 +311,7 @@ void ShaderUniformBlock::copyUniformData(void* pData, size_t copySizeBytes) {
 }
 void ShaderUniformBlock::bindUniformFast() { 
     if (_pValue == nullptr) {
-        BroLogWarn("Shader Uniform Block '", getName(), "' value was not set ");
+        BroLogWarn("Shader Uniform Block '" + getName() + "' value was not set ");
     }
     _pContext->glBindBufferBase(GL_UNIFORM_BUFFER, _iBindingIndex, _iUboId);
     _pContext->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);

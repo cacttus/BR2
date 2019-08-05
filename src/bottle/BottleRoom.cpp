@@ -115,7 +115,7 @@ void BottleRoom::setup(std::shared_ptr<Viewport> pv, std::shared_ptr<GLContext> 
 void BottleRoom::loadGameFile() {
     //Called when we change to edit mode.
     t_string strObFileName = makeAssetPath("game.dat");
-    BroLogInfo("World25 - Parsing Spec File '", strObFileName, "'");
+    BroLogInfo("World25 - Parsing Spec File '" + strObFileName + "'");
 
     _pGameFile = std::make_shared<ObFile>(getThis<RoomBase>());
     _pGameFile->loadAndParse(strObFileName);
@@ -128,7 +128,7 @@ void BottleRoom::constructWorld() {
         _pWorld25 = std::make_shared<World25>();
         Gu::getContext()->setPhysicsWorld(_pWorld25);
         _pWorld25->init(_pGameFile);
-        BroLogInfo("Finished..", (uint32_t)(Gu::getMicroSeconds() - t0) / 1000, "ms");
+        BroLogInfo("Finished.." + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
     }
 }
 
@@ -153,11 +153,11 @@ t_string BottleRoom::getNewWorldName(t_string gameName) {
                 iHigh = MathUtils::broMax(i, iHigh);
             }
             else {
-                BroLogWarn("Dir '", dir, "' is not a valid world name");
+                BroLogWarn("Dir '" + dir + "' is not a valid world name");
             }
         }
         else {
-            BroLogWarn("Dir '", dir, "' is not a valid world name");
+            BroLogWarn("Dir '" + dir + "' is not a valid world name");
 
         }
 
@@ -185,7 +185,7 @@ bool BottleRoom::loadOrCreateGame(t_string gameName) {
 
     if (FileSystem::directoryExists(gameDir)) {
         //later
-        BroLogInfo("Loading game ", gameName);
+        BroLogInfo("Loading game " + gameName);
 
         if (FileSystem::fileExists(gameFileDir)) {
 
@@ -201,7 +201,7 @@ bool BottleRoom::loadOrCreateGame(t_string gameName) {
             }
         }
         else {
-            BroLogError("Game file '", gameFileDir, "' not found.");
+            BroLogError("Game file '" + gameFileDir + "' not found.");
             Gu::debugBreak();
             return false;
         }
@@ -233,7 +233,7 @@ void BottleRoom::createGameSaveDir() {
     _strGameSaveDir = makeAssetPath("games");
     // t_string ddir = "";
     if (!FileSystem::createDirectoryRecursive(_strGameSaveDir)) {
-        BroLogError("Failed to create game save directory ", _strGameSaveDir);
+        BroLogError("Failed to create game save directory " + _strGameSaveDir);
     }
 }
 void BottleRoom::setDebugMode() {
@@ -404,6 +404,7 @@ void BottleRoom::drawDebugText() {
         DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
         DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
         DBGL("  Vsync: %s", (_pContext->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+        DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
 
         DBGL("  Camera: %s", getContext()->getCamera()->getPos().toString(5).c_str());
         DBGL("  Avg. Offline: %i", (iAvgOffline), "us");
@@ -547,7 +548,12 @@ void BottleRoom::toggleDebug(std::shared_ptr<Fingers> pFingers) {
         //Debug info
         //TODO: these should all be in rednersettings 1/22/18
         if (pFingers->keyPress(SDL_SCANCODE_F1)) {
-            _bShowDebugText = !_bShowDebugText;
+            if (pFingers->shiftHeld()) {
+                _bDebugDisableShadows = !_bDebugDisableShadows;
+            }
+            else {
+                _bShowDebugText = !_bShowDebugText;
+            }
         }
         if (pFingers->keyPress(SDL_SCANCODE_F2)) {
             _bDrawDebug = !_bDrawDebug;
@@ -578,7 +584,7 @@ void BottleRoom::toggleDebug(std::shared_ptr<Fingers> pFingers) {
             }
             if (Gu::getMicroSeconds() - _iF10Pressed > 1000000) {
                 _pWorld25->getConfig()->setRenderBlocks(!_pWorld25->getConfig()->getRenderBlocks());
-                BroLogInfo("Block Mode turned ", _pWorld25->getConfig()->getRenderBlocks() ? "On" : "Off");
+                BroLogInfo("Block Mode turned " + (_pWorld25->getConfig()->getRenderBlocks() ? "On" : "Off"));
                 BroLogInfo("Remaking all grid meshes... be patient.");
                 _pWorld25->remakeGridMeshes();
                 _iF10Pressed = 0;
@@ -681,7 +687,7 @@ t_string BottleRoom::getIconFullPath() {
     return makeAssetPath("tex", "icon.png");
 }
 t_string BottleRoom::getConfigPath() {
-    return makeAssetPath("", "engine.dat");
+    return makeAssetPath("", "engine.xml");
 }
 t_string BottleRoom::getAssetsDir() {
     return "./data/";
@@ -750,10 +756,10 @@ void WorldSelect::deleteWorld(t_string worldName) {
     FileSystem::deleteDirectoryRecursive(gameDir, fileExts);
 }
 void WorldSelect::updateTouch(std::shared_ptr<Fingers> pFingers, float dt) {
-#ifdef _DEBUG
+//#ifdef _DEBUG
     //Go Straight to a new world.
     _strSelectedWorld = genNewWorldName("NewWorld");
-#endif
+//#endif
 
     if (_eWorldSelectState == WorldSelectState::e::ConfirmDeleteAll) {
         if (pFingers->keyPress(SDL_SCANCODE_Y)) {

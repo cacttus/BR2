@@ -74,7 +74,7 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
 
     size_t byteSize = getByteSize();
     if(readSize > byteSize) {
-        BroThrowException("Tried to read ", readSize, " from Gpu Buffer with size of ", getByteSize(), ".");
+        BroThrowException("Tried to read " + readSize + " from Gpu Buffer with size of " + getByteSize() + ".");
     }
     _pContext->chkErrDbg();
 
@@ -120,7 +120,7 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
             copySizeBytes = iElementSize * num_elements;
         }
         if (copySizeBytes > byteSize) {
-            BroLogError("Copy size ", copySizeBytes, " (", num_elements, " elements) was larger than the buffer size ", byteSize, ". Make sure the input size is not -1 or less than 0.");
+            BroLogError("Copy size " + copySizeBytes + " (" + num_elements + " elements) was larger than the buffer size " + byteSize + ". Make sure the input size is not -1 or less than 0.");
             unbindBuffer();
             return;
             Gu::debugBreak();

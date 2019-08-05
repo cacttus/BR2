@@ -51,10 +51,10 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
 
         if (_iGLLocation == NoAttribLocationFound)
         {
-            _strError += TStr("  Error [GLSL] Attrib ", getName(), " was not found.  \r\n  \
+            _strError +=  Stz "  Error [GLSL] Attrib "+ getName()+ " was not found.  \r\n  \
                              1) It may have been optimized out.\r\n  \
                              2) you may have forgotten to set it in addAttr()\r\n \
-                             3) the attribute may not be in the shader, so you need to remove the addAttr(). \r\n");
+                             3) the attribute may not be in the shader, so you need to remove the addAttr(). \r\n";
 
             BroLogWarn(err);
             Gu::debugBreak();
@@ -76,10 +76,10 @@ VertexUserType::e ShaderAttribute::parseUserType(t_string& name) {
     //Validate some errors
     t_string err = "";
     if (_strName.length() <4) {
-        err += TStr("  Invalid attribute identifier: '", _strName, "'\r\n");
+        err += Stz "  Invalid attribute identifier: '" + _strName + "'\r\n";
     }
     else if (_strName[0] != '_') {
-        err += TStr("  Invalid attribute identifier pattern: '", _strName, "'\r\n");
+        err += Stz "  Invalid attribute identifier pattern: '" + _strName + "'\r\n";
     }
     else {
         t_string strValue = _strName.substr(1, 4);
@@ -88,27 +88,27 @@ VertexUserType::e ShaderAttribute::parseUserType(t_string& name) {
         t_string strIndex = strValue.substr(2, 2);
 
         //validate component size.
-        if (_eGLAttribType      == GL_FLOAT_VEC2 && !(strVectorSize == "2")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_FLOAT_VEC3 && !(strVectorSize == "3")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_FLOAT_VEC4 && !(strVectorSize == "4")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_INT_VEC2   && !(strVectorSize == "2")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_INT_VEC3   && !(strVectorSize == "3")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_INT_VEC4   && !(strVectorSize == "4")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_BOOL_VEC2  && !(strVectorSize == "2")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_BOOL_VEC3  && !(strVectorSize == "3")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_BOOL_VEC4  && !(strVectorSize == "4")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_FLOAT_MAT2 && !(strVectorSize == "2")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_FLOAT_MAT3 && !(strVectorSize == "3")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
-        else if (_eGLAttribType == GL_FLOAT_MAT4 && !(strVectorSize == "4")){ err += TStr("  Vertex component for '", strValue, "' is invalid.\r\n");  }
+        if (_eGLAttribType      == GL_FLOAT_VEC2 && !(strVectorSize == "2")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_FLOAT_VEC3 && !(strVectorSize == "3")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_FLOAT_VEC4 && !(strVectorSize == "4")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_INT_VEC2   && !(strVectorSize == "2")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_INT_VEC3   && !(strVectorSize == "3")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_INT_VEC4   && !(strVectorSize == "4")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_BOOL_VEC2  && !(strVectorSize == "2")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_BOOL_VEC3  && !(strVectorSize == "3")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_BOOL_VEC4  && !(strVectorSize == "4")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_FLOAT_MAT2 && !(strVectorSize == "2")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_FLOAT_MAT3 && !(strVectorSize == "3")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
+        else if (_eGLAttribType == GL_FLOAT_MAT4 && !(strVectorSize == "4")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }
 
         if (StringUtil::isEmpty(strVectorSize)) {
-            err += TStr("  Could not match the given gl enumeration type for vertex attribute '", _strName, "'\r\n");
+            err += Stz "  Could not match the given gl enumeration type for vertex attribute '" + _strName + "'\r\n";
         }
 
     }
 
     if(StringUtil::isNotEmpty(err)) { 
-        BroLogError("Attribute '",_strName,"'parse error: \r\n", err);
+        BroLogError("Attribute '" + _strName + "'parse error: \r\n" + err);
         Gu::debugBreak();
     }
     else {
@@ -148,7 +148,7 @@ VertexUserType::e ShaderAttribute::parseUserType(t_string& name) {
         }
         else {
             //Wer're going to hit this in the beginning because we can have a lot of different attrib types.
-            BroLogInfo("  Unrecognized vertex attribute '", name, "'.");
+            BroLogInfo("  Unrecognized vertex attribute '" + name + "'.");
             Gu::debugBreak();
         }
 

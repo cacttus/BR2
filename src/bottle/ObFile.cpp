@@ -28,7 +28,7 @@ void ObFile::preLoad() {
     _pW25Config = std::make_shared<W25Config>();//Deleted in ~World25
 }
 void ObFile::postLoad() {
-    BroLogInfo("ObFile: Debug mode is ", _pW25Config->getIsDebugMode() ? "Enabled" : "Disabled");
+    BroLogInfo("ObFile: Debug mode is " + (_pW25Config->getIsDebugMode() ? "Enabled" : "Disabled"));
 }
 void ObFile::pkp(std::vector<t_string>& tokens) {
 
@@ -71,7 +71,7 @@ void ObFile::parseConfig(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "CF_GM", 2)) {
         _pW25Config->_eDebugGridMode = (DebugGridMode::e)TypeConv::strToInt(getCleanToken(tokens, iind));
         if ((int)_pW25Config->_eDebugGridMode >= (int)DebugGridMode::e::MaxDebugGridModes) {
-            BroLogError("Grid mode ", _pW25Config->_eDebugGridMode, " is invalid. Max modes = ", (int)DebugGridMode::e::MaxDebugGridModes - 1);
+            BroLogError("Grid mode " + _pW25Config->_eDebugGridMode + " is invalid. Max modes = " + ((int)DebugGridMode::e::MaxDebugGridModes - 1));
             Gu::debugBreak();
             _pW25Config->_eDebugGridMode = (DebugGridMode::e)0;
         }
@@ -103,7 +103,7 @@ void ObFile::parseConfig(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "CF_MAX_GRIDS_GEN_ASYNC", 2)) {
         uint32_t ui = TypeConv::strToUint(getCleanToken(tokens, iind));
         if (ui > 128) {
-            BroLogWarn(tokens[0], ": Too many grids, ", ui, " limiting to 128. ");
+            BroLogWarn(tokens[0] + ": Too many grids, " + ui + " limiting to 128. ");
         }
         _pW25Config->_iMaxGridsGenAsync = ui;
     }
@@ -125,7 +125,7 @@ void ObFile::parseVer(std::vector<t_string>& tokens) {
     if (lcmp(tokens[0], "VER", 2)) {
         t_string ver = StringUtil::stripDoubleQuotes(tokens[1]);
         if (ver != CONGA_SPRITE_FILE_VERSION) {
-            BroThrowException("Sprite file version mismatch, File is ", ver, ", Engine wanted ", CONGA_SPRITE_FILE_VERSION);
+            BroThrowException(Stz "Sprite file version mismatch, File is "+ ver + ", Engine wanted "+ CONGA_SPRITE_FILE_VERSION);
         }
     }
 }
@@ -141,7 +141,7 @@ void ObFile::parseMobs(std::vector<t_string>& tokens) {
         //Find Duplicate
         for (std::shared_ptr<WorldObj> ws : _vecWorldObjs) {
             if (StringUtil::equalsi(ws->getMobName(), mobFolder)) {
-                parseErr(TStr("Duplicate mob file found in game config ", mobFolder), true, true);
+                parseErr(Stz "Duplicate mob file found in game config "+ mobFolder, true, true);
             }
         }
 
@@ -187,7 +187,7 @@ void ObFile::parseSprites(std::vector<t_string>& tokens) {
                 }
                 else {
                     files.push_back(_pRoom->makeAssetPath("spr", "default.png"));
-                    BroLogError(name, ": Failed to find Sprite path: '", path, "'. A default sprite will show.");
+                    BroLogError(name + ": Failed to find Sprite path: '" + path + "'. A default sprite will show.");
                     Gu::debugBreak();
                 }
             }
@@ -198,14 +198,14 @@ void ObFile::parseSprites(std::vector<t_string>& tokens) {
                 std::shared_ptr<SpriteSpec> ps = _vecMotionSpecs[iMot];
 
                 if (StringUtil::equalsi(ps->getName(), name)) {
-                    BroLogWarn(name, ", ", ps->getName(), ": Duplicate sprite names found. Ignoring duplicate sprite.");
+                    BroLogWarn(name + ", " + ps->getName() + ": Duplicate sprite names found. Ignoring duplicate sprite.");
                     bVerified = false;
                     Gu::debugBreak();
                 }
             }
 
             if (files.size() > 1 && fDuration == 0) {
-                BroLogWarn(name, ", Animation had frames but didn't have a duration set. The animation will not play.");
+                BroLogWarn(name + ", Animation had frames but didn't have a duration set. The animation will not play.");
                 Gu::debugBreak();
             }
 
@@ -218,7 +218,7 @@ void ObFile::parseSprites(std::vector<t_string>& tokens) {
 
         }
         else {
-            BroLogWarn("Invalid SPR - incorrect number of arguments.  Wanted ", iMinArgCount, " got ", tokens.size());
+            BroLogWarn("Invalid SPR - incorrect number of arguments.  Wanted " + iMinArgCount + " got " + tokens.size());
             Gu::debugBreak();
         }
     }
@@ -262,7 +262,7 @@ void ObFile::parseTiles(std::vector<t_string>& tokens) {
                 eMatterMode = GridMeshLayer::e::Transparent;
             }
             if (eMatterMode == GridMeshLayer::e::Invalid) {
-                BroLogWarn(name, ",  Invalid TileMatter specification '", matter, "'");
+                BroLogWarn(name + ",  Invalid TileMatter specification '" + matter + "'");
                 bVerified = false;
                 Gu::debugBreak();
             }
@@ -271,12 +271,12 @@ void ObFile::parseTiles(std::vector<t_string>& tokens) {
             for (size_t iTile = 0; iTile < _vecTileSpecs.size(); ++iTile) {
                 Tile25Spec* ps = _vecTileSpecs[iTile];
                 if (StringUtil::equalsi(ps->getName(), name)) {
-                    BroLogWarn(name, ", ", ps->getName(), ": Duplicate tile names found. Ignoring duplicate tile.");
+                    BroLogWarn(name + ", " + ps->getName() + ": Duplicate tile names found. Ignoring duplicate tile.");
                     bVerified = false;
                     Gu::debugBreak();
                 }
                 if (ps->getTileIndex() == index) {
-                    BroLogWarn(name, ", ", ps->getName(), ": Duplicate tile indexes '", index, "' were found in the sprite file. These must be unique. Ignoring duplicate.");
+                    BroLogWarn(name + ", " + ps->getName() + ": Duplicate tile indexes '" + index + "' were found in the sprite file. These must be unique. Ignoring duplicate.");
                     bVerified = false;
                     Gu::debugBreak();
                 }
@@ -288,23 +288,23 @@ void ObFile::parseTiles(std::vector<t_string>& tokens) {
             pBot = getMot(strBot);
 
             if (pTop == nullptr) {
-                BroLogWarn(name, ": Top sprite '", strTop, "'not found.  (Check the if sprite name is misspelled).");
+                BroLogWarn(name + ": Top sprite '" + strTop + "'not found.  (Check the if sprite name is misspelled).");
                 bVerified = false;
                 Gu::debugBreak();
             }
             if (pSide == nullptr) {
-                BroLogWarn(name, ": Side sprite '", strSide, "'not found.  (Check the if sprite name is misspelled).");
+                BroLogWarn(name + ": Side sprite '" + strSide + "'not found.  (Check the if sprite name is misspelled).");
                 bVerified = false;
                 Gu::debugBreak();
             }
             if (pBot == nullptr) {
-                BroLogWarn(name, ": Bot sprite '", strBot, "'not found.  (Check the if sprite name is misspelled).");
+                BroLogWarn(name + ": Bot sprite '" + strBot + "'not found.  (Check the if sprite name is misspelled).");
                 bVerified = false;
                 Gu::debugBreak();
             }
 
             if (index < 0 || index>255) {
-                BroLogWarn(name, ": Index cannot be larger than 255!");
+                BroLogWarn(name + ": Index cannot be larger than 255!");
                 bVerified = false;
                 Gu::debugBreak();
             }
@@ -315,7 +315,7 @@ void ObFile::parseTiles(std::vector<t_string>& tokens) {
 
         }
         else {
-            BroLogWarn("Invalid Tile - incorrect number of arguments, wanted ", iMinArgCount, " got ", tokens.size());
+            BroLogWarn("Invalid Tile - incorrect number of arguments, wanted " + iMinArgCount + " got " + tokens.size());
             Gu::debugBreak();
         }
     }
@@ -470,7 +470,7 @@ void ObFile::parseMorphTiles(std::vector<t_string>& tokens) {
         _bCurSpecValid = true;
         t_string name = getCleanToken(tokens, iind);
         if (_pCurMorphTile != nullptr) {
-            BroLogError(tokens[0], ": 'OBB' Failed to read MT: Format Error - already begun an object desc.");
+            BroLogError(tokens[0] + ": 'OBB' Failed to read MT: Format Error - already begun an object desc.");
         }
 
         _pCurMorphTile = new MorphTile(name);
@@ -482,7 +482,7 @@ void ObFile::parseMorphTiles(std::vector<t_string>& tokens) {
             Tile25Spec* pt = getTileSpecByName(name);
 
             if (pt == nullptr) {
-                BroLogError(tokens[0], ": couldn't find Tile '", name, "' for morph tile '", _pCurMorphTile->getName(), "'.");
+                BroLogError(tokens[0] + ": couldn't find Tile '" + name + "' for morph tile '" + _pCurMorphTile->getName() + "'.");
                 _bCurSpecValid = false;
             }
             else {
@@ -509,12 +509,12 @@ void ObFile::parseWalkers(std::vector<t_string>& tokens) {
 
         t_string name = getCleanToken(tokens, iind);
         if (_pCurWalkerSpec != nullptr) {
-            BroThrowException(tokens[0], ": 'OBB' Failed to read Objects: Format Error - already begun an object desc.");
+            BroThrowException(tokens[0] + ": 'OBB' Failed to read Objects: Format Error - already begun an object desc.");
         }
         Hash32 nh = STRHASH(name);
         for (WalkerSpec* sp : _vecWalkers) {
             if (sp->getNameHashed() == nh) {
-                BroLogWarn(tokens[0], ": Duplicate walker name found, ignoring: ", name);
+                BroLogWarn(tokens[0] + ": Duplicate walker name found, ignoring: " + name);
                 _bCurSpecValid = false;
             }
         }
@@ -525,7 +525,7 @@ void ObFile::parseWalkers(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "WK_TYPE", 2)) {
         if (_bCurSpecValid == true) {
             if (_pCurWalkerSpec == nullptr) {
-                BroLogError(tokens[0], ":Walker was null.");
+                BroLogError(tokens[0] + ":Walker was null.");
                 _bCurSpecValid = false;
             }
             t_string type = getCleanToken(tokens, iind);
@@ -546,7 +546,7 @@ void ObFile::parseWalkers(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "WK_LOCALE", 2)) {
         if (_bCurSpecValid == true) {
             if (_pCurWalkerSpec == nullptr) {
-                BroLogError(tokens[0], ":Walker was null.");
+                BroLogError(tokens[0] + ":Walker was null.");
                 _bCurSpecValid = false;
             }
             t_string sLocality = getCleanToken(tokens, iind);
@@ -598,7 +598,7 @@ void ObFile::parseWalkers(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "WK_END", 1)) {
         if (_bCurSpecValid == true) {
             if (_pCurWalkerSpec == nullptr) {
-                BroLogError(tokens[0], ":Walker was null.");
+                BroLogError(tokens[0] + ":Walker was null.");
                 _bCurSpecValid = false;
 
             }
@@ -617,12 +617,12 @@ void ObFile::parseLairs(std::vector<t_string>& tokens) {
         _bCurSpecValid = true;
         t_string name = getCleanToken(tokens, iind);
         if (_pCurLairSpec != nullptr) {
-            BroThrowException(tokens[0], ": Lair Object already begun");
+            BroThrowException(tokens[0] + ": Lair Object already begun");
         }
         Hash32 nh = STRHASH(name);
         for (LairSpec* sp : _vecLairs) {
             if (sp->getLairId() == nh) {
-                BroLogWarn(tokens[0], ": Duplicate lair name found, ignoring: ", name);
+                BroLogWarn(tokens[0] + ": Duplicate lair name found, ignoring: " + name);
                 _bCurSpecValid = false;
             }
         }
@@ -645,7 +645,7 @@ void ObFile::parseLairs(std::vector<t_string>& tokens) {
             if (bDef == true) {
                 for (LairSpec* ls : _vecLairs) {
                     if (ls->getDefault() == true) {
-                        BroLogWarn(tokens[0], ": ", _pCurLairSpec->getName(), " and ", ls->getName(), ": Default lair spec already set. Ignoring");
+                        BroLogWarn(tokens[0] + ": " + _pCurLairSpec->getName() + " and " + ls->getName() + ": Default lair spec already set. Ignoring");
                         _pCurLairSpec->_bDefault = false;
                     }
                 }
@@ -657,7 +657,7 @@ void ObFile::parseLairs(std::vector<t_string>& tokens) {
             int pri = TypeConv::strToInt(getCleanToken(tokens, iind));
             for (LairSpec* ls : _vecLairs) {
                 if (ls->getPriority() == pri) {
-                    BroLogWarn(tokens[0], ": ", _pCurLairSpec->getName(), ": Priority is already used.");
+                    BroLogWarn(tokens[0] + ": " + _pCurLairSpec->getName() + ": Priority is already used.");
                     break;
                 }
             }
@@ -680,7 +680,7 @@ void ObFile::parseLairs(std::vector<t_string>& tokens) {
             _pCurLairSpec->_mxGlobBounds.setMin(std::move(a));
             _pCurLairSpec->_mxGlobBounds.setMax(std::move(b));
             if ((a.x > b.x) || (a.y > b.y) || (a.z > b.z)) {
-                BroLogError(tokens[0], ":Lair area had a minimum value greater than a maximum.");
+                BroLogError(tokens[0] + ":Lair area had a minimum value greater than a maximum.");
                 _bCurSpecValid = false;
             }
         }
@@ -703,7 +703,7 @@ void ObFile::parseLairs(std::vector<t_string>& tokens) {
             float scale = TypeConv::strToFloat(getCleanToken(tokens, iind));
 
             if (octaves > 7) {
-                BroLogWarn("Noise func has a large number of octaves (", octaves, ").  World may generate slowly!");
+                BroLogWarn("Noise func has a large number of octaves (" + octaves + ").  World may generate slowly!");
             }
 
             _pCurLairSpec->getNoiseFunc()->_fOffset = off;
@@ -730,7 +730,7 @@ void ObFile::parseLairs(std::vector<t_string>& tokens) {
             WalkerSpec* ps = getWalkerSpecByName(name);
 
             if (ps == nullptr) {
-                BroLogError(tokens[0], ": While parsing lair, '", _pCurLairSpec->getName(), "' Could not find the walker spec '", name, "'.");
+                BroLogError(tokens[0] + ": While parsing lair, '" + _pCurLairSpec->getName() + "' Could not find the walker spec '" + name + "'.");
 
             }
 
@@ -801,24 +801,24 @@ void ObFile::processShiftMotionImage(std::shared_ptr<SpriteSpec> ps, bool shiftH
     if (ps->getIsGenerated() == true) {
     }
     else if (ps->getFrames().size() > 1) {
-        BroLogWarn(ps->getName(), ": Motion to shift had more than 1 frame.  We can only process if they are 1 frame.");
+        BroLogWarn(ps->getName() + ": Motion to shift had more than 1 frame.  We can only process if they are 1 frame.");
         Gu::debugBreak();
     }
     else if (ps->getFrames().size() == 0) {
-        BroLogWarn(ps->getName(), ": Motion to shift had no frames!");
+        BroLogWarn(ps->getName() + ": Motion to shift had no frames!");
         Gu::debugBreak();
     }
     else {
         SpriteFrame* pFrame = ps->getFrames()[0];
         t_string baseImgName = pFrame->getImageName();
-        BroLogInfo("Processing ", baseImgName);
+        BroLogInfo("Processing " + baseImgName);
 
         std::shared_ptr<Img32> bi = nullptr;
         try {
             bi = Gu::loadImage(pFrame->getImageName());
         }
         catch (Exception* ex) {
-            BroLogError("Failed to Open image.:\r\n", ex->what());
+            BroLogError("Failed to Open image.:\r\n" + ex->what());
             return;
         }
 
@@ -849,7 +849,7 @@ void ObFile::processShiftMotionImage(std::shared_ptr<SpriteSpec> ps, bool shiftH
                 temp->getData()->copyFrom(pNew->getData());
             }
 
-            t_string genName = TStr(baseImgName, "-gen-", ii);
+            t_string genName = baseImgName+ "-gen-"+ ii;
             ps->addGeneratedFrame(genName, pNew);
         }
 
@@ -892,7 +892,7 @@ LairGenLocale::e ObFile::parseGenLocale(t_string str) {
     }
     else {
         if (_bCurSpecValid) {
-            BroLogError("For Lair '", _pCurLairSpec->getName(), "', Unrecognized Tile Gen Locality: ", str);
+            BroLogError("For Lair '" + _pCurLairSpec->getName() + "', Unrecognized Tile Gen Locality: " + str);
             _bCurSpecValid = false;
         }
     }
@@ -914,22 +914,23 @@ LairTile* ObFile::parseLairTile(std::vector<t_string>& tokens, t_string specName
     //  LairGenLocale::e eGenLocale = parseGenLocale(sLocality);
 
     if (fMinPct < 0.0f || fMinPct > 100.0f) {
-        BroLogError(tokens[0], ":For  '", specName, "', Invalid Min Pct: ", fMinPct);
+        BroLogError(tokens[0] + ":For  '" + specName + "', Invalid Min Pct: " + fMinPct);
         _bCurSpecValid = false;
     }
     if (fMaxPct < 0.0f || fMaxPct > 100.0f) {
-        BroLogError(tokens[0], ":For  '", specName, "', Invalid Max Pct: ", fMaxPct);
+        BroLogError(tokens[0] + ":For  '" + specName + "', Invalid Max Pct: " + fMaxPct);
         _bCurSpecValid = false;
     }
     if (fMinPct > fMaxPct) {
-        BroLogError(tokens[0], ":For  '", specName, "', Min Pct Is greater than max Pct");
+        BroLogError(tokens[0] + ":For  '" + specName + "', Min Pct Is greater than max Pct");
         _bCurSpecValid = false;
     }
 
 
     MorphTile* sp = getMorphTileGroupByName(name);
     if (sp == nullptr) {
-        BroLogError(tokens[0], ":For '", specName, "' Morph Tile '", name, "' was not found.  Make sure that the LA_BEG comes after all tiles (TIL) and that it's defined in MT_BEG.");
+        BroLogError(tokens[0] + ":For '" + specName + "' Morph Tile '" + name +
+            "' was not found.  Make sure that the LA_BEG comes after all tiles (TIL) and that it's defined in MT_BEG.");
         _bCurSpecValid = false;
     }
 
@@ -974,7 +975,7 @@ uint32_t ObFile::parseNbr_uint(std::vector<t_string>& tokens, int& iind) {
     uint32_t ret;
     t_string nbr = getCleanToken(tokens, iind);
     if (StringUtil::equalsi(nbr, "-i")) {
-        BroLogWarn(tokens[0], ": -i (infinity) is invalid for an unsigned int parameter.");
+        BroLogWarn(tokens[0] + ": -i (infinity) is invalid for an unsigned int parameter.");
         ret = 0;
     }
     else if (StringUtil::equalsi(nbr, "i")) {
@@ -998,8 +999,8 @@ MpVec3i ObFile::parse_mxv3(std::vector<t_string>& tokens, t_string specName, int
         parseNbr_int(tokens, iind)));
 
     if ((uv.getMin().x > uv.getMax().x) || (uv.getMin().y > uv.getMax().y) || (uv.getMin().z > uv.getMax().z)) {
-        BroLogError(tokens[0], " For Spec, '", specName, "' a min component was greater than a max component '",
-            uv.getMin().toString(), " , ", uv.getMax().toString(), "'");
+        BroLogError(tokens[0] + " For Spec, '" + specName + "' a min component was greater than a max component '" +
+            uv.getMin().toString() + " , " + uv.getMax().toString() + "'");
         _bCurSpecValid = false;
     }
 
@@ -1013,15 +1014,15 @@ MpUint ObFile::parse_mxui2(std::vector<t_string>& tokens, t_string specName, int
     int32_t cMax = parseNbr_uint(tokens, iind);
 
     if (cMin < 0) {
-        BroLogError(tokens[0], " For Spec, '", specName, "' invalid min value '", cMin, "'");
+        BroLogError(tokens[0] + " For Spec, '" + specName + "' invalid min value '" + cMin + "'");
         _bCurSpecValid = false;
     }
     if (cMax < 0) {
-        BroLogError(tokens[0], " For Spec, '", specName, "' invalid max value '", cMax, "'");
+        BroLogError(tokens[0] + " For Spec, '" + specName + "' invalid max value '" + cMax + "'");
         _bCurSpecValid = false;
     }
     if (cMin > cMax) {
-        BroLogError(tokens[0], " For Spec, '", specName, "' min was greater than max '", cMin, " , ", cMax, "'");
+        BroLogError(tokens[0] + " For Spec, '" + specName + "' min was greater than max '" + cMin + " , " + cMax + "'");
         _bCurSpecValid = false;
     }
 
@@ -1040,7 +1041,7 @@ MpFloat ObFile::parse_mxf2(std::vector<t_string>& tokens, t_string specName, int
     ui.setMax(parseNbr_float(tokens, iind));
 
     if (ui.getMin() > ui.getMax()) {
-        BroLogError(tokens[0], ": For Spec, '", specName, "' min was greater than max '", ui.getMin(), " , ", ui.getMax(), "'");
+        BroLogError(tokens[0] + ": For Spec, '" + specName + "' min was greater than max '" + ui.getMin() + " , " + ui.getMax() + "'");
         _bCurSpecValid = false;
     }
 

@@ -303,7 +303,7 @@ bool PhysicsWorld::tryRemoveObj(std::shared_ptr<PhysicsNode> ob){
 }
 void PhysicsWorld::addObj(std::shared_ptr<PhysicsNode> ob, bool bActivate, bool bRefreshCache) {
     if(ob->detachFromParent() == true){
-        BroLogWarn(ob->getSpecName(), "Added a parented OBJ - you may get invaid results.");
+        BroLogWarn(ob->getSpecName() + "Added a parented OBJ - you may get invaid results.");
         Gu::debugBreak();
     }
     calc_obj_manifold(ob);
@@ -544,7 +544,7 @@ void PhysicsWorld::calc_obj_manifold(std::shared_ptr<PhysicsNode> ob) {
     if (ob->getBoundBoxObject()->limitSizeForEachAxis(ob->getPos(), 20000.0f)) {
         //Restrict bound box size, this will prevent us from trying to reparent an object
         //that has an invalid bound box
-        BroLogWarnCycle("Bound Box Of Object ", ob->getSpecName(), " was too large, >20000, check meshes to ensure box is accurate.");
+        BroLogWarnCycle("Bound Box Of Object " + ob->getSpecName() + " was too large, >20000, check meshes to ensure box is accurate.");
     }
 
     //Update Speedbox
@@ -1171,7 +1171,7 @@ void PhysicsWorld::sweepGridBox(std::function<void(ivec3&)> func, ivec3& viMin, 
 
     int dbg_nGrids = abs(viMax.x - viMin.x + 1) * abs(viMax.z - viMin.z + 1);
     if (dbg_nGrids > 5000) {
-        BroLogWarnCycle("sweepGridBox, too many grids, looping over: ", dbg_nGrids);
+        BroLogWarnCycle("sweepGridBox, too many grids, looping over: " + dbg_nGrids);
         static int n = 0;
         if (n == 0) {
             Gu::debugBreak();
@@ -1242,7 +1242,8 @@ void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
 
     parms->_pRenderBucket->clear();
     std::set<ivec3*, ivec3::Vec3xCompLess> grids;
-    //All Grids
+
+    //Get All Grids
     sweepGridFrustum([&](ivec3& cv) {
         std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
         if (pGrid != nullptr) {

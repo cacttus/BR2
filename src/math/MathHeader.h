@@ -201,6 +201,20 @@ typedef Mat44 mat4;
 typedef Mat33 mat3;
 typedef Quaternion quat;
 
+//String conversion
+
+std::string operator+(const std::string& str, const vec2& rhs);
+std::string operator+(const std::string& str, const vec3& rhs);
+std::string operator+(const std::string& str, const vec4& rhs);
+std::string operator+(const std::string& str, const ivec2& rhs);
+std::string operator+(const std::string& str, const ivec3& rhs);
+std::string operator+(const std::string& str, const ivec4& rhs);
+std::string operator+(const std::string& str, const uvec2& rhs);
+std::string operator+(const std::string& str, const uvec3& rhs);
+std::string operator+(const std::string& str, const uvec4& rhs);
+std::string operator+(const std::string& str, const mat3& rhs);
+std::string operator+(const std::string& str, const mat4& rhs);
+
 //////////////////////////////////////////////////////////////////////////
 // Syntax helper.
 

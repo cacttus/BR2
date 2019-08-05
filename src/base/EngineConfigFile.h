@@ -12,16 +12,16 @@
 #ifndef __ENGINECONFIG_14940903882644616215_H__
 #define __ENGINECONFIG_14940903882644616215_H__
 
-#include "../base/PoundFile.h"
+#include "../base/XmlFile.h"
+//#include "../base/PoundFile.h"
 
 namespace Game {
 
-class EngineConfigFile : public PoundFile {
-
+class EngineConfigFile : public XmlFile {
 protected:
-    virtual void pkp(std::vector<t_string>& tokens);
-    virtual void preLoad();
-    virtual void postLoad();
+    virtual void pkp(std::vector<t_string>& tokens) override;
+    virtual void preLoad() override;
+    virtual void postLoad(bool success) override;
 
     std::shared_ptr<EngineConfig> _pConfig = nullptr;
 
@@ -32,6 +32,7 @@ public:
     std::shared_ptr<EngineConfig> getConfig() { return _pConfig; }
 
 };
+
 }//ns Game
 
 

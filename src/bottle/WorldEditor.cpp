@@ -209,7 +209,7 @@ void WorldEditor::editWorldEndEdit() {
             //pg->saveGrid();
         }
 
-        BroLogInfo("Saved ", _setGridsToSave.size(), " grids.");
+        BroLogInfo("Saved " + _setGridsToSave.size() + " grids.");
         _setGridsToSave.clear();
     }
 }

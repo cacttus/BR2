@@ -49,7 +49,7 @@ void Fingers::setKeyDown(SDL_Scancode keyCode) {
 
     if (keyCode >= SDL_NUM_SCANCODES) {
         //Error
-        BroLogError("scancode outside range:", keyCode);
+        BroLogError("scancode outside range:" + keyCode);
     }
     else {
         _kbKeys[keyCode] = Game::ButtonState::e::Press;
@@ -64,7 +64,7 @@ void Fingers::setKeyUp(SDL_Scancode keyCode)
 {
     if (keyCode >= SDL_NUM_SCANCODES) {
         //Error
-        BroLogError("scancode outside range: ", keyCode);
+        BroLogError("scancode outside range: " + keyCode);
     }
     else {
         _kbKeys[keyCode] = Game::ButtonState::Release;

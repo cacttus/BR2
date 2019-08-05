@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 #include "../base/StringUtil.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../model/MeshNode.h"
 #include "../model/VertexFormat.h"
 #include "../model/MeshSpec.h"
@@ -27,7 +27,7 @@ ObjectFile::~ObjectFile(){
 ///////////////////////////////////////////////////////////////////
 void ObjectFile::load(t_string& strFilePath, bool flipWinding)
 {
-    BufferedFile bufferedFile;
+    BinaryFile bufferedFile;
     t_uint32 iLastGroupOffset;    // - For NON relative vertexes (ones with no '-' in front of their indexes we have
 
     _sFileName = strFilePath;
@@ -46,7 +46,7 @@ void ObjectFile::load(t_string& strFilePath, bool flipWinding)
     //Load the last spec
     addCurrentSpec();
 }
-vec3 ObjectFile::readVec3(BufferedFile& pBufferedFile)
+vec3 ObjectFile::readVec3(BinaryFile& pBufferedFile)
 {
     vec3 ret;
     ret.x = TypeConv::strToFloat(pBufferedFile.getTok());
@@ -54,14 +54,14 @@ vec3 ObjectFile::readVec3(BufferedFile& pBufferedFile)
     ret.z = TypeConv::strToFloat(pBufferedFile.getTok());
     return ret;
 }
-vec2 ObjectFile::readVec2(BufferedFile& pBufferedFile)
+vec2 ObjectFile::readVec2(BinaryFile& pBufferedFile)
 {
     vec2 ret;
     ret.x = TypeConv::strToFloat(pBufferedFile.getTok());
     ret.y = TypeConv::strToFloat(pBufferedFile.getTok());
     return ret;
 }
-void ObjectFile::loadObjFileContents(BufferedFile& pBufferedFile)
+void ObjectFile::loadObjFileContents(BinaryFile& pBufferedFile)
 {
     t_string    tok;
     vec3 temp_v3;
@@ -111,7 +111,7 @@ void ObjectFile::loadObjFileContents(BufferedFile& pBufferedFile)
     }
 
 }
-void ObjectFile::parseGeom(BufferedFile& pBufferedFile, t_string& tok)
+void ObjectFile::parseGeom(BinaryFile& pBufferedFile, t_string& tok)
 {
     tok = pBufferedFile.getTokSameLineOrReturnEmpty();
 
@@ -122,7 +122,7 @@ void ObjectFile::parseGeom(BufferedFile& pBufferedFile, t_string& tok)
 //        _pCurrentSpec->setFileName(_sFileName);
     }
 }
-void ObjectFile::parseFace(BufferedFile& pBufferedFile, t_string& tok)
+void ObjectFile::parseFace(BinaryFile& pBufferedFile, t_string& tok)
 {
     std::vector <t_string> strVec;
     int32_t iComp;
@@ -169,7 +169,7 @@ int32_t ObjectFile::parseFaceComponent(t_string& tok, int32_t& strlind, int32_t 
 
         //20160509 we don't allow varied formats.
         //You're missing Tex Coords, Or Normals
-        BroThrowException("Invalid object file format.  Missing face index.", iComponent, " at line ", _iCurrentLine);
+        BroThrowException(Stz "Invalid object file format.  Missing face index." + iComponent + " at line " + _iCurrentLine);
     }
     else
     {
@@ -188,17 +188,17 @@ void ObjectFile::addFaceVertex(int32_t iVertex, int32_t iTCoord, int32_t iNormal
     int32_t xi = iTCoord - 1;
 
     if(vi<0)
-        BroThrowException("Vertex buffer underflow at line ", _iCurrentLine);
+        BroThrowException("Vertex buffer underflow at line " + _iCurrentLine);
     if(ni<0)
-        BroThrowException("Normal buffer underflow at line ", _iCurrentLine);
+        BroThrowException("Normal buffer underflow at line " + _iCurrentLine);
     if(xi<0)
-        BroThrowException("TCoord buffer underflow at line ", _iCurrentLine);
+        BroThrowException("TCoord buffer underflow at line " + _iCurrentLine);
     if(vi>= (int32_t)_vecVerts.size())
-        BroThrowException("Vertex buffer overflow at line ", _iCurrentLine);
+        BroThrowException("Vertex buffer overflow at line " + _iCurrentLine);
     if(ni>= (int32_t)_vecNormals.size())
-        BroThrowException("Normal buffer overflow at line ", _iCurrentLine);
+        BroThrowException("Normal buffer overflow at line " + _iCurrentLine);
     if(xi>= (int32_t)_vecTCoords.size())
-        BroThrowException("TCoord buffer overflow at line ", _iCurrentLine);
+        BroThrowException("TCoord buffer overflow at line " + _iCurrentLine);
 
     int32_t newIndex = 0;
 
@@ -298,7 +298,7 @@ void ObjectFile::clearVertexCache()
     }
     _mapVertexCache.clear();
 }
-mat4 ObjectFile::parseMat4(BufferedFile& bf)
+mat4 ObjectFile::parseMat4(BinaryFile& bf)
 {
     // - Parse csv matrix string.
     t_string mat_str = bf.getTok();

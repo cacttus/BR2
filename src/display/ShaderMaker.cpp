@@ -51,7 +51,7 @@ void ShaderMaker::initialize(std::shared_ptr<RoomBase> mainRoom) {
     _pDiffuseShaders.insert(std::make_pair(v_v3n3::getVertexFormat(), makeShader(std::vector<t_string> { "d_v3n3_diffuse.vs", "d_v3n3_diffuse.ps" })));
     _pDiffuseShaders.insert(std::make_pair(v_v3::getVertexFormat(), makeShader(std::vector<t_string> { "d_v3_diffuse.vs", "d_v3_diffuse.ps" })));
     _pDiffuseShaders.insert(std::make_pair(v_v2x2::getVertexFormat(), makeShader(std::vector<t_string> { "d_v2x2_diffuse.vs", "d_v2x2_diffuse.ps" })));
-    
+
     _pGlassShaders.insert(std::make_pair(v_v3n3x2::getVertexFormat(), makeShader(std::vector<t_string> { "f_v3n3x2_glass.vs", "f_v3n3x2_glass.ps" })));
     _pGlassShaders.insert(std::make_pair(v_v3n3::getVertexFormat(), makeShader(std::vector<t_string> { "f_v3n3_glass.vs", "f_v3n3_glass.ps" })));
 
@@ -62,7 +62,7 @@ void ShaderMaker::initialize(std::shared_ptr<RoomBase> mainRoom) {
     _pGuiShader = makeShader(std::vector<t_string> { "f_gui.vs", "f_gui.gs", "f_gui.ps" });
 
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     getComputeLimits();
 }
 std::shared_ptr<ShaderBase> ShaderMaker::getDiffuseShader(std::shared_ptr<VertexFormat> reqType) {
@@ -123,12 +123,12 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<t_string>& vecFi
     //  4) Then we compile/link all programs
     try
     {
-        BroLogInfo("\r\n------------------------------\r\nShaderMaker: Processing ", vecFiles.size(), " files.");
+        BroLogInfo("\r\n------------------------------\r\nShaderMaker: Processing " + vecFiles.size() + " files.");
         removeDuplicateSourceFiles(vecFiles);
         t_string strShaderName = getShaderNameFromFileNames(vecFiles);
         fullyQualifyFiles(vecFiles);
 
-        BroLogInfo("Processing Shader: ", strShaderName);
+        BroLogInfo("Processing Shader: " + strShaderName);
 
         loadShaderSubPrograms(vecFiles, vecSubProgs);
         if (checkForErrors(vecSubProgs, pShader)) {
@@ -194,7 +194,7 @@ t_string ShaderMaker::getShaderNameFromFileNames(std::vector<t_string>& vecFiles
         progName.append(FileSystem::getFilePartOfFileName(vecFiles[iFile]));
         if (iFile < vecFiles.size() - 1) {
             //Add a separator.
-            progName = TStr(progName, "-");
+            progName = progName + "-";
         }
     }
 
@@ -217,9 +217,9 @@ t_string ShaderMaker::getGeneralErrorsAsString(bool clear)
     }
     ret += "\n\n";
 
-	if (clear) {
-		_vecGeneralErrors.clear();
-	}
+    if (clear) {
+        _vecGeneralErrors.clear();
+    }
     return ret;
 }
 bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>& vecSubProgs, std::shared_ptr<ShaderBase> sp) {
@@ -228,23 +228,23 @@ bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>&
 
     for (std::shared_ptr<ShaderSubProgram> subProg : vecSubProgs) {
         if (subProg->getGeneralErrors().size() > 0) {
-            errStr += TStr(subProg->getSourceLocation(), "\r\nGen. Errors\r\n, ", subProg->getSourceLocation(), "\r\n");
+            errStr += subProg->getSourceLocation() + "\r\nGen. Errors\r\n, " + subProg->getSourceLocation() + "\r\n";
             for (t_string gErr : subProg->getGeneralErrors()) {
-                errStr += TStr(gErr, "\r\n");
+                errStr += gErr + "\r\n";
             }
         }
         if (subProg->getCompileErrors().size() > 0) {
-            errStr += TStr(subProg->getSourceLocation(), "\r\nCompile Errors\r\n, ", subProg->getSourceLocation(), "\r\n");
+            errStr += subProg->getSourceLocation() + "\r\nCompile Errors\r\n, " + subProg->getSourceLocation() + "\r\n";
             for (t_string gErr : subProg->getCompileErrors()) {
-                errStr += TStr(gErr, "\r\n");
+                errStr += gErr + "\r\n";
             }
         }
     }
     if (sp != nullptr) {
         if (sp->getLinkErrors().size() > 0) {
-            errStr += TStr("Link Errors:", "\r\n");
+            errStr += Stz"Link Errors:" + "\r\n";
             for (t_string str : sp->getLinkErrors()) {
-                errStr += TStr(str, "\r\n");
+                errStr += str + "\r\n";
             }
         }
     }
@@ -280,7 +280,7 @@ void ShaderMaker::loadShaderSubPrograms(std::vector<t_string>& vecFiles, std::ve
     for (t_string strFile : vecFiles) {
 
         if (!FileSystem::fileExists(strFile)) {
-            _vecGeneralErrors.push_back(TStr("Shader source file '", strFile, "' was not found."));
+            _vecGeneralErrors.push_back(Stz "Shader source file '" + strFile + "' was not found.");
             continue;
         }
 
@@ -328,7 +328,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
         _setSubPrograms.insert(pSubProg);
     }
     else {
-        BroLogDebug("Shader subprog ", loc, " already loaded.");
+        BroLogDebug("Shader subprog " + loc + " already loaded.");
     }
 
     // - Load source, if it fails dump to console and return.
@@ -390,7 +390,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
             pProgram->getSubPrograms().push_back(subProg);
         }
         else {
-            addGeneralError(TStr("[Link] Sub program not compiled or compile failed.", subProg->getSourceLocation()));
+            addGeneralError(Stz "[Link] Sub program not compiled or compile failed." + subProg->getSourceLocation());
 
             _setSubPrograms.erase(_setSubPrograms.find(subProg));
             // removeSubProgram(vecpsp[i]);
@@ -406,7 +406,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
         GLuint err = glGetError();
 
         if (err != GL_NO_ERROR) {
-            addGeneralError(TStr("[Link] Failed to attach all sub-programs. Error:", err));
+            addGeneralError(Stz "[Link] Failed to attach all sub-programs. Error:" + err);
             //DEL_MEM(pProgram);
             pProgram = nullptr;
             return nullptr;
@@ -468,7 +468,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
         _mapPrograms.insert(std::make_pair(pProgram->getNameHashed(), pProgram));
 
-        BroLogInfo("Created shader ", pProgram->getProgramName());
+        BroLogInfo("Created shader " + pProgram->getProgramName());
 
         _pShaderCache->saveCompiledBinaryToDisk(pProgram);
 
@@ -489,9 +489,9 @@ bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp)
         if (!validateSubProgram(subProg, psp))
         {
             _pContext->glDetachShader(psp->getGlId(), subProg->getGlId());
-            psp->getLinkErrors().push_back(TStr(
-                "[Link] Failed to validate sub-program ", subProg->getSourceLocation()
-            ));
+            psp->getLinkErrors().push_back(Stz
+                "[Link] Failed to validate sub-program " + subProg->getSourceLocation()
+            );
             retVal = false;
         }
         subProg->setStatus(ShaderStatus::e::CreateComplete);
@@ -508,13 +508,13 @@ bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp)
 */
 bool ShaderMaker::validateSubProgram(std::shared_ptr<ShaderSubProgram> prog, std::shared_ptr<ShaderBase> psp) {
     if (prog == nullptr) {
-        psp->getLinkErrors().push_back(TStr(" Program was null: ", prog->getSourceLocation()));
+        psp->getLinkErrors().push_back(Stz " Program was null: " + prog->getSourceLocation());
         return false;
     }
     if (prog->getStatus() != ShaderStatus::e::Linked) {
-        psp->getLinkErrors().push_back(TStr(
-            " Sub-Program invalid status: ", (int)prog->getStatus(), " : ", prog->getSourceLocation()
-        ));
+        psp->getLinkErrors().push_back(
+            Stz " Sub-Program invalid status: " + (int)prog->getStatus() + " : " + prog->getSourceLocation()
+        );
         return false;
     }
 
@@ -565,7 +565,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
     sb->deleteUniforms();
 
     //Uniforms
-    BroLogInfo(" Parsing ", nUniforms, " shader Uniforms..");
+    BroLogInfo(" Parsing " + nUniforms + " shader Uniforms..");
     _pContext->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
     for (int32_t i = 0; i < nUniforms; ++i)
     {
@@ -585,30 +585,30 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
 
         if (glLocation >= 0) {
             //If location >=0 - then we are not a buffer.
-            if (StringUtil::contains(uniformName, TStr("_ufShadowBoxSamples"))) {
-                BroLogWarn("Altering Uniform '", name, "' to '_ufShadowBoxSamples'.  This is inconsistent among vendors.");
+            if (StringUtil::contains(uniformName, "_ufShadowBoxSamples")) {
+                BroLogWarn("Altering Uniform '" + name + "' to '_ufShadowBoxSamples'.  This is inconsistent among vendors.");
 
                 uniformName = "_ufShadowBoxSamples";
             }
-            else if (StringUtil::contains(uniformName, TStr("_ufGaussianWeight"))) {
-                BroLogWarn("Altering Uniform '", name, "' to '_ufGaussianWeight'.  This is inconsistent among vendors.");
+            else if (StringUtil::contains(uniformName, "_ufGaussianWeight")) {
+                BroLogWarn("Altering Uniform '" + name + "' to '_ufGaussianWeight'.  This is inconsistent among vendors.");
 
                 uniformName = "_ufGaussianWeight";
             }
-            else if (StringUtil::contains(uniformName, TStr("_ufShadowFrustumSamples"))) {
-                BroLogWarn("Altering Uniform '", name, "' to '_ufShadowFrustumSamples'.  This is inconsistent among vendors.");
+            else if (StringUtil::contains(uniformName, "_ufShadowFrustumSamples")) {
+                BroLogWarn("Altering Uniform '" + name + "' to '_ufShadowFrustumSamples'.  This is inconsistent among vendors.");
 
                 uniformName = "_ufShadowFrustumSamples";
             }
             else if (StringUtil::findFirstOf(name, std::vector<char> { '.', '[', ']' }) != t_string::npos) {
-                BroLogWarn("Uniform name '", name, "' was not valid but was parsed as a basic uniform. Could be a buffer. (parse error).");
+                BroLogWarn("Uniform name '" + name + "' was not valid but was parsed as a basic uniform. Could be a buffer. (parse error).");
                 Gu::debugBreak();
             }
 
 
-            if (StringUtil::equals(uniformName, TStr("gl_NumWorkGroups")))
+            if (StringUtil::equals(uniformName, "gl_NumWorkGroups"))
             {
-                BroLogError(" [The GPU implementation thought the system variable ", uniformName, " was a uniform variable.  This is incorrect.  Ignoring...");
+                BroLogError(" [The GPU implementation thought the system variable " + uniformName + " was a uniform variable.  This is incorrect.  Ignoring...");
                 continue;
             }
 
@@ -633,7 +633,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
     glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &iMaxUniformBufferBindings);
 
     //Uniform Blocks
-    BroLogInfo(" Parsing ", nUniformBlocks, " shader Uniform Blocks..");
+    BroLogInfo(" Parsing " + nUniformBlocks + " shader Uniform Blocks..");
     _pContext->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
     for (int32_t iBlock = 0; iBlock < nUniformBlocks; ++iBlock) {
         t_string blockName;
@@ -659,7 +659,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
             GLint bindingIndex = s_iBindingIndex++;
 
             if (bindingIndex > iMaxUniformBufferBindings) {
-                BroLogWarn("The binding index ", bindingIndex, " was greater than the maximum number of UBO bindings: ", iMaxUniformBufferBindings, ".");
+                BroLogWarn("The binding index " + bindingIndex + " was greater than the maximum number of UBO bindings: " + iMaxUniformBufferBindings + ".");
                 Gu::debugBreak();
             }
 
@@ -674,7 +674,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
             sb->getUniformBlocks().insert(std::make_pair(STRHASH(blockName), pBlock));
         }
         else {
-            BroLogInfo("Shader block '", blockName, "' already created.");
+            BroLogInfo("Shader block '" + blockName + "' already created.");
         }
     }
 }
@@ -700,8 +700,8 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb)
         for (ShaderAttribute* attrOther : sb->getAttributes()) {
             if (attrOther->getUserType() == attr->getUserType()) {
                 if (attrOther->getUserType() != VertexUserType::e::None) {
-                    err += TStr("  ", sb->getProgramName(),
-                        " - Duplicate shader attribute '", VertexFormat::getUserTypeName(attrOther->getUserType()), "'.");
+                    err += Stz "  " + sb->getProgramName() +
+                        " - Duplicate shader attribute '" + VertexFormat::getUserTypeName(attrOther->getUserType()) + "'.";
                     Gu::debugBreak();
                 }
             }
@@ -714,7 +714,7 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb)
     if (err != "")
     {
         sb->setProgramStatus(ShaderStatus::e::Error);
-        addGeneralError(TStr("Shader ", sb->getProgramName(), "\r\n", err));
+        addGeneralError(Stz "Shader " + sb->getProgramName() + "\r\n" + err);
     }
 }
 bool ShaderMaker::isGoodStatus(ShaderStatus::e stat) {
@@ -749,7 +749,7 @@ t_string ShaderMaker::getShaderNameForId(GLuint id) {
     if (sb != nullptr) {
         return sb->getProgramName();
     }
-    return TStr("");
+    return "";
 }
 void ShaderMaker::shaderBound(std::shared_ptr<ShaderBase> sb) {
     //This system is here for sanity checking of uniform bindings.
@@ -770,31 +770,31 @@ void ShaderMaker::shaderBound(std::shared_ptr<ShaderBase> sb) {
 
 t_string ShaderMaker::systemTypeToSTring(OpenGLShaderVarType::e eType) {
     switch (eType) {
-    case OpenGLShaderVarType::ut_notype: return TStr("ut_notype "); break;
-    case OpenGLShaderVarType::GpuInt1: return TStr("GpuInt1   "); break;
-    case OpenGLShaderVarType::GpuInt2: return TStr("GpuInt2   "); break;
-    case OpenGLShaderVarType::GpuInt3: return TStr("GpuInt3   "); break;
-    case OpenGLShaderVarType::GpuInt4: return TStr("GpuInt4   "); break;
-    case OpenGLShaderVarType::GpuUint1: return TStr("GpuUint1  "); break;
-    case OpenGLShaderVarType::GpuUint2: return TStr("GpuUint2  "); break;
-    case OpenGLShaderVarType::GpuUint3: return TStr("GpuUint3  "); break;
-    case OpenGLShaderVarType::GpuUint4: return TStr("GpuUint4  "); break;
-    case OpenGLShaderVarType::GpuFloat1: return TStr("GpuFloat1 "); break;
-    case OpenGLShaderVarType::GpuFloat2: return TStr("GpuFloat2 "); break;
-    case OpenGLShaderVarType::GpuFloat3: return TStr("GpuFloat3 "); break;
-    case OpenGLShaderVarType::GpuFloat4: return TStr("GpuFloat4 "); break;
-    case OpenGLShaderVarType::GpuBool1: return TStr("GpuBool1  "); break;
-    case OpenGLShaderVarType::GpuBool2: return TStr("GpuBool2  "); break;
-    case OpenGLShaderVarType::GpuBool3: return TStr("GpuBool3  "); break;
-    case OpenGLShaderVarType::GpuBool4: return TStr("GpuBool4  "); break;
-    case OpenGLShaderVarType::GpuMat2: return TStr("GpuMat2   "); break;
-    case OpenGLShaderVarType::GpuMat3: return TStr("GpuMat3   "); break;
-    case OpenGLShaderVarType::GpuMat4: return TStr("GpuMat4   "); break;
-    case OpenGLShaderVarType::GpuDouble1: return TStr("GpuDouble1"); break;
-    case OpenGLShaderVarType::GpuDouble2: return TStr("GpuDouble2"); break;
-    case OpenGLShaderVarType::GpuDouble3: return TStr("GpuDouble3"); break;
-    case OpenGLShaderVarType::GpuDouble4: return TStr("GpuDouble4"); break;
-    default: return TStr("Unknown.");
+    case OpenGLShaderVarType::ut_notype: return  "ut_notype "; break;
+    case OpenGLShaderVarType::GpuInt1: return    "GpuInt1   "; break;
+    case OpenGLShaderVarType::GpuInt2: return    "GpuInt2   "; break;
+    case OpenGLShaderVarType::GpuInt3: return    "GpuInt3   "; break;
+    case OpenGLShaderVarType::GpuInt4: return    "GpuInt4   "; break;
+    case OpenGLShaderVarType::GpuUint1: return   "GpuUint1  "; break;
+    case OpenGLShaderVarType::GpuUint2: return   "GpuUint2  "; break;
+    case OpenGLShaderVarType::GpuUint3: return   "GpuUint3  "; break;
+    case OpenGLShaderVarType::GpuUint4: return   "GpuUint4  "; break;
+    case OpenGLShaderVarType::GpuFloat1: return  "GpuFloat1 "; break;
+    case OpenGLShaderVarType::GpuFloat2: return  "GpuFloat2 "; break;
+    case OpenGLShaderVarType::GpuFloat3: return  "GpuFloat3 "; break;
+    case OpenGLShaderVarType::GpuFloat4: return  "GpuFloat4 "; break;
+    case OpenGLShaderVarType::GpuBool1: return   "GpuBool1  "; break;
+    case OpenGLShaderVarType::GpuBool2: return   "GpuBool2  "; break;
+    case OpenGLShaderVarType::GpuBool3: return   "GpuBool3  "; break;
+    case OpenGLShaderVarType::GpuBool4: return   "GpuBool4  "; break;
+    case OpenGLShaderVarType::GpuMat2: return    "GpuMat2   "; break;
+    case OpenGLShaderVarType::GpuMat3: return    "GpuMat3   "; break;
+    case OpenGLShaderVarType::GpuMat4: return    "GpuMat4   "; break;
+    case OpenGLShaderVarType::GpuDouble1: return "GpuDouble1"; break;
+    case OpenGLShaderVarType::GpuDouble2: return "GpuDouble2"; break;
+    case OpenGLShaderVarType::GpuDouble3: return "GpuDouble3"; break;
+    case OpenGLShaderVarType::GpuDouble4: return "GpuDouble4"; break;
+    default: return "Unknown.";
         break;
     }
 }
@@ -802,12 +802,16 @@ void ShaderMaker::setUfBlock(t_string name, void* value, size_t copySizeBytes, b
     std::shared_ptr<ShaderUniformBlock> uf = getUniformBlockByName(name);
     if (uf == nullptr) {
         if (bIgnore == false) {
-            BroLogWarnCycle("Uniform Block '", name, "' could not be found.");
+            BroLogWarnCycle("Uniform Block '" + name + "' could not be found.");
         }
     }
     else {
         uf->copyUniformData(value, copySizeBytes);
     }
+}
+void ShaderMaker::addGeneralError(t_string str) {
+    str = Stz "error: " + str + "\r\n";
+    _vecGeneralErrors.push_back(str);
 }
 
 

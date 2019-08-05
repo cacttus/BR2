@@ -49,12 +49,12 @@ t_string Stopwatch::toString(bool bFancy)
     }
     else {
 
-        return TStr("",_strName, " ", StringUtil::format("%.2f", (float)deltaMilliseconds() + ((float)deltaMicrosecondsRemainder() / 1000.0f)), "ms");
+        return Stz ""+_strName+ " "+ StringUtil::format("%.2f", (float)deltaMilliseconds() + ((float)deltaMicrosecondsRemainder() / 1000.0f))+ "ms";
     }
 }
 void Stopwatch::print(t_string& st)
 {
-    t_string str = TStr(st, toString(), "ms");
+    t_string str = st+ toString()+ "ms";
     Gu::print(str);
 }
 t_string Stopwatch::pulse(bool bLog, bool bFancy)

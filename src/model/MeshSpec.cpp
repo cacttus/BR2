@@ -3,7 +3,7 @@
 #include "../base/TStr.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../display/Texture2DSpec.h"
 #include "../model/ModelHeader.h"
 #include "../model/Model.h"
@@ -199,7 +199,7 @@ void MeshSpec::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
     }
     //Create skin on GPU
     t_timeval t0 = Gu::getMicroSeconds();
-    BroLogInfo("Creating GPU skin '", getName(), "'..");
+    BroLogInfo("Creating GPU skin '" + getName() + "'..");
     {
         if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
             //2018/1/15 so we made all armatures be global in ModelSpec
@@ -216,7 +216,7 @@ void MeshSpec::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
             _eSkinStatus = MeshSkinStatus::e::Allocated;
         }
     }
-    BroLogInfo("..Done.", (uint32_t)((Gu::getMicroSeconds() - t0) / 1000), "ms");
+    BroLogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) +"ms");
 }
 std::shared_ptr<MeshSpec> MeshSpec::createCopy()
 {
@@ -703,25 +703,25 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
 
     ////Skin Data Logging
     if (nFragInvalid > 0) {
-        BroLogError(nJointInvalid, " invalid Joint IDs Encountered making "
-            , nFragInvalid, " skin vertexes invalid, default Joint ID "
-            , " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
+        BroLogError(nJointInvalid + " invalid Joint IDs Encountered making "
+            + nFragInvalid + " skin vertexes invalid, default Joint ID "
+            + " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
     }
 
     if (maxOrd > 200000) {
-        BroLogWarn("Max joint index was HUGE, possibly invalid: ", maxOrd);
+        BroLogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
     }
     if (minOrd < 0) {
-        BroLogWarn("Min joint index was invalid: ", minOrd);
+        BroLogWarn("Min joint index was invalid: " + minOrd);
     }
 
     BroLogDebug("Skin Stats:");
-    BroLogDebug(">  min/max joint ord: ", minOrd, "/", maxOrd);
-    BroLogDebug(">  min/max weight off: ", minOff, "/", maxOff);
-    BroLogDebug(">  min/max weight cnt: ", minCount, "/", maxCount);
-    BroLogDebug(">  nTotalWeights: ", nTotalWeights);
-    BroLogDebug(">  nFragCount: ", nFragCount);
-    BroLogDebug(">  nJoints: ", setUniqueJointOrdinals.size());
+    BroLogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
+    BroLogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
+    BroLogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
+    BroLogDebug(">  nTotalWeights: " + nTotalWeights);
+    BroLogDebug(">  nFragCount: " + nFragCount);
+    BroLogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
 
     if (maxOrd >= (int32_t)setUniqueJointOrdinals.size()) {
         BroLogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
@@ -782,7 +782,7 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
         int32_t off = weightOffsetsGpu[iWeightOff]._offset;
         int32_t count = weightOffsetsGpu[iWeightOff]._count;
         if (off + count > (int32_t)weightsGpuSize) {
-            BroLogError("Skin test failed.  Weight offset ", off + count, " was outside bounds of ", weightsGpuSize);
+            BroLogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
             _eSkinStatus = MeshSkinStatus::e::Error;
             Gu::debugBreak();
         }
@@ -790,12 +790,12 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
             for (int iWeight = 0; iWeight < count; ++iWeight) {
                 GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
                 if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
-                    BroLogError("Skin test failed.  Joint ", gpuWeight._iArmJointOffset, " invalid (or greater than 1000) ");
+                    BroLogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
                     _eSkinStatus = MeshSkinStatus::e::Error;
                     Gu::debugBreak();
                 }
                 if (gpuWeight._weight < 0.0f) {
-                    BroLogError("Skin test failed.  Weight was invalid: ", gpuWeight._weight);
+                    BroLogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
                     _eSkinStatus = MeshSkinStatus::e::Error;
                     Gu::debugBreak();
                 }
@@ -808,7 +808,7 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
 
     BroLogDebug("..Skin test complete.");
 }
-void MeshSpec::deserialize(std::shared_ptr<BufferedFile> fb) {
+void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
     BaseSpec::deserialize(fb);
 
     fb->readBool(_bHideRender);
@@ -910,7 +910,7 @@ void MeshSpec::int32ToVertexFormat(int32_t i) {
     else if (i == 4) { _pVertexFormat = v_v3::getVertexFormat(); }
     else BroThrowException("Unsupported vertex format while deserializing");
 }
-void MeshSpec::serialize(std::shared_ptr<BufferedFile> fb) {
+void MeshSpec::serialize(std::shared_ptr<BinaryFile> fb) {
     BaseSpec::serialize(fb);
 
     fb->writeBool(std::move(_bHideRender));

@@ -47,7 +47,7 @@ void ModelCache::addSpec(std::shared_ptr<ModelSpec> ms) {
         _mapModels.insert(std::make_pair(h, ms));
     }
     else {
-        BroLogError("Tried to add duplicate model name '", ms->getName(), "'");
+        BroLogError("Tried to add duplicate model name '" + ms->getName() + "'");
     }
 }
 std::shared_ptr<ModelSpec> ModelCache::getModelByName(t_string name) {
@@ -55,7 +55,7 @@ std::shared_ptr<ModelSpec> ModelCache::getModelByName(t_string name) {
     return getModelByName(h);
 }
 std::shared_ptr<ModelSpec> ModelCache::getModelByName(Hash32 hash) {
-    std::map<Hash32, std::shared_ptr<ModelSpec>>::iterator it = _mapModels.find(hash);
+    auto it = _mapModels.find(hash);
     if (it != _mapModels.end()) {
         return it->second;
     }
@@ -123,7 +123,7 @@ std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(t_string mobName, bool bUs
     if (ms == nullptr) {
         t_string filename = getFilePathForMobName(mobName, bUseBinary);
         if (FileSystem::fileExists(filename) == false) {
-            BroLogError("Model File does not exist: '", filename, "'");
+            BroLogError("Model File does not exist: '" + filename + "'");
             if (false) {
                 debugPrintAllModelNames();
             }
@@ -131,12 +131,12 @@ std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(t_string mobName, bool bUs
         }
         else {
             t_timeval t0 = Gu::getMicroSeconds();
-            BroLogInfo("Loading model '", mobName, "' from '", filename, "'..");
+            BroLogInfo("Loading model '" + mobName + "' from '" + filename + "'..");
             {
                 if (bUseBinary) {
                     MbiFile mf;
                     if (mf.loadAndParse(filename) == false) {
-                        BroLogError("Failed to load model ", mobName, " ");
+                        BroLogError("Failed to load model " + mobName + " ");
                     }
                     ms = getModelByName(STRHASH(mobName));
                 }
@@ -146,32 +146,32 @@ std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(t_string mobName, bool bUs
                     ms = getModelByName(STRHASH(mobName));
                 }
             }
-            BroLogInfo("..Done. ", (uint32_t)(Gu::getMicroSeconds() - t0) / 1000, "ms");
+            BroLogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
 
         }
     }
     return ms;
 }
 t_string ModelCache::debugPrintAllModelNames() {
-    t_string strOut = TStr("Loaded:\n");
+    t_string strOut = ("Loaded:\n");
 
     for (std::pair<Hash32, std::shared_ptr<ModelSpec>> p : _mapModels) {
-        strOut += TStr("   ", p.second->getName(), "\n");
+        strOut += Stz "   " + p.second->getName()+ "\n";
     }
-    strOut += TStr("In Dir:\n");
+    strOut += ("In Dir:\n");
     std::vector<t_string> vecFiles;
     t_string mods = Gu::getContext()->getRoom()->getModelsTextDir();
     mods = Gu::getContext()->getRoom()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
     for (t_string file : vecFiles) {
-        strOut += TStr("  ", file, "\n");
+        strOut += Stz "  " +file+ "\n";
     }
 
     mods = Gu::getContext()->getRoom()->getModelsBinDir();
     mods = Gu::getContext()->getRoom()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
     for (t_string file : vecFiles) {
-        strOut += TStr("  ", file, "\n");
+        strOut += Stz "  " +file +"\n";
     }
 
     return strOut;
@@ -182,7 +182,7 @@ void ModelCache::convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::st
     t_string filepathBin = getFilePathForMobName(strMobName, true);
 
     if (FileSystem::fileExists(filepathText) == false) {
-        BroLogError("Convert: Could not find mob file ", strMobName);
+        BroLogError("Convert: Could not find mob file " + strMobName);
         return;
     }
 
@@ -201,7 +201,7 @@ void ModelCache::convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::st
 
     if (bConvert) {
         unloadModel(strMobName, false);
-        BroLogInfo("Convert: Loading MOB ", strMobName);
+        BroLogInfo("Convert: Loading MOB " + strMobName);
         MobFile mf;
         mf.loadAndParse(filepathText);
         for (std::shared_ptr<ModelSpec> ms : mf.getModelSpecs()) {
@@ -209,7 +209,7 @@ void ModelCache::convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::st
             ms->setFriendlyName(strFriendlyName);
         }
 
-        BroLogInfo("Convert: Saving MOB ", strMobName);
+        BroLogInfo("Convert: Saving MOB " + strMobName);
         MbiFile mb;
         for (std::shared_ptr<ModelSpec> ms : mf.getModelSpecs()) {
             mb.getModelSpecs().push_back(ms);
@@ -223,7 +223,7 @@ void ModelCache::unloadModel(t_string strMobName, bool bErrorIfFailed) {
 
     if (it == _mapModels.end()) {
         if(bErrorIfFailed)
-        BroLogError("Failed to find model ", strMobName, " to unload.");
+        BroLogError("Failed to find model " + strMobName + " to unload.");
     }
     else {
         //std::shared_ptr<ModelSpec> ms = it->second;

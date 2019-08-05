@@ -18,7 +18,7 @@
 #define __VEC3I_1793212932844915478412_H__
 
 #include "../math/MathHeader.h"
-namespace Game{
+namespace Game {
 
 /**
 *    @struct Vec3x

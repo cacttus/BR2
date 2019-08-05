@@ -88,11 +88,11 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
         std::shared_ptr<VertexComponent> comp = _pVertexFormat->getComponentForUserType(attr->getUserType());
 
         if (comp == nullptr) {
-            errStr += TStr("  Error: Could not match vertex attribute '", attr->getName(), "'\r\n");
-            errStr += TStr("     UserType:'", VertexFormat::getUserTypeName(attr->getUserType()), "'\r\n");
-            errStr += TStr("     GL Type:'", RenderUtils::openGlTypeToString(attr->getGlAttributeType()), "'\r\n");
-            errStr += TStr("     GL Location:", attr->getGlLocation(), ".\r\n");
-            errStr += TStr("\r\n");
+            errStr += Stz "  Error: Could not match vertex attribute '"+ attr->getName()+ "'\r\n";
+            errStr += Stz "     UserType:'"+ VertexFormat::getUserTypeName(attr->getUserType())+ "'\r\n";
+            errStr += Stz "     GL Type:'"+ RenderUtils::openGlTypeToString(attr->getGlAttributeType())+ "'\r\n";
+            errStr += Stz "     GL Location:"+ attr->getGlLocation()+ ".\r\n";
+            errStr += Stz "\r\n";
         }
         else {
             _pContext->glEnableVertexAttribArray(attr->getGlLocation());
@@ -125,13 +125,13 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
     }
 
     if (StringUtil::isNotEmpty(errStr)) {
-        errStr = TStr("\r\n  For Shader: ", pShader->getProgramName(), "\r\n", errStr, "\r\n");
-        errStr = TStr(errStr, "  when binding to Vertex Type '", _pVertexFormat->getName(), "'\r\n\r\n");
+        errStr =  Stz "\r\n  For Shader: "+ pShader->getProgramName()+ "\r\n"+ errStr+ "\r\n";
+        errStr =  Stz errStr+ "  when binding to Vertex Type '"+ _pVertexFormat->getName()+ "'\r\n\r\n";
 
-        errStr = TStr("\r\n===========================================================\r\n", errStr);
-        errStr = TStr(errStr, "\r\n  Check if the shader optimized out the attribute (if it's used).\r\n");
-        errStr = TStr(errStr, "\r\n  Check the callstack below for more info.\r\n");
-        errStr = TStr(errStr, "\r\n===========================================================\r\n");
+        errStr = Stz "\r\n===========================================================\r\n"+ errStr;
+        errStr = Stz errStr+ "\r\n  Check if the shader optimized out the attribute (if it's used).\r\n";
+        errStr = Stz errStr+ "\r\n  Check the callstack below for more info.\r\n";
+        errStr = Stz errStr+ "\r\n===========================================================\r\n";
 
         BroLogError(errStr);
         Gu::debugBreak();

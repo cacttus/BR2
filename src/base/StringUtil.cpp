@@ -22,14 +22,6 @@ bool StringUtil::charIsLetterOrNumber(char c)
     int r = isalnum(c);
     return r != 0;
 }
-// t_uint32 StringUtil::computeHash32bit(const t_string& str)
-//{
-//    return Hash::computeStringHash32bit(str, str.getHashAlgorithmIndex());
-//}
-// t_uint64 StringUtil::computeHash64bit(const t_string& str)
-//{
-//    return Hash::computeStringHash64bit(str, str.getHashAlgorithmIndex());
-//}
 bool StringUtil::isEmpty(const t_string& str)
 {
     return str.compare(t_string("")) == 0;
@@ -70,7 +62,7 @@ t_string StringUtil::createStringFromChars(char* c1, ...)
 // - Returns the Lowercase.
 t_string StringUtil::uppercase(const t_string& in) {
     t_string out = "";
-    for (size_t n = 0; n<in.length(); ++n) {
+    for (size_t n = 0; n < in.length(); ++n) {
         out += toupper(in[n]);
     }
 
@@ -81,29 +73,18 @@ t_string StringUtil::lowercase(const t_string& in) {
     t_string str2(in);
     std::transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
     return str2;
-    //t_string out = "";
-    //for (size_t n = 0; n<in.length(); ++n) {
-    //    out += tolower(in[n]);
-    //}
-
-    //return out;
 }
 // - Returns the Lowercase.
 t_string StringUtil::lowercase(const char* _in) {
     t_string in = t_string(_in);
     return lowercase(in);
-    //t_string out = "";
-    //for (size_t n = 0; n<in.length(); ++n) {
-    //    out += tolower(in[n]);
-    //}
-    //return out;
 }
 // - Returns the Lowercase.
 t_string StringUtil::uppercase(const char* _in)
 {
     t_string in = t_string(_in);
     t_string out = "";
-    for (size_t n = 0; n<in.length(); ++n) {
+    for (size_t n = 0; n < in.length(); ++n) {
         out += toupper(in[n]);
     }
     in = out;
@@ -217,7 +198,7 @@ t_string StringUtil::getPaddedNumber(int32_t number, int32_t maxNumberOfChars, c
 
     nDigits = MathUtils::getNumberOfDigits(number);
 
-    if (nDigits >maxNumberOfChars)
+    if (nDigits > maxNumberOfChars)
         if (expand)
             maxNumberOfChars = nDigits;
 
@@ -246,7 +227,7 @@ t_string StringUtil::getPaddedNumber(int32_t number, int32_t maxNumberOfChars, c
 t_string StringUtil::repeat(const t_string& strToRepeat, int32_t nRepeats)
 {
     t_string ret;
-    for (int32_t i = 0; i<nRepeats; ++i)
+    for (int32_t i = 0; i < nRepeats; ++i)
         ret.append(strToRepeat);
     return ret;
 }
@@ -268,11 +249,11 @@ bool StringUtil::doesNotEqual(const t_string& a, const t_string& b)
 }
 bool StringUtil::equalsi(const t_string& a, const t_string& b)
 {
-    if(a.length() != b.length()) {
+    if (a.length() != b.length()) {
         return false;
     }
-    for(size_t i=0; i<a.length(); ++i){
-        if(toupper(a[i]) != toupper(b[i])){
+    for (size_t i = 0; i < a.length(); ++i) {
+        if (toupper(a[i]) != toupper(b[i])) {
             return false;
         }
     }
@@ -410,7 +391,7 @@ t_string StringUtil::getEscapedCharLiteral(char c)
     else if (c == '\?') return "\?";
     else if (c == '\\') return "\\";
 
-    return TStr("Invalid escape char '", c, "'");
+    return Stz "Invalid escape char '" + c + "'";
     //if(c=='\x') return "\a";
     //if(c=='\u') return "\a";
     //if(c=='\U') return "\a";
@@ -429,7 +410,7 @@ std::vector<t_string> StringUtil::split(const t_string& in, char del)
 void StringUtil::split(const t_string& in, char del, std::vector<t_string>& __out_ ret)
 {
     t_string tbuf = "";
-    for (size_t n = 0; n<in.length(); ++n)
+    for (size_t n = 0; n < in.length(); ++n)
     {
         if (in[n] == del)
         {
@@ -453,12 +434,12 @@ void StringUtil::split(const t_string& __in_ in, const std::vector<char>& __in_ 
     t_string tbuf = "";
     //std::vector<t_string> ret;
     bool bDel;
-    for (size_t n = 0; n<in.length(); ++n)
+    for (size_t n = 0; n < in.length(); ++n)
     {
         bDel = (bool)false;
-        for (size_t idel = 0; idel<dels.size(); ++idel)
+        for (size_t idel = 0; idel < dels.size(); ++idel)
         {
-            if ((in[n] == dels[idel]) && (tbuf.length()>0))
+            if ((in[n] == dels[idel]) && (tbuf.length() > 0))
             {
                 ret.push_back(tbuf);
                 tbuf = "";
@@ -475,7 +456,7 @@ void StringUtil::split(const t_string& __in_ in, const std::vector<char>& __in_ 
 t_string::size_type StringUtil::findFirstOf(const t_string& sin, std::vector<char>& chars)
 {
     t_string::size_type ret = t_string::npos;
-    for (size_t i = 0; i<chars.size(); ++i)
+    for (size_t i = 0; i < chars.size(); ++i)
     {
         ret = sin.find(chars[i]);
         if (ret != t_string::npos) {
@@ -486,7 +467,6 @@ t_string::size_type StringUtil::findFirstOf(const t_string& sin, std::vector<cha
 }
 t_string StringUtil::removeNewline(const t_string& str) {
     t_string out = str;
-    
 
     if (out.length() == 0) {
         return out;
@@ -497,8 +477,8 @@ t_string StringUtil::removeNewline(const t_string& str) {
     if (out.length() == 0) {
         return out;
     }
-    if(out[out.length()-1] == '\n') {
-        out = out.substr(0, out.length()-1);
+    if (out[out.length() - 1] == '\n') {
+        out = out.substr(0, out.length() - 1);
     }
     if (out.length() == 0) {
         return out;
@@ -507,15 +487,14 @@ t_string StringUtil::removeNewline(const t_string& str) {
         out = out.substr(0, out.length() - 1);
     }
 
-
     return out;
 }
 t_string StringUtil::appendLine(t_string& str, const char* toAppend) {
-    return appendLine(str, TStr(toAppend));   
+    return appendLine(str, toAppend);
 }
 
 t_string StringUtil::appendLine(t_string& str, t_string& toAppend) {
-    str = TStr(str, toAppend, "\r\n");
+    str = str+ toAppend+ "\r\n";
     return str;
 }
 t_string StringUtil::generate() {
@@ -529,10 +508,10 @@ t_string StringUtil::generate() {
     }
     return ret;
 }
-bool StringUtil::contains(const t_string& a, const t_string& b){
+bool StringUtil::contains(const t_string& a, const t_string& b) {
     return a.find(b) != std::string::npos;
 }
-t_string StringUtil::format(t_string aft, ...){
+t_string StringUtil::format(t_string aft, ...) {
     t_string strRet;
     va_list args;
     va_start(args, aft);
@@ -541,11 +520,11 @@ t_string StringUtil::format(t_string aft, ...){
     return strRet;
 }
 t_string StringUtil::formatVa(t_string aft, va_list args) {
-    t_string strRet="";
+    t_string strRet = "";
     //he vsnprintf function returns the number of characters written, not counting the terminating null character.
     int nCount = _vsnprintf(nullptr, 0, aft.c_str(), args);
 
-    if (nCount == 0){
+    if (nCount == 0) {
         //Empty, no format
     }
     else {
@@ -556,7 +535,44 @@ t_string StringUtil::formatVa(t_string aft, va_list args) {
 
     return strRet;
 }
+t_string StringUtil::join(t_string delim, std::vector<t_string>& strings) {
+    t_string ret = "";
+    t_string del = "";
 
+    for (t_string st : strings) {
+        ret = del + st;
+        del = delim;
+    }
+
+    return ret;
+}
+/**
+*   @fn tabify
+*   @brief Add tabs or spaces to a string.
+*   @param use_spaces - Use space instead of tab (\t)
+*   @param tab_newlines - Tab the string on newlines.  If False only the beginning of the string is tabified (kind of useless).
+*/
+t_string StringUtil::tabify(t_string str_to_tabify, int number_of_tabs, bool use_spaces, bool tab_newlines, LineBreak::e lineBreak) {
+    t_string ret = str_to_tabify;
+
+    t_string linebreak = "";
+    if (lineBreak == LineBreak::e::DOS) {
+        linebreak = "\r\n";
+    }
+    else {
+        linebreak = "\n";
+    }
+
+    t_string tabchar = "\t";
+    if (use_spaces) {
+        tabchar = " ";
+    }
+
+    t_string tabs = StringUtil::repeat(tabchar, number_of_tabs);
+
+    ret = StringUtil::replaceAll(ret, linebreak, tabs);
+    return ret;
+}
 
 
 }//nS GAME

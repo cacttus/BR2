@@ -1,6 +1,6 @@
 #include "../base/BaseAll.h"
 #include "../base/Logger.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../model/Material.h"
 #include "../display/ShaderBase.h"
 #include "../display/Texture2DSpec.h"
@@ -52,7 +52,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
         TextureChannel::e channel = b.first;
 
         if (channelsBound.find(channel) != channelsBound.end()) {
-            BroLogWarn("[Material] Multiple textures bound to channel ", channel);
+            BroLogWarn("[Material] Multiple textures bound to channel " + channel);
         }
         else {
             //TODO: set tex influence
@@ -120,7 +120,7 @@ void Material::addTextureBinding(std::shared_ptr<Texture2DSpec> ptm, TextureChan
     AssertOrThrow2(ptm != NULL);
 
     if (_mapTextureBindings.find(channel) != _mapTextureBindings.end()) {
-        BroLogWarn("Texture channel ", (int)channel, " already used in material ", getName());
+        BroLogWarn("Texture channel " + (int)channel + " already used in material " + getName());
     }
 
     if (ptm->getIsTransparent()) {
@@ -154,7 +154,7 @@ void Material::removeTextureBinding(std::shared_ptr<Texture2DSpec> ptm) {
 void Material::unbind() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
-void Material::deserialize( std::shared_ptr<BufferedFile> fb) {
+void Material::deserialize( std::shared_ptr<BinaryFile> fb) {
     fb->readString(_strName);
     int32_t nTextures;
     fb->readInt32(nTextures);
@@ -162,7 +162,7 @@ void Material::deserialize( std::shared_ptr<BufferedFile> fb) {
         std::shared_ptr<TextureSlot> ts = std::make_shared<TextureSlot>();
         ts->deserialize(fb);
         if(_mapTextureBindings.find(ts->_eChannel) != _mapTextureBindings.end()){
-            BroLogWarn("Duplicate Texture binding for material.", (int)ts->_eChannel);
+            BroLogWarn("Duplicate Texture binding for material." + (int)ts->_eChannel);
             Gu::debugBreak();
         }
         _mapTextureBindings.insert(std::make_pair(ts->_eChannel, ts));
@@ -177,7 +177,7 @@ void Material::deserialize( std::shared_ptr<BufferedFile> fb) {
     fb->readFloat(_fTpFilter);
     fb->readFloat(_fTpIOR);
 }
-void Material::serialize( std::shared_ptr<BufferedFile> fb) {
+void Material::serialize( std::shared_ptr<BinaryFile> fb) {
     fb->writeString(std::move(_strName));
     fb->writeInt32((int32_t)_mapTextureBindings.size());
     for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : _mapTextureBindings) {
@@ -194,7 +194,7 @@ void Material::serialize( std::shared_ptr<BufferedFile> fb) {
     fb->writeFloat(std::move(_fTpIOR));
 
 }
-void TextureSlot::deserialize( std::shared_ptr<BufferedFile> fb) {
+void TextureSlot::deserialize( std::shared_ptr<BinaryFile> fb) {
     fb->readUint32((uint32_t)_iTexFileHashed);
     fb->readFloat(_fInfluence);
     int32_t n;
@@ -203,7 +203,7 @@ void TextureSlot::deserialize( std::shared_ptr<BufferedFile> fb) {
     fb->readInt32(n);
     _eChannel= (TextureChannel::e)n;
 }
-void TextureSlot::serialize( std::shared_ptr<BufferedFile> fb) {
+void TextureSlot::serialize( std::shared_ptr<BinaryFile> fb) {
     if (_pTex != nullptr) {
         t_string fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
         if (StringUtil::isNotEmpty(_pTex->getLocation())) {

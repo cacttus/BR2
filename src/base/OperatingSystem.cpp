@@ -246,23 +246,23 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title)
         t_string dialogExeCommand;
         dialogExeCommand = dialogPath;
         
-        title  = StringUtil::replaceAll(title  ,TStr("\n"), TStr("\\n"));
-        str    = StringUtil::replaceAll(str    ,TStr("\n"), TStr("\\n"));
-        logDir = StringUtil::replaceAll(logDir ,TStr("\n"), TStr("\\n"));
+        title  = StringUtil::replaceAll(title  , "\n" ,  "\\n" );
+        str    = StringUtil::replaceAll(str    , "\n" ,  "\\n" );
+        logDir = StringUtil::replaceAll(logDir , "\n" ,  "\\n" );
+                                                         
+        title  = StringUtil::replaceAll(title  , "\r" ,  "\\r" );
+        str    = StringUtil::replaceAll(str    , "\r" ,  "\\r" );
+        logDir = StringUtil::replaceAll(logDir , "\r" ,  "\\r" );
+                                                         
+                                                         
+        title  = StringUtil::replaceAll(title ,  "\"" ,  "\"\"\"" );
+        str    = StringUtil::replaceAll(str   ,  "\"" ,  "\"\"\"" );
+        logDir = StringUtil::replaceAll(logDir,  "\"" ,  "\"\"\"" );
 
-        title  = StringUtil::replaceAll(title  ,TStr("\r"), TStr("\\r"));
-        str    = StringUtil::replaceAll(str    ,TStr("\r"), TStr("\\r"));
-        logDir = StringUtil::replaceAll(logDir ,TStr("\r"), TStr("\\r"));
 
-
-        title  = StringUtil::replaceAll(title , TStr("\""), TStr("\"\"\""));
-        str    = StringUtil::replaceAll(str   , TStr("\""), TStr("\"\"\""));
-        logDir = StringUtil::replaceAll(logDir, TStr("\""), TStr("\"\"\""));
-
-
-        dialogExeCommand += TStr(" \"", title ,"\"");
-        dialogExeCommand += TStr(" \"", str   ,"\"");
-        dialogExeCommand += TStr(" \"", logDir,"\"");
+        dialogExeCommand += Stz " \"" + title +"\"" ;
+        dialogExeCommand += Stz " \"" + str   +"\"" ;
+        dialogExeCommand += Stz " \"" + logDir+"\"" ;
         system( dialogExeCommand.c_str() );
     }
     else

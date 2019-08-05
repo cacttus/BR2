@@ -57,40 +57,40 @@ public:
 };
 
 //Some awesome string concat business
-class _TemplateDummy {};
-static FORCE_INLINE t_string tstr(_TemplateDummy t) { return t_string(""); }
-static FORCE_INLINE t_string tstr(char t)
-{
-    char cc[2];
-    cc[0] = t;
-    cc[1] = 0;
-    return t_string((char*)cc); 
-}
-// String Shorthand overloads.
-STATIC FORCE_INLINE t_string tstr(const char* x){ return t_string(x); }
-STATIC FORCE_INLINE t_string tstr(const t_string& x){ return x; }
-STATIC FORCE_INLINE t_string tstr(const t_int16 x){ return TypeConv::intToStr((t_int16)x); }
-STATIC FORCE_INLINE t_string tstr(const int32_t x){ return TypeConv::intToStr((int32_t)x); }
-STATIC FORCE_INLINE t_string tstr(const t_int64 x) { return TypeConv::intToStr((t_int64)x); }
-STATIC FORCE_INLINE t_string tstr(const t_uint64 x){ return TypeConv::intToStr((t_uint64)x); }
-STATIC FORCE_INLINE t_string tstr(const t_uint32 x){ return TypeConv::intToStr((t_uint32)x); }
-STATIC FORCE_INLINE t_string tstr(const float x){ return TypeConv::floatToStr((float)x); }
-STATIC FORCE_INLINE t_string tstr(const double x){ return TypeConv::dblToStr((double)x); }
-
-//static FORCE_INLINE std::string tstr(x) {
-//    std::ostringstream stream;
-//    stream << "Some Text";
-//    std::string str = stream.str();
-//    const char* chr = str.c_str();
+//class _TemplateDummy {};
+//static FORCE_INLINE t_string tstr(_TemplateDummy t) { return t_string(""); }
+//static FORCE_INLINE t_string tstr(char t)
+//{
+//    char cc[2];
+//    cc[0] = t;
+//    cc[1] = 0;
+//    return t_string((char*)cc); 
 //}
-
-#ifdef BRO_OS_WINDOWS
-//Unix freaks out.  I think because of size_t being integral.
-static FORCE_INLINE t_string tstr(const t_long x){ return TypeConv::longToStr((t_long)x); }
-//Unix freaks out.  I think because of size_t being integral.
-//static FORCE_INLINE t_string tstr(const size_t x){ return sizetToStr((size_t)x); }
-//static FORCE_INLINE t_string tstr(const void* x){ return TypeConv::intToStr((t_ptr)x); }
-#endif
+//// String Shorthand overloads.
+//STATIC FORCE_INLINE t_string tstr(const char* x){ return t_string(x); }
+//STATIC FORCE_INLINE t_string tstr(const t_string& x){ return x; }
+//STATIC FORCE_INLINE t_string tstr(const t_int16 x){ return TypeConv::intToStr((t_int16)x); }
+//STATIC FORCE_INLINE t_string tstr(const int32_t x){ return TypeConv::intToStr((int32_t)x); }
+//STATIC FORCE_INLINE t_string tstr(const t_int64 x) { return TypeConv::intToStr((t_int64)x); }
+//STATIC FORCE_INLINE t_string tstr(const t_uint64 x){ return TypeConv::intToStr((t_uint64)x); }
+//STATIC FORCE_INLINE t_string tstr(const t_uint32 x){ return TypeConv::intToStr((t_uint32)x); }
+//STATIC FORCE_INLINE t_string tstr(const float x){ return TypeConv::floatToStr((float)x); }
+//STATIC FORCE_INLINE t_string tstr(const double x){ return TypeConv::dblToStr((double)x); }
+//
+////static FORCE_INLINE std::string tstr(x) {
+////    std::ostringstream stream;
+////    stream << "Some Text";
+////    std::string str = stream.str();
+////    const char* chr = str.c_str();
+////}
+//
+//#ifdef BRO_OS_WINDOWS
+////Unix freaks out.  I think because of size_t being integral.
+//static FORCE_INLINE t_string tstr(const t_long x){ return TypeConv::longToStr((t_long)x); }
+////Unix freaks out.  I think because of size_t being integral.
+////static FORCE_INLINE t_string tstr(const size_t x){ return sizetToStr((size_t)x); }
+////static FORCE_INLINE t_string tstr(const void* x){ return TypeConv::intToStr((t_ptr)x); }
+//#endif
 
 
 }//ns game

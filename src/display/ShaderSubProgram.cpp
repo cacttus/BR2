@@ -29,8 +29,8 @@ void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, t_string loc, Shader
     GLenum er = glGetError();
     if (er != GL_NO_ERROR) {
         setStatus(ShaderStatus::e::CreateFailed);
-        _generalErrors.push_back(TStr("[error] Failed to create shader of type ",
-            StringUtil::toHex((int)eShaderType, true), ". GL error: ", StringUtil::toHex(er, true)));
+        _generalErrors.push_back( Stz "[error] Failed to create shader of type "+ 
+            StringUtil::toHex((int)eShaderType, true)+ ". GL error: "+ StringUtil::toHex(er, true));
     }
     else {
         setSourceLocation(loc);
@@ -56,7 +56,7 @@ t_string ShaderSubProgram::getHumanReadableErrorString() const
 void ShaderSubProgram::debugPrintShaderSource() const
 {
     t_string str = "\n";
-    str += TStr("Source For: ", _sourceLocation);
+    str += Stz "Source For: " + _sourceLocation;
     str += "\n";
     for (size_t iLine = 0; iLine<_sourceLines.size(); ++iLine)
     {
@@ -96,7 +96,7 @@ ShaderType::e ShaderSubProgram::getShaderTypeByFileLocation(DiskLoc& loc)
     else if (!(other.compare(t_string("cs"))))
         type = ShaderType::e::st_compute;
     else
-        _generalErrors.push_back(TStr("[error] Shader file type '", other, "' not recognized."));
+        _generalErrors.push_back(Stz "[error] Shader file type '"+ other+ "' not recognized.");
 
     return type;
 }
@@ -110,7 +110,7 @@ GLenum ShaderSubProgram::getGLShaderEnum(ShaderType::e type) {
     else if (type == ShaderType::e::st_geometry)
         return GL_GEOMETRY_SHADER;
     else
-        _generalErrors.push_back(TStr("[error] Opengl Shader type not supported for ShaderType::e = ", (int)type));
+        _generalErrors.push_back(Stz "[error] Opengl Shader type not supported for ShaderType::e = "+ (int)type);
     return GL_VERTEX_SHADER;
 }
 

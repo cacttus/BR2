@@ -4,7 +4,7 @@
 #include "../base/Img32.h"
 #include "../base/Gu.h"
 #include "../base/Allocator.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../display/TexCache.h"
 #include "../display/ShaderBase.h"
 #include "../display/Texture2DSpec.h"
@@ -256,7 +256,7 @@ bool Texture2DSpec::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image) {
     return RenderUtils::getTextureDataFromGpu(image, _glId, GL_TEXTURE_2D);
 }
 
-void Texture2DSpec::serialize( std::shared_ptr<BufferedFile> fb){
+void Texture2DSpec::serialize( std::shared_ptr<BinaryFile> fb){
     std::shared_ptr<Img32> img = std::make_shared<Img32>();
     getTextureDataFromGpu(img);
 
@@ -270,7 +270,7 @@ void Texture2DSpec::serialize( std::shared_ptr<BufferedFile> fb){
     fb->writeUint32(std::move((uint32_t)img->getData()->byteSize()));
     fb->write((const char*)img->getData()->ptr(), img->getData()->byteSize());
 }
-void Texture2DSpec::deserialize( std::shared_ptr<BufferedFile> fb) {
+void Texture2DSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
 
     fb->readString(_strLocation);
     uint32_t iWidth;

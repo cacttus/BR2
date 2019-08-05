@@ -3,12 +3,12 @@
 #include "../base/Gu.h"
 #include "../base/TStr.h"
 #include "../base/Logger.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 
 namespace Game {
 ;
 t_string Exception::what() {
-    return TStr(_msg, " file:", _file, " line:", _line);
+    return _msg+ " file:"+ _file+ " line:"+ _line;
 }
 ////////////////////////////////////////////////////////////////////////////
 
@@ -894,7 +894,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
 
 }
 
-void Img32::serialize(std::shared_ptr<BufferedFile> bf) {
+void Img32::serialize(std::shared_ptr<BinaryFile> bf) {
     size_t nbytes = getData()->byteSize();
     bf->writeString(std::move(_strNameOrFilePath));
     bf->writeUint32(std::move((uint32_t)_iWidth));
@@ -902,7 +902,7 @@ void Img32::serialize(std::shared_ptr<BufferedFile> bf) {
     bf->writeUint32(std::move((uint32_t)nbytes));
     bf->write((const char*)getData()->ptr(), nbytes);
 }
-void Img32::deserialize(std::shared_ptr<BufferedFile> bf) {
+void Img32::deserialize(std::shared_ptr<BinaryFile> bf) {
     bf->readString(_strNameOrFilePath);
     bf->readUint32(_iWidth);
     bf->readUint32(_iHeight);
@@ -912,7 +912,7 @@ void Img32::deserialize(std::shared_ptr<BufferedFile> bf) {
     
     //So data->size should be nBytse.
     if(getData()->byteSize() != nBytes) { 
-        BroLogError("Deserializing image '",_strNameOrFilePath,"'.. image too big.");
+        BroLogError("Deserializing image '" + _strNameOrFilePath + "'.. image too big.");
     }
     else if (getData()->ptr() == nullptr) {
         BroLogError("Deserializing image, data not allocated.");

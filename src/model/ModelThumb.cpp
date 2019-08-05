@@ -1,7 +1,7 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Package.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/RoomBase.h"
 #include "../display/CameraNode.h"
@@ -60,7 +60,7 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
 
 
     //save to disk (debug)
-    t_string cached = Gu::getContext()->getRoom()->makeAssetPath("cache", TStr("test-thumb-", name, "-vflip-0.png"));
+    t_string cached = Gu::getContext()->getRoom()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
     thumb->flipV();
     Gu::saveImage(cached, thumb);
     thumb->flipV();

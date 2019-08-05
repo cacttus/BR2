@@ -94,7 +94,7 @@ void SpriteBucket::loadMotions(std::shared_ptr<ObFile> obFile) {
     for (Tile25Spec* ps : obFile->getTiles()) {
         TileMap::iterator it = _mapTiles.find(ps->getTileIndex());
         if(it!=_mapTiles.end()){
-            BroLogError("Duplicate tile Index", ps->getTileIndex()," tried to be added to motion bucket.");
+            BroLogError("Duplicate tile Index" + ps->getTileIndex() + " tried to be added to motion bucket.");
                 Gu::debugBreak();
         }
         else{

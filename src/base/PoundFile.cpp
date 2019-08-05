@@ -8,7 +8,7 @@ PoundFile::PoundFile()
 {
 }
 PoundFile::PoundFile(t_string& loc) :
-    BaseDataFile(loc)
+    TextConfigFile(loc)
 {
 }
 PoundFile::~PoundFile()
@@ -16,32 +16,13 @@ PoundFile::~PoundFile()
     _vecTokens.clear();
 }
 
-t_string PoundFile::getCleanToken(std::vector<t_string>& tokens, int& iind) {
-    //**NOTE be care ful with this function when calling in constructors  C++ constructors don't guarantee parameter order, thus
-    //you may end up with invalid parameters.
-    t_string ret = getCleanTokenInd(tokens, iind);
-    iind++;
-    return ret;
-}
-t_string PoundFile::getCleanTokenInd(std::vector<t_string>& tokens, int iind) {
-    t_string ret;
-    //MSVC default exception handling was fucking ignoring this.  REALLY?
-    if((size_t)iind >= tokens.size()) {
-        parseErr(TStr("Token index '",iind,"' out of range."), true, true); //throw
-    }
-    ret = StringUtil::stripDoubleQuotes(tokens[iind]);
-    ret = StringUtil::trim(ret);
-
-    return ret;
-}
-
-void PoundFile::parse(char* buf)
+void PoundFile::parse(char* buf, int64_t bufsize)
 {
     /*
     Note; if you add more delimiters make sure to update isEscapeCharacter()
     */
     char c;
-    ptr = buf;
+    //char* ptr = buf;
     t_string token;
     int32_t _nStringProfile = 0;
     int32_t _nParenProfile = 0;
@@ -51,23 +32,24 @@ void PoundFile::parse(char* buf)
 
     bool _bEscape = false;
 
-    while (ptr)
+    TextParser tp(buf);
+
+    while (tp.eof()==false)
     {
-        c = *ptr;
+        c = tp.charAt();
 
-        if (c == 0)
-            b_eof = true;
-
-        if (b_eof)
+        if (tp.eof())
         {
             //if we're EOF then parse dumb token
-            if (token.length())
+            if (token.length()) {
                 _vecTokens.push_back(t_string(token));
+            }
 
             token = "";
 
-            if (_vecTokens.size())
+            if (_vecTokens.size()) {
                 pkp(_vecTokens);// - Parse the given token buffer
+            }
 
             break;
         }
@@ -76,96 +58,111 @@ void PoundFile::parse(char* buf)
             _nStringProfile = ~_nStringProfile;
 
             token += c;
-            inc();
+            tp.inc();
         }
         else if (_nStringProfile)
         {
             //Inside string - do not parse other delimiters
             token += c;
-            inc();
+            tp.inc();
         }
         else if (_bEscape)
         {
-            if (!isEscapeCharacter(c))
-                displayError(TStr("The given character '", StringUtil::getEscapedCharLiteral(c), "' is not a valid pound file escape character."));
+            if (!isEscapeCharacter(c)) {
+                displayError(Stz "The given character '"+ StringUtil::getEscapedCharLiteral(c)+ "' is not a valid pound file escape character.");
+            }
             token += c;
             _bEscape = false;
-            inc();
+            tp.inc();
         }
         else if (c == '\\')
         {
             _bEscape = true;
-            inc();
+            tp.inc();
         }
         else if (c == '#')
         {
-            if (token.length())
+            if (token.length()) {
                 _vecTokens.push_back(t_string(token));
+            }
 
-            if (_vecTokens.size())
+            if (_vecTokens.size()) {
                 pkp(_vecTokens);// - Parse the given token buffer
+            }
 
             _vecTokens.clear();
-            eatLine(_iCurrentParseLine);
+            tp.eatLine(_iCurrentParseLine);
         }
         else if (c == '(')
         {
             _nParenProfile++;
 
             token += c;
-            inc();
+            tp.inc();
         }
         else if (c == ')')
         {
             _nParenProfile--;
-            if (_nParenProfile < 0)
-                displayError(TStr("Parentheses profile is invalid. You're missing a parentheses somewhere."));
+
+            if (_nParenProfile < 0) {
+                displayError("Parentheses profile is invalid. You're missing a parentheses somewhere.");
+            }
 
             token += c;
-            inc();
+            tp.inc();
         }
         else if (c == '[')
         {
             _nBracketProfile++;
 
             token += c;
-            inc();
+            tp.inc();
         }
         else if (c == ']')
         {
             _nBracketProfile--;
-            if (_nBracketProfile < 0)
-                displayError(TStr("Bracket profile is invalid. You're missing a Bracket somewhere."));
+
+            if (_nBracketProfile < 0) {
+                displayError("Bracket profile is invalid. You're missing a Bracket somewhere.");
+            }
 
             token += c;
-            inc();
+            tp.inc();
         }
         else if (c == '\n' || c == '\r')
         {
-            if (_nStringProfile || _nParenProfile || _nBracketProfile)
-                displayError(TStr("Parser error - you can't have multi-line strings \"\", braces [] or parentheses ()"));
-            if (token.length())
+            if (_nStringProfile || _nParenProfile || _nBracketProfile) {
+                displayError("Parser error - you can't have multi-line strings \"\", braces [] or parentheses ()");
+            }
+
+            if (token.length()) {
                 _vecTokens.push_back(t_string(token));
+            }
+
             token = "";
-            if (_vecTokens.size())
+
+            if (_vecTokens.size()) {
                 pkp(_vecTokens);// - Parse the given token buffer
+            }
+
             _vecTokens.clear();
-            eatLine(_iCurrentParseLine);
+            tp.eatLine(_iCurrentParseLine);
             //_iCurrentParseLine++;
         }
         // - If we're whitespace but we also are within a string or bracket then do not skip it, add it to
         // the argument.
         else if (StringUtil::isWs(c) && !(_nStringProfile || _nParenProfile || _nBracketProfile))
         {
-            if (token.length())
+            if (token.length()) {
                 _vecTokens.push_back(t_string(token));
+            }
             token = "";
-            inc();
+            tp.inc();
         }
         else
         {
             token += c;
-            inc();
+            tp.inc();
         }
 
     }
@@ -180,13 +177,6 @@ bool PoundFile::isEscapeCharacter(char c)
         || (c == ')')
         || (c == '#')
         ;
-}
-bool PoundFile::validateArguments(t_string& arg, int32_t count)
-{
-    if (_vecTokens.size() != count) {
-        displayError(TStr("While parsing '", _fileLoc, "' invalid number of arguments for '", arg, "'. Got ", _vecTokens.size(), " expected ", count, "."));
-    }
-    return true;
 }
 void PoundFile::gatherArgs()
 {
@@ -231,32 +221,13 @@ t_string PoundFile::tryGetArg(int32_t arg)
         return _vecTokens[arg];
     return StringUtil::emptyString();
 }
-void PoundFile::displayError(t_string& errMsg, bool bThrow)
-{
-    t_string strErr = TStr("Data File Parse Error:\r\n  ", errMsg, "\r\n   File: ", _fileLoc, "\r\n   Line:", _iCurrentParseLine, "\r\n");
-    if (bThrow) {
-        BroThrowException(strErr);
-    }
-}
+
 void PoundFile::showMessageOnFailure(bool b)
 {
     if (b == false)
-        displayError(TStr("Condition failed."));
+        displayError("Condition failed.");
 }
-void PoundFile::parseErr(t_string str, bool bDebugBreak, bool bFatal) {
-    t_string strhead = TStr("Error: '" , _fileLoc , "': line ", _iCurrentParseLine, "\r\n  ");
-    str = TStr(strhead, str);
-    //Throw this if you wnt to have an error in your file.
-    if (bFatal) {
-        BroThrowException(str);
-    }
-    else {
-        BroLogError(str);
-        if (bDebugBreak) {
-            Gu::debugBreak();
-        }
-    }
-}
+
 mat4 PoundFile::parseMat4(t_string tok) {
     mat4 m;
     mat4::parse(tok, m);
@@ -290,7 +261,7 @@ bool PoundFile::parsePrs(t_string tok, vec3& pos, vec4& rot, vec3& scl) {
             else if (iind == 8) scl.y = fVal;
             else if (iind == 9) scl.z = fVal;
             else {
-                parseErr(TStr("Input string '", tok, "'wasn't a valid PRS string.."));
+                parseErr("Input string '"+ tok+ "'wasn't a valid PRS string..", _iCurrentParseLine);
                 bValid = false;
             }
             iind++;

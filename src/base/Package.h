@@ -45,17 +45,17 @@ private:
     int32_t _iTableLenBytes = 0;
     bool _bIsPackage = false;
 
-    bool loadPackedFile(std::string fileLoc, std::shared_ptr<BufferedFile> fb, bool bAddNull);
-    int32_t parseInt32(std::shared_ptr<BufferedFile> fb, int32_t& off);
-    std::string parseStr(std::shared_ptr<BufferedFile> fb, int32_t& off);
+    bool loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull);
+    int32_t parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off);
+    std::string parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off);
     FileEntry* getEntry(std::string fileLoc);
-    bool loadExe(std::shared_ptr<BufferedFile> fb);
+    bool loadExe(std::shared_ptr<BinaryFile> fb);
 public:
 	Package();
     virtual ~Package() override;
 
     bool isPackage(){ return _bIsPackage; }
-    bool getFile(std::string fileLoc, std::shared_ptr<BufferedFile> fb, bool bAddNull = false);
+    bool getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull = false);
     void build(std::string exeLoc);
     t_string debugPrint();
 	bool fileExists(t_string file);

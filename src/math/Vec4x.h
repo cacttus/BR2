@@ -624,7 +624,7 @@ bool Vec4x<Tx>::operator<=(const Tx& f)
 template < class Tx >
 t_string Vec4x<Tx>::toString() const
 {
-    return tstr(x) + "," + tstr(y) + "," + tstr(z) + "," + tstr(w);
+    return Stz x + "," + y + "," + z + "," + w;
 }
 
 // Constructors

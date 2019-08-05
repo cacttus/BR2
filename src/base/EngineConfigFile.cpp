@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-#include "../base/TStr.h"
+
 #include "../base/EngineConfigFile.h"
 #include "../base/EngineConfig.h"
 
@@ -18,7 +18,6 @@ EngineConfigFile::~EngineConfigFile()
 
 }
 ///////////////////////////////////////////////////////////////////
-
 
 void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
     int iind = 1;
@@ -55,7 +54,7 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
 
         _pConfig->_bEnableRuntimeErrorChecking = TypeConv::strToBool(getCleanToken(tokens, iind));
         if (Gu::isDebug()) {
-            BroLogDebug("Runtime error checking is turned on by default in debug build.");
+            msg("Runtime error checking is turned on by default in debug build.");
             _pConfig->_bEnableRuntimeErrorChecking = true;
         }
         //*Always default true in debug mode
@@ -90,21 +89,21 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
             _pConfig->_eColorSpace = ColorSpace::e::Linear;
         }
         else {
-            BroLogWarn("Unkown color space ", csp, " defaulting to linear.");
+            msg(Stz "Unkown color space " + csp + " defaulting to linear.");
             _pConfig->_eColorSpace = ColorSpace::e::Linear;
         }
     }
     else if (lcmp(tokens[0], "FontBitmapSize", 2)) {
         _pConfig->_iFontBitmapSize = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (_pConfig->_iFontBitmapSize < 5 || _pConfig->_iFontBitmapSize > 99999) {
-            BroLogWarn(tokens[0], " invalid.  Defaulting to 1024");
+            msg(tokens[0] + " invalid.  Defaulting to 1024");
             _pConfig->_iFontBitmapSize = 1024;
         }
     }
     else if (lcmp(tokens[0], "FontBakedCharSize", 2)) {
         _pConfig->_iBakedCharSize = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (_pConfig->_iBakedCharSize < 5 || _pConfig->_iBakedCharSize > 999) {
-            BroLogWarn(tokens[0], " was <5 ro > 999.  Defaulting to 64");
+            msg(tokens[0] + " was <5 ro > 999.  Defaulting to 64");
             _pConfig->_iBakedCharSize = 64;
         }
     }
@@ -117,21 +116,21 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "ShadowMapResolution", 2)) {
         _pConfig->_iShadowMapResolution = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (Alg::isPow2((int32_t)_pConfig->_iShadowMapResolution) == false) {
-            BroLogWarn(tokens[0], " not a power of 2.  Defaulting to 256");
+            msg(tokens[0] + " not a power of 2.  Defaulting to 256");
             _pConfig->_iShadowMapResolution = 256;
         }
     }
     else if (lcmp(tokens[0], "ShadowMapMaxInfluences", 2)) {
         _pConfig->_iShadowMapMaxInfluences = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (_pConfig->_iShadowMapMaxInfluences > 32) {
-            BroLogWarn(tokens[0], " >32.  Defaulting to 32");
+            msg(tokens[0] + " >32.  Defaulting to 32");
             _pConfig->_iShadowMapMaxInfluences = 32;
         }
     }
     else if (lcmp(tokens[0], "MaxPointLightShadowDistance", 2)) {
         _pConfig->_fMaxPointLightShadowDistance = TypeConv::strToFloat(getCleanToken(tokens, iind));
         if (_pConfig->_fMaxPointLightShadowDistance > 2000.0f) {
-            BroLogWarn(tokens[0], " >2000.0f.  Defaulting to 2000.0f");
+            msg(tokens[0] + " >2000.0f.  Defaulting to 2000.0f");
             _pConfig->_fMaxPointLightShadowDistance = 2000.0f;
         }
     }
@@ -141,17 +140,18 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "MSAASamples", 2)) {
         _pConfig->_iMsaaSamples = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (_pConfig->_iMsaaSamples < 0) {
+            msg(Stz "MSAA Samples" + _pConfig->_iMsaaSamples + " invalid.");
             _pConfig->_iMsaaSamples = 2;
         }
     }
     else if (lcmp(tokens[0], "NumTextQuads", 2)) {
         _pConfig->_iNumTextQuads = TypeConv::strToInt(getCleanToken(tokens, iind));
         if (_pConfig->_iNumTextQuads <= 256) {
-            BroLogWarn(tokens[0], " Too small, set to 256.");
+            msg(tokens[0] + " Too small, set to 256.");
             _pConfig->_iNumTextQuads = 256;
         }
         if (_pConfig->_iNumTextQuads > 16384) {
-            BroLogWarn(tokens[0], " Too large.  Set to 16384.");
+            msg(tokens[0] + " Too large.  Set to 16384.");
             _pConfig->_iNumTextQuads = 16384;
         }
     }
@@ -190,15 +190,26 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
         if (_pConfig->_iMaxSoftwareOutgoingBufferSizeBytes < 1) _pConfig->_iMaxSoftwareOutgoingBufferSizeBytes = 1;
         if (_pConfig->_iMaxSoftwareOutgoingBufferSizeBytes > 9999999) _pConfig->_iMaxSoftwareOutgoingBufferSizeBytes = 9999999;
     }
+    else if (lcmp(tokens[0], "RenderSystem", 2)) {
+        t_string tok = getCleanToken(tokens, iind);
+        
+        _pConfig->_eRenderSystem = RenderSystem::OpenGL;
+        if (StringUtil::equalsi(tok, "Vulkan")) {
+            _pConfig->_eRenderSystem = RenderSystem::Vulkan;
+        }
+        else {
+            msg(Stz "Render system '" + tok + "' is invalid.");
+        }
+    }
     else {
-        BroLogError("Unrecognized engine config token '", tokens[0], "'");
+        msg(Stz "Unrecognized engine config token '" + tokens[0] + "'");
         Gu::debugBreak();
     }
 }
 void EngineConfigFile::preLoad() {
     _pConfig = std::make_shared<EngineConfig>();
 }
-void EngineConfigFile::postLoad() {
+void EngineConfigFile::postLoad(bool success) {
 }
 
 

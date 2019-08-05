@@ -51,12 +51,12 @@ void WorldCellFile::clearCells() {
     _vecCells.clear();
 }
 int WorldCellFile::loadAndParse() {
-    uint32_t iReadSizeBytes;
+    int64_t iReadSizeBytes;
     char* pOut;
     if (FileSystem::SDLFileRead(_strLoc, pOut, iReadSizeBytes, true) != 0) {
         return 1;
     }
-    if (iReadSizeBytes == 0) {
+    if (iReadSizeBytes <=0) {
         return 1;
     }
 
@@ -133,8 +133,8 @@ void WorldCellFile::parseFile(std::vector<char>& buf, uint32_t iDataSizeBytes) {
     readUInt32(buf, iOff, _iVersion);
     if(_iVersion != CONGA_GRID_FILE_VERSION) {
         BroLogError("Warning: Conga file version mismatch.");
-        BroLogError("  Got: ", getFriendlyVersion(_iVersion));
-        BroLogError("  Expected: ", getFriendlyVersion(CONGA_GRID_FILE_VERSION));
+        BroLogError("  Got: " + getFriendlyVersion(_iVersion));
+        BroLogError("  Expected: " + getFriendlyVersion(CONGA_GRID_FILE_VERSION));
         Gu::debugBreak();
     }
 

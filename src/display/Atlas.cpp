@@ -39,7 +39,7 @@ std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
         return nullptr;
     }
     t_timeval t0 = Gu::getMicroSeconds();
-    BroLogInfo("Loading cached image '", getCachedImageFilePath(), "'...");
+    BroLogInfo("Loading cached image '" + getCachedImageFilePath() + "'...");
     {
 
         greatestDependencyModifyTime = cacheGetGreatestModifyTimeForAllDependencies();
@@ -50,7 +50,7 @@ std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
             bi = Gu::loadImage(cachedImageLoc);
         }
     }
-    BroLogInfo("Finished..", (uint32_t)((Gu::getMicroSeconds() - t0)/1000), "ms");
+    BroLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0)/1000) + "ms");
 
     return bi;
 }
@@ -78,7 +78,7 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies()
         if(ite->second->getIsGenerated() == false) {
            //  spriteFileLoc = getAtlasSpriteFullpath(ite->second);
             if (FileSystem::fileExists(strPath) == false) {
-                BroLogError(_strName, " atlas file '", strPath ,"' does not exist.");
+                BroLogError(_strName + " atlas file '" + strPath + "' does not exist.");
                 Gu::debugBreak();
                 return 0;
             }
@@ -109,7 +109,7 @@ void Atlas::compilePrecompiled(bool bMipmaps){
     finishCompile(bi, bMipmaps);
 }
 t_string Atlas::constructPrecompiledSpriteName(int32_t ix, int32_t iy) { 
-    return TStr(ix, "_", iy);
+    return Stz ix+ "_"+ iy;
 }
 void Atlas::addImagePrecompiled(int32_t ix, int32_t iy){
     t_string strSpriteName;
@@ -142,12 +142,12 @@ void Atlas::compileFiles(bool bMipmaps, bool saveAndLoad) {
 
     if(sp == nullptr) {
         t_timeval t0 = Gu::getMicroSeconds();
-        BroLogInfo("Composing image '", getCachedImageFilePath(), "'...");
+        BroLogInfo("Composing image '" + getCachedImageFilePath() + "'...");
         {
             sp = composeImage(saveAndLoad);
 
         }
-        BroLogInfo("Finished..", (uint32_t)((Gu::getMicroSeconds() - t0) / 1000), "ms");
+        BroLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
     }
 
     printInfoAndErrors(sp);
@@ -233,7 +233,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
         }
         catch (Exception* ex)
         {
-            BroLogError("Failed to Open image.:\r\n", ex->what());
+            BroLogError("Failed to Open image.:\r\n" + ex->what());
         }
 
         try
@@ -248,7 +248,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
         }
         catch (Game::Exception* ex)
         {
-            BroLogError("Failed to Copy Sub-Image during texture composition.:\r\n", ex->what());
+            BroLogError("Failed to Copy Sub-Image during texture composition.:\r\n" + ex->what());
         }
 
         pCopy = nullptr;
@@ -261,7 +261,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
    // masterImage->flipH();
 
     if(bCache) { 
-        BroLogInfo("Saving atlas '", getName(), "' to '", getCachedImageFilePath(), "'.");
+        BroLogInfo("Saving atlas '" + getName() + "' to '" + getCachedImageFilePath() + "'.");
         t_string strFileName = getCachedImageFilePath();
         Gu::saveImage(strFileName, masterImage);
     }
@@ -271,7 +271,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
 }
 t_string Atlas::getCachedImageFilePath() {
     t_string fn;
-    fn = TStr(getName(), ".png");
+    fn = getName() + ".png";
     fn = FileSystem::appendCachePathToFile(fn);
     return fn;
 }
@@ -327,24 +327,24 @@ void Atlas::printInfoAndErrors(std::shared_ptr<Img32> sp){
     GLint iMaxTextureSiz;//, maxColorAttachments;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &iMaxTextureSiz);
     //Some atlas infor.
-    BroLogInfo("Atlas size is ", sp->getWidth(), " x ", sp->getHeight()
-        , ", with sprite size ", getSpriteSize().x, " x ", getSpriteSize().y, " and has ", _mapImages.size(), " textures.\r\n"
-        , " The Graphics card supports textures up to ", iMaxTextureSiz, " x ", iMaxTextureSiz, " units.\r\n"
-        "Maximum Number of Textures for each texture size follows:",
-        "\r\n  ", (getSpriteSize().x == 8) ? "*" : " ", "8    x 8    : ", (iMaxTextureSiz / 8) * (iMaxTextureSiz / 8), " textures."
-        "\r\n  ", (getSpriteSize().x == 16) ? "*" : " ", "16   x 16   : ", (iMaxTextureSiz / 16) * (iMaxTextureSiz / 16), " textures."
-        "\r\n  ", (getSpriteSize().x == 32) ? "*" : " ", "32   x 32   : ", (iMaxTextureSiz / 32) * (iMaxTextureSiz / 32), " textures."
-        "\r\n  ", (getSpriteSize().x == 64) ? "*" : " ", "64   x 64   : ", (iMaxTextureSiz / 64) * (iMaxTextureSiz / 64), " textures."
-        "\r\n  ", (getSpriteSize().x == 128) ? "*" : " ", "128  x 128  : ", (iMaxTextureSiz / 128) * (iMaxTextureSiz / 128), " textures."
-        "\r\n  ", (getSpriteSize().x == 256) ? "*" : " ", "256  x 256  : ", (iMaxTextureSiz / 256) * (iMaxTextureSiz / 256), " textures."
-        "\r\n  ", (getSpriteSize().x == 512) ? "*" : " ", "512  x 512  : ", (iMaxTextureSiz / 512) * (iMaxTextureSiz / 512), " textures."
-        "\r\n  ", (getSpriteSize().x == 1024) ? "*" : " ", "1024 x 1024 : ", (iMaxTextureSiz / 1024) * (iMaxTextureSiz / 1024), " textures."
-        "\r\n  ", (getSpriteSize().x == 2048) ? "*" : " ", "2048 x 2048 : ", (iMaxTextureSiz / 2048) * (iMaxTextureSiz / 2048), " textures."
-        "\r\n  ", (getSpriteSize().x == 4096) ? "*" : " ", "4096 x 4096 : ", (iMaxTextureSiz / 4096) * (iMaxTextureSiz / 4096), " textures."
+    BroLogInfo("Atlas size is "+ sp->getWidth()+ " x "+ sp->getHeight()
+        + "+ with sprite size "+ getSpriteSize().x+ " x "+ getSpriteSize().y+ " and has "+ _mapImages.size()+ " textures.\r\n"
+        + " The Graphics card supports textures up to "+ iMaxTextureSiz+ " x "+ iMaxTextureSiz+ " units.\r\n"
+        "Maximum Number of Textures for each texture size follows:"+
+        "\r\n  "+ ((getSpriteSize().x == 8) ? "*" : " "   )+ "8    x 8    : "+ (iMaxTextureSiz / 8) * (iMaxTextureSiz / 8)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 16) ? "*" : " "  )+ "16   x 16   : "+ (iMaxTextureSiz / 16) * (iMaxTextureSiz / 16)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 32) ? "*" : " "  )+ "32   x 32   : "+ (iMaxTextureSiz / 32) * (iMaxTextureSiz / 32)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 64) ? "*" : " "  )+ "64   x 64   : "+ (iMaxTextureSiz / 64) * (iMaxTextureSiz / 64)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 128) ? "*" : " " )+ "128  x 128  : "+ (iMaxTextureSiz / 128) * (iMaxTextureSiz / 128)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 256) ? "*" : " " )+ "256  x 256  : "+ (iMaxTextureSiz / 256) * (iMaxTextureSiz / 256)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 512) ? "*" : " " )+ "512  x 512  : "+ (iMaxTextureSiz / 512) * (iMaxTextureSiz / 512)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 1024) ? "*" : " ")+ "1024 x 1024 : "+ (iMaxTextureSiz / 1024) * (iMaxTextureSiz / 1024)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 2048) ? "*" : " ")+ "2048 x 2048 : "+ (iMaxTextureSiz / 2048) * (iMaxTextureSiz / 2048)+ " textures."
+        "\r\n  "+ ((getSpriteSize().x == 4096) ? "*" : " ")+ "4096 x 4096 : "+ (iMaxTextureSiz / 4096) * (iMaxTextureSiz / 4096)+ " textures."
     );
 
     if (sp->getWidth() > iMaxTextureSiz) {
-        BroThrowException("Atlas: ", getName(), "The generated texture size is ", sp->getWidth(), ". Your graphics card cna't handle texture sizes above ", iMaxTextureSiz, ".  TODO: Implement shrinkage.");
+        BroThrowException("Atlas: " + getName() + "The generated texture size is " + sp->getWidth() + ". Your graphics card can't handle texture sizes above " + iMaxTextureSiz + ".  TODO: Implement shrinkage.");
     }
 
 }

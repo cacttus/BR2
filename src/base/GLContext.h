@@ -45,7 +45,6 @@ class RenderSettings;
 class GLContext : public VirtualMemoryShared<GLContext> {
 private:
     std::shared_ptr<TexCache> _pTexCache = nullptr;
-    std::shared_ptr<Viewport> _pWindowViewport = nullptr;
     std::shared_ptr<CameraNode> _pCamera = nullptr;
   //  std::shared_ptr<TextBoss> _pTextManager = nullptr;
     std::shared_ptr<Party> _pParty = nullptr;
@@ -106,8 +105,7 @@ public:
     void setRenderPipe(std::shared_ptr<RenderPipe> r) { _pRenderPipe = r; }
     void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
     void setLineWidth(float w);
-    std::shared_ptr<Viewport> getWindowViewport2() { AssertOrThrow2(_pWindowViewport != nullptr); return _pWindowViewport; }
-    void setWindowViewport2(std::shared_ptr<Viewport> pv) { _pWindowViewport = pv; }
+
     void setCamera(std::shared_ptr<CameraNode> pc) { _pCamera = pc; }
     void setRoom(std::shared_ptr<RoomBase> b) { _pRoom = b; }
     // void setRtErrors(bool b);

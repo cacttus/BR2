@@ -241,7 +241,7 @@ bool GLContext::loadOpenGLFunctions() {
 #define SDLGLP(x, y, z) do{ \
 if( !(x = (y)SDL_GL_GetProcAddress(z))) \
 { \
-BroLogError("GL Method ", z, " not supported by your GPU, or there was another error somewhere.."); \
+BroLogError("GL Method "+ z+" not supported by your GPU, or there was another error somewhere.."); \
 bValid = false; \
 Gu::debugBreak(); \
 } \
@@ -250,7 +250,7 @@ Gu::debugBreak(); \
 #define SDLGLP2(x, y) do{ \
 if( !(y = (x)SDL_GL_GetProcAddress(#y))) \
 { \
-BroLogError("GL Method ", #y, " not supported by your GPU, or there was another error somewhere.."); \
+BroLogError("GL Method "+ #y+ " not supported by your GPU, or there was another error somewhere.."); \
 bValid = false; \
 Gu::debugBreak(); \
 } \
@@ -395,7 +395,7 @@ void GLContext::setLineWidth(float w) {
 #ifdef COMPATIBILITY_PROFILE_ENABLED
     glLineWidth(w);
 #else
-    BroLogError("glLineWidth not supported");
+    BroLogErrorOnce("glLineWidth not supported");
 #endif
 }
 

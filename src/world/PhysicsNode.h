@@ -26,8 +26,8 @@ public:
     PhysicsSpec() { } //deserialize ctor
     PhysicsSpec(t_string strName) : BaseSpec(strName) { }
     virtual ~PhysicsSpec() override { }
-    virtual void serialize( std::shared_ptr<BufferedFile> fb) override;
-    virtual void deserialize( std::shared_ptr<BufferedFile> fb) override;
+    virtual void serialize( std::shared_ptr<BinaryFile> fb) override;
+    virtual void deserialize( std::shared_ptr<BinaryFile> fb) override;
 };
 //The physics data is independent of the PixObj only because we need to
 //collide with the World Node plane so we need a separate box that isn't an object.

@@ -42,7 +42,7 @@ void RenderPipe::setClear(vec4& v) {
 void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath) {
     BroLogInfo("[RenderPipe] Initializing.");
     if (iWidth <= 0 || iHeight <= 0) {
-        BroLogError("[RenderPipe] Got framebuffer of width or height < 0", iWidth, ",", iHeight);
+        BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
     }
 
     releaseFbosAndMesh();
@@ -156,9 +156,9 @@ void RenderPipe::saveScreenshot() {
             iTarget = 0;
             for (std::shared_ptr<ShadowFrustum> sf : Gu::getContext()->getLightManager()->getAllShadowFrustums()) {
                 t_string fname = FileSystem::getScreenshotFilename();
-                fname = TStr(fname, "_shadow_frustum_", iTarget, "_.png");
+                fname = fname + "_shadow_frustum_" + iTarget + "_.png";
                 RenderUtils::saveTexture(std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
-                BroLogInfo("[RenderPipe] Screenshot '", fname, "' saved");
+                BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
                 iTarget++;
             }
             iTarget = 0;
@@ -174,9 +174,9 @@ void RenderPipe::saveScreenshot() {
                     else if (i + GL_TEXTURE_CUBE_MAP_POSITIVE_X == GL_TEXTURE_CUBE_MAP_NEGATIVE_Y) side = "-Y";
                     else if (i + GL_TEXTURE_CUBE_MAP_POSITIVE_X == GL_TEXTURE_CUBE_MAP_NEGATIVE_Z) side = "-Z";
 
-                    fname = TStr(fname, "_shadowbox_", iTarget, "_side_", side, "_.png");
+                    fname = fname + "_shadowbox_" + iTarget + "_side_" + side + "_.png";
                     RenderUtils::saveTexture(std::move(fname), sb->getGlTexId(), GL_TEXTURE_CUBE_MAP, i);
-                    BroLogInfo("[RenderPipe] Screenshot '", fname, "' saved");
+                    BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
                 }
                 iTarget++;
             }
@@ -184,16 +184,16 @@ void RenderPipe::saveScreenshot() {
             iTarget = 0;
             for (std::shared_ptr<RenderTarget> pTarget : _pBlittedDeferred->getTargets()) {
                 t_string fname = FileSystem::getScreenshotFilename();
-                fname = TStr(fname, "_deferred_", pTarget->getName(), "_", iTarget++, "_.png");
+                fname = fname + "_deferred_" + pTarget->getName() + "_" + iTarget++ + "_.png";
                 RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
-                BroLogInfo("[RenderPipe] Screenshot '", fname, "' saved");
+                BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
             }
             iTarget = 0;
             for (std::shared_ptr<RenderTarget> pTarget : _pBlittedForward->getTargets()) {
                 t_string fname = FileSystem::getScreenshotFilename();
-                fname = TStr(fname, "_forward_", pTarget->getName(), "_", iTarget++, "_.png");
+                fname = fname + "_forward_" + pTarget->getName() + "_" + iTarget++ + "_.png";
                 RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
-                BroLogInfo("[RenderPipe] Screenshot '", fname, "' saved");
+                BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
             }
 
         }
@@ -201,7 +201,7 @@ void RenderPipe::saveScreenshot() {
             //Basic Forward Screenshot
             t_string fname = FileSystem::getScreenshotFilename();
             RenderUtils::saveTexture(std::move(fname), _pBlittedForward->getGlId(), GL_TEXTURE_2D);
-            BroLogInfo("[RenderPipe] Screenshot '", fname, "' saved");
+            BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         }
     }
 }
@@ -334,7 +334,7 @@ void RenderPipe::blitDeferredRender() {
     _pDeferredShader->endRaster();
 
 }
-void RenderPipe::setShadowUf(){
+void RenderPipe::setShadowUf() {
     int32_t iMaxTexs = 0;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &iMaxTexs);
     
@@ -349,7 +349,7 @@ void RenderPipe::setShadowUf(){
 
     //We loop this way because we MUST fill all texture units in the GPU
     if(Gu::getContext()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowBoxes){
-        BroLogWarnCycle("More than ", iNumGpuShadowBoxes, " boxes - some shadows will not show.");
+        BroLogWarnCycle("More than " + iNumGpuShadowBoxes + " boxes - some shadows will not show.");
     }
     for (int iShadowBox = 0; iShadowBox < iNumGpuShadowBoxes; ++iShadowBox) {
         iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
@@ -369,7 +369,7 @@ void RenderPipe::setShadowUf(){
             iIndex++;
         }
         else {
-            BroLogWarn("Deferred Step: Too many textures bound: ", iTextureIndex);
+            BroLogWarn("Deferred Step: Too many textures bound: "+ iTextureIndex);
         }
     }
     _pDeferredShader->setUf("_ufShadowBoxSamples", boxSamples.data(), (GLint)boxSamples.size() );
@@ -377,7 +377,7 @@ void RenderPipe::setShadowUf(){
 
     //We loop this way because we MUST fill all texture units in the GPU
     if (Gu::getContext()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowFrustums) {
-        BroLogWarnCycle("More than ", iNumGpuShadowFrustums, " frustum - some shadows will not show.");
+        BroLogWarnCycle("More than " + iNumGpuShadowFrustums + " frustum - some shadows will not show.");
     }
     for (int iShadowFrustum = 0; iShadowFrustum < iNumGpuShadowFrustums; ++iShadowFrustum) {
         iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
@@ -397,10 +397,10 @@ void RenderPipe::setShadowUf(){
             iIndex++;
         }
         else {
-            BroLogWarn("Deferred Step: Too many textures bound: ", iTextureIndex);
+            BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
         }
     }
-    _pDeferredShader->setUf("_ufShadowFrustumSamples", frustSamples.data(), (GLint)frustSamples.size());
+    _pDeferredShader->setUf("_ufShadowFrustumSamples" , frustSamples.data(), (GLint)frustSamples.size());
     Gu::checkErrorsDbg();
 
     //Set Mirror Environment map.
@@ -409,11 +409,11 @@ void RenderPipe::setShadowUf(){
         if (iTextureIndex < iMaxTexs) {
             Gu::getContext()->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
             glBindTexture(GL_TEXTURE_2D, _pEnvTex->getGlId());
-            _pDeferredShader->setUf("_ufTexEnv0", (GLvoid*)&iTextureIndex);
+            _pDeferredShader->setUf("_ufTexEnv0" , (GLvoid*)&iTextureIndex);
             iIndex++;
         }
         else {
-            BroLogWarn("Deferred Step: Too many textures bound: ", iTextureIndex);
+            BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
         }
     }
     else {
@@ -583,8 +583,8 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight)
 
     if (iMaxDrawBuffers < 1)
     {
-        BroThrowException("[RenderPipe] Your GPU only supports ", iMaxDrawBuffers,
-            " MRTs, the system requires at least ", 1,
+        BroThrowException(Stz "[RenderPipe] Your GPU only supports "+ iMaxDrawBuffers +
+            " MRTs, the system requires at least "+ 1 +
             " MRTs. Consider upgrading graphics card.");
     }
 
@@ -593,9 +593,9 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight)
 
     if (iMaxFbHeight < iHeight || iMaxFbWidth < iWidth)
     {
-        BroThrowException("[RenderPipe] Your GPU only supports MRTs at ",
-            iMaxFbWidth, "x", iMaxFbHeight,
-            " pixels. The system requested ", iWidth, "x", iHeight, ".");
+        BroThrowException(Stz "[RenderPipe] Your GPU only supports MRTs at "+
+            iMaxFbWidth+ "x"+ iMaxFbHeight+
+            " pixels. The system requested "+ iWidth+ "x"+ iHeight+ ".");
     }
 
     checkMultisampleParams();
@@ -603,19 +603,19 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight)
 void RenderPipe::checkMultisampleParams() {
     GLint iMaxSamples;
     glGetIntegerv(GL_MAX_SAMPLES, &iMaxSamples);
-    BroLogInfo("Max OpenGL MSAA Samples ", iMaxSamples);
+    BroLogInfo(Stz "Max OpenGL MSAA Samples "+ iMaxSamples);
 
     if (_bMsaaEnabled)
     {
         if ((int)_nMsaaSamples>iMaxSamples)
         {
-            BroLogWarn("[RenderPipe] MSAA sample count of '", _nMsaaSamples,
-                "' was larger than the card's maximum: '", iMaxSamples, "'. Truncating.");
+            BroLogWarn(Stz "[RenderPipe] MSAA sample count of '"+ _nMsaaSamples+
+                "' was larger than the card's maximum: '"+ iMaxSamples+ "'. Truncating.");
             _nMsaaSamples = iMaxSamples;
             Gu::debugBreak();
         }
         if (BitHacks::bitcount(_nMsaaSamples) != 1) {
-            BroLogWarn("[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
+            BroLogWarn(Stz "[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
             _nMsaaSamples = iMaxSamples > 2 ? 2 : iMaxSamples;
             Gu::debugBreak();
         }

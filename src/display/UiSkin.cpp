@@ -30,7 +30,7 @@ namespace Game {
 bool UiSkinElement::setAndValid(std::shared_ptr<UiSkinElement> ele) {
     bool b = (ele != nullptr && ele->validate());
     if (b == false) {
-        Gui2d::error(TStr("Skin element ", ele->_strName, " was not valid."));
+        Gui2d::error( Stz "Skin element " + ele->_strName + " was not valid.");
     }
     return b;
 }

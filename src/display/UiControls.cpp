@@ -32,10 +32,6 @@
 namespace Game {
 
 //////////////////////////////////////////////////////////////////////////
-#pragma region UiFastQuads
-////////////////////////////////////////////////////////////////////////////
-
-//#pragma endregion
 std::shared_ptr<UiEventFunc> UiEventFunc::create(std::function<void(UiEventId::e eventId, void*)> f) {
     std::shared_ptr<UiEventFunc> ef = std::make_shared<UiEventFunc>();
     ef->_func = f;
@@ -85,7 +81,6 @@ bool UiElement::removeEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f) {
     }
     return false;
 }
-
 void UiElement::addEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f) {
     //Layman's: For each Mouse Button State we have a list of functions that get called when it is active (like clicked)
     EventMap::iterator e = _events.find(evId);
@@ -96,7 +91,6 @@ void UiElement::addEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f) {
     }
     e->second.push_back(f);
 }
-
 void UiElement::doMouseEvents(std::shared_ptr<Fingers> pFingers) {
     //This seems like the moste fficient way to do this.
     ButtonState::e eLmb = pFingers->getLmbState();
@@ -287,7 +281,6 @@ void UiElement::computepad_unit(float& pt, float dim, uDim& ud) {
         pt = 0;
     }
 }
-
 void UiElement::performLayout(bool bForce) {
     //thinking of ditching generic layout and going for a manual approach
     //each element has its own performlayout, and we just do it based on that.
@@ -752,14 +745,14 @@ void UiElement::validateQuad() {
     if (_right.px() < _left.px()) {
         static int nn = 0;
         if (nn == 0) {
-            Gui2d::error(TStr("Quad is invalid, rtbl= ", _right.px(), ",", _top.px(), ",", _bottom.px(), ",", _left.px()));
+            Gui2d::error(Stz "Quad is invalid, rtbl= "+ _right.px()+ ","+ _top.px()+ ","+ _bottom.px()+ ","+ _left.px());
         }
         _right = _left;
     }
     if (_bottom.px() < _top.px()) {
         static int nn = 0;
         if (nn == 0) {
-            Gui2d::error(TStr("Quad is invalid, rtbl= ", _right.px(), ",", _top.px(), ",", _bottom.px(), ",", _left.px()));
+            Gui2d::error(Stz "Quad is invalid, rtbl= "+ _right.px()+ ","+ _top.px()+ ","+ _bottom.px()+ ","+ _left.px());
         }
         _bottom = _top;
     }
@@ -951,7 +944,7 @@ void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, 
 std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uint32_t uiSort, bool bUpdateLayout, bool bCheckDupes) {
     if (c == nullptr) {
         //Allow this to simply fail this may happen if you fail to specify certain skin requirements.
-        Gui2d::error(TStr("Tried to add a null child to UI element ", _strName));
+        Gui2d::error(Stz "Tried to add a null child to UI element "+ _strName);
         return nullptr;
     }
 
@@ -980,7 +973,7 @@ bool UiElement::checkDupes(std::shared_ptr<UiElement> childTree) {
         bool b = false;;
         rp->findElement(e, b);
         if (b == true) {
-            Gui2d::error(TStr("Gui2d: child '", e->_strName, "' found multiple times in GUI, please create new GUI element then add."));
+            Gui2d::error(Stz "Gui2d: child '"+ e->_strName+ "' found multiple times in GUI, please create new GUI element then add.");
             return true;
         }
     }
@@ -1798,7 +1791,7 @@ void UiGridRow::init() {
 }
 std::shared_ptr<UiElement> UiGridRow::getCol(size_t iCol) {
     if (iCol >= _cols.size()) {
-        Gui2d::error(TStr("UiGridRow: Error: tried to access grid column outside of bounds: ", iCol));
+        Gui2d::error(Stz "UiGridRow: Error: tried to access grid column outside of bounds: "+ iCol);
         return nullptr;
     }
     return _cols[iCol];
@@ -1821,7 +1814,7 @@ void UiGridRow::resizeCols() {
     if (_cols.size() == 0) {
         return;
     }
-    std::string w = TStr(100.0f / (float)(_cols.size()), "%");
+    std::string w = Stz 100.0f / (float)(_cols.size())+ "%";
     for (std::shared_ptr<UiElement> c : _cols) {
         c->width() = w;
         c->height() = "100%";
@@ -1842,7 +1835,7 @@ std::shared_ptr<UiGrid> UiGrid::create(int nr, int nc) {
 }
 std::shared_ptr<UiElement> UiGrid::getCell(size_t iRow, size_t iCol) {
     if (iRow >= _rows.size()) {
-        Gui2d::error(TStr("UiGrid: Error: tried to access grid cell outside of bounds tried, (", iRow, ",", iCol, ") "));
+        Gui2d::error( Stz "UiGrid: Error: tried to access grid cell outside of bounds tried, ("+ iRow+ ","+ iCol+ ") ");
         return nullptr;
     }
     return  _rows[iRow]->getCol(iCol);
@@ -1874,7 +1867,7 @@ std::shared_ptr<UiGridRow> UiGrid::addRow(int nr, int nc, bool bAutoSizeRows, ui
     return r;
 }
 void UiGrid::resizeRows() {
-    std::string h = TStr(100.0f / (float)(_rows.size()), "%");
+    std::string h = Stz 100.0f / (float)(_rows.size())+ "%";
     for (std::shared_ptr<UiGridRow> r : _rows) {
         r->height() = h;
         r->width() = "100%";
@@ -1882,7 +1875,7 @@ void UiGrid::resizeRows() {
 }
 std::shared_ptr<UiGrid> UiGrid::createImageStack(std::shared_ptr<Ui3Tex> tex, uDim uWorHPx, Orientation::e eOr) {
     if (uWorHPx.px() == 0) {
-        Gui2d::error(TStr("Image stack width or hieght was zero, errors will occur orientation = ", Orientation::toString(eOr)));
+        Gui2d::error(Stz "Image stack width or hieght was zero, errors will occur orientation = "+ Orientation::toString(eOr));
         return nullptr;
     }
     std::shared_ptr<UiGrid> pg = UiGrid::create(0, 0);
@@ -2113,39 +2106,6 @@ void Ui9Grid::update(std::shared_ptr<Fingers> pFingers) {
 }
 
 #pragma endregion
-////////////////////////////////////////////////////////////////////////////
-//#pragma region UiFlexGrid
-//std::shared_ptr<UiFlexGrid> UiFlexGrid::create() {
-//    int nr = 3;
-//    int nc = 3;
-//
-//    std::shared_ptr<UiFlexGrid> pg = std::make_shared<UiFlexGrid>();
-//    pg->init();
-//
-//    for (int ir = 0; ir < nr; ++ir) {
-//        std::shared_ptr<UiGridRow> r0 = pg->addRow(1);
-//        r0->width() = "100%";
-//        r0->height() = "auto";
-//        for (int ic = 0; ic < nc; ++ic) {
-//            std::shared_ptr<UiElement> c0 = r0->addCol(1);
-//            c0->width() = "auto";
-//            c0->height() = "100%";
-//        }
-//    }
-//
-//    //Center column grows/shrinks to fit
-//    pg->getCell(1, 1)->setAutoSizeModeX(UiAutoSizeMode::e::GrowAndShrink);
-//    pg->getCell(1, 1)->setAutoSizeModeY(UiAutoSizeMode::e::GrowAndShrink);
-//
-//    return pg;
-//}
-//void UiFlexGrid::init() {
-//    Ui9Grid::init();
-//}
-//void UiFlexGrid::performLayout(bool bForce) {
-//    Ui9Grid::performLayout(bForce);
-//}
-//#pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiFlexButton
 std::shared_ptr<UiFlexButton> UiFlexButton::create(std::shared_ptr<UiFlexButtonSkin> skin) {
@@ -2389,7 +2349,7 @@ void UiScrubGen::update(std::shared_ptr<Fingers> pFingers) {
                     float fMax = maxVal();
                     float fMin = minVal();
                     if (fMax < fMin) {
-                        Gui2d::error(TStr("Max '", fMax, "' was greater than min '", fMin, "' for scrollgen."));
+                        Gui2d::error(Stz "Max '"+ fMax+ "' was greater than min '"+ fMin+ "' for scrollgen.");
                         maxVal() = minVal();
                     }
                     float fVal = fMin + (fMax - fMin) * _pThumb->getScrollPct();
@@ -2756,7 +2716,7 @@ void UiDropdown::setSelectedItem(std::shared_ptr<UiElement> item) {
         return;
     }
     if (_pListContainer->getContentContainer()->hasChild(item) == false) {
-        Gui2d::error(TStr("Dropdown didn't have the item you treid to select: ", item->getName()));
+        Gui2d::error( Stz "Dropdown didn't have the item you treid to select: "+ item->getName());
         return;
     }
 
@@ -2805,10 +2765,6 @@ void  UiDropdown::performLayout(bool bForce) {
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
-
-
-//
-//class UiContainer
 #pragma region UiContainer
 std::shared_ptr<UiContainer> UiContainer::create(){
     std::shared_ptr<UiContainer> pc = std::make_shared<UiContainer>();
@@ -2990,7 +2946,7 @@ void UiContainer::enableResize() {
     setLayoutChanged();
 }
 #pragma endregion
-
+//////////////////////////////////////////////////////////////////////////
 #pragma region UIWindow
 std::shared_ptr<UiElement> UiWindow::getContentContainer(){
     return _pContainer->getContentContainer();
@@ -3126,7 +3082,6 @@ void UiWindow::enableHScrollbar() {
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiToolbar
-
 std::shared_ptr<UiToolbar> UiToolbar::create(std::shared_ptr<UiToolbarSkin> skin) {
     std::shared_ptr<UiToolbar> ui = std::make_shared<UiToolbar>();
     ui->_pToolbarSkin = skin;
@@ -3158,7 +3113,6 @@ void UiToolbar::performLayout(bool bForce) {
     UiElement::performLayout(bForce);
     for(auto p : getChildren()) {
         std::shared_ptr<UiElement> e = p.second;
-
     }
 }
 #pragma endregion

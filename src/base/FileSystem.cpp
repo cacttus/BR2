@@ -28,7 +28,7 @@ t_string FileSystem::getExecutableFullPath() {
     //  t_string ret;
     //  char* p = SDL_GetBasePath();
     //  if (p == nullptr) {
-    //      BroLogError("SDL Doesn't implement SDL_GetBasePath. Using program argument '",FileSystem::_strExePath,"'  This will result in errors.");
+    //      BroLogError("SDL Doesn't implement SDL_GetBasePath. Using program argument '"+FileSystem::_strExePath+"'  This will result in errors.");
     t_string ret = FileSystem::_strExePath;
     // }
    //  else {
@@ -72,7 +72,7 @@ bool FileSystem::createFile(const t_string& filename, bool trunc, bool bLog)
     if (!pStream.good())
     {
         exists = false;
-        t_string err = TStr(" [FileSystem] Output file ", filename, " could not be created with trunc=", (int32_t)trunc);
+        t_string err = Stz " [FileSystem] Output file "+ filename+ " could not be created with trunc="+ (int32_t)trunc;
         if (bLog == true) {//For logger initializtion
             BroLogError(err);
         }
@@ -132,7 +132,7 @@ bool FileSystem::createDirectorySingle(t_string& dirName) {
         }
         else if (ret == ENOENT) {
             //DO NOT LOG
-            //BroLogError("mkdir failed with code ", ret);
+            //BroLogError("mkdir failed with code "+ ret);
             return false;
         }
         else {
@@ -260,7 +260,7 @@ time_t FileSystem::getFileModifyTime(t_string& location) {
     struct stat fileInfo;
 
     if (FileSystem::fileExists(location) == false) {
-        BroThrowException("File '", location, "' does not exist");
+        BroThrowException("File '" + location +"' does not exist");
     }
 
     stat(location.c_str(), &fileInfo);
@@ -329,7 +329,7 @@ bool FileSystem::getAllFilesOrDirs(t_string dir, std::vector<t_string>& __out_ d
         closedir(dp);
     }
     else {
-        BroLogError("Couldn't open the directory '", dir, "'");
+        BroLogError("Couldn't open the directory '"+ dir+ "'");
         return false;
     }
     return true;
@@ -377,7 +377,7 @@ bool FileSystem::deleteAllFiles(t_string dir, std::vector<t_string>& vecFileExts
 
     std::vector<t_string> files;
     if (getAllFiles(dir, files) == false) {
-        BroLogError("Failed to get files from '", dir, "'");
+        BroLogError("Failed to get files from '" + dir + "'");
         return false;
     }
 
@@ -392,7 +392,7 @@ bool FileSystem::deleteAllFiles(t_string dir, std::vector<t_string>& vecFileExts
             }
             if (bMatch) {
                 if (FileSystem::deleteFile(file) == false) {
-                    BroLogError("Failed to delte file '", file, "'");
+                    BroLogError("Failed to delte file '" + file + "'");
                     return false;
                 }
             }
@@ -406,7 +406,7 @@ bool FileSystem::deleteFile(t_string filename) {
     //Equivalent POSIX function
     //unlink(filename.c_str())
     if (ret != 0) {
-        BroLogError("Failed to delete file '", filename, "'");
+        BroLogError("Failed to delete file '" + filename + "'");
         return false;
     }
     return true;
@@ -440,7 +440,7 @@ t_string FileSystem::formatPath(const t_string& p)
     return StringUtil::replaceAll(p, '\\', '/');
 }
 t_string FileSystem::getScreenshotFilename() {
-    t_string fname = TStr(DateTime::dateTimeToStr(DateTime::getDateTime()), "_", FileSystem::getExecutableName(), "_frame.png");
+    t_string fname = DateTime::dateTimeToStr(DateTime::getDateTime())+ "_"+ FileSystem::getExecutableName()+ "_frame.png";
     fname = FileSystem::replaceInvalidCharsFromFilename(fname);
     fname = StringUtil::replaceAll(fname, " ", "_");
     fname = FileSystem::appendCachePathToFile(fname);
@@ -450,17 +450,17 @@ t_string FileSystem::getScreenshotFilename() {
 t_string FileSystem::replaceInvalidCharsFromFilename(const t_string& __in_ fnIn, char replaceChar, bool bIgnoreSlashes) {
     //Remove invalid WINDOWS characters from path
     t_string fname = fnIn;
-    fname = StringUtil::replaceAll(fname, "<", TStr(replaceChar));
-    fname = StringUtil::replaceAll(fname, ">", TStr(replaceChar));
-    fname = StringUtil::replaceAll(fname, ":", TStr(replaceChar));
-    fname = StringUtil::replaceAll(fname, "\"", TStr(replaceChar));
+    fname = StringUtil::replaceAll(fname, "<", Stz(replaceChar));
+    fname = StringUtil::replaceAll(fname, ">", Stz(replaceChar));
+    fname = StringUtil::replaceAll(fname, ":", Stz(replaceChar));
+    fname = StringUtil::replaceAll(fname, "\"", Stz(replaceChar));
     if (bIgnoreSlashes == false) {
-        fname = StringUtil::replaceAll(fname, "/", TStr(replaceChar));
-        fname = StringUtil::replaceAll(fname, "\\", TStr(replaceChar));
+        fname = StringUtil::replaceAll(fname, "/", Stz(replaceChar));
+        fname = StringUtil::replaceAll(fname, "\\", Stz(replaceChar));
     }
-    fname = StringUtil::replaceAll(fname, "|", TStr(replaceChar));
-    fname = StringUtil::replaceAll(fname, "?", TStr(replaceChar));
-    fname = StringUtil::replaceAll(fname, "*", TStr(replaceChar));
+    fname = StringUtil::replaceAll(fname, "|", Stz(replaceChar));
+    fname = StringUtil::replaceAll(fname, "?", Stz(replaceChar));
+    fname = StringUtil::replaceAll(fname, "*", Stz(replaceChar));
 
     return fname;
 }
@@ -468,7 +468,7 @@ void FileSystem::SDLFileFree(char*& pOutData) {
     delete[] pOutData;
     pOutData = nullptr;
 }
-int FileSystem::SDLFileRead(std::string fname, char*& pOutData, uint32_t& _iOutSizeBytes, bool addNull) {
+int FileSystem::SDLFileRead(std::string fname, char*& pOutData, int64_t& _iOutSizeBytes, bool addNull) {
 
     fname = getFilePath(fname);
 
@@ -476,7 +476,7 @@ int FileSystem::SDLFileRead(std::string fname, char*& pOutData, uint32_t& _iOutS
     if (rw == NULL)
         return 1;
 
-    _iOutSizeBytes = (uint32_t)SDL_RWsize(rw);
+    _iOutSizeBytes = SDL_RWsize(rw);
     if (addNull) {
         pOutData = new char[_iOutSizeBytes + 1];
     }
@@ -486,17 +486,18 @@ int FileSystem::SDLFileRead(std::string fname, char*& pOutData, uint32_t& _iOutS
 
     Sint64 nb_read_total = 0, nb_read = 1;
     char* buf = pOutData;
-    while (nb_read_total < (uint32_t)_iOutSizeBytes && nb_read != 0) {
-        nb_read = (Sint64)SDL_RWread(rw, buf, 1, (std::size_t)((Sint64)_iOutSizeBytes - nb_read_total));
+    while (nb_read_total < _iOutSizeBytes && nb_read != 0) {
+        nb_read = SDL_RWread(rw, buf, 1, _iOutSizeBytes - nb_read_total);
         nb_read_total += nb_read;
         buf += nb_read;
     }
     SDL_RWclose(rw);
     if (nb_read_total != _iOutSizeBytes) {
-        delete[] pOutData; // free(pOutData);
+        delete[] pOutData;
         return 1;
     }
 
+    //So yeah sometimes you just gotta..
     if (addNull) {
         pOutData[nb_read_total] = '\0';
     }

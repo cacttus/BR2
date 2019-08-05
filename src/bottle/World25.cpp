@@ -210,7 +210,7 @@ void World25::createNewWorld() {
     {
         _pWorldMaker->makeNewWorld();
     }
-    BroLogInfo("..", (Gu::getMicroSeconds() - tv) / 1000, "ms");
+    BroLogInfo(".." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
 }
 //std::shared_ptr<PhysicsGrid> World25::makeGrid(ivec3& cv) {
 //    //we manually set empty here because all grids are pre-loaded
@@ -226,8 +226,8 @@ void World25::loadWorld() {
         {
             _pWorldMaker->loadAllGrids(grids);
         }
-        BroLogInfo("..", (Gu::getMicroSeconds() - tv) / 1000, "ms");
-        BroLogInfo("Generating ", grids.size(), " grids..");
+        BroLogInfo(".." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
+        BroLogInfo("Generating " + grids.size() + " grids..");
         tv = Gu::getMicroSeconds();
         {
             BroLogInfo("Add..");
@@ -253,7 +253,7 @@ void World25::loadWorld() {
                 Gu::print(pg->getGenProfileString());
             }
         }
-        BroLogInfo(grids.size(), " grids..", (Gu::getMicroSeconds() - tv) / 1000, "ms");
+        BroLogInfo(grids.size() + " grids.." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
     }
 }
 void World25::createHandCursor() {
@@ -363,7 +363,7 @@ void World25::makeAtlas() {
     float fsq = sqrtf((float)nFrames);
     int iSize = (int)ceilf(fsq);
 
-    BroLogInfo("Sprite Map Size = ", iSize, "x", iSize);
+    BroLogInfo("Sprite Map Size = " + iSize + "x" + iSize);
 
     ivec2 gsiz(iSize, iSize);
     _pWorldAtlas = std::make_shared<Atlas>(Gu::getContext(), "W25Atlas", gsiz);
@@ -1065,7 +1065,7 @@ void World25::remakeGridMeshes() {
             }
         }
         nMesh++;
-        BroLogInfo("", nMesh, " / ", getGrids().size());
+        BroLogInfo("" + nMesh + " / " + getGrids().size());
     }
 }
 

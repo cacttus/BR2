@@ -9,7 +9,7 @@
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../display/Viewport.h"
  
 #include "../base/GLContext.h"
@@ -68,14 +68,14 @@ bool Gu::is64Bit() {
 void parsearg(std::string key, std::string value) {
     if (key == "--show-console") {
         Gu::getEngineConfig()->setShowConsole( Game::TypeConv::strToBool(value) );
-        BroLogInfo("Overriding show console window: ", value);
+        BroLogInfo("Overriding show console window: " + value);
     }
     else if (key == "--game-host") {
         Gu::getEngineConfig()->setGameHostAttached(Game::TypeConv::strToBool(value));
-        BroLogInfo("Overriding game host: ", value);
+        BroLogInfo("Overriding game host: " + value);
     }
     else {
-        BroLogWarn("Unrecognized parameter '", key, "' value ='", value, "'");
+        BroLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
     }
 }
 //**TODO Move this crap to AppRunner
@@ -169,7 +169,7 @@ void Gu::SDLCreateSurfaceFromImage(const t_string strImage,
         pSurface = Gu::SDLCreateSurfaceFromImage(pImage);
     }
     else {
-        BroLogError("Could not icon image '", strImage, "'");
+        BroLogError("Could not icon image '" + strImage + "'");
     }
 }
 SDL_Surface* Gu::SDLCreateSurfaceFromImage(const std::shared_ptr<Img32> pImage) {
@@ -197,14 +197,14 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
    // uint32_t imgSize;
     std::shared_ptr<Img32> ret = nullptr;
 
-    std::shared_ptr<BufferedFile> fb = std::make_shared<BufferedFile>();
+    std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
     if (Gu::getPackage()->getFile(imgLoc, fb)) {
         //decode
         err = lodepng_decode32(&image, &width, &height, (unsigned char*)fb->getData().ptr(), fb->getData().count());
         if (err != 0) {
             //FB should free itself.
           //  Gu::SDLFileFree(imgData);
-            BroThrowException("Could not load image ", imgLoc, " err code = ", err);
+            BroThrowException(Stz "Could not load image "+ imgLoc+ " err code = "+ err);
         }
         else {
             Img32::flipImage20161206(image, width, height);
@@ -241,12 +241,12 @@ bool Gu::saveImage(std::string path, std::shared_ptr<Img32> spec) {
 
         RetCode rc = DiskFile::writeAllBytes(path, allocr);
         if (rc != GR_OK) {
-            BroLogError("Error'", (int)rc, "' occurred while saving image.");
+            BroLogError("Error'" + (int)rc + "' occurred while saving image.");
         }
         allocr.dealloc();
     }
     else {
-        BroLogError("LodePng - Error encoding image '", path, "'.");
+        BroLogError("LodePng - Error encoding image '" + path + "'.");
         bRet = false;
     }
     free(buffer);//lodepng_free
@@ -448,9 +448,9 @@ t_string Gu::getOperatingSystemName()
     }
 
     if (vex.wServicePackMajor != 0)
-        res += TStr(", Service Pack ", vex.wServicePackMajor, ".", vex.wServicePackMinor);
+        res += Stz ", Service Pack "+ vex.wServicePackMajor+ "."+ vex.wServicePackMinor;
     else
-        res += TStr(", No service pack");
+        res += Stz ", No service pack";
 
     if (vex.wProductType == VER_NT_DOMAIN_CONTROLLER)
         res.append(", Domain Controller, note operating system may be incorrect as this is not supported");
@@ -667,7 +667,7 @@ void Gu::pulsePerf() {
         for (int i = 0; i < n; ++i) {
             str2 += ".";
         }
-        _strCachedProf = TStr(_strCachedProf, str2, _stopw.top().pulse(), "\n");
+        _strCachedProf = _strCachedProf+ str2+ _stopw.top().pulse()+ "\n";
     }
 }
 void Gu::pushPerf() {

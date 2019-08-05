@@ -1,4 +1,4 @@
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../world/PhysicsShapes.h"
 
 
@@ -19,25 +19,25 @@ HullShape::~HullShape() {
 
     _vecPoints.resize(0);
 }
-void PhysicsShape::deserialize( std::shared_ptr<BufferedFile> fb) {
+void PhysicsShape::deserialize( std::shared_ptr<BinaryFile> fb) {
     fb->readBool(_bKinematic);
     fb->readBool(_bDynamic);
 }
-void HullShape::deserialize( std::shared_ptr<BufferedFile> fb){
+void HullShape::deserialize( std::shared_ptr<BinaryFile> fb){
     PhysicsShape::deserialize(fb);
 }
-void SphereShape::deserialize( std::shared_ptr<BufferedFile> fb) {
+void SphereShape::deserialize( std::shared_ptr<BinaryFile> fb) {
     PhysicsShape::deserialize(fb);
 }
 
-void PhysicsShape::serialize( std::shared_ptr<BufferedFile> fb) {
+void PhysicsShape::serialize( std::shared_ptr<BinaryFile> fb) {
     fb->writeBool(std::move(_bKinematic));
     fb->writeBool(std::move(_bDynamic));
 }
-void HullShape::serialize( std::shared_ptr<BufferedFile> fb) {
+void HullShape::serialize( std::shared_ptr<BinaryFile> fb) {
     PhysicsShape::deserialize(fb);
 }
-void SphereShape::serialize( std::shared_ptr<BufferedFile> fb) {
+void SphereShape::serialize( std::shared_ptr<BinaryFile> fb) {
     PhysicsShape::deserialize(fb);
 }
 

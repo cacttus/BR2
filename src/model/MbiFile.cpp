@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Package.h"
-#include "../base/BufferedFile.h"
+#include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/RoomBase.h"
 #include "../display/CameraNode.h"
@@ -21,7 +21,7 @@ namespace Game {
 ///////////////////////////////////////////////////////////////////
 MbiFile::MbiFile()
 {
-    _pFile = std::make_shared<BufferedFile>();
+    _pFile = std::make_shared<BinaryFile>();
 }
 MbiFile::~MbiFile()
 {
@@ -30,8 +30,8 @@ MbiFile::~MbiFile()
 }
 ///////////////////////////////////////////////////////////////////
 void MbiFile::parseErr(t_string str, bool bDebugBreak, bool bFatal) {
-    t_string strhead = TStr("Error: '", _fileLoc, "': line ", _pFile->pos(), "\r\n  ");
-    str = TStr(strhead, str);
+    t_string strhead = Stz "Error: '"+ _fileLoc+ "': line "+ _pFile->pos()+ "\r\n  ";
+    str =  strhead + str;
     //Throw this if you wnt to have an error in your file.
     if (bFatal) {
         BroThrowException(str);
@@ -55,7 +55,7 @@ void MbiFile::postLoad(){
 }
 bool MbiFile::loadAndParse(t_string file) {
     _fileLoc = file;
-    std::shared_ptr<BufferedFile> fb = std::make_shared<BufferedFile>();
+    std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
     Gu::getContext()->getPackage()->getFile(file, fb, false);
 
     //    return false;
@@ -79,7 +79,7 @@ bool MbiFile::loadAndParse(t_string file) {
     float version;
     fb->readFloat(version);
     if (version != c_fVersion) {
-        parseErr(TStr("Version mismatch loaded ", version, " expected ", c_fVersion), true, false);
+        parseErr(Stz "Version mismatch loaded " +version+ " expected "+ c_fVersion, true, false);
         return false;
     }
 
@@ -161,7 +161,7 @@ bool MbiFile::loadAndParse(t_string file) {
 }
 void MbiFile::save(t_string file) {
     _fileLoc = file;
-    std::shared_ptr<BufferedFile> fb = std::make_shared<BufferedFile>();
+    std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
     fb->rewind();
 
     //header

@@ -41,7 +41,7 @@ void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_of
 
     //Segfault
     VerifyOrThrow(getByteSize()<=(byte_offset + num_bytes),
-        "Tried to write more data than OpenGL Buffer could handle, bufsize: ",getByteSize(), " tried to write ", num_bytes, " at offset ", byte_offset  );
+        "Tried to write more data than OpenGL Buffer could handle, bufsize: " + getByteSize() + " tried to write " + num_bytes + " at offset " + byte_offset  );
 
     if(useMemoryBarrier) {
         _pContext->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);

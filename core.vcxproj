@@ -22,12 +22,11 @@
     <ClInclude Include="src\base\Allocator.h" />
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\BaseAll.h" />
-    <ClInclude Include="src\base\BaseDataFile.h" />
+    <ClInclude Include="src\base\StringExtensions.h" />
+    <ClInclude Include="src\base\TextDataFile.h" />
     <ClInclude Include="src\base\BaseHeader.h" />
-    <ClInclude Include="src\base\BPUtil.h" />
-    <ClInclude Include="src\base\BufferedFile.h" />
-    <ClInclude Include="src\base\BufParser.h" />
-    <ClInclude Include="src\base\BufParserHeader.h" />
+    <ClInclude Include="src\base\BinaryFile.h" />
+    <ClInclude Include="src\base\TextParser.h" />
     <ClInclude Include="src\base\BuildConfig.h" />
     <ClInclude Include="src\base\ConsoleColors.h" />
     <ClInclude Include="src\base\CoreHeader.h" />
@@ -60,6 +59,7 @@
     <ClInclude Include="src\base\OperatingSystem.h" />
     <ClInclude Include="src\base\OperatingSystemHeader.h" />
     <ClInclude Include="src\base\Package.h" />
+    <ClInclude Include="src\base\TextConfigFile.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
     <ClInclude Include="src\base\RoomBase.h" />
@@ -74,6 +74,7 @@
     <ClInclude Include="src\base\TStr.h" />
     <ClInclude Include="src\base\TypeCast.h" />
     <ClInclude Include="src\base\TypeConv.h" />
+    <ClInclude Include="src\base\XmlFile.h" />
     <ClInclude Include="src\display\Atlas.h" />
     <ClInclude Include="src\display\CameraNode.h" />
     <ClInclude Include="src\display\DeferredFramebuffer.h" />
@@ -122,6 +123,8 @@
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />
+    <ClInclude Include="src\ext\pugixml\pugiconfig.hpp" />
+    <ClInclude Include="src\ext\pugixml\pugixml.hpp" />
     <ClInclude Include="src\ext\stb_truetype-old.h" />
     <ClInclude Include="src\ext\stb_truetype.h" />
     <ClInclude Include="src\math\Algorithm.h" />
@@ -202,10 +205,10 @@
   <ItemGroup>
     <ClCompile Include="src\base\Allocator.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
-    <ClCompile Include="src\base\BaseDataFile.cpp" />
-    <ClCompile Include="src\base\BPUtil.cpp" />
-    <ClCompile Include="src\base\BufferedFile.cpp" />
-    <ClCompile Include="src\base\BufParser.cpp" />
+    <ClCompile Include="src\base\StringExtensions.cpp" />
+    <ClCompile Include="src\base\TextDataFile.cpp" />
+    <ClCompile Include="src\base\BinaryFile.cpp" />
+    <ClCompile Include="src\base\TextParser.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
@@ -232,6 +235,7 @@
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />
     <ClCompile Include="src\base\Package.cpp" />
+    <ClCompile Include="src\base\TextConfigFile.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
     <ClCompile Include="src\base\RoomBase.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
@@ -243,6 +247,7 @@
     <ClCompile Include="src\base\TouchInfo.cpp" />
     <ClCompile Include="src\base\TreeNode.cpp" />
     <ClCompile Include="src\base\TypeConv.cpp" />
+    <ClCompile Include="src\base\XmlFile.cpp" />
     <ClCompile Include="src\display\Atlas.cpp" />
     <ClCompile Include="src\display\CameraNode.cpp" />
     <ClCompile Include="src\display\DeferredFramebuffer.cpp" />
@@ -287,6 +292,7 @@
     <ClCompile Include="src\display\UiSkin.cpp" />
     <ClCompile Include="src\display\Viewport.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
+    <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
     <ClCompile Include="src\math\Algorithm.cpp" />
     <ClCompile Include="src\math\BitHacks.cpp" />

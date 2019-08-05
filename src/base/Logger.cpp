@@ -26,7 +26,7 @@ Logger::~Logger()
 //////////////////////////////////////////////////////////////////////////
 void Logger::init(std::shared_ptr<RoomBase> rb) {
 
-    _logFileName = TStr("CongaLog.txt");
+    _logFileName =  "CongaLog.txt";
 
     _logDir = rb->makeAssetPath(rb->getCacheDir(), _logFileName);
 
@@ -39,11 +39,11 @@ void Logger::init(std::shared_ptr<RoomBase> rb) {
     _bEnabled = true;
 
     //*Note: do not call the #define shortcuts here.
-    logInfo(TStr(""));
-    logInfo(TStr("=========================================================================================="));
-    logInfo(TStr("============ Logger Init ", DateTime::dateTimeToStr(DateTime::getDateTime()), "============"));
-    logInfo(TStr(""));
-    logInfo(TStr("Operating System: ", Gu::getOperatingSystemName()));
+    logInfo(Stz  "");
+    logInfo(Stz  "==========================================================================================");
+    logInfo(Stz  "============ Logger Init " + DateTime::dateTimeToStr(DateTime::getDateTime()) + "============");
+    logInfo(Stz  "");
+    logInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
 }
 void Logger::logDebug(const char* msg)
 {
@@ -88,7 +88,7 @@ void Logger::enableLogger()
 void Logger::addLineFileToMsg(t_string& msg, int line, char* file)
 {
     if (_bSuppressLineFileDisplay == false)
-        msg = TStr(msg, "  (", FileSystem::getFileNameFromPath(TStr(file)), " : ", line, ")");
+        msg = msg+ "  ("+ FileSystem::getFileNameFromPath(file)+" : "+line+ ")";
 }
 t_string Logger::createMessageHead(LogLevel level)
 {
@@ -106,7 +106,7 @@ t_string Logger::createMessageHead(LogLevel level)
 
 
     szLine = StringUtil::getPaddedNumber(_nMsg, 6, '.');
-    return TStr("[", szLine, "][", DateTime::timeToStr(DateTime::getTime()), "][", str, "]");
+    return Stz("[", szLine, "][", DateTime::timeToStr(DateTime::getTime()), "][", str, "]");
 }
 void Logger::logDebug(t_string& msg)
 {

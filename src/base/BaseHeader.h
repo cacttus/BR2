@@ -91,7 +91,7 @@ namespace Game {
 void staticDebugBreak(t_string str);
 #define TIME_T_MIN (0)
 #ifdef _DEBUG
-#define AssertOrThrow2(x) do{ if(!(x)) { staticDebugBreak(TStr("Runtime Assertion: '", #x, "'. ")); } }while(0)
+#define AssertOrThrow2(x) do{ if(!(x)) { staticDebugBreak(Stz "Runtime Assertion: '"+ #x + "'. "); } }while(0)
 #else
 #define AssertOrThrow2(x) do{ if(!(x)) { BroThrowException("Runtime Assertion: '", #x, "'. "); } }while(0)
 #endif
@@ -100,10 +100,10 @@ void staticDebugBreak(t_string str);
 //GCC NOTE: GCC says allowing the use of an undeclared name is deprecated which would make us have to move TStr up 
 //above BaseHeader.
 //if you use '-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated
-#define BroThrowException(...) throw new Exception(TStr(__VA_ARGS__),__LINE__,__FILE__)
+#define BroThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
 #define BroThrowNotImplementedException() throw new NotImplementedException()
 #define BroThrowDeprecatedException() throw new DeprecatedException()
-#define VerifyOrThrow(expr,...) do { if(!(expr)) BroThrowException(__VA_ARGS__); } while(0)
+#define VerifyOrThrow(expr,x) do { if(!(expr)) BroThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()
 
 //Note: this must remain a uint32_t, we serialize it as a uint32_t
@@ -128,6 +128,8 @@ namespace KeyMod {typedef enum {
     None = 0x00,
     Shift = 0x01, Alt = 0x02, Ctrl = 0x04,
     ShiftDontCare = 0x08, AltDontCare = 0x10, CtrlDontCare = 0x20} e; }
+namespace RenderSystem { typedef enum { OpenGL, Vulkan } e; }
+namespace LineBreak { typedef enum { Unix, DOS }e; }
 
 class SoundSpec;
 class SoundInst;
@@ -140,7 +142,7 @@ class Texture2DSpec;
 class GLContext;
 class TexCache;
 class Img32;
-class BufferedFile;
+class BinaryFile;
 class EasyNoise;
 class FileSystem;
 class Exception;
@@ -156,6 +158,7 @@ class EngineConfigFile;
 class TreeNode;
 class Package;
 class Crc32;
+
 
 template < class Tx >
 class DynamicBuffer;
@@ -255,6 +258,22 @@ public:
 //TODO: REMOVE
 class Packet {};
 
+
+//String Extensions
+//Helper string since we can't cast char* to std::string automatically.
+#define Stz std::string("")+
+
+std::string operator+(const std::string& str, const char& rhs);
+std::string operator+(const std::string& str, const int8_t& rhs);
+std::string operator+(const std::string& str, const int16_t& rhs);
+std::string operator+(const std::string& str, const int32_t& rhs);
+std::string operator+(const std::string& str, const int64_t& rhs);
+std::string operator+(const std::string& str, const uint8_t& rhs);
+std::string operator+(const std::string& str, const uint16_t& rhs);
+std::string operator+(const std::string& str, const uint32_t& rhs);
+std::string operator+(const std::string& str, const uint64_t& rhs);
+std::string operator+(const std::string& str, const double& rhs);
+std::string operator+(const std::string& str, const float& rhs);
 
 
 }//ns Game

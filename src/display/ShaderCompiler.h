@@ -41,8 +41,8 @@ class ShaderCompiler : public VirtualMemory {
 
     void searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, std::vector<t_string>& lines, time_t& greatestModifyTime);
     void loadSource_r(std::shared_ptr<ShaderSubProgram> subProg, t_string& location, std::vector<t_string>& out_lines, time_t& greatestModifyTime);
-    void parseSourceIntoLines(std::shared_ptr<BufferedFile>, std::vector<t_string>& out_lines);
-    void loadSourceData(t_string& location, std::shared_ptr<BufferedFile> __out_ data);
+    void parseSourceIntoLines(std::shared_ptr<BinaryFile>, std::vector<t_string>& out_lines);
+    void loadSourceData(t_string& location, std::shared_ptr<BinaryFile> __out_ data);
     void addSourceLineAt(size_t pos, std::vector<t_string>& vec, t_string line);
 public:
     ShaderCompiler(std::shared_ptr<GLContext> ct, t_string fileDir);

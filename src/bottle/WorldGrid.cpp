@@ -788,28 +788,28 @@ t_string WorldGrid::getGenProfileString(){
     + _tvPostGen2;
  
 
-    return TStr(getGridPos().toString(),"  ", iSizeKb, "kb (", iNodeSizeKb, " node, ", iCellSizeKb, " cell, ", iMeshSizeKb, " mesh) ", iTimeMs, "ms \r\n ",
-        "#CellSiz ", cellSize, ", ",
-        "#NodeSiz ", nodeSize, ", ",
-        "#GridSiz ", gridSize, ", ",
-        "\r\n",
-        "#Verts ", nVerts, ", ",
-        "#Indexes ", nIndexes, "(",nIndexes/3," tris), ",
-        "\r\n",
-        "#Cells ", (int)_nCells, ", ",
-        "#Nodes ", (int)_nNodes, ", ",
-        "#Pruned ", (int)_nPruned, ", ",
-        "\r\n",
-        "   Div ", (int)_tvDivide, "ms, ",
-        "Save ", (int)_tvSave, "ms, ",
-        "Load ", (int)_tvLoad, "ms, ",
-        "Link ", (int)_tvLink, "ms, ",
-        "\r\n",
-        "   Mesh ", (int)_tvMesh, "ms, ",
-        "Prop ", (int)_tvProp, "ms, ",
-        "Post1 ", (int)_tvPostGen1, "ms ",
-        "Post2 ", (int)_tvPostGen2, "ms ",
-        "\n");
+    return Stz getGridPos().toString()+"  "+ iSizeKb+ "kb ("+ iNodeSizeKb+ " node+ "+ iCellSizeKb+ " cell+ "+ iMeshSizeKb+ " mesh) "+ iTimeMs+ "ms \r\n "+
+        "#CellSiz "+ cellSize+ "+ "+
+        "#NodeSiz "+ nodeSize+ "+ "+
+        "#GridSiz "+ gridSize+ "+ "+
+        "\r\n"+
+        "#Verts "+ nVerts+ "+ "+
+        "#Indexes "+ nIndexes+ "("+nIndexes/3+" tris)+ "+
+        "\r\n"+
+        "#Cells "+ (int)_nCells+ "+ "+
+        "#Nodes "+ (int)_nNodes+ "+ "+
+        "#Pruned "+ (int)_nPruned+ "+ "+
+        "\r\n"+
+        "   Div "+ (int)_tvDivide+ "ms+ "+
+        "Save "+ (int)_tvSave+ "ms+ "+
+        "Load "+ (int)_tvLoad+ "ms+ "+
+        "Link "+ (int)_tvLink+ "ms+ "+
+        "\r\n"+
+        "   Mesh "+ (int)_tvMesh+ "ms+ "+
+        "Prop "+ (int)_tvProp+ "ms+ "+
+        "Post1 "+ (int)_tvPostGen1+ "ms "+
+        "Post2 "+ (int)_tvPostGen2+ "ms "+
+        "\n";
 }
 void WorldGrid::cleanEmptyNodes() {
     //TODO:

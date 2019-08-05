@@ -62,6 +62,7 @@ class BottleRoom : public RoomBase {
     bool _bShowDebugText = false;
     bool _bDebugShowWireframe = false;
     bool _bDebugClearWhite = false;
+    bool _bDebugDisableShadows = false;
     bool _bDebugDisableDepthTest = false;
     std::shared_ptr<WorldEditor> _pWorldEditor = nullptr;
     NodeId _iFocusCharacter = NO_NODE_ID;
