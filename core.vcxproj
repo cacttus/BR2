@@ -62,7 +62,7 @@
     <ClInclude Include="src\base\TextConfigFile.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
-    <ClInclude Include="src\base\RoomBase.h" />
+    <ClInclude Include="src\base\AppBase.h" />
     <ClInclude Include="src\base\Sequencer.h" />
     <ClInclude Include="src\base\SoundCache.h" />
     <ClInclude Include="src\base\StackInfo.h" />
@@ -93,10 +93,12 @@
     <ClInclude Include="src\display\LightManager.h" />
     <ClInclude Include="src\display\LightNode.h" />
     <ClInclude Include="src\display\MegaTex.h" />
+    <ClInclude Include="src\display\OpenGLApi.h" />
     <ClInclude Include="src\display\Particles.h" />
     <ClInclude Include="src\display\Party.h" />
     <ClInclude Include="src\display\Picker.h" />
     <ClInclude Include="src\display\QuadBufferMesh.h" />
+    <ClInclude Include="src\display\GraphicsApi.h" />
     <ClInclude Include="src\display\RenderParams.h" />
     <ClInclude Include="src\display\RenderPipe.h" />
     <ClInclude Include="src\display\RenderSettings.h" />
@@ -237,7 +239,7 @@
     <ClCompile Include="src\base\Package.cpp" />
     <ClCompile Include="src\base\TextConfigFile.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
-    <ClCompile Include="src\base\RoomBase.cpp" />
+    <ClCompile Include="src\base\AppBase.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
     <ClCompile Include="src\base\SoundCache.cpp" />
     <ClCompile Include="src\base\StackInfo.cpp" />
@@ -264,10 +266,12 @@
     <ClCompile Include="src\display\LightManager.cpp" />
     <ClCompile Include="src\display\LightNode.cpp" />
     <ClCompile Include="src\display\MegaTex.cpp" />
+    <ClCompile Include="src\display\OpenGLApi.cpp" />
     <ClCompile Include="src\display\Particles.cpp" />
     <ClCompile Include="src\display\Party.cpp" />
     <ClCompile Include="src\display\Picker.cpp" />
     <ClCompile Include="src\display\QuadBufferMesh.cpp" />
+    <ClCompile Include="src\display\GraphicsApi.cpp" />
     <ClCompile Include="src\display\RenderParams.cpp" />
     <ClCompile Include="src\display\RenderPipe.cpp" />
     <ClCompile Include="src\display\RenderSettings.cpp" />

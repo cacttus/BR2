@@ -781,7 +781,7 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
 }
 void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pSpec) {
     if (_pMatData != nullptr) {
-        std::shared_ptr<RoomBase> pRoom = Gu::getContext()->getRoom();
+        std::shared_ptr<AppBase> pRoom = Gu::getContext()->getRoom();
         AssertOrThrow2(pRoom != nullptr);
 
         std::shared_ptr<Texture2DSpec> diffuse = nullptr;

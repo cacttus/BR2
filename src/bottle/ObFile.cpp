@@ -1,4 +1,4 @@
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/GLContext.h"
@@ -19,7 +19,7 @@
 #include "../bottle/WorldObj.h"
 
 namespace Game {
-ObFile::ObFile(std::shared_ptr<RoomBase> pRoom) :_pRoom(pRoom) {
+ObFile::ObFile(std::shared_ptr<AppBase> pRoom) :_pApp(pRoom) {
     _pBucket = std::make_shared<SpriteBucket>();
 }
 ObFile::~ObFile() {
@@ -176,7 +176,7 @@ void ObFile::parseSprites(std::vector<t_string>& tokens) {
 
                 //Attempt to find absolute path.  If we can't find, then attempt to append path.
                 if (!FileSystem::fileExists(path)) {
-                    path = _pRoom->makeAssetPath("spr", path);
+                    path = _pApp->makeAssetPath("spr", path);
                 }
                 if (FileSystem::fileExists(path)) {
 
@@ -186,7 +186,7 @@ void ObFile::parseSprites(std::vector<t_string>& tokens) {
                     files.push_back(path);
                 }
                 else {
-                    files.push_back(_pRoom->makeAssetPath("spr", "default.png"));
+                    files.push_back(_pApp->makeAssetPath("spr", "default.png"));
                     BroLogError(name + ": Failed to find Sprite path: '" + path + "'. A default sprite will show.");
                     Gu::debugBreak();
                 }

@@ -117,7 +117,7 @@ void BottleRoom::loadGameFile() {
     t_string strObFileName = makeAssetPath("game.dat");
     BroLogInfo("World25 - Parsing Spec File '" + strObFileName + "'");
 
-    _pGameFile = std::make_shared<ObFile>(getThis<RoomBase>());
+    _pGameFile = std::make_shared<ObFile>(getThis<AppBase>());
     _pGameFile->loadAndParse(strObFileName);
 
 }
@@ -169,7 +169,7 @@ t_string BottleRoom::getNewWorldName(t_string gameName) {
     memset(buf, 0, 256);
 
     const int ciWorldDigits = 6;
-    t_string fmt = TStr("w%0", ciWorldDigits, "d");
+    t_string fmt = Stz"w%0" + ciWorldDigits + "d";
     snprintf(buf, 256, fmt.c_str(), iHigh);
 
     t_string wn(buf);
@@ -306,7 +306,7 @@ void BottleRoom::drawNonDepth(RenderParams& rp) {
 }
 void BottleRoom::drawDebug(RenderParams& rp) {
     if (_bDrawDebug == true) {
-        RoomBase::drawDebug();
+        AppBase::drawDebug();
     }
 
 }

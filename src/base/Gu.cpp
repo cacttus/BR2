@@ -4,7 +4,7 @@
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
 #include "../base/EngineConfigFile.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
@@ -100,7 +100,7 @@ void parsearg(std::string arg) {
     parsearg(key, value);
 }
 
-void Gu::initGlobals(std::shared_ptr<RoomBase> rb, std::vector<std::string>& args) {
+void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args) {
     //Try to create teh cache dir.
     //Make sure to check this on IOS
     FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
@@ -128,7 +128,7 @@ void Gu::initGlobals(std::shared_ptr<RoomBase> rb, std::vector<std::string>& arg
         OperatingSystem::showConsole();
     }
 }
-void Gu::createGLContext(std::shared_ptr<RoomBase> rb) {
+void Gu::createGLContext(std::shared_ptr<AppBase> rb) {
     Gu::_pContext = std::make_shared<GLContext>();
     if (!_pContext->load(rb)) {
         BroLogError("Failed to load ctx.");

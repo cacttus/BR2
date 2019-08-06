@@ -1,6 +1,6 @@
 #include "../base/FrameSync.h"
 #include "../base/Gu.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/GLContext.h"
 //#include "../base/OperatingSystem.h"
 //#include "../math/XMath.h"

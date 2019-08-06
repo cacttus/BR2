@@ -1,6 +1,6 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 
 #include "../display/GpuQuad3.h"
 #include "../display/ShaderBase.h"

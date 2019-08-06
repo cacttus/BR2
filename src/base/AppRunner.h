@@ -5,69 +5,46 @@
 //  Created by mac1224 on 11/5/16.
 //  Copyright © 2016 Swill. All rights reserved.
 //
-#ifndef AppRunner_h
-#define AppRunner_h
+#ifndef __57823905782390589020_AppRunner_h_2298357238957238957129348__
+#define __57823905782390589020_AppRunner_h_2298357238957238957129348__
 
 #include "../base/BaseHeader.h"
+#include "../display/DisplayHeader.h"
 
 namespace Game { 
 
-
-struct GLProfile : public VirtualMemory {
-public:
-    int _iDepthBits = 0;
-    int _iMinVersion = 0;
-    int _iMinSubVersion = 0;
-    int _iProfile  = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
-    bool _bVsync = true; //Automatic on IOS
-    void make(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
-        _iDepthBits = iDepthBits;
-        _iMinSubVersion = iMinSubver;
-        _iMinVersion = iMinVer;
-        _iProfile = iProfile;
-        _bVsync = bVsync;
-    }
-};
-
+/**
+*   @class AppRunner
+*   @brief The entry point of the application from main()
+*/
 class AppRunner : public VirtualMemory {
 private:
     t_timeval _tvInitStartTime =0;
-    SDL_GLContext _context;
     Engine* _pEngine = nullptr;
-    SDL_Window* _pWindow = nullptr;
     SDL_AudioSpec _audioSpec;
-    SDL_Renderer* _pRenderer = nullptr;
+
+    std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
 
     // accept a connection coming in on server_tcpsock
     TCPsocket _gameHostSocket;//Send and receive data
     TCPsocket _server_tcpsock;//Accept connections
 
-
-    void makeWindow(char* windowTitle);
-    void initGLContext();
-    void setWindowAndOpenGLFlags(GLProfile& prof);
-    void checkSDLErrors();
+    void initSDL(t_string windowTitle, std::shared_ptr<AppBase> app);
     void doShowError(t_string err, Exception* e=nullptr);
     SDL_bool initAudio();
     void initNet();
-    void initSDL(char* windowTitle);
-    void printHelpfulDebug();
     bool handleEvents(SDL_Event * event);
-    //static int eventFilter(void* data, SDL_Event* ev);
-    void runGameLoop(std::shared_ptr<RoomBase> rb);
+    void runGameLoop(std::shared_ptr<AppBase> rb);
     void exitApp(t_string error, int rc);
-   // void exitApp(int rc);
     void doAnnoyingSoundTest();
-    void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
-    void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
-    void runGameLoopTryCatch(std::shared_ptr<RoomBase> rb);
+    void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
     bool argMatch(std::vector<t_string>& args,t_string arg, int32_t iCount);
     bool runCommands(std::vector<t_string>& args);
     void checkVideoCard();
     void updateWindowHandleForGamehost();
     void attachToGameHost();
 public:
-    void runApp(std::vector<t_string>& args, char* windowTitle, std::shared_ptr<RoomBase> rb);
+    void runApp(std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
 };
 
 

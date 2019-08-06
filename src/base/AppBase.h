@@ -1,6 +1,6 @@
 /**
 *
-*    @file RoomBase.h
+*    @file AppBase.h
 *    @date January 9, 2017
 *    @author Derek Page
 *
@@ -17,14 +17,14 @@
 #include "../math/MathAll.h"
 namespace Game {
 /**
-*    @class RoomBase
+*    @class AppBase
 *    @brief
 *
 */
-class RoomBase : public Drawable {
+class AppBase : public Drawable {
 public:
-    RoomBase();
-    virtual ~RoomBase() override;
+    AppBase();
+    virtual ~AppBase() override;
     t_string makeAssetPath(t_string file);
     t_string makeAssetPath(t_string folder, t_string file);
 

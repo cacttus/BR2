@@ -3,7 +3,7 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/GLContext.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/PoundFile.h"
 #include "../base/Img32.h"
 

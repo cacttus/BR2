@@ -31,7 +31,6 @@ public:
 class RenderPipe : public VirtualMemory  {
     typedef std::bitset<8> PipeBits;
 protected:
-    std::shared_ptr<GLContext> _pContext = nullptr;
     bool _bMsaaEnabled = false;
     t_uint32 _nMsaaSamples = 0;
     std::shared_ptr<MeshNode> _pQuadMesh = nullptr;
@@ -85,7 +84,7 @@ protected:
     void postProcessDOF();
     void postProcessDeferredRender();
 public:
-    RenderPipe(std::shared_ptr<GLContext> pContext);
+    RenderPipe();
     virtual ~RenderPipe() override;
 
     void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);

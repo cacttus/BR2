@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/Hash.h"
 #include "../base/FrameSync.h"
 #include "../base/DebugHelper.h"
@@ -110,7 +110,7 @@ void World25::init(std::shared_ptr<ObFile> obFile) {
     /*
     need to load the file before the UI
     make Asset Images
-    _proom->createAssetWindow(imgs)
+    _pApp->createAssetWindow(imgs)
 
     */
 

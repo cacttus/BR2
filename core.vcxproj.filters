@@ -126,9 +126,6 @@
     <ClInclude Include="src\base\RetCode.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\RoomBase.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\Sequencer.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -573,6 +570,15 @@
     <ClInclude Include="src\base\StringExtensions.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\AppBase.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\display\GraphicsApi.h">
+      <Filter>display</Filter>
+    </ClInclude>
+    <ClInclude Include="src\display\OpenGLApi.h">
+      <Filter>display</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\DateTime.cpp">
@@ -648,9 +654,6 @@
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\PoundFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\RoomBase.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\Sequencer.cpp">
@@ -1051,6 +1054,15 @@
     </ClCompile>
     <ClCompile Include="src\base\StringExtensions.cpp">
       <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\AppBase.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\display\GraphicsApi.cpp">
+      <Filter>display</Filter>
+    </ClCompile>
+    <ClCompile Include="src\display\OpenGLApi.cpp">
+      <Filter>display</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ protected:
     virtual void pkp(std::vector<t_string>& tokens);
     virtual void preLoad();
     virtual void postLoad();
-    std::shared_ptr<RoomBase> _pRoom;
+    std::shared_ptr<AppBase> _pApp;
     std::shared_ptr<SpriteBucket> _pBucket = nullptr;
     std::vector<std::shared_ptr<SpriteSpec>> _vecMotionSpecs;
     //std::vector<WorldObjectSpec*> _vecPixObjSpecs;
@@ -74,7 +74,7 @@ protected:
     ivec3 parseBoxFit(std::string boxFit);
 
 public:
-    ObFile(std::shared_ptr<RoomBase> pRoom);
+    ObFile(std::shared_ptr<AppBase> pRoom);
     virtual ~ObFile() override;
 
     std::vector<WalkerSpec*>& getWalkerSpecs() { return _vecWalkers; }

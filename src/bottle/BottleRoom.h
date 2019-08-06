@@ -13,7 +13,7 @@
 #define __DDROOM_1483943709643826476_H__
 
 #include "../bottle/BottleHeader.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 
 namespace Game {
 class SKIN_TEMP;
@@ -42,7 +42,7 @@ public:
 
 };
 //////////////////////////////////////////////////////////////////////////
-class BottleRoom : public RoomBase {
+class BottleRoom : public AppBase {
 
     std::shared_ptr<GLContext> _pContext = nullptr;
     std::shared_ptr<World25> _pWorld25 = nullptr;

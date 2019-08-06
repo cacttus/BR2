@@ -24,7 +24,7 @@
 
 namespace Game {
 //////////////////////////////////////////////////////////////////////////
-RenderPipe::RenderPipe(std::shared_ptr<GLContext> pContext) : _pContext(pContext){
+RenderPipe::RenderPipe() {
     _vClear = vec4(0,0,0,1);
 }
 RenderPipe::~RenderPipe(){
@@ -44,6 +44,17 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
     if (iWidth <= 0 || iHeight <= 0) {
         BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
     }
+
+
+    //Enable some stuff.
+#ifdef _DEBUG
+    glEnable(GL_DEBUG_OUTPUT);
+#endif
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
 
     releaseFbosAndMesh();
 
@@ -67,19 +78,19 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
 
     //Shaders
     if(_pDeferredShader == nullptr) {
-        _pDeferredShader = _pContext->getShaderMaker()->makeShader( std::vector<t_string>{
+        _pDeferredShader = Gu::getContext()->getShaderMaker()->makeShader( std::vector<t_string>{
             "d_v3x2_lighting.vs", "d_v3x2_lighting.ps" });
     }
     if(_pForwardShader == nullptr) {
-        _pForwardShader = _pContext->getShaderMaker()->makeShader(std::vector<t_string>{
+        _pForwardShader = Gu::getContext()->getShaderMaker()->makeShader(std::vector<t_string>{
             "f_v3x2_fbo.vs", "f_v3x2_fbo.ps"});
     }
-    _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    _pContext->chkErrDbg();
-    _pContext->glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-    _pContext->chkErrDbg();
-    _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    _pContext->chkErrDbg();
+    Gu::getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    Gu::getContext()->chkErrDbg();
+    Gu::getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    Gu::getContext()->chkErrDbg();
+    Gu::getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    Gu::getContext()->chkErrDbg();
 
     //Guess what?  Headache time.
     //This deletion of the shared stuff is super important 2/9/18
@@ -102,10 +113,10 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
     //Do not cahnge "Pick" name.  This is shared.
     _pPick = FramebufferBase::createTarget("Pick", GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, iWidth, iHeight, RenderTargetType::e::Pick, 0, 0, 0);//4
 
-    _pBlittedDeferred = std::make_shared<DeferredFramebuffer>(_pContext, iWidth, iHeight, false, 0, _vClear);
+    _pBlittedDeferred = std::make_shared<DeferredFramebuffer>(Gu::getContext(), iWidth, iHeight, false, 0, _vClear);
     _pBlittedDeferred->init(iWidth, iHeight, _pBlittedDepth, _pPick);
     
-    _pBlittedForward = std::make_shared<ForwardFramebuffer>(_pContext, iWidth, iHeight, false, 0, _vClear);
+    _pBlittedForward = std::make_shared<ForwardFramebuffer>(Gu::getContext(), iWidth, iHeight, false, 0, _vClear);
     _pBlittedForward->init(iWidth, iHeight, _pBlittedDepth, _pPick);
 
     _pDOFFbo= std::make_shared<DOFFbo>(iWidth, iHeight);
@@ -114,9 +125,9 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
     if (_bMsaaEnabled == true) {
         BroLogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
         _pMsaaDepth = FramebufferBase::createDepthTarget("depth msaa", iWidth, iHeight, 0, _bMsaaEnabled, _nMsaaSamples);
-        _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(_pContext, iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
+        _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(Gu::getContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
         _pMsaaDeferred->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
-        _pMsaaForward = std::make_shared<ForwardFramebuffer>(_pContext, iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
+        _pMsaaForward = std::make_shared<ForwardFramebuffer>(Gu::getContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
         _pMsaaForward->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
     }
     else {
@@ -210,13 +221,13 @@ void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::sha
     //Downsize the MSAA sample buffer.
     if (_bMsaaEnabled)
     {
-        _pContext->glBindRenderbuffer(GL_RENDERBUFFER, NULL);
-        _pContext->chkErrDbg();
+        Gu::getContext()->glBindRenderbuffer(GL_RENDERBUFFER, NULL);
+        Gu::getContext()->chkErrDbg();
 
-        _pContext->glBindFramebuffer(GL_READ_FRAMEBUFFER, msaa->getGlId());
-        _pContext->chkErrDbg();
-        _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, blitted->getGlId());
-        _pContext->chkErrDbg();
+        Gu::getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, msaa->getGlId());
+        Gu::getContext()->chkErrDbg();
+        Gu::getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, blitted->getGlId());
+        Gu::getContext()->chkErrDbg();
 
         for (std::shared_ptr<RenderTarget> inf : msaa->getTargets())
         {
@@ -228,9 +239,9 @@ void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::sha
             }
             else {
                 glReadBuffer(inf->getAttachment());
-                _pContext->chkErrDbg();
+                Gu::getContext()->chkErrDbg();
                 glDrawBuffer(inf->getAttachment());
-                _pContext->chkErrDbg();
+                Gu::getContext()->chkErrDbg();
                 blendMode = GL_LINEAR;
             }
 
@@ -239,10 +250,10 @@ void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::sha
             bitMask = inf->getBlitBit();
 
             //GL_DEPTH_BUFFER_BIT;
-            _pContext->glBlitFramebuffer(0, 0, _iLastWidth, _iLastHeight, 0, 0, _iLastWidth, _iLastHeight, bitMask, blendMode);
-            _pContext->chkErrDbg();
+            Gu::getContext()->glBlitFramebuffer(0, 0, _iLastWidth, _iLastHeight, 0, 0, _iLastWidth, _iLastHeight, bitMask, blendMode);
+            Gu::getContext()->chkErrDbg();
         }
-        _pContext->chkErrDbg();
+        Gu::getContext()->chkErrDbg();
 
     }
 }
@@ -297,11 +308,11 @@ void RenderPipe::endRenderForward() {
 void RenderPipe::blitDeferredRender() {
     //NOTE:
     //Bind the forward framebuffer (_pBlittedForward is equal to _pMsaaForward if MSAA is disabled, if it isn't we call copyMSAASamples later)
-    _pContext->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
-    _pContext->glBindFramebuffer(GL_FRAMEBUFFER, _pMsaaForward->getGlId());
-    _pContext->chkErrDbg();
-    _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    _pContext->chkErrDbg();
+    Gu::getContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
+    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _pMsaaForward->getGlId());
+    Gu::getContext()->chkErrDbg();
+    Gu::getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    Gu::getContext()->chkErrDbg();
 
 
     _pDeferredShader->beginRaster();
@@ -312,15 +323,15 @@ void RenderPipe::blitDeferredRender() {
 
         for (std::shared_ptr<RenderTarget> inf : _pMsaaDeferred->getTargets())
         {
-            _pContext->glActiveTexture(inf->getTextureChannel());
-            _pContext->chkErrDbg();
+            Gu::getContext()->glActiveTexture(inf->getTextureChannel());
+            Gu::getContext()->chkErrDbg();
             glBindTexture(inf->getTextureTarget(), inf->getTexId());
-            _pContext->chkErrDbg();
+            Gu::getContext()->chkErrDbg();
 
             if (inf->getTargetType() == RenderTargetType::e::Color || inf->getTargetType() == RenderTargetType::e::Shadow) {
                 //Don't set depth target.
                 _pDeferredShader->setTextureUf(inf->getLayoutIndex());
-                _pContext->chkErrDbg();
+                Gu::getContext()->chkErrDbg();
             }
 
         }
@@ -329,7 +340,7 @@ void RenderPipe::blitDeferredRender() {
         _pDeferredShader->setLightUf();
         setShadowUf();
         _pDeferredShader->draw(_pQuadMesh);
-        _pContext->chkErrDbg();
+        Gu::getContext()->chkErrDbg();
     }
     _pDeferredShader->endRaster();
 
@@ -529,36 +540,36 @@ void RenderPipe::postProcessDOF() {
 void RenderPipe::endRenderAndBlit() {
 
     //Do not bind anything - default framebuffer.
-    _pContext->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
-    _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    _pContext->chkErrDbg();
-    _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    _pContext->chkErrDbg();
+    Gu::getContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
+    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Gu::getContext()->chkErrDbg();
+    Gu::getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    Gu::getContext()->chkErrDbg();
 
     // - Clear the color and depth buffers (back and front buffers not the Mrts)
     glClearColor(getClear().x, getClear().y, getClear().z, getClear().w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _pContext->chkErrDbg();
+    Gu::getContext()->chkErrDbg();
 
-    _pContext->glActiveTexture(GL_TEXTURE0);
-    _pContext->chkErrDbg();
+    Gu::getContext()->glActiveTexture(GL_TEXTURE0);
+    Gu::getContext()->chkErrDbg();
     glBindTexture(GL_TEXTURE_2D, _pBlittedForward->getGlColorBufferTexId());
-    _pContext->chkErrDbg();
+    Gu::getContext()->chkErrDbg();
 
     _pForwardShader->beginRaster();
     {
         saveScreenshot();
-        _pContext->chkErrDbg();
+        Gu::getContext()->chkErrDbg();
 
         debugForceSetPolygonMode();
-        _pContext->chkErrDbg();
+        Gu::getContext()->chkErrDbg();
 
         _pForwardShader->setTextureUf(0);
-        _pContext->chkErrDbg();
+        Gu::getContext()->chkErrDbg();
 
         //draw a screen quad to the default OpenGL framebuffer
         _pForwardShader->draw(_pQuadMesh);
-        _pContext->chkErrDbg();
+        Gu::getContext()->chkErrDbg();
     }
     _pForwardShader->endRaster();
 
@@ -634,7 +645,7 @@ void RenderPipe::debugForceSetPolygonMode() {
 
 
 void RenderPipe::releaseFbosAndMesh(){
-    _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
     _pBlittedDeferred = nullptr;
     _pBlittedForward = nullptr;
     _pBlittedDepth = nullptr;

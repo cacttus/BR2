@@ -2,7 +2,7 @@
 #include "../base/Fingers.h"
 #include "../base/GLContext.h"
 #include "../base/GLContext.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/SoundCache.h"
 #include "../display/ShaderBase.h"
 #include "../display/ShaderMaker.h"

@@ -13,7 +13,7 @@
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/Package.h"
 
 #include "../math/MathAll.h"
@@ -40,7 +40,7 @@ GLContext::GLContext() {
     _fClearB = 0.021f;
     _fClearA = 1.0f;
 }
-void GLContext::createManagers(std::shared_ptr<RoomBase> rb) {
+void GLContext::createManagers(std::shared_ptr<AppBase> rb) {
     _pRenderSettings = RenderSettings::create();
     BroLogInfo("GLContext - Building Package");
     _pPackage = std::make_shared<Package>();
@@ -115,7 +115,7 @@ GLContext::~GLContext() {
     //   DEL_MEM(_pPackage);
     //   DEL_MEM(_pRenderSettings);
 }
-bool GLContext::load(std::shared_ptr<RoomBase> rb) {
+bool GLContext::load(std::shared_ptr<AppBase> rb) {
     _bValid = true;
     setRoom(rb);
 

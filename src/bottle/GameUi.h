@@ -55,7 +55,7 @@ class GameUi : public VirtualMemoryShared<GameUi>{
     std::shared_ptr<UiLabel> _pDebugLabel;
 public:
     std::shared_ptr<SKIN_TEMP> _pGuiSkin = nullptr;
-    std::shared_ptr<BottleRoom> _pRoom = nullptr;
+    std::shared_ptr<BottleRoom> _pApp = nullptr;
     std::string makeAssetPath(std::string dir, std::string p);
    void createToolbar();
    void createCursor();

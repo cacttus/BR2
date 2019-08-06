@@ -85,7 +85,7 @@ public:
 
     std::shared_ptr<ShaderUniformBlock> getUniformBlockByName(t_string& blockName);
 
-    void initialize(std::shared_ptr<RoomBase> mainRoom);
+    void initialize(std::shared_ptr<AppBase> mainRoom);
     //std::shared_ptr<ShaderBase> getFlatShader_F() { return _pFlatShader; }
     //std::shared_ptr<ShaderBase> getDiffuseShader_v3n3x2_d() { return _pDiffuseShader_v3n3x2_d; }
     std::shared_ptr<ShaderBase> getDiffuseShader(std::shared_ptr<VertexFormat> fmt);

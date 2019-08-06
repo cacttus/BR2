@@ -135,7 +135,7 @@ class SoundSpec;
 class SoundInst;
 class Sequence;
 class Sequencer;
-class RoomBase;
+class AppBase;
 class _NoInheritClassBase { };
 class Logger;
 class Texture2DSpec;
@@ -201,23 +201,17 @@ public:
 */
 class VirtualMemory : public GameMemory {
 public:
-    VirtualMemory()
-    {
+    VirtualMemory() {
     }
-    virtual ~VirtualMemory() DOES_NOT_OVERRIDE
-    {
-
+    virtual ~VirtualMemory() DOES_NOT_OVERRIDE {
     }
- 
 };
 template < class Tx >
 class VirtualMemoryShared : public std::enable_shared_from_this<Tx> {
 public:
-    VirtualMemoryShared()
-    {
+    VirtualMemoryShared() {
     }
-    virtual ~VirtualMemoryShared() DOES_NOT_OVERRIDE
-    {
+    virtual ~VirtualMemoryShared() DOES_NOT_OVERRIDE {
 
     }
     template<class Tx> std::shared_ptr<Tx> getThis() { return std::dynamic_pointer_cast<Tx>(shared_from_this()); }
@@ -225,11 +219,9 @@ public:
 };
 class OperatingSystemMemory : DOES_NOT_INHERIT {
 public:
-    OperatingSystemMemory()
-    {
+    OperatingSystemMemory() {
     }
-    VIRTUAL ~OperatingSystemMemory() DOES_NOT_OVERRIDE
-    {
+    VIRTUAL ~OperatingSystemMemory() DOES_NOT_OVERRIDE {
     }
 };
 class GameMemoryManager : DOES_NOT_INHERIT {
@@ -258,11 +250,9 @@ public:
 //TODO: REMOVE
 class Packet {};
 
-
-//String Extensions
 //Helper string since we can't cast char* to std::string automatically.
 #define Stz std::string("")+
-
+//String Extensions  See MathHeader for math string extensions.
 std::string operator+(const std::string& str, const char& rhs);
 std::string operator+(const std::string& str, const int8_t& rhs);
 std::string operator+(const std::string& str, const int16_t& rhs);

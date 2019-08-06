@@ -20,7 +20,7 @@ class CameraNode;
 //class TextBoss;
 class Party;
 class Sequencer;
-class RoomBase;
+class AppBase;
 class Fingers;
 class FpsMeter;
 class FrameSync;
@@ -49,7 +49,7 @@ private:
   //  std::shared_ptr<TextBoss> _pTextManager = nullptr;
     std::shared_ptr<Party> _pParty = nullptr;
     std::shared_ptr<Sequencer> _pSequencer = nullptr;
-    std::shared_ptr<RoomBase> _pRoom = nullptr;
+    std::shared_ptr<AppBase> _pApp = nullptr;
     std::shared_ptr<Fingers> _pFingers = nullptr;
     std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
     std::shared_ptr<FrameSync> _pFrameSync = nullptr;
@@ -70,14 +70,14 @@ private:
     bool _bValid = false;
 
     bool loadOpenGLFunctions();
-    void createManagers(std::shared_ptr<RoomBase> rb);
+    void createManagers(std::shared_ptr<AppBase> rb);
 
     void makeVertexFormats();
 public:
     GLContext();
     virtual ~GLContext() override;
 
-    bool load(std::shared_ptr<RoomBase> br);
+    bool load(std::shared_ptr<AppBase> br);
     void update(float delta);
     EngineLoopState::e getLoopState() { return _eLoopState; }
     void setLoopState(EngineLoopState::e ee) { _eLoopState = ee; }
@@ -92,7 +92,7 @@ public:
     std::shared_ptr<FrameSync> getFrameSync() { AssertOrThrow2(_pFrameSync != nullptr); return _pFrameSync; }
     std::shared_ptr<SoundCache> getSoundCache() { AssertOrThrow2(_pSoundCache != nullptr); return _pSoundCache;}
     std::shared_ptr<ShaderMaker> getShaderMaker() { AssertOrThrow2(_pShaderMaker != nullptr);  return _pShaderMaker; }
-    std::shared_ptr<RoomBase> getRoom() {  AssertOrThrow2(_pRoom != nullptr); return _pRoom; }
+    std::shared_ptr<AppBase> getRoom() {  AssertOrThrow2(_pApp != nullptr); return _pApp; }
     std::shared_ptr<TexCache> getTexCache() { AssertOrThrow2(_pTexCache != nullptr); return _pTexCache;}
     std::shared_ptr<LightManager> getLightManager() { AssertOrThrow2(_pLightManager != nullptr);  return _pLightManager; }
     std::shared_ptr<Picker> getPicker() {  AssertOrThrow2(_pPicker != nullptr); return _pPicker; }
@@ -107,7 +107,7 @@ public:
     void setLineWidth(float w);
 
     void setCamera(std::shared_ptr<CameraNode> pc) { _pCamera = pc; }
-    void setRoom(std::shared_ptr<RoomBase> b) { _pRoom = b; }
+    void setRoom(std::shared_ptr<AppBase> b) { _pApp = b; }
     // void setRtErrors(bool b);
 
     float& getClearR() { return _fClearR; }

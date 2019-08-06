@@ -28,7 +28,7 @@ ShaderMaker::~ShaderMaker()
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void ShaderMaker::initialize(std::shared_ptr<RoomBase> mainRoom) {
+void ShaderMaker::initialize(std::shared_ptr<AppBase> mainRoom) {
     t_string assetPath = mainRoom->getAssetsDir();
     t_string cacheDir = FileSystem::combinePath(assetPath, mainRoom->getCacheDir());
     t_string shadersDir = FileSystem::combinePath(assetPath, mainRoom->getShadersDir());

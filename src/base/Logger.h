@@ -67,7 +67,7 @@ class Logger : public OperatingSystemMemory {
 public:
     Logger();
     virtual ~Logger() override;
-    void init(std::shared_ptr<RoomBase> rb);
+    void init(std::shared_ptr<AppBase> rb);
 
     void disableLogger();
     void enableLogger();

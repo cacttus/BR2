@@ -276,6 +276,11 @@ typedef enum {
  class LightNodePoint;
  class LightNodeDir;
 
+ class GraphicsApi;
+ class OpenGLApi;
+ //class VulkanGraphicsApi; //TODO;
+
+
  class UiTex;
  class Ui3Tex;
  class Ui9Tex;
@@ -393,8 +398,6 @@ typedef enum {
      float _pad2;
      float _pad3;
  };
-
-
 
 }//ns game
 

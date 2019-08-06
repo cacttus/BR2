@@ -30,15 +30,12 @@ namespace Game {
 class Engine : public GameMemory {
 private:
     std::shared_ptr<Viewport> _pViewport = nullptr;
-    Uint64 NOW=0, LAST=0;
-    SDL_Window* _pWindow = nullptr;
-    std::shared_ptr<GLContext> _pContext = nullptr;
-    std::shared_ptr<RoomBase> _pRoomBase = nullptr;
-    //PipeMode::e _ePipeMode = PipeMode::e::Full; //Debug turns off render pipes.
-
-    GLuint vbuf, ibuf, vao;
+    std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
+    std::shared_ptr<AppBase> _pApp = nullptr;
     std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
-    //FramebufferMultisampleDeferred* _pFramebuffer = nullptr;
+
+    Uint64 NOW=0, LAST=0;
+    GLuint vbuf, ibuf, vao;
     PipeBit::e _ePipeBit = PipeBit::e::Full;
     std::bitset<8> _pipeBits;
 
@@ -55,7 +52,7 @@ private:
     void toggleFullscreen();
     void updateWidthHeight(uint32_t iw, uint32_t ih, bool bForce);
 public:
-    Engine(std::shared_ptr<GLContext> ct, std::shared_ptr<RoomBase> rb, SDL_Window* w, int xw, int xh);
+    Engine(std::shared_ptr<AppBase> rb, std::shared_ptr<GraphicsApi> re, int xw, int xh);
     virtual ~Engine();
    
     void init();

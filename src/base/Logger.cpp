@@ -5,7 +5,7 @@
 #include "../base/Gu.h"
 #include "../base/DebugHelper.h"
 #include "../base/StringUtil.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/GLContext.h"
 
 #define writeDisabledToConsoe
@@ -24,7 +24,7 @@ Logger::~Logger()
 {
 }
 //////////////////////////////////////////////////////////////////////////
-void Logger::init(std::shared_ptr<RoomBase> rb) {
+void Logger::init(std::shared_ptr<AppBase> rb) {
 
     _logFileName =  "CongaLog.txt";
 

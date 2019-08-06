@@ -29,7 +29,7 @@ namespace Game {
 #define DEBUG_FONT "EmilysCandy-Regular.ttf"
 #define CHECKBOX_FONT "AveriaSansLibre-Regular.ttf"
 void GameUi::constructUI(std::shared_ptr<BottleRoom> r) {
-    _pRoom = r;
+    _pApp = r;
     BroLogInfo("Making UI.");
     {
         t_timeval t0 = Gu::getMicroSeconds();
@@ -202,7 +202,7 @@ std::shared_ptr<UiAssetItem> UiAssetItem::create( std::shared_ptr<ModelSpec> ms,
 }
 //////////////////////////////////////////////////////////////////////////
 std::string GameUi::makeAssetPath(std::string dir, std::string p){
-    return _pRoom->makeAssetPath(dir,p);
+    return _pApp->makeAssetPath(dir,p);
 }
 void GameUi::createCursor() {
     std::shared_ptr<UiCursor> cs = UiCursor::create(_pGuiSkin->pCursorSkin);
@@ -380,7 +380,7 @@ void GameUi::createToolbar() {
     tbGrid->padRight() = spacing;
     std::shared_ptr<UiImage> buttonImg = UiImage::create(_pGuiSkin->pTbGrid0, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
     tbGrid->getContentContainer()->addChild(buttonImg);
-    std::shared_ptr<BottleRoom> r = _pRoom ;
+    std::shared_ptr<BottleRoom> r = _pApp ;
     std::weak_ptr<UiImage> img_w = buttonImg;
     tbGrid->setClick([r, img_w, sk]() {
         if(std::shared_ptr<UiImage> img =  img_w.lock()){
@@ -497,7 +497,7 @@ std::shared_ptr<UiWindow> GameUi::createAssetWindow() {
     //////////////////////////////////////////////////////////////////////////
     //Add Asset item
     std::shared_ptr<UiTex> coinImg = _pGuiSkin->pCoinImg;
-    for (auto ws : _pRoom->getGameFile()->getMobSpecs()) {
+    for (auto ws : _pApp->getGameFile()->getMobSpecs()) {
         std::shared_ptr<ModelSpec> ms = Gu::getContext()->getModelCache()->getOrLoadModel(ws->getMobName());
         if (ms != nullptr) {
             winObjects->getContentContainer()->addChild(UiAssetItem::create(
@@ -798,7 +798,7 @@ std::shared_ptr<UiWindow> GameUi::createTerrainWindow(){
     //}
 
 
-    for (auto p : _pRoom->getWorld25()->getSpriteBucket()->getSpecs()) {
+    for (auto p : _pApp->getWorld25()->getSpriteBucket()->getSpecs()) {
         std::shared_ptr<SpriteSpec> ss = p.second;
         if(ss->getFrames().size()>0){
             std::string imgName = ss->getFrames()[0]->getImageName();

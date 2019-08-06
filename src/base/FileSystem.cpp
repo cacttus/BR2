@@ -1,6 +1,6 @@
 #include "../base/FileSystem.h"
 #include "../base/GLContext.h"
-#include "../base/RoomBase.h"
+#include "../base/AppBase.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
@@ -20,7 +20,7 @@ FileSystem::~FileSystem()
 }
 ///////////////////////////////////////////////////////////////////
 t_string FileSystem::appendCachePathToFile(const t_string& strFileName) {
-    std::shared_ptr<RoomBase> rb = Gu::getContext()->getRoom();
+    std::shared_ptr<AppBase> rb = Gu::getContext()->getRoom();
     t_string ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
     return ret;
 }
