@@ -11,16 +11,27 @@
 #pragma once
 #ifndef __GLOBALINCLUDES_14789744473709794265_H__
 #define __GLOBALINCLUDES_14789744473709794265_H__
+
+//
+#define WIN32_LEAN_AND_MEAN
+
 //SDL
 #include <SDL.h>
+
+//Including both APIs.  In the future we abstract the API calls to interface and move the headers.
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
+#include <SDL_vulkan.h>
 
 //Needed to get the main window handle so we can set the main window handle.
 #include <SDL_syswm.h>
+
+//Networking
 #include <SDL_net.h>
 
-////////////
+//Vulkan
+#include <vulkan/vulkan.h>
+
 //STL
 #include <iostream>
 #include <string>
@@ -46,15 +57,18 @@
 
 //for std::atomic_bool
 #include <atomic>
+
 //std::future
 #include <future>
 
 //std::array
 #include <array>
+
 #include <bitset>
 
 //for mkdir
 #include <direct.h>
+
 //for opendir
 #include "../ext/dirent.h"
 
@@ -78,6 +92,7 @@
 
 //XML files.
 #include "../ext/pugixml/pugixml.hpp"
+
 
 ////////////
 //Windows

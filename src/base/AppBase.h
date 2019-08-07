@@ -18,7 +18,7 @@
 namespace Game {
 /**
 *    @class AppBase
-*    @brief
+*    @brief Base class for application.
 *
 */
 class AppBase : public Drawable {

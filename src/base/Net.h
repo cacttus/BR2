@@ -23,11 +23,15 @@ namespace Game {
 * https://www.libsdl.org/projects/SDL_net/
 */
 class Net : public VirtualMemory {
+    bool _bError = false;
+
     TCPsocket _server_control; // the server control socket.
     std::vector<TCPsocket> _control_clients;
 
-public:
+    std::shared_ptr<SyncTimer> _pTimer;
+
     void init();
+public:
     void update();
     Net();
     virtual ~Net() override;

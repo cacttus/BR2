@@ -25,7 +25,8 @@ namespace Game {
 class EngineConfig {
     friend class EngineConfigFile;
   //  bool _bEnableGpuDebugLogging = true;
-    bool _bEnableLogging = true;
+    bool _bEnableLogToFile = true;
+    bool _bEnableLogToConsole = true;
     bool _bUseGLMapBuffer = false;
     bool _bStartFullscreen = false;
     int _iDefaultScreenWidth = 800;
@@ -78,7 +79,8 @@ class EngineConfig {
 public:
     bool getEnableMsaa() { return _bEnableMsaa;}
     int32_t getMsaaSamples() { return _iMsaaSamples; }
-    bool getEnableLogging           () { return       _bEnableLogging           ; }
+    bool getEnableLogToConsole          () { return       _bEnableLogToConsole          ; }
+    bool getEnableLogToFile          () { return       _bEnableLogToFile           ; }
     bool getUseGLMapBuffer          () { return       _bUseGLMapBuffer          ; }
     bool getStartFullscreen         () { return       _bStartFullscreen         ; }
     int getDefaultScreenWidth       () { return      _iDefaultScreenWidth       ; }

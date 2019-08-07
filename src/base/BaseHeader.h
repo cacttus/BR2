@@ -4,7 +4,7 @@
 *    @date November 12, 2016
 *    @author Derek Page
 *
-*    � 2016 
+*    � 2016
 *
 *
 */
@@ -89,11 +89,12 @@ namespace Game {
 #define MaxStaticStringBufferSize 16384
 
 void staticDebugBreak(t_string str);
+void runtimeAssertion(t_string str);
 #define TIME_T_MIN (0)
 #ifdef _DEBUG
-#define AssertOrThrow2(x) do{ if(!(x)) { staticDebugBreak(Stz "Runtime Assertion: '"+ #x + "'. "); } }while(0)
+#define AssertOrThrow2(x) do{ if(!(x)) { staticDebugBreak(Stz "Debug Time Assertion: '" + #x + "'. "); } }while(0)
 #else
-#define AssertOrThrow2(x) do{ if(!(x)) { BroThrowException("Runtime Assertion: '", #x, "'. "); } }while(0)
+#define AssertOrThrow2(x) do{ if(!(x)) { runtimeAssertion(Stz "Runtime Assertion: '" + #x + "'. "); } }while(0)
 #endif
 
 
@@ -111,11 +112,6 @@ typedef uint32_t Hash32;
 typedef uint64_t NodeId;
 #define NO_NODE_ID (0)
 
-#define KX_(x) (GetAsyncKeyState(x) & 0x8000)
-
-
-#define PPERF(x) x; Gu::pulsePerf(#x);
-
 namespace EngineLoopState { typedef enum { SyncBegin, Update, Render, SyncEnd } e; }
 namespace ColorSpace { typedef enum { Linear, SRGB } e; }
 namespace ButtonState { typedef enum { Up, Press, Down, Release, None } e; }//2/11/18 added "None" for no mouse interation
@@ -123,11 +119,14 @@ namespace MouseButton { typedef enum { Left, Right, Middle } e; }
 namespace PlayState { typedef enum { Playing, Paused, Stopped, Ended }e; }
 namespace MemSize { typedef enum { MEMSZ_GIG2 = 536870912 } e; }
 namespace FileWriteMode { typedef enum { Truncate, Append }e; }
-namespace LoadState {typedef enum { NotLoaded, Loaded, LoadFailed } e;}
-namespace KeyMod {typedef enum {
+namespace LoadState { typedef enum { NotLoaded, Loaded, LoadFailed } e; }
+namespace KeyMod {
+typedef enum {
     None = 0x00,
     Shift = 0x01, Alt = 0x02, Ctrl = 0x04,
-    ShiftDontCare = 0x08, AltDontCare = 0x10, CtrlDontCare = 0x20} e; }
+    ShiftDontCare = 0x08, AltDontCare = 0x10, CtrlDontCare = 0x20
+} e;
+}
 namespace RenderSystem { typedef enum { OpenGL, Vulkan } e; }
 namespace LineBreak { typedef enum { Unix, DOS }e; }
 
@@ -170,6 +169,7 @@ class Allocator;
 class StreamBuffer;
 
 class Net;
+class SyncTimer;
 
 typedef std::string t_string;
 typedef uint64_t t_timeval;

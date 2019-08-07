@@ -1,8 +1,11 @@
+//#include <SDL.h>
+//#include <SDL_opengl.h>
+//#include <SDL_opengl_glext.h>
+
 #include "../display/OpenGLApi.h"
 #include "../base/Exception.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
-
 
 namespace Game {
 OpenGLApi::OpenGLApi() {
@@ -10,8 +13,6 @@ OpenGLApi::OpenGLApi() {
 OpenGLApi::~OpenGLApi() {
 }
 void OpenGLApi::createWindow(t_string windowTitle) {
-
-    // Hard code
     int minGLVersion;
     int minGLSubversion;
     const int c_iMax_Profs = 2;
@@ -35,7 +36,7 @@ void OpenGLApi::createWindow(t_string windowTitle) {
     for (int iProf = 0; iProf < c_iMax_Profs; ++iProf) {
         //This must be called before creating the window because this sets SDL's PixelFormatDescritpro
         setWindowAndOpenGLFlags(profs[iProf]);
-        makeWindow(windowTitle);
+        makeWindow(windowTitle, SDL_WINDOW_OPENGL);
         initGLContext();
 
         int ver, subver, shad_ver, shad_subver;
@@ -57,6 +58,8 @@ void OpenGLApi::createWindow(t_string windowTitle) {
     //Run a secondary check to make sure we didn't **F up 
     checkForOpenGlMinimumVersion(minGLVersion, minGLSubversion);
 
+    //Check that OpenGL initialized successfully
+    loadCheckProc();
 }
 void OpenGLApi::setWindowAndOpenGLFlags(GLProfile& prof) {
     //Attribs
@@ -92,8 +95,6 @@ void OpenGLApi::setWindowAndOpenGLFlags(GLProfile& prof) {
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-
-
 
     // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, _pGlState->gl_multisamplebuffers);
     // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
@@ -154,8 +155,7 @@ void OpenGLApi::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
         BroLogError("Failed to get OpenGL Shade version.");
     }
 }
-void OpenGLApi::checkForOpenGlMinimumVersion(int required_version, int required_subversion)
-{
+void OpenGLApi::checkForOpenGlMinimumVersion(int required_version, int required_subversion) {
     t_string rver = Stz "" + required_version + "." + required_subversion;
 
     //GLint iMajor, iMinor;
@@ -191,15 +191,12 @@ void OpenGLApi::checkForOpenGlMinimumVersion(int required_version, int required_
 
 
 }
-
 void OpenGLApi::makeCurrent() {
     SDL_GL_MakeCurrent(getWindow(), _context);
 }
-
 void OpenGLApi::getDrawableSize(int* w, int* h) {
     SDL_GL_GetDrawableSize(_pWindow, w, h);
 }
-
 void OpenGLApi::swapBuffers() {
     SDL_GL_SwapWindow(_pWindow);
 }
@@ -209,8 +206,7 @@ void OpenGLApi::cleanup() {
         /* SDL_GL_MakeCurrent(0, NULL); *//* doesn't do anything */
         SDL_GL_DeleteContext(_context);
     }
-
-    SDL_DestroyWindow(_pWindow);
+    GraphicsApi::cleanup();
 }
 void OpenGLApi::createContext(std::shared_ptr<AppBase> app) {
 
@@ -224,7 +220,6 @@ void OpenGLApi::createContext(std::shared_ptr<AppBase> app) {
     BroLogInfo("Creating GL Context");
     Gu::createGLContext(app);
 }
-
 void OpenGLApi::printHelpfulDebug() {
     int dw, dh;
     SDL_DisplayMode mode;
@@ -261,6 +256,18 @@ void OpenGLApi::printHelpfulDebug() {
     BroLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
 
     OglErr::checkSDLErr();
+}
+void OpenGLApi::loadCheckProc() {
+    //Check that OpenGL initialized successfully by checking a library pointer.
+    PFNGLUSEPROGRAMPROC proc = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
+    if (proc == nullptr) {
+        t_string exep;
+        exep += "glUseProgram was not found in your graphics driver.  There can be a few reasons for this:\n";
+        exep += ("  1. Your primary graphics card is not correct.  You can set your primary graphics card in Windows.\n");
+        exep += ("  2. Your graphics card is outdated.  Consider upgrading.\n");
+        exep += ("  3. Your Operating System isn't Windows 7 or above.\n");
+        BroThrowException(exep);
+    }
 }
 
 

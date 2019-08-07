@@ -19,6 +19,10 @@ void staticDebugBreak(t_string str) {
     BroLogError(str);
     Gu::debugBreak();
 }
+void runtimeAssertion(t_string str) {
+    BroThrowException(str);
+}
+
 DebugHelper::DebugHelper() {
 }
 DebugHelper::~DebugHelper() {

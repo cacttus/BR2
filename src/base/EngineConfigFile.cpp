@@ -62,8 +62,11 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
         _pConfig->_bEnableRuntimeErrorChecking = true;
 #endif
     }
-    else if (lcmp(tokens[0], "EnableLogging", 2)) {
-        _pConfig->_bEnableLogging = TypeConv::strToBool(getCleanToken(tokens, iind));
+    else if (lcmp(tokens[0], "EnableFileLog", 2)) {
+        _pConfig->_bEnableLogToFile = TypeConv::strToBool(getCleanToken(tokens, iind));
+    }
+    else if (lcmp(tokens[0], "EnableConsoleLog", 2)) {
+        _pConfig->_bEnableLogToFile = TypeConv::strToBool(getCleanToken(tokens, iind));
     }
     else if (lcmp(tokens[0], "GameHostTimeoutMs", 2)) {
         _pConfig->_iGameHostTimeoutMs = TypeConv::strToInt(getCleanToken(tokens, iind));

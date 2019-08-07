@@ -4,7 +4,7 @@
 *    @date December 14, 2013
 *    @author Derek Page
 *
-*    © 2013 
+*    © 2013
 *
 *
 */
@@ -14,17 +14,12 @@
 
 #include "../base/BaseHeader.h"
 #include "../base/Gu.h"
-//#include "../mem/OperatingSystemMemory.h"
-//#include "../base/BaseHeader.h"
-//#include "../base/GlobalStorage.h"
-//#include "../base/StringWrapper.h"
-//Note don't put more #includes here as we include this in globals.h
 
 namespace Game {
 /**
-*    @class Logger
-*    @brief Logs information to a text file.
-*
+*   @class Logger
+*   @brief Logs information to a text file or console.
+*   @note Logger is initially disabled. 
 */
 class Logger : public OperatingSystemMemory {
     typedef enum {
@@ -33,67 +28,55 @@ class Logger : public OperatingSystemMemory {
         Warn,
         Error,
     }LogLevel;
-    bool _bWriteDisabledLogsToConsole;
+private:
     t_string _logDir;
     t_string _logFileName;
-    bool _bEnabled;
-    int32_t _nMsg;    // - Profiling variables.  We increment them when we log.
-    int32_t _nErr;
-    int32_t _nDbg;
-    std::atomic_bool _bSuppressLineFileDisplay;
-    std::ofstream _f;
-    //DECLARE_SYNC(_sync);    //creates sync object
+    int32_t _nMsg = 0;    // - Profiling variables.  We increment them when we log.
 
+    std::atomic_bool _bSuppressLineFileDisplay = false;
     std::mutex _mtLogWriteMutex;
-    
-    void addLineFileToMsg(t_string& msg, int line, char* file);
-    t_string createMessageHead(LogLevel level);
-    void log(t_string& msg, t_string& errPred, Game::Exception* e);    // - Log an error with exception contents.
 
-    // This function is important for when
-    // we initialize the logger it can't be enabled so.. we can
-    // write to the console in the meantime.
-    FORCE_INLINE bool disableCheck(const char* c)
-    {
-        if(_bEnabled==FALSE)
-        {
-            //if(_bWriteDisabledLogsToConsole)
-               // std::cout<<"logger disabled: "<<c<<std::endl;
-            return FALSE;
-        }
-        return TRUE;
-    }
+    bool _bEnabled = false;
+    bool _bLogToFile = false;
+    bool _bLogToConsole = false;
+
+    void addLineFileToMsg(t_string msg, int line, char* file);
+    t_string createMessageHead(LogLevel level);
+    void log(t_string msg, t_string header, Game::Exception* e);    // - Log an error with exception contents.
     t_string addStackTrace(t_string msg);
 public:
     Logger();
     virtual ~Logger() override;
+
     void init(std::shared_ptr<AppBase> rb);
 
-    void disableLogger();
-    void enableLogger();
-    
-    void logError(t_string& msg, Game::Exception* e=NULL);    // - Log an error with exception contents.
-    void logWarn(t_string& msg, Game::Exception* e=NULL);    // - Log an error with exception contents.
-    void logDebug(t_string& msg);
-    void logInfo(t_string& msg);
+    void enableLogToConsole(bool bLogToConsole);
+    void enableLogToFile(bool bLogToFile);
 
-    void logError(t_string& msg, int line, char* file, Game::Exception* e=NULL);    // - Log an error with exception contents.
-    void logWarn(t_string& msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
-    void logWarnCycle(t_string& msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-    void logErrorCycle(t_string& msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-    void logDebug(t_string& msg, int line, char* file );
-    void logInfo(t_string& msg, int line, char* file );
+    void logError(t_string msg, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logWarn(t_string msg, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logDebug(t_string msg);
+    void logInfo(t_string msg);
+
+    void logError(t_string msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logWarn(t_string msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logWarnCycle(t_string msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+    void logErrorCycle(t_string msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+    void logDebug(t_string msg, int line, char* file);
+    void logInfo(t_string msg, int line, char* file);
 
     void logInfo(const char* msg);
     void logDebug(const char* msg);
-    void logError(const char* msg, Game::Exception* e=NULL);
-    void logWarn(const char* msg, Game::Exception* e=NULL);
+    void logError(const char* msg, Game::Exception* e = NULL);
+    void logWarn(const char* msg, Game::Exception* e = NULL);
 
     t_string getLogPath() { return _logDir; }
 };
 
 }//ns game
- // - Log Macros
+
+
+//Macros
 #define BroLogDebug(x) Game::Gu::getLogger()->logDebug(Stz x,__LINE__,__FILE__ )
 #define BroLogInfo(x) Game::Gu::getLogger()->logInfo(Stz x,__LINE__,__FILE__ )
 #define BroLogWarn(x) Game::Gu::getLogger()->logWarn(Stz x,__LINE__,__FILE__, NULL )

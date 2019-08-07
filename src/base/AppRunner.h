@@ -40,7 +40,7 @@ private:
     void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
     bool argMatch(std::vector<t_string>& args,t_string arg, int32_t iCount);
     bool runCommands(std::vector<t_string>& args);
-    void checkVideoCard();
+    void printVideoDiagnostics();
     void updateWindowHandleForGamehost();
     void attachToGameHost();
 public:

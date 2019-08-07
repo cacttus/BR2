@@ -687,7 +687,7 @@ t_string BottleRoom::getIconFullPath() {
     return makeAssetPath("tex", "icon.png");
 }
 t_string BottleRoom::getConfigPath() {
-    return makeAssetPath("", "engine.xml");
+    return makeAssetPath("", "config.xml");
 }
 t_string BottleRoom::getAssetsDir() {
     return "./data/";

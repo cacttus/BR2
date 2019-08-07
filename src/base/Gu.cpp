@@ -118,9 +118,9 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
         parsearg(arg);
     }
 
-    if (Gu::getEngineConfig()->getEnableLogging() == false) {
-        getLogger()->disableLogger();
-    }
+    getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
+    getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
+
     if (Gu::getEngineConfig()->getShowConsole() == false) {
         OperatingSystem::hideConsole();
     }

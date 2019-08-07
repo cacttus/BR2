@@ -10,7 +10,7 @@ GraphicsApi::GraphicsApi(){
 GraphicsApi::~GraphicsApi(){
     cleanup();
 }
-void GraphicsApi::makeWindow(t_string windowTitle)
+void GraphicsApi::makeWindow(t_string windowTitle, int render_system)
 {
     t_string title;
     bool bFullscreen = false;
@@ -21,11 +21,10 @@ void GraphicsApi::makeWindow(t_string windowTitle)
     title = "";
 #elif BRO_OS_WINDOWS
 
-    int render_system = SDL_WINDOW_OPENGL;
-    if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::e::Vulkan) {
-        render_system = SDL_WINDOW_VULKAN;
-    }
-
+    //int render_system = SDL_WINDOW_OPENGL;
+    //if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::e::Vulkan) {
+    //    render_system = SDL_WINDOW_VULKAN;
+    //}
     if (bFullscreen) {
         x = 0; y = 0;
         w = 1920; h = 1080;
@@ -56,7 +55,13 @@ void GraphicsApi::makeWindow(t_string windowTitle)
 
 }
 
+void GraphicsApi::cleanup() {
+    if (_pWindow != nullptr) {
+        SDL_DestroyWindow(_pWindow);
+        _pWindow = nullptr;
+    }
 
+}
 
 
 

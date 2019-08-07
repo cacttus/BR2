@@ -35,11 +35,10 @@ class Package;
 class PhysicsWorld;
 class Gui2d;
 class RenderSettings;
-//class PhysicsWorld;
-    //class SprixteManager;
+
 /**
 *    @class GLContext
-*    @brief
+*    @brief OpenGL render context
 *
 */
 class GLContext : public VirtualMemoryShared<GLContext> {
