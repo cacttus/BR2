@@ -7,10 +7,10 @@ layout(location = 1) out uint _gPickOut;
 uniform sampler2D _ufTexture0;
 
 in vec2 _vert;
-in vec4 _clip;
+flat in vec4 _clip;
 in vec2 _tex;
-in vec2 _texPos;//Origin of the texture coords (top left)
-in vec2 _texSiz;
+flat in vec2 _texPos;//Origin of the texture coords (top left)
+flat in vec2 _texSiz;
 flat in uvec2 _pick_color;
 
 void main(){

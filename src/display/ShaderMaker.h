@@ -15,6 +15,7 @@
 #include "../display/DisplayHeader.h"
 
 namespace Game {
+
 /**
 *    @class ShaderMaker
 *    @brief
@@ -63,7 +64,7 @@ protected:
     void parseAttributes(std::shared_ptr<ShaderBase> sb);
     void parseUniforms(std::shared_ptr<ShaderBase> sb);
     void removeDuplicateSourceFiles(std::vector<t_string>& vecFiles);
-    void loadShaderSubPrograms(std::vector<t_string>& vecFiles, std::vector<std::shared_ptr<ShaderSubProgram>>&  __out_ subProgs);
+    void loadSubPrograms(std::vector<t_string>& vecFiles, std::vector<std::shared_ptr<ShaderSubProgram>>&  __out_ subProgs);
     bool validateShadersForProgram(std::shared_ptr<ShaderBase> psp);
     void getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vector<t_string>& __out_ log);
     t_string getShaderNameFromFileNames(std::vector<t_string>& vecFiles);
@@ -77,7 +78,7 @@ protected:
     void parseUniformBlocks(std::shared_ptr<ShaderBase> sb);
     std::shared_ptr<ShaderBase> getValidShaderForVertexType(ShaderMap& shaders, std::shared_ptr<VertexFormat> fmt);
 public:
-    ShaderMaker(std::shared_ptr<GLContext> ct);
+    ShaderMaker();
     virtual ~ShaderMaker() override;
 
     void shaderBound(std::shared_ptr<ShaderBase> sb);

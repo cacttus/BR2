@@ -228,11 +228,11 @@ t_datetime DateTime::getDateTime()
 {
     t_date dt = DateTime::getDate();
     t_time tm = DateTime::getTime();
-    return (t_datetime)(static_cast<t_int64>(dt) << 32 | static_cast<t_int64>(tm));
+    return (t_datetime)(static_cast<int64_t>(dt) << 32 | static_cast<int64_t>(tm));
 }
 t_datetime DateTime::getDateTime(t_date d, t_time t)
 {
-    return (t_datetime)(static_cast<t_int64>(d) << 32 | static_cast<t_int64>(t));
+    return (t_datetime)(static_cast<int64_t>(d) << 32 | static_cast<int64_t>(t));
 }
 int32_t DateTime::dateGetDay(t_date d) {
     return (d >> 16) & 0xFF;
@@ -332,41 +332,41 @@ t_string DateTime::dateToStrNoSlash(const t_date date)
     return ret;
 }
 
-t_uint32 DateTime::timeGetHour(t_time t)
+uint32_t DateTime::timeGetHour(t_time t)
 {
-    return (t_uint32)((t >> TIME_HH_LSH)&TIME_HH_CH_MASK);//fix
+    return (uint32_t)((t >> TIME_HH_LSH)&TIME_HH_CH_MASK);//fix
 }
-t_uint32 DateTime::timeGetMinute(t_time t)
+uint32_t DateTime::timeGetMinute(t_time t)
 {
-    return (t_uint32)((t >> TIME_MM_LSH)&TIME_MM_CH_MASK);
+    return (uint32_t)((t >> TIME_MM_LSH)&TIME_MM_CH_MASK);
 }
-t_uint32 DateTime::timeGetSecond(t_time t)
+uint32_t DateTime::timeGetSecond(t_time t)
 {
-    return (t_uint32)((t >> TIME_SS_LSH)&TIME_SS_CH_MASK);
+    return (uint32_t)((t >> TIME_SS_LSH)&TIME_SS_CH_MASK);
 }
-t_uint32 DateTime::timeGetMS(t_time t)
+uint32_t DateTime::timeGetMS(t_time t)
 {
-    return (t_uint32)((t >> TIME_MS_LSH)&TIME_MS_CH_MASK);
+    return (uint32_t)((t >> TIME_MS_LSH)&TIME_MS_CH_MASK);
 }
 t_time DateTime::getTime()
 {
-    t_uint32 hh = (t_uint32)DateTime::hour();
-    t_uint32 mm = (t_uint32)DateTime::minute();
-    t_uint32 ss = (t_uint32)DateTime::second();
-    t_uint32 ms = (t_uint32)DateTime::ms();    //ms/1000
+    uint32_t hh = (uint32_t)DateTime::hour();
+    uint32_t mm = (uint32_t)DateTime::minute();
+    uint32_t ss = (uint32_t)DateTime::second();
+    uint32_t ms = (uint32_t)DateTime::ms();    //ms/1000
 
     return getTime(hh, mm, ss, ms);
 }
 t_time DateTime::getTime(t_timeval in_ms)
 {
-    t_uint32 hh = in_ms % (60 * 60 * 60 * 1000) / (60 * 60 * 1000);
-    t_uint32 mm = in_ms % (60 * 60 * 1000) / (60 * 1000);
-    t_uint32 ss = in_ms % (60 * 1000) / (1000);
-    t_uint32 ms = in_ms % (1000);
+    uint32_t hh = in_ms % (60 * 60 * 60 * 1000) / (60 * 60 * 1000);
+    uint32_t mm = in_ms % (60 * 60 * 1000) / (60 * 1000);
+    uint32_t ss = in_ms % (60 * 1000) / (1000);
+    uint32_t ms = in_ms % (1000);
 
     return getTime(hh, mm, ss, ms);
 }
-t_time DateTime::getTime(t_uint32 hh, t_uint32 mm, t_uint32 ss, t_uint32 ms)
+t_time DateTime::getTime(uint32_t hh, uint32_t mm, uint32_t ss, uint32_t ms)
 {
     return (t_time)(
         (hh << TIME_HH_LSH) |

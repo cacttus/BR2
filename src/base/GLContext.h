@@ -45,7 +45,7 @@ class GLContext : public VirtualMemoryShared<GLContext> {
 private:
     std::shared_ptr<TexCache> _pTexCache = nullptr;
     std::shared_ptr<CameraNode> _pCamera = nullptr;
-  //  std::shared_ptr<TextBoss> _pTextManager = nullptr;
+    //  std::shared_ptr<TextBoss> _pTextManager = nullptr;
     std::shared_ptr<Party> _pParty = nullptr;
     std::shared_ptr<Sequencer> _pSequencer = nullptr;
     std::shared_ptr<AppBase> _pApp = nullptr;
@@ -83,18 +83,18 @@ public:
     //Required Globals (cannot be NULL for the game impl.)
     std::shared_ptr<RenderSettings> getRenderSettings() { AssertOrThrow2(_pRenderSettings != nullptr);  return _pRenderSettings; }
     std::shared_ptr<Package> getPackage() { AssertOrThrow2(_pPackage != nullptr);  return _pPackage; }
-    std::shared_ptr<ModelCache> getModelCache() {  AssertOrThrow2(_pModelCache != nullptr);  return _pModelCache; }
-  //  std::shared_ptr<TextBoss> getTextBoss() { AssertOrThrow2(_pTextManager != nullptr);return _pTextManager;}
-    std::shared_ptr<Sequencer> getSequencer() {  AssertOrThrow2(_pSequencer != nullptr); return _pSequencer; }
-    std::shared_ptr<Fingers> getFingers() { AssertOrThrow2(_pFingers != nullptr);return _pFingers; }
+    std::shared_ptr<ModelCache> getModelCache() { AssertOrThrow2(_pModelCache != nullptr);  return _pModelCache; }
+    //  std::shared_ptr<TextBoss> getTextBoss() { AssertOrThrow2(_pTextManager != nullptr);return _pTextManager;}
+    std::shared_ptr<Sequencer> getSequencer() { AssertOrThrow2(_pSequencer != nullptr); return _pSequencer; }
+    std::shared_ptr<Fingers> getFingers() { AssertOrThrow2(_pFingers != nullptr); return _pFingers; }
     std::shared_ptr<FpsMeter> getFpsMeter() { AssertOrThrow2(_pFpsMeter != nullptr); return _pFpsMeter; }
     std::shared_ptr<FrameSync> getFrameSync() { AssertOrThrow2(_pFrameSync != nullptr); return _pFrameSync; }
-    std::shared_ptr<SoundCache> getSoundCache() { AssertOrThrow2(_pSoundCache != nullptr); return _pSoundCache;}
+    std::shared_ptr<SoundCache> getSoundCache() { AssertOrThrow2(_pSoundCache != nullptr); return _pSoundCache; }
     std::shared_ptr<ShaderMaker> getShaderMaker() { AssertOrThrow2(_pShaderMaker != nullptr);  return _pShaderMaker; }
-    std::shared_ptr<AppBase> getRoom() {  AssertOrThrow2(_pApp != nullptr); return _pApp; }
-    std::shared_ptr<TexCache> getTexCache() { AssertOrThrow2(_pTexCache != nullptr); return _pTexCache;}
+    std::shared_ptr<AppBase> getRoom() { AssertOrThrow2(_pApp != nullptr); return _pApp; }
+    std::shared_ptr<TexCache> getTexCache() { AssertOrThrow2(_pTexCache != nullptr); return _pTexCache; }
     std::shared_ptr<LightManager> getLightManager() { AssertOrThrow2(_pLightManager != nullptr);  return _pLightManager; }
-    std::shared_ptr<Picker> getPicker() {  AssertOrThrow2(_pPicker != nullptr); return _pPicker; }
+    std::shared_ptr<Picker> getPicker() { AssertOrThrow2(_pPicker != nullptr); return _pPicker; }
     std::shared_ptr<Gui2d> getGui() { AssertOrThrow2(_pGui2d != nullptr);  return _pGui2d; }
     std::shared_ptr<PhysicsWorld> getPhysicsWorld() { AssertOrThrow2(_pPhysicsWorld != nullptr); return _pPhysicsWorld; }
     std::shared_ptr<Party> getParty() { AssertOrThrow2(_pParty != nullptr); return _pParty; }
@@ -114,8 +114,8 @@ public:
     float& getClearB() { return _fClearB; }
     float& getClearA() { return _fClearA; }
 
-    bool chkErrRt(bool bDoNotBreak = false); //check for errrors
-    bool chkErrDbg(bool bDoNotBreak = false); //check for errrors
+    bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false); //check for errrors
+    bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false); //check for errrors
     bool isValid() { return _bValid; }
 
     PFNGLUSEPROGRAMPROC         glUseProgram = nullptr;

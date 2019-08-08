@@ -59,7 +59,7 @@ public:
     void build(std::string exeLoc);
     t_string debugPrint();
 	bool fileExists(t_string file);
-    time_t getFileModifyTime(t_string str);
+    time_t getLastModifyTime(t_string str);
 
 
 };

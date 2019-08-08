@@ -7,23 +7,26 @@
 #include "../base/DebugHelper.h"
 
 namespace Game {
-bool OglErr::chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak){
+bool OglErr::chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool doNotLog){
     if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking() == true) {
-        return handleErrors(ctx, true, bDoNotBreak);
+        return handleErrors(ctx, true, bDoNotBreak, doNotLog);
     }
     return false;
 }
-bool OglErr::chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak){
+bool OglErr::chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool doNotLog){
     if (Gu::getEngineConfig()->getEnableDebugErrorChecking() == true) {
-        return handleErrors(ctx, true, bDoNotBreak);
+        return handleErrors(ctx, true, bDoNotBreak, doNotLog);
     }
     return false;
 }
-void OglErr::checkSDLErr() {
+void OglErr::checkSDLErr(bool doNotLog) {
     //Do SDL errors here as well
     const char* c;
     while ((c = SDL_GetError()) != nullptr && *c != 0) {
-        BroLogError("SDL: " + c);
+        if (doNotLog == false) {
+            BroLogError("SDL: " + c);
+        }
+
         if(Gu::getEngineConfig()->getBreakOnSDLError() == true) { 
             Gu::debugBreak();
         }
@@ -43,22 +46,25 @@ t_string OglErr::glErrToStr(GLenum err) {
     }
     return " *GL Error code not recognized.";
 }
-bool OglErr::handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak){
+bool OglErr::handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog){
 
-    checkSDLErr();
+    checkSDLErr(doNotLog);
 
-    printAndFlushGpuLog(ctx, true, bDoNotBreak);
+    printAndFlushGpuLog(ctx, true, bDoNotBreak, doNotLog);
 
-    return checkOglErr(ctx, bShowNote, bDoNotBreak);
+    return checkOglErr(ctx, bShowNote, bDoNotBreak, doNotLog);
 }
-bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak){
+bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog){
     bool bError = false;
 
     //GPU Log - 
     // This isn't the Application log it's the hardware log on the card.
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {
-        BroLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
+        if (doNotLog==false) {
+            BroLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
+        }
+
         if (Gu::getEngineConfig()->getBreakOnOpenGLError() == true) {
             if (bDoNotBreak == false) {
                 Gu::debugBreak();
@@ -69,7 +75,7 @@ bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bD
 
     return bError;
 }
-void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak) {
+void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog) {
 
     //Enable this in engine.cpp
  //   glEnable(GL_DEBUG_OUTPUT);
@@ -154,24 +160,26 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
             t_string strType = glDebugGetMessageType(types[iMsg]);
             t_string strSev = glDebugGetMessageSeverity(severities[iMsg]);
 
-            strMsg = "GPU LOG\r\n ID: "+ StringUtil::toHex(id, true)+ "\r\n Msg: "+ strMsg;
+            if (doNotLog == false) {
+                strMsg = "GPU LOG\r\n ID: "+ StringUtil::toHex(id, true)+ "\r\n Msg: "+ strMsg;
 
-            GLenum severity = severities[iMsg];
-            GLenum type = types[iMsg];
-            if (type == GL_DEBUG_TYPE_ERROR)
-            {
-                t_string _strStackInfo = DebugHelper::getStackTrace();
-                BroLogError(strMsg+ "\r\n" + _strStackInfo);
-            }
-            else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
-            {
-                t_string _strStackInfo = DebugHelper::getStackTrace();
-                BroLogInfo(strMsg + "\r\n" + _strStackInfo);
-            }
-            else
-            {
-                t_string _strStackInfo = DebugHelper::getStackTrace();
-                BroLogWarn(strMsg + "\r\n" + _strStackInfo);
+                GLenum severity = severities[iMsg];
+                GLenum type = types[iMsg];
+                if (type == GL_DEBUG_TYPE_ERROR)
+                {
+                    t_string _strStackInfo = DebugHelper::getStackTrace();
+                    BroLogError(strMsg+ "\r\n" + _strStackInfo);
+                }
+                else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+                {
+                    t_string _strStackInfo = DebugHelper::getStackTrace();
+                    BroLogInfo(strMsg + "\r\n" + _strStackInfo);
+                }
+                else
+                {
+                    t_string _strStackInfo = DebugHelper::getStackTrace();
+                    BroLogWarn(strMsg + "\r\n" + _strStackInfo);
+                }
             }
 
             currPos = currPos + lengths[iMsg];

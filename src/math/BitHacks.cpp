@@ -113,7 +113,7 @@ uint8_t BitHacks::bitcount(int32_t x) {
     return r;
 }
 // - Count the number of bits in ny tbyte/word
-uint8_t BitHacks::bitcount(t_uint32 x) {
+uint8_t BitHacks::bitcount(uint32_t x) {
     uint8_t r = 0;
     for (; x; x >>= 1) {
         r += (uint8_t)x & 1;
@@ -121,7 +121,7 @@ uint8_t BitHacks::bitcount(t_uint32 x) {
     return r;
 }
 // - Count the number of bits in ny tbyte/word
-uint8_t BitHacks::bitcount(t_int64 x) {
+uint8_t BitHacks::bitcount(int64_t x) {
     uint8_t r = 0;
     for (; x; x >>= 1) {
         r += (uint8_t)x & 1;

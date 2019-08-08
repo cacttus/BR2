@@ -258,14 +258,14 @@ std::shared_ptr<MeshSpec> MeshSpec::mergeWith(std::shared_ptr<MeshSpec> other, b
     //}
 
     // - Index manipulation
-    //t_uint32 otherMeshICount = (t_uint32)other->indexCount();
-    //t_uint32 oldICount = (t_uint32)indexCount();
+    //uint32_t otherMeshICount = (uint32_t)other->indexCount();
+    //uint32_t oldICount = (uint32_t)indexCount();
     //if (_pIndexes != nullptr) {
     //    _pIndexes->appendToEnd(other->_pIndexes);
     //}
 
     //if (otherMeshICount && automaticallyRecalculateIndexOffsets) {
-    //    addOffsetToIndexRange(otherMeshICount, oldICount, (t_uint32)indexCount());
+    //    addOffsetToIndexRange(otherMeshICount, oldICount, (uint32_t)indexCount());
     //}
 
     ////**You need to do the weights too.
@@ -277,7 +277,7 @@ std::shared_ptr<MeshSpec> MeshSpec::mergeWith(std::shared_ptr<MeshSpec> other, b
 *    @fn
 *    @brief Adds an offset to the given indexes for a specified range.
 */
-//void MeshSpec::addOffsetToIndexRange(t_uint32 offset, t_uint32 startIndex, t_uint32 endIndex)
+//void MeshSpec::addOffsetToIndexRange(uint32_t offset, uint32_t startIndex, uint32_t endIndex)
 //{
 //    //Index integrity check
 //    AssertOrThrow2(startIndex < 40000000);
@@ -591,7 +591,7 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
     int64_t nJointInvalid = 0;
     int64_t iValidJointId = -1;
 
-    uint32_t nFragCount = (t_uint32)fragCount();
+    uint32_t nFragCount = (uint32_t)fragCount();
     size_t nTotalWeights = 0;
     for (VertexWeightMob w : _vecWeightsMob) {
         for (std::pair<int32_t, std::map<int32_t, float>> parm : w._mapWeights) {
@@ -682,7 +682,7 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
 
     //Fix invalid weights 
     if (nFragInvalid > 0) {
-        for (t_uint32 iW = 0; iW < num_added_weights; ++iW) {
+        for (uint32_t iW = 0; iW < num_added_weights; ++iW) {
             if (weightsGpu[iW]._iArmJointOffset < 0) {
                 weightsGpu[iW]._iArmJointOffset = (GpuInt)iValidJointId;
                 weightsGpu[iW]._weight = 0.0f; //disablinmg weght

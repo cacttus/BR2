@@ -32,7 +32,7 @@ class RenderPipe : public VirtualMemory  {
     typedef std::bitset<8> PipeBits;
 protected:
     bool _bMsaaEnabled = false;
-    t_uint32 _nMsaaSamples = 0;
+    uint32_t _nMsaaSamples = 0;
     std::shared_ptr<MeshNode> _pQuadMesh = nullptr;
     std::shared_ptr<ShaderBase> _pDeferredShader = nullptr;
     std::shared_ptr<ShaderBase> _pForwardShader = nullptr;

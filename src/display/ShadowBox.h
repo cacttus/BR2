@@ -33,8 +33,8 @@ private:
     GLuint _glFrameBufferId = 0;
     GLuint _glDepthTextureId;
     GLuint _glShadowCubeMapId = 0;
-    t_uint32 _iFboWidthPixels;
-    t_uint32 _iFboHeightPixels;
+    uint32_t _iFboWidthPixels;
+    uint32_t _iFboHeightPixels;
     Box2f _screenQuadPos;
     Box2f _screenQuadTCoords;
     std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
@@ -60,8 +60,8 @@ public:
     void beginRenderSide(BoxSide::e side);
     void endRenderSide();
     void endRenderShadowBox();
-    t_uint32 getFboWidth() { return _iFboWidthPixels; }
-    t_uint32 getFboHeight() { return _iFboHeightPixels; }
+    uint32_t getFboWidth() { return _iFboWidthPixels; }
+    uint32_t getFboHeight() { return _iFboHeightPixels; }
     GLuint getGlTexId() { return _glShadowCubeMapId; }
     //  void getTexturePixels(t_string& __out_ pixels, CubeSide eCubeSide);
     void updateScreenQuad();

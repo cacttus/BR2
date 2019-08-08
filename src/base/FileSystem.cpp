@@ -72,7 +72,7 @@ bool FileSystem::createFile(const t_string& filename, bool trunc, bool bLog)
     if (!pStream.good())
     {
         exists = false;
-        t_string err = Stz " [FileSystem] Output file "+ filename+ " could not be created with trunc="+ (int32_t)trunc;
+        t_string err = Stz " [FileSystem] Output file " + filename + " could not be created with trunc=" + (int32_t)trunc;
         if (bLog == true) {//For logger initializtion
             BroLogError(err);
         }
@@ -185,7 +185,7 @@ t_string FileSystem::getFileNameOrDirectoryFromPath(const t_string& name, bool b
 t_string FileSystem::getFileNameFromPath(const t_string& name, bool bformatPath) {
     return getFileNameOrDirectoryFromPath(name, bformatPath);
 }
-t_string FileSystem::getDirectoryFromPath(const t_string& name, bool bformatPath){
+t_string FileSystem::getDirectoryFromPath(const t_string& name, bool bformatPath) {
     return getFileNameOrDirectoryFromPath(name, bformatPath);
 }
 t_string FileSystem::getPathFromPath(const t_string& name, bool bformatPath)
@@ -235,15 +235,15 @@ bool FileSystem::fileExists(t_string filename)
     struct stat buffer;
     exists = (stat(filename.c_str(), &buffer) == 0);
 
-    #ifdef BRO_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
     //Fuck this shit
     // we get error 2 and 6 all the time because
     // windows sets it when we call stat()
     // WHY??? i don't need a fucking error when i'm seeing whether a file exists.
     SetLastError(0);
-    #else
-    #error "Operating System Error"
-    #endif
+#else
+#error "Operating System Error"
+#endif
 
     return exists;
 }
@@ -256,11 +256,12 @@ void FileSystem::createFileIfFileDoesNotExist(t_string& filename, bool bAlsoCrea
         createFile(filename, false);
     }
 }
-time_t FileSystem::getFileModifyTime(t_string& location) {
+time_t FileSystem::getLastModifyTime(t_string& location) {
+    //Gets the last time the file was modified as a time_t
     struct stat fileInfo;
 
     if (FileSystem::fileExists(location) == false) {
-        BroThrowException("File '" + location +"' does not exist");
+        BroThrowException("File '" + location + "' does not exist");
     }
 
     stat(location.c_str(), &fileInfo);
@@ -274,8 +275,8 @@ t_string FileSystem::getCurrentDirectory() {
     return cwd;
 }
 void FileSystem::setCurrentDirectory(t_string str) {
-	//DO NOT LOG HERE
-	_chdir(str.c_str());
+    //DO NOT LOG HERE
+    _chdir(str.c_str());
 }
 
 bool FileSystem::isFile(t_string fileOrDirPath) {
@@ -329,7 +330,7 @@ bool FileSystem::getAllFilesOrDirs(t_string dir, std::vector<t_string>& __out_ d
         closedir(dp);
     }
     else {
-        BroLogError("Couldn't open the directory '"+ dir+ "'");
+        BroLogError("Couldn't open the directory '" + dir + "'");
         return false;
     }
     return true;
@@ -435,12 +436,12 @@ t_string FileSystem::getExtensionPartOfFileName(const t_string& name) {
 
     return ext;
 }
-t_string FileSystem::formatPath(const t_string& p)
+t_string FileSystem::formatPath(t_string p)
 {
     return StringUtil::replaceAll(p, '\\', '/');
 }
 t_string FileSystem::getScreenshotFilename() {
-    t_string fname = DateTime::dateTimeToStr(DateTime::getDateTime())+ "_"+ FileSystem::getExecutableName()+ "_frame.png";
+    t_string fname = DateTime::dateTimeToStr(DateTime::getDateTime()) + "_" + FileSystem::getExecutableName() + "_frame.png";
     fname = FileSystem::replaceInvalidCharsFromFilename(fname);
     fname = StringUtil::replaceAll(fname, " ", "_");
     fname = FileSystem::appendCachePathToFile(fname);
@@ -503,7 +504,7 @@ int FileSystem::SDLFileRead(std::string fname, char*& pOutData, int64_t& _iOutSi
     }
     return 0;
 }
-int FileSystem::SDLFileWrite(std::string fname, char* pData, uint32_t _iDataSizeBytes) {
+int FileSystem::SDLFileWrite(std::string fname, char* pData, size_t _iDataSizeBytes) {
     fname = getFilePath(fname);
 
     SDL_RWops *rw = SDL_RWFromFile(fname.c_str(), "wb");
@@ -577,6 +578,93 @@ std::string FileSystem::getFilePath(std::string name) {
     return str;
 }
 
+FileInfo FileSystem::getFileInfo(std::string loc) {
+    FileInfo inf;
+    inf._originalPath = loc;
+    inf._exists = FileSystem::fileExists(loc);
+    if (!inf._exists) {
+        return inf;
+    }
+
+    //Gets the last time the file was modified as a time_t
+    struct stat fi;
+    stat(loc.c_str(), &fi);
+    inf._rootedPath = getRootedPath(loc);
+    inf._modified = fi.st_mtime;
+    inf._status = fi.st_ctime;
+    inf._accssed = fi.st_atime;
+    inf._protection = fi.st_mode;
+    inf._size = fi.st_size;
+ 
+    return inf;
+}
+t_string FileSystem::getRootedPath(t_string loc) {
+    //C++17 has std::filesystem::path path(loc);
+    //currently not supported so we need our own.
+
+    //Get root of current.
+    t_string path = "";
+    if (!pathIsAbsolute(loc)) {
+        path = combinePath(FileSystem::getCurrentDirectory(), loc);
+    }
+	return path;
+}
+t_string FileSystem::getRoot(t_string in_loc) {
+    //C++17 has std::filesystem::path path(loc);
+    //currently not supported so we need our own.
+
+    //returns the root of the path (c:, e:, or \\,// for UNC) of the current path.
+    //if the path is relative, then it is assumed to be relative to the current directory set with setCurrentDirectory()
+    t_string s = "";
+    t_string path = "";
+
+    if (pathIsAbsolute(in_loc)) {
+        path = in_loc;
+    }
+    else {
+        path = FileSystem::getCurrentDirectory();
+    }
+
+    if (path.length() > 0) {
+        if (pathIsAbsolute(path)) {
+            if (isUNC(path)) {
+                s = Stz path[0] + path[1];
+            }
+            else {
+				char c = path[0];
+                for (int i = 0; (i < path.length()) && (c != ':'); ++i) {
+                    s += c;
+                }
+            }
+        }
+    }
+
+    return s;
+}
+bool FileSystem::isUNC(t_string path) {
+    //Returns true if the path is a valid UNC root
+    if (path.length() == 0) {
+        return false;
+    }
+    bool uncFs = path[0] == '/' && path[1] == '/' && path[2] != '/';
+    bool uncBs = path[0] == '\\' && path[1] == '\\' && path[2] != '\\';
+
+    return (uncFs || uncBs);
+}
+bool FileSystem::pathIsAbsolute(t_string path) {
+    //C++17 has std::filesystem::path path(loc);
+    //currently not supported so we need our own.
+    if (isUNC(path)) {
+        return true;
+    }
+
+    if ((path.length() ==0) || (path[0] == '.' || path[0] == '/' || path[0] == '\\')) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
 
 
 

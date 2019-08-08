@@ -8,25 +8,25 @@ namespace Game {
 
 //Prime Numbers
 //Gneeratoer: https://asecuritysite.com/encryption/random3
-const t_uint32 Hash::Fnv_Basis_32[FNV_MAX_ALGORITHMS_32] = {
+const uint32_t Hash::Fnv_Basis_32[FNV_MAX_ALGORITHMS_32] = {
      2166136261
    , 50331653
    , 3331805713
    , 2324833853
 };
-const t_uint32 Hash::Fnv_Prime_32[FNV_MAX_ALGORITHMS_32] = {
+const uint32_t Hash::Fnv_Prime_32[FNV_MAX_ALGORITHMS_32] = {
      16777619
    , 805306457
    , 124675729
    , 417013901
 };
-const t_uint64 Hash::Fnv_Basis_64[FNV_MAX_ALGORITHMS_64] = {
+const uint64_t Hash::Fnv_Basis_64[FNV_MAX_ALGORITHMS_64] = {
       16540412399126526479
     , 1604091723691372229
     , 1729532795367666019
     , 15711276102652330523
 };
-const t_uint64 Hash::Fnv_Prime_64[FNV_MAX_ALGORITHMS_64] = {
+const uint64_t Hash::Fnv_Prime_64[FNV_MAX_ALGORITHMS_64] = {
       17577211953059058149
     , 4401858765275463419
     , 8868681736133192851
@@ -38,27 +38,27 @@ Hash::Hash() {
 Hash::~Hash() {
 }
 
-Hash32 Hash::computeStringHash32bit(const t_string& str, t_uint32 iAlgorithmIndex)
+Hash32 Hash::computeStringHash32bit(const t_string& str, uint32_t iAlgorithmIndex)
 {
     AssertOrThrow2(iAlgorithmIndex < FNV_MAX_ALGORITHMS_32);
 
-    t_uint32 n = Fnv_Basis_32[iAlgorithmIndex];
+    uint32_t n = Fnv_Basis_32[iAlgorithmIndex];
     for (size_t i = 0; i < str.size(); ++i)
     {
         n *= Fnv_Prime_32[iAlgorithmIndex];
-        n ^= (t_uint32)str[i];
+        n ^= (uint32_t)str[i];
     }
     return (Hash32)n;
 }
-t_uint64 Hash::computeStringHash64bit(const t_string& str, t_uint64 iAlgorithmIndex)
+uint64_t Hash::computeStringHash64bit(const t_string& str, uint64_t iAlgorithmIndex)
 {
     AssertOrThrow2(iAlgorithmIndex < FNV_MAX_ALGORITHMS_64);
 
-    t_uint64 n = Fnv_Basis_64[iAlgorithmIndex];;
+    uint64_t n = Fnv_Basis_64[iAlgorithmIndex];;
     for (size_t i = 0; i < str.size(); ++i)
     {
         n *= Fnv_Prime_64[iAlgorithmIndex];
-        n ^= (t_uint64)str[i];
+        n ^= (uint64_t)str[i];
     }
     return n;
 }

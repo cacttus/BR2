@@ -155,17 +155,17 @@ typedef Vec2x<double> Vec2d;
 typedef Vec2x<float> Vec2f;
 typedef Vec2x<t_byte> Vec2ub;
 typedef Vec2x<int32_t> Vec2i;
-typedef Vec2x<t_uint32> Vec2ui;
+typedef Vec2x<uint32_t> Vec2ui;
 typedef Vec3x<double> Vec3d;
 typedef Vec3x<float> Vec3f;
 typedef Vec3x<t_byte> Vec3ub;
 typedef Vec3x<int32_t> Vec3i;
-typedef Vec3x<t_uint32> Vec3ui;
+typedef Vec3x<uint32_t> Vec3ui;
 typedef Vec4x<double> Vec4d;
 typedef Vec4x<float> Vec4f;
 typedef Vec4x<t_byte> Vec4ub;
 typedef Vec4x<int32_t> Vec4i;
-typedef Vec4x<t_uint32> Vec4ui;
+typedef Vec4x<uint32_t> Vec4ui;
 typedef Box3x<int32_t> Box3i32;
 typedef Box3x<float> Box3f;
 typedef Box2x<float> Box2f;
@@ -315,7 +315,7 @@ public:
     FORCE_INLINE STATIC int32_t getNumberOfDigits(int32_t i) {
         return i > 0 ? (int)log10f((float)i) + 1 : 1;
     }
-    FORCE_INLINE STATIC t_uint32 getNumberOfDigits(t_uint32 i) {
+    FORCE_INLINE STATIC uint32_t getNumberOfDigits(uint32_t i) {
         return i > 0 ? (int)log10((double)i) + 1 : 1;
     }
     //btMin/max copied from bullet.

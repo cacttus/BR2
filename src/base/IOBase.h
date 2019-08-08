@@ -44,17 +44,17 @@ public:
     void readVec3i(ivec3& val);
     void readByte(t_byte& val);
     void readInt32(int32_t& val, size_t offset = memsize_max);
-    void readInt16(t_int16& val);
-    void readInt64(t_int64& val);
-    void readUint32(t_uint32& val, size_t offset = memsize_max);
+    void readInt16(int16_t& val);
+    void readInt64(int64_t& val);
+    void readUint32(uint32_t& val, size_t offset = memsize_max);
 
     void writeVec3(vec3& val);
     void writeVec3i(ivec3& val);
     void writeByte(t_byte& val);
-    void writeInt16(t_int16& val);
+    void writeInt16(int16_t& val);
     void writeInt32(int32_t& val, size_t offset = memsize_max);
-    void writeInt64(t_int64& val);
-    void writeUint32(t_uint32& val, size_t offset = memsize_max);
+    void writeInt64(int64_t& val);
+    void writeUint32(uint32_t& val, size_t offset = memsize_max);
     void writeStr(const t_string& str);
     void writeTextLine(const t_string& str); //Writes a /n
 };

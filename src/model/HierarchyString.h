@@ -86,7 +86,7 @@ void HierarchyString<Tx>::parse(bool bThrowIfDuplicateFound) {
 template < class Tx >
 Tx HierarchyString<Tx>::_parse( int32_t& n, Tx parent, bool bThrowIfDupeFound)
 {
-    t_char c;
+    char c;
     bool in_tok = false;    // - We are in a node definition token. Demarcated by (...)
     int32_t node_part;        // - Which part of the node parameters we are parsing
     //t_string p[16];            // - The node parameters

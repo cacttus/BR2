@@ -252,7 +252,7 @@ void RenderUtils::drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor)
     ax->draw();
     delete ax;
 }
-//void RenderUtils::drawPickBox(Box3f* box, t_uint32 uiColorId)
+//void RenderUtils::drawPickBox(Box3f* box, uint32_t uiColorId)
 //{
 //    UtilMeshPickBox* ax = new UtilMeshPickBox(Gu::getContext(), box, uiColorId);
 //    ax->init();
@@ -433,7 +433,7 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
 {
     GLint nUniforms;
     t_string uniformName;
-    t_char name[256];
+    char name[256];
     GLint name_len = -1;
     GLint iArraySize = -1;
     GLenum uniformType = GL_ZERO;

@@ -410,9 +410,9 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title)
 //#endif
 //    CheckOsErrorsDbg();
 //}
-//t_int64 Gu::getMilliSeconds()
+//int64_t Gu::getMilliSeconds()
 //{
-//    t_int64 ret;
+//    int64_t ret;
 //    std::chrono::nanoseconds ns = std::chrono::high_resolution_clock::now().time_since_epoch();
 //    ret = std::chrono::duration_cast<std::chrono::milliseconds>(ns).count();
 //    return ret;
@@ -467,7 +467,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title)
 //    CheckOsErrorsDbg();
 //    return osmsg;
 //}
-//ThreadHandle OperatingSystem::createThread(ThreadCallbackMethod myCallback, void* parameter, t_uint32* threadId)
+//ThreadHandle OperatingSystem::createThread(ThreadCallbackMethod myCallback, void* parameter, uint32_t* threadId)
 //{
 //    ThreadHandle ret;
 //#ifdef BRO_OS_WINDOWS
@@ -485,12 +485,12 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title)
 //#endif
 //    return ret;
 //}
-//t_uint32 OperatingSystem::getCurrentThreadId()
+//uint32_t OperatingSystem::getCurrentThreadId()
 //{
-//    t_uint32 threadId;
+//    uint32_t threadId;
 //#ifdef BRO_OS_WINDOWS
 //    //TODO: std::this_thread::get_id()
-//    threadId = (t_uint32) GetCurrentThreadId();
+//    threadId = (uint32_t) GetCurrentThreadId();
 //    OperatingSystem::osed(__LINE__, __FILE__);
 //#else
 //    #error "Operating System Error"
@@ -525,7 +525,7 @@ t_string OperatingSystem::getRuntimeEnvironmentStr()
     throw new NotImplementedException();
 #endif
 }
-//void OperatingSystem::suspendThread(t_uint32 millis)
+//void OperatingSystem::suspendThread(uint32_t millis)
 //{
 //#ifdef BRO_OS_WINDOWS
 //    std::this_thread::sleep_for(std::chrono::milliseconds(millis));

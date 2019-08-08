@@ -202,7 +202,7 @@ std::vector<std::string> DebugHelper::getCallStack(bool bIncludeFrameId) {
     std::vector<std::string> callStack;
 #ifdef BRO_OS_WINDOWS
     //Code copied from Msdn.
-    t_uint32 i;
+    uint32_t i;
     void* stack[512];
     unsigned short frames;
     SYMBOL_INFO* symbol;

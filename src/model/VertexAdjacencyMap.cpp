@@ -19,7 +19,7 @@ VertexAdjacencyMap::~VertexAdjacencyMap()
     delete _vmap;//HEAP:
 }
 //////////////////////////////////////////////////////////////////////////
-void VertexAdjacencyMap::addMappingIgnoreDupes(v_index32 index, t_uint32 face_index)
+void VertexAdjacencyMap::addMappingIgnoreDupes(v_index32 index, uint32_t face_index)
 {
     AdjacencyMap::iterator ite1 = _vmap->find(index);
     FaceList* fl;

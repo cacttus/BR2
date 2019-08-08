@@ -40,7 +40,7 @@ public:
     StreamBuffer(int32_t chunkSize = 512);
     virtual ~StreamBuffer() override;
 
-    t_bool getIsEmpty() { return _iAddCountBytes == 0; }
+    bool getIsEmpty() { return _iAddCountBytes == 0; }
 
     void copyFrom(StreamBuffer* rhs);
     virtual RetCode write(
@@ -51,7 +51,7 @@ public:
     virtual RetCode read(
         char* buf
         , size_t len
-        , t_long buflen = -1
+        , int64_t buflen = -1
         , int32_t offset = -1
     );
 

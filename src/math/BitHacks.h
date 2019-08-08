@@ -27,8 +27,8 @@ public:
     static uint8_t bitcount(uint8_t x);// - Count the number of bits in a byte. Kernighan made it faster?? but wtf.
     static uint8_t bitcount(uint16_t x);// - Count the number of bits in a tbyte. Kernighan made it faster?? but wtf.
     static uint8_t bitcount(int32_t x);// - Count the number of bits in ny tbyte/word
-    static uint8_t bitcount(t_uint32 x);// - Count the number of bits in ny tbyte/word
-    static uint8_t bitcount(t_int64 x);// - Count the number of bits in ny tbyte/word
+    static uint8_t bitcount(uint32_t x);// - Count the number of bits in ny tbyte/word
+    static uint8_t bitcount(int64_t x);// - Count the number of bits in ny tbyte/word
     static uint8_t trailingzeros(int32_t x);// - Returns the position of the first bit in the little endian tbyte. Returns the LOG2 of the first bit.
 };
 

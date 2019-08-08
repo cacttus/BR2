@@ -19,37 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\bottle\BlockNode.h" />
-    <ClInclude Include="src\bottle\BottleHeader.h" />
-    <ClInclude Include="src\bottle\BottleRoom.h" />
-    <ClInclude Include="src\bottle\BottleUtils.h" />
-    <ClInclude Include="src\bottle\Brain25.h" />
-    <ClInclude Include="src\bottle\CongaGui.h" />
-    <ClInclude Include="src\bottle\GameFile.h" />
-    <ClInclude Include="src\bottle\GameUi.h" />
-    <ClInclude Include="src\bottle\Goal25.h" />
-    <ClInclude Include="src\bottle\Goal25MoveTo.h" />
-    <ClInclude Include="src\bottle\Goal25Think.h" />
-    <ClInclude Include="src\bottle\GodCam.h" />
-    <ClInclude Include="src\bottle\Lair.h" />
-    <ClInclude Include="src\bottle\ObFile.h" />
-    <ClInclude Include="src\bottle\SpriteBucket.h" />
-    <ClInclude Include="src\bottle\Tile25Spec.h" />
-    <ClInclude Include="src\bottle\W25Config.h" />
-    <ClInclude Include="src\bottle\W25GridMesh.h" />
-    <ClInclude Include="src\bottle\W25MeshMaker.h" />
-    <ClInclude Include="src\bottle\WalkerSpec.h" />
-    <ClInclude Include="src\bottle\WipGrid.h" />
-    <ClInclude Include="src\bottle\World25.h" />
-    <ClInclude Include="src\bottle\WorldCell.h" />
-    <ClInclude Include="src\bottle\WorldCellFile.h" />
-    <ClInclude Include="src\bottle\WorldEditor.h" />
-    <ClInclude Include="src\bottle\WorldEditState.h" />
-    <ClInclude Include="src\bottle\WorldGrid.h" />
-    <ClInclude Include="src\bottle\WorldMaker.h" />
-    <ClInclude Include="src\bottle\WorldObj.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\bottle\BlockNode.cpp" />
     <ClCompile Include="src\bottle\BottleRoom.cpp" />
     <ClCompile Include="src\bottle\BottleUtils.cpp" />
@@ -81,39 +50,67 @@
     <ClCompile Include="src\bottle\WorldObj.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\bottle\linect.exe" />
+    <ClInclude Include="src\bottle\BlockNode.h" />
+    <ClInclude Include="src\bottle\BottleHeader.h" />
+    <ClInclude Include="src\bottle\BottleRoom.h" />
+    <ClInclude Include="src\bottle\BottleUtils.h" />
+    <ClInclude Include="src\bottle\Brain25.h" />
+    <ClInclude Include="src\bottle\CongaGui.h" />
+    <ClInclude Include="src\bottle\GameFile.h" />
+    <ClInclude Include="src\bottle\GameUi.h" />
+    <ClInclude Include="src\bottle\Goal25.h" />
+    <ClInclude Include="src\bottle\Goal25MoveTo.h" />
+    <ClInclude Include="src\bottle\Goal25Think.h" />
+    <ClInclude Include="src\bottle\GodCam.h" />
+    <ClInclude Include="src\bottle\Lair.h" />
+    <ClInclude Include="src\bottle\ObFile.h" />
+    <ClInclude Include="src\bottle\SpriteBucket.h" />
+    <ClInclude Include="src\bottle\Tile25Spec.h" />
+    <ClInclude Include="src\bottle\W25Config.h" />
+    <ClInclude Include="src\bottle\W25GridMesh.h" />
+    <ClInclude Include="src\bottle\W25MeshMaker.h" />
+    <ClInclude Include="src\bottle\WalkerSpec.h" />
+    <ClInclude Include="src\bottle\WipGrid.h" />
+    <ClInclude Include="src\bottle\World25.h" />
+    <ClInclude Include="src\bottle\WorldCell.h" />
+    <ClInclude Include="src\bottle\WorldCellFile.h" />
+    <ClInclude Include="src\bottle\WorldEditor.h" />
+    <ClInclude Include="src\bottle\WorldEditState.h" />
+    <ClInclude Include="src\bottle\WorldGrid.h" />
+    <ClInclude Include="src\bottle\WorldMaker.h" />
+    <ClInclude Include="src\bottle\WorldObj.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B2C1E38C-0D2B-4D89-849F-EB09391C491D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Conga</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Bottle</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -198,6 +195,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
       <StructMemberAlignment>Default</StructMemberAlignment>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -84,14 +84,14 @@ public:
     STATIC int32_t dateGetMonth( t_date d );// Return the integer number of the month
     STATIC int32_t dateGetYear( t_date d );// return the integer number of the year.
     
-    STATIC t_uint32 timeGetHour(t_time t);
-    STATIC t_uint32 timeGetMinute(t_time t);
-    STATIC t_uint32 timeGetSecond(t_time t);
-    STATIC t_uint32 timeGetMS(t_time t);
+    STATIC uint32_t timeGetHour(t_time t);
+    STATIC uint32_t timeGetMinute(t_time t);
+    STATIC uint32_t timeGetSecond(t_time t);
+    STATIC uint32_t timeGetMS(t_time t);
 
     STATIC t_time getTime();    // - Returns a system-dependant time with h,m,s,ms.  This can be converted to and from s,ms,m,h using system functions.
     STATIC t_time getTime(t_timeval milliseconds);    // - Milliseconds to time
-    STATIC t_time getTime(t_uint32 hh, t_uint32 mm, t_uint32 ss, t_uint32 ms);    // - components to time
+    STATIC t_time getTime(uint32_t hh, uint32_t mm, uint32_t ss, uint32_t ms);    // - components to time
     STATIC int hour();                // - Get the current hour. 
     STATIC int minute();            // - Get the current minute.
     STATIC int second();            // - Get the current second.

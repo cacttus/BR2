@@ -44,7 +44,7 @@ RetCode StreamBuffer::write(
 RetCode StreamBuffer::read(
     char* buf
     , size_t len
-    , t_long buflen
+    , int64_t buflen
     , int32_t offset //Offset in BUF.
 )
 {

@@ -150,8 +150,8 @@ public:
     FORCE_INLINE Vec3x<Tx> operator/(const Tx &f) const; 
 
     //From Color3
-    FORCE_INLINE t_uint32 toUint();
-    FORCE_INLINE void fromUint(const t_uint32& i);
+    FORCE_INLINE uint32_t toUint();
+    FORCE_INLINE void fromUint(const uint32_t& i);
 
     FORCE_INLINE bool compareTo(const Vec3x<Tx>* rhs) const; //Binary compare two vectors and return the closer in the sort order.
 
@@ -705,18 +705,18 @@ Vec3x<Tx> Vec3x<Tx>::zero()
 }
     
 template < class Tx >
-FORCE_INLINE t_uint32 Vec3x<Tx>::toUint()
+FORCE_INLINE uint32_t Vec3x<Tx>::toUint()
 {  
-    t_uint32 ret = (t_uint32)(
-        ((t_uint32)0 << 16) |
-        ((t_uint32)r()<<16) |
-        ((t_uint32)g()<<8)  |
-        ((t_uint32)b())
+    uint32_t ret = (uint32_t)(
+        ((uint32_t)0 << 16) |
+        ((uint32_t)r()<<16) |
+        ((uint32_t)g()<<8)  |
+        ((uint32_t)b())
     ); 
     return ret;
 }
 template < class Tx >
-FORCE_INLINE void Vec3x<Tx>::fromUint(const t_uint32& i)
+FORCE_INLINE void Vec3x<Tx>::fromUint(const uint32_t& i)
 {  
     r() = (i>>16)&0xFF; 
     g() = (i>>8)&0xFF; 

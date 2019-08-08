@@ -80,7 +80,7 @@ public:
     RetCode normalize(float depth = 1.0); // - Returns an image that is normalized.  Useful for normal maps.
     Pixel4ub normalizePixel(int32_t x, int32_t y, float depth = 1.0);  // - Returns a normalized pixel.
     Pixel4ub normalizePixel32(int32_t x, int32_t y, float depth = 1.0); // 32 bit versrion (alpha channel is preserved)
-    t_byte toGray(Pixel4ub& in);  // returns the gray value of this pixel.
+    int8_t toGray(Pixel4ub& in);  // returns the gray value of this pixel.
     static Pixel4ub    invert(Pixel4ub); // - Inverts a pixel
     void invert();    // - Inverts the entire image
     void convertDataFrom24BitTo32Bit(t_byte defaultAlpha = 255);//try to change to given format.  if same do nothing.

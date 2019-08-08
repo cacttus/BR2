@@ -678,7 +678,7 @@ FORCE_INLINE Vector4 Matrix4x4::getVec4() const
 */
 FORCE_INLINE void Matrix4x4::clear()
 {
-    for( t_uint32 n=0; n<16; ++n )
+    for( uint32_t n=0; n<16; ++n )
         Mat(n) = (float)0.0;
 }
 /**

@@ -42,13 +42,13 @@
 //    JointOrdinalMap _mapJointOrdinals;    // - **This is a contiguous mapping of all joints in the model from a top level.
 //    JointOrdinal _nextJointOrdinal;
 //
-//    t_uint32 _nTotalJoints;    //sum total of all joints
+//    uint32_t _nTotalJoints;    //sum total of all joints
 //    mat4 _matObjectMatrix;  //Matrix of the armature in local object space.
 //public:
 //    ArmatureSpec();
 //    OVERRIDES ~ArmatureSpec() OVERRIDE;
 //
-//    FORCE_INLINE t_uint32 getNumJoints(){ return _nTotalJoints; }
+//    FORCE_INLINE uint32_t getNumJoints(){ return _nTotalJoints; }
 //    FORCE_INLINE size_t numJointTrees(){ return _vecJointTrees.size(); }
 //
 //    mat4& getObjectMatrix() { return _matObjectMatrix; }
@@ -59,7 +59,7 @@
 //    // Ordered joint access
 //    JointOrdinal getJointOrdinal(t_jointId j);
 //    JointSpec* getJointByOrdinal(JointOrdinal o);
-//    //t_jointId getJointIdByOrdinal(t_uint32 o);
+//    //t_jointId getJointIdByOrdinal(uint32_t o);
 //
 //    JointSpec* getJointById(t_jointId jointId);
 //    void addJointTree(JointSpecHierarchy* pt);// add new joint tree root

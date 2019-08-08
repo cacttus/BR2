@@ -32,7 +32,7 @@ private:
     int getNumTargets();
     bool getIsBloomEnabled();
 public:
-    DeferredFramebuffer(std::shared_ptr<GLContext> pContext, t_uint32 iWidth, t_uint32 iHeight, bool bMultisample, t_uint32 nSamples, vec4& vClear);
+    DeferredFramebuffer(std::shared_ptr<GLContext> pContext, uint32_t iWidth, uint32_t iHeight, bool bMultisample, uint32_t nSamples, vec4& vClear);
     virtual ~DeferredFramebuffer() override;
     
     virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<RenderTarget> sharedDepth, std::shared_ptr<RenderTarget> sharedPick) override;

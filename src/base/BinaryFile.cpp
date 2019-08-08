@@ -80,7 +80,7 @@ BinaryFile::~BinaryFile()
 //    return data;
 //}
 //t_byte BinaryFile::readByte(){
-//    t_byte data = *((t_byte*)getBuffer());
+//    int8_t data = *((t_byte*)getBuffer());
 //
 //    iFilePos += sizeof(t_byte);
 //

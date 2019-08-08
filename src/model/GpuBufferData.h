@@ -46,7 +46,7 @@ public:
     void bindBuffer(GLenum e);
 
     bool isAllocated() { return _bIsAllocated; }
-    t_uint32 getGlId() { return _glId; }
+    uint32_t getGlId() { return _glId; }
     size_t getByteSize() { return _iElementSize * _iNumElements; } // Returns the size in bytes!.
     size_t getEleSize() { return _iElementSize; }    // Reutrns the number of fragments in this VBO.
     size_t getNumElements() { return _iNumElements; }

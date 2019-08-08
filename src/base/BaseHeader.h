@@ -247,6 +247,7 @@ public:
     virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
 };
 
+
 //TODO: REMOVE
 class Packet {};
 

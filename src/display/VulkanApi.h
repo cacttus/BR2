@@ -15,15 +15,45 @@
 #include "../display/GraphicsApi.h"
 
 namespace Game {
+#define VkExtFn(_vkFn) PFN_##_vkFn _vkFn = nullptr;
 /**
 *    @class VulkanApi
 *    @brief
 *
 */
 class VulkanApi : public GraphicsApi {
-    VkSurfaceKHR surface;
-    VkInstance instance;
-    void debugPrintExtensions(std::vector<const char*> exts);
+   // std::vector<VkLayerProperties> _availableLayers;
+
+    bool _bEnableValidationLayers = true;
+
+    VkSurfaceKHR surface = VK_NULL_HANDLE;
+    VkInstance instance = VK_NULL_HANDLE;
+    VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+    VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
+    VkDevice device = VK_NULL_HANDLE;
+
+    std::vector<const char*> getValidationLayers();
+    std::vector<const char*> getExtensionNames();
+
+    VkQueue graphicsQueue; //Device queues are implicitly cleaned up when the device is destroyed, so we don't need to do anything in cleanup.
+
+   // void loadCaps();
+    bool extensionSupported(std::string ext);
+
+    void setupDebug();
+
+    void loadExtensions();
+    void createVulkanInstance(t_string title);
+
+    void pickPhysicalDevice();
+
+    std::optional<uint32_t> getGraphicsQueueFamily();
+    void createLogicalDevice();
+
+    VkExtFn(vkCreateDebugUtilsMessengerEXT);  //PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
+    VkExtFn(vkDestroyDebugUtilsMessengerEXT);  
+    
+    
 public:
     virtual void createWindow(t_string title) override;
     virtual void getDrawableSize(int* w, int* h) override;

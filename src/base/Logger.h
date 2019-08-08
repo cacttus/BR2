@@ -58,7 +58,7 @@ public:
     void logDebug(t_string msg);
     void logInfo(t_string msg);
 
-    void logError(t_string msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logError(t_string msg, int line, char* file, Game::Exception* e = NULL, bool hideStackTrace = false);    // - Log an error with exception contents.
     void logWarn(t_string msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
     void logWarnCycle(t_string msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
     void logErrorCycle(t_string msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
@@ -81,6 +81,7 @@ public:
 #define BroLogInfo(x) Game::Gu::getLogger()->logInfo(Stz x,__LINE__,__FILE__ )
 #define BroLogWarn(x) Game::Gu::getLogger()->logWarn(Stz x,__LINE__,__FILE__, NULL )
 #define BroLogError(x) Game::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL )
+#define BroLogErrorNoStack(x) Game::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL, true)
 
 #define BroLogErrorOnce(x) \
 { \

@@ -16,8 +16,8 @@ namespace Game {
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
-DeferredFramebuffer::DeferredFramebuffer( std::shared_ptr<GLContext> pc, t_uint32 iWidth, t_uint32 iHeight, bool bMultisample, 
-    t_uint32 nSamples, vec4& vClear) :
+DeferredFramebuffer::DeferredFramebuffer( std::shared_ptr<GLContext> pc, uint32_t iWidth, uint32_t iHeight, bool bMultisample, 
+    uint32_t nSamples, vec4& vClear) :
     FramebufferBase(pc, bMultisample, nSamples, vClear) {
     _bMultisample = bMultisample;
     _nMsaaSamples = nSamples; 

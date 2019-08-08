@@ -48,13 +48,13 @@ public:
     };
   //  static RuntimeEnvironment getRuntimeEnvironment();// Returns windows/linux 32/64 environment.
     static t_string getRuntimeEnvironmentStr();// Returns windows/linux 32/64 environment.
-   // static void suspendThread(t_uint32 millis); // Suspends the currend thread this method is called in for the specified number of milliseconds.
-  //  static t_uint32 getCurrentThreadId();
-   // static ThreadHandle createThread(ThreadCallbackMethod myCallback, void* parameter=NULL, t_uint32* threadId=NULL);
+   // static void suspendThread(uint32_t millis); // Suspends the currend thread this method is called in for the specified number of milliseconds.
+  //  static uint32_t getCurrentThreadId();
+   // static ThreadHandle createThread(ThreadCallbackMethod myCallback, void* parameter=NULL, uint32_t* threadId=NULL);
    // static void terminateThread(ThreadHandle handle);
    // static OsWindowMessage processThreadMessages();    // Win32 message pump.
    // static OsWindowMessage processThreadMessagesIgnore();    // Win32 message pump.
-  //  static t_int64 getTickCount64();
+  //  static int64_t getTickCount64();
    // static size_t getAvailableMemory();
    // static size_t getProcessMemoryUsage();
    // static int32_t getError(); // gets the current operating system error code.

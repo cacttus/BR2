@@ -18,10 +18,10 @@ void IOBase<char>::readByte(t_byte& val)
 
     read((char*)&val, readSiz, readSiz, memsize_max);
 }
-void IOBase<char>::readInt16(t_int16& val)
+void IOBase<char>::readInt16(int16_t& val)
 {
     int32_t readSiz;
-    readSiz = sizeof(t_int16);
+    readSiz = sizeof(int16_t);
     AssertGoodRead(readSiz);
 
     read((char*)&val, readSiz, readSiz, memsize_max);
@@ -34,18 +34,18 @@ void IOBase<char>::readInt32(int32_t& val, size_t offset)
 
     read((char*)&val, readSiz, readSiz, offset);
 }
-void IOBase<char>::readInt64(t_int64& val)
+void IOBase<char>::readInt64(int64_t& val)
 {
     int32_t readSiz;
-    readSiz = sizeof(t_int64);
+    readSiz = sizeof(int64_t);
     AssertGoodRead(readSiz);
 
     read((char*)&val, readSiz, readSiz, memsize_max);
 }
-void IOBase<char>::readUint32(t_uint32& val, size_t offset)
+void IOBase<char>::readUint32(uint32_t& val, size_t offset)
 {
     int32_t readSiz;
-    readSiz = sizeof(t_uint32);
+    readSiz = sizeof(uint32_t);
     AssertGoodRead(readSiz);
 
     read((char*)&val, readSiz, readSiz, offset);
@@ -92,26 +92,26 @@ void IOBase<char>::writeByte(t_byte& val)
 
     write((char*)&val, readSiz, memsize_max);
 }
-void IOBase<char>::writeInt16(t_int16& val)
+void IOBase<char>::writeInt16(int16_t& val)
 {
     int32_t readSiz;
-    readSiz = sizeof(t_int16);
+    readSiz = sizeof(int16_t);
     AssertGoodWrite(readSiz);
 
     write((char*)&val, readSiz, memsize_max);
 }
-void IOBase<char>::writeInt64(t_int64& val)
+void IOBase<char>::writeInt64(int64_t& val)
 {
     int32_t readSiz;
-    readSiz = sizeof(t_int64);
+    readSiz = sizeof(int64_t);
     AssertGoodWrite(readSiz);
 
     write((char*)&val, readSiz, memsize_max);
 }
-void IOBase<char>::writeUint32(t_uint32& val, size_t offset)
+void IOBase<char>::writeUint32(uint32_t& val, size_t offset)
 {
     int32_t readSiz;
-    readSiz = sizeof(t_uint32);
+    readSiz = sizeof(uint32_t);
     AssertGoodWrite(readSiz);
 
     write((char*)&val, readSiz, offset);

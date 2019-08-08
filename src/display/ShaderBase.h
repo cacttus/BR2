@@ -26,7 +26,6 @@ namespace Game {
 */
 class ShaderBase : public VirtualMemoryShared<ShaderBase> {
 private:
-    std::shared_ptr<GLContext> _pContext;
     ShaderStatus::e _eProgramStatus = ShaderStatus::e::Uninitialized;
     GLuint _glId;
     time_t _compileTime;
@@ -39,18 +38,16 @@ private:
     std::vector<t_string> _vecLinkErrors;  
     std::vector<std::shared_ptr<ShaderSubProgram>> _vecSubPrograms;
     void bindAllUniforms();
-
     
     void setShadowUf();
 
 public:
-    ShaderBase(std::shared_ptr<GLContext> ctx, t_string strName);
+    ShaderBase(t_string strName);
     virtual ~ShaderBase() override ;
 
     void init();
     bool confirmInit();
     void setCompileTime(time_t tt) { _compileTime = tt; }
-   // void verifyAttributes(std::shared_ptr<VertexFormat> inf);
 
     void setProgramStatus(ShaderStatus::e sp) { _eProgramStatus = sp; }
     ShaderStatus::e getProgramStatus() { return _eProgramStatus; }
@@ -74,7 +71,6 @@ public:
     std::map<Hash32, std::shared_ptr<ShaderUniform>>& getUniforms() { return _vecUniforms; }
     std::set<ShaderAttribute*>& getAttributes() { return _setAttributes; }
 
-    std::shared_ptr<GLContext> getContext() { return _pContext; }
     std::shared_ptr<ShaderUniform> getUniformByName(t_string name);
     void setUf(t_string name, void* value, GLint count = -1, bool bIgnore = false);//SetUniformByName
     void setCameraUf(std::shared_ptr<CameraNode> cam, mat4* model = nullptr);

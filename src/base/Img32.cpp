@@ -100,8 +100,8 @@ void Img32::create(int w, int h)
 /**
 *   @fn toGray()
 *   @brief Desaturate this image.
-*/
-t_byte Img32::toGray(Pixel4ub& in)
+*/
+int8_t Img32::toGray(Pixel4ub& in)
 {
     return (11 * in.r() + 16 * in.g() + 5 * in.b()) / 32;
 }
@@ -657,7 +657,7 @@ void Img32::flipRB32() {
     for (int32_t iH = 0; iH < h; ++iH) {
         for (int32_t iW = 0; iW < w; ++iW) {
             pix = getPixel32(iW, iH);
-            t_byte tmp = pix.r();
+            int8_t tmp = pix.r();
             pix.r() = pix.b();
             pix.b() = tmp;
             setPixel32(iW, iH, pix);

@@ -17,6 +17,7 @@
 *         Februrary 29, 2011    - added t_char8
 *         20140630 added double
 *    20151115 fixed stl header include
+*   082019 g'bye
 */
 #pragma once
 #ifndef __MACHINE__TYPES98467984679864954679654794673546__H__
@@ -24,38 +25,17 @@
 
 #include "../base/GlobalIncludes.h"
 
-#define CINT32 (32)
-
-
-/**
-*    Cross-platform type names.
-*/
 namespace Game {
-    //typedef double              double;
 
-    typedef std::string t_string;
-
-typedef int8_t      t_char8;    
-typedef uint16_t    t_ushort16;
-typedef int16_t     t_short16;
-typedef uint16_t    t_uint16;
-typedef int16_t     t_int16;
-typedef uint32_t    t_uint32;
-typedef int32_t     int32_t;
-typedef uint64_t    t_uint64;
-typedef int64_t     t_int64;
-typedef bool t_bool;
+typedef std::string t_string;
 
 //#endif
-typedef size_t              size_t;
 #define memsize_max (size_t)(-1)
 typedef unsigned char       t_byte;
-typedef signed int          t_sdword;
 typedef char                t_char;
-typedef long                t_long;
-typedef unsigned long       t_ulong;
 
 typedef uint64_t t_timeval;
+
 // - Max and min component sizes for integeral types.
 // call COMP_MAX<Tx>::m();        to get max size
 template < class Tx > class COMP_MAX;

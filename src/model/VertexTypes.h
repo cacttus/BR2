@@ -17,7 +17,7 @@
 
 namespace Game {
 namespace VertexUserType { typedef enum { v2_01, v3_01, v4_01, v4_02, v4_03, c4_01, c3_01, n3_01, x2_01, i2_01, u2_01, None } e; }
-typedef t_uint32 v_index32;
+typedef uint32_t v_index32;
 
 class v_v2c4x2 {
     friend class GLContext;

@@ -28,7 +28,7 @@ ObjectFile::~ObjectFile(){
 void ObjectFile::load(t_string& strFilePath, bool flipWinding)
 {
     BinaryFile bufferedFile;
-    t_uint32 iLastGroupOffset;    // - For NON relative vertexes (ones with no '-' in front of their indexes we have
+    uint32_t iLastGroupOffset;    // - For NON relative vertexes (ones with no '-' in front of their indexes we have
 
     _sFileName = strFilePath;
     _bFlipWinding = flipWinding;

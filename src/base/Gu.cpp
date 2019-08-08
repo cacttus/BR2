@@ -11,7 +11,7 @@
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
 #include "../display/Viewport.h"
- 
+
 #include "../base/GLContext.h"
 #include "../math/Algorithm.h"
 #include "../display/CameraNode.h"
@@ -67,7 +67,7 @@ bool Gu::is64Bit() {
 }
 void parsearg(std::string key, std::string value) {
     if (key == "--show-console") {
-        Gu::getEngineConfig()->setShowConsole( Game::TypeConv::strToBool(value) );
+        Gu::getEngineConfig()->setShowConsole(Game::TypeConv::strToBool(value));
         BroLogInfo("Overriding show console window: " + value);
     }
     else if (key == "--game-host") {
@@ -84,7 +84,7 @@ void parsearg(std::string arg) {
     std::string key = "";
     std::string value = "";
     //**TODO Move this crap to AppRunner
-    
+
     for (int i = 0; i < arg.length(); ++i) {
         if (arg[i] == '=') {
             isvalue = true;
@@ -105,9 +105,11 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
     //Make sure to check this on IOS
     FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
 
+    //Log
     Gu::_pLogger = std::make_shared<Logger>();
     Gu::_pLogger->init(rb);
 
+    //Config
     EngineConfigFile ef;
     ef.loadAndParse(rb->getConfigPath());
     Gu::_pEngineConfig = ef.getConfig();
@@ -118,8 +120,14 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
         parsearg(arg);
     }
 
+    //Setup Global Configruation
     getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
     getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
+
+
+    //Print some environment Diagnostics
+    BroLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
+    BroLogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
 
     if (Gu::getEngineConfig()->getShowConsole() == false) {
         OperatingSystem::hideConsole();
@@ -204,7 +212,7 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
         if (err != 0) {
             //FB should free itself.
           //  Gu::SDLFileFree(imgData);
-            BroThrowException(Stz "Could not load image "+ imgLoc+ " err code = "+ err);
+            BroThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
         }
         else {
             Img32::flipImage20161206(image, width, height);
@@ -448,7 +456,7 @@ t_string Gu::getOperatingSystemName()
     }
 
     if (vex.wServicePackMajor != 0)
-        res += Stz ", Service Pack "+ vex.wServicePackMajor+ "."+ vex.wServicePackMinor;
+        res += Stz ", Service Pack " + vex.wServicePackMajor + "." + vex.wServicePackMinor;
     else
         res += Stz ", No service pack";
 
@@ -471,7 +479,7 @@ uint32_t Gu::getCurrentThreadId() {
     uint32_t threadId = 0;
 #ifdef BRO_OS_WINDOWS
     //TODO: std::this_thread::get_id()
-    threadId = (t_uint32)GetCurrentThreadId();
+    threadId = (uint32_t)GetCurrentThreadId();
 #else
     //#error "Operating System Error"
     return std::hash<std::thread::id>()(std::this_thread::get_id());
@@ -487,7 +495,7 @@ bool Gu::isDebug() {
 #endif
 }
 std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
-    int squot = 0 , dquot = 0;
+    int squot = 0, dquot = 0;
 
     //todo - fix the delimiter thing
     std::vector<t_string> ret;
@@ -667,7 +675,7 @@ void Gu::pulsePerf() {
         for (int i = 0; i < n; ++i) {
             str2 += ".";
         }
-        _strCachedProf = _strCachedProf+ str2+ _stopw.top().pulse()+ "\n";
+        _strCachedProf = _strCachedProf + str2 + _stopw.top().pulse() + "\n";
     }
 }
 void Gu::pushPerf() {
@@ -686,6 +694,24 @@ void Gu::popPerf() {
 
 uint64_t Gu::getFrameNumber() {
     return Gu::getContext()->getFpsMeter()->getFrameNumber();
+}
+
+std::string Gu::getCPPVersion() {
+    //https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
+
+    if (__cplusplus == 201703L) {
+        return Stz "C++17";
+    }
+    else if (__cplusplus == 201403L) {
+        return Stz "C++14";
+    }
+    else if (__cplusplus == 201103L) {
+        return Stz "C++11";
+    }
+    else if (__cplusplus == 199711L) {
+        return Stz "C++98";
+    }
+    return Stz "pre-standard C++";
 }
 
 }//ns Game

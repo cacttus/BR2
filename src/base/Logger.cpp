@@ -19,7 +19,6 @@ void Logger::init(std::shared_ptr<AppBase> rb) {
 
      //*Note: do not call the #define shortcuts here.
     logInfo(Stz  "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
-    logInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
 }
 t_string Logger::createMessageHead(LogLevel level) {
     t_string str;
@@ -91,14 +90,16 @@ void Logger::logError(t_string msg, Game::Exception* e) {
 
     log(msg, createMessageHead(LogLevel::Error), e);
 }
-void Logger::logError(t_string msg, int line, char* file, Game::Exception* e) {
+void Logger::logError(t_string msg, int line, char* file, Game::Exception* e, bool hideStackTrace) {
     if (_bEnabled == false) {
         return;
     }
     SetLoggerColor_Error();
     addLineFileToMsg(msg, line, file);
 
-    msg = addStackTrace(msg);
+    if (hideStackTrace == false) {
+        msg = addStackTrace(msg);
+    }
 
     log(msg, createMessageHead(LogLevel::Error), e);
 }

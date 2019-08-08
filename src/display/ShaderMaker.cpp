@@ -1,4 +1,8 @@
-#include "../base/BaseAll.h"
+#include "../base/Gu.h"
+#include "../base/FileSystem.h"
+#include "../base/Logger.h"
+#include "../base/AppBase.h"
+#include "../base/GLContext.h"
 #include "../display/ShaderMaker.h"
 #include "../display/ShaderBase.h"
 #include "../display/ShaderSubProgram.h"
@@ -13,12 +17,9 @@
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-ShaderMaker::ShaderMaker(std::shared_ptr<GLContext> ct) : _pContext(ct)
-{
-
+ShaderMaker::ShaderMaker() {
 }
-ShaderMaker::~ShaderMaker()
-{
+ShaderMaker::~ShaderMaker() {
     //Delete all Shaders
     //DELETE_VECTOR_ELEMENTS(_vecShaders);
     _pShaderCache = nullptr;
@@ -33,8 +34,8 @@ void ShaderMaker::initialize(std::shared_ptr<AppBase> mainRoom) {
     t_string cacheDir = FileSystem::combinePath(assetPath, mainRoom->getCacheDir());
     t_string shadersDir = FileSystem::combinePath(assetPath, mainRoom->getShadersDir());
 
-    _pShaderCache = std::make_shared<ShaderCache>(_pContext, cacheDir);
-    _pShaderCompiler = std::make_shared<ShaderCompiler>(_pContext, shadersDir);
+    _pShaderCache = std::make_shared<ShaderCache>( cacheDir);
+    _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getContext(), shadersDir);
 
     //Single VT shaders
     _pImageShader = makeShader(std::vector<t_string> { "f_v3x2_diffuse.vs", "f_v3x2_diffuse.ps" });
@@ -97,9 +98,9 @@ std::shared_ptr<ShaderBase> ShaderMaker::getValidShaderForVertexType(ShaderMap& 
 
 void ShaderMaker::getComputeLimits() {
 
-    _pContext->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &_maxWorkGroupDims[0]);
-    _pContext->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &_maxWorkGroupDims[1]);
-    _pContext->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &_maxWorkGroupDims[2]);
+    Gu::getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &_maxWorkGroupDims[0]);
+    Gu::getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &_maxWorkGroupDims[1]);
+    Gu::getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &_maxWorkGroupDims[2]);
 
     GLint maxBindings;
     glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &maxBindings);
@@ -121,24 +122,29 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<t_string>& vecFi
     //  3) We then TRY TO GET THE CACHED PROGRAM
     //          This is a problem.  We should attempt to get the cached program first
     //  4) Then we compile/link all programs
-    try
-    {
-        BroLogInfo("\r\n------------------------------\r\nShaderMaker: Processing " + vecFiles.size() + " files.");
+    try {
         removeDuplicateSourceFiles(vecFiles);
         t_string strShaderName = getShaderNameFromFileNames(vecFiles);
         fullyQualifyFiles(vecFiles);
+        BroLogInfo("Making '" + strShaderName + "', Processing " + vecFiles.size() + " files.");
 
-        BroLogInfo("Processing Shader: " + strShaderName);
+        pShader = _pShaderCache->tryLoadCachedBinary(strShaderName, vecFiles);
 
-        loadShaderSubPrograms(vecFiles, vecSubProgs);
-        if (checkForErrors(vecSubProgs, pShader)) {
-            return nullptr;
+        if (pShader != nullptr) {
+            pShader->setProgramStatus(ShaderStatus::Linked);
+            _mapPrograms.insert(std::make_pair(pShader->getNameHashed(), pShader));
         }
+        else {
+            loadSubPrograms(vecFiles, vecSubProgs);
+            if (checkForErrors(vecSubProgs, pShader)) {
+                return nullptr;
+            }
 
-        pShader = makeProgram(vecSubProgs, strShaderName);
-        if (checkForErrors(vecSubProgs, pShader)) {
-            deleteShader(pShader);
-            return nullptr;
+            pShader = makeProgram(vecSubProgs, strShaderName);
+            if (checkForErrors(vecSubProgs, pShader)) {
+                deleteShader(pShader);
+                return nullptr;
+            }
         }
 
         parseUniforms(pShader);
@@ -159,10 +165,10 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<t_string>& vecFi
             return nullptr;
         }
 
+
         BroLogInfo("Load Success\r\n------------------------------\r\n");
     }
-    catch (Exception* ex)
-    {
+    catch (Exception* ex) {
         BroLogError(ex->what());
     }
 
@@ -171,23 +177,21 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<t_string>& vecFi
 void ShaderMaker::deleteShader(std::shared_ptr<ShaderBase> ps) {
     if (ps != nullptr) {
         std::map<Hash32, std::shared_ptr<ShaderBase>>::iterator it = _mapPrograms.find(ps->getNameHashed());
-        if (it != _mapPrograms.end())
-        {
+        if (it != _mapPrograms.end()) {
             _mapPrograms.erase(it);
         }
         // delete ps;
     }
 }
 void ShaderMaker::fullyQualifyFiles(std::vector<t_string>& vecFiles) {
-    AssertOrThrow2(_pContext->getRoom() != nullptr);
+    AssertOrThrow2(Gu::getContext()->getRoom() != nullptr);
 
     for (size_t iFile = 0; iFile < vecFiles.size(); iFile++) { // strFile : vecFiles) {
-        t_string qual = _pContext->getRoom()->makeAssetPath(_pContext->getRoom()->getShadersDir(), vecFiles[iFile]);
+        t_string qual = Gu::getContext()->getRoom()->makeAssetPath(Gu::getContext()->getRoom()->getShadersDir(), vecFiles[iFile]);
         vecFiles[iFile] = qual;
     }
 }
-t_string ShaderMaker::getShaderNameFromFileNames(std::vector<t_string>& vecFiles)
-{
+t_string ShaderMaker::getShaderNameFromFileNames(std::vector<t_string>& vecFiles) {
     t_string progName = StringUtil::empty();
 
     for (size_t iFile = 0; iFile < vecFiles.size(); ++iFile) {
@@ -202,8 +206,7 @@ t_string ShaderMaker::getShaderNameFromFileNames(std::vector<t_string>& vecFiles
 
     return progName;
 }
-t_string ShaderMaker::getGeneralErrorsAsString(bool clear)
-{
+t_string ShaderMaker::getGeneralErrorsAsString(bool clear) {
     if (_vecGeneralErrors.size() == 0) {
         return "";
     }
@@ -250,11 +253,9 @@ bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>&
     }
 
     if (errStr != "") {
-        if (StringUtil::lowercase(errStr).find("error") == t_string::npos)
-        {
+        if (StringUtil::lowercase(errStr).find("error") == t_string::npos) {
         }
-        else
-        {
+        else {
             //for (std::shared_ptr<ShaderSubProgram> sub : vecSubProgs) {
             //    sub = nullptr///delete sub;
             //}
@@ -271,8 +272,7 @@ bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>&
 
 }
 
-void ShaderMaker::loadShaderSubPrograms(std::vector<t_string>& vecFiles, std::vector<std::shared_ptr<ShaderSubProgram>>&  __out_ subProgs)
-{
+void ShaderMaker::loadSubPrograms(std::vector<t_string>& vecFiles, std::vector<std::shared_ptr<ShaderSubProgram>>& __out_ subProgs) {
     std::vector<std::shared_ptr<ShaderSubProgram>> vx;
     std::shared_ptr<ShaderSubProgram> pSubProg;
 
@@ -291,14 +291,10 @@ void ShaderMaker::loadShaderSubPrograms(std::vector<t_string>& vecFiles, std::ve
         }
     }
 }
-void ShaderMaker::removeDuplicateSourceFiles(std::vector<t_string>& vecFiles)
-{
-    for (int i = 0; i < (int)vecFiles.size(); ++i)
-    {
-        for (int j = i + 1; j < (int)vecFiles.size(); ++j)
-        {
-            if (StringUtil::lowercase(vecFiles[j]) == StringUtil::lowercase(vecFiles[i]))
-            {
+void ShaderMaker::removeDuplicateSourceFiles(std::vector<t_string>& vecFiles) {
+    for (int i = 0; i < (int)vecFiles.size(); ++i) {
+        for (int j = i + 1; j < (int)vecFiles.size(); ++j) {
+            if (StringUtil::lowercase(vecFiles[j]) == StringUtil::lowercase(vecFiles[i])) {
                 vecFiles.erase(vecFiles.begin() + j);
                 j--;
             }
@@ -313,8 +309,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::getShaderSubProgramByLocation(Dis
     }
     return nullptr;
 }
-std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc loc)
-{
+std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc loc) {
     // - See if we've already loaded the program.  If we have then compile it.
     std::shared_ptr<ShaderSubProgram> pSubProg;
 
@@ -323,7 +318,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
     if (pSubProg == nullptr) {
         //Adds subprog to map.
         pSubProg = std::make_shared<ShaderSubProgram>();
-        pSubProg->init(_pContext, loc, ShaderType::e::st_use_extension);
+        pSubProg->init(Gu::getContext(), loc, ShaderType::e::st_use_extension);
 
         _setSubPrograms.insert(pSubProg);
     }
@@ -345,8 +340,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
 
     return pSubProg;
 }
-void ShaderMaker::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pShader)
-{
+void ShaderMaker::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pShader) {
     // - Next compile it
     _pShaderCompiler->compile(pShader);
     if (pShader->getStatus() != ShaderStatus::Compiled) {
@@ -355,25 +349,12 @@ void ShaderMaker::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pSha
     }
 
 }
-std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr<ShaderSubProgram>>& vecpsp, t_string& programName)
-{
-    std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(_pContext, programName);
+std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr<ShaderSubProgram>>& vecpsp, t_string& programName) {
+    std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(programName);
     pProgram->init(); //The program must be constructed for the shader cache.
 
     //One compilation time which is the same across all sub-programs.
     time_t compileTime = time(NULL);
-
-    //TODO: 20160608 in the future, move this code up ABOVE the shader creation stage.
-    // because we're actually creating the shader objects and caching them.  If we try
-    //to access one of those shader sub programs it will fail.
-    // Try to load the cached binary. Return if successful
-    if (_pShaderCache->tryLoadCachedBinary(pProgram, vecpsp))
-    {
-        pProgram->setProgramStatus(ShaderStatus::Linked);
-        _mapPrograms.insert(std::make_pair(pProgram->getNameHashed(), pProgram));
-        return pProgram;
-    }
-
 
     // - Compile and add all sub programs
     for (std::shared_ptr<ShaderSubProgram> subProg : vecpsp) {
@@ -402,7 +383,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
 
     for (std::shared_ptr<ShaderSubProgram> subProg : pProgram->getSubPrograms()) {//size_t i = 0; i<pProgram->_vecSubPrograms.size(); ++i) {
-        _pContext->glAttachShader(pProgram->getGlId(), subProg->getGlId());
+        Gu::getContext()->glAttachShader(pProgram->getGlId(), subProg->getGlId());
         GLuint err = glGetError();
 
         if (err != GL_NO_ERROR) {
@@ -416,8 +397,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
 
     // - Issue here - do we need to validate? is it really a performance issue?
-    if (!validateShadersForProgram(pProgram))
-    {
+    if (!validateShadersForProgram(pProgram)) {
         addGeneralError("[Link] Failed to validate all shaders.");
 
         pProgram = nullptr;
@@ -426,7 +406,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
     }
 
     // - Link the program.
-    _pContext->glLinkProgram(pProgram->getGlId());
+    Gu::getContext()->glLinkProgram(pProgram->getGlId());
     pProgram->setProgramStatus(ShaderStatus::Linked);
 
     // - Add all remaining errors from the GL
@@ -439,7 +419,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
     // - Try to use it to see if we get an error, if so exit out.
     //Do not use Gd::BindSHader here -- this might fail.
-    _pContext->glUseProgram(pProgram->getGlId());
+    Gu::getContext()->glUseProgram(pProgram->getGlId());
     GLenum ex = glGetError();
     if (ex != GL_NO_ERROR) {
         t_string str = "";
@@ -461,8 +441,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
         return nullptr;
     }
-    else
-    {
+    else {
         // - set compile time.
         pProgram->setCompileTime(compileTime);
 
@@ -480,15 +459,12 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
     return pProgram;
 }
-bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp)
-{
+bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp) {
     bool retVal = true;
 
-    for (std::shared_ptr<ShaderSubProgram> subProg : psp->getSubPrograms())
-    {
-        if (!validateSubProgram(subProg, psp))
-        {
-            _pContext->glDetachShader(psp->getGlId(), subProg->getGlId());
+    for (std::shared_ptr<ShaderSubProgram> subProg : psp->getSubPrograms()) {
+        if (!validateSubProgram(subProg, psp)) {
+            Gu::getContext()->glDetachShader(psp->getGlId(), subProg->getGlId());
             psp->getLinkErrors().push_back(Stz
                 "[Link] Failed to validate sub-program " + subProg->getSourceLocation()
             );
@@ -525,19 +501,17 @@ void ShaderMaker::getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vecto
 
     // - Do your stuff
     GLsizei buf_size;
-    _pContext->glGetProgramiv(psp->getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
+    Gu::getContext()->glGetProgramiv(psp->getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
 
     char* log_out = (char*)GameMemoryManager::allocBlock(buf_size);
     GLsizei length_out;
-    _pContext->glGetProgramInfoLog(psp->getGlId(), buf_size, &length_out, log_out);
+    Gu::getContext()->glGetProgramInfoLog(psp->getGlId(), buf_size, &length_out, log_out);
 
     t_string tempStr;
     char* c = log_out;
 
-    for (int i = 0; i < length_out; ++i)
-    {
-        while ((*c) && (*c) != '\n' && (i < length_out))
-        {
+    for (int i = 0; i < length_out; ++i) {
+        while ((*c) && (*c) != '\n' && (i < length_out)) {
             tempStr += (*c);
             c++;
             i++;
@@ -561,27 +535,26 @@ std::shared_ptr<ShaderUniformBlock> ShaderMaker::getUniformBlockByName(t_string&
 void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
     GLint nUniforms = 0;
     static const int NBUFSIZ = 512;
-    t_char name[NBUFSIZ];
+    char name[NBUFSIZ];
     sb->deleteUniforms();
 
     //Uniforms
     BroLogInfo(" Parsing " + nUniforms + " shader Uniforms..");
-    _pContext->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
-    for (int32_t i = 0; i < nUniforms; ++i)
-    {
+    Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
+    for (int32_t i = 0; i < nUniforms; ++i) {
         GLint name_len = -1;
         GLint iArraySize = -1;
         GLenum uniformType = GL_ZERO;
         t_string uniformName;
 
         //Get name an d type
-        _pContext->glGetActiveUniform(sb->getGlId(), (GLuint)i, NBUFSIZ, &name_len, &iArraySize, &uniformType, (char*)name);
+        Gu::getContext()->glGetActiveUniform(sb->getGlId(), (GLuint)i, NBUFSIZ, &name_len, &iArraySize, &uniformType, (char*)name);
         AssertOrThrow2(name_len < NBUFSIZ);
         name[name_len] = 0;
         uniformName = t_string(name);
 
         //get location
-        GLint glLocation = _pContext->glGetUniformLocation((GLuint)sb->getGlId(), (GLchar*)uniformName.c_str());
+        GLint glLocation = Gu::getContext()->glGetUniformLocation((GLuint)sb->getGlId(), (GLchar*)uniformName.c_str());
 
         if (glLocation >= 0) {
             //If location >=0 - then we are not a buffer.
@@ -606,13 +579,12 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
             }
 
 
-            if (StringUtil::equals(uniformName, "gl_NumWorkGroups"))
-            {
+            if (StringUtil::equals(uniformName, "gl_NumWorkGroups")) {
                 BroLogError(" [The GPU implementation thought the system variable " + uniformName + " was a uniform variable.  This is incorrect.  Ignoring...");
                 continue;
             }
 
-            std::shared_ptr<ShaderUniform> glVar = std::make_shared<ShaderUniform>(_pContext, uniformType, glLocation, uniformName, iArraySize);
+            std::shared_ptr<ShaderUniform> glVar = std::make_shared<ShaderUniform>(Gu::getContext(), uniformType, glLocation, uniformName, iArraySize);
 
             sb->getUniforms().insert(std::make_pair(glVar->getNameHashed(), glVar));
         }
@@ -627,14 +599,14 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
 
     GLint nUniformBlocks = 0;
     static const int NBUFSIZ = 512;
-    t_char name[NBUFSIZ];
+    char name[NBUFSIZ];
 
     GLint iMaxUniformBufferBindings = 0;
     glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &iMaxUniformBufferBindings);
 
     //Uniform Blocks
     BroLogInfo(" Parsing " + nUniformBlocks + " shader Uniform Blocks..");
-    _pContext->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
+    Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
     for (int32_t iBlock = 0; iBlock < nUniformBlocks; ++iBlock) {
         t_string blockName;
         GLint blockDataSize;
@@ -642,11 +614,11 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
 
         //Because we haven't bound the block yet, the binding will be zero.
         //   GLint binding;
-        //  _pContext->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_BINDING, &binding);
-        _pContext->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize);
-        _pContext->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
+        //  Gu::getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_BINDING, &binding);
+        Gu::getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize);
+        Gu::getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
 
-        _pContext->glGetActiveUniformBlockName(sb->getGlId(), iBlock, NBUFSIZ, NULL, name);
+        Gu::getContext()->glGetActiveUniformBlockName(sb->getGlId(), iBlock, NBUFSIZ, NULL, name);
         blockName = t_string(name);
 
         std::shared_ptr<ShaderUniformBlock> pBlock;
@@ -664,10 +636,10 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
             }
 
             //set the program's buffer to be bound to this one.
-            bufferIndex = _pContext->glGetUniformBlockIndex(sb->getGlId(), blockName.c_str());
-            _pContext->glUniformBlockBinding(sb->getGlId(), bufferIndex, bindingIndex);
+            bufferIndex = Gu::getContext()->glGetUniformBlockIndex(sb->getGlId(), blockName.c_str());
+            Gu::getContext()->glUniformBlockBinding(sb->getGlId(), bufferIndex, bindingIndex);
 
-            pBlock = std::make_shared<ShaderUniformBlock>(_pContext, blockName, bufferIndex, bindingIndex, blockDataSize);
+            pBlock = std::make_shared<ShaderUniformBlock>(Gu::getContext(), blockName, bufferIndex, bindingIndex, blockDataSize);
 
             //Uniform blocks are shared between programs.  We doulbe up the reference here.
             _mapUniformBlocks.insert(std::make_pair(STRHASH(blockName), pBlock));
@@ -678,8 +650,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
         }
     }
 }
-void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb)
-{
+void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb) {
     if (!sb->confirmInit())
         return;
 
@@ -688,11 +659,10 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb)
     t_string err = "";
 
     GLsizei nAttributes;
-    _pContext->glGetProgramiv(sb->getGlId(), GL_ACTIVE_ATTRIBUTES, &nAttributes);
+    Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_ATTRIBUTES, &nAttributes);
 
     // std::vector<GlslShaderAttribute*> tempAttributes;
-    for (GLsizei iAttr = 0; iAttr < nAttributes; ++iAttr)
-    {
+    for (GLsizei iAttr = 0; iAttr < nAttributes; ++iAttr) {
         ShaderAttribute* attr = new ShaderAttribute(sb, (int32_t)iAttr);
         err += attr->getError();
 
@@ -711,8 +681,7 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb)
         sb->getAttributes().insert(attr);
     }
 
-    if (err != "")
-    {
+    if (err != "") {
         sb->setProgramStatus(ShaderStatus::e::Error);
         addGeneralError(Stz "Shader " + sb->getProgramName() + "\r\n" + err);
     }
@@ -758,10 +727,10 @@ void ShaderMaker::shaderBound(std::shared_ptr<ShaderBase> sb) {
         _pBound->unbindAllUniforms();
     }
     if (sb == nullptr) {
-        _pContext->glUseProgram(0);
+        Gu::getContext()->glUseProgram(0);
     }
     else {// if(_pBound != sb ){ //*this was causing errors because we must be calling UseProgram somewhere.
-        _pContext->glUseProgram(sb->getGlId());
+        Gu::getContext()->glUseProgram(sb->getGlId());
     }
     _pBound = sb;
 

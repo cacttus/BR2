@@ -26,7 +26,7 @@ private:
     t_string _strClass; // generation class
     MeshGenType::e _eGenType; // algorithm for generation
     t_string _strParams[MaxParams]; // params to algorithm
-    t_uint32 _uiParamCount = 0;
+    uint32_t _uiParamCount = 0;
     std::vector<MeshGenParams*> _vecSubMeshParams;
     MeshGenType::e getGenerationAlgorithmFromString(t_string str);
     bool logAndExit(t_string);

@@ -43,7 +43,7 @@ std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
     {
 
         greatestDependencyModifyTime = cacheGetGreatestModifyTimeForAllDependencies();
-        cachedImageModifyTime = FileSystem::getFileModifyTime(cachedImageLoc);
+        cachedImageModifyTime = FileSystem::getLastModifyTime(cachedImageLoc);
 
 
         if (greatestDependencyModifyTime <= cachedImageModifyTime) {
@@ -66,7 +66,7 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies()
         return 0;
     }
 
-    cacheModifyTime = FileSystem::getFileModifyTime(cachedImageLoc);
+    cacheModifyTime = FileSystem::getLastModifyTime(cachedImageLoc);
     greatestModifyTime = TIME_T_MIN;
 
     // - If any image in the loaded images is greater than x then the cache is invalid.
@@ -82,7 +82,7 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies()
                 Gu::debugBreak();
                 return 0;
             }
-            currentModifyTime = FileSystem::getFileModifyTime(strPath);
+            currentModifyTime = FileSystem::getLastModifyTime(strPath);
             greatestModifyTime = MathUtils::broMax(greatestModifyTime, currentModifyTime);
         }
     }

@@ -1,0 +1,9 @@
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/SDL2-static.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/SDL2main.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/install/local.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/install.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/SDL2.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/uninstall.dir
+C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/list_install_components.dir

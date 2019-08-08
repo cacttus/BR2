@@ -25,15 +25,15 @@
 //    float _fSize;
 //    vec3 _vOffset;
 //    Color4f _vColor;
-//    t_bool _blnWireFrame;
+//    bool _blnWireFrame;
 //    TRef(MeshSpec) _pSpec; 
 //    Cube3f* _pCube;
-//    t_uint32 _uiColorId;
+//    uint32_t _uiColorId;
 //public:
-//    UtilMeshPickBox( Cube3f* pCube, t_uint32 uiColorId);
+//    UtilMeshPickBox( Cube3f* pCube, uint32_t uiColorId);
 //    virtual ~UtilMeshPickBox() override ;
 //    
-//    void setWireFrame(t_bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
+//    void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
 //    OVERRIDES TRef(GlslShaderBase) getShader();
 //    OVERRIDES void generate();
 //    OVERRIDES void preDraw();

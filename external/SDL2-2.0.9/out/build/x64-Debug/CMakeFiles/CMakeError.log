@@ -1,0 +1,34 @@
+Performing C SOURCE FILE Test HAVE_XINPUT_GAMEPAD_EX failed with the following output:
+Change Dir: C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_8eebf 
+[1/2] Building C object CMakeFiles\cmTC_8eebf.dir\src.c.obj
+FAILED: CMakeFiles/cmTC_8eebf.dir/src.c.obj 
+C:\PROGRA~2\MICROS~1\2019\COMMUN~1\VC\Tools\MSVC\1422~1.279\bin\HostX64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 -DHAVE_XINPUT_GAMEPAD_EX /MDd /ZI /Ob0 /Od /RTC1 /JMC /showIncludes /FoCMakeFiles\cmTC_8eebf.dir\src.c.obj /FdCMakeFiles\cmTC_8eebf.dir\ /FS -c src.c
+C:\git\bottle-world\external\SDL2-2.0.9\out\build\x64-Debug\CMakeFiles\CMakeTmp\src.c(4): error C2061: syntax error: identifier 'x1'
+C:\git\bottle-world\external\SDL2-2.0.9\out\build\x64-Debug\CMakeFiles\CMakeTmp\src.c(4): error C2059: syntax error: ';'
+ninja: build stopped: subcommand failed.
+
+Source file was:
+
+        #include <windows.h>
+        #include <xinput.h>
+        XINPUT_GAMEPAD_EX x1;
+        int main(int argc, char **argv) { }
+Performing C SOURCE FILE Test HAVE_XINPUT_STATE_EX failed with the following output:
+Change Dir: C:/git/bottle-world/external/SDL2-2.0.9/out/build/x64-Debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe cmTC_5eae5 
+[1/2] Building C object CMakeFiles\cmTC_5eae5.dir\src.c.obj
+FAILED: CMakeFiles/cmTC_5eae5.dir/src.c.obj 
+C:\PROGRA~2\MICROS~1\2019\COMMUN~1\VC\Tools\MSVC\1422~1.279\bin\HostX64\x64\cl.exe  /nologo   /DWIN32 /D_WINDOWS /W3 -DHAVE_XINPUT_STATE_EX /MDd /ZI /Ob0 /Od /RTC1 /JMC /showIncludes /FoCMakeFiles\cmTC_5eae5.dir\src.c.obj /FdCMakeFiles\cmTC_5eae5.dir\ /FS -c src.c
+C:\git\bottle-world\external\SDL2-2.0.9\out\build\x64-Debug\CMakeFiles\CMakeTmp\src.c(4): error C2061: syntax error: identifier 's1'
+C:\git\bottle-world\external\SDL2-2.0.9\out\build\x64-Debug\CMakeFiles\CMakeTmp\src.c(4): error C2059: syntax error: ';'
+ninja: build stopped: subcommand failed.
+
+Source file was:
+
+        #include <windows.h>
+        #include <xinput.h>
+        XINPUT_STATE_EX s1;
+        int main(int argc, char **argv) { }

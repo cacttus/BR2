@@ -206,9 +206,9 @@ bool Package::fileExists(t_string file){
     }
 }
 
-time_t Package::getFileModifyTime(t_string str){
+time_t Package::getLastModifyTime(t_string str){
     if(isPackage() == false){
-        return FileSystem::getFileModifyTime(str);
+        return FileSystem::getLastModifyTime(str);
     }
     else {
         return 0;

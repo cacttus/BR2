@@ -67,7 +67,7 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
     Gu::checkErrorsDbg();
 
 }
-void Picker::samplePixelId(int32_t x, int32_t y, t_uint32& __out_ selectedId)
+void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId)
 {
     GLuint pixel = 0;
 

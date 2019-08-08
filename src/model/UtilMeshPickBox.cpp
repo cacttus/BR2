@@ -14,7 +14,7 @@
 //
 //namespace Game {
 //
-//UtilMeshPickBox::UtilMeshPickBox(Cube3f* pCube, t_uint32 uiColorId):
+//UtilMeshPickBox::UtilMeshPickBox(Cube3f* pCube, uint32_t uiColorId):
 //UtilMesh(GL_TRIANGLES)
 //, _blnWireFrame(true)
 //, _pCube(pCube)

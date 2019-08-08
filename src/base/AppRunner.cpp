@@ -17,6 +17,31 @@
 #include "../display/VulkanApi.h"
 
 namespace Game {
+void AppRunner::runApp(std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> app) {
+    _tvInitStartTime = Gu::getMicroSeconds();
+
+    //Root the engine FIRST so we can find the EngineConfig.dat
+    FileSystem::setExecutablePath(args[0]);
+    t_string a = FileSystem::getCurrentDirectory();
+    FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
+    t_string b = FileSystem::getCurrentDirectory();
+
+    //**Must come first before other logic
+    Gu::initGlobals(app, args);
+    {
+        initSDL(windowTitle, app);
+
+
+        if (runCommands(args) == false) {
+            // - Game Loop
+            //*Init room
+            //*Setup everything
+            //Most processing
+            runGameLoopTryCatch(app);
+        }
+    }
+    Gu::deleteGlobals();
+}
 void AppRunner::doShowError(t_string err, Exception* e) {
     if (e != nullptr) {
         OperatingSystem::showErrorDialog(e->what() + err);
@@ -168,31 +193,7 @@ void AppRunner::initNet() {
         exitApp(Stz "SDL Net could not be initialized: " + SDL_GetError(), -1);
     }
 }
-void AppRunner::runApp(std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> app) {
-    _tvInitStartTime = Gu::getMicroSeconds();
 
-    //Root the engine FIRST so we can find the EngineConfig.dat
-    FileSystem::setExecutablePath(args[0]);
-    t_string a = FileSystem::getCurrentDirectory();
-    FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
-    t_string b = FileSystem::getCurrentDirectory();
-
-    //**Must come first before other logic
-    Gu::initGlobals(app, args);
-    {
-        initSDL(windowTitle, app);
-
-
-        if (runCommands(args) == false) {
-            // - Game Loop
-            //*Init room
-            //*Setup everything
-            //Most processing
-            runGameLoopTryCatch(app);
-        }
-    }
-    Gu::deleteGlobals();
-}
 void SignalHandler(int signal) {
     BroThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
 }

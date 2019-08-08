@@ -31,8 +31,8 @@ class ShadowFrustum : public VirtualMemoryShared<ShadowFrustum> {
     GLuint _glFrameBufferId = 0;
     GLuint _glDepthTextureId;
     GLuint _glShadowMapId = 0;
-    t_uint32 _iFboWidthPixels;
-    t_uint32 _iFboHeightPixels;
+    uint32_t _iFboWidthPixels;
+    uint32_t _iFboHeightPixels;
     std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
 
     int32_t _iShadowFrustumId;

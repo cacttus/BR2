@@ -57,10 +57,10 @@
 //*/
 //RetCode MemFile::readStr(char* buf, size_t bufLen)
 //{
-//    t_uint32 len;
+//    uint32_t len;
 //    RetCode f;
 //
-//    if ((f = read((char*)&len, sizeof(t_uint32))) != GR_OK)
+//    if ((f = read((char*)&len, sizeof(uint32_t))) != GR_OK)
 //        return f;
 //
 //    if ((len + 1) > (int32_t)bufLen)

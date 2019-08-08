@@ -150,7 +150,7 @@ void Allocator<Tx>::appendToEnd(const Allocator<Tx>* in)
     // the end of itself but it was growing and so the algorithm messed up
     size_t oldCountThis = count();
     size_t oldCountIn = in->count();
-    grow((t_int64)oldCountIn);
+    grow((int64_t)oldCountIn);
     copyFrom(in->constptr(), oldCountIn, oldCountThis);
 }
 template < class Tx >
@@ -158,7 +158,7 @@ void Allocator<Tx>::appendToBeg(const Allocator<Tx>* in)
 {
     size_t oldCount = count();
     size_t oldInCount = in->count();    //must cache if we're copying a buffer to itself
-    grow((t_int64)oldInCount);
+    grow((int64_t)oldInCount);
     copyFrom((this)->constptr(), oldCount, oldInCount);
     copyFrom(in->constptr(), oldInCount, 0);
 }
@@ -395,7 +395,7 @@ void Allocator<Tx>::grow(size_t add_count, size_t itemOffset)
     if(add_count == 0)
         return;
 
-    newCount = (t_int64)count() + add_count;
+    newCount = (int64_t)count() + add_count;
 
     newData.alloca(newCount);
 

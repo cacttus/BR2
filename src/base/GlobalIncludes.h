@@ -46,6 +46,8 @@
 //needed for FLT_MAX
 #include <float.h>
 
+
+
 //for fpclassify
 #include <cmath>
 
@@ -74,6 +76,11 @@
 
 //For std::setprecision
 #include <iomanip>
+
+//C++17 Used for some Vulkan init stuff
+#include <optional>
+//C++17 For path
+#include <filesystem>
 
 #ifdef __IPHONEOS__
 //#include "CGGeometry.h"

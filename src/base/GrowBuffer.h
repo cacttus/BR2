@@ -40,7 +40,7 @@ namespace Game {
 template < class Tx >
 class GrowBuffer : public DynamicBuffer<Tx> {
 public:
-    GrowBuffer(t_uint32 iChunkSize);
+    GrowBuffer(uint32_t iChunkSize);
     OVERRIDES ~GrowBuffer() OVERRIDE;
 
     Tx* ptr();
@@ -52,7 +52,7 @@ public:
 };
 //////////////////////////////////////////////////////////////////////////
 template < typename Tx >
-GrowBuffer<Tx>::GrowBuffer(t_uint32 iChunkSize) :
+GrowBuffer<Tx>::GrowBuffer(uint32_t iChunkSize) :
     DynamicBuffer(iChunkSize)
 {
 }

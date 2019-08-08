@@ -44,7 +44,7 @@ private:
     //ProjectedRay _projectedRay;
     uint32_t _uiLastSelectedPixelId;//Note: This is relative to the last UserSelectionSet - the Id here is not fixed.
     void updatePickedPixel(int32_t x, int32_t y);
-    void samplePixelId(int32_t x, int32_t y, t_uint32& __out_ selectedId);
+    void samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId);
 
 public:
     Picker(std::shared_ptr<GLContext> pc);

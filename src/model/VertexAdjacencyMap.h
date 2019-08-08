@@ -32,8 +32,8 @@ private:
     AdjacencyMap* _vmap = nullptr;    // Maps vertex indexes to face indexes in a face buffer.
 public:
 
-    //void addMapping( t_index index, t_uint32 face_index);
-    void addMappingIgnoreDupes(v_index32 index, t_uint32 face_index);
+    //void addMapping( t_index index, uint32_t face_index);
+    void addMappingIgnoreDupes(v_index32 index, uint32_t face_index);
     FaceList* getVertexIndexMapping(v_index32 index);
 
     //+-- CTOR/DTOR --+

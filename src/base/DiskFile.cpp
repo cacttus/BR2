@@ -199,9 +199,9 @@ RetCode DiskFile::writeStrWithLen(const t_string& str)
 {
     AssertOrThrow2(state == file_opened_write);
 
-    t_uint32 len = (int32_t)str.length();
+    uint32_t len = (int32_t)str.length();
     RetCode f;
-    if((f = write((char*)&len, sizeof(t_uint32))) != GR_OK) {
+    if((f = write((char*)&len, sizeof(uint32_t))) != GR_OK) {
         return f;
     }
     f = write(str.c_str(), str.length());
@@ -215,7 +215,7 @@ RetCode DiskFile::writeStrText(const t_string& str)
 {
     AssertOrThrow2(state == file_opened_write);
 
-    t_uint32 len = (int32_t)str.length();
+    uint32_t len = (int32_t)str.length();
     RetCode f;
     f = write(str.c_str(), str.length());
     return f;
@@ -228,9 +228,9 @@ RetCode DiskFile::readStr(char* buf, size_t bufLen)
 {
     AssertOrThrow2(state == file_opened_read);
 
-    t_uint32 len;
+    uint32_t len;
     RetCode f;
-    if((f = read((char*)&len, sizeof(t_uint32))) != GR_OK) {
+    if((f = read((char*)&len, sizeof(uint32_t))) != GR_OK) {
         return f;
     }
     if((len + 1) > (int32_t)bufLen) {

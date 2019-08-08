@@ -108,8 +108,8 @@ double TypeConv::strToDouble(t_string& s) {
         return 0;
     }
     return ret;
-}
-t_byte TypeConv::strToByte(t_string& s) {
+}
+int8_t TypeConv::strToByte(t_string& s) {
     int32_t i = strToInt(s);
     return (t_byte)i;
 }
@@ -196,9 +196,9 @@ t_string TypeConv::wstrToStr(wchar_t* wstr) {
 
 //////////////////////////////////////////////////////////////////////////
 //Format Versions
-//t_string TypeConv::uintToStr(const  t_uint32 i) {
-//    t_uint32 cpy = i;
-//    t_byte buf[32];
+//t_string TypeConv::uintToStr(const  uint32_t i) {
+//    uint32_t cpy = i;
+//    int8_t buf[32];
 //    //_itoa_s( cpy, (char*)buf, 32, 10 );
 //    snprintf((char*)buf, 32, "%u", i);
 //    return t_string((char*)buf);

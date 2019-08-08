@@ -1,9 +1,93 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="bottle">
-      <UniqueIdentifier>{c45a20ad-b748-4d9e-9519-b502dc5f01e3}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="src\bottle\BlockNode.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\BottleRoom.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\BottleUtils.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\BottleWorld.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Brain25.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\CongaGui.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\GameFile.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\GameUi.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Goal25.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Goal25MoveTo.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Goal25Think.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\GodCam.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Lair.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\ObFile.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\SpriteBucket.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Tile25Spec.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\W25Config.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\W25GridMesh.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\W25MeshMaker.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WalkerSpec.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WipGrid.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\World25.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldCell.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldCellFile.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldEditor.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldEditState.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldGrid.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldMaker.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldObj.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\bottle\BlockNode.h">
@@ -95,97 +179,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\bottle\BottleRoom.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\BottleUtils.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\Brain25.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\CongaGui.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\GameFile.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\GameUi.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\Goal25.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\Goal25MoveTo.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\Goal25Think.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\GodCam.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\Lair.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\ObFile.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\SpriteBucket.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\Tile25Spec.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\W25Config.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\W25GridMesh.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\W25MeshMaker.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WalkerSpec.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WipGrid.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\World25.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldCell.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldCellFile.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldEditor.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldEditState.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldGrid.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldMaker.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\WorldObj.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\BottleWorld.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\BlockNode.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\bottle\linect.exe">
-      <Filter>bottle</Filter>
-    </None>
+    <Filter Include="bottle">
+      <UniqueIdentifier>{aba85895-6ef8-4fe5-b9c5-e9b054d39fef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

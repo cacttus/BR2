@@ -26,7 +26,7 @@ void main() {
 
     //blend distance is disatnce that the grid blends.
     float fBlendDist = 80.0f;//This can be a uniform
-    float d = clamp(1.0f - clamp(_fGsDist / fBlendDist, 0,1 ) + 0.3f, 0, 1.0) ;
+    float d = clamp(1.0f - clamp(_fGsDist / fBlendDist, 0,1 ) + 0.3f, 0.0f, 1.0f) ;
     
     d *= pow(1.0f - _fSide,4) * clamp( affect2(_fGsDist) + 0.4f, 0.0f, 1.0f);// * clamp(_t01+0.3f, 0.3f, 1.0f);//pow 1-_fSide makes the lines horizontally 'smooth'
 

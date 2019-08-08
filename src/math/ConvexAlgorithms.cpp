@@ -196,7 +196,7 @@ int32_t ConvexUtils::convexConvexTest(
                  
                  int32_t* p_h1_i_out, // Point indexes where the hulls collided
                  int32_t* p_h2_i_out,
-                 t_bool is_box        // true if we are box so we can simplify equations.
+                 bool is_box        // true if we are box so we can simplify equations.
                  )
 {
     if(is_box)

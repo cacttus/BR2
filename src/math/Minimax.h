@@ -25,7 +25,7 @@ class MinimaxParam;
 //typedef MinimaxParam<Vec3f> MpVec3;
 //typedef MinimaxParam<Vec3i> MpVec3i;
 //typedef MinimaxParam<Vec4f> MpVec4;
-//typedef MinimaxParam<t_uint32> MpUint;
+//typedef MinimaxParam<uint32_t> MpUint;
 //typedef MinimaxParam<int32_t> MpInt;
 
 /**

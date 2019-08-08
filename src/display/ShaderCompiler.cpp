@@ -67,7 +67,7 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, t_
         BroThrowException("Could not find shader file or #include file, " + location);
     }
     // - Store the greater modify time for shader cache.
-    modTime = Gu::getPackage()->getFileModifyTime((t_string)location);
+    modTime = Gu::getPackage()->getLastModifyTime((t_string)location);
     greatestModifyTime = MathUtils::broMax(modTime, greatestModifyTime);
 
     // - Load all source bytes
@@ -320,7 +320,7 @@ void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg)
             if (StringUtil::lowercase(str).find("error") != t_string::npos)
             {
                 pSubProg->debugPrintShaderSource();
-                BroLogError(str);
+                BroLogErrorNoStack(str);
                 Gu::debugBreak();
             }
             else

@@ -190,8 +190,8 @@ void ModelCache::convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::st
     if (bOnlyIfNewer) {
         if (FileSystem::fileExists(filepathText) &&
             FileSystem::fileExists(filepathBin)) {
-            time_t t0 = FileSystem::getFileModifyTime(filepathText);
-            time_t t1 = FileSystem::getFileModifyTime(filepathBin);
+            time_t t0 = FileSystem::getLastModifyTime(filepathText);
+            time_t t1 = FileSystem::getLastModifyTime(filepathBin);
             if (t1 > t0) {
                 bConvert = false;
                // BroLogInfo("Convet: Mob ",strMobName," is not newer.");

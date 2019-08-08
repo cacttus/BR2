@@ -39,15 +39,15 @@ public:
     Hash();
     virtual ~Hash() override ;
 
-    STATIC const t_uint32 Fnv_Basis_32[FNV_MAX_ALGORITHMS_32];
-    STATIC const t_uint32 Fnv_Prime_32[FNV_MAX_ALGORITHMS_32];
-    STATIC const t_uint64 Fnv_Basis_64[FNV_MAX_ALGORITHMS_64];
-    STATIC const t_uint64 Fnv_Prime_64[FNV_MAX_ALGORITHMS_64];
+    STATIC const uint32_t Fnv_Basis_32[FNV_MAX_ALGORITHMS_32];
+    STATIC const uint32_t Fnv_Prime_32[FNV_MAX_ALGORITHMS_32];
+    STATIC const uint64_t Fnv_Basis_64[FNV_MAX_ALGORITHMS_64];
+    STATIC const uint64_t Fnv_Prime_64[FNV_MAX_ALGORITHMS_64];
 
     //Fnv Algorithm and an awesome website
     //http://isthe.com/chongo/tech/comp/fnv/#FNV-1a
-    STATIC Hash32 computeStringHash32bit(const t_string& str, t_uint32 iAlgorithmIndex=0);
-    STATIC t_uint64 computeStringHash64bit(const t_string& str, t_uint64 iAlgorithmIndex=0);
+    STATIC Hash32 computeStringHash32bit(const t_string& str, uint32_t iAlgorithmIndex=0);
+    STATIC uint64_t computeStringHash64bit(const t_string& str, uint64_t iAlgorithmIndex=0);
 
     
 };

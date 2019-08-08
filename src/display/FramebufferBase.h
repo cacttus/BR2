@@ -24,7 +24,7 @@ class FramebufferBase : public VirtualMemory {
 protected:
     std::shared_ptr<GLContext> _pContext = nullptr;
     bool _bMsaaEnabled = false;
-    t_uint32 _nMsaaSamples = 0;
+    uint32_t _nMsaaSamples = 0;
     GLuint _uiGlFramebufferId = 0;
     std::vector<std::shared_ptr<RenderTarget>> _vecTargets;
     FramebufferState::e _eState = FramebufferState::e::Not_Initialized;

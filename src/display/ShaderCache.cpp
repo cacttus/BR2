@@ -1,5 +1,9 @@
-#include "../base/BaseAll.h"
 #include "../base/DiskFile.h"
+#include "../base/Logger.h"
+#include "../base/FileSystem.h"
+#include "../base/Gu.h"
+#include "../base/Oglerr.h"
+#include "../base/GLContext.h"
 
 #include "../display/ShaderCache.h"
 #include "../display/ShaderSubProgram.h"
@@ -7,9 +11,24 @@
 
 
 namespace Game {
-;
-ShaderCache::ShaderCache(std::shared_ptr<GLContext> ct, t_string cacheDir) : _pContext(ct),
-_bCacheIsSupported(false)
+ShaderCache::GLProgramBinary::GLProgramBinary(ShaderCache* cc, size_t binLength) :
+	_pShaderCache(cc),
+	_binaryLength(binLength),
+	_binaryData(NULL),
+	_compileTime(0)
+{
+	_binaryData = new char[binLength];
+
+}
+ShaderCache::GLProgramBinary::~GLProgramBinary()
+{
+	if (_binaryData) {
+		delete[] _binaryData;
+	}
+	_binaryData = NULL;
+}
+
+ShaderCache::ShaderCache(t_string cacheDir)
 {
     _strCacheDirectory = cacheDir;
     GLint n;
@@ -34,13 +53,13 @@ t_string ShaderCache::getBinaryNameFromProgramName(t_string& progName)
     return FileSystem::combinePath(_strCacheDirectory, fb);//::appendCacheDirectory(fb);
 }
 
-GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
+ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
 {
     GLint binBufSz = 0;
     GLint outLen = 0;
 
-    _pContext->glGetProgramiv(prog->getGlId(), GL_PROGRAM_BINARY_LENGTH, &binBufSz);
-    _pContext->chkErrRt();
+    Gu::getContext()->glGetProgramiv(prog->getGlId(), GL_PROGRAM_BINARY_LENGTH, &binBufSz);
+    Gu::getContext()->chkErrRt();
 
     if (binBufSz == 0 || binBufSz > MemSize::e::MEMSZ_GIG2) {
         BroThrowException("Shader program binary was 0 or exceeded " + MemSize::e::MEMSZ_GIG2 + " bytes; actual: " + binBufSz);
@@ -48,8 +67,8 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
 
     GLProgramBinary* b = new GLProgramBinary(this, binBufSz);
 
-    _pContext->glGetProgramBinary(prog->getGlId(), binBufSz, &outLen, &(b->_glFormat), (void*)b->_binaryData);
-    _pContext->chkErrRt();
+    Gu::getContext()->glGetProgramBinary(prog->getGlId(), binBufSz, &outLen, &(b->_glFormat), (void*)b->_binaryData);
+    Gu::getContext()->chkErrRt();
 
     if (binBufSz != outLen)
     {
@@ -65,83 +84,6 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
     return b;
 }
 
-/**
-*    @fn
-*    @brief Attaches the binary to the already created program object and loads it to the GPU.
-*        Prog must already have been created.
-*
-*    @return false if the program returned errors.
-*/
-bool ShaderCache::loadBinaryToGpu(std::shared_ptr<ShaderBase> prog, GLProgramBinary* bin)
-{
-    _pContext->chkErrRt();
-
-    //if prog already loaded onto GPU (finalized) then delete it.
-    if (prog->getProgramStatus() == ShaderStatus::e::Loaded) {
-        BroLogDebug("[ShaderCache] Program already loaded.  Deleting program.");
-        prog->recreateProgram();
-    }
-
-    _pContext->chkErrRt();
-
-    GLboolean b1 = _pContext->glIsProgram(prog->getGlId());
-    if (b1 == false) {
-        BroLogWarn("[ShaderCache] Program was not valid before loading to GPU");
-        return false;
-    }
-    //Pre-check for errors
-    _pContext->chkErrRt();
-
-    BroLogDebug("[ShaderCache] Loading Cached Program Binary to GPU");
-    _pContext->glProgramBinary(prog->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
-    if (_pContext->chkErrRt(true)) {
-        //If we have en error here, we failed to load the binary.
-        BroLogWarn("Failed to load binary to GPU - we might be on a different platform.");
-        return false;
-    }
-
-    //Print Log
-    std::vector<t_string> inf;
-    prog->getProgramErrorLog(inf);
-    for (size_t i = 0; i < inf.size(); ++i) {
-        BroLogWarn("   " + inf[i]);
-    }
-
-    //validate program.
-    GLint iValid;
-    _pContext->glValidateProgram(prog->getGlId());
-    _pContext->chkErrRt();
-
-    _pContext->glGetProgramiv(prog->getGlId(), GL_VALIDATE_STATUS, (GLint*)&iValid);
-    _pContext->chkErrRt();
-
-    if (iValid == GL_FALSE)
-    {
-        // Program load faiiled
-        BroLogWarn("glValidateProgram says program binary load failed.  Check the above logs for errors.");
-        return false;
-    }
-
-    GLboolean b2 = _pContext->glIsProgram(prog->getGlId());
-    _pContext->chkErrRt();
-    if (b2 == false) {
-        BroThrowException("[ShaderCache] glIsProgram says program was not valid after loading to GPU");
-    }
-
-    prog->bind();
-    // - If the program failed to load it will raise an error after failing to bind.
-    GLenum e = glGetError();
-    if (e != GL_NO_ERROR)
-    {
-        BroLogWarn("[ShaderCache, GL error " + StringUtil::toHex(e, true) + " , program was not valid after loading to GPU.  See log above.");
-        return false;
-    }
-
-    prog->unbind();
-    _pContext->chkErrRt();
-
-    return true;
-}
 
 
 /**
@@ -159,7 +101,7 @@ Extension: .sb
     binary (char*)
 
 */
-GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName)
+ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName)
 {
     DiskFile df;
     GLProgramBinary* pbin = nullptr;
@@ -221,8 +163,7 @@ GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName)
     return pbin;
 
 }
-void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin)
-{
+void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin) {
     DiskFile df;
     t_string binaryName = getBinaryNameFromProgramName(programName);
     t_string binPath = FileSystem::getPathFromPath(binaryName);
@@ -247,78 +188,10 @@ void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin)
 
 }
 /**
-*    @fn
+*    @fn deleteBinaryFromDisk
 *    @brief
 */
-void ShaderCache::freeLoadedBinary(GLProgramBinary* bin)
-{
-    _vecBinaries.erase(std::remove(_vecBinaries.begin(), _vecBinaries.end(), bin), _vecBinaries.end());
-    delete bin;
-}
-/**
-*    @fn
-*    @brief
-*/
-void ShaderCache::saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram)
-{
-    GLProgramBinary* bin = getBinaryFromGpu(pProgram);
-    saveBinaryToDisk(pProgram->getProgramName(), bin);
-}
-/**
-*    @fn tryLoadCachedBinary
-*    @brief Try to load the binary to disk
-*    @return false if the load failed or file was not found.
-*    @return true if the program loaded successfully
-*/
-bool ShaderCache::tryLoadCachedBinary(std::shared_ptr<ShaderBase> prog, std::vector<std::shared_ptr<ShaderSubProgram>>& subProgs)
-{
-    bool bSuccess = false;
-    GLProgramBinary* binary;
-
-    binary = getBinaryFromDisk(prog->getProgramName());
-
-    if (binary != NULL) {
-        time_t maxTime = 0;
-        for (size_t i = 0; i < subProgs.size(); ++i) {
-            maxTime = MathUtils::broMax(subProgs[i]->getSourceLastGreatestModificationTime(), maxTime);
-        }
-
-        if (binary->_compileTime >= maxTime)
-        {
-            //pProgram has already asked GL for an ID.
-            try
-            {
-                if (loadBinaryToGpu(prog, binary))
-                {
-                    BroLogDebug("Program binary load success.");
-                    bSuccess = true;
-                }
-                else
-                {
-                    BroLogWarn("Program binary load failed, or was out of date.  Deleting from disk and recreating.");
-                    deleteBinaryFromDisk(prog->getProgramName());
-                }
-            }
-            catch (Exception* e)
-            {
-                BroLogWarn("[ShaderCache] Loading program binary returned warnings/errors:\r\n");
-                BroLogWarn(e->what());
-                deleteBinaryFromDisk(prog->getProgramName());
-            }
-
-        }
-
-        freeLoadedBinary(binary);
-    }
-
-    return bSuccess;
-}
-/**
-*    @fn
-*    @brief
-*/
-void ShaderCache::deleteBinaryFromDisk(t_string& programName)
-{
+void ShaderCache::deleteBinaryFromDisk(t_string& programName) {
     t_string binaryName = getBinaryNameFromProgramName(programName);
 
     if (!FileSystem::fileExists(binaryName)) {
@@ -327,23 +200,142 @@ void ShaderCache::deleteBinaryFromDisk(t_string& programName)
 
     FileSystem::deleteFile(binaryName);
 }
-
-//////////////////////////////////////////////////////////////////////////
-GLProgramBinary::GLProgramBinary(ShaderCache* cc, size_t binLength) :
-    _pShaderCache(cc),
-    _binaryLength(binLength),
-    _binaryData(NULL),
-    _compileTime(0)
-{
-    _binaryData = new char[binLength];
-
+/**
+*    @fn freeLoadedBinary
+*    @brief
+*/
+void ShaderCache::freeLoadedBinary(GLProgramBinary* bin) {
+    _vecBinaries.erase(std::remove(_vecBinaries.begin(), _vecBinaries.end(), bin), _vecBinaries.end());
+    delete bin;
 }
-GLProgramBinary::~GLProgramBinary()
-{
-    if (_binaryData) {
-        delete[] _binaryData;
+/**
+*    @fn saveCompiledBinaryToDisk
+*    @brief 
+*/
+void ShaderCache::saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram) {
+    GLProgramBinary* bin = getBinaryFromGpu(pProgram);
+    saveBinaryToDisk(pProgram->getProgramName(), bin);
+}
+/**
+*    @fn tryLoadCachedBinary
+*    @brief Try to load a cached GLSL binary to the GPU.
+*    @return false if the load failed or file was not found.
+*    @return true if the program loaded successfully
+*/
+std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string programName, std::vector<t_string> shaderFiles) {
+    bool bSuccess = false;
+    GLProgramBinary* binary;
+    std::shared_ptr<ShaderBase> ret = nullptr;
+
+    binary = getBinaryFromDisk(programName);
+
+    if (binary != NULL) {
+        time_t maxTime = 0;
+        for(t_string file : shaderFiles){
+            FileInfo inf = FileSystem::getFileInfo(file);
+            if (!inf._exists) {
+                BroLogError("Shader source file '" + file + "' does not exist.");
+            }
+            else{
+                maxTime = MathUtils::broMax(inf._modified, maxTime);
+            }
+        }
+
+        if (binary->_compileTime >= maxTime)
+        {
+            //pProgram has already asked GL for an ID.
+            try
+            {
+                ret = loadBinaryToGpu(programName, binary);
+                if (ret==nullptr)
+                {
+                    BroLogInfo("Program binary for '" + programName + "' out of date.  Deleting from disk");
+                    deleteBinaryFromDisk(programName);
+                }
+            }
+            catch (Exception* e)
+            {
+                BroLogWarn("[ShaderCache] Loading program binary returned warnings/errors:\r\n");
+                BroLogWarn(e->what());
+                deleteBinaryFromDisk(programName);
+            }
+
+        }
+
+        freeLoadedBinary(binary);
     }
-    _binaryData = NULL;
+
+    return ret;
 }
+
+/**
+*    @fn
+*    @brief Attaches the binary to the already created program object and loads it to the GPU.
+*        Prog must already have been created.
+*
+*    @return false if the program returned errors.
+*/
+std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName, GLProgramBinary* bin) {
+    Gu::getContext()->chkErrRt();
+
+    std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(programName);
+    pProgram->init();
+    Gu::checkErrorsRt();
+
+    GLboolean b1 = Gu::getContext()->glIsProgram(pProgram->getGlId());
+    if (b1 == false) {
+        BroLogWarn("[ShaderCache] Program was not valid before loading to GPU");
+        return nullptr;
+    }
+    Gu::checkErrorsRt();
+
+    BroLogDebug("[ShaderCache] Loading Cached Program Binary to GPU");
+    Gu::getContext()->glProgramBinary(pProgram->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
+    if (Gu::getContext()->chkErrRt(true, true)) {
+        //If we have en error here, we failed to load the binary.
+        BroLogWarn("[ShaderCache] Failed to load binary to GPU - we might be on a different platform.");
+        return nullptr;
+    }
+
+    //Print Log
+    std::vector<t_string> inf;
+    pProgram->getProgramErrorLog(inf);
+    for (size_t i = 0; i < inf.size(); ++i) {
+        BroLogWarn("   " + inf[i]);
+    }
+
+    //validate program.
+    GLint iValid;
+    Gu::getContext()->glValidateProgram(pProgram->getGlId());
+    Gu::checkErrorsRt();
+    Gu::getContext()->glGetProgramiv(pProgram->getGlId(), GL_VALIDATE_STATUS, (GLint*)& iValid);
+    Gu::checkErrorsRt();
+    if (iValid == GL_FALSE) {
+        // Program load faiiled
+        BroLogWarn("[ShaderCache] glValidateProgram says program binary load failed.  Check the above logs for errors.");
+        return nullptr;
+    }
+
+    GLboolean b2 = Gu::getContext()->glIsProgram(pProgram->getGlId());
+    Gu::checkErrorsRt();
+
+    if (b2 == false) {
+        BroThrowException("[ShaderCache] glIsProgram says program was not valid after loading to GPU");
+    }
+
+    pProgram->bind();
+    // - If the program failed to load it will raise an error after failing to bind.
+    GLenum e = glGetError();
+    if (e != GL_NO_ERROR) {
+        BroLogWarn("[ShaderCache], GL error " + StringUtil::toHex(e, true) + " , program was not valid after loading to GPU.");
+        return nullptr;
+    }
+
+    pProgram->unbind();
+    Gu::checkErrorsRt();
+
+    return pProgram;
+}
+
 
 }//ns game

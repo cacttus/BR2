@@ -91,12 +91,17 @@ public:
 
     static void SDLTrySetWindowIcon(SDL_Window* w, t_string img);
 
+    static std::string getCPPVersion();
+
+    //OPENGL 
     static void pushCullFace();
     static void popCullFace();
     static void pushBlend();
     static void popBlend();
     static void pushDepthTest();
     static void popDepthTest();
+
+
     static void print(char msg);
     static void print(const char* msg);
     static void print(const t_string& msg);

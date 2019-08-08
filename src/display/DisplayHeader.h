@@ -311,6 +311,9 @@ typedef enum {
  class MtTex;
  class MtFont;
 
+ class ShaderCache;
+
+
  namespace UiEventId {
  typedef enum {
      Mouse_Lmb_Up

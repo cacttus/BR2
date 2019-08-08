@@ -166,7 +166,7 @@
 ////#define ThreadHandle HANDLE
 ////#else
 ////typedef unsigned long (__stdcall *ThreadCallbackMethod)(void*);
-////#define ThreadHandle t_uint32
+////#define ThreadHandle uint32_t
 ////#endif
 //
 ////This enum is the result of the windows thread message procedure.

@@ -50,7 +50,7 @@ public:
     STATIC void drawWireSphereShader(float fRadius, vec4& vColor, int32_t nSlices=5, int32_t nStacks=5, mat4* pMatrix = nullptr);
     STATIC void drawWireBoxShader(Box3f* box, vec3& vOffset, vec4& vColor);
     STATIC void drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor);
-    //STATIC void drawPickBox(Box3f* box, t_uint32 uiColorId);
+    //STATIC void drawPickBox(Box3f* box, uint32_t uiColorId);
     STATIC void drawAxisShader(float scale = 10.0f, float lineWidth = 2.0f, mat4& transform= mat4::identity()); // Renders an Axis at the origin.
     STATIC void drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avColor);//idk why there are 2
     STATIC void drawGridShader(float r = 1.0f, float g = 1.0f, float b = 1.0f, int32_t nSlices = 60,

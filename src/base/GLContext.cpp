@@ -66,7 +66,7 @@ void GLContext::createManagers(std::shared_ptr<AppBase> rb) {
     BroLogInfo("GLContext - Creating SoundCache");
     _pSoundCache = std::make_shared<SoundCache>();
     BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
-    _pShaderMaker = std::make_shared<ShaderMaker>(shared_from_this());
+    _pShaderMaker = std::make_shared<ShaderMaker>();
     _pShaderMaker->initialize(rb);
     BroLogInfo("GLContext -  Lights");
     _pLightManager = std::make_shared<LightManager>(shared_from_this());
@@ -155,12 +155,12 @@ void GLContext::update(float delta) {
 
 }
 
-bool GLContext::chkErrRt(bool bDoNotBreak) {
+bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
     //Enable runtime errors.
-   return OglErr::chkErrRt(shared_from_this(), bDoNotBreak);
+   return OglErr::chkErrRt(shared_from_this(), bDoNotBreak, doNotLog);
 }
-bool GLContext::chkErrDbg(bool bDoNotBreak) {
-    return OglErr::chkErrDbg(shared_from_this(), bDoNotBreak);
+bool GLContext::chkErrDbg(bool bDoNotBreak, bool doNotLog) {
+    return OglErr::chkErrDbg(shared_from_this(), bDoNotBreak, doNotLog);
 }
 
 void GLContext::makeVertexFormats() {

@@ -20,14 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\Allocator.h" />
+    <ClInclude Include="src\base\AppBase.h" />
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\BaseAll.h" />
-    <ClInclude Include="src\base\StringExtensions.h" />
-    <ClInclude Include="src\base\SyncTimer.h" />
-    <ClInclude Include="src\base\TextDataFile.h" />
     <ClInclude Include="src\base\BaseHeader.h" />
     <ClInclude Include="src\base\BinaryFile.h" />
-    <ClInclude Include="src\base\TextParser.h" />
     <ClInclude Include="src\base\BuildConfig.h" />
     <ClInclude Include="src\base\ConsoleColors.h" />
     <ClInclude Include="src\base\CoreHeader.h" />
@@ -49,6 +46,7 @@
     <ClInclude Include="src\base\GrowBuffer.h" />
     <ClInclude Include="src\base\Gu.h" />
     <ClInclude Include="src\base\Hash.h" />
+    <ClInclude Include="src\base\HashMap.h" />
     <ClInclude Include="src\base\Img32.h" />
     <ClInclude Include="src\base\IOBase.h" />
     <ClInclude Include="src\base\Logger.h" />
@@ -60,16 +58,19 @@
     <ClInclude Include="src\base\OperatingSystem.h" />
     <ClInclude Include="src\base\OperatingSystemHeader.h" />
     <ClInclude Include="src\base\Package.h" />
-    <ClInclude Include="src\base\TextConfigFile.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
-    <ClInclude Include="src\base\AppBase.h" />
     <ClInclude Include="src\base\Sequencer.h" />
     <ClInclude Include="src\base\SoundCache.h" />
     <ClInclude Include="src\base\StackInfo.h" />
     <ClInclude Include="src\base\Stopwatch.h" />
     <ClInclude Include="src\base\StreamBuffer.h" />
+    <ClInclude Include="src\base\StringExtensions.h" />
     <ClInclude Include="src\base\StringUtil.h" />
+    <ClInclude Include="src\base\SyncTimer.h" />
+    <ClInclude Include="src\base\TextConfigFile.h" />
+    <ClInclude Include="src\base\TextDataFile.h" />
+    <ClInclude Include="src\base\TextParser.h" />
     <ClInclude Include="src\base\TouchInfo.h" />
     <ClInclude Include="src\base\TreeNode.h" />
     <ClInclude Include="src\base\TStr.h" />
@@ -89,6 +90,7 @@
     <ClInclude Include="src\display\Gd.h" />
     <ClInclude Include="src\display\GpuComputeSync.h" />
     <ClInclude Include="src\display\GpuQuad3.h" />
+    <ClInclude Include="src\display\GraphicsApi.h" />
     <ClInclude Include="src\display\Gui2d.h" />
     <ClInclude Include="src\display\HappySky.h" />
     <ClInclude Include="src\display\LightManager.h" />
@@ -99,7 +101,6 @@
     <ClInclude Include="src\display\Party.h" />
     <ClInclude Include="src\display\Picker.h" />
     <ClInclude Include="src\display\QuadBufferMesh.h" />
-    <ClInclude Include="src\display\GraphicsApi.h" />
     <ClInclude Include="src\display\RenderParams.h" />
     <ClInclude Include="src\display\RenderPipe.h" />
     <ClInclude Include="src\display\RenderSettings.h" />
@@ -129,7 +130,6 @@
     <ClInclude Include="src\ext\lodepng.h" />
     <ClInclude Include="src\ext\pugixml\pugiconfig.hpp" />
     <ClInclude Include="src\ext\pugixml\pugixml.hpp" />
-    <ClInclude Include="src\ext\stb_truetype-old.h" />
     <ClInclude Include="src\ext\stb_truetype.h" />
     <ClInclude Include="src\math\Algorithm.h" />
     <ClInclude Include="src\math\BitHacks.h" />
@@ -208,12 +208,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\Allocator.cpp" />
+    <ClCompile Include="src\base\AppBase.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
-    <ClCompile Include="src\base\StringExtensions.cpp" />
-    <ClCompile Include="src\base\SyncTimer.cpp" />
-    <ClCompile Include="src\base\TextDataFile.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
-    <ClCompile Include="src\base\TextParser.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
@@ -231,6 +228,7 @@
     <ClCompile Include="src\base\GrowBuffer.cpp" />
     <ClCompile Include="src\base\Gu.cpp" />
     <ClCompile Include="src\base\Hash.cpp" />
+    <ClCompile Include="src\base\HashMap.cpp" />
     <ClCompile Include="src\base\Img32.cpp" />
     <ClCompile Include="src\base\IOBase.cpp" />
     <ClCompile Include="src\base\Logger.cpp" />
@@ -240,15 +238,18 @@
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />
     <ClCompile Include="src\base\Package.cpp" />
-    <ClCompile Include="src\base\TextConfigFile.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
-    <ClCompile Include="src\base\AppBase.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
     <ClCompile Include="src\base\SoundCache.cpp" />
     <ClCompile Include="src\base\StackInfo.cpp" />
     <ClCompile Include="src\base\Stopwatch.cpp" />
     <ClCompile Include="src\base\StreamBuffer.cpp" />
+    <ClCompile Include="src\base\StringExtensions.cpp" />
     <ClCompile Include="src\base\StringUtil.cpp" />
+    <ClCompile Include="src\base\SyncTimer.cpp" />
+    <ClCompile Include="src\base\TextConfigFile.cpp" />
+    <ClCompile Include="src\base\TextDataFile.cpp" />
+    <ClCompile Include="src\base\TextParser.cpp" />
     <ClCompile Include="src\base\TouchInfo.cpp" />
     <ClCompile Include="src\base\TreeNode.cpp" />
     <ClCompile Include="src\base\TypeConv.cpp" />
@@ -264,6 +265,7 @@
     <ClCompile Include="src\display\Gd.cpp" />
     <ClCompile Include="src\display\GpuComputeSync.cpp" />
     <ClCompile Include="src\display\GpuQuad3.cpp" />
+    <ClCompile Include="src\display\GraphicsApi.cpp" />
     <ClCompile Include="src\display\Gui2d.cpp" />
     <ClCompile Include="src\display\HappySky.cpp" />
     <ClCompile Include="src\display\LightManager.cpp" />
@@ -274,7 +276,6 @@
     <ClCompile Include="src\display\Party.cpp" />
     <ClCompile Include="src\display\Picker.cpp" />
     <ClCompile Include="src\display\QuadBufferMesh.cpp" />
-    <ClCompile Include="src\display\GraphicsApi.cpp" />
     <ClCompile Include="src\display\RenderParams.cpp" />
     <ClCompile Include="src\display\RenderPipe.cpp" />
     <ClCompile Include="src\display\RenderSettings.cpp" />
@@ -375,33 +376,33 @@
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>core</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Shake</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -482,6 +483,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
       <StructMemberAlignment>Default</StructMemberAlignment>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

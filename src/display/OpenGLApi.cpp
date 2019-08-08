@@ -171,8 +171,8 @@ void OpenGLApi::checkForOpenGlMinimumVersion(int required_version, int required_
     BroLogInfo("\n"
         + "   OpenGL version " + ver + "." + subver + ".\n"
         + "   GLSL version:          " + shad_ver + "." + shad_subver + "\n"
-        + "   Graphics unit:         " + renderer + "\n"
-        + "   Graphics unit Vendor:  " + vendor + "\n"
+        + "   GPU:         " + renderer + "\n"
+        + "   GPU Vendor:  " + vendor + "\n"
     );
 
     if (ver < required_version || (ver >= required_subversion && subver < required_subversion)) {
@@ -185,7 +185,6 @@ void OpenGLApi::checkForOpenGlMinimumVersion(int required_version, int required_
             + " This application requires OpenGL version " + rver + ".\n"
             + " The system has detected OpenGL version " + ver + "." + subver + ".\n"
             + " Update your graphics driver by going to www.nvidia.com, www.ati.com or www.intel.com.\n\n"
-
         );
     }
 
