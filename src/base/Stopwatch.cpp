@@ -1,6 +1,6 @@
 #include "../base/Stopwatch.h"
 #include "../base/Logger.h"
-#include "../base/TStr.h"
+
 #include "../base/DateTime.h"
 #include "../base/Gu.h"
 

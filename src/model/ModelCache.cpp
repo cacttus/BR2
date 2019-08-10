@@ -2,12 +2,12 @@
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-#include "../base/TStr.h"
+
 #include "../base/AppBase.h"
 #include "../base/Img32.h"
 
-#include "../display/CameraNode.h"
-#include "../display/RenderPipe.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderPipe.h"
 
 #include "../model/ModelCache.h"
 #include "../model/Model.h"
@@ -103,15 +103,15 @@ t_string ModelCache::getFilePathForMobName(t_string mobName, bool bUseBinary) {
     t_string fileExt;
     t_string modelsDir;
     if (bUseBinary) {
-        modelsDir = Gu::getContext()->getRoom()->getModelsBinDir();
+        modelsDir = Gu::getRoom()->getModelsBinDir();
         fileExt = ".mbi";
     }
     else {
-        modelsDir = Gu::getContext()->getRoom()->getModelsTextDir();
+        modelsDir = Gu::getRoom()->getModelsTextDir();
         fileExt = ".mob";
     }
 
-    t_string folderPath = Gu::getContext()->getRoom()->makeAssetPath(modelsDir, mobName);
+    t_string folderPath = Gu::getRoom()->makeAssetPath(modelsDir, mobName);
     t_string filename = FileSystem::combinePath(folderPath, mobName);
     filename += fileExt;
 
@@ -160,15 +160,15 @@ t_string ModelCache::debugPrintAllModelNames() {
     }
     strOut += ("In Dir:\n");
     std::vector<t_string> vecFiles;
-    t_string mods = Gu::getContext()->getRoom()->getModelsTextDir();
-    mods = Gu::getContext()->getRoom()->makeAssetPath(mods);
+    t_string mods = Gu::getRoom()->getModelsTextDir();
+    mods = Gu::getRoom()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
     for (t_string file : vecFiles) {
         strOut += Stz "  " +file+ "\n";
     }
 
-    mods = Gu::getContext()->getRoom()->getModelsBinDir();
-    mods = Gu::getContext()->getRoom()->makeAssetPath(mods);
+    mods = Gu::getRoom()->getModelsBinDir();
+    mods = Gu::getRoom()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
     for (t_string file : vecFiles) {
         strOut += Stz "  " +file +"\n";

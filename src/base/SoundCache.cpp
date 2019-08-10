@@ -1,6 +1,6 @@
 #include "../base/SoundCache.h"
 #include "../base/Hash.h"
-#include "../base/TStr.h"
+
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
 

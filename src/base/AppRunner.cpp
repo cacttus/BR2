@@ -1,20 +1,23 @@
 #include <signal.h>
+
 #include "../base/AppRunner.h"
 #include "../base/DebugHelper.h"
-#include "../math/MathAll.h"
-
 #include "../base/SoundCache.h"
 #include "../base/GLContext.h"
 #include "../base/Fingers.h"
 #include "../base/Logger.h"
-#include "../base/TStr.h"
+
 #include "../base/oglErr.h"
 #include "../base/OperatingSystem.h"
 #include "../base/Engine.h"
+#include "../base/FileSystem.h"
+#include "../base/EngineConfig.h"
+#include "../math/MathAll.h"
+#include "../gfx/GraphicsApi.h"
+#include "../gfx/OpenGLApi.h"
+#include "../gfx/VulkanApi.h"
 #include "../model/ModelCache.h"
-#include "../display/GraphicsApi.h"
-#include "../display/OpenGLApi.h"
-#include "../display/VulkanApi.h"
+
 
 namespace Game {
 void AppRunner::runApp(std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> app) {
@@ -224,7 +227,7 @@ bool AppRunner::handleEvents(SDL_Event * event) {
     int n = 0;
     vec2 delta;
     SDL_Scancode keyCode;
-    std::shared_ptr<Fingers> pFingers = Gu::getContext()->getFingers();
+    std::shared_ptr<Fingers> pFingers = Gu::getFingers();
 
     if (event == nullptr)
         return true;
@@ -317,7 +320,7 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
     BroLogInfo(str);
 
 
-    std::shared_ptr<Fingers> pFingers = Gu::getContext()->getFingers();
+    std::shared_ptr<Fingers> pFingers = Gu::getFingers();
 
     while (done == false) {
         Gu::beginPerf();
@@ -354,7 +357,7 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
 
 
         //**End of loop error -- Don't Remove** 
-        Gu::getContext()->chkErrRt();
+        Gu::getGraphicsContext()->chkErrRt();
         //**End of loop error -- Don't Remove** 
     }
 
@@ -405,7 +408,7 @@ bool AppRunner::runCommands(std::vector<t_string>& args) {
         //Convert Mob
         t_string strMob = args[2];
         t_string strFriendlyName = args[3];
-        Gu::getContext()->getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
+        Gu::getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
         return true;
     }
     else if (argMatch(args, "/s", 3)) {

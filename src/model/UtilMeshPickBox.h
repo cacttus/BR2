@@ -12,7 +12,7 @@
 //#ifndef __UTILMESHPICKBOX_315421104614287930312130_H__
 //#define __UTILMESHPICKBOX_315421104614287930312130_H__
 //
-//#include "../display/UtilMesh.h"
+//#include "../gfx/UtilMesh.h"
 //
 //namespace Game {
 ///**

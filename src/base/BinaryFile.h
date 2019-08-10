@@ -3,13 +3,14 @@
 #pragma once
 #ifndef __BUFFERED_FILE_H__
 #define __BUFFERED_FILE_H__
+
 #include "../base/BaseHeader.h"
 #include "../base/RetCode.h"
 #include "../base/Allocator.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-namespace Game {
 
+namespace Game {
 /**
 *    @class BinaryFile
 *    @brief Binary parsed file which is loaded into a static buffer in memory via the memory manager.
@@ -21,12 +22,7 @@ public:
 private:
     Allocator<char> _data;
     size_t iFilePos;
-    //char* _pData = nullptr;;
-    //size_t _iLength;  //length in bytes
 
-    //char* getBuffer() { return _data.ptr(); }
-    //size_t getBufferSize() { return _data.count();  }
-    //char* getBufferPtrOff(size_t i) { return (char*)(_data.ptr() + i);  }
     void validateRead(size_t outSize, size_t readCount);
     RetCode read(const char* buf, size_t count, size_t bufcount, size_t offset);
     RetCode write(const char* buf, size_t count, size_t bufcount, size_t offset);
@@ -37,8 +33,6 @@ public:
     BinaryFile(size_t buffer_size);
     virtual ~BinaryFile() override;
 
-    //char* ptr();
-    //size_t getSize();    // - Returns the size of the buffered file.
     void reallocBuffer(size_t i) { _data.alloca(i); }
 
     size_t pos(){return iFilePos;}
@@ -55,11 +49,7 @@ public:
     bool eatTo(int8_t c);
     bool eof();
 
-
     // - Read
-    //int32_t readInt32();
-    //t_string readString(size_t length);
-    //t_byte readByte();
     void readBool(bool& val, size_t offset = memsize_max);
     void readVec2(vec2& val, size_t offset = memsize_max);
     void readVec3(vec3& val, size_t offset = memsize_max);
@@ -90,18 +80,12 @@ public:
     void writeMat4(mat4&& val, size_t offset = memsize_max);
 
     void write(const char* buf, size_t bufsiz, size_t offset = memsize_max);
-    //  void readBytes(void* in, size_t in_sz, size_t read_sz);
 
-    // - Write
-    //void writeInt32(int32_t in);
-    //void writeString(t_string& in);
-    //void writeByte(t_byte in);
-    //void writeBytes(t_byte* in, size_t length);
-        
     //- File Operations
     bool loadFromDisk( t_string fileLoc, bool bAddNull = false );        // - Read the whole file into the buffer.
-    bool loadFromDisk(t_string fileLoc, size_t offset, int32_t length, bool bAddNull = false);        // - Read a part of the file.
+    bool loadFromDisk(t_string fileLoc, size_t offset, int64_t length, bool bAddNull = false);        // - Read a part of the file.
     bool writeToDisk(t_string fileLoc);        // - Read a part of the file.
+   
     std::string toString();
 
 };

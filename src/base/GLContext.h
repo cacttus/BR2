@@ -12,111 +12,43 @@
 #ifndef __GLCONTEXT_14795781163972161943_H__
 #define __GLCONTEXT_14795781163972161943_H__
 
-#include "../base/BaseAll.h"
+#include "../gfx/GraphicsContext.h"
+
 namespace Game {
-class Viewport;
-class CameraNode;
-//class MeshCache;
-//class TextBoss;
-class Party;
-class Sequencer;
-class AppBase;
-class Fingers;
-class FpsMeter;
-class FrameSync;
-class SoundCache;
-class Logger;
-class ShaderMaker;
-class EngineConfig;
-class LightManager;
-class ModelCache;
-class Picker;
-class Package;
-class PhysicsWorld;
-class Gui2d;
-class RenderSettings;
 
 /**
 *    @class GLContext
 *    @brief OpenGL render context
-*
 */
-class GLContext : public VirtualMemoryShared<GLContext> {
+class GLContext : public GraphicsContext {
 private:
-    std::shared_ptr<TexCache> _pTexCache = nullptr;
-    std::shared_ptr<CameraNode> _pCamera = nullptr;
-    //  std::shared_ptr<TextBoss> _pTextManager = nullptr;
-    std::shared_ptr<Party> _pParty = nullptr;
-    std::shared_ptr<Sequencer> _pSequencer = nullptr;
-    std::shared_ptr<AppBase> _pApp = nullptr;
-    std::shared_ptr<Fingers> _pFingers = nullptr;
-    std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
-    std::shared_ptr<FrameSync> _pFrameSync = nullptr;
-    std::shared_ptr<SoundCache> _pSoundCache = nullptr;
-    std::shared_ptr<ShaderMaker> _pShaderMaker = nullptr;
-    std::shared_ptr<LightManager> _pLightManager = nullptr;
-    std::shared_ptr<ModelCache> _pModelCache = nullptr;
-    std::shared_ptr<Picker> _pPicker = nullptr;
-    std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
-    std::shared_ptr<Package> _pPackage = nullptr;
-    std::shared_ptr<RenderSettings> _pRenderSettings = nullptr;
-    std::shared_ptr<Gui2d> _pGui2d = nullptr;
-    std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
-    EngineLoopState::e _eLoopState = EngineLoopState::Update;
-    float _fClearR = 1.0f, _fClearG = 1.0f, _fClearB = 1.0f, _fClearA = 1.0f;
-    // bool _bEnableRtErrors = false;
-     //bool _bUseMapBuffer = false;
     bool _bValid = false;
-
     bool loadOpenGLFunctions();
-    void createManagers(std::shared_ptr<AppBase> rb);
 
-    void makeVertexFormats();
+    //Render Stack.
+    static std::stack<GLenum> _eLastCullFaceStack;
+    static std::stack<GLenum> _eLastBlendStack;
+    static std::stack<GLenum> _eLastDepthTestStack;
+    static const int MaxStackSize = 32;
+
 public:
     GLContext();
     virtual ~GLContext() override;
 
-    bool load(std::shared_ptr<AppBase> br);
-    void update(float delta);
-    EngineLoopState::e getLoopState() { return _eLoopState; }
-    void setLoopState(EngineLoopState::e ee) { _eLoopState = ee; }
-    //Required Globals (cannot be NULL for the game impl.)
-    std::shared_ptr<RenderSettings> getRenderSettings() { AssertOrThrow2(_pRenderSettings != nullptr);  return _pRenderSettings; }
-    std::shared_ptr<Package> getPackage() { AssertOrThrow2(_pPackage != nullptr);  return _pPackage; }
-    std::shared_ptr<ModelCache> getModelCache() { AssertOrThrow2(_pModelCache != nullptr);  return _pModelCache; }
-    //  std::shared_ptr<TextBoss> getTextBoss() { AssertOrThrow2(_pTextManager != nullptr);return _pTextManager;}
-    std::shared_ptr<Sequencer> getSequencer() { AssertOrThrow2(_pSequencer != nullptr); return _pSequencer; }
-    std::shared_ptr<Fingers> getFingers() { AssertOrThrow2(_pFingers != nullptr); return _pFingers; }
-    std::shared_ptr<FpsMeter> getFpsMeter() { AssertOrThrow2(_pFpsMeter != nullptr); return _pFpsMeter; }
-    std::shared_ptr<FrameSync> getFrameSync() { AssertOrThrow2(_pFrameSync != nullptr); return _pFrameSync; }
-    std::shared_ptr<SoundCache> getSoundCache() { AssertOrThrow2(_pSoundCache != nullptr); return _pSoundCache; }
-    std::shared_ptr<ShaderMaker> getShaderMaker() { AssertOrThrow2(_pShaderMaker != nullptr);  return _pShaderMaker; }
-    std::shared_ptr<AppBase> getRoom() { AssertOrThrow2(_pApp != nullptr); return _pApp; }
-    std::shared_ptr<TexCache> getTexCache() { AssertOrThrow2(_pTexCache != nullptr); return _pTexCache; }
-    std::shared_ptr<LightManager> getLightManager() { AssertOrThrow2(_pLightManager != nullptr);  return _pLightManager; }
-    std::shared_ptr<Picker> getPicker() { AssertOrThrow2(_pPicker != nullptr); return _pPicker; }
-    std::shared_ptr<Gui2d> getGui() { AssertOrThrow2(_pGui2d != nullptr);  return _pGui2d; }
-    std::shared_ptr<PhysicsWorld> getPhysicsWorld() { AssertOrThrow2(_pPhysicsWorld != nullptr); return _pPhysicsWorld; }
-    std::shared_ptr<Party> getParty() { AssertOrThrow2(_pParty != nullptr); return _pParty; }
-    std::shared_ptr<CameraNode> getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
-    std::shared_ptr<EngineConfig> getConfig();
-    std::shared_ptr<RenderPipe> getRenderPipe() { return _pRenderPipe; }
-    void setRenderPipe(std::shared_ptr<RenderPipe> r) { _pRenderPipe = r; }
-    void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
+    virtual bool load(std::shared_ptr<AppBase> br) override;
+    virtual void update(float delta) override;
+    virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false) override;
+    virtual bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false) override;
+
+    virtual void pushCullFace() override;
+    virtual void popCullFace() override;
+    virtual void pushBlend() override;
+    virtual void popBlend() override;
+    virtual void pushDepthTest() override;
+    virtual void popDepthTest() override;
+
     void setLineWidth(float w);
-
-    void setCamera(std::shared_ptr<CameraNode> pc) { _pCamera = pc; }
-    void setRoom(std::shared_ptr<AppBase> b) { _pApp = b; }
-    // void setRtErrors(bool b);
-
-    float& getClearR() { return _fClearR; }
-    float& getClearG() { return _fClearG; }
-    float& getClearB() { return _fClearB; }
-    float& getClearA() { return _fClearA; }
-
-    bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false); //check for errrors
-    bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false); //check for errrors
-    bool isValid() { return _bValid; }
+   // void beginWin32InlineDebug();
 
     PFNGLUSEPROGRAMPROC         glUseProgram = nullptr;
     PFNGLBINDBUFFERARBPROC      glBindBuffer = nullptr;

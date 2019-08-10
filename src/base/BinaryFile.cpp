@@ -1,6 +1,6 @@
 #include "../base/BinaryFile.h"
 #include "../base/BaseHeader.h"
-#include "../base/TStr.h"
+
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
@@ -253,7 +253,7 @@ int32_t BinaryFile::get()
 bool BinaryFile::loadFromDisk(t_string fileLoc, bool bAddNull) {
     return loadFromDisk(fileLoc, 0, -1, bAddNull);
 }
-bool BinaryFile::loadFromDisk(t_string fileLoc, size_t offset, int32_t length, bool bAddNull) {
+bool BinaryFile::loadFromDisk(t_string fileLoc, size_t offset, int64_t length, bool bAddNull) {
     //DiskFile df;
     //df.openForRead(fileLoc);
 
@@ -278,7 +278,7 @@ bool BinaryFile::loadFromDisk(t_string fileLoc, size_t offset, int32_t length, b
         length = size;
     }
 
-    AssertOrThrow2((int64_t)size <= length);
+    AssertOrThrow2(size <= length);
 
     _data._alloca(length + 1);
     memcpy(_data.ptr(), bufRet, length);

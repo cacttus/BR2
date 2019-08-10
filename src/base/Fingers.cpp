@@ -1,5 +1,5 @@
 #include "Fingers.h"
-#include "../base/TStr.h"
+
 #include "../base/Logger.h"
 
 namespace Game {

@@ -1,7 +1,7 @@
 
 #include "../base/StringUtil.h"
 #include "../base/TypeConv.h"
-#include "../base/TStr.h"
+
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 
@@ -13,7 +13,7 @@ StringUtil::StringUtil()
 StringUtil::~StringUtil()
 {
 }
-int32_t StringUtil::compare(const t_string& a, const t_string& b)
+int32_t StringUtil::compare(t_string a, t_string b)
 {
     return a.compare(b);
 }
@@ -22,15 +22,15 @@ bool StringUtil::charIsLetterOrNumber(char c)
     int r = isalnum(c);
     return r != 0;
 }
-bool StringUtil::isEmpty(const t_string& str)
+bool StringUtil::isEmpty(t_string str)
 {
     return str.compare(t_string("")) == 0;
 }
-bool StringUtil::isNotEmpty(const t_string& str)
+bool StringUtil::isNotEmpty(t_string str)
 {
     return !StringUtil::isEmpty(str);
 }
-char* StringUtil::getBufferCopy(const t_string& str)
+char* StringUtil::getBufferCopy(t_string str)
 {
     char* buf = new char[str.length() + 1];
     memcpy(buf, str.c_str(), str.length());
@@ -60,7 +60,7 @@ t_string StringUtil::createStringFromChars(char* c1, ...)
     return str;
 }
 // - Returns the Lowercase.
-t_string StringUtil::uppercase(const t_string& in) {
+t_string StringUtil::uppercase(t_string in) {
     t_string out = "";
     for (size_t n = 0; n < in.length(); ++n) {
         out += toupper(in[n]);
@@ -69,7 +69,7 @@ t_string StringUtil::uppercase(const t_string& in) {
     return out;
 }
 // - Returns the Lowercase.
-t_string StringUtil::lowercase(const t_string& in) {
+t_string StringUtil::lowercase(t_string in) {
     t_string str2(in);
     std::transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
     return str2;
@@ -99,7 +99,7 @@ bool StringUtil::isNewline(char c)
 {
     return ((c == '\r') || (c == '\n'));
 }
-t_string StringUtil::trimBeg(const t_string& s) {
+t_string StringUtil::trimBeg(t_string s) {
     t_string e = s;
     while (e.length() && isWspaceEx(e.at(0))) {
         if (e.length() == 1) {
@@ -112,7 +112,7 @@ t_string StringUtil::trimBeg(const t_string& s) {
     }
     return e;
 }
-t_string StringUtil::trimEnd(const t_string& s) {
+t_string StringUtil::trimEnd(t_string s) {
     t_string e = s;
     while (e.length() && isWspaceEx(e.at(e.length() - 1))) {
         if (e.length() == 1)
@@ -126,7 +126,7 @@ t_string StringUtil::trimEnd(const t_string& s) {
     }
     return e;
 }
-t_string StringUtil::trim(const t_string& s)
+t_string StringUtil::trim(t_string s)
 {
     t_string e;
     e = StringUtil::trimBeg(s);
@@ -134,15 +134,15 @@ t_string StringUtil::trim(const t_string& s)
 
     return e;
 }
-t_string StringUtil::stripDoubleQuotes(const t_string& lc)
+t_string StringUtil::stripDoubleQuotes(t_string lc)
 {
     return stripAllChars(lc, '\"');
 }
-t_string StringUtil::trimDoubleQuotes(const t_string& lc)
+t_string StringUtil::trimDoubleQuotes(t_string lc)
 {
     return trim(lc, '\"');
 }
-t_string StringUtil::stripAllChars(const t_string& lc, char ch)
+t_string StringUtil::stripAllChars(t_string lc, char ch)
 {
     t_string x = lc;
     t_string::size_type last = 0;
@@ -224,7 +224,7 @@ t_string StringUtil::getPaddedNumber(int32_t number, int32_t maxNumberOfChars, c
     }
     return ret;
 }
-t_string StringUtil::repeat(const t_string& strToRepeat, int32_t nRepeats)
+t_string StringUtil::repeat(t_string strToRepeat, int32_t nRepeats)
 {
     t_string ret;
     for (int32_t i = 0; i < nRepeats; ++i)
@@ -239,15 +239,15 @@ t_string StringUtil::emptyString()
 {
     return t_string("");
 }
-bool StringUtil::equals(const t_string& a, const t_string& b)
+bool StringUtil::equals(t_string a, t_string b)
 {
     return StringUtil::compare(a, b) == 0;
 }
-bool StringUtil::doesNotEqual(const t_string& a, const t_string& b)
+bool StringUtil::doesNotEqual(t_string a, t_string b)
 {
     return !StringUtil::equals(a, b);
 }
-bool StringUtil::equalsi(const t_string& a, const t_string& b)
+bool StringUtil::equalsi(t_string a, t_string b)
 {
     if (a.length() != b.length()) {
         return false;
@@ -259,7 +259,7 @@ bool StringUtil::equalsi(const t_string& a, const t_string& b)
     }
     return true;
 }
-t_string StringUtil::replaceAll(const t_string& str, char charToRemove, char charToAdd)
+t_string StringUtil::replaceAll(t_string str, char charToRemove, char charToAdd)
 {
     t_string::size_type x = 0;
     t_string ret = str;
@@ -272,7 +272,7 @@ t_string StringUtil::replaceAll(const t_string& str, char charToRemove, char cha
     }
     return ret;
 }
-t_string StringUtil::replaceAll(const t_string& str, const t_string& strToRemove, const t_string& strToAdd)
+t_string StringUtil::replaceAll(t_string str, t_string strToRemove, t_string strToAdd)
 {
     t_string::size_type x = 0;
     t_string ret = str;
@@ -283,14 +283,14 @@ t_string StringUtil::replaceAll(const t_string& str, const t_string& strToRemove
     }
     return ret;
 }
-t_string StringUtil::trim(const t_string& astr, char trimch)
+t_string StringUtil::trim(t_string astr, char trimch)
 {
     t_string str = astr;
     str = trimBeg(str, trimch);
     str = trimEnd(str, trimch);
     return str;
 }
-t_string StringUtil::trimBeg(const t_string& astr, char trimch)
+t_string StringUtil::trimBeg(t_string astr, char trimch)
 {
     t_string str = astr;
     while (str.length() && str.at(0) == trimch) {
@@ -298,7 +298,7 @@ t_string StringUtil::trimBeg(const t_string& astr, char trimch)
     }
     return str;
 }
-t_string StringUtil::trimEnd(const t_string& astr, char trimch)
+t_string StringUtil::trimEnd(t_string astr, char trimch)
 {
     t_string str = astr;
     while (str.length() && str.at(str.length() - 1) == trimch) {
@@ -306,7 +306,7 @@ t_string StringUtil::trimEnd(const t_string& astr, char trimch)
     }
     return str;
 }
-t_string StringUtil::addCommasToNumber(const t_string& __in_ str)
+t_string StringUtil::addCommasToNumber(t_string __in_ str)
 {
     t_string ret;
 
@@ -347,7 +347,7 @@ t_string StringUtil::toDec(int value)
     ss << std::hex << value;
     return ss.str();
 }
-bool StringUtil::isDelim(char c, const t_string& delims)
+bool StringUtil::isDelim(char c, t_string delims)
 {
     return (delims.find(c) != t_string::npos);
 }
@@ -401,13 +401,13 @@ t_string StringUtil::getEscapedCharLiteral(char c)
 *    @fn
 *    @brief Split the string with a delim.
 */
-std::vector<t_string> StringUtil::split(const t_string& in, char del)
+std::vector<t_string> StringUtil::split(t_string in, char del)
 {
     std::vector<t_string> ret;
     split(in, del, ret);
     return ret;
 }
-void StringUtil::split(const t_string& in, char del, std::vector<t_string>& __out_ ret)
+void StringUtil::split(t_string in, char del, std::vector<t_string>& __out_ ret)
 {
     t_string tbuf = "";
     for (size_t n = 0; n < in.length(); ++n)
@@ -423,13 +423,13 @@ void StringUtil::split(const t_string& in, char del, std::vector<t_string>& __ou
     if (tbuf.length())
         ret.push_back(tbuf);
 }
-std::vector<t_string> StringUtil::split(const t_string& in, std::vector<char>& dels)
+std::vector<t_string> StringUtil::split(t_string in, std::vector<char>& dels)
 {
     std::vector<t_string> v;
     split(in, dels, v);
     return v;
 }
-void StringUtil::split(const t_string& __in_ in, const std::vector<char>& __in_ dels, std::vector<t_string>& __out_ ret)
+void StringUtil::split(t_string __in_ in, const std::vector<char>& __in_ dels, std::vector<t_string>& __out_ ret)
 {
     t_string tbuf = "";
     //std::vector<t_string> ret;
@@ -453,7 +453,7 @@ void StringUtil::split(const t_string& __in_ in, const std::vector<char>& __in_ 
         ret.push_back(tbuf);
     }
 }
-t_string::size_type StringUtil::findFirstOf(const t_string& sin, std::vector<char>& chars)
+t_string::size_type StringUtil::findFirstOf(t_string sin, std::vector<char>& chars)
 {
     t_string::size_type ret = t_string::npos;
     for (size_t i = 0; i < chars.size(); ++i)
@@ -465,7 +465,7 @@ t_string::size_type StringUtil::findFirstOf(const t_string& sin, std::vector<cha
     }
     return ret;
 }
-t_string StringUtil::removeNewline(const t_string& str) {
+t_string StringUtil::removeNewline(t_string str) {
     t_string out = str;
 
     if (out.length() == 0) {
@@ -489,11 +489,8 @@ t_string StringUtil::removeNewline(const t_string& str) {
 
     return out;
 }
-t_string StringUtil::appendLine(t_string& str, const char* toAppend) {
-    return appendLine(str, toAppend);
-}
 
-t_string StringUtil::appendLine(t_string& str, t_string& toAppend) {
+t_string StringUtil::appendLine(t_string str, t_string toAppend) {
     str = str+ toAppend+ "\r\n";
     return str;
 }
@@ -508,7 +505,7 @@ t_string StringUtil::generate() {
     }
     return ret;
 }
-bool StringUtil::contains(const t_string& a, const t_string& b) {
+bool StringUtil::contains(t_string a, t_string b) {
     return a.find(b) != std::string::npos;
 }
 t_string StringUtil::format(t_string aft, ...) {

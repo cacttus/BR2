@@ -1,7 +1,7 @@
 #include "../base/DiskFile.h"
 #include "../base/StringUtil.h"
 #include "../base/FileSystem.h"
-#include "../base/TStr.h"
+
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 

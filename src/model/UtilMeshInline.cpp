@@ -3,7 +3,7 @@
 //#include "../base/GlobalUtils.h"
 #include "../model/IndexBufferData.h"
 #include "../model/FragmentBufferData.h"
-//#include "../display/GLRenderSystem.h"
+//#include "../gfx/GLRenderSystem.h"
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////

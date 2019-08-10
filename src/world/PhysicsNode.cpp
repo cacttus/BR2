@@ -43,7 +43,7 @@ void PhysicsNode::setVelocity(vec3& v) {
 std::shared_ptr<TreeNode> PhysicsNode::attachChild(std::shared_ptr<TreeNode> pChild) {
     if(std::dynamic_pointer_cast<PhysicsNode>(pChild) != nullptr){
         //*Make sure the node is not in the scene.
-        Gu::getContext()->getPhysicsWorld()->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
+        Gu::getPhysicsWorld()->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
     }
     else {
         //This is not an error - like ArmatureNode will come here it's not a physicsnode.

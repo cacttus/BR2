@@ -2,10 +2,10 @@
 #include "../base/Logger.h"
 #include "../base/BinaryFile.h"
 #include "../model/Material.h"
-#include "../display/ShaderBase.h"
-#include "../display/Texture2DSpec.h"
-#include "../display/TexCache.h"
-#include "../display/RenderSettings.h"  
+#include "../gfx/ShaderBase.h"
+#include "../gfx/Texture2DSpec.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/RenderSettings.h"  
 
 namespace Game {
 Material::Material(t_string name) {
@@ -75,7 +75,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
         pShader->setUf("_ufSpecColor", (void*)&_v4Spec);  //uniform vec3 _ufSpecColor;
         pShader->setUf("_ufDiffuseColor", (void*)&_v4Diffuse);  //This is now used by all shaders because of the "intensity" parameter (per blender)
 
-        if(_bEnableTransparency && Gu::getContext()->getRenderSettings()->enableTransparency()) {
+        if(_bEnableTransparency && Gu::getRenderSettings()->enableTransparency()) {
             pShader->setUf("_fTpAlpha" , (void*)&(_fTpAlpha ));
             pShader->setUf("_fTpIOR"   , (void*)&(_fTpIOR   ));
             pShader->setUf("_fTpFilter", (void*)&(_fTpFilter));
@@ -87,8 +87,8 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
     if (u != nullptr) {
         std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Color);
         if (ts == nullptr) {
-            Gu::getContext()->glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, Gu::getContext()->getTexCache()->getDummy1x1Texture2D());
+            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1Texture2D());
             //Material has no normal map, set it to the default texture.
             pShader->setTextureUf(0);
         }
@@ -103,8 +103,8 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
     if (u2 != nullptr) {
         std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Normal);
         if (ts == nullptr) {
-            Gu::getContext()->glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, Gu::getContext()->getTexCache()->getDummy1x1NormalTexture2D());
+            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1NormalTexture2D());
             //Material has no normal map, set it to the default texture.
             pShader->setTextureUf(1);
         }

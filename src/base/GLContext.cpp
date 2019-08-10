@@ -1,14 +1,14 @@
 #include "../base/GlobalIncludes.h"
 #include "../base/BaseHeader.h"
 #include "../base/TypeConv.h"
-#include "../base/TStr.h"
+
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/Fingers.h"
 #include "../base/Sequencer.h"
-#include "../base/TStr.h"
+
 #include "../base/FrameSync.h"
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
@@ -18,15 +18,15 @@
 
 #include "../math/MathAll.h"
 
-#include "../display/RenderUtils.h"
-#include "../display/Party.h"
-#include "../display/TexCache.h"
-#include "../display/ShaderMaker.h"
-#include "../display/LightManager.h"
-#include "../display/Picker.h"
-#include "../display/Gui2d.h"
-#include "../display/CameraNode.h"
-#include "../display/RenderSettings.h"
+#include "../gfx/RenderUtils.h"
+#include "../gfx/Party.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/Picker.h"
+#include "../gfx/Gui2d.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderSettings.h"
 
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
@@ -35,205 +35,31 @@ namespace Game {
 
 GLContext::GLContext() {
     //Do not init here.
-    _fClearR = 0.02f;
-    _fClearG = 0.02f;
-    _fClearB = 0.021f;
-    _fClearA = 1.0f;
-}
-void GLContext::createManagers(std::shared_ptr<AppBase> rb) {
-    _pRenderSettings = RenderSettings::create();
-    BroLogInfo("GLContext - Building Package");
-    _pPackage = std::make_shared<Package>();
-    _pPackage->build(FileSystem::getExecutableFullPath());
-    BroLogInfo("GLContext - Creating TexCache");
-    _pTexCache = std::make_shared<TexCache>(shared_from_this());
-    //BroLogInfo("GLContext - Creating MeshCache");
-    //_pMeshCache = std::make_shared<MeshCache(this);
-  //  BroLogInfo("GLContext - Creating TextBoss");
-//    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
-    BroLogInfo("GLContext - Creating Party");
-    _pParty = std::make_shared<Party>(shared_from_this());
-    BroLogInfo("GLContext - Creating Sequencer");
-    _pSequencer = std::make_shared<Sequencer>();
-    BroLogInfo("GLContext - Creating Fingers");
-    _pFingers = std::make_shared<Fingers>();
-    _pFingers->init();
-    BroLogInfo("GLContext - Creating FpsMeter");
-    _pFpsMeter = std::make_shared<FpsMeter>();
-    BroLogInfo("GLContext - Creating FrameSync");
-    _pFrameSync = std::make_shared<FrameSync>(shared_from_this());
-    //This was commented out.  Why? 11/6
-    BroLogInfo("GLContext - Creating SoundCache");
-    _pSoundCache = std::make_shared<SoundCache>();
-    BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
-    _pShaderMaker = std::make_shared<ShaderMaker>();
-    _pShaderMaker->initialize(rb);
-    BroLogInfo("GLContext -  Lights");
-    _pLightManager = std::make_shared<LightManager>(shared_from_this());
-    BroLogInfo("GLContext - Model Cache");
-    _pModelCache = std::make_shared<ModelCache>(shared_from_this());
-    
-  //  _CrtCheckMemory();
-
-    BroLogInfo("GLContext - Picker");
-    _pPicker = std::make_shared<Picker>(shared_from_this());
-
-   // _CrtCheckMemory();
-
-    BroLogInfo("GLContext - Gui");
-    _pGui2d = std::make_shared<Gui2d>();
 
 }
+
 GLContext::~GLContext() {
-    //   BroLogInfo("GLContext - Destroying ModelCache");
-    //   DEL_MEM(_pModelCache);
-    //   //BroLogInfo("GLContext - Destroying MeshCache");
-    //   //DEL_MEM(_pMeshCache);
-    //   BroLogInfo("GLContext - Destroying Text Man");
-    //   DEL_MEM(_pTextManager);
-    //   BroLogInfo("GLContext - Destroying Party");
-    //   DEL_MEM(_pParty);
-    //   BroLogInfo("GLContext - Destroying Sequencer");
-    //   DEL_MEM(_pSequencer);
-    //   BroLogInfo("GLContext - Destroying Fingers");
-    //   DEL_MEM(_pFingers);
-    //   BroLogInfo("GLContext - Destroying FrameSync");
-    //   DEL_MEM(_pFrameSync);
-    //   BroLogInfo("GLContext - Destroying ShaderMaker");
-    //   DEL_MEM(_pShaderMaker);
-    //   BroLogInfo("GLContext - Destroying SoundCache");
-    //   DEL_MEM(_pSoundCache);
-    //   BroLogInfo("GLContext - Destroying FpsMeter");
-    //   DEL_MEM(_pFpsMeter);
-    //   BroLogInfo("GLContext - Destroying Lights");
-    //   DEL_MEM(_pLightManager);
-    //   BroLogInfo("GLContext - Destroying TexCache");
-    //   DEL_MEM(_pTexCache);
-    //   BroLogInfo("GLContext - Destroying Picker");
-    //   DEL_MEM(_pPicker);
-    //   BroLogInfo("GLContext - Destroying Package");
-    //   DEL_MEM(_pPackage);
-    //   DEL_MEM(_pRenderSettings);
+
 }
 bool GLContext::load(std::shared_ptr<AppBase> rb) {
-    _bValid = true;
-    setRoom(rb);
+    bool valid = true;
+    valid = valid && GraphicsContext::load(rb);
+    if (!valid) {
+        return false;
+    }
+    valid = valid && loadOpenGLFunctions();
 
-    BroLogInfo("GLContext - Loading GL Functions.");
-    _bValid = _bValid && loadOpenGLFunctions();
-
-    BroLogInfo("GLContext - Making Vtx Formats.");
-    makeVertexFormats();
-
-    BroLogInfo("GLContext - Creating Managers.");
-    createManagers(rb);
-
-
-
-    return isValid();
+    return valid;
 }
-std::shared_ptr<EngineConfig> GLContext::getConfig() { return Gu::getEngineConfig(); }
 void GLContext::update(float delta) {
-    if (_pSequencer != nullptr) {
-        _pSequencer->update();
-    }
-    if (_pParty != nullptr) {
-        _pParty->update(delta);
-    }
-    if (_pFpsMeter != nullptr) {
-        _pFpsMeter->update();
-    }
-    if (_pSoundCache != nullptr) {
-        _pSoundCache->update();
-    }
-    if (_pPicker != nullptr) {
-        _pPicker->update(_pFingers);
-    }
-    if (_pGui2d != nullptr) {
-        _pGui2d->update(_pFingers);
-    }
 
 }
-
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
     //Enable runtime errors.
-   return OglErr::chkErrRt(shared_from_this(), bDoNotBreak, doNotLog);
+    return OglErr::chkErrRt(shared_from_this(), bDoNotBreak, doNotLog);
 }
 bool GLContext::chkErrDbg(bool bDoNotBreak, bool doNotLog) {
     return OglErr::chkErrDbg(shared_from_this(), bDoNotBreak, doNotLog);
-}
-
-void GLContext::makeVertexFormats() {
-
-    v_v3c4x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4x2");
-    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v2c4x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v2c4x2");
-    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v3n3x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3n3x2");
-    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v3x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3x2");
-    v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v3n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3n3");
-    v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_v3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3");
-    v_v3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-
-    v_v2x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v2x2");
-    v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v2c4::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v2c4");
-    v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-
-    //v_v3c3i4i4::_pVertexFormat = new VertexFormat(this, "v_v3c3i4i4");
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_FLOAT, 3, sizeof(vec3), VertexUserType::e::v3_01);
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_FLOAT, 3, sizeof(vec3), VertexUserType::e::c3_01);
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_INT, 4, sizeof(ivec4));
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_INT, 4, sizeof(ivec4));
-
-    v_v3c3x2n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c3x2n3");
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::c3_01);
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_v3i2n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3i2n3");
-    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::i2_01);
-    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_v3c4::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4");
-    v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-
-    v_v3c4x2n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4x2n3");
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_GuiVert::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_GuiVert");
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_01);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_02);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_03);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::u2_01);
-
-
 }
 bool GLContext::loadOpenGLFunctions() {
     bool bValid = true;
@@ -398,6 +224,113 @@ void GLContext::setLineWidth(float w) {
     BroLogErrorOnce("glLineWidth not supported");
 #endif
 }
+
+void GLContext::pushCullFace() {
+    GLint cull;
+    glGetIntegerv(GL_CULL_FACE, &cull);
+
+    if (_eLastCullFaceStack.size() > MaxStackSize) {
+        BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
+    }
+    else {
+        _eLastCullFaceStack.push(cull);
+    }
+}
+void GLContext::popCullFace() {
+    GLint cull = _eLastCullFaceStack.top();
+
+    if (_eLastCullFaceStack.size() > 0) {
+        _eLastCullFaceStack.pop();
+    }
+    if (_eLastCullFaceStack.size() == 0) {
+        _eLastCullFaceStack.push(1);
+    }
+
+    if (cull) {
+        glEnable(GL_CULL_FACE);
+    }
+    else {
+        glDisable(GL_CULL_FACE);
+    }
+}
+void GLContext::pushBlend() {
+    GLint cull;
+    glGetIntegerv(GL_BLEND, &cull);
+
+    if (_eLastBlendStack.size() > MaxStackSize) {
+        BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
+    }
+    else {
+        _eLastBlendStack.push(cull);
+    }
+}
+void GLContext::popBlend() {
+    GLint cull = _eLastBlendStack.top();
+
+    if (_eLastBlendStack.size() > 0) {
+        _eLastBlendStack.pop();
+    }
+    if (_eLastBlendStack.size() == 0) {
+        _eLastBlendStack.push(1);
+    }
+
+    if (cull) {
+        glEnable(GL_BLEND);
+    }
+    else {
+        glDisable(GL_BLEND);
+    }
+}
+void GLContext::pushDepthTest() {
+    GLint cull;
+    glGetIntegerv(GL_DEPTH_TEST, &cull);
+
+    if (_eLastDepthTestStack.size() > MaxStackSize) {
+        BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
+    }
+    else {
+        _eLastDepthTestStack.push(cull);
+    }
+}
+void GLContext::popDepthTest() {
+    GLint cull = _eLastDepthTestStack.top();
+
+    if (_eLastDepthTestStack.size() > 0) {
+        _eLastDepthTestStack.pop();
+    }
+    if (_eLastDepthTestStack.size() == 0) {
+        _eLastDepthTestStack.push(1);
+    }
+
+    if (cull) {
+        glEnable(GL_DEPTH_TEST);
+    }
+    else {
+        glDisable(GL_DEPTH_TEST);
+    }
+}
+//
+//void GLContext::beginWin32InlineDebug() {
+//#ifdef _WIN32
+//#ifdef _DEBUG
+//    //**INLINE MODE -- REMOVE FOR RELEASE
+//    Gu::getShaderMaker()->shaderBound(nullptr);
+//    glBindBuffer(GL_ARRAY_BUFFER, 0);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+//    glBindVertexArray(0);
+//    chkErrDbg();
+//
+//    mat4 mProj = Gu::getCamera()->getProj();
+//    // mProj.transpose();
+//    mat4 mView = Gu::getCamera()->getView();
+//    // mView.transpose();
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadMatrixf((GLfloat*)& mProj);
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadMatrixf((GLfloat*)& mView);
+//#endif
+//#endif
+//}
 
 
 

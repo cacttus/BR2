@@ -2,8 +2,8 @@
 #include "../base/Hash.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
-#include "../display/TexCache.h"
-#include "../display/Texture2DSpec.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/Texture2DSpec.h"
 #include "../model/Material.h"
 #include "../model/MobFile.h"
 #include "../model/MeshSpec.h"
@@ -88,7 +88,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
         //Create Model Spec
         std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>(mdd->_strModName, mdd->_iFrameRate);
         _vecModelSpecs.push_back(ms);
-        Gu::getContext()->getModelCache()->addSpec(ms);
+        Gu::getModelCache()->addSpec(ms);
 
         BroLogInfo("  Caching data..");
         //Add specs to the Caches
@@ -781,7 +781,7 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
 }
 void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pSpec) {
     if (_pMatData != nullptr) {
-        std::shared_ptr<AppBase> pRoom = Gu::getContext()->getRoom();
+        std::shared_ptr<AppBase> pRoom = Gu::getRoom();
         AssertOrThrow2(pRoom != nullptr);
 
         std::shared_ptr<Texture2DSpec> diffuse = nullptr;
@@ -796,7 +796,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
             //Texture should be placed in the same directory as the mob.
             path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strDiffuseTex);
             if (FileSystem::fileExists(path)) {
-                std::shared_ptr<Texture2DSpec> pTex = Gu::getContext()->getTexCache()->getOrLoad(path);
+                std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
                 mat->addTextureBinding(pTex, TextureChannel::e::Channel0, TextureType::e::Color, _pMatData->_fDiffuseTexInfluence);
             }
             else {
@@ -807,7 +807,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
         if (StringUtil::isNotEmpty(_pMatData->_strNormalTex)) {
             path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strNormalTex);
             if (FileSystem::fileExists(path)) {
-                std::shared_ptr<Texture2DSpec> pTex = Gu::getContext()->getTexCache()->getOrLoad(path);
+                std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
                 mat->addTextureBinding(pTex, TextureChannel::e::Channel1, TextureType::e::Normal, _pMatData->_fNormalTexInfluence);
             }
             else {

@@ -5,11 +5,11 @@
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../math/Algorithm.h"
-#include "../display/Texture2DSpec.h"
-#include "../display/CameraNode.h"
-#include "../display/ShaderMaker.h"
-#include "../display/ShaderBase.h"
-#include "../display/RenderSettings.h"
+#include "../gfx/Texture2DSpec.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/RenderSettings.h"
 #include "../model/BaseNode.h"
 #include "../model/ShaderStorageBuffer.h"
 #include "../model/Model.h"
@@ -727,7 +727,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
         _pThumb = std::make_shared<Img32>();
         _pThumb->deserialize(fb);
         if(false) {
-            t_string cached = Gu::getContext()->getRoom()->makeAssetPath("cache", getName() + "-thumb-loaded.png");
+            t_string cached = Gu::getRoom()->makeAssetPath("cache", getName() + "-thumb-loaded.png");
             Gu::saveImage(cached, _pThumb);
         }
     }
@@ -762,7 +762,7 @@ void ModelSpec::serialize( std::shared_ptr<BinaryFile> fb) {
         fb->writeBool(true);
 
         if (false) {
-            t_string cached = Gu::getContext()->getRoom()->makeAssetPath("cache", getName() + "-thumb-saved.png");
+            t_string cached = Gu::getRoom()->makeAssetPath("cache", getName() + "-thumb-saved.png");
             Gu::saveImage(cached, _pThumb);
         }
 
@@ -974,9 +974,9 @@ void ModelNode::drawForward(RenderParams& rp) {
     BaseNode::drawForward(rp);
 
     //Debug Boxes and Soforth
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowArmatures()) {
-        Gu::getContext()->setLineWidth(1.0f);
-        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getContext());
+    if (Gu::getRenderSettings()->getDebug()->getShowArmatures()) {
+        Gu::getGraphicsContext()->setLineWidth(1.0f);
+        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getGraphicsContext());
         mi->setDefaultColor(vec4(1, 1, 0, 1));
         mi->begin(GL_LINES);
         for (std::shared_ptr<ArmatureNode> pa : _vecArmatures) {
@@ -985,9 +985,9 @@ void ModelNode::drawForward(RenderParams& rp) {
         mi->end();
     }
     //Recursive!
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowBoneBindBoxes()) {
-        Gu::getContext()->setLineWidth(1.0f);
-        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getContext());
+    if (Gu::getRenderSettings()->getDebug()->getShowBoneBindBoxes()) {
+        Gu::getGraphicsContext()->setLineWidth(1.0f);
+        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getGraphicsContext());
         mi->setDefaultColor(vec4(1, 1, 0, 1));
         mi->begin(GL_LINES);
         for (std::shared_ptr<ArmatureNode> an : _vecArmatures) {
@@ -995,9 +995,9 @@ void ModelNode::drawForward(RenderParams& rp) {
         }
         mi->end();
     }
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowBoneBoxes()) {
-        Gu::getContext()->setLineWidth(1.0f);
-        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getContext());
+    if (Gu::getRenderSettings()->getDebug()->getShowBoneBoxes()) {
+        Gu::getGraphicsContext()->setLineWidth(1.0f);
+        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getGraphicsContext());
         mi->setDefaultColor(vec4(1, 1, 0, 1));
         mi->begin(GL_LINES);
         for(std::shared_ptr<ArmatureNode> an : _vecArmatures){
@@ -1006,25 +1006,25 @@ void ModelNode::drawForward(RenderParams& rp) {
         mi->end();
 
     }
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowMeshBoxes()) {
-        Gu::getContext()->setLineWidth(1.0f);
-        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getContext());
+    if (Gu::getRenderSettings()->getDebug()->getShowMeshBoxes()) {
+        Gu::getGraphicsContext()->setLineWidth(1.0f);
+        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getGraphicsContext());
         mi->setDefaultColor(vec4(1, 1, 0, 1));
         mi->begin(GL_LINES);
         drawMeshBoxes(mi);
         mi->end();
     }
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowModelBoxes()) {
-        Gu::getContext()->setLineWidth(1.0f);
-        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getContext());
+    if (Gu::getRenderSettings()->getDebug()->getShowModelBoxes()) {
+        Gu::getGraphicsContext()->setLineWidth(1.0f);
+        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getGraphicsContext());
         mi->setDefaultColor(vec4(1, 1, 0, 1));
         mi->begin(GL_LINES);
         drawBoxes(mi);
         mi->end();
     }
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowModelBoundBox()) {
-        Gu::getContext()->setLineWidth(1.0f);
-        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getContext());
+    if (Gu::getRenderSettings()->getDebug()->getShowModelBoundBox()) {
+        Gu::getGraphicsContext()->setLineWidth(1.0f);
+        std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(Gu::getGraphicsContext());
         mi->setDefaultColor(vec4(1, 1, 0, 1));
         mi->begin(GL_LINES);
         drawBox(mi);

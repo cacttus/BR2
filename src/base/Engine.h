@@ -17,7 +17,7 @@
 #include "../math/Vec2x.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {

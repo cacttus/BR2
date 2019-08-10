@@ -5,6 +5,7 @@
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/DebugHelper.h"
+#include "../base/EngineConfig.h"
 
 namespace Game {
 bool OglErr::chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool doNotLog){

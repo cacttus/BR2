@@ -1,12 +1,13 @@
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
-#include "../base/TStr.h"
+
 #include "../base/DateTime.h"
 #include "../base/Gu.h"
 #include "../base/DebugHelper.h"
 #include "../base/StringUtil.h"
 #include "../base/AppBase.h"
 #include "../base/GLContext.h"
+#include "../base/FpsMeter.h"
 
 namespace Game {
 Logger::Logger() {
@@ -135,9 +136,9 @@ void Logger::logWarn(t_string msg, int line, char* file, Game::Exception* e) {
 }
 void Logger::logWarnCycle(t_string msg, int line, char* file, Game::Exception* e, int iCycle) {
     //prevents per-frame logging conundrum
-    if (Gu::getContext() != nullptr) {
-        if (Gu::getContext()->getFpsMeter() != nullptr) {
-            if (Gu::getContext()->getFpsMeter()->frameMod(iCycle)) {
+    if (Gu::getGraphicsContext() != nullptr) {
+        if (Gu::getFpsMeter() != nullptr) {
+            if (Gu::getFpsMeter()->frameMod(iCycle)) {
                 logWarn(msg, line, file, e);
             }
         }
@@ -145,9 +146,9 @@ void Logger::logWarnCycle(t_string msg, int line, char* file, Game::Exception* e
 }
 void Logger::logErrorCycle(t_string msg, int line, char* file, Game::Exception* e, int iCycle) {
     //prevents per-frame logging conundrum
-    if (Gu::getContext() != nullptr) {
-        if (Gu::getContext()->getFpsMeter() != nullptr) {
-            if (Gu::getContext()->getFpsMeter()->frameMod(iCycle)) {
+    if (Gu::getGraphicsContext() != nullptr) {
+        if (Gu::getFpsMeter() != nullptr) {
+            if (Gu::getFpsMeter()->frameMod(iCycle)) {
                 logError(msg, line, file, e);
             }
         }

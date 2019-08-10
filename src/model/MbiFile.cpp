@@ -5,11 +5,11 @@
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/AppBase.h"
-#include "../display/CameraNode.h"
-#include "../display/RenderPipe.h"
-#include "../display/TexCache.h"
-#include "../display/LightNode.h"
-#include "../display/ShadowBox.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderPipe.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/ShadowBox.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshSpec.h"
@@ -56,7 +56,7 @@ void MbiFile::postLoad(){
 bool MbiFile::loadAndParse(t_string file) {
     _fileLoc = file;
     std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
-    Gu::getContext()->getPackage()->getFile(file, fb, false);
+    Gu::getPackage()->getFile(file, fb, false);
 
     //    return false;
 
@@ -91,7 +91,7 @@ bool MbiFile::loadAndParse(t_string file) {
         ms->deserialize(fb);
         _vecModels.push_back(ms);
 
-        Gu::getContext()->getModelCache()->addSpec(ms);
+        Gu::getModelCache()->addSpec(ms);
     }
 
     
@@ -105,13 +105,13 @@ bool MbiFile::loadAndParse(t_string file) {
         Hash32 hTex;
         fb->readUint32(hTex);
 
-        std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>(Gu::getContext());
+        std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>(Gu::getGraphicsContext());
         pTex->deserialize(fb);
-        if(Gu::getContext()->getTexCache()->add(pTex->getLocation(), pTex, false) == false){
+        if(Gu::getTexCache()->add(pTex->getLocation(), pTex, false) == false){
             t_string loc = pTex->getLocation();
             //DEL_MEM(pTex);
             pTex = nullptr;
-            pTex = Gu::getContext()->getTexCache()->getOrLoad(loc);
+            pTex = Gu::getTexCache()->getOrLoad(loc);
         }
         texs.insert(std::make_pair(hTex, pTex));
     }

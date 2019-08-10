@@ -10,12 +10,34 @@
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
-#include "../display/Viewport.h"
+#include "../gfx/Viewport.h"
+
+#include "../gfx/GraphicsContext.h"
+#include "../gfx/RenderSettings.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/ShaderMaker.h"
+#include "../model/ModelCache.h"
+#include "../base/FpsMeter.h"
+#include "../base/FrameSync.h"
+#include "../base/Fingers.h"
+#include "../base/Package.h"
+#include "../base/Logger.h"
+#include "../base/Sequencer.h"
+#include "../base/SoundCache.h"
+#include "../base/FileSystem.h"
+#include "../base/EngineConfig.h"
+#include "../gfx/FlyCam.h"
+#include "../model/VertexTypes.h"
+#include "../model/VertexFormat.h"
+#include "../gfx/Gui2d.h"   
+#include "../gfx/Picker.h"   
+#include "../gfx/Party.h"   
+#include "../world/PhysicsWorld.h"
 
 #include "../base/GLContext.h"
 #include "../math/Algorithm.h"
-#include "../display/CameraNode.h"
-#include "../display/ShaderMaker.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/ShaderMaker.h"
 
 extern "C" {
     //nothings commented on Apr 12, 2016
@@ -36,27 +58,67 @@ extern "C" {
 
 namespace Game {
 //////////////////////////////////////////////////////////////////////////
+std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
+std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
+std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
+std::shared_ptr<Party> Gu::_pParty = nullptr;
+std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
+std::shared_ptr<AppBase> Gu::_pApp = nullptr;
+std::shared_ptr<Fingers> Gu::_pFingers = nullptr;
+std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
+std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
+std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
+std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
+std::shared_ptr<LightManager> Gu::_pLightManager = nullptr;
+std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
+std::shared_ptr<Picker> Gu::_pPicker = nullptr;
+std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
+std::shared_ptr<Package> Gu::_pPackage = nullptr;
+std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
+std::shared_ptr<Gui2d> Gu::_pGui2d = nullptr;
+std::shared_ptr<RenderPipe> Gu::_pRenderPipe = nullptr;
+
 std::stack<Stopwatch> Gu::_stopw;
-std::stack<GLenum> Gu::_eLastCullFaceStack;
-std::stack<GLenum> Gu::_eLastBlendStack;
-std::stack<GLenum> Gu::_eLastDepthTestStack;
+
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
-std::shared_ptr<GLContext> Gu::_pContext = nullptr;
+
 int Gu::_iSupportedDepthSize = 24;
 t_string Gu::_strCachedProf = "";
 //////////////////////////////////////////////////////////////////////////
+std::shared_ptr<GraphicsContext> Gu::getGraphicsContext() { return _pContext; }
+std::shared_ptr<RenderSettings> Gu::getRenderSettings() { AssertOrThrow2(Gu::_pRenderSettings != nullptr);  return _pRenderSettings; }
+std::shared_ptr<Package> Gu::getPackage() { AssertOrThrow2(_pPackage != nullptr);  return _pPackage; }
+std::shared_ptr<ModelCache> Gu::getModelCache() { AssertOrThrow2(_pModelCache != nullptr);  return _pModelCache; }
+std::shared_ptr<Sequencer> Gu::getSequencer() { AssertOrThrow2(_pSequencer != nullptr); return _pSequencer; }
+std::shared_ptr<Fingers> Gu::getFingers() { AssertOrThrow2(_pFingers != nullptr); return _pFingers; }
+std::shared_ptr<FpsMeter> Gu::getFpsMeter() { AssertOrThrow2(_pFpsMeter != nullptr); return _pFpsMeter; }
+std::shared_ptr<FrameSync> Gu::getFrameSync() { AssertOrThrow2(_pFrameSync != nullptr); return _pFrameSync; }
+std::shared_ptr<SoundCache> Gu::getSoundCache() { AssertOrThrow2(_pSoundCache != nullptr); return _pSoundCache; }
+std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { AssertOrThrow2(_pShaderMaker != nullptr);  return _pShaderMaker; }
+std::shared_ptr<AppBase> Gu::getRoom() { AssertOrThrow2(_pApp != nullptr); return _pApp; }
+std::shared_ptr<TexCache> Gu::getTexCache() { AssertOrThrow2(_pTexCache != nullptr); return _pTexCache; }
+std::shared_ptr<LightManager> Gu::getLightManager() { AssertOrThrow2(_pLightManager != nullptr);  return _pLightManager; }
+std::shared_ptr<Picker> Gu::getPicker() { AssertOrThrow2(_pPicker != nullptr); return _pPicker; }
+std::shared_ptr<Gui2d> Gu::getGui() { AssertOrThrow2(_pGui2d != nullptr);  return _pGui2d; }
+std::shared_ptr<PhysicsWorld> Gu::getPhysicsWorld() { AssertOrThrow2(_pPhysicsWorld != nullptr); return _pPhysicsWorld; }
+std::shared_ptr<Party> Gu::getParty() { AssertOrThrow2(_pParty != nullptr); return _pParty; }
+std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
+std::shared_ptr<EngineConfig> Gu::getConfig() { return Gu::getEngineConfig(); }
+std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return _pRenderPipe; }
+
+void Gu::setRenderPipe(std::shared_ptr<RenderPipe> r) { _pRenderPipe = r; }
+void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
+void Gu::setCamera(std::shared_ptr<CameraNode> pc) { _pCamera = pc; }
+void Gu::setRoom(std::shared_ptr<AppBase> b) { _pApp = b; }
 
 void Gu::checkErrorsDbg() {
-    getContext()->chkErrDbg();
+    Gu::getGraphicsContext()->chkErrDbg();
 }
 void Gu::checkErrorsRt() {
-    getContext()->chkErrRt();
+    Gu::getGraphicsContext()->chkErrRt();
 }
-std::shared_ptr<Package> Gu::getPackage() {
-    AssertOrThrow2(_pContext != nullptr);
-    return _pContext->getPackage();
-}
+
 bool Gu::is64Bit() {
     if (sizeof(size_t) == 8)
         return true;
@@ -136,15 +198,8 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
         OperatingSystem::showConsole();
     }
 }
-void Gu::createGLContext(std::shared_ptr<AppBase> rb) {
-    Gu::_pContext = std::make_shared<GLContext>();
-    if (!_pContext->load(rb)) {
-        BroLogError("Failed to load ctx.");
-        BroThrowException("Failed to load OpenGL Context. One or more methods were not supported.");
-    }
-
-    //Quick GL test.
-    _pContext->glUseProgram(0);
+void Gu::setContext(std::shared_ptr<GraphicsContext> rb) {
+    Gu::_pContext = rb;
 }
 void Gu::deleteGlobals() {
     // DEL_MEM(_pContext);
@@ -378,28 +433,6 @@ float Gu::fade(float t) {
 
 }
 
-void Gu::beginWin32InlineDebug(std::shared_ptr<GLContext> pContext) {
-#ifdef _WIN32
-#ifdef _DEBUG
-    //**INLINE MODE -- REMOVE FOR RELEASE
-    Gu::getContext()->getShaderMaker()->shaderBound(nullptr);
-    pContext->glBindBuffer(GL_ARRAY_BUFFER, 0);
-    pContext->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    pContext->glBindVertexArray(0);
-    pContext->chkErrDbg();
-
-    mat4 mProj = pContext->getCamera()->getProj();
-    // mProj.transpose();
-    mat4 mView = pContext->getCamera()->getView();
-    // mView.transpose();
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf((GLfloat*)&mProj);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf((GLfloat*)&mView);
-#endif
-#endif
-}
-
 void Gu::checkMemory() {
 #ifdef _WIN32
 #ifdef _DEBUG
@@ -521,90 +554,7 @@ int32_t Gu::getSupportedDepthSize() {
     ////SDL_GL_GetAttribute(i , &tmp);
     //return tmp;
 }
-void Gu::pushCullFace() {
-    GLint cull;
-    glGetIntegerv(GL_CULL_FACE, &cull);
 
-    if (_eLastCullFaceStack.size() > MaxStackSize) {
-        BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
-    }
-    else {
-        _eLastCullFaceStack.push(cull);
-    }
-}
-void Gu::popCullFace() {
-    GLint cull = _eLastCullFaceStack.top();
-
-    if (_eLastCullFaceStack.size() > 0) {
-        _eLastCullFaceStack.pop();
-    }
-    if (_eLastCullFaceStack.size() == 0) {
-        _eLastCullFaceStack.push(1);
-    }
-
-    if (cull) {
-        glEnable(GL_CULL_FACE);
-    }
-    else {
-        glDisable(GL_CULL_FACE);
-    }
-}
-void Gu::pushBlend() {
-    GLint cull;
-    glGetIntegerv(GL_BLEND, &cull);
-
-    if (_eLastBlendStack.size() > MaxStackSize) {
-        BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
-    }
-    else {
-        _eLastBlendStack.push(cull);
-    }
-}
-void Gu::popBlend() {
-    GLint cull = _eLastBlendStack.top();
-
-    if (_eLastBlendStack.size() > 0) {
-        _eLastBlendStack.pop();
-    }
-    if (_eLastBlendStack.size() == 0) {
-        _eLastBlendStack.push(1);
-    }
-
-    if (cull) {
-        glEnable(GL_BLEND);
-    }
-    else {
-        glDisable(GL_BLEND);
-    }
-}
-void Gu::pushDepthTest() {
-    GLint cull;
-    glGetIntegerv(GL_DEPTH_TEST, &cull);
-
-    if (_eLastDepthTestStack.size() > MaxStackSize) {
-        BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
-    }
-    else {
-        _eLastDepthTestStack.push(cull);
-    }
-}
-void Gu::popDepthTest() {
-    GLint cull = _eLastDepthTestStack.top();
-
-    if (_eLastDepthTestStack.size() > 0) {
-        _eLastDepthTestStack.pop();
-    }
-    if (_eLastDepthTestStack.size() == 0) {
-        _eLastDepthTestStack.push(1);
-    }
-
-    if (cull) {
-        glEnable(GL_DEPTH_TEST);
-    }
-    else {
-        glDisable(GL_DEPTH_TEST);
-    }
-}
 void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<Viewport> vp) {
     //Transforms a quad for the matrix-less gui projection.
 
@@ -648,7 +598,7 @@ void Gu::print(const char* msg) {
 //////////////////////////////////////////////////////////////////////////
 static int g_bPerfFrame = false;
 void Gu::beginPerf() {
-    if (Gu::getContext()->getFingers()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift))
+    if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift))
     {
         if (g_bPerfFrame == 0) {
             g_bPerfFrame = 1;
@@ -693,7 +643,7 @@ void Gu::popPerf() {
 }
 
 uint64_t Gu::getFrameNumber() {
-    return Gu::getContext()->getFpsMeter()->getFrameNumber();
+    return Gu::getFpsMeter()->getFrameNumber();
 }
 
 std::string Gu::getCPPVersion() {

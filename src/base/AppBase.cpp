@@ -1,9 +1,12 @@
-#include "AppBase.h"
-
+#include "../base/AppBase.h"
 #include "../base/FileSystem.h"
-#include "../base/GLContext.h"
-#include "../display/CameraNode.h"
-#include "../display/RenderUtils.h"
+#include "../base/Gu.h"
+#include "../base/EngineConfig.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderUtils.h"
+#include "../gfx/GraphicsContext.h"
+
+
 namespace Game {
 ///////////////////////////////////////////////////////////////////
 AppBase::AppBase()
@@ -13,11 +16,11 @@ AppBase::AppBase()
 AppBase::~AppBase()
 {
 
-}
+} 
 ///////////////////////////////////////////////////////////////////
 void AppBase::drawDebug() {
 
-    if(Gu::getContext() != nullptr && Gu::getContext()->getCamera() != nullptr) {
+    if(Gu::getGraphicsContext() != nullptr && Gu::getCamera() != nullptr) {
         RenderUtils::drawGridShader(1, 1, 1, 20, 5.0f);
         //RenderUtils::drawAxisShader(8.0f, 4.0f);
         //RenderUtils::drawWireSphereShader(4.0f, vec4(1, 1, 1, 1), 8, 8);
@@ -39,20 +42,20 @@ t_string AppBase::makeAssetPath(t_string folder, t_string file) {
 }
 
 bool AppBase::getStartFullscreen() {
-	AssertOrThrow2(getContext() && getContext()->getConfig());
-	return getContext()->getConfig()->getStartFullscreen();
+	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
+	return Gu::getConfig()->getStartFullscreen();
 }
 uint32_t AppBase::getStartWidth() {
-	AssertOrThrow2(getContext() && getContext()->getConfig());
-	return getContext()->getConfig()->getDefaultScreenWidth();
+	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
+	return Gu::getConfig()->getDefaultScreenWidth();
 }
 uint32_t AppBase::getStartHeight() {
-	AssertOrThrow2(getContext() && getContext()->getConfig());
-	return getContext()->getConfig()->getDefaultScreenHeight();
+	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
+	return Gu::getConfig()->getDefaultScreenHeight();
 }
 bool AppBase::getForceAspectRatio() {
-	AssertOrThrow2(getContext() && getContext()->getConfig());
-	return getContext()->getConfig()->getForceAspectRatio();
+	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
+	return Gu::getConfig()->getForceAspectRatio();
 }
 
 }//ns Game

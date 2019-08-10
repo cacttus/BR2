@@ -14,7 +14,7 @@
 
 
 #include "../base/BaseHeader.h"
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../math/MathAll.h"
 //#include "../bottle/CongaHeader.h"
 namespace Game {

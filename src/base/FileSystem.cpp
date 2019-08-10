@@ -4,7 +4,7 @@
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-#include "../base/TStr.h"
+
 #include "../base/DateTime.h"
 
 namespace Game {
@@ -20,7 +20,7 @@ FileSystem::~FileSystem()
 }
 ///////////////////////////////////////////////////////////////////
 t_string FileSystem::appendCachePathToFile(const t_string& strFileName) {
-    std::shared_ptr<AppBase> rb = Gu::getContext()->getRoom();
+    std::shared_ptr<AppBase> rb = Gu::getRoom();
     t_string ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
     return ret;
 }

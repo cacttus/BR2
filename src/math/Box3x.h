@@ -13,7 +13,7 @@
 #define __CUBE3_49452698133252756717211_H__
 
 #include "../base/BaseHeader.h"
-#include "../base/TStr.h"
+
 #include "../math/Vec3x.h"
 //#include "../math/Vector3.h"
 //#include "../math/MathHeader.h"

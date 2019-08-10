@@ -12,7 +12,7 @@
 #ifndef __VAODATAGENERIC_14904114892307368716_H__
 #define __VAODATAGENERIC_14904114892307368716_H__
 
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 #include "../model/VertexFormat.h"
 

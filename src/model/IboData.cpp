@@ -1,6 +1,6 @@
 #include "../base/BaseAll.h"
 #include "../model/IboData.h"
-//#include "../display/GLRenderSystem.h"
+//#include "../gfx/GLRenderSystem.h"
 //#include "../math/Vec2x.h"
 //#include "../math/Vector3.h"
 //#include "../math/Vector4.h"

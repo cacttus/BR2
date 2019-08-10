@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\app\AppMain.h" />
     <ClInclude Include="src\base\Allocator.h" />
     <ClInclude Include="src\base\AppBase.h" />
     <ClInclude Include="src\base\AppRunner.h" />
+    <ClInclude Include="src\base\Base.h" />
     <ClInclude Include="src\base\BaseAll.h" />
     <ClInclude Include="src\base\BaseHeader.h" />
     <ClInclude Include="src\base\BinaryFile.h" />
@@ -39,6 +41,7 @@
     <ClInclude Include="src\base\Exception.h" />
     <ClInclude Include="src\base\FileSystem.h" />
     <ClInclude Include="src\base\Fingers.h" />
+    <ClInclude Include="src\base\FpsMeter.h" />
     <ClInclude Include="src\base\FrameSync.h" />
     <ClInclude Include="src\base\GameMemory.h" />
     <ClInclude Include="src\base\GLContext.h" />
@@ -73,64 +76,64 @@
     <ClInclude Include="src\base\TextParser.h" />
     <ClInclude Include="src\base\TouchInfo.h" />
     <ClInclude Include="src\base\TreeNode.h" />
-    <ClInclude Include="src\base\TStr.h" />
     <ClInclude Include="src\base\TypeCast.h" />
     <ClInclude Include="src\base\TypeConv.h" />
     <ClInclude Include="src\base\XmlFile.h" />
-    <ClInclude Include="src\display\Atlas.h" />
-    <ClInclude Include="src\display\CameraNode.h" />
-    <ClInclude Include="src\display\DeferredFramebuffer.h" />
-    <ClInclude Include="src\display\DisplayHeader.h" />
-    <ClInclude Include="src\display\FlyCam.h" />
-    <ClInclude Include="src\display\FontTextBuffer.h" />
-    <ClInclude Include="src\display\ForwardFramebuffer.h" />
-    <ClInclude Include="src\display\FramebufferBase.h" />
-    <ClInclude Include="src\display\FrustumBase.h" />
-    <ClInclude Include="src\display\FrustumProjectionParameters.h" />
-    <ClInclude Include="src\display\Gd.h" />
-    <ClInclude Include="src\display\GpuComputeSync.h" />
-    <ClInclude Include="src\display\GpuQuad3.h" />
-    <ClInclude Include="src\display\GraphicsApi.h" />
-    <ClInclude Include="src\display\Gui2d.h" />
-    <ClInclude Include="src\display\HappySky.h" />
-    <ClInclude Include="src\display\LightManager.h" />
-    <ClInclude Include="src\display\LightNode.h" />
-    <ClInclude Include="src\display\MegaTex.h" />
-    <ClInclude Include="src\display\OpenGLApi.h" />
-    <ClInclude Include="src\display\Particles.h" />
-    <ClInclude Include="src\display\Party.h" />
-    <ClInclude Include="src\display\Picker.h" />
-    <ClInclude Include="src\display\QuadBufferMesh.h" />
-    <ClInclude Include="src\display\RenderParams.h" />
-    <ClInclude Include="src\display\RenderPipe.h" />
-    <ClInclude Include="src\display\RenderSettings.h" />
-    <ClInclude Include="src\display\RenderTarget.h" />
-    <ClInclude Include="src\display\RenderUtils.h" />
-    <ClInclude Include="src\display\ScreenProps.h" />
-    <ClInclude Include="src\display\ShaderAttribute.h" />
-    <ClInclude Include="src\display\ShaderBase.h" />
-    <ClInclude Include="src\display\ShaderCache.h" />
-    <ClInclude Include="src\display\ShaderCompiler.h" />
-    <ClInclude Include="src\display\ShaderMaker.h" />
-    <ClInclude Include="src\display\ShaderSubProgram.h" />
-    <ClInclude Include="src\display\ShaderUniform.h" />
-    <ClInclude Include="src\display\ShadowBox.h" />
-    <ClInclude Include="src\display\ShadowBoxSide.h" />
-    <ClInclude Include="src\display\ShadowFrustum.h" />
-    <ClInclude Include="src\display\TexCache.h" />
-    <ClInclude Include="src\display\TextBoss.h" />
-    <ClInclude Include="src\display\Texture2DSpec.h" />
-    <ClInclude Include="src\display\UiBase.h" />
-    <ClInclude Include="src\display\UiControls.h" />
-    <ClInclude Include="src\display\UiSkin.h" />
-    <ClInclude Include="src\display\Viewport.h" />
-    <ClInclude Include="src\display\VulkanApi.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />
     <ClInclude Include="src\ext\pugixml\pugiconfig.hpp" />
     <ClInclude Include="src\ext\pugixml\pugixml.hpp" />
     <ClInclude Include="src\ext\stb_truetype.h" />
+    <ClInclude Include="src\gfx\Atlas.h" />
+    <ClInclude Include="src\gfx\CameraNode.h" />
+    <ClInclude Include="src\gfx\GraphicsContext.h" />
+    <ClInclude Include="src\gfx\DeferredFramebuffer.h" />
+    <ClInclude Include="src\gfx\DisplayHeader.h" />
+    <ClInclude Include="src\gfx\FlyCam.h" />
+    <ClInclude Include="src\gfx\FontTextBuffer.h" />
+    <ClInclude Include="src\gfx\ForwardFramebuffer.h" />
+    <ClInclude Include="src\gfx\FramebufferBase.h" />
+    <ClInclude Include="src\gfx\FrustumBase.h" />
+    <ClInclude Include="src\gfx\FrustumProjectionParameters.h" />
+    <ClInclude Include="src\gfx\GpuComputeSync.h" />
+    <ClInclude Include="src\gfx\GpuQuad3.h" />
+    <ClInclude Include="src\gfx\GraphicsApi.h" />
+    <ClInclude Include="src\gfx\Gui2d.h" />
+    <ClInclude Include="src\gfx\HappySky.h" />
+    <ClInclude Include="src\gfx\LightManager.h" />
+    <ClInclude Include="src\gfx\LightNode.h" />
+    <ClInclude Include="src\gfx\MegaTex.h" />
+    <ClInclude Include="src\gfx\OpenGLApi.h" />
+    <ClInclude Include="src\gfx\Particles.h" />
+    <ClInclude Include="src\gfx\Party.h" />
+    <ClInclude Include="src\gfx\Picker.h" />
+    <ClInclude Include="src\gfx\QuadBufferMesh.h" />
+    <ClInclude Include="src\gfx\RenderParams.h" />
+    <ClInclude Include="src\gfx\RenderPipe.h" />
+    <ClInclude Include="src\gfx\RenderSettings.h" />
+    <ClInclude Include="src\gfx\RenderTarget.h" />
+    <ClInclude Include="src\gfx\RenderUtils.h" />
+    <ClInclude Include="src\gfx\ScreenProps.h" />
+    <ClInclude Include="src\gfx\ShaderAttribute.h" />
+    <ClInclude Include="src\gfx\ShaderBase.h" />
+    <ClInclude Include="src\gfx\ShaderCache.h" />
+    <ClInclude Include="src\gfx\ShaderCompiler.h" />
+    <ClInclude Include="src\gfx\ShaderMaker.h" />
+    <ClInclude Include="src\gfx\ShaderSubProgram.h" />
+    <ClInclude Include="src\gfx\ShaderUniform.h" />
+    <ClInclude Include="src\gfx\ShadowBox.h" />
+    <ClInclude Include="src\gfx\ShadowBoxSide.h" />
+    <ClInclude Include="src\gfx\ShadowFrustum.h" />
+    <ClInclude Include="src\gfx\TexCache.h" />
+    <ClInclude Include="src\gfx\TextBoss.h" />
+    <ClInclude Include="src\gfx\Texture2DSpec.h" />
+    <ClInclude Include="src\gfx\UiBase.h" />
+    <ClInclude Include="src\gfx\UiControls.h" />
+    <ClInclude Include="src\gfx\UiSkin.h" />
+    <ClInclude Include="src\gfx\Viewport.h" />
+    <ClInclude Include="src\gfx\VulkanApi.h" />
+    <ClInclude Include="src\gfx\VulkanContext.h" />
     <ClInclude Include="src\math\Algorithm.h" />
     <ClInclude Include="src\math\BitHacks.h" />
     <ClInclude Include="src\math\Box2x.h" />
@@ -207,6 +210,8 @@
     <ClInclude Include="src\world\WorldHeader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\AppMain.cpp" />
+    <ClCompile Include="src\app\Main.cpp" />
     <ClCompile Include="src\base\Allocator.cpp" />
     <ClCompile Include="src\base\AppBase.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
@@ -222,6 +227,7 @@
     <ClCompile Include="src\base\Exception.cpp" />
     <ClCompile Include="src\base\FileSystem.cpp" />
     <ClCompile Include="src\base\Fingers.cpp" />
+    <ClCompile Include="src\base\FpsMeter.cpp" />
     <ClCompile Include="src\base\FrameSync.cpp" />
     <ClCompile Include="src\base\GameMemory.cpp" />
     <ClCompile Include="src\base\GLContext.cpp" />
@@ -254,55 +260,56 @@
     <ClCompile Include="src\base\TreeNode.cpp" />
     <ClCompile Include="src\base\TypeConv.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
-    <ClCompile Include="src\display\Atlas.cpp" />
-    <ClCompile Include="src\display\CameraNode.cpp" />
-    <ClCompile Include="src\display\DeferredFramebuffer.cpp" />
-    <ClCompile Include="src\display\FlyCam.cpp" />
-    <ClCompile Include="src\display\FontTextBuffer.cpp" />
-    <ClCompile Include="src\display\ForwardFramebuffer.cpp" />
-    <ClCompile Include="src\display\FramebufferBase.cpp" />
-    <ClCompile Include="src\display\FrustumBase.cpp" />
-    <ClCompile Include="src\display\Gd.cpp" />
-    <ClCompile Include="src\display\GpuComputeSync.cpp" />
-    <ClCompile Include="src\display\GpuQuad3.cpp" />
-    <ClCompile Include="src\display\GraphicsApi.cpp" />
-    <ClCompile Include="src\display\Gui2d.cpp" />
-    <ClCompile Include="src\display\HappySky.cpp" />
-    <ClCompile Include="src\display\LightManager.cpp" />
-    <ClCompile Include="src\display\LightNode.cpp" />
-    <ClCompile Include="src\display\MegaTex.cpp" />
-    <ClCompile Include="src\display\OpenGLApi.cpp" />
-    <ClCompile Include="src\display\Particles.cpp" />
-    <ClCompile Include="src\display\Party.cpp" />
-    <ClCompile Include="src\display\Picker.cpp" />
-    <ClCompile Include="src\display\QuadBufferMesh.cpp" />
-    <ClCompile Include="src\display\RenderParams.cpp" />
-    <ClCompile Include="src\display\RenderPipe.cpp" />
-    <ClCompile Include="src\display\RenderSettings.cpp" />
-    <ClCompile Include="src\display\RenderTarget.cpp" />
-    <ClCompile Include="src\display\RenderUtils.cpp" />
-    <ClCompile Include="src\display\ScreenProps.cpp" />
-    <ClCompile Include="src\display\ShaderAttribute.cpp" />
-    <ClCompile Include="src\display\ShaderBase.cpp" />
-    <ClCompile Include="src\display\ShaderCache.cpp" />
-    <ClCompile Include="src\display\ShaderCompiler.cpp" />
-    <ClCompile Include="src\display\ShaderMaker.cpp" />
-    <ClCompile Include="src\display\ShaderSubProgram.cpp" />
-    <ClCompile Include="src\display\ShaderUniform.cpp" />
-    <ClCompile Include="src\display\ShadowBox.cpp" />
-    <ClCompile Include="src\display\ShadowBoxSide.cpp" />
-    <ClCompile Include="src\display\ShadowFrustum.cpp" />
-    <ClCompile Include="src\display\TexCache.cpp" />
-    <ClCompile Include="src\display\TextBoss.cpp" />
-    <ClCompile Include="src\display\Texture2DSpec.cpp" />
-    <ClCompile Include="src\display\UiBase.cpp" />
-    <ClCompile Include="src\display\UiControls.cpp" />
-    <ClCompile Include="src\display\UiSkin.cpp" />
-    <ClCompile Include="src\display\Viewport.cpp" />
-    <ClCompile Include="src\display\VulkanApi.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
+    <ClCompile Include="src\gfx\Atlas.cpp" />
+    <ClCompile Include="src\gfx\CameraNode.cpp" />
+    <ClCompile Include="src\gfx\GraphicsContext.cpp" />
+    <ClCompile Include="src\gfx\DeferredFramebuffer.cpp" />
+    <ClCompile Include="src\gfx\FlyCam.cpp" />
+    <ClCompile Include="src\gfx\FontTextBuffer.cpp" />
+    <ClCompile Include="src\gfx\ForwardFramebuffer.cpp" />
+    <ClCompile Include="src\gfx\FramebufferBase.cpp" />
+    <ClCompile Include="src\gfx\FrustumBase.cpp" />
+    <ClCompile Include="src\gfx\GpuComputeSync.cpp" />
+    <ClCompile Include="src\gfx\GpuQuad3.cpp" />
+    <ClCompile Include="src\gfx\GraphicsApi.cpp" />
+    <ClCompile Include="src\gfx\Gui2d.cpp" />
+    <ClCompile Include="src\gfx\HappySky.cpp" />
+    <ClCompile Include="src\gfx\LightManager.cpp" />
+    <ClCompile Include="src\gfx\LightNode.cpp" />
+    <ClCompile Include="src\gfx\MegaTex.cpp" />
+    <ClCompile Include="src\gfx\OpenGLApi.cpp" />
+    <ClCompile Include="src\gfx\Particles.cpp" />
+    <ClCompile Include="src\gfx\Party.cpp" />
+    <ClCompile Include="src\gfx\Picker.cpp" />
+    <ClCompile Include="src\gfx\QuadBufferMesh.cpp" />
+    <ClCompile Include="src\gfx\RenderParams.cpp" />
+    <ClCompile Include="src\gfx\RenderPipe.cpp" />
+    <ClCompile Include="src\gfx\RenderSettings.cpp" />
+    <ClCompile Include="src\gfx\RenderTarget.cpp" />
+    <ClCompile Include="src\gfx\RenderUtils.cpp" />
+    <ClCompile Include="src\gfx\ScreenProps.cpp" />
+    <ClCompile Include="src\gfx\ShaderAttribute.cpp" />
+    <ClCompile Include="src\gfx\ShaderBase.cpp" />
+    <ClCompile Include="src\gfx\ShaderCache.cpp" />
+    <ClCompile Include="src\gfx\ShaderCompiler.cpp" />
+    <ClCompile Include="src\gfx\ShaderMaker.cpp" />
+    <ClCompile Include="src\gfx\ShaderSubProgram.cpp" />
+    <ClCompile Include="src\gfx\ShaderUniform.cpp" />
+    <ClCompile Include="src\gfx\ShadowBox.cpp" />
+    <ClCompile Include="src\gfx\ShadowBoxSide.cpp" />
+    <ClCompile Include="src\gfx\ShadowFrustum.cpp" />
+    <ClCompile Include="src\gfx\TexCache.cpp" />
+    <ClCompile Include="src\gfx\TextBoss.cpp" />
+    <ClCompile Include="src\gfx\Texture2DSpec.cpp" />
+    <ClCompile Include="src\gfx\UiBase.cpp" />
+    <ClCompile Include="src\gfx\UiControls.cpp" />
+    <ClCompile Include="src\gfx\UiSkin.cpp" />
+    <ClCompile Include="src\gfx\Viewport.cpp" />
+    <ClCompile Include="src\gfx\VulkanApi.cpp" />
+    <ClCompile Include="src\gfx\VulkanContext.cpp" />
     <ClCompile Include="src\math\Algorithm.cpp" />
     <ClCompile Include="src\math\BitHacks.cpp" />
     <ClCompile Include="src\math\Box2x.cpp" />
@@ -372,6 +379,9 @@
     <ClCompile Include="src\world\PhysicsWorld.cpp" />
     <ClCompile Include="src\world\RenderBucket.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Roadmap.odt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -394,13 +404,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -433,11 +443,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>.\lib\</OutDir>
+    <OutDir>.\bin\</OutDir>
     <TargetName>shake_x64_d</TargetName>
-    <IncludePath>.\external\SDL2-2.0.9\include;.\external\SDL2_net-2.0.1;.\external\LunarG\VulkanSDK\1.1.114.0\Include;$(IncludePath)</IncludePath>
+    <IncludePath>.\external\SDL2-2.0.9\include;.\external\SDL2_net-2.0.1;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\debug64</IntDir>
-    <LibraryPath>.\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -448,11 +458,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>.\lib\</OutDir>
+    <OutDir>.\bin\</OutDir>
     <TargetName>shake_x64_r</TargetName>
-    <IncludePath>.\external\SDL2-2.0.9\include;.\external\SDL2_net-2.0.1;.\external\LunarG\VulkanSDK\1.1.114.0\Include;$(IncludePath)</IncludePath>
+    <IncludePath>.\external\SDL2-2.0.9\include;.\external\SDL2_net-2.0.1;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\release64</IntDir>
-    <LibraryPath>.\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -488,6 +498,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2_d.lib;SDL2_Net_d.lib;opengl32.lib;vulkan-1.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -533,6 +544,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2_r.lib;SDL2_Net_r.lib;opengl32.lib;vulkan-1.lib;winmm.lib;imm32.lib;version.lib;Dbghelp.lib;Setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

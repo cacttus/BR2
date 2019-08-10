@@ -5,9 +5,9 @@
 #include "../model/MeshSpec.h"
 #include "../model/IndexBufferData.h"
 #include "../model/VaoDataGeneric.h"
-#include "../display/ShaderBase.h"
-#include "../display/RenderUtils.h"
-#include "../display/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/RenderUtils.h"
+#include "../gfx/ShaderMaker.h"
 
 namespace Game {
 //////////////////////////////////////////////////////////////////////////

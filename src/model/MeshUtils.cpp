@@ -1,7 +1,7 @@
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-#include "../base/TStr.h"
+
 #include "../base/TypeConv.h"
 #include "../base/StringUtil.h"
 #include "../model/MeshUtils.h"
@@ -12,7 +12,6 @@
 #include "../model/MeshNode.h"
 
 namespace Game {
-;
 
 /**
 *    @fn parseGenParams

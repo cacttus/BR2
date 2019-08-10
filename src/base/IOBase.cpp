@@ -1,5 +1,5 @@
 #include "../base/IOBase.h"
-#include "../base/TStr.h"
+
 
 namespace Game {
 void IOBase<char>::readVec3(vec3& val)

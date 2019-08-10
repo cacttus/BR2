@@ -12,7 +12,7 @@
 #ifndef __FRAMESYNC_27052177462681769929099_H__
 #define __FRAMESYNC_27052177462681769929099_H__
 
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 //#include "../scene/SceneHeader.h"
 namespace Game {
 /**
@@ -21,7 +21,6 @@ namespace Game {
 */
 class FrameSync : public VirtualMemory {
 private:
-    std::shared_ptr<GLContext> _pContext = nullptr;
     t_timeval _syncStart;
     t_timeval _syncEnd;
     bool _bVsyncDisabled = false;
@@ -39,7 +38,7 @@ public:
     float getCurrentFrameCap();
 
     //+-- CTOR/DTOR --+
-    FrameSync(std::shared_ptr<GLContext> ct);
+    FrameSync();
     virtual ~FrameSync() override ;
 };
 

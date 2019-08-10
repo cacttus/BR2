@@ -17,6 +17,7 @@
 #include "../base/MachineTypes.h"
 #include "../base/OperatingSystemHeader.h"
 #include "../base/ConsoleColors.h"
+
 namespace Game {
 #ifdef __APPLE__
 #ifdef TARGET_OS_IPHONE
@@ -182,6 +183,11 @@ typedef std::vector<char> ByteBuffer;
 typedef GameMemory PureMemory;//Pure memory without a VPtr
 typedef PureMemory GpuMemory; //Pure memory without a VPtr
 
+
+class FpsMeter;
+class FrameSync;
+
+
 /**
 *    @class GameMemory
 *    @brief An object which inherits this class will be allocated in the memory system.
@@ -247,6 +253,16 @@ public:
     virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
 };
 
+
+#define ShowMessageBoxOnce(msg) { \
+static bool __show=false; \
+if(__show==false) { \
+do{ \
+Gu::showMessageBox(msg, "Error"); \
+}while(0); \
+}; \
+__show=true; \
+}
 
 //TODO: REMOVE
 class Packet {};

@@ -14,7 +14,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../math/MathHeader.h"
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 #include "../world/WorldHeader.h"
 #include "../math/Vec3x.h"

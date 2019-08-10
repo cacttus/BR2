@@ -4,7 +4,7 @@
 #include "../base/GLContext.h"
 #include "../base/EngineConfig.h"
 #include "../math/MathAll.h"
-#include "../display/ShaderMaker.h"
+#include "../gfx/ShaderMaker.h"
 #include "../model/GpuBufferData.h"
 
 namespace Game {

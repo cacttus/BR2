@@ -1,7 +1,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/VboData.h"
 #include "../base/GLContext.h"
-#include "../display/RenderUtils.h"
+#include "../gfx/RenderUtils.h"
 
 
 namespace Game {

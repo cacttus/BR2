@@ -1,7 +1,7 @@
 //#ifdef _DEBUG
 #include "../base/TypeConv.h"
 #include "../base/StringUtil.h"
-#include "../base/TStr.h"
+
 #include "../base/Logger.h"
 //#endif
 namespace Game {
@@ -108,7 +108,8 @@ double TypeConv::strToDouble(t_string& s) {
         return 0;
     }
     return ret;
-}
+}
+
 int8_t TypeConv::strToByte(t_string& s) {
     int32_t i = strToInt(s);
     return (t_byte)i;

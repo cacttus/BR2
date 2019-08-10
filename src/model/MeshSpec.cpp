@@ -1,10 +1,10 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-#include "../base/TStr.h"
+
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/BinaryFile.h"
-#include "../display/Texture2DSpec.h"
+#include "../gfx/Texture2DSpec.h"
 #include "../model/ModelHeader.h"
 #include "../model/Model.h"
 #include "../model/Material.h"
@@ -103,7 +103,7 @@ void MeshSpec::allocMesh(const void* pFrags, size_t nFrags, const void* pIndexes
 
     if(_pVaoData == nullptr) {
         //Prevent multiple reallocations
-        _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getContext(), _pVertexFormat);
+        _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getGraphicsContext(), _pVertexFormat);
     }
 
     _pVaoData->fillData(pFrags, nFrags, pIndexes, nIndexes);
@@ -143,7 +143,7 @@ void MeshSpec::printWeightsToStdout() {
     int n = 0;
     for (VertexWeightMob w : _vecWeightsMob) {
         for (std::pair<int32_t, std::map<int32_t, float>> p1 : w._mapWeights) {
-            // std::shared_ptr<Armature> pa = Gu::getContext()->getModelCache()->getArmature(p1.first);
+            // std::shared_ptr<Armature> pa = Gu::getModelCache()->getArmature(p1.first);
             // if (pa != nullptr) {
             std::cout << n << ": " << p1.first << std::endl;
             for (std::pair<int32_t, float> p2 : p1.second) {
@@ -564,7 +564,7 @@ void MeshSpec::calculateVertexNormals()
 //void MeshSpec::createMaterial(t_string strName, std::shared_ptr<Texture2DSpec> tmd, std::shared_ptr<Texture2DSpec> tmn) {
 //    DEL_MEM(_pMaterial);
 //
-//    _pMaterial = new Material(Gu::getContext(), strName);
+//    _pMaterial = new Material(Gu::getGraphicsContext(), strName);
 //    if (tmd != nullptr) {
 //        _pMaterial->addTextureBinding(tmd, TextureChannel::e::Channel0);
 //    }
@@ -606,8 +606,8 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
     GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nFragCount];
     GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nTotalWeights];
 
-    _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeightData));
-    _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeight));
+    _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeightData));
+    _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeight));
 
     std::set<int32_t> setUniqueJointOrdinals;
 
@@ -730,7 +730,7 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
         BroLogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
     }
 
-    Gu::getContext()->chkErrRt();
+    Gu::getGraphicsContext()->chkErrRt();
     setUniqueJointOrdinals.clear();
 
     //**We still need the vec weights to compute bone boxes later (optimally putting them here.
@@ -856,7 +856,7 @@ void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
         if (nWeightOffsets > 0) {
             GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nWeightOffsets];
             fb->read((const char*)weightOffsetsGpu, sizeof(GpuAnimatedMeshWeightData)*nWeightOffsets);
-            _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeightData));
+            _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeightData));
             _pWeightOffsetsGpu->allocFill(nWeightOffsets, (void*)weightOffsetsGpu);
             delete[] weightOffsetsGpu;
         }
@@ -866,7 +866,7 @@ void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
         if (nWeights > 0) {
             GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nWeights];
             fb->read((const char*)weightsGpu, sizeof(GpuAnimatedMeshWeight)*nWeights);
-            _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeight));
+            _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeight));
             _pWeightsGpu->allocFill(nWeights, (void*)weightsGpu);
             delete[] weightsGpu;
         }
@@ -981,7 +981,7 @@ void MeshSpec::serialize(std::shared_ptr<BinaryFile> fb) {
 
 }
 //void MeshSpec::sendVertsToGpu(){
-//    _pVertsGpu = std::make_sVboData(Gu::getContext(), _pVertexFormat->getSizeBytes());
+//    _pVertsGpu = std::make_sVboData(Gu::getGraphicsContext(), _pVertexFormat->getSizeBytes());
 //    _pVertsGpu->allocate(_pFrags->count());
 //    _pVertsGpu->copyDataClientServer(_pFrags->count(), _pFrags->ptr());
 //}

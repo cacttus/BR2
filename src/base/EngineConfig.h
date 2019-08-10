@@ -13,7 +13,7 @@
 #define __ENGINECONFIG_14942867052644616215_H__
 
 #include "../base/BaseHeader.h"
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 
 namespace Game {
 

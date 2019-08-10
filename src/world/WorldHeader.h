@@ -31,7 +31,6 @@ class NodeManifold;
 class PhysicsGrid;
 class PhysicsWorld;
 class PhysicsGridAwareness;
-//class BoxShape;
 class PhysicsShape;
 class SphereShape;
 class HullShape;

@@ -2,15 +2,15 @@
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../math/CollisionEquations.h"
-#include "../display/CameraNode.h"
-#include "../display/FrustumBase.h"
-#include "../display/LightNode.h"
-#include "../display/LightManager.h"
-#include "../display/ShaderMaker.h"
-#include "../display/ShaderBase.h"
-#include "../display/ShadowBox.h"
-#include "../display/RenderParams.h"
-#include "../display/RenderSettings.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/FrustumBase.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/ShadowBox.h"
+#include "../gfx/RenderParams.h"
+#include "../gfx/RenderSettings.h"
 #include "../model/MeshUtils.h"
 #include "../model/MeshNode.h"
 #include "../model/UtilMeshInline.h"
@@ -217,7 +217,7 @@ void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Bo
 
                 }
                 else {
-                    //if (Gu::getContext()->getFpsMeter()->frameMod(30)) {
+                    //if (Gu::getFpsMeter()->frameMod(30)) {
                     //    BroLogWarn("OBject outside grid!");
                     //}
                     //**Object is approaching outside grid bounds.
@@ -348,18 +348,18 @@ void PhysicsWorld::update(float delta) {
     }
 
     _pAwareness->update(delta);
-   // if (Gu::getContext()->getFpsMeter()->frameMod(3)) {
+   // if (Gu::getFpsMeter()->frameMod(3)) {
         makeGrid();
    // }
     collisionLoopDual(delta);
 
     //Collect all nodes
     BvhCollectionParams bcp;
-    bcp._pFrustum = Gu::getContext()->getCamera()->getFrustum();
+    bcp._pFrustum = Gu::getCamera()->getFrustum();
     bcp._pRenderBucket = _pRenderBucket;
     float nw = getNodeWidth();
     float nh = getNodeHeight();
-    float dd = Gu::getContext()->getRenderSettings()->drawDistance();
+    float dd = Gu::getRenderSettings()->drawDistance();
     if(dd<1){
         dd = 1;
     }
@@ -376,7 +376,7 @@ void PhysicsWorld::collisionLoopDual(float delta)
     vec3 vGrav = _vUp * getGravityAmount();
     //  Physics* that = this;
     int32_t nIterV = 0, nIterA = 0;
-    uint64_t frameId = Gu::getContext()->getFpsMeter()->getFrameNumber();
+    uint64_t frameId = Gu::getFpsMeter()->getFrameNumber();
     vec3 vDa = vGrav * delta;
 
     //Accelleration
@@ -1247,7 +1247,7 @@ void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
     sweepGridFrustum([&](ivec3& cv) {
         std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
         if (pGrid != nullptr) {
-            std::shared_ptr<FrustumBase> frust = Gu::getContext()->getCamera()->getFrustum();
+            std::shared_ptr<FrustumBase> frust = Gu::getCamera()->getFrustum();
             Box3f* box = pGrid->getBoundBox();
             if (frust->hasBox(box)) {
                 parms->_pRenderBucket->addGrid(pGrid);
@@ -1475,7 +1475,7 @@ void PhysicsWorld::drawDeferred() {
         //if we have skin draw normally.
         //_pRenderBucket->sortAndDrawMeshes(
         //    [](std::shared_ptr<VertexFormat> vf) {
-        //        return Gu::getContext()->getShaderMaker()->getDiffuseShader(vf);
+        //        return Gu::getShaderMaker()->getDiffuseShader(vf);
         //    },
         //    [&](std::shared_ptr<ShaderBase> sb) {
         //        sb->bind();
@@ -1545,7 +1545,7 @@ void PhysicsWorld::drawTransparent(){
 std::shared_ptr<ModelNode> PhysicsWorld::makeObj(std::shared_ptr<ModelSpec> ms) {
     std::shared_ptr<ModelNode> mn = ModelNode::create(ms);
     mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-    Gu::getContext()->getPhysicsWorld()->addObj(mn, true, true);
+    Gu::getPhysicsWorld()->addObj(mn, true, true);
 
     return mn;
 }
@@ -1571,7 +1571,7 @@ std::shared_ptr<LightNodePoint> PhysicsWorld::makePointLight(vec3&& pos, float r
     lp->setLightColor(std::move(color));
 
     lp->getShadowBox()->getSmallBoxSize() = 0.6f;
-    Gu::getContext()->getPhysicsWorld()->addObj(lp, false, false);
+    Gu::getPhysicsWorld()->addObj(lp, false, false);
 
     return lp;
 }

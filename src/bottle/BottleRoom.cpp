@@ -5,23 +5,23 @@
 #include "../base/EngineConfig.h"
 #include "../base/FileSystem.h"
 
-#include "../display/Atlas.h"
-#include "../display/CameraNode.h"
-#include "../display/Viewport.h"
-#include "../display/Party.h"
-#include "../display/CameraNode.h"
-#include "../display/FrustumBase.h"
-#include "../display/ShaderMaker.h"
-#include "../display/ShaderBase.h"
-#include "../display/RenderUtils.h"
-#include "../display/TexCache.h"
-#include "../display/ShadowBox.h"
-#include "../display/ShadowFrustum.h"
-#include "../display/LightManager.h"
-#include "../display/MegaTex.h"
-#include "../display/RenderPipe.h"
-#include "../display/LightNode.h"
-#include "../display/RenderSettings.h"
+#include "../gfx/Atlas.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/Viewport.h"
+#include "../gfx/Party.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/FrustumBase.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/RenderUtils.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/ShadowBox.h"
+#include "../gfx/ShadowFrustum.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/MegaTex.h"
+#include "../gfx/RenderPipe.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/RenderSettings.h"
 
 #include "../model/UtilMeshSphere.h"
 #include "../model/Model.h"
@@ -46,7 +46,7 @@
 #include "../bottle/WorldGrid.h"
 
 #include "../bottle/GodCam.h"
-#include "../display/FlyCam.h"
+#include "../gfx/FlyCam.h"
 #include "../bottle/W25Config.h"
 #include "../bottle/Tile25Spec.h"
 #include "../bottle/W25Config.h"
@@ -126,7 +126,7 @@ void BottleRoom::constructWorld() {
     {
         t_timeval t0 = Gu::getMicroSeconds();
         _pWorld25 = std::make_shared<World25>();
-        Gu::getContext()->setPhysicsWorld(_pWorld25);
+        Gu::getGraphicsContext()->setPhysicsWorld(_pWorld25);
         _pWorld25->init(_pGameFile);
         BroLogInfo("Finished.." + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
     }
@@ -270,11 +270,11 @@ void BottleRoom::drawForward(RenderParams& rp) {
         _pWorldEditor->drawForward();
     }
 
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowShadowBox()) {
-        for (std::shared_ptr<ShadowBox> sb : Gu::getContext()->getLightManager()->getAllShadowBoxes()) {
+    if (Gu::getRenderSettings()->getDebug()->getShowShadowBox()) {
+        for (std::shared_ptr<ShadowBox> sb : Gu::getLightManager()->getAllShadowBoxes()) {
             sb->debugRender();
         }
-        for (std::shared_ptr<ShadowFrustum> sb : Gu::getContext()->getLightManager()->getAllShadowFrustums()) {
+        for (std::shared_ptr<ShadowFrustum> sb : Gu::getLightManager()->getAllShadowFrustums()) {
             sb->debugRender();
         }
     }
@@ -363,7 +363,7 @@ void BottleRoom::draw2d() {
             _pWorldSelect->draw2d();
         }
         else {
-            Gu::getContext()->getGui()->drawForward();
+            Gu::getGui()->drawForward();
         }
         drawDebugText();
 
@@ -512,7 +512,7 @@ void BottleRoom::makeParticles() {
 
 void BottleRoom::teardown() {}
 void BottleRoom::userZoom(int amount) {
-    if (Gu::getContext()->getCamera() == _pFlyCam->getCam()) {
+    if (Gu::getCamera() == _pFlyCam->getCam()) {
         _pFlyCam->userZoom((float)amount);
     }
     else {
@@ -528,22 +528,22 @@ void BottleRoom::toggleDebug(std::shared_ptr<Fingers> pFingers) {
         TOGGLECD(SDL_SCANCODE_KP_0, Gu::getEngineConfig()->getEnableDebugErrorChecking());
         if (pFingers->keyPress(SDL_SCANCODE_F1)) {
             //Force layout update
-            Gu::getContext()->getGui()->debugForceLayoutChanged();
+            Gu::getGui()->debugForceLayoutChanged();
         }
     }
     else if (pFingers->modsHeld(KeyMod::None)) {
         //NONE
-        TOGGLECD(SDL_SCANCODE_KP_0, Gu::getContext()->getRenderSettings()->getDebug()->getShadowHelpVisible());
-        TOGGLECD(SDL_SCANCODE_KP_1, Gu::getContext()->getRenderSettings()->getDebug()->getShowBoneBoxes());
-        TOGGLECD(SDL_SCANCODE_KP_2, Gu::getContext()->getRenderSettings()->getDebug()->getShowMeshBoxes());
-        TOGGLECD(SDL_SCANCODE_KP_3, Gu::getContext()->getRenderSettings()->getDebug()->getShowNormals());
-        TOGGLECD(SDL_SCANCODE_KP_4, Gu::getContext()->getRenderSettings()->getDebug()->getShowArmatures());
-        //TOGGLECD(SDL_SCANCODE_KP_5, Gu::getContext()->getRenderSettings()->getShowBoneBindBoxes());
-        TOGGLECD(SDL_SCANCODE_KP_5, Gu::getContext()->getRenderSettings()->getDebug()->getPickGui());
-        TOGGLECD(SDL_SCANCODE_KP_6, Gu::getContext()->getRenderSettings()->getDebug()->getShowModelBoxes());
-        TOGGLECD(SDL_SCANCODE_KP_7, Gu::getContext()->getRenderSettings()->getDebug()->getShowModelBoundBox());
-        TOGGLECD(SDL_SCANCODE_KP_8, Gu::getContext()->getRenderSettings()->getDebug()->getShowShadowBox());
-        TOGGLECD(SDL_SCANCODE_KP_9, Gu::getContext()->getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping());
+        TOGGLECD(SDL_SCANCODE_KP_0, Gu::getRenderSettings()->getDebug()->getShadowHelpVisible());
+        TOGGLECD(SDL_SCANCODE_KP_1, Gu::getRenderSettings()->getDebug()->getShowBoneBoxes());
+        TOGGLECD(SDL_SCANCODE_KP_2, Gu::getRenderSettings()->getDebug()->getShowMeshBoxes());
+        TOGGLECD(SDL_SCANCODE_KP_3, Gu::getRenderSettings()->getDebug()->getShowNormals());
+        TOGGLECD(SDL_SCANCODE_KP_4, Gu::getRenderSettings()->getDebug()->getShowArmatures());
+        //TOGGLECD(SDL_SCANCODE_KP_5, Gu::getRenderSettings()->getShowBoneBindBoxes());
+        TOGGLECD(SDL_SCANCODE_KP_5, Gu::getRenderSettings()->getDebug()->getPickGui());
+        TOGGLECD(SDL_SCANCODE_KP_6, Gu::getRenderSettings()->getDebug()->getShowModelBoxes());
+        TOGGLECD(SDL_SCANCODE_KP_7, Gu::getRenderSettings()->getDebug()->getShowModelBoundBox());
+        TOGGLECD(SDL_SCANCODE_KP_8, Gu::getRenderSettings()->getDebug()->getShowShadowBox());
+        TOGGLECD(SDL_SCANCODE_KP_9, Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping());
 
         //Debug info
         //TODO: these should all be in rednersettings 1/22/18
@@ -604,7 +604,7 @@ void BottleRoom::updateTouch(std::shared_ptr<Fingers> pFingers, float delta) {
         _pFlyCam->update(pFingers, delta);
     }
     else if (_eGameMode == GameMode::e::Play) {
-        if (Gu::getContext()->getCamera() == _pFlyCam->getCam()) {
+        if (Gu::getCamera() == _pFlyCam->getCam()) {
             _pFlyCam->update(pFingers, delta);
         }
         else {
@@ -622,7 +622,7 @@ void BottleRoom::updateTouch(std::shared_ptr<Fingers> pFingers, float delta) {
 
         handleGameModeControls(pFingers);
 
-        if (Gu::getContext()->getCamera() == _pFlyCam->getCam()) {
+        if (Gu::getCamera() == _pFlyCam->getCam()) {
             _pFlyCam->moveCameraWSAD(pFingers, delta);
         }
         else {
@@ -630,7 +630,7 @@ void BottleRoom::updateTouch(std::shared_ptr<Fingers> pFingers, float delta) {
         }
 
 
-        if (!Gu::getContext()->getGui()->getIsPicked()) {
+        if (!Gu::getGui()->getIsPicked()) {
             _pWorldEditor->editWorld(pFingers);   
         }
     }
@@ -651,7 +651,7 @@ void BottleRoom::handleGameModeControls(std::shared_ptr<Fingers> pFingers) {
     if (_eGameMode != GameMode::e::WorldSelect) {
 
         if (pFingers->keyPress(SDL_Scancode::SDL_SCANCODE_E)) {
-            if(Gu::getContext()->getCamera() == _pFlyCam->getCam()){
+            if(Gu::getCamera() == _pFlyCam->getCam()){
                 _pSnapRooter->setActive();
             }
             else {
@@ -707,8 +707,8 @@ WorldSelect::~WorldSelect() {
 void WorldSelect::gatherWorlds() {
     if (_pQuadMeshBackground == nullptr) {
         _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-            Gu::getContext()->getCamera()->getViewport()->getWidth(), Gu::getContext()->getCamera()->getViewport()->getHeight());
-        _pTex = Gu::getContext()->getTexCache()->getOrLoad(_pCongaRoom->makeAssetPath("tex", "test_tex3.png"));
+            Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
+        _pTex = Gu::getTexCache()->getOrLoad(_pCongaRoom->makeAssetPath("tex", "test_tex3.png"));
     }
 
     t_string gsd = _pCongaRoom->getGameSaveDir();
@@ -797,17 +797,17 @@ void WorldSelect::draw2d() {
     // _pContext->getTextBoss()->pstrb(TStr("0: New World"), bx, by + cy); cy += 30;
 }
 void WorldSelect::drawBackgroundImage() {
-    std::shared_ptr<CameraNode> bc = Gu::getContext()->getCamera();
-    Gu::getContext()->getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-    Gu::getContext()->getShaderMaker()->getImageShader_F()->beginRaster();
+    std::shared_ptr<CameraNode> bc = Gu::getCamera();
+    Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
+    Gu::getShaderMaker()->getImageShader_F()->beginRaster();
     {
         //We want depth test so we can see what's in front.
         //glEnable(GL_DEPTH_TEST);
-        _pTex->bind(TextureChannel::e::Channel0, Gu::getContext()->getShaderMaker()->getImageShader_F());
+        _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
 
-        Gu::getContext()->getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+        Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
     }
-    Gu::getContext()->getShaderMaker()->getImageShader_F()->endRaster();
+    Gu::getShaderMaker()->getImageShader_F()->endRaster();
 
 }
 void WorldSelect::drawText() {
@@ -820,42 +820,42 @@ void WorldSelect::drawText() {
     //    FontSize iFontHeight = 40;
     //    Box2f quad;
 
-    //    Gu::getContext()->getTextBoss()->setFontSize(iFontHeight);
-    //    Gu::getContext()->getTextBoss()->setColor(vec4(0.9877, 0.9778, 0.969, 1));
+    //    Gu::getTextBoss()->setFontSize(iFontHeight);
+    //    Gu::getTextBoss()->setColor(vec4(0.9877, 0.9778, 0.969, 1));
 
     //    t_string strLoad = TStr("Loading ", _strSelectedWorld, "..");
 
 
-    //    float dx = Gu::getContext()->getTextBoss()->getCenteredTextX(strLoad);
-    //    float dy = Gu::getContext()->getTextBoss()->getCenteredTextY(strLoad);
+    //    float dx = Gu::getTextBoss()->getCenteredTextX(strLoad);
+    //    float dy = Gu::getTextBoss()->getCenteredTextY(strLoad);
 
-    //    Gu::getContext()->getTextBoss()->pstrb(TStr(strLoad), dx, dy);
+    //    Gu::getTextBoss()->pstrb(TStr(strLoad), dx, dy);
     //}
     //else {
-    //    Gu::getContext()->getTextBoss()->setColor(vec4(0.9877, 0.9778, 0.969, 1));
-    //    Gu::getContext()->getTextBoss()->setFont(std::string("Nunito"));
+    //    Gu::getTextBoss()->setColor(vec4(0.9877, 0.9778, 0.969, 1));
+    //    Gu::getTextBoss()->setFont(std::string("Nunito"));
 
     //    //Title - testing centering
-    //    Gu::getContext()->getTextBoss()->setFontSize(40);
+    //    Gu::getTextBoss()->setFontSize(40);
     //    t_string strTitle = "Animal Motors v0.01";
-    //    float titleX = Gu::getContext()->getTextBoss()->getCenteredTextX(strTitle);
-    //    Gu::getContext()->getTextBoss()->pstrb(TStr(strTitle), titleX, by + cy); cy += 40;
+    //    float titleX = Gu::getTextBoss()->getCenteredTextX(strTitle);
+    //    Gu::getTextBoss()->pstrb(TStr(strTitle), titleX, by + cy); cy += 40;
 
-    //    Gu::getContext()->getTextBoss()->setFontSize(30);
+    //    Gu::getTextBoss()->setFontSize(30);
     //    if (_eWorldSelectState == WorldSelectState::Select) {
-    //        Gu::getContext()->getTextBoss()->pstrb(TStr("Select World by typing key"), bx, by + cy); cy += 30;
-    //        Gu::getContext()->getTextBoss()->setFontSize(28);
-    //        Gu::getContext()->getTextBoss()->pstrb(TStr("1: *New World*"), bx, by + cy); cy += 30;
+    //        Gu::getTextBoss()->pstrb(TStr("Select World by typing key"), bx, by + cy); cy += 30;
+    //        Gu::getTextBoss()->setFontSize(28);
+    //        Gu::getTextBoss()->pstrb(TStr("1: *New World*"), bx, by + cy); cy += 30;
 
     //        for (size_t n = 0; n < _vecWorldFolders.size(); ++n) {
-    //            Gu::getContext()->getTextBoss()->pstrb(TStr(n + 2, " :", _vecWorldFolders[n], "   ", (int)STRHASH(_vecWorldFolders[n]) % 100, "%%"), bx, by + cy); cy += 30;
+    //            Gu::getTextBoss()->pstrb(TStr(n + 2, " :", _vecWorldFolders[n], "   ", (int)STRHASH(_vecWorldFolders[n]) % 100, "%%"), bx, by + cy); cy += 30;
     //        }
-    //        Gu::getContext()->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += 30;
-    //        Gu::getContext()->getTextBoss()->pstrb(TStr("0: **Delete All Worlds"), bx, by + cy); cy += 30;
+    //        Gu::getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += 30;
+    //        Gu::getTextBoss()->pstrb(TStr("0: **Delete All Worlds"), bx, by + cy); cy += 30;
     //    }
     //    else  if (_eWorldSelectState == WorldSelectState::ConfirmDeleteAll) {
-    //        Gu::getContext()->getTextBoss()->pstrb(TStr("Delete All Worlds ? (Y/N)"), bx, by + cy); cy += 30;
-    //        Gu::getContext()->getTextBoss()->setFontSize(28);
+    //        Gu::getTextBoss()->pstrb(TStr("Delete All Worlds ? (Y/N)"), bx, by + cy); cy += 30;
+    //        Gu::getTextBoss()->setFontSize(28);
     //    }
     //}
 }

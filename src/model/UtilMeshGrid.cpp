@@ -1,7 +1,7 @@
 #include "../base/GLContext.h"
 #include "../model/UtilMeshGrid.h"
 //#include "../base/GlobalUtils.h"
-//#include "../display/UtilMeshGrid.h"
+//#include "../gfx/UtilMeshGrid.h"
 //#include "../gpu/GraphicsDriver.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"

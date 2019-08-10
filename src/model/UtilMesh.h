@@ -13,7 +13,7 @@
 #define __UTILMESH_12100900221286185268356_H__
 
 
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {
@@ -28,7 +28,9 @@ private:
     std::shared_ptr<VertexFormat> _pVertexFormat = nullptr;
     GLuint bdVerts, bdIndexes, vaoIndexes;
     bool _bInitialized = false;
+
     GLenum _eDrawMode = GL_LINES;
+
     mat4 _m4ModelMatrix;
     std::shared_ptr<ShaderBase> _pShader = nullptr;
     std::shared_ptr<FragmentBufferData> _pVerts = nullptr; //Note if using a spec make sure to set vertexes and indexes to NULL in post draw so you don't delete the spec data.

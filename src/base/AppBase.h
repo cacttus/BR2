@@ -13,7 +13,7 @@
 #define __ROOMBASE_1483942071882744649_H__
 
 #include "../base/BaseHeader.h"
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../math/MathAll.h"
 namespace Game {
 /**
@@ -36,8 +36,7 @@ public:
     virtual void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) { };
     virtual void idle(t_timeval us) { }
 
-    virtual std::shared_ptr<GLContext> getContext() = 0;
-    virtual void setup(std::shared_ptr<Viewport> pv, std::shared_ptr<GLContext> ct) = 0;
+    virtual void setup(std::shared_ptr<Viewport> pv) = 0;
     virtual void step(float dt) = 0;
     virtual void teardown() = 0;
     virtual void updateTouch(std::shared_ptr<Fingers>, float dt) = 0;

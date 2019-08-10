@@ -1,6 +1,6 @@
 #include "../base/TreeNode.h"
 #include "../base/Exception.h"
-#include "../base/TStr.h"   
+
 #include "../base/Gu.h"   
 
 namespace Game {

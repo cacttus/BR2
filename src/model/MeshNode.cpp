@@ -4,17 +4,17 @@
 #include "../math/Random.h"
 #include "../model/OBB.h"
 
-#include "../display/GpuComputeSync.h"
-#include "../display/ShaderMaker.h"
-#include "../display/ShaderBase.h"
-#include "../display/CameraNode.h"
-#include "../display/RenderParams.h"
-#include "../display/LightNode.h"
-#include "../display/LightManager.h"
-#include "../display/ShadowBoxSide.h"
-#include "../display/Picker.h"
-#include "../display/TexCache.h"
-#include "../display/RenderSettings.h"
+#include "../gfx/GpuComputeSync.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderParams.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/ShadowBoxSide.h"
+#include "../gfx/Picker.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/RenderSettings.h"
 #include "../model/Material.h"
 #include "../model/ModelCache.h"
 
@@ -30,7 +30,7 @@
 #include "../model/MeshNode.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
-#include "../display/Picker.h"
+#include "../gfx/Picker.h"
 
 namespace Game {
 
@@ -94,7 +94,7 @@ void MeshNode::init() {
         createSkin();
     }
 
-    _iPickId = Gu::getContext()->getPicker()->genPickId();
+    _iPickId = Gu::getPicker()->genPickId();
 }
 
 std::shared_ptr<MeshSpec> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshSpec>(BaseNode::getSpec()); }
@@ -146,9 +146,9 @@ void MeshNode::createSkin() {
         }
     }
 
-  //  _pSkinCompute = new GpuComputeSync(Gu::getContext());
+  //  _pSkinCompute = new GpuComputeSync(Gu::getGraphicsContext());
 
-    _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshSkinMatrix));
+    _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshSkinMatrix));
     _pArmJoints->allocate(iOrdCount);
     _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
 
@@ -211,7 +211,7 @@ void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& 
 
 void MeshNode::computeSkinFrame() {
     Gu::pushPerf();
-    Gu::getContext()->chkErrDbg();
+    Gu::getGraphicsContext()->chkErrDbg();
     copyJointsToGpu();
     Gu::popPerf();
     // dispatchSkinCompute();
@@ -242,9 +242,9 @@ void MeshNode::copyJointsToGpu() {
     Gu::popPerf();
 }
 //void MeshNode::dispatchSkinCompute() {
-//    Gu::getContext()->chkErrDbg();
+//    Gu::getGraphicsContext()->chkErrDbg();
 //
-//    std::shared_ptr<ShaderBase> pSkinShader = Gu::getContext()->getShaderMaker()->getSkinComputeShader();
+//    std::shared_ptr<ShaderBase> pSkinShader = Gu::getShaderMaker()->getSkinComputeShader();
 //    AssertOrThrow2(pSkinShader != nullptr);
 //    pSkinShader->bind();
 //
@@ -354,7 +354,7 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     std::shared_ptr<VertexFormat> meshFmt = getMeshSpec()->getVertexFormat();
 
     if (_pMaterial == nullptr) {
-        _pMaterial = Gu::getContext()->getModelCache()->getDefaultMaterial();
+        _pMaterial = Gu::getModelCache()->getDefaultMaterial();
         //showNoMaterialError();
         //meshFmt = v_v3::getVertexFormat();
     }
@@ -362,10 +362,10 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     //Bind a new shader based on format.
     std::shared_ptr<ShaderBase> pShader;
     if (_pMaterial && _pMaterial->getEnableTransparency() && bTransparent) {
-        pShader = Gu::getContext()->getShaderMaker()->getGlassShader(meshFmt);
+        pShader = Gu::getShaderMaker()->getGlassShader(meshFmt);
     }
     else {
-        pShader = Gu::getContext()->getShaderMaker()->getDiffuseShader(meshFmt);
+        pShader = Gu::getShaderMaker()->getDiffuseShader(meshFmt);
     }
     if(pShader==nullptr) {
         BroLogWarnCycle("Could not find shader for mesh '" + (getSpec() ? getSpec()->getName() : "") + "'");
@@ -375,7 +375,7 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
         rp.setShader(pShader);
 
         //Camera
-        std::shared_ptr<CameraNode> bc = Gu::getContext()->getCamera();
+        std::shared_ptr<CameraNode> bc = Gu::getCamera();
         rp.getShader()->setCameraUf(bc, &mat_mesh);
 
         //Pick ID
@@ -413,16 +413,16 @@ void MeshNode::bindSkin(std::shared_ptr<ShaderBase> shader){
 }
 void MeshNode::drawForward(RenderParams& rp) {
     BaseNode::drawForward(rp);
-    if (Gu::getContext()->getRenderSettings()->getDebug()->getShowNormals()) {
+    if (Gu::getRenderSettings()->getDebug()->getShowNormals()) {
 
         //Draw Normals
         std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
         mat4 mat_mesh;
         getMeshLocalMatrix(mat_mesh);
-        std::shared_ptr<ShaderBase> pShader = Gu::getContext()->getShaderMaker()->getNormalsShader_v3n3();
+        std::shared_ptr<ShaderBase> pShader = Gu::getShaderMaker()->getNormalsShader_v3n3();
         pShader->bind();
         rp.setShader(pShader);
-        std::shared_ptr<CameraNode> bc = Gu::getContext()->getCamera();
+        std::shared_ptr<CameraNode> bc = Gu::getCamera();
         rp.getShader()->setCameraUf(bc, &mat_mesh);
         vec4 vColor(1, 0, 1, 1);
         float fLen = 0.3f;
@@ -444,7 +444,7 @@ void MeshNode::drawShadow(RenderParams& rp){
     bindSkin(rp.getShader());
     
     if(_pMaterial==nullptr) {
-        _pMaterial = Gu::getContext()->getModelCache()->getDefaultMaterial();
+        _pMaterial = Gu::getModelCache()->getDefaultMaterial();
        // showNoMaterialError();
     }
 

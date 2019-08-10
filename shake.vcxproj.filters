@@ -4,9 +4,6 @@
     <Filter Include="base">
       <UniqueIdentifier>{7b7a7c25-bf20-4533-b59e-3676b8f0b1c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="display">
-      <UniqueIdentifier>{23668c34-e309-4ae8-89e0-32325e1c07ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ext">
       <UniqueIdentifier>{491579bc-9003-412d-bdb7-0c7a8c901984}</UniqueIdentifier>
     </Filter>
@@ -21,6 +18,12 @@
     </Filter>
     <Filter Include="ext\pugixml">
       <UniqueIdentifier>{d2658863-2ad1-453a-8f53-18210e73b8c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="app">
+      <UniqueIdentifier>{a2fca983-dd27-4701-907f-87ac3ae2f2d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gfx">
+      <UniqueIdentifier>{23668c34-e309-4ae8-89e0-32325e1c07ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,9 +177,6 @@
     <ClInclude Include="src\base\TreeNode.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\TStr.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\TypeCast.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -197,150 +197,6 @@
     </ClInclude>
     <ClInclude Include="src\base\BaseAll.h">
       <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\DeferredFramebuffer.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\DisplayHeader.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\FlyCam.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\FontTextBuffer.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ForwardFramebuffer.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\FramebufferBase.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\FrustumBase.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\FrustumProjectionParameters.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Gd.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\GpuComputeSync.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\GpuQuad3.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\GraphicsApi.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Gui2d.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\HappySky.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\LightManager.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\LightNode.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\MegaTex.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\OpenGLApi.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Particles.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Party.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Picker.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\QuadBufferMesh.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\RenderParams.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\RenderPipe.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\RenderSettings.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\RenderTarget.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\RenderUtils.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ScreenProps.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderAttribute.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderBase.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderCache.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderCompiler.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderMaker.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderSubProgram.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShaderUniform.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShadowBox.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShadowBoxSide.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\ShadowFrustum.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\TexCache.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\TextBoss.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Texture2DSpec.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\UiBase.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\UiControls.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\UiSkin.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Viewport.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\VulkanApi.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\Atlas.h">
-      <Filter>display</Filter>
-    </ClInclude>
-    <ClInclude Include="src\display\CameraNode.h">
-      <Filter>display</Filter>
     </ClInclude>
     <ClInclude Include="src\ext\pugixml\pugixml.hpp">
       <Filter>ext\pugixml</Filter>
@@ -582,6 +438,162 @@
     <ClInclude Include="src\world\PhysicsNode.h">
       <Filter>world</Filter>
     </ClInclude>
+    <ClInclude Include="src\app\AppMain.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\DeferredFramebuffer.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\DisplayHeader.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FlyCam.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FontTextBuffer.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ForwardFramebuffer.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FramebufferBase.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FrustumBase.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FrustumProjectionParameters.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\GpuComputeSync.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\GpuQuad3.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\GraphicsApi.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Gui2d.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\HappySky.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\LightManager.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\LightNode.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\MegaTex.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\OpenGLApi.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Particles.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Party.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Picker.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\QuadBufferMesh.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderParams.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderPipe.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderSettings.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderTarget.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderUtils.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ScreenProps.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderAttribute.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderBase.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderCache.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderCompiler.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderMaker.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderSubProgram.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderUniform.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShadowBox.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShadowBoxSide.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShadowFrustum.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\TexCache.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\TextBoss.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Texture2DSpec.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\UiBase.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\UiControls.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\UiSkin.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Viewport.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\VulkanApi.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Atlas.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\CameraNode.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\VulkanContext.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\GraphicsContext.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\FpsMeter.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Base.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BinaryFile.cpp">
@@ -724,144 +736,6 @@
     </ClCompile>
     <ClCompile Include="src\base\AppRunner.cpp">
       <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\FlyCam.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\FontTextBuffer.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ForwardFramebuffer.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\FramebufferBase.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\FrustumBase.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Gd.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\GpuComputeSync.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\GpuQuad3.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\GraphicsApi.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Gui2d.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\HappySky.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\LightManager.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\LightNode.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\MegaTex.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\OpenGLApi.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Particles.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Party.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Picker.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\QuadBufferMesh.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\RenderParams.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\RenderPipe.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\RenderSettings.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\RenderTarget.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\RenderUtils.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ScreenProps.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderAttribute.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderBase.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderCache.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderCompiler.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderMaker.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderSubProgram.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShaderUniform.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShadowBox.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShadowBoxSide.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\ShadowFrustum.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\TexCache.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\TextBoss.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Texture2DSpec.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\UiBase.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\UiControls.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\UiSkin.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Viewport.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\VulkanApi.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\Atlas.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\CameraNode.cpp">
-      <Filter>display</Filter>
-    </ClCompile>
-    <ClCompile Include="src\display\DeferredFramebuffer.cpp">
-      <Filter>display</Filter>
     </ClCompile>
     <ClCompile Include="src\ext\pugixml\pugixml.cpp">
       <Filter>ext\pugixml</Filter>
@@ -1076,5 +950,158 @@
     <ClCompile Include="src\world\PhysicsShapes.cpp">
       <Filter>world</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\Main.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\AppMain.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\DeferredFramebuffer.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FlyCam.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FontTextBuffer.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ForwardFramebuffer.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FramebufferBase.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FrustumBase.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\GpuComputeSync.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\GpuQuad3.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\GraphicsApi.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Gui2d.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\HappySky.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\LightManager.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\LightNode.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\MegaTex.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\OpenGLApi.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Particles.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Party.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Picker.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\QuadBufferMesh.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderParams.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderPipe.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderSettings.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderTarget.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderUtils.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ScreenProps.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderAttribute.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderBase.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderCache.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderCompiler.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderMaker.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderSubProgram.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderUniform.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShadowBox.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShadowBoxSide.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShadowFrustum.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\TexCache.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\TextBoss.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Texture2DSpec.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\UiBase.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\UiControls.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\UiSkin.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Viewport.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\VulkanApi.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Atlas.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\CameraNode.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\VulkanContext.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\GraphicsContext.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\FpsMeter.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Roadmap.odt" />
   </ItemGroup>
 </Project>

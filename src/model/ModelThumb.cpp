@@ -4,12 +4,12 @@
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/AppBase.h"
-#include "../display/CameraNode.h"
-#include "../display/RenderPipe.h"
-#include "../display/TexCache.h"
-#include "../display/LightNode.h"
-#include "../display/ShadowBox.h"
-#include "../display/Viewport.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderPipe.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/ShadowBox.h"
+#include "../gfx/Viewport.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshSpec.h"
@@ -26,21 +26,21 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
     //Create Lights + Camera
     std::shared_ptr<Viewport> pv = std::make_shared<Viewport>(iThumbSize, iThumbSize);
     std::shared_ptr<CameraNode> pThumbCam = CameraNode::create(pv);
-    std::shared_ptr<LightNodePoint> light = Gu::getContext()->getPhysicsWorld()->makePointLight(vec3(30, 30, 30), 99999, vec4(1, 1, 1, 1), "", false);
+    std::shared_ptr<LightNodePoint> light = Gu::getPhysicsWorld()->makePointLight(vec3(30, 30, 30), 99999, vec4(1, 1, 1, 1), "", false);
     pThumbCam->setPos(std::move(vec3(20, 20, 20)));
     pThumbCam->setLookAt(std::move(vec3(0, 0, 0)));
     std::map<Hash32, std::shared_ptr<Animator>> m;
     pThumbCam->update(0.0f, m);
-    std::shared_ptr<CameraNode> pOrigCam = Gu::getContext()->getCamera();
-    Gu::getContext()->setCamera(pThumbCam);
+    std::shared_ptr<CameraNode> pOrigCam = Gu::getCamera();
+    Gu::getGraphicsContext()->setCamera(pThumbCam);
 
     //*Clear color - this isn't working for some reason.
-    vec4 savedClear = Gu::getContext()->getRenderPipe()->getClear();
-    Gu::getContext()->getRenderPipe()->setClear(vec4(0, 0, 0, 0));//Zero alpha
+    vec4 savedClear = Gu::getRenderPipe()->getClear();
+    Gu::getRenderPipe()->setClear(vec4(0, 0, 0, 0));//Zero alpha
 
                                                                   //Create an instance of model A
     t_string name = mod->getName();
-    std::shared_ptr<ModelNode> wo = Gu::getContext()->getPhysicsWorld()->makeObj(mod, vec3(0, 0, 0), vec4(0, 0, 1, 0), vec3(1, 1, 1), "");
+    std::shared_ptr<ModelNode> wo = Gu::getPhysicsWorld()->makeObj(mod, vec3(0, 0, 0), vec4(0, 0, 1, 0), vec3(1, 1, 1), "");
 
     //Position cam + light outside the model
     float r = wo->getBoundBoxObject()->outerRadius() * 2.0f;
@@ -55,22 +55,22 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
     std::bitset<8> bits;
     bits.set(PipeBit::e::Deferred);
     bits.set(PipeBit::e::Shadow);//I think we need this in order to update lights
-    Gu::getContext()->getRenderPipe()->renderScene(bits, wo);
-    std::shared_ptr<Img32> thumb = Gu::getContext()->getRenderPipe()->getResultAsImage();
+    Gu::getRenderPipe()->renderScene(bits, wo);
+    std::shared_ptr<Img32> thumb = Gu::getRenderPipe()->getResultAsImage();
 
 
     //save to disk (debug)
-    t_string cached = Gu::getContext()->getRoom()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
+    t_string cached = Gu::getRoom()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
     thumb->flipV();
     Gu::saveImage(cached, thumb);
     thumb->flipV();
 
 
     //Cleanup, Restore state
-    Gu::getContext()->getPhysicsWorld()->tryRemoveObj(wo);
-    Gu::getContext()->getPhysicsWorld()->tryRemoveObj(light);
-    Gu::getContext()->getRenderPipe()->setClear(savedClear);
-    Gu::getContext()->setCamera(pOrigCam);
+    Gu::getPhysicsWorld()->tryRemoveObj(wo);
+    Gu::getPhysicsWorld()->tryRemoveObj(light);
+    Gu::getRenderPipe()->setClear(savedClear);
+    Gu::getGraphicsContext()->setCamera(pOrigCam);
 
 
     return thumb;

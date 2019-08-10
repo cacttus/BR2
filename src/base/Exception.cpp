@@ -1,6 +1,6 @@
 #include "../base/Exception.h"
 #include "../base/Logger.h"
-#include "../base/TStr.h"
+
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
@@ -15,7 +15,9 @@ Exception::Exception(t_string c, int line, const char* file, bool bLogError ) {
 
     Gu::debugBreak();
 }
-
+t_string Exception::what() {
+    return _msg + " file:" + _file + " line:" + _line;
+}
 
 
 

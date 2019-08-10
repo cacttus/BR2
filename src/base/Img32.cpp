@@ -1,15 +1,12 @@
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
 #include "../base/Gu.h"
-#include "../base/TStr.h"
+
 #include "../base/Logger.h"
 #include "../base/BinaryFile.h"
 
 namespace Game {
-;
-t_string Exception::what() {
-    return _msg+ " file:"+ _file+ " line:"+ _line;
-}
+
 ////////////////////////////////////////////////////////////////////////////
 
 Img32::Img32(t_string path, bool bLoad){
@@ -100,7 +97,8 @@ void Img32::create(int w, int h)
 /**
 *   @fn toGray()
 *   @brief Desaturate this image.
-*/
+*/
+
 int8_t Img32::toGray(Pixel4ub& in)
 {
     return (11 * in.r() + 16 * in.g() + 5 * in.b()) / 32;
@@ -881,7 +879,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
                 voff.construct(x0, y0);
                 vsiz.construct(x1 - x0, y1 - y0);
                 img = master->copySubImageTo(voff, vsiz);
-                ret.push_back(img);//std::make_shared<Texture2DSpec>(img, Gu::getContext(), eFilter));
+                ret.push_back(img);//std::make_shared<Texture2DSpec>(img, Gu::getGraphicsContext(), eFilter));
             }
             else {
                 //Invalid Patch segment

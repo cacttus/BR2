@@ -1,30 +1,22 @@
 #include "../base/Gu.h"
-#include "../display/ShaderBase.h"
-#include "../display/CameraNode.h"
-#include "../display/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/ShaderMaker.h"
 #include "../base/GLContext.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
 #include "../model/Material.h"
 #include "../world/PhysicsGrid.h"
 #include "../world/RenderBucket.h"
-#include "../display/LightNode.h"
-#include "../display/RenderSettings.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/RenderSettings.h"
 
 
 namespace Game {
-///////////////////////////////////////////////////////////////////
-RenderBucket::RenderBucket()
-{
-
+RenderBucket::RenderBucket(){
 }
-RenderBucket::~RenderBucket()
-{
-
+RenderBucket::~RenderBucket(){
 }
-///////////////////////////////////////////////////////////////////
-
-
 void RenderBucket::clear(){
     _mapObjs.clear();
     _mapGrids.clear();
@@ -32,7 +24,7 @@ void RenderBucket::clear(){
     _mapDirLights.clear();
     _mapPointLights.clear();
     _mapMeshes.clear();
-    std::shared_ptr<CameraNode> cam = Gu::getContext()->getCamera();
+    std::shared_ptr<CameraNode> cam = Gu::getCamera();
     _vCachedCamPos = cam->getFinalPos();
 }
 float RenderBucket::distToCam(Box3f* bn){
@@ -64,7 +56,7 @@ void RenderBucket::collect(std::shared_ptr<BaseNode> bn) {
         }
         else if (std::dynamic_pointer_cast<MeshNode>(bn) != nullptr) {
             std::shared_ptr<MeshNode> mn = std::dynamic_pointer_cast<MeshNode>(bn);
-            if(mn->getMeshSpec()->getMaterial() != nullptr && mn->getMeshSpec()->getMaterial()->getEnableTransparency() && Gu::getContext()->getRenderSettings()->enableTransparency()){
+            if(mn->getMeshSpec()->getMaterial() != nullptr && mn->getMeshSpec()->getMaterial()->getEnableTransparency() && Gu::getRenderSettings()->enableTransparency()){
                 _mapMeshesTransparent.insert(std::make_pair(fDist, std::dynamic_pointer_cast<MeshNode>(bn)));
             }
             else {

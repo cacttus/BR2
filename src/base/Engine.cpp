@@ -9,17 +9,17 @@
 
 #include "../math/MathAll.h"
 
-#include "../display/ShaderMaker.h"
-#include "../display/RenderUtils.h"
-#include "../display/ShaderBase.h"
-#include "../display/Atlas.h"
-#include "../display/HappySky.h"
-#include "../display/RenderPipe.h"
-#include "../display/CameraNode.h"
-#include "../display/Viewport.h"
-#include "../display/Picker.h"
-#include "../display/Gui2d.h"
-#include "../display/GraphicsApi.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/RenderUtils.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/Atlas.h"
+#include "../gfx/HappySky.h"
+#include "../gfx/RenderPipe.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/Viewport.h"
+#include "../gfx/Picker.h"
+#include "../gfx/Gui2d.h"
+#include "../gfx/GraphicsApi.h"
 
 #include "../model/MeshNode.h"
 #include "../model/MeshUtils.h"
@@ -48,16 +48,16 @@ void Engine::init() {
 
     _pRenderPipe = std::make_shared<RenderPipe>();
     _pRenderPipe->init(_pViewport->getWidth(), _pViewport->getHeight(), _pApp->makeAssetPath(_pApp->getEnvTexturePath()));
-    Gu::getContext()->setRenderPipe(_pRenderPipe);
+    Gu::setRenderPipe(_pRenderPipe);
 
     //Gui
-    Gu::getContext()->getGui()->init();
+    Gu::getGui()->init();
 
     //Net
     _pNet = std::make_shared<Net>();
 
     //Make Room
-    _pApp->setup(_pViewport, Gu::getContext());
+    _pApp->setup(_pViewport);
 
     //*Set room width / height
     _iLastWidth = _pApp->getStartWidth();
@@ -153,7 +153,7 @@ void Engine::step(int w, int h)
     Gu::pushPerf();    
 
     //Debug:Inc/Dec render ipe
-    if(Gu::getContext()->getFingers()->keyPress(SDL_SCANCODE_F8)) {
+    if(Gu::getFingers()->keyPress(SDL_SCANCODE_F8)) {
         Gu::incrementEnum<PipeBit::e>(_ePipeBit, PipeBit::e::MaxPipes);
         if(_ePipeBit == PipeBit::e::Full){
             _pipeBits.set();
@@ -166,21 +166,21 @@ void Engine::step(int w, int h)
 
     _pNet->update();
 
-    Gu::getContext()->setLoopState(EngineLoopState::SyncBegin);
-    Gu::getContext()->getFrameSync()->syncBegin();
+    Gu::getGraphicsContext()->setLoopState(EngineLoopState::SyncBegin);
+    Gu::getFrameSync()->syncBegin();
     {
-        Gu::getContext()->setLoopState(EngineLoopState::Update);
-        Gu::getContext()->update(getFrameDelta());
+        Gu::getGraphicsContext()->setLoopState(EngineLoopState::Update);
+        Gu::getGraphicsContext()->update(getFrameDelta());
 
         updateWidthHeight(w, h, false);
         _pApp->step((float)_fDelta);
 
-        Gu::getContext()->setLoopState(EngineLoopState::Render);
+        Gu::getGraphicsContext()->setLoopState(EngineLoopState::Render);
         
         _pRenderPipe->renderScene(_pipeBits, _pApp);
     }
-    Gu::getContext()->setLoopState(EngineLoopState::SyncEnd);
-    Gu::getContext()->getFrameSync()->syncEnd();
+    Gu::getGraphicsContext()->setLoopState(EngineLoopState::SyncEnd);
+    Gu::getFrameSync()->syncEnd();
 
     Gu::popPerf();
 }
@@ -204,7 +204,7 @@ void Engine::updateWidthHeight(uint32_t w, uint32_t h, bool bForce){
             _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
         }
         _pApp->screenChanged(w, h, _bFullscreen);
-        Gu::getContext()->getGui()->screenChanged(w, h, _bFullscreen);
+        Gu::getGui()->screenChanged(w, h, _bFullscreen);
     }
     _iLastWidth = w;
     _iLastHeight = h;

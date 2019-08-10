@@ -4,7 +4,7 @@
 #include "../world/PhysicsWorld.h"
 #include "../world/Manifold.h"
 #include "../world/PhysicsNode.h"
-#include "../display/ShaderMaker.h"
+#include "../gfx/ShaderMaker.h"
 
 
 namespace Game {

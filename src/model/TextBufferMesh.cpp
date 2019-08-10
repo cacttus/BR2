@@ -1,6 +1,6 @@
 #include "../model/TextBufferMesh.h"
-#include "../display/GpuQuad3.h"
-#include "../display/ShaderBase.h"
+#include "../gfx/GpuQuad3.h"
+#include "../gfx/ShaderBase.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/MeshNode.h"
 #include "../base/GLContext.h"

@@ -14,7 +14,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../base/IOBase.h"
-#include "../base/TStr.h"
+
 
 namespace Game {
 /**

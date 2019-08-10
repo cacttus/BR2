@@ -15,6 +15,9 @@
 //
 #define WIN32_LEAN_AND_MEAN
 
+//**TODO: Remove 90% of this file and place headers in their respective files.
+// This will speed up the build.
+
 //SDL
 #include <SDL.h>
 
@@ -81,6 +84,10 @@
 #include <optional>
 //C++17 For path
 #include <filesystem>
+
+//Mono
+#include <mono/jit/jit.h>
+#include <mono/metadata/assembly.h>
 
 #ifdef __IPHONEOS__
 //#include "CGGeometry.h"

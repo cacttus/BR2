@@ -1,19 +1,19 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
 
-#include "../display/GpuQuad3.h"
-#include "../display/DisplayHeader.h"
-#include "../display/ShaderBase.h"
+#include "../gfx/GpuQuad3.h"
+#include "../gfx/DisplayHeader.h"
+#include "../gfx/ShaderBase.h"
 
 #include "../model/MeshNode.h"
 
 #include "../model/VboData.h"
 #include "../model/IboData.h"
-#include "../display/ShaderAttribute.h"
+#include "../gfx/ShaderAttribute.h"
 
 #include "../model/VaoDataGeneric.h"
 #include "../model/VertexFormat.h"
-#include "../display/RenderUtils.h"
+#include "../gfx/RenderUtils.h"
 
 
 namespace Game {

@@ -2,8 +2,8 @@
 #include "../base/OglErr.h"
 #include "../base/AppBase.h"
 
-#include "../display/GpuQuad3.h"
-#include "../display/ShaderBase.h"
+#include "../gfx/GpuQuad3.h"
+#include "../gfx/ShaderBase.h"
 
 #include "../model/MeshNode.h"
 #include "../model/VaoDataGeneric.h"

@@ -88,13 +88,13 @@
     <IncludePath>..\..\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <TargetName>SDL2_net</TargetName>
+    <TargetName>SDL2_net_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>..\..\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib;$(LibraryPath)</LibraryPath>
-    <TargetName>SDL2_net</TargetName>
+    <TargetName>SDL2_net_r</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>

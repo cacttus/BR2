@@ -12,7 +12,7 @@
 #ifndef __RenderBucket_15166495182133110211_H__
 #define __RenderBucket_15166495182133110211_H__
 
-#include "../display/DisplayHeader.h"
+#include "../gfx/DisplayHeader.h"
 #include "../world/WorldHeader.h"
 
 
