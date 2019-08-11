@@ -12,7 +12,7 @@
 #ifndef __OPENGLGraphicsApi_15650573213471462786_H__
 #define __OPENGLGraphicsApi_15650573213471462786_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../gfx/GraphicsApi.h"
 
 namespace Game {
@@ -55,6 +55,7 @@ public:
     virtual void cleanup() override;
     virtual void swapBuffers() override;
     virtual void createContext(std::shared_ptr<AppBase> app) override;
+
 
     OpenGLApi();
     virtual ~OpenGLApi() override;

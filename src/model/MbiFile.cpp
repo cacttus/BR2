@@ -1,7 +1,4 @@
-#include "../model/MbiFile.h"
-#include "../base/Gu.h"
-#include "../base/GLContext.h"
-#include "../base/Package.h"
+#include "../base/Base.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/AppBase.h"
@@ -10,28 +7,28 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShadowBox.h"
+#include "../gfx/Texture2DSpec.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshSpec.h"
 #include "../model/Material.h"
+#include "../model/MbiFile.h"
 #include "../world/PhysicsWorld.h"
 
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-MbiFile::MbiFile()
-{
+MbiFile::MbiFile() {
     _pFile = std::make_shared<BinaryFile>();
 }
-MbiFile::~MbiFile()
-{
+MbiFile::~MbiFile() {
     _pFile = nullptr;
     //DEL_MEM(_pFile);
 }
 ///////////////////////////////////////////////////////////////////
 void MbiFile::parseErr(t_string str, bool bDebugBreak, bool bFatal) {
-    t_string strhead = Stz "Error: '"+ _fileLoc+ "': line "+ _pFile->pos()+ "\r\n  ";
-    str =  strhead + str;
+    t_string strhead = Stz "Error: '" + _fileLoc + "': line " + _pFile->pos() + "\r\n  ";
+    str = strhead + str;
     //Throw this if you wnt to have an error in your file.
     if (bFatal) {
         BroThrowException(str);
@@ -43,7 +40,7 @@ void MbiFile::parseErr(t_string str, bool bDebugBreak, bool bFatal) {
         }
     }
 }
-void MbiFile::postLoad(){
+void MbiFile::postLoad() {
 
     //Compute Bone Boxes
     //Debug: we'll do this every time becasue FUCK!s
@@ -79,7 +76,7 @@ bool MbiFile::loadAndParse(t_string file) {
     float version;
     fb->readFloat(version);
     if (version != c_fVersion) {
-        parseErr(Stz "Version mismatch loaded " +version+ " expected "+ c_fVersion, true, false);
+        parseErr(Stz "Version mismatch loaded " + version + " expected " + c_fVersion, true, false);
         return false;
     }
 
@@ -94,10 +91,10 @@ bool MbiFile::loadAndParse(t_string file) {
         Gu::getModelCache()->addSpec(ms);
     }
 
-    
+
     //Read textures
     BroLogInfo("  Loading textures..");
-    std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs; 
+    std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs;
     int32_t nTexs;
     fb->readInt32(nTexs);
     Img32 img;
@@ -107,7 +104,7 @@ bool MbiFile::loadAndParse(t_string file) {
 
         std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>(Gu::getGraphicsContext());
         pTex->deserialize(fb);
-        if(Gu::getTexCache()->add(pTex->getLocation(), pTex, false) == false){
+        if (Gu::getTexCache()->add(pTex->getLocation(), pTex, false) == false) {
             t_string loc = pTex->getLocation();
             //DEL_MEM(pTex);
             pTex = nullptr;

@@ -1,8 +1,10 @@
-#include "../base/GLContext.h"
-#include "../base/Gu.h"
+#include "../base/Base.h"
 #include "../base/EngineConfig.h"
 #include "../base/DateTime.h"
-#include "../gfx/Viewport.h"
+#include "../base/Img32.h"
+#include "../base/Fingers.h"
+#include "../gfx/WindowViewport.h"
+#include "../gfx/Texture2DSpec.h"
 #include "../gfx/RenderPipe.h"
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/ForwardFramebuffer.h"
@@ -16,7 +18,6 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderSettings.h"
-#include "../base/Img32.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshUtils.h"
 #include "../model/VertexFormat.h"
@@ -266,9 +267,9 @@ void RenderPipe::resizeScreenBuffers(int32_t w, int32_t h)
 
 void RenderPipe::beginRenderShadows(){
     //See GLLightManager in BRO
-    Gu::pushDepthTest();
-    Gu::pushBlend();
-    Gu::pushCullFace();
+    Gu::getGraphicsContext()->pushDepthTest();
+    Gu::getGraphicsContext()->pushBlend();
+    Gu::getGraphicsContext()->pushCullFace();
     glCullFace(GL_FRONT);
 
     glEnable(GL_DEPTH_TEST);
@@ -278,9 +279,9 @@ void RenderPipe::beginRenderShadows(){
 void RenderPipe::endRenderShadows() {
 
     glCullFace(GL_BACK);
-    Gu::popDepthTest();
-    Gu::popBlend();
-    Gu::popCullFace();
+    Gu::getGraphicsContext()->popDepthTest();
+    Gu::getGraphicsContext()->popBlend();
+    Gu::getGraphicsContext()->popCullFace();
 }
 void RenderPipe::renderShadows() {
     Gu::getLightManager()->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
@@ -669,7 +670,7 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
         BroLogError("Camera Viewport was not set for renderScene");
         return;
     }
-    std::shared_ptr<Viewport> pv = Gu::getCamera()->getViewport();
+    std::shared_ptr<WindowViewport> pv = Gu::getCamera()->getViewport();
     if (pv->getWidth() != _iLastWidth || pv->getHeight() != _iLastHeight) {
         init(pv->getWidth(), pv->getHeight(), "");
     }

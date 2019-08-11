@@ -18,7 +18,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/BaseNode.h"
 namespace Game {
 /**
@@ -39,7 +39,7 @@ protected:
     float z_near = 1.0f;
     float z_far = 1000.0f;
     ProjectionMode::e _eProjectionMode;
-    std::shared_ptr<Viewport> _pViewportRef;    // - Reference to camera viewport.
+    std::shared_ptr<WindowViewport> _pViewportRef;    // - Reference to camera viewport.
     //Line3f* _satLine;
     Box3f* _minimax;
 //
@@ -55,7 +55,7 @@ protected:
     void setupBox( FrustumProjectionParameters* params);
     //void updateBoundBox();//We don't do this in the generic system for frustums.
 public:
-    FrustumBase(std::shared_ptr<Viewport> pv, float fov);
+    FrustumBase(std::shared_ptr<WindowViewport> pv, float fov);
     virtual ~FrustumBase() override ;
 
     mat4 getProjectionMatrix();

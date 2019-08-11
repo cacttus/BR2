@@ -12,7 +12,7 @@
 #ifndef __PARTY_14823443362825418313_H__
 #define __PARTY_14823443362825418313_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
 namespace Game {

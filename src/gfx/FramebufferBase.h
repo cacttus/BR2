@@ -11,7 +11,7 @@
 #pragma once
 #ifndef __FRAMEBUFFERBASE_14942908062084042827_H__
 #define __FRAMEBUFFERBASE_14942908062084042827_H__
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 
 namespace Game {

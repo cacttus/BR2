@@ -1,14 +1,13 @@
-﻿#include "../gfx/MegaTex.h"
-#include "../base/Img32.h"
-#include "../base/Logger.h"
+﻿#include "../base/Img32.h"
+#include "../base/Base.h"
 #include "../base/Hash.h"
-#include "../base/FileSystem.h"
 #include "../base/Allocator.h"
 #include "../base/Package.h"
 #include "../base/BinaryFile.h"
 #include "../base/GLContext.h"
 #include "../gfx/Gui2d.h"
 #include "../gfx/RenderUtils.h"
+#include "../gfx/MegaTex.h"
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../ext/stb_truetype.h"

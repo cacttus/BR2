@@ -17,7 +17,7 @@
 #include "../math/Vec2x.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {
@@ -29,7 +29,7 @@ namespace Game {
 */
 class Engine : public GameMemory {
 private:
-    std::shared_ptr<Viewport> _pViewport = nullptr;
+    //std::shared_ptr<Viewport> _pViewport = nullptr;
     std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
     std::shared_ptr<AppBase> _pApp = nullptr;
     std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
@@ -41,23 +41,17 @@ private:
 
     std::shared_ptr<Net> _pNet;
 
-    uint32_t _iLastWidth = 0;
-    uint32_t _iLastHeight = 0;
-    uint32_t _iFullscreenToggleWidth  = 0;
-    uint32_t _iFullscreenToggleHeight = 0;
-
     double _fDelta = 0;
-    bool _bFullscreen = false;
 
-    void toggleFullscreen();
-    void updateWidthHeight(uint32_t iw, uint32_t ih, bool bForce);
 public:
     Engine(std::shared_ptr<AppBase> rb, std::shared_ptr<GraphicsApi> re, int xw, int xh);
     virtual ~Engine();
    
+//    std::shared_ptr<Viewport> getViewport() { return _pViewport; }
+
     void init();
     void updateDelta(); //**Call before step()
-    void step(int w, int h);
+    void step();
     void cleanup();
     float getFrameDelta() { return (float)_fDelta; }
     GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);

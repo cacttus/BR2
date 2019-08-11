@@ -3,7 +3,7 @@
 #include "../base/GLContext.h"
 #include "../model/MeshUtils.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"

@@ -16,7 +16,7 @@
 #include "../gfx/HappySky.h"
 #include "../gfx/RenderPipe.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/Picker.h"
 #include "../gfx/Gui2d.h"
 #include "../gfx/GraphicsApi.h"
@@ -35,7 +35,7 @@ Engine::Engine(std::shared_ptr<AppBase> rb, std::shared_ptr<GraphicsApi> re, int
 {
     AssertOrThrow2(rb != nullptr);
     _pGraphicsApi = re;
-    _pViewport = std::make_shared<Viewport>(xw, xh);
+
 }
 Engine::~Engine()
 {
@@ -47,7 +47,7 @@ void Engine::init() {
     _pipeBits.set();
 
     _pRenderPipe = std::make_shared<RenderPipe>();
-    _pRenderPipe->init(_pViewport->getWidth(), _pViewport->getHeight(), _pApp->makeAssetPath(_pApp->getEnvTexturePath()));
+    _pRenderPipe->init(Gu::getViewport()->getWidth(), Gu::getViewport()->getHeight(), _pApp->makeAssetPath(_pApp->getEnvTexturePath()));
     Gu::setRenderPipe(_pRenderPipe);
 
     //Gui
@@ -55,15 +55,6 @@ void Engine::init() {
 
     //Net
     _pNet = std::make_shared<Net>();
-
-    //Make Room
-    _pApp->setup(_pViewport);
-
-    //*Set room width / height
-    _iLastWidth = _pApp->getStartWidth();
-    _iLastHeight = _pApp->getStartHeight();
-
-    Gu::SDLTrySetWindowIcon(_pGraphicsApi->getWindow(), _pApp->getIconFullPath());
 
     if(_pApp->getForceAspectRatio()){
         SDL_DisplayMode dm;
@@ -148,7 +139,7 @@ void Engine::updateDelta() {
     _fDelta = delta;
 }
 
-void Engine::step(int w, int h)
+void Engine::step()
 {
     Gu::pushPerf();    
 
@@ -170,9 +161,8 @@ void Engine::step(int w, int h)
     Gu::getFrameSync()->syncBegin();
     {
         Gu::getGraphicsContext()->setLoopState(EngineLoopState::Update);
-        Gu::getGraphicsContext()->update(getFrameDelta());
+        Gu::update(getFrameDelta());
 
-        updateWidthHeight(w, h, false);
         _pApp->step((float)_fDelta);
 
         Gu::getGraphicsContext()->setLoopState(EngineLoopState::Render);
@@ -191,26 +181,6 @@ void Engine::cleanup()
 //    DEL_MEM(_pApp);
 }
 
-void Engine::updateWidthHeight(uint32_t w, uint32_t h, bool bForce){
-    //update view/cam
-    if (_iLastWidth != w || bForce) {
-        _pViewport->setWidth(w);
-    }
-    if (_iLastHeight != h || bForce) {
-        _pViewport->setHeight(h);
-    }
-    if (_iLastHeight != h || _iLastWidth != w || bForce) {
-        if(_pRenderPipe != nullptr) {
-            _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
-        }
-        _pApp->screenChanged(w, h, _bFullscreen);
-        Gu::getGui()->screenChanged(w, h, _bFullscreen);
-    }
-    _iLastWidth = w;
-    _iLastHeight = h;
-
-
-}
 
 
 }//ns Game

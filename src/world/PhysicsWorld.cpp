@@ -1,6 +1,4 @@
-#include "../base/Logger.h"
-#include "../base/GLContext.h"
-#include "../base/Gu.h"
+#include "../base/Base.h"
 #include "../math/CollisionEquations.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
@@ -1458,13 +1456,13 @@ void PhysicsWorld::drawForward() {
 void PhysicsWorld::drawDeferred() {
     Gu::pushPerf();
 
-    Gu::pushDepthTest();
-    Gu::pushCullFace();
-    Gu::pushBlend();
+    Gu::getGraphicsContext()->pushDepthTest();
+    Gu::getGraphicsContext()->pushCullFace();
+    Gu::getGraphicsContext()->pushBlend();
     {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glDisable(GL_BLEND);
+        Gu::getGraphicsContext()->enableBlend(false);
+        Gu::getGraphicsContext()->enableCullFace(true);
+        Gu::getGraphicsContext()->enableDepthTest(true);
 
         //**
         //2/24 in order to set up the rendering system to be instanced we gotta change a lot around, like merge all the uniform buffers, skin joint buffers, and stuff.  Then reference by gl_InstanceID
@@ -1512,22 +1510,22 @@ void PhysicsWorld::drawDeferred() {
             pm->drawDeferred(rp); 
         }
     }
-    Gu::popBlend();
-    Gu::popCullFace();
-    Gu::popDepthTest();
+    Gu::getGraphicsContext()->popBlend();
+    Gu::getGraphicsContext()->popCullFace();
+    Gu::getGraphicsContext()->popDepthTest();
 
     Gu::popPerf();
 }
 void PhysicsWorld::drawTransparent(){
     Gu::pushPerf();
 
-    Gu::pushDepthTest();
-    Gu::pushCullFace();
-    Gu::pushBlend();
+    Gu::getGraphicsContext()->pushDepthTest();
+    Gu::getGraphicsContext()->pushCullFace();
+    Gu::getGraphicsContext()->pushBlend();
     {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glDisable(GL_BLEND);
+        Gu::getGraphicsContext()->enableDepthTest(true);
+        Gu::getGraphicsContext()->enableCullFace(true);
+        Gu::getGraphicsContext()->enableBlend(false);
 
         RenderParams rp;
         for (std::pair<float, std::shared_ptr<MeshNode>> p : _pRenderBucket->getMeshesTransparent()) {
@@ -1535,9 +1533,9 @@ void PhysicsWorld::drawTransparent(){
             pm->drawTransparent(rp);
         }
     }
-    Gu::popBlend();
-    Gu::popCullFace();
-    Gu::popDepthTest();
+    Gu::getGraphicsContext()->popBlend();
+    Gu::getGraphicsContext()->popCullFace();
+    Gu::getGraphicsContext()->popDepthTest();
 
     Gu::popPerf();
 

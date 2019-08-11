@@ -20,7 +20,7 @@ FileSystem::~FileSystem()
 }
 ///////////////////////////////////////////////////////////////////
 t_string FileSystem::appendCachePathToFile(const t_string& strFileName) {
-    std::shared_ptr<AppBase> rb = Gu::getRoom();
+    std::shared_ptr<AppBase> rb = Gu::getApp();
     t_string ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
     return ret;
 }

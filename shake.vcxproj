@@ -63,6 +63,7 @@
     <ClInclude Include="src\base\Package.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
+    <ClInclude Include="src\base\SDL.h" />
     <ClInclude Include="src\base\Sequencer.h" />
     <ClInclude Include="src\base\SoundCache.h" />
     <ClInclude Include="src\base\StackInfo.h" />
@@ -89,7 +90,7 @@
     <ClInclude Include="src\gfx\CameraNode.h" />
     <ClInclude Include="src\gfx\GraphicsContext.h" />
     <ClInclude Include="src\gfx\DeferredFramebuffer.h" />
-    <ClInclude Include="src\gfx\DisplayHeader.h" />
+    <ClInclude Include="src\gfx\GfxHeader.h" />
     <ClInclude Include="src\gfx\FlyCam.h" />
     <ClInclude Include="src\gfx\FontTextBuffer.h" />
     <ClInclude Include="src\gfx\ForwardFramebuffer.h" />
@@ -131,9 +132,10 @@
     <ClInclude Include="src\gfx\UiBase.h" />
     <ClInclude Include="src\gfx\UiControls.h" />
     <ClInclude Include="src\gfx\UiSkin.h" />
-    <ClInclude Include="src\gfx\Viewport.h" />
+    <ClInclude Include="src\gfx\WindowViewport.h" />
     <ClInclude Include="src\gfx\VulkanApi.h" />
     <ClInclude Include="src\gfx\VulkanContext.h" />
+    <ClInclude Include="src\gfx\Window.h" />
     <ClInclude Include="src\math\Algorithm.h" />
     <ClInclude Include="src\math\BitHacks.h" />
     <ClInclude Include="src\math\Box2x.h" />
@@ -215,6 +217,7 @@
     <ClCompile Include="src\base\Allocator.cpp" />
     <ClCompile Include="src\base\AppBase.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
+    <ClCompile Include="src\base\BaseHeader.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
@@ -231,6 +234,7 @@
     <ClCompile Include="src\base\FrameSync.cpp" />
     <ClCompile Include="src\base\GameMemory.cpp" />
     <ClCompile Include="src\base\GLContext.cpp" />
+    <ClCompile Include="src\base\GlobalIncludes.cpp" />
     <ClCompile Include="src\base\GrowBuffer.cpp" />
     <ClCompile Include="src\base\Gu.cpp" />
     <ClCompile Include="src\base\Hash.cpp" />
@@ -238,6 +242,7 @@
     <ClCompile Include="src\base\Img32.cpp" />
     <ClCompile Include="src\base\IOBase.cpp" />
     <ClCompile Include="src\base\Logger.cpp" />
+    <ClCompile Include="src\base\MachineTypes.cpp" />
     <ClCompile Include="src\base\MemFile.cpp" />
     <ClCompile Include="src\base\Net.cpp" />
     <ClCompile Include="src\base\ObjectFile.cpp" />
@@ -245,6 +250,7 @@
     <ClCompile Include="src\base\OperatingSystem.cpp" />
     <ClCompile Include="src\base\Package.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
+    <ClCompile Include="src\base\SDL.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
     <ClCompile Include="src\base\SoundCache.cpp" />
     <ClCompile Include="src\base\StackInfo.cpp" />
@@ -307,9 +313,10 @@
     <ClCompile Include="src\gfx\UiBase.cpp" />
     <ClCompile Include="src\gfx\UiControls.cpp" />
     <ClCompile Include="src\gfx\UiSkin.cpp" />
-    <ClCompile Include="src\gfx\Viewport.cpp" />
+    <ClCompile Include="src\gfx\WindowViewport.cpp" />
     <ClCompile Include="src\gfx\VulkanApi.cpp" />
     <ClCompile Include="src\gfx\VulkanContext.cpp" />
+    <ClCompile Include="src\gfx\Window.cpp" />
     <ClCompile Include="src\math\Algorithm.cpp" />
     <ClCompile Include="src\math\BitHacks.cpp" />
     <ClCompile Include="src\math\Box2x.cpp" />
@@ -382,6 +389,9 @@
   <ItemGroup>
     <None Include="Roadmap.odt" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="devlog.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -445,7 +455,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <TargetName>shake_x64_d</TargetName>
-    <IncludePath>.\external\SDL2-2.0.9\include;.\external\SDL2_net-2.0.1;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
+    <IncludePath>.\external\;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\debug64</IntDir>
     <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>

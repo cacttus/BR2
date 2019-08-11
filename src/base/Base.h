@@ -9,3 +9,6 @@
 #include "../base/FileSystem.h"
 #include "../base/Allocator.h"
 #include "../base/Gu.h"
+#include "../base/Hash.h"
+#include "../base/Package.h"
+#include "../gfx/GraphicsContext.h"

@@ -1,19 +1,17 @@
-#include "../base/Gu.h"
-#include "../base/GLContext.h"
-#include "../base/Logger.h"
-#include "../gfx/CameraNode.h"
-#include "../model/MeshSpec.h"
-#include "../model/MeshNode.h"
+#include "../base/Base.h"
+#include "../math/MathAll.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderParams.h"
-#include "../math/MathAll.h"
+#include "../gfx/CameraNode.h"
 #include "../gfx/ShadowBoxSide.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/RenderSettings.h"
+#include "../model/MeshSpec.h"
+#include "../model/MeshNode.h"
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/PhysicsGrid.h"
@@ -35,7 +33,7 @@ ShadowBoxSide::ShadowBoxSide(
     _bMustUpdate = true;
     _pLightSource = pLightSource;
 
-    _pViewport = std::make_shared<Viewport>(_pParentBox->getFboWidth()
+    _pViewport = std::make_shared<WindowViewport>(_pParentBox->getFboWidth()
         , _pParentBox->getFboHeight()
         , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
         , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE

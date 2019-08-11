@@ -12,7 +12,7 @@
 #ifndef __FONTTEXTBUFFER_1778616551277491261427268_H__
 #define __FONTTEXTBUFFER_1778616551277491261427268_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 namespace Game {
 /**

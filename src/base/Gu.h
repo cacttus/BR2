@@ -13,7 +13,7 @@
 #define __GU_14784108333124451735_H__
 
 #include "../base/BaseHeader.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../math/MathHeader.h"
 #include "../world/WorldHeader.h"
 #include "../base/Stopwatch.h"
@@ -32,7 +32,7 @@ class Gu : public GameMemory {
     static std::shared_ptr<CameraNode> _pCamera;
     static std::shared_ptr<Party> _pParty;
     static std::shared_ptr<Sequencer> _pSequencer;
-    static std::shared_ptr<AppBase> _pApp;
+    static std::shared_ptr<AppBase> _pAppBase;
     static std::shared_ptr<Fingers> _pFingers;
     static std::shared_ptr<FpsMeter> _pFpsMeter;
     static std::shared_ptr<FrameSync> _pFrameSync;
@@ -48,19 +48,21 @@ class Gu : public GameMemory {
     static std::shared_ptr<RenderPipe> _pRenderPipe;
     static std::shared_ptr<EngineConfig> _pEngineConfig;
     static std::shared_ptr<Logger> _pLogger;
+    static std::shared_ptr<Engine> _pEngine;
+    static std::shared_ptr<GraphicsApi> _pGraphicsApi;
 
-    //static std::map<Hash32, Stopwatch> _stopw;
     static t_string _strCachedProf ;
     static std::stack<Stopwatch> _stopw;
 
 	static int _iSupportedDepthSize;
     
-	static void SDLCreateSurfaceFromImage(const t_string strImage,
-        std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
+	static void SDLCreateSurfaceFromImage(const t_string strImage, std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
     static SDL_Surface* SDLCreateSurfaceFromImage(const std::shared_ptr<Img32> bi);
     static void pulsePerf();
-public:
-    static std::shared_ptr<GraphicsContext> getGraphicsContext();
+    
+    static void createManagers(std::shared_ptr<AppBase> r);
+public: 
+    static std::shared_ptr<GLContext> getGraphicsContext();
     static std::shared_ptr<RenderSettings> getRenderSettings();
     static std::shared_ptr<Package> getPackage();
     static std::shared_ptr<ModelCache> getModelCache();
@@ -70,7 +72,7 @@ public:
     static std::shared_ptr<FrameSync> getFrameSync();
     static std::shared_ptr<SoundCache> getSoundCache();
     static std::shared_ptr<ShaderMaker> getShaderMaker();
-    static std::shared_ptr<AppBase> getRoom();
+    static std::shared_ptr<AppBase> getApp();
     static std::shared_ptr<TexCache> getTexCache();
     static std::shared_ptr<LightManager> getLightManager();
     static std::shared_ptr<Picker> getPicker();
@@ -80,14 +82,24 @@ public:
     static std::shared_ptr<CameraNode> getCamera();
     static std::shared_ptr<EngineConfig> getConfig();
     static std::shared_ptr<RenderPipe> getRenderPipe();
-    static std::shared_ptr<Logger> getLogger() { return _pLogger; }
-    static std::shared_ptr<EngineConfig> getEngineConfig() { return _pEngineConfig; }
+    static std::shared_ptr<Logger> getLogger();
+    static std::shared_ptr<EngineConfig> getEngineConfig();
+    static std::shared_ptr<Engine> getEngine();
+    static std::shared_ptr<GraphicsApi> getGraphicsApi();
+    static std::shared_ptr<WindowViewport> getViewport();
+
+    static std::shared_ptr<Window> getWindow();
 
     static void setContext(std::shared_ptr<GraphicsContext> rb);
     static void setRenderPipe(std::shared_ptr<RenderPipe> r);
     static void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p);
     static void setCamera(std::shared_ptr<CameraNode> pc);
     static void setRoom(std::shared_ptr<AppBase> b);
+    static void setEngine(std::shared_ptr<Engine> engine);
+    static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
+    static void setViewport(std::shared_ptr<WindowViewport> vp);
+
+    static void update(float dt);
 
     static void checkErrorsDbg();
     static void checkErrorsRt();
@@ -135,7 +147,7 @@ public:
     static void print(const t_string& msg);
     static uint64_t getFrameNumber();
 
-    static void guiQuad2d(Box2f& pq, std::shared_ptr<Viewport> vp);//Transforms a quad for the matrix-less 
+    static void guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp);//Transforms a quad for the matrix-less 
 
     template < typename Tx >
     static bool addIfDoesNotContain(std::vector<Tx>& vec, Tx& rhs) { 

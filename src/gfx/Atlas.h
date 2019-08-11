@@ -12,7 +12,7 @@
 #ifndef __ATLAS_14813066743083963786_H__
 #define __ATLAS_14813066743083963786_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../math/MathAll.h"
 namespace Game {

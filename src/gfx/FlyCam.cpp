@@ -4,14 +4,14 @@
 #include "../base/Logger.h"
 
 #include "../gfx/CameraNode.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FlyCam.h"
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-FlyCam::FlyCam(std::shared_ptr<Viewport> pv) : _pViewport(pv) {
+FlyCam::FlyCam(std::shared_ptr<WindowViewport> pv) : _pViewport(pv) {
     BroLogInfo("Creating Camera.");
     _pCamera = CameraNode::create(pv);
     _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  

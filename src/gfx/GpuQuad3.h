@@ -12,7 +12,7 @@
 #ifndef __GPUQUAD2_1926533372616313719120_H__
 #define __GPUQUAD2_1926533372616313719120_H__
 
-#include "../gfx/displayheader.h"
+#include "../gfx/GfxHeader.h"
 #include "../math/MathHeader.h"
 namespace Game {
 /**

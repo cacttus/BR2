@@ -13,7 +13,7 @@
 #define __TEXCACHE_1480188610676155930_H__
 
 #include "../base/BaseHeader.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 /**

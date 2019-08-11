@@ -51,9 +51,7 @@ bool GLContext::load(std::shared_ptr<AppBase> rb) {
 
     return valid;
 }
-void GLContext::update(float delta) {
 
-}
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
     //Enable runtime errors.
     return OglErr::chkErrRt(shared_from_this(), bDoNotBreak, doNotLog);
@@ -332,8 +330,37 @@ void GLContext::popDepthTest() {
 //#endif
 //}
 
+void GLContext::enableCullFace(bool enable) {
+    if (enable)glEnable(GL_CULL_FACE);
+    else glDisable(GL_CULL_FACE);
+}
+void GLContext::enableBlend(bool enable) {
+    if (enable)glEnable(GL_BLEND);
+    else glDisable(GL_BLEND);
+}
 
-
+void GLContext::enableDepthTest(bool enable) {
+    if (enable)glEnable(GL_DEPTH_TEST);
+    else glDisable(GL_DEPTH_TEST);
+}
+void GLContext::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
+    //update view/cam
+    if (_iLastWidth != w || bForce) {
+        Gu::getViewport()->setWidth(w);
+    }
+    if (_iLastHeight != h || bForce) {
+        Gu::getViewport()->setHeight(h);
+    }
+    if (_iLastHeight != h || _iLastWidth != w || bForce) {
+        if (_pRenderPipe != nullptr) {
+            _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
+        }
+        _pApp->screenChanged(w, h, _bFullscreen);
+        Gu::getGui()->screenChanged(w, h, _bFullscreen);
+    }
+    _iLastWidth = w;
+    _iLastHeight = h;
+}
 
 
 

@@ -12,7 +12,7 @@
 #ifndef __RENDERTARGET_149586780355650870_H__
 #define __RENDERTARGET_149586780355650870_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 namespace Game {
 /**
 *    @class RenderTarget

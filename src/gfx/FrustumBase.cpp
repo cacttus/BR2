@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FrustumProjectionParameters.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 //#include "../gfx/DisplayIncludes.h"
 //#include "../math/MathIncludes.h"
 //#include "../physics/CollisionEquations.h"
@@ -11,7 +11,7 @@
 
 namespace Game {
 // - CONSTRUCTOR/ DESTRUCTOR
-FrustumBase::FrustumBase(std::shared_ptr<Viewport> pv, float fov) : _pViewportRef(pv)
+FrustumBase::FrustumBase(std::shared_ptr<WindowViewport> pv, float fov) : _pViewportRef(pv)
 {
     //_satLine = new Line3f();
     _minimax = new Box3f();

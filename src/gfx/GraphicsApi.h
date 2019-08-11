@@ -12,20 +12,20 @@
 #ifndef __GraphicsApi_1565057965514614365_H__
 #define __GraphicsApi_1565057965514614365_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 /**
 *    @class GraphicsApi
 *    @brief
-*
 */
 class GraphicsApi : public VirtualMemory {
 protected:
-    SDL_Window* _pWindow = nullptr;
-    void makeWindow(t_string title, int rendersystem);
+    std::shared_ptr<Window> _pWindow = nullptr;
+
+    void makeWindow();
 public:
-    SDL_Window* getWindow() { return _pWindow; }
+    std::shared_ptr<Window> getWindow() { return _pWindow; }
     virtual void createWindow(t_string title) = 0;
     virtual void getDrawableSize(int* w, int* h) = 0;
     virtual void swapBuffers() = 0;

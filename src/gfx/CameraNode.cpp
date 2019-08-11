@@ -1,11 +1,11 @@
 #include "../base/GLContext.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../base/Gu.h"
 
 namespace Game {
-CameraNode::CameraNode(std::shared_ptr<Viewport> ppViewport) : PhysicsNode(nullptr),
+CameraNode::CameraNode(std::shared_ptr<WindowViewport> ppViewport) : PhysicsNode(nullptr),
 _pViewport(ppViewport){
     _vWorldUp.construct(0,1,0);
 
@@ -15,7 +15,7 @@ _pViewport(ppViewport){
     setPos(vec3(-100, -100, -100));
 
 }
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<Viewport> ppViewport){
+std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<WindowViewport> ppViewport){
     std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
     cn->init();
     return cn;

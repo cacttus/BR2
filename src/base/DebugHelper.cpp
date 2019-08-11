@@ -184,8 +184,9 @@ t_string DebugHelper::modList() {
     do
     {
         ret += app;
+        //TDOO: check this for errors 8/11/19
         std::wstring ws = std::wstring(me32.szModule);
-        ret += std::string(ws.begin(), ws.end());
+        ret += StringUtil::wStrToStr(ws);
         app = ",";
         //me32.
     } while (Module32Next(hModuleSnap, &me32));

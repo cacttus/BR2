@@ -1,7 +1,4 @@
-#include "../base/Logger.h"
-#include "../base/Hash.h"
-#include "../base/GLContext.h"
-#include "../base/Gu.h"
+#include "../base/Base.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../model/Material.h"
@@ -781,7 +778,7 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
 }
 void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pSpec) {
     if (_pMatData != nullptr) {
-        std::shared_ptr<AppBase> pRoom = Gu::getRoom();
+        std::shared_ptr<AppBase> pRoom = Gu::getApp();
         AssertOrThrow2(pRoom != nullptr);
 
         std::shared_ptr<Texture2DSpec> diffuse = nullptr;

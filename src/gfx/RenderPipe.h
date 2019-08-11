@@ -12,7 +12,7 @@
 #ifndef __FRAMEBUFFER2_14939705342264419216_H__
 #define __FRAMEBUFFER2_14939705342264419216_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {

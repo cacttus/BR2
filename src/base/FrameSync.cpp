@@ -62,8 +62,8 @@ int FrameSync::syncEnd() {
         while (elapsedUs < waitUs) {
             // - If we have an idle processor execute some extra computations
             // while we wait for next frame to come around.
-            if (Gu::getRoom() != nullptr) {
-                Gu::getRoom()->idle(waitUs - elapsedUs);//**MUST BE US
+            if (Gu::getApp() != nullptr) {
+                Gu::getApp()->idle(waitUs - elapsedUs);//**MUST BE US
             }
 
             // - update elapsed
@@ -72,7 +72,7 @@ int FrameSync::syncEnd() {
     }
     else {
         //Still call the idle() method so stuff don't get missed
-        Gu::getRoom()->idle(0);
+        Gu::getApp()->idle(0);
     }
     return 0;
 }

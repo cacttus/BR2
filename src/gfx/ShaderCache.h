@@ -12,7 +12,7 @@
 #ifndef __ShaderCache_434517993163531317228885_H__
 #define __ShaderCache_434517993163531317228885_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 //#include "../gpu/ShaderHeader.h"
 //#include "../hardware/HardwareHeader.h"
 

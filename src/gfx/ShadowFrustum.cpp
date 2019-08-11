@@ -1,19 +1,19 @@
-#include "../gfx/ShadowFrustum.h"
 #include "../base/Stopwatch.h"
-#include "../base/Gu.h"
-#include "../base/GLContext.h"
-#include "../base/Logger.h"
+#include "../base/Base.h"
+
 #include "../math/BoxUtils.h"
+#include "../gfx/ShadowFrustum.h"
+
 #include "../gfx/FrustumBase.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderMaker.h"
-#include "../world/RenderBucket.h"
 #include "../model/MeshNode.h"
+#include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 
 namespace Game {
@@ -39,7 +39,7 @@ ShadowFrustum::~ShadowFrustum()
 ///////////////////////////////////////////////////////////////////
 void ShadowFrustum::init() {
 
-    _pViewport = std::make_shared<Viewport>(60, 60
+    _pViewport = std::make_shared<WindowViewport>(60, 60
         , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
         , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
         );

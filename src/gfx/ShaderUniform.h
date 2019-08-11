@@ -12,7 +12,7 @@
 #ifndef __SHADERUNIFORM_14940165762940726006_H__
 #define __SHADERUNIFORM_14940165762940726006_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 /**

@@ -6,7 +6,7 @@
 #include "../math/MathAll.h"
 #include "../gfx/FramebufferBase.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/RenderTarget.h"

@@ -1,4 +1,4 @@
-#include "../base/GLContext.h"
+#include "../base/Base.h"
 #include "../base/OglErr.h"
 #include "../base/AppBase.h"
 #include "../math/Random.h"

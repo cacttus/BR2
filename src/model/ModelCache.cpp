@@ -1,8 +1,5 @@
 #include "../base/AppBase.h"
-#include "../base/GLContext.h"
-#include "../base/Logger.h"
-#include "../base/Exception.h"
-
+#include "../base/Base.h"
 #include "../base/AppBase.h"
 #include "../base/Img32.h"
 
@@ -103,15 +100,15 @@ t_string ModelCache::getFilePathForMobName(t_string mobName, bool bUseBinary) {
     t_string fileExt;
     t_string modelsDir;
     if (bUseBinary) {
-        modelsDir = Gu::getRoom()->getModelsBinDir();
+        modelsDir = Gu::getApp()->getModelsBinDir();
         fileExt = ".mbi";
     }
     else {
-        modelsDir = Gu::getRoom()->getModelsTextDir();
+        modelsDir = Gu::getApp()->getModelsTextDir();
         fileExt = ".mob";
     }
 
-    t_string folderPath = Gu::getRoom()->makeAssetPath(modelsDir, mobName);
+    t_string folderPath = Gu::getApp()->makeAssetPath(modelsDir, mobName);
     t_string filename = FileSystem::combinePath(folderPath, mobName);
     filename += fileExt;
 
@@ -160,15 +157,15 @@ t_string ModelCache::debugPrintAllModelNames() {
     }
     strOut += ("In Dir:\n");
     std::vector<t_string> vecFiles;
-    t_string mods = Gu::getRoom()->getModelsTextDir();
-    mods = Gu::getRoom()->makeAssetPath(mods);
+    t_string mods = Gu::getApp()->getModelsTextDir();
+    mods = Gu::getApp()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
     for (t_string file : vecFiles) {
         strOut += Stz "  " +file+ "\n";
     }
 
-    mods = Gu::getRoom()->getModelsBinDir();
-    mods = Gu::getRoom()->makeAssetPath(mods);
+    mods = Gu::getApp()->getModelsBinDir();
+    mods = Gu::getApp()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
     for (t_string file : vecFiles) {
         strOut += Stz "  " +file +"\n";

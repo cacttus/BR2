@@ -9,7 +9,7 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShadowBox.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshSpec.h"
@@ -24,7 +24,7 @@ namespace Game {
 
 std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int32_t iThumbSize) {
     //Create Lights + Camera
-    std::shared_ptr<Viewport> pv = std::make_shared<Viewport>(iThumbSize, iThumbSize);
+    std::shared_ptr<WindowViewport> pv = std::make_shared<WindowViewport>(iThumbSize, iThumbSize);
     std::shared_ptr<CameraNode> pThumbCam = CameraNode::create(pv);
     std::shared_ptr<LightNodePoint> light = Gu::getPhysicsWorld()->makePointLight(vec3(30, 30, 30), 99999, vec4(1, 1, 1, 1), "", false);
     pThumbCam->setPos(std::move(vec3(20, 20, 20)));
@@ -32,7 +32,7 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
     std::map<Hash32, std::shared_ptr<Animator>> m;
     pThumbCam->update(0.0f, m);
     std::shared_ptr<CameraNode> pOrigCam = Gu::getCamera();
-    Gu::getGraphicsContext()->setCamera(pThumbCam);
+    Gu::setCamera(pThumbCam);
 
     //*Clear color - this isn't working for some reason.
     vec4 savedClear = Gu::getRenderPipe()->getClear();
@@ -60,7 +60,7 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
 
 
     //save to disk (debug)
-    t_string cached = Gu::getRoom()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
+    t_string cached = Gu::getApp()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
     thumb->flipV();
     Gu::saveImage(cached, thumb);
     thumb->flipV();
@@ -70,7 +70,7 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
     Gu::getPhysicsWorld()->tryRemoveObj(wo);
     Gu::getPhysicsWorld()->tryRemoveObj(light);
     Gu::getRenderPipe()->setClear(savedClear);
-    Gu::getGraphicsContext()->setCamera(pOrigCam);
+    Gu::setCamera(pOrigCam);
 
 
     return thumb;

@@ -1,11 +1,12 @@
-#include "../base/GLContext.h"
-#include "../base/Logger.h"
+#include "../base/Base.h"
 #include "../model/UtilMesh.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/MeshSpec.h"
 #include "../model/IndexBufferData.h"
 #include "../model/VaoDataGeneric.h"
+#include "../gfx/CameraNode.h" 
 #include "../gfx/ShaderBase.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShaderMaker.h"
 
@@ -70,7 +71,7 @@ void UtilMesh::copyBuffersToVao() {
 }
 std::shared_ptr<ShaderBase> UtilMesh::getShader() { 
     if(_pShader == nullptr) { 
-        return _pContext->getShaderMaker()->getFlatShader(_pVertexFormat);
+        return Gu::getShaderMaker()->getFlatShader(_pVertexFormat);
     }
     return _pShader; 
 }
@@ -81,7 +82,7 @@ void UtilMesh::draw()
         //Allcate and generate verts
         std::shared_ptr<ShaderBase> pShader = getShader();
         AssertOrThrow2(pShader != NULL);
-        std::shared_ptr<CameraNode> bc = _pContext->getCamera();
+        std::shared_ptr<CameraNode> bc = Gu::getCamera();
         pShader->setCameraUf(bc, &_m4ModelMatrix);
         pShader->draw(_pVaoData, -1, _eDrawMode);
     }

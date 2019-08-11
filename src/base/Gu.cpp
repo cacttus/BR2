@@ -1,4 +1,5 @@
-#include "../base/Gu.h"
+#include "../base/Base.h"
+
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
 #include "../base/FileSystem.h"
@@ -10,7 +11,10 @@
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/TexCache.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/WindowViewport.h"
+#include "../gfx/GraphicsApi.h"
 
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
@@ -42,7 +46,7 @@
 extern "C" {
     //nothings commented on Apr 12, 2016
     //It's not meant to be #included. Don't #include it, just compile & link it.
-    extern int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
+    extern int stb_vorbis_decode_filename(const char* filename, int* channels, int* sample_rate, short** output);
 }
 
 
@@ -63,7 +67,7 @@ std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
 std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
 std::shared_ptr<Party> Gu::_pParty = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
-std::shared_ptr<AppBase> Gu::_pApp = nullptr;
+std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
 std::shared_ptr<Fingers> Gu::_pFingers = nullptr;
 std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
 std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
@@ -77,6 +81,8 @@ std::shared_ptr<Package> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
 std::shared_ptr<Gui2d> Gu::_pGui2d = nullptr;
 std::shared_ptr<RenderPipe> Gu::_pRenderPipe = nullptr;
+std::shared_ptr<Engine> Gu::_pEngine = nullptr;
+std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 
 std::stack<Stopwatch> Gu::_stopw;
 
@@ -86,31 +92,48 @@ std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 int Gu::_iSupportedDepthSize = 24;
 t_string Gu::_strCachedProf = "";
 //////////////////////////////////////////////////////////////////////////
-std::shared_ptr<GraphicsContext> Gu::getGraphicsContext() { return _pContext; }
-std::shared_ptr<RenderSettings> Gu::getRenderSettings() { AssertOrThrow2(Gu::_pRenderSettings != nullptr);  return _pRenderSettings; }
-std::shared_ptr<Package> Gu::getPackage() { AssertOrThrow2(_pPackage != nullptr);  return _pPackage; }
-std::shared_ptr<ModelCache> Gu::getModelCache() { AssertOrThrow2(_pModelCache != nullptr);  return _pModelCache; }
-std::shared_ptr<Sequencer> Gu::getSequencer() { AssertOrThrow2(_pSequencer != nullptr); return _pSequencer; }
-std::shared_ptr<Fingers> Gu::getFingers() { AssertOrThrow2(_pFingers != nullptr); return _pFingers; }
-std::shared_ptr<FpsMeter> Gu::getFpsMeter() { AssertOrThrow2(_pFpsMeter != nullptr); return _pFpsMeter; }
-std::shared_ptr<FrameSync> Gu::getFrameSync() { AssertOrThrow2(_pFrameSync != nullptr); return _pFrameSync; }
-std::shared_ptr<SoundCache> Gu::getSoundCache() { AssertOrThrow2(_pSoundCache != nullptr); return _pSoundCache; }
-std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { AssertOrThrow2(_pShaderMaker != nullptr);  return _pShaderMaker; }
-std::shared_ptr<AppBase> Gu::getRoom() { AssertOrThrow2(_pApp != nullptr); return _pApp; }
-std::shared_ptr<TexCache> Gu::getTexCache() { AssertOrThrow2(_pTexCache != nullptr); return _pTexCache; }
-std::shared_ptr<LightManager> Gu::getLightManager() { AssertOrThrow2(_pLightManager != nullptr);  return _pLightManager; }
-std::shared_ptr<Picker> Gu::getPicker() { AssertOrThrow2(_pPicker != nullptr); return _pPicker; }
-std::shared_ptr<Gui2d> Gu::getGui() { AssertOrThrow2(_pGui2d != nullptr);  return _pGui2d; }
-std::shared_ptr<PhysicsWorld> Gu::getPhysicsWorld() { AssertOrThrow2(_pPhysicsWorld != nullptr); return _pPhysicsWorld; }
-std::shared_ptr<Party> Gu::getParty() { AssertOrThrow2(_pParty != nullptr); return _pParty; }
-std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
-std::shared_ptr<EngineConfig> Gu::getConfig() { return Gu::getEngineConfig(); }
-std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return _pRenderPipe; }
+std::shared_ptr<GLContext> Gu::getGraphicsContext() {
+    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(_pContext);
+    return ct;
+    //    return _pContext; 
+}
+#define _STPROP(x) std::shared_ptr<##x> Gu::get##x() { AssertOrThrow2(_p##x!=nullptr); return _p##x; }
+_STPROP(RenderSettings);
+_STPROP(Package);
+_STPROP(ModelCache);
+_STPROP(Sequencer);
+_STPROP(Fingers);
+_STPROP(FpsMeter);
+_STPROP(FrameSync);
+_STPROP(SoundCache);
 
-void Gu::setRenderPipe(std::shared_ptr<RenderPipe> r) { _pRenderPipe = r; }
+_STPROP(ShaderMaker);
+std::shared_ptr<AppBase> Gu::getApp() { AssertOrThrow2(_pAppBase != nullptr);  return _pAppBase; }
+
+_STPROP(TexCache);
+_STPROP(LightManager);
+_STPROP(Picker);
+std::shared_ptr<Gui2d> Gu::getGui() { AssertOrThrow2(_pGui2d != nullptr);  return _pGui2d; }
+_STPROP(PhysicsWorld);
+_STPROP(Party);
+std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
+_STPROP(EngineConfig);
+_STPROP(RenderPipe);
+_STPROP(Logger);
+_STPROP(Engine);
+_STPROP(GraphicsApi);
+
+std::shared_ptr<Window> Gu::getWindow() {
+    return Gu::getGraphicsApi()->getWindow();
+}
+
+
+void Gu::setRenderPipe(std::shared_ptr<RenderPipe> r) { AssertOrThrow2(r != nullptr); _pRenderPipe = r; }
 void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
-void Gu::setCamera(std::shared_ptr<CameraNode> pc) { _pCamera = pc; }
-void Gu::setRoom(std::shared_ptr<AppBase> b) { _pApp = b; }
+void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
+void Gu::setRoom(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
+void Gu::setEngine(std::shared_ptr<Engine> engine) { AssertOrThrow2(engine != nullptr); _pEngine = engine; }
+void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
 
 void Gu::checkErrorsDbg() {
     Gu::getGraphicsContext()->chkErrDbg();
@@ -206,45 +229,7 @@ void Gu::deleteGlobals() {
       //DEL_MEM(_pLogger);
 
 }
-void Gu::SDLTrySetWindowIcon(SDL_Window* w, t_string iconPath) {
-    if (iconPath.length()) {
-        std::shared_ptr<Img32> img = nullptr;
-        SDL_Surface* ss = nullptr;
-        Gu::SDLCreateSurfaceFromImage(iconPath, img, ss);
-        if (ss != nullptr) {
-            SDL_SetWindowIcon(w, ss);
-            OglErr::checkSDLErr();
-            SDL_FreeSurface(ss);
-            OglErr::checkSDLErr();
-        }
-        if (img != nullptr) {
-            //SDL uses the image pointer, so you have to free the image AFTER you free the surface.
-            Gu::freeImage(img);
-        }
-    }
-}
-void Gu::SDLCreateSurfaceFromImage(const t_string strImage,
-    std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface) {
-    pImage = nullptr;
-    pSurface = nullptr;
-    if (FileSystem::fileExists(strImage)) {
-        pImage = Gu::loadImage(strImage);
-        pSurface = Gu::SDLCreateSurfaceFromImage(pImage);
-    }
-    else {
-        BroLogError("Could not icon image '" + strImage + "'");
-    }
-}
-SDL_Surface* Gu::SDLCreateSurfaceFromImage(const std::shared_ptr<Img32> pImage) {
-    SDL_Surface* pSurface = SDL_CreateRGBSurfaceFrom(
-        pImage->getData(), pImage->getWidth(), pImage->getHeight(),
-        pImage->getBitsPerPixel(), pImage->getPitch(),
-        pImage->getRMask(), pImage->getGMask(), pImage->getBMask(), pImage->getAMask());
 
-    OglErr::checkSDLErr();
-
-    return pSurface;
-}
 bool Gu::isBigEndian() {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     return true;
@@ -320,21 +305,18 @@ void Gu::freeImage(std::shared_ptr<Img32> b) {
     //b->dea
     //delete b;
 }
-t_timeval Gu::getMicroSeconds()
-{
+t_timeval Gu::getMicroSeconds() {
     int64_t ret;
     std::chrono::nanoseconds ns = std::chrono::high_resolution_clock::now().time_since_epoch();
     ret = std::chrono::duration_cast<std::chrono::microseconds>(ns).count();
     return ret;
 }
-t_timeval Gu::getMilliSeconds()
-{
+t_timeval Gu::getMilliSeconds() {
     return getMicroSeconds() / 1000;
 }
 #ifdef __APPLE__
 #ifdef TARGET_OS_IPHONE
-static CFStringRef stdStrToCFStr(std::string st)
-{
+static CFStringRef stdStrToCFStr(std::string st) {
     CFStringRef str;
     //kCFStringEncodingUTF8
     str = CFStringCreateWithCString(NULL, st.c_str(), CFStringGetSystemEncoding());
@@ -445,46 +427,37 @@ void Gu::checkMemory() {
 
 
 
-t_string Gu::getOperatingSystemName()
-{
+t_string Gu::getOperatingSystemName() {
     t_string res;
 #ifdef BRO_OS_WINDOWS
     OSVERSIONINFOEX vex;
     vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    GetVersionEx((OSVERSIONINFO*)&vex);
+    GetVersionEx((OSVERSIONINFO*)& vex);
 
     // CheckOsErrorsDbg();
 
-    if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 3)
-    {
+    if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 3) {
         res.append(" Windows 8.1");
     }
-    else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 2)
-    {
+    else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 2) {
         res.append(" Windows 8");
     }
-    else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 1)
-    {
+    else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 1) {
         res.append(" Windows 7");
     }
-    else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 0)
-    {
+    else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 0) {
         res.append(" Windows Vista");
     }
-    else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 2)
-    {
+    else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 2) {
         res.append(" Windows XP Pro 64 bit");
     }
-    else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 1)
-    {
+    else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 1) {
         res.append(" Windows XP");
     }
-    else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 0)
-    {
+    else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 0) {
         res.append(" Windows 2000");
     }
-    else
-    {
+    else {
         res.append(" OS Unknown.  Note: Mac / Linux are not supported.");
     }
 
@@ -555,7 +528,7 @@ int32_t Gu::getSupportedDepthSize() {
     //return tmp;
 }
 
-void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<Viewport> vp) {
+void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp) {
     //Transforms a quad for the matrix-less gui projection.
 
     //The resulting coordinates for the GPU are -0.5 +0.5 in both axes with the center being in the center of the screen
@@ -598,8 +571,7 @@ void Gu::print(const char* msg) {
 //////////////////////////////////////////////////////////////////////////
 static int g_bPerfFrame = false;
 void Gu::beginPerf() {
-    if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift))
-    {
+    if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift)) {
         if (g_bPerfFrame == 0) {
             g_bPerfFrame = 1;
         }
@@ -662,6 +634,68 @@ std::string Gu::getCPPVersion() {
         return Stz "C++98";
     }
     return Stz "pre-standard C++";
+}
+
+void Gu::createManagers(std::shared_ptr<AppBase> rb) {
+    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext());
+
+    _pRenderSettings = RenderSettings::create();
+    BroLogInfo("GLContext - Building Package");
+    _pPackage = std::make_shared<Package>();
+    _pPackage->build(FileSystem::getExecutableFullPath());
+    BroLogInfo("GLContext - Creating TexCache");
+    _pTexCache = std::make_shared<TexCache>(Gu::getGraphicsContext());
+
+    BroLogInfo("GLContext - Creating TextBoss");
+    //    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
+    BroLogInfo("GLContext - Creating Party");
+    _pParty = std::make_shared<Party>(Gu::getGraphicsContext());
+    BroLogInfo("GLContext - Creating Sequencer");
+    _pSequencer = std::make_shared<Sequencer>();
+    BroLogInfo("GLContext - Creating Fingers");
+    _pFingers = std::make_shared<Fingers>();
+    _pFingers->init();
+    BroLogInfo("GLContext - Creating FpsMeter");
+    _pFpsMeter = std::make_shared<FpsMeter>();
+    BroLogInfo("GLContext - Creating FrameSync");
+    _pFrameSync = std::make_shared<FrameSync>();
+    //This was commented out.  Why? 11/6
+    BroLogInfo("GLContext - Creating SoundCache");
+    _pSoundCache = std::make_shared<SoundCache>();
+    BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
+    _pShaderMaker = std::make_shared<ShaderMaker>();
+    _pShaderMaker->initialize(rb);
+    BroLogInfo("GLContext -  Lights");
+    _pLightManager = std::make_shared<LightManager>(Gu::getGraphicsContext());
+    BroLogInfo("GLContext - Model Cache");
+    _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
+
+    BroLogInfo("GLContext - Picker");
+    _pPicker = std::make_shared<Picker>(Gu::getGraphicsContext());
+
+    BroLogInfo("GLContext - Gui");
+    _pGui2d = std::make_shared<Gui2d>();
+}
+void Gu::update(float delta) {
+    if (_pSequencer != nullptr) {
+        _pSequencer->update();
+    }
+    if (_pParty != nullptr) {
+        _pParty->update(delta);
+    }
+    if (_pFpsMeter != nullptr) {
+        _pFpsMeter->update();
+    }
+    if (_pSoundCache != nullptr) {
+        _pSoundCache->update();
+    }
+    if (_pPicker != nullptr) {
+        _pPicker->update(_pFingers);
+    }
+    if (_pGui2d != nullptr) {
+        _pGui2d->update(_pFingers);
+    }
+
 }
 
 }//ns Game

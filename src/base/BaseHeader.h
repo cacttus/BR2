@@ -12,13 +12,12 @@
 #ifndef __BASEHEADER_1478973884162863251_H__
 #define __BASEHEADER_1478973884162863251_H__
 
-#include "../base/BuildConfig.h"
-#include "../base/GlobalIncludes.h"
 #include "../base/MachineTypes.h"
-#include "../base/OperatingSystemHeader.h"
 #include "../base/ConsoleColors.h"
 
 namespace Game {
+
+
 #ifdef __APPLE__
 #ifdef TARGET_OS_IPHONE
 #define BRO_OS_IPHONE 1
@@ -196,7 +195,6 @@ class GameMemory : DOES_NOT_INHERIT {
 public:
     NOT_VIRTUAL ~GameMemory() DOES_NOT_OVERRIDE {} // Upon tests - this also will get called when the class is deleted.
     GameMemory() {}
-
 };
 
 /**
@@ -252,7 +250,6 @@ public:
     virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
     virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
 };
-
 
 #define ShowMessageBoxOnce(msg) { \
 static bool __show=false; \

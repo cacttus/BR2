@@ -13,7 +13,7 @@
 #define __BONE_14815063041061475745_H__
 
 #include "../base/BaseHeader.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 #include "../model/BaseNode.h"
 #include "../world/PhysicsNode.h"

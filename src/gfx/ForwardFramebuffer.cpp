@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/ForwardFramebuffer.h"
 #include "../gfx/RenderTarget.h"
 

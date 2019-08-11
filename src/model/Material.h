@@ -10,7 +10,7 @@
 #ifndef __MATERIAL_9659280356928315689236_H__
 #define __MATERIAL_9659280356928315689236_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 

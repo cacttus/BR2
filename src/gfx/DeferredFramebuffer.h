@@ -12,7 +12,7 @@
 #ifndef __DEFERREDFRAMEBUFFER_1464419631987791295_H__
 #define __DEFERREDFRAMEBUFFER_1464419631987791295_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../gfx/FramebufferBase.h"
 #include "../model/ModelHeader.h"
 

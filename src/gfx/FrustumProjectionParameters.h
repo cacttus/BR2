@@ -13,7 +13,7 @@
 #define __FRUSTUMPROJECTIONPARAMETERS_171293099427757171585801_H__
 
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
 namespace Game {

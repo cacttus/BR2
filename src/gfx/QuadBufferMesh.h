@@ -13,7 +13,7 @@
 #define __QUADBUFFERMESH_308121747560101184222802_H__
 
 #include "../base/BaseHeader.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 namespace Game {

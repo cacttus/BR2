@@ -12,7 +12,7 @@
 #ifndef __SHADERMAKER_14940026902175372902_H__
 #define __SHADERMAKER_14940026902175372902_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 

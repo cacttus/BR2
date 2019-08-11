@@ -12,7 +12,7 @@
 #ifndef __FRAMESYNC_27052177462681769929099_H__
 #define __FRAMESYNC_27052177462681769929099_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 //#include "../scene/SceneHeader.h"
 namespace Game {
 /**

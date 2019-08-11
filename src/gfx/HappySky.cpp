@@ -136,13 +136,15 @@ void HappySky::side(std::vector<v_v3n3x2>* verts, std::vector<v_index32>* inds,
 
 }
 void HappySky::draw(RenderParams& rp) {
-    Gu::pushCullFace();
-    Gu::pushBlend();
+    Graphics->pushCullFace();
+    Graphics->pushBlend();
     //We can't disable depth testing here unless we put an additional forward stage before thed eferred stage.
    // Gu::pushDepthTest();
     {
-        glDisable(GL_CULL_FACE);
-        glDisable(GL_BLEND);
+        Graphics->enableCullFace(false);
+        Graphics->enableBlend(false);
+        //glDisable(GL_CULL_FACE);
+        //glDisable(GL_BLEND);
 
         _pMesh->drawDeferred(rp);
        // int wc = 0;
@@ -164,8 +166,8 @@ void HappySky::draw(RenderParams& rp) {
        // rp.setMesh(_pMesh);
        // rp.draw();
     }
-    Gu::popCullFace();
-    Gu::popBlend();
+    Graphics->popCullFace();
+    Graphics->popBlend();
   //  Gu::popDepthTest();
 
 }

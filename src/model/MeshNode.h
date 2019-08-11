@@ -12,7 +12,7 @@
 #ifndef __MeshNode_1490572482630426783_H__
 #define __MeshNode_1490572482630426783_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 #include "../model/BaseNode.h"
 

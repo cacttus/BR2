@@ -13,7 +13,7 @@
 #define __SCREENPROPS_751578542347261859456_H__
 
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 

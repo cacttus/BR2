@@ -206,7 +206,7 @@ typedef enum {
  //FWDDCL
  class ShaderSubProgram;
  class CameraNode;
- class Viewport;
+ class WindowViewport;
  class FrustumBase;
  class ShaderBase;
  class FboShader;
@@ -314,6 +314,7 @@ typedef enum {
 
  class ShaderCache;
 
+ class Window;
 
  class GraphicsContext;
  class VulkanContext;

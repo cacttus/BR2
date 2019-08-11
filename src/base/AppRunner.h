@@ -9,7 +9,7 @@
 #define __57823905782390589020_AppRunner_h_2298357238957238957129348__
 
 #include "../base/BaseHeader.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game { 
 
@@ -19,11 +19,11 @@ namespace Game {
 */
 class AppRunner : public VirtualMemory {
 private:
-    t_timeval _tvInitStartTime =0;
-    Engine* _pEngine = nullptr;
+   // std::shared_ptr<Engine> _pEngine = nullptr;
+   // std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
     SDL_AudioSpec _audioSpec;
-
-    std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
+  
+    t_timeval _tvInitStartTime = 0;
 
     // accept a connection coming in on server_tcpsock
     TCPsocket _gameHostSocket;//Send and receive data

@@ -13,7 +13,7 @@
 #define __SHADOWMAPFRUSTUM_14616351763757858195_H__
 
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 /**

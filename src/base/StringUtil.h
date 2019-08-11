@@ -78,6 +78,7 @@ public:
     static t_string formatVa(t_string fmt, va_list args);
     static t_string join(t_string delim, std::vector<t_string>& strings);
     static t_string tabify(t_string str_to_tabify, int number_of_tabs, bool use_spaces = true, bool tab_newlines = true, LineBreak::e lineBreak = LineBreak::e::DOS);
+    static t_string wStrToStr(std::wstring str);
 };
 #define StrLn(a,...) TStr(a,__VA_ARGS__,"\n");
 

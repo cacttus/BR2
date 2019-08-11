@@ -1,7 +1,10 @@
+#include "../base/GLContext.h"
+#include "../base/Logger.h"
+#include "../base/Gu.h"
+#include "../gfx/RenderUtils.h"
 #include "../model/VertexFormat.h"
 #include "../model/VboData.h"
-#include "../base/GLContext.h"
-#include "../gfx/RenderUtils.h"
+
 
 
 namespace Game {

@@ -12,7 +12,7 @@
 #ifndef __RENDERSETTINGS_1519414886985932822_H__
 #define __RENDERSETTINGS_1519414886985932822_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 
 namespace Game {

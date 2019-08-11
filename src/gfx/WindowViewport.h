@@ -21,7 +21,7 @@ namespace Game {
 *    @brief Viewport class.
 *
 */
-class Viewport : public VirtualMemory /*This is contained by RenderWindow, do not accept window param events */{
+class WindowViewport : public VirtualMemory /*This is contained by RenderWindow, do not accept window param events */{
     //int32_t _width, _height;    // Width / Height of viewport (not window)
     float _width_1, _height_1;    // Reciprocal width/ height for faster computations.
     //int32_t _x,_y;                // X / Y location of viewport (relative to window)
@@ -71,7 +71,7 @@ public:
 
     bool containsPointRelativeToWindow(vec2& mp);
 
-    Viewport(
+    WindowViewport(
           int32_t w
         , int32_t h
         , VIEWPORT_LOCATION location = VIEWPORT_LOCATION::VIEWPORT_TOPLEFTCORNER

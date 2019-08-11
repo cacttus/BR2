@@ -12,7 +12,7 @@
 #ifndef __HAPPYSKY_14813313153843142444_H__
 #define __HAPPYSKY_14813313153843142444_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 namespace Game {
 /**

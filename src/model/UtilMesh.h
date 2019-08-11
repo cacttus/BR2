@@ -13,7 +13,7 @@
 #define __UTILMESH_12100900221286185268356_H__
 
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {

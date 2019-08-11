@@ -14,7 +14,7 @@
 
 #include "../math/BoxUtils.h"
 #include "../math/MathHeader.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
 //#include "../material/MaterialHeader.h"
 //#include "../scene/BvhHeader.h"
@@ -28,7 +28,7 @@ namespace Game {
 */
 class ShadowBoxSide : public VirtualMemory { 
 private:
-    std::shared_ptr<Viewport> _pViewport = nullptr;
+    std::shared_ptr<WindowViewport> _pViewport = nullptr;
     BoxSide::e _eSide;
     std::shared_ptr<FrustumBase> _pFrustum = nullptr;
     std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
@@ -50,7 +50,7 @@ public:
     OVERRIDES ~ShadowBoxSide() OVERRIDE;
 
     bool getMustUpdate() { return _bMustUpdate; }
-    std::shared_ptr<Viewport> getViewport() { return _pViewport; }
+    std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }
     std::shared_ptr<FrustumBase> getFrustum() { return _pFrustum; }
     std::shared_ptr<LightNodePoint> getLight() { return _pLightSource; }
     mat4* getProjectionMatrix() { return &_projMatrix; }

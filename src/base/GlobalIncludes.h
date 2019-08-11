@@ -12,6 +12,8 @@
 #ifndef __GLOBALINCLUDES_14789744473709794265_H__
 #define __GLOBALINCLUDES_14789744473709794265_H__
 
+#include "../base/BuildConfig.h"
+
 //
 #define WIN32_LEAN_AND_MEAN
 
@@ -19,21 +21,21 @@
 // This will speed up the build.
 
 //SDL
-#include <SDL.h>
+#include "../external/SDL2/include/SDL.h"
 
 //Including both APIs.  In the future we abstract the API calls to interface and move the headers.
-#include <SDL_opengl.h>
-#include <SDL_opengl_glext.h>
-#include <SDL_vulkan.h>
+#include "../external/SDL2/include/SDL_opengl.h"
+#include "../external/SDL2/include/SDL_opengl_glext.h"
+#include "../external/SDL2/include/SDL_vulkan.h"
 
 //Needed to get the main window handle so we can set the main window handle.
-#include <SDL_syswm.h>
+#include "../external/SDL2/include/SDL_syswm.h"
 
 //Networking
-#include <SDL_net.h>
+#include "../external/SDL2_net/SDL_net.h"
 
 //Vulkan
-#include <vulkan/vulkan.h>
+#include "../external/LunarG/VulkanSDK/1.1.114.0/Include/vulkan/vulkan.h"
 
 //STL
 #include <iostream>
@@ -119,6 +121,8 @@
 #pragma warning(error:4553)
 //warning C4002: too many arguments for function-like macro invocation 'BroLogWarn'
 #pragma warning(error:4002)
+//recursive on all control paths
+#pragma warning(error:4717)
 
 #include <Windows.h>
 

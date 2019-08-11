@@ -12,7 +12,7 @@
 #ifndef __FLYCAM_14924442872935518543_H__
 #define __FLYCAM_14924442872935518543_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 /**
@@ -21,7 +21,7 @@ namespace Game {
 *
 */
 class FlyCam : public VirtualMemory {
-    std::shared_ptr<Viewport> _pViewport = nullptr;
+    std::shared_ptr<WindowViewport> _pViewport = nullptr;
     std::shared_ptr<CameraNode> _pCamera = nullptr;
     vec2 _vMousePress;
     vec3 _vCamPos;
@@ -41,7 +41,7 @@ class FlyCam : public VirtualMemory {
     void updateCameraPosition();
     void updateRotate(std::shared_ptr<Fingers> pFingers);
 public:
-    FlyCam(std::shared_ptr<Viewport> pv);
+    FlyCam(std::shared_ptr<WindowViewport> pv);
     virtual ~FlyCam() override;
 
     void moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta);

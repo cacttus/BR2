@@ -26,17 +26,22 @@ private:
     bool loadOpenGLFunctions();
 
     //Render Stack.
-    static std::stack<GLenum> _eLastCullFaceStack;
-    static std::stack<GLenum> _eLastBlendStack;
-    static std::stack<GLenum> _eLastDepthTestStack;
+    std::stack<GLenum> _eLastCullFaceStack;
+    std::stack<GLenum> _eLastBlendStack;
+    std::stack<GLenum> _eLastDepthTestStack;
     static const int MaxStackSize = 32;
+
+    uint32_t _iLastWidth = 0;
+    uint32_t _iLastHeight = 0;
+    uint32_t _iFullscreenToggleWidth = 0;
+    uint32_t _iFullscreenToggleHeight = 0;
 
 public:
     GLContext();
     virtual ~GLContext() override;
 
     virtual bool load(std::shared_ptr<AppBase> br) override;
-    virtual void update(float delta) override;
+    //virtual void update(float delta) override;
     virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false) override;
     virtual bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false) override;
 
@@ -46,6 +51,11 @@ public:
     virtual void popBlend() override;
     virtual void pushDepthTest() override;
     virtual void popDepthTest() override;
+
+    void enableCullFace(bool enable) override;
+    void enableBlend(bool enable) override;
+    void enableDepthTest(bool enable) override;
+
 
     void setLineWidth(float w);
    // void beginWin32InlineDebug();

@@ -12,7 +12,7 @@
 #ifndef __SHADERBASE_14802955721654117059_H__
 #define __SHADERBASE_14802955721654117059_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../base/BaseHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/Matrix4x4.h"

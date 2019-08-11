@@ -444,9 +444,6 @@
     <ClInclude Include="src\gfx\DeferredFramebuffer.h">
       <Filter>gfx</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\DisplayHeader.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\FlyCam.h">
       <Filter>gfx</Filter>
     </ClInclude>
@@ -570,9 +567,6 @@
     <ClInclude Include="src\gfx\UiSkin.h">
       <Filter>gfx</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Viewport.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\VulkanApi.h">
       <Filter>gfx</Filter>
     </ClInclude>
@@ -592,6 +586,18 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\Base.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Window.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\WindowViewport.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\GfxHeader.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\SDL.h">
       <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1079,9 +1085,6 @@
     <ClCompile Include="src\gfx\UiSkin.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Viewport.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\VulkanApi.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
@@ -1100,8 +1103,29 @@
     <ClCompile Include="src\base\FpsMeter.cpp">
       <Filter>base</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\Window.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\WindowViewport.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\MachineTypes.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\BaseHeader.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\GlobalIncludes.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\SDL.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Roadmap.odt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="devlog.txt" />
   </ItemGroup>
 </Project>

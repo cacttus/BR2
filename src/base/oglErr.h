@@ -32,7 +32,6 @@ class OglErr  {
 public:
      static bool chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak = false, bool doNotLog = true);
      static bool chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak = false, bool doNotLog =true);
-     static void checkSDLErr(bool log = true);
 };
 
 }//ns Game

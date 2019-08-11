@@ -38,7 +38,6 @@ class AppMain : public AppBase {
 public:
     AppMain();
     virtual ~AppMain() override;
-    virtual void setup(std::shared_ptr<Viewport> pv) override {}
     virtual void step(float dt) override {}
     virtual void teardown() override {}
     virtual void updateTouch(std::shared_ptr<Fingers>, float dt) override {}

@@ -11,6 +11,13 @@
 #define __BUILDCONFIG_14597134672299218799_H__
 namespace Game {
 
+#ifdef _DEBUG
+
+//Uncomment this to debug pure header files
+#define __SK_DEBUG_INCLUDES__ 1
+
+#endif
+
 
 //////////////////////////////////////////////////////////////////////////
 //G++ / CLANG - NDEBUG is enabled by DEFAULT messing up builds.

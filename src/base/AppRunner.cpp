@@ -6,6 +6,7 @@
 #include "../base/GLContext.h"
 #include "../base/Fingers.h"
 #include "../base/Logger.h"
+#include "../base/SDL.h"
 
 #include "../base/oglErr.h"
 #include "../base/OperatingSystem.h"
@@ -34,7 +35,6 @@ void AppRunner::runApp(std::vector<t_string>& args, t_string windowTitle, std::s
     {
         initSDL(windowTitle, app);
 
-
         if (runCommands(args) == false) {
             // - Game Loop
             //*Init room
@@ -44,14 +44,6 @@ void AppRunner::runApp(std::vector<t_string>& args, t_string windowTitle, std::s
         }
     }
     Gu::deleteGlobals();
-}
-void AppRunner::doShowError(t_string err, Exception* e) {
-    if (e != nullptr) {
-        OperatingSystem::showErrorDialog(e->what() + err);
-    }
-    else {
-        OperatingSystem::showErrorDialog("No Error Message" + err);
-    }
 }
 void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
     //Nix main()
@@ -75,14 +67,16 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
     else {
         BroThrowException("Invalid render engine.");
     }
+    Gu::setGraphicsApi(_pGraphicsApi);
 
     _pGraphicsApi->createWindow(windowTitle);
+    
 
     initAudio();
-    OglErr::checkSDLErr();
+    SDL::checkSDLErr();
 
     initNet();
-    OglErr::checkSDLErr();
+    SDL::checkSDLErr();
 
     if (Gu::getEngineConfig()->getGameHostAttached()) {
         updateWindowHandleForGamehost();
@@ -90,6 +84,14 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
     }
 
     _pGraphicsApi->createContext(app);
+}
+void AppRunner::doShowError(t_string err, Exception* e) {
+    if (e != nullptr) {
+        OperatingSystem::showErrorDialog(e->what() + err);
+    }
+    else {
+        OperatingSystem::showErrorDialog("No Error Message" + err);
+    }
 }
 void AppRunner::attachToGameHost() {
     int GameHostPort = Gu::getEngineConfig()->getGameHostPort();
@@ -161,12 +163,12 @@ void AppRunner::printVideoDiagnostics() {
         if (should_be_zero != 0) {
             // In case of error...
             BroLogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
-            OglErr::checkSDLErr();
+            SDL::checkSDLErr();
         }
         else {
             // On success, print the current display mode.
             BroLogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
-            OglErr::checkSDLErr();
+            SDL::checkSDLErr();
         }
     }
 }
@@ -299,16 +301,14 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
     bool done = false;
     int w, h;
 
+    
 #ifdef __WINDOWS__
     SDL_ShowCursor(SDL_DISABLE);
 #endif
 
-    SDL_Window* win = _pGraphicsApi->getWindow();
-
-    SDL_GL_GetDrawableSize(win, &w, &h);
-
-    _pEngine = new Engine(rb, _pGraphicsApi, w, h);
+    _pEngine = std::make_shared<Engine>(rb, _pGraphicsApi);
     _pEngine->init();
+    Gu::setEngine(_pEngine);
 
     _pGraphicsApi->makeCurrent();
 
@@ -325,32 +325,36 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
     while (done == false) {
         Gu::beginPerf();
         Gu::pushPerf();
-        if (false) {
-            //AV Exception test **doesn't work in anything but debug build.
-            *(int *)0 = 0;
-        }
-        _pEngine->updateDelta();
-
-        while (SDL_PollEvent(&event)) {
-            if (handleEvents(&event) == false) {
-                done = true;
+        {
+            if (false) {
+                //AV Exception test **doesn't work in anything but debug build.
+                *(int*)0 = 0;
             }
+            _pEngine->updateDelta();
+
+            while (SDL_PollEvent(&event)) {
+                if (handleEvents(&event) == false) {
+                    done = true;
+                }
+            }
+            pFingers->preUpdate();
+
+            doAnnoyingSoundTest();
+
+            Gu::getEngine()->updateTouch(pFingers);
+
+            Gu::getGraphicsApi()->getDrawableSize(&w, &h);
+
+            Gu::getGraphicsContext()->updateWidthHeight(w, h, false);
+
+            _pEngine->step();
+
+            _pGraphicsApi->swapBuffers();
+
+
+            //Update all button states.
+            pFingers->postUpdate();
         }
-        pFingers->preUpdate();
-
-        doAnnoyingSoundTest();
-
-        _pEngine->updateTouch(pFingers);
-
-        _pGraphicsApi->getDrawableSize(&w, &h);
-
-        _pEngine->step(w, h);
-
-        _pGraphicsApi->swapBuffers();
-
-
-        //Update all button states.
-        pFingers->postUpdate();
         Gu::popPerf();
         Gu::endPerf();
         DebugHelper::checkMemory();

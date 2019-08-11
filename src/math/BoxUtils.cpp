@@ -1,7 +1,7 @@
 #include "../math/MathHeader.h"
 #include "../math/BoxUtils.h"
 #include "../math/Vec3x.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////

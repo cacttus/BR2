@@ -1,9 +1,9 @@
-#include "../gfx/Viewport.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/WindowViewport.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 
-Viewport::Viewport(
+WindowViewport::WindowViewport(
     int32_t w, 
     int32_t h, 
     VIEWPORT_LOCATION location, 
@@ -32,16 +32,16 @@ Viewport::Viewport(
     //**Force an initial viewport update
     updateChanged(true);
 }
-float Viewport::pctW(float f) {
+float WindowViewport::pctW(float f) {
     return (float)((float)getWidth() * (f*0.01));
 }
-float Viewport::pctH(float f){
+float WindowViewport::pctH(float f){
     return (float)((float)getHeight() * (f*0.01));
 }
-Box2f Viewport::getClientQuad(){
+Box2f WindowViewport::getClientQuad(){
     return Box2f(Vec2f(0,0),Vec2f((float)getWidth(),(float)getHeight()));
 }
-void Viewport::centerViewport()
+void WindowViewport::centerViewport()
 {
     
     //if( _viewportLocation==VIEWPORT_TOPLEFTCORNER )
@@ -81,7 +81,7 @@ void Viewport::centerViewport()
 
 }
 // - Set the width / height of the viewport given the window's width/height parameters. (not the viewport's)
-void Viewport::setHeight(int32_t h){
+void WindowViewport::setHeight(int32_t h){
     _windowHeight=h;
   //  if( _constraint==VP_MAINTAIN_ASPECT_RATIO ){
   //      // - sets the width relative to the height given the aspect ratio value.
@@ -112,7 +112,7 @@ void Viewport::setHeight(int32_t h){
     updateAspectRatio();
   //  updateChanged();
 }
-void Viewport::setWidth(int32_t w){
+void WindowViewport::setWidth(int32_t w){
     _windowWidth=w;
  //   if( _constraint==VP_MAINTAIN_ASPECT_RATIO ){
  //       float oldW = (float)getWidth();
@@ -141,44 +141,44 @@ void Viewport::setWidth(int32_t w){
    // updateChanged();
 }
 
-int32_t Viewport::getWidth()
+int32_t WindowViewport::getWidth()
 {
    // std::lock_guard<std::mutex> guard(_mtClassMtx);
     return _currentViewportRect._max.x;
 }
-int32_t Viewport::getHeight()
+int32_t WindowViewport::getHeight()
 {
     //std::lock_guard<std::mutex> guard(_mtClassMtx);
     return _currentViewportRect._max.y;
 }
-int32_t Viewport::getX()
+int32_t WindowViewport::getX()
 {
     return _currentViewportRect._min.x;
 }
-int32_t Viewport::getY()
+int32_t WindowViewport::getY()
 {
     return _currentViewportRect._min.y;
 }
-void Viewport::setX(int32_t x) 
+void WindowViewport::setX(int32_t x) 
 { 
     _currentViewportRect._min.x = x; 
     updateAspectRatio(); 
 }
-void Viewport::setY(int32_t y) 
+void WindowViewport::setY(int32_t y) 
 { 
     _currentViewportRect._min.y = y; 
     updateAspectRatio(); 
 }
-float Viewport::getAspectRatio()
+float WindowViewport::getAspectRatio()
 { 
     return _aspectRatio; 
 }//getAspectRatiof(getRatioForResolution(_resolution)); }
-float Viewport::getAspectRatio_1()
+float WindowViewport::getAspectRatio_1()
 { 
     return _aspectRatio_1; 
 }//getAspectRatiof(getRatioForResolution(_resolution)); }
 
-void Viewport::updateAspectRatio()
+void WindowViewport::updateAspectRatio()
 {
     if(getHeight()==0)
         _aspectRatio=1.0f;
@@ -190,12 +190,12 @@ void Viewport::updateAspectRatio()
 
     updateReciprocalValues();
 }
-void Viewport::updateReciprocalValues()
+void WindowViewport::updateReciprocalValues()
 {
     _width_1 = 1.0f / (float)getWidth();
     _height_1 = 1.0f / (float)getHeight();
 }
-bool Viewport::containsPointRelativeToWindow(vec2& mp)
+bool WindowViewport::containsPointRelativeToWindow(vec2& mp)
 {
     if(mp.x<0.0f)
         return false;
@@ -208,7 +208,7 @@ bool Viewport::containsPointRelativeToWindow(vec2& mp)
 
     return true;
 }
-void Viewport::updateChanged(bool blnForce)
+void WindowViewport::updateChanged(bool blnForce)
 {
     if(_lastViewportRect != _currentViewportRect || blnForce)
     {

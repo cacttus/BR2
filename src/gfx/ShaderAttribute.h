@@ -12,7 +12,7 @@
 #ifndef __SHADERATTRIBUTE_1494032876996691758_H__
 #define __SHADERATTRIBUTE_1494032876996691758_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {

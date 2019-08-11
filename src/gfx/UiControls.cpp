@@ -1,6 +1,5 @@
-#include "../base/GLContext.h"
+#include "../base/Base.h"
 #include "../base/Fingers.h"
-#include "../base/Gu.h"
 #include "../base/Img32.h"
 
 #include "../math/Box2x.h"
@@ -9,7 +8,7 @@
 #include "../gfx/Gui2d.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"

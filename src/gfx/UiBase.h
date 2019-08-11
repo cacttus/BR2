@@ -12,7 +12,7 @@
 #ifndef __UIBASE_15188874021299537968_H__
 #define __UIBASE_15188874021299537968_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 #include "../base/PoundFile.h"

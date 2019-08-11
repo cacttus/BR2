@@ -1,8 +1,9 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
+#include "../base/Logger.h"
 
 #include "../gfx/GpuQuad3.h"
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../gfx/ShaderBase.h"
 
 #include "../model/MeshNode.h"

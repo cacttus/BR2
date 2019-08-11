@@ -570,6 +570,14 @@ t_string StringUtil::tabify(t_string str_to_tabify, int number_of_tabs, bool use
     ret = StringUtil::replaceAll(ret, linebreak, tabs);
     return ret;
 }
+t_string StringUtil::wStrToStr(std::wstring wstr) {
+    using convert_type = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_type, wchar_t> converter;
 
+    //use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+    std::string str = converter.to_bytes(wstr);
+    return str;
+
+}
 
 }//nS GAME

@@ -12,7 +12,7 @@
 #ifndef __RENDERPARAMS_14951219313732568565_H__
 #define __RENDERPARAMS_14951219313732568565_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {

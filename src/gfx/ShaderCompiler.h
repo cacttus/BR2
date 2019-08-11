@@ -12,7 +12,7 @@
 #ifndef __SHADERPARSER_14940011921511191713_H__
 #define __SHADERPARSER_14940011921511191713_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 struct ShaderIncludeRef {

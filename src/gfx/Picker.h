@@ -12,7 +12,7 @@
 #ifndef __PICKER_15143971382984040801_H__
 #define __PICKER_15143971382984040801_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 
 namespace Game {
 /**

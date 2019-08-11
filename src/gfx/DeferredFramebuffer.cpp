@@ -5,7 +5,7 @@
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/RenderTarget.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderBase.h"

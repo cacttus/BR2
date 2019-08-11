@@ -9,7 +9,7 @@
 #include "../gfx/RenderUtils.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/LightNode.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/Picker.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/GpuComputeSync.h"
@@ -269,7 +269,7 @@ void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenu
 }
 void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDrawMode) {
     //Removing the loopstate
-    if (Gu::getLoopState() != EngineLoopState::e::Render) {
+    if (Gu::getGraphicsContext()->getLoopState() != EngineLoopState::e::Render) {
         BroLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
     }
     AssertOrThrow2(vao != nullptr);
@@ -371,8 +371,8 @@ void ShaderBase::setLightUf() {
 }
 
 void ShaderBase::beginRaster() {
-    Gu::pushDepthTest();
-    Gu::pushCullFace();
+    Gu::getGraphicsContext()->pushDepthTest();
+    Gu::getGraphicsContext()->pushCullFace();
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -389,8 +389,8 @@ void ShaderBase::beginRaster() {
     Gu::getGraphicsContext()->chkErrDbg();
 }
 void ShaderBase::endRaster() {
-    Gu::popCullFace();
-    Gu::popDepthTest();
+    Gu::getGraphicsContext()->popCullFace();
+    Gu::getGraphicsContext()->popDepthTest();
     Gu::getGraphicsContext()->chkErrDbg();
 }
 

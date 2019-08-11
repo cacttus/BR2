@@ -1,6 +1,4 @@
-#include "../base/Gu.h"
-#include "../base/FileSystem.h"
-#include "../base/Logger.h"
+#include "../base/Base.h"
 #include "../base/AppBase.h"
 #include "../base/GLContext.h"
 #include "../gfx/ShaderMaker.h"
@@ -184,10 +182,10 @@ void ShaderMaker::deleteShader(std::shared_ptr<ShaderBase> ps) {
     }
 }
 void ShaderMaker::fullyQualifyFiles(std::vector<t_string>& vecFiles) {
-    AssertOrThrow2(Gu::getRoom() != nullptr);
+    AssertOrThrow2(Gu::getApp() != nullptr);
 
     for (size_t iFile = 0; iFile < vecFiles.size(); iFile++) { // strFile : vecFiles) {
-        t_string qual = Gu::getRoom()->makeAssetPath(Gu::getRoom()->getShadersDir(), vecFiles[iFile]);
+        t_string qual = Gu::getApp()->makeAssetPath(Gu::getApp()->getShadersDir(), vecFiles[iFile]);
         vecFiles[iFile] = qual;
     }
 }
@@ -298,6 +296,7 @@ void ShaderMaker::removeDuplicateSourceFiles(std::vector<t_string>& vecFiles) {
                 vecFiles.erase(vecFiles.begin() + j);
                 j--;
             }
+
         }
     }
 }

@@ -1,0 +1,8 @@
+
+8/11/19
+Adding a Window layer,
+replacing Viewport with WindowViewport to differentiate between window and render viewport 
+this is in preparation for multiple viewports for the UI system.
+
+having a problem with teh file SDL.h because it conflicts.
+added <SDL> from a more absolute path.

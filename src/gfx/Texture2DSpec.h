@@ -13,7 +13,7 @@
 #ifndef __TEXTURE2D_202381107519012904417182_H__
 #define __TEXTURE2D_202381107519012904417182_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../base/BaseHeader.h"
 
 namespace Game {

@@ -6,6 +6,7 @@
 #include "../base/GLContext.h"
 #include "../base/DebugHelper.h"
 #include "../base/EngineConfig.h"
+#include "../base/SDL.h"
 
 namespace Game {
 bool OglErr::chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool doNotLog){
@@ -20,21 +21,7 @@ bool OglErr::chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool do
     }
     return false;
 }
-void OglErr::checkSDLErr(bool doNotLog) {
-    //Do SDL errors here as well
-    const char* c;
-    while ((c = SDL_GetError()) != nullptr && *c != 0) {
-        if (doNotLog == false) {
-            BroLogError("SDL: " + c);
-        }
 
-        if(Gu::getEngineConfig()->getBreakOnSDLError() == true) { 
-            Gu::debugBreak();
-        }
-        SDL_ClearError();
-    }
-
-}
 t_string OglErr::glErrToStr(GLenum err) {
     switch(err) { 
 		case 0     : return  "GL_NO_ERROR         ";      		
@@ -49,7 +36,7 @@ t_string OglErr::glErrToStr(GLenum err) {
 }
 bool OglErr::handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog){
 
-    checkSDLErr(doNotLog);
+    SDL::checkSDLErr(doNotLog);
 
     printAndFlushGpuLog(ctx, true, bDoNotBreak, doNotLog);
 

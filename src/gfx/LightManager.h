@@ -12,7 +12,7 @@
 #ifndef __LIGHTMANAGER_14940893702945849424_H__
 #define __LIGHTMANAGER_14940893702945849424_H__
 
-#include "../gfx/DisplayHeader.h"
+#include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
 namespace Game {

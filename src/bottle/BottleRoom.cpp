@@ -7,7 +7,7 @@
 
 #include "../gfx/Atlas.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/Party.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"

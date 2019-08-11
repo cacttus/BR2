@@ -5,11 +5,11 @@
 #include "../base/FpsMeter.h"
 
 #include "../gfx/Picker.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/RenderPipe.h"
-#include "../gfx/Viewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/CameraNode.h"
 
 
