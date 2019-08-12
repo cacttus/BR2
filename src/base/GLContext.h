@@ -31,11 +31,6 @@ private:
     std::stack<GLenum> _eLastDepthTestStack;
     static const int MaxStackSize = 32;
 
-    uint32_t _iLastWidth = 0;
-    uint32_t _iLastHeight = 0;
-    uint32_t _iFullscreenToggleWidth = 0;
-    uint32_t _iFullscreenToggleHeight = 0;
-
 public:
     GLContext();
     virtual ~GLContext() override;

@@ -23,7 +23,8 @@ class GraphicsApi : public VirtualMemory {
 protected:
     std::shared_ptr<Window> _pWindow = nullptr;
 
-    void makeWindow();
+    void makeWindow(t_string windowTitle, int render_system);
+    void destroyWindow();
 public:
     std::shared_ptr<Window> getWindow() { return _pWindow; }
     virtual void createWindow(t_string title) = 0;

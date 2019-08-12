@@ -6,7 +6,8 @@
 #include "../base/GLContext.h"
 #include "../base/Fingers.h"
 #include "../base/Logger.h"
-#include "../base/SDL.h"
+#include "../base/Window.h"
+#include "../base/SDLUtils.h"
 
 #include "../base/oglErr.h"
 #include "../base/OperatingSystem.h"
@@ -36,10 +37,6 @@ void AppRunner::runApp(std::vector<t_string>& args, t_string windowTitle, std::s
         initSDL(windowTitle, app);
 
         if (runCommands(args) == false) {
-            // - Game Loop
-            //*Init room
-            //*Setup everything
-            //Most processing
             runGameLoopTryCatch(app);
         }
     }
@@ -57,33 +54,36 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
 
     printVideoDiagnostics();
 
+    std::shared_ptr<GraphicsApi> api;
     //Create graphics API
     if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::OpenGL) {
-        _pGraphicsApi = std::make_shared<OpenGLApi>();
+        api = std::make_shared<OpenGLApi>();
     }
     else if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::Vulkan) {
-        _pGraphicsApi = std::make_shared<VulkanApi>();
+        api = std::make_shared<VulkanApi>();
     }
     else {
         BroThrowException("Invalid render engine.");
     }
-    Gu::setGraphicsApi(_pGraphicsApi);
-
-    _pGraphicsApi->createWindow(windowTitle);
+    Gu::setGraphicsApi(api);
+    api->createWindow(windowTitle);
     
 
     initAudio();
-    SDL::checkSDLErr();
+    SDLUtils::checkSDLErr();
 
     initNet();
-    SDL::checkSDLErr();
+    SDLUtils::checkSDLErr();
 
     if (Gu::getEngineConfig()->getGameHostAttached()) {
         updateWindowHandleForGamehost();
         attachToGameHost();
     }
 
-    _pGraphicsApi->createContext(app);
+    api->createContext(app);
+
+    BroLogInfo("Creating Managers.");
+    Gu::createManagers();
 }
 void AppRunner::doShowError(t_string err, Exception* e) {
     if (e != nullptr) {
@@ -163,12 +163,12 @@ void AppRunner::printVideoDiagnostics() {
         if (should_be_zero != 0) {
             // In case of error...
             BroLogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
-            SDL::checkSDLErr();
+            SDLUtils::checkSDLErr();
         }
         else {
             // On success, print the current display mode.
             BroLogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
-            SDL::checkSDLErr();
+            SDLUtils::checkSDLErr();
         }
     }
 }
@@ -176,12 +176,12 @@ void AppRunner::updateWindowHandleForGamehost() {
 #ifdef _WINDOWS_
     //For the WPF app container we need to set the window handle to be the top window
     //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.mainwindowhandle?view=netframework-4.8
-    SDL_SysWMinfo wmInfo;
-    SDL_VERSION(&wmInfo.version);
-    SDL_GetWindowWMInfo(_pGraphicsApi->getWindow(), &wmInfo);
-    HWND hwnd = wmInfo.info.win.window;
-    HWND old = GetActiveWindow();
-    SetActiveWindow(hwnd);
+    //SDL_SysWMinfo wmInfo;
+    //SDL_VERSION(&wmInfo.version);
+    //SDL_GetWindowWMInfo(Gu::getWindow(), &wmInfo);
+    //HWND hwnd = wmInfo.info.win.window;
+    //HWND old = GetActiveWindow();
+    //SetActiveWindow(hwnd);
 #endif
 }
 SDL_bool AppRunner::initAudio() {
@@ -282,7 +282,7 @@ bool AppRunner::handleEvents(SDL_Event * event) {
 
             int n = MathUtils::broMin(10, MathUtils::broMax(-10, event->wheel.y));
 
-            _pEngine->userZoom(n);
+            Gu::getEngine()->userZoom(n);
             n++;
         }
         if (event->wheel.x != 0) {
@@ -300,27 +300,19 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
     SDL_Event event;
     bool done = false;
     int w, h;
-
     
 #ifdef __WINDOWS__
     SDL_ShowCursor(SDL_DISABLE);
 #endif
 
-    _pEngine = std::make_shared<Engine>(rb, _pGraphicsApi);
-    _pEngine->init();
-    Gu::setEngine(_pEngine);
+    std::shared_ptr<Engine> engine = std::make_shared<Engine>();
+    engine->init();
+    Gu::setEngine(engine);
 
-    _pGraphicsApi->makeCurrent();
+    Gu::getGraphicsApi()->makeCurrent();
 
     //Print the setup time.
-    t_string str = "";
-    str = str + "\r\n======================================================\r\n";
-    str = str + "  **Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n";
-    str = str + "======================================================\r\n";
-    BroLogInfo(str);
-
-
-    std::shared_ptr<Fingers> pFingers = Gu::getFingers();
+    BroLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
 
     while (done == false) {
         Gu::beginPerf();
@@ -330,30 +322,29 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
                 //AV Exception test **doesn't work in anything but debug build.
                 *(int*)0 = 0;
             }
-            _pEngine->updateDelta();
+            engine->updateDelta();
 
             while (SDL_PollEvent(&event)) {
                 if (handleEvents(&event) == false) {
                     done = true;
                 }
             }
-            pFingers->preUpdate();
+            Gu::getFingers()->preUpdate();
 
             doAnnoyingSoundTest();
 
-            Gu::getEngine()->updateTouch(pFingers);
+            Gu::getEngine()->updateTouch(Gu::getFingers());
 
             Gu::getGraphicsApi()->getDrawableSize(&w, &h);
 
-            Gu::getGraphicsContext()->updateWidthHeight(w, h, false);
+            Gu::getWindow()->updateWidthHeight(w, h, false);
 
-            _pEngine->step();
+            Gu::getEngine()->step();
 
-            _pGraphicsApi->swapBuffers();
-
-
+            Gu::getGraphicsApi()->swapBuffers();
+            
             //Update all button states.
-            pFingers->postUpdate();
+            Gu::getFingers()->postUpdate();
         }
         Gu::popPerf();
         Gu::endPerf();
@@ -365,7 +356,7 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
         //**End of loop error -- Don't Remove** 
     }
 
-    _pEngine->cleanup();
+    engine->cleanup();
     DebugHelper::checkMemory();
 
     //quit(0);
@@ -375,7 +366,7 @@ void AppRunner::exitApp(t_string error, int rc) {
 
     Gu::debugBreak();
 
-    _pGraphicsApi->cleanup();
+    Gu::getGraphicsApi()->cleanup();
 
     SDLNet_Quit();
     SDL_Quit();

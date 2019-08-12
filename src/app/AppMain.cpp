@@ -8,6 +8,7 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/CameraNode.h"
+#include "../gfx/RenderUtils.h"
 
 
 namespace Game {
@@ -84,6 +85,8 @@ void AppMain::drawForward(RenderParams& rp) {
             Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
         _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
     }
+
+    RenderUtils::drawAxisShader();
 }
 void AppMain::drawShadow(RenderParams& rp) {
 }

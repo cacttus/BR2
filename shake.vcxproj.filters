@@ -588,16 +588,16 @@
     <ClInclude Include="src\base\Base.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Window.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\WindowViewport.h">
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\GfxHeader.h">
       <Filter>gfx</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\SDL.h">
+    <ClInclude Include="src\base\Window.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\SDLUtils.h">
       <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1103,9 +1103,6 @@
     <ClCompile Include="src\base\FpsMeter.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Window.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\WindowViewport.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
@@ -1118,7 +1115,10 @@
     <ClCompile Include="src\base\GlobalIncludes.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\SDL.cpp">
+    <ClCompile Include="src\base\SDLUtils.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Window.cpp">
       <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>

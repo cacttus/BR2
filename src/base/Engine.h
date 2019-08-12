@@ -29,26 +29,22 @@ namespace Game {
 */
 class Engine : public GameMemory {
 private:
-    //std::shared_ptr<Viewport> _pViewport = nullptr;
-    std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
-    std::shared_ptr<AppBase> _pApp = nullptr;
+    std::shared_ptr<Net> _pNet = nullptr;
     std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
 
-    Uint64 NOW=0, LAST=0;
-    GLuint vbuf, ibuf, vao;
+    Uint64 _iDeltaNow=0, _iDeltaLast=0;
     PipeBit::e _ePipeBit = PipeBit::e::Full;
     std::bitset<8> _pipeBits;
-
-    std::shared_ptr<Net> _pNet;
 
     double _fDelta = 0;
 
 public:
-    Engine(std::shared_ptr<AppBase> rb, std::shared_ptr<GraphicsApi> re, int xw, int xh);
+    Engine();
     virtual ~Engine();
    
 //    std::shared_ptr<Viewport> getViewport() { return _pViewport; }
 
+    void updateWidthHeight(int w, int h);
     void init();
     void updateDelta(); //**Call before step()
     void step();

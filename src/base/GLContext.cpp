@@ -343,26 +343,6 @@ void GLContext::enableDepthTest(bool enable) {
     if (enable)glEnable(GL_DEPTH_TEST);
     else glDisable(GL_DEPTH_TEST);
 }
-void GLContext::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
-    //update view/cam
-    if (_iLastWidth != w || bForce) {
-        Gu::getViewport()->setWidth(w);
-    }
-    if (_iLastHeight != h || bForce) {
-        Gu::getViewport()->setHeight(h);
-    }
-    if (_iLastHeight != h || _iLastWidth != w || bForce) {
-        if (_pRenderPipe != nullptr) {
-            _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
-        }
-        _pApp->screenChanged(w, h, _bFullscreen);
-        Gu::getGui()->screenChanged(w, h, _bFullscreen);
-    }
-    _iLastWidth = w;
-    _iLastHeight = h;
-}
-
-
 
 
 }//ns Game

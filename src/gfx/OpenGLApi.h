@@ -46,7 +46,6 @@ private:
     void initGLContext();
     void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
     void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
-    void printHelpfulDebug();
     void loadCheckProc();
 public:
     virtual void createWindow(t_string title) override;

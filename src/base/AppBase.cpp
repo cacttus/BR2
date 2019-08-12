@@ -41,21 +41,5 @@ t_string AppBase::makeAssetPath(t_string folder, t_string file) {
     return ret;
 }
 
-bool AppBase::getStartFullscreen() {
-	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
-	return Gu::getConfig()->getStartFullscreen();
-}
-uint32_t AppBase::getStartWidth() {
-	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
-	return Gu::getConfig()->getDefaultScreenWidth();
-}
-uint32_t AppBase::getStartHeight() {
-	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
-	return Gu::getConfig()->getDefaultScreenHeight();
-}
-bool AppBase::getForceAspectRatio() {
-	AssertOrThrow2(Gu::getGraphicsContext() && Gu::getConfig());
-	return Gu::getConfig()->getForceAspectRatio();
-}
 
 }//ns Game

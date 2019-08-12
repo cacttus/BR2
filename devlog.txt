@@ -6,3 +6,10 @@ this is in preparation for multiple viewports for the UI system.
 
 having a problem with teh file SDL.h because it conflicts.
 added <SDL> from a more absolute path.
+
+Todo: merge engine and apprunner
+
+Need:
+	For split view need
+	Image Dropdown like blender
+	remove "udim"

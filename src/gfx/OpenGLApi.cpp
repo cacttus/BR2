@@ -2,12 +2,12 @@
 //#include <SDL_opengl.h>
 //#include <SDL_opengl_glext.h>
 
-
 #include "../base/Exception.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
-#include "../gfx/OpenGLApi.h"
 #include "../base/GLContext.h"
+#include "../base/Window.h"
+#include "../gfx/OpenGLApi.h"
 
 namespace Game {
 OpenGLApi::OpenGLApi() {
@@ -52,8 +52,7 @@ void OpenGLApi::createWindow(t_string windowTitle) {
         }
         else {
             BroLogInfo("OpenGL config profile " + iProf + " didn't work. Trying next profile.");
-            SDL_DestroyWindow(_pWindow);
-            _pWindow = nullptr;
+            destroyWindow();
         }
     }
 
@@ -102,7 +101,7 @@ void OpenGLApi::setWindowAndOpenGLFlags(GLProfile& prof) {
     // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
 }
 void OpenGLApi::initGLContext() {
-    _context = SDL_GL_CreateContext(_pWindow);
+    _context = SDL_GL_CreateContext(_pWindow->getSDLWindow());
     if (!_context) {
         BroThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
     }
@@ -127,10 +126,6 @@ void OpenGLApi::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
     else {
         glslver = "";
     }
-
-    //  t_string glver;
-    ///  t_string glslver;
-    // // glver = glslver = TStr(iMajor,".",iMinor);
 
     std::vector<t_string> sv;
 
@@ -193,13 +188,13 @@ void OpenGLApi::checkForOpenGlMinimumVersion(int required_version, int required_
 
 }
 void OpenGLApi::makeCurrent() {
-    SDL_GL_MakeCurrent(getWindow(), _context);
+    SDL_GL_MakeCurrent(_pWindow->getSDLWindow(), _context);
 }
 void OpenGLApi::getDrawableSize(int* w, int* h) {
-    SDL_GL_GetDrawableSize(_pWindow, w, h);
+    SDL_GL_GetDrawableSize(_pWindow->getSDLWindow(), w, h);
 }
 void OpenGLApi::swapBuffers() {
-    SDL_GL_SwapWindow(_pWindow);
+    SDL_GL_SwapWindow(_pWindow->getSDLWindow());
 }
 void OpenGLApi::cleanup() {
     if (_context)
@@ -216,9 +211,13 @@ void OpenGLApi::createContext(std::shared_ptr<AppBase> app) {
     SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
     Gu::setSupportedDepthSize(tmp);
 
-    printHelpfulDebug();
+    if (getWindow() != nullptr) {
+        getWindow()->printHelpfulDebug();
+    }
 
     std::shared_ptr<GLContext> ct = std::make_shared<GLContext>();
+    Gu::setContext(ct);
+
     if (!ct->load(app)) {
         BroLogError("Failed to load context.");
         BroThrowException("Failed to load OpenGL Context. One or more methods were not supported.");
@@ -230,43 +229,7 @@ void OpenGLApi::createContext(std::shared_ptr<AppBase> app) {
     BroLogInfo("Creating GL Context");
     Gu::setContext(std::dynamic_pointer_cast<GraphicsContext>(ct));
 }
-void OpenGLApi::printHelpfulDebug() {
-    int dw, dh;
-    SDL_DisplayMode mode;
-    SDL_Window* win = getWindow();
 
-    SDL_GetCurrentDisplayMode(0, &mode);
-    BroLogInfo("Screen BPP    : " + SDL_BITSPERPIXEL(mode.format));
-    BroLogInfo("Swap Interval : " + SDL_GL_GetSwapInterval());
-    SDL_GetWindowSize(win, &dw, &dh);
-    BroLogInfo("Initial Window Size   : " + dw + "x" + dh);
-    SDL_GL_GetDrawableSize(win, &dw, &dh);
-    BroLogInfo("Draw Size     : " + dw + "x" + dh);
-
-    int tmp = 0;
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &tmp);
-    BroLogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &tmp);
-    BroLogInfo("SDL_GL_BUFFER_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
-
-    BroLogInfo("SDL_GL_DEPTH_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &tmp);
-    BroLogInfo("SDL_GL_STENCIL_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &tmp);
-    BroLogInfo("SDL_GL_ACCELERATED_VISUAL: " + tmp);
-
-    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &tmp);
-    BroLogInfo("SDL_GL_RED_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &tmp);
-    BroLogInfo("SDL_GL_GREEN_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &tmp);
-    BroLogInfo("SDL_GL_BLUE_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &tmp);
-    BroLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
-
-    OglErr::checkSDLErr();
-}
 void OpenGLApi::loadCheckProc() {
     //Check that OpenGL initialized successfully by checking a library pointer.
     PFNGLUSEPROGRAMPROC proc = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");

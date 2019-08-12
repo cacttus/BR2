@@ -2,6 +2,8 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/oglErr.h"
+#include "../base/Window.h"
+#include "../base/SDLUtils.h"
 
 
 namespace Game {
@@ -44,9 +46,9 @@ std::vector<const char*> VulkanApi::getExtensionNames() {
     std::vector<const char*> extensionNames { };
     //Get initial data.
     uint32_t extensionCount;
-    SDL_Vulkan_GetInstanceExtensions(_pWindow, &extensionCount, nullptr);
+    SDL_Vulkan_GetInstanceExtensions(Gu::getWindow()->getSDLWindow(), &extensionCount, nullptr);
     extensionNames = std::vector<const char*>(extensionCount);
-    SDL_Vulkan_GetInstanceExtensions(_pWindow, &extensionCount, extensionNames.data());
+    SDL_Vulkan_GetInstanceExtensions(Gu::getWindow()->getSDLWindow(), &extensionCount, extensionNames.data());
 
     if (_bEnableValidationLayers) {
         extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -96,8 +98,8 @@ void VulkanApi::createVulkanInstance(t_string title) {
         BroThrowException("Failed to create vulkan instance: " + (int)res);
     }
 
-    if (!SDL_Vulkan_CreateSurface(_pWindow, instance, &surface)) {
-        OglErr::checkSDLErr();
+    if (!SDL_Vulkan_CreateSurface(Gu::getWindow()->getSDLWindow(), instance, &surface)) {
+        SDLUtils::checkSDLErr();
         BroThrowException("SDL failed to create vulkan window.");
     }
     //You can log every vulkan call to stdout.

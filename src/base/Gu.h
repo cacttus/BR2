@@ -55,12 +55,9 @@ class Gu : public GameMemory {
     static std::stack<Stopwatch> _stopw;
 
 	static int _iSupportedDepthSize;
-    
-	static void SDLCreateSurfaceFromImage(const t_string strImage, std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
-    static SDL_Surface* SDLCreateSurfaceFromImage(const std::shared_ptr<Img32> bi);
+
     static void pulsePerf();
     
-    static void createManagers(std::shared_ptr<AppBase> r);
 public: 
     static std::shared_ptr<GLContext> getGraphicsContext();
     static std::shared_ptr<RenderSettings> getRenderSettings();
@@ -97,9 +94,11 @@ public:
     static void setRoom(std::shared_ptr<AppBase> b);
     static void setEngine(std::shared_ptr<Engine> engine);
     static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
-    static void setViewport(std::shared_ptr<WindowViewport> vp);
 
     static void update(float dt);
+
+    static void createManagers();
+
 
     static void checkErrorsDbg();
     static void checkErrorsRt();
@@ -136,11 +135,7 @@ public:
     static int32_t getSupportedDepthSize();
     static void setSupportedDepthSize(int32_t ee) { _iSupportedDepthSize =ee; }
 
-    static void SDLTrySetWindowIcon(SDL_Window* w, t_string img);
-
     static std::string getCPPVersion();
-
-
 
     static void print(char msg);
     static void print(const char* msg);

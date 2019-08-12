@@ -19,24 +19,26 @@
 namespace Game {
 /**
 *    @class Window
-*    @brief
+*    @brief 
 */
 class Window : public VirtualMemory {
-    std::shared_ptr<WindowViewport> _pViewport = nullptr;
+    std::shared_ptr<WindowViewport> _pWindowViewport = nullptr;
     SDL_Window* _pSDLWindow = nullptr;
-    uint32_t _iLastWidth;
-    uint32_t _iLastHeight;
+    bool _bFullscreen = false;
+    uint32_t _iLastWidth = 0;
+    uint32_t _iLastHeight = 0;
+    uint32_t _iFullscreenToggleWidth = 0;
+    uint32_t _iFullscreenToggleHeight = 0;
+
     void makeSDLWindow(t_string title, int rendersystem);
 public:
     Window(t_string title, int rendersystem);
     virtual ~Window() override;
-
-    std::shared_ptr<WindowViewport> getWindowViewport() { return _pViewport; }
-
-    bool _bFullscreen = false;
+    SDL_Window* getSDLWindow() { return _pSDLWindow;  }
+    void printHelpfulDebug();
+    std::shared_ptr<WindowViewport> getWindowViewport() { return _pWindowViewport; }
     void toggleFullscreen();
     void updateWidthHeight(uint32_t w, uint32_t h, bool force);
-
 
 };
 

@@ -63,7 +63,7 @@
     <ClInclude Include="src\base\Package.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
-    <ClInclude Include="src\base\SDL.h" />
+    <ClInclude Include="src\base\SDLUtils.h" />
     <ClInclude Include="src\base\Sequencer.h" />
     <ClInclude Include="src\base\SoundCache.h" />
     <ClInclude Include="src\base\StackInfo.h" />
@@ -79,6 +79,7 @@
     <ClInclude Include="src\base\TreeNode.h" />
     <ClInclude Include="src\base\TypeCast.h" />
     <ClInclude Include="src\base\TypeConv.h" />
+    <ClInclude Include="src\base\Window.h" />
     <ClInclude Include="src\base\XmlFile.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
@@ -135,7 +136,6 @@
     <ClInclude Include="src\gfx\WindowViewport.h" />
     <ClInclude Include="src\gfx\VulkanApi.h" />
     <ClInclude Include="src\gfx\VulkanContext.h" />
-    <ClInclude Include="src\gfx\Window.h" />
     <ClInclude Include="src\math\Algorithm.h" />
     <ClInclude Include="src\math\BitHacks.h" />
     <ClInclude Include="src\math\Box2x.h" />
@@ -250,7 +250,7 @@
     <ClCompile Include="src\base\OperatingSystem.cpp" />
     <ClCompile Include="src\base\Package.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
-    <ClCompile Include="src\base\SDL.cpp" />
+    <ClCompile Include="src\base\SDLUtils.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
     <ClCompile Include="src\base\SoundCache.cpp" />
     <ClCompile Include="src\base\StackInfo.cpp" />
@@ -265,6 +265,7 @@
     <ClCompile Include="src\base\TouchInfo.cpp" />
     <ClCompile Include="src\base\TreeNode.cpp" />
     <ClCompile Include="src\base\TypeConv.cpp" />
+    <ClCompile Include="src\base\Window.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
@@ -316,7 +317,6 @@
     <ClCompile Include="src\gfx\WindowViewport.cpp" />
     <ClCompile Include="src\gfx\VulkanApi.cpp" />
     <ClCompile Include="src\gfx\VulkanContext.cpp" />
-    <ClCompile Include="src\gfx\Window.cpp" />
     <ClCompile Include="src\math\Algorithm.cpp" />
     <ClCompile Include="src\math\BitHacks.cpp" />
     <ClCompile Include="src\math\Box2x.cpp" />
@@ -455,7 +455,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <TargetName>shake_x64_d</TargetName>
-    <IncludePath>.\external\;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
+    <IncludePath>C:\git\bottle-world\external\SDL2_net;C:\git\bottle-world\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\debug64</IntDir>
     <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>

@@ -29,11 +29,9 @@ public:
     t_string makeAssetPath(t_string folder, t_string file);
 
     virtual void drawDebug();
-	virtual bool getStartFullscreen();
-	virtual uint32_t getStartWidth();
-	virtual uint32_t getStartHeight();
-	virtual bool getForceAspectRatio();
-    virtual void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) { };
+
+	
+    //virtual void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) { };
     virtual void idle(t_timeval us) { }
 
     virtual void step(float dt) = 0;

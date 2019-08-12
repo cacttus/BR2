@@ -20,9 +20,9 @@
 */
 
 /**
- *  \file SDL.h
+ *  \file SDLUtils.h
  *
- *  Main include header for the SDL library
+ *  Main include header for the SDLUtils library
  */
 
 
@@ -65,7 +65,7 @@
 extern "C" {
 #endif
 
-/* As of version 0.5, SDL is loaded dynamically into the application */
+/* As of version 0.5, SDLUtils is loaded dynamically into the application */
 
 /**
  *  \name SDL_INIT_*
@@ -95,7 +95,7 @@ extern "C" {
 extern DECLSPEC int SDLCALL SDL_Init(Uint32 flags);
 
 /**
- *  This function initializes specific SDL subsystems
+ *  This function initializes specific SDLUtils subsystems
  *
  *  Subsystem initialization is ref-counted, you must call
  *  SDL_QuitSubSystem() for each SDL_InitSubSystem() to correctly
@@ -106,7 +106,7 @@ extern DECLSPEC int SDLCALL SDL_Init(Uint32 flags);
 extern DECLSPEC int SDLCALL SDL_InitSubSystem(Uint32 flags);
 
 /**
- *  This function cleans up specific SDL subsystems
+ *  This function cleans up specific SDLUtils subsystems
  */
 extern DECLSPEC void SDLCALL SDL_QuitSubSystem(Uint32 flags);
 

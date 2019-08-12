@@ -1,6 +1,6 @@
 /**
 *
-*    @file SDL.h
+*    @file SDLUtils.h
 *    @date August 11, 2019
 *    @author Derek Page
 *
@@ -17,14 +17,16 @@
 
 namespace Game {
 /**
-*    @class SDL
-*    @brief Static SDL interface functions.
+*    @class SDLUtils
+*    @brief Static SDLUtils interface functions.
 *
 */
-class SDL : public VirtualMemory {
+class SDLUtils : public VirtualMemory {
+    static void createSurfaceFromImage(const t_string strImage, std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
+    static SDL_Surface* createSurfaceFromImage(const std::shared_ptr<Img32> bi);
 public:
     static void trySetWindowIcon(SDL_Window* w, t_string iconPath);
-    static void createSurfaceFromImage(const t_string strImage, std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
+
     static void checkSDLErr(bool log = true);
 
 };

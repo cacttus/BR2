@@ -11,6 +11,7 @@
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
+#include "../base/Window.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/WindowViewport.h"
@@ -97,7 +98,7 @@ std::shared_ptr<GLContext> Gu::getGraphicsContext() {
     return ct;
     //    return _pContext; 
 }
-#define _STPROP(x) std::shared_ptr<##x> Gu::get##x() { AssertOrThrow2(_p##x!=nullptr); return _p##x; }
+#define _STPROP(x) std::shared_ptr<##x> Gu::get##x() { return _p##x; }
 _STPROP(RenderSettings);
 _STPROP(Package);
 _STPROP(ModelCache);
@@ -113,7 +114,7 @@ std::shared_ptr<AppBase> Gu::getApp() { AssertOrThrow2(_pAppBase != nullptr);  r
 _STPROP(TexCache);
 _STPROP(LightManager);
 _STPROP(Picker);
-std::shared_ptr<Gui2d> Gu::getGui() { AssertOrThrow2(_pGui2d != nullptr);  return _pGui2d; }
+std::shared_ptr<Gui2d> Gu::getGui() { return _pGui2d; }
 _STPROP(PhysicsWorld);
 _STPROP(Party);
 std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
@@ -122,10 +123,11 @@ _STPROP(RenderPipe);
 _STPROP(Logger);
 _STPROP(Engine);
 _STPROP(GraphicsApi);
+std::shared_ptr<Window> Gu::getWindow() { return Gu::getGraphicsApi()->getWindow(); }
+std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 
-std::shared_ptr<Window> Gu::getWindow() {
-    return Gu::getGraphicsApi()->getWindow();
-}
+
+std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getWindow()->getWindowViewport(); }
 
 
 void Gu::setRenderPipe(std::shared_ptr<RenderPipe> r) { AssertOrThrow2(r != nullptr); _pRenderPipe = r; }
@@ -189,6 +191,8 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
     //Try to create teh cache dir.
     //Make sure to check this on IOS
     FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
+
+    _pAppBase = rb;
 
     //Log
     Gu::_pLogger = std::make_shared<Logger>();
@@ -636,7 +640,7 @@ std::string Gu::getCPPVersion() {
     return Stz "pre-standard C++";
 }
 
-void Gu::createManagers(std::shared_ptr<AppBase> rb) {
+void Gu::createManagers() {
     std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext());
 
     _pRenderSettings = RenderSettings::create();
@@ -664,7 +668,7 @@ void Gu::createManagers(std::shared_ptr<AppBase> rb) {
     _pSoundCache = std::make_shared<SoundCache>();
     BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
     _pShaderMaker = std::make_shared<ShaderMaker>();
-    _pShaderMaker->initialize(rb);
+    _pShaderMaker->initialize(Gu::getApp());
     BroLogInfo("GLContext -  Lights");
     _pLightManager = std::make_shared<LightManager>(Gu::getGraphicsContext());
     BroLogInfo("GLContext - Model Cache");
@@ -674,7 +678,12 @@ void Gu::createManagers(std::shared_ptr<AppBase> rb) {
     _pPicker = std::make_shared<Picker>(Gu::getGraphicsContext());
 
     BroLogInfo("GLContext - Gui");
-    _pGui2d = std::make_shared<Gui2d>();
+ //   _pGui2d = std::make_shared<Gui2d>();
+
+
+    BroLogInfo("GLContext - Physics World");
+    //Either A) subclass or B) remove genericy thing
+   // _pPhysicsWorld = std::make_shared<PhysicsWorld>();
 }
 void Gu::update(float delta) {
     if (_pSequencer != nullptr) {

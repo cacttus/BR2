@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
 #include "../base/SyncTimer.h"
-#include "../base/SDL.h"
+#include "../base/SDLUtils.h"
 
 
 namespace Game {
@@ -37,7 +37,7 @@ void Net::update() {
             // https://gist.github.com/psqq/b92243f2149fcf4dd46370d4c0b5fef9
 
             //Check any dangling SDL errors before clearing them.
-            SDL::checkSDLErr();
+            SDLUtils::checkSDLErr();
 
             //Accept control clients
             TCPsocket new_control_client = SDLNet_TCP_Accept(_server_control);

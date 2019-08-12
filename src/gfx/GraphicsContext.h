@@ -32,7 +32,6 @@ private:
 
     std::shared_ptr<FlyCam> _pFlyCam = nullptr;
 
-    void createManagers(std::shared_ptr<AppBase> rb);
     void makeVertexFormats();
 public:
     GraphicsContext();

@@ -43,25 +43,17 @@ bool GraphicsContext::load(std::shared_ptr<AppBase> rb) {
     BroLogInfo("GraphicsContext - Making Vtx Formats.");
     makeVertexFormats();
 
-    BroLogInfo("GraphicsContext - Creating Managers.");
-    createManagers(rb);
-
     //In the future we will replace this witht he active object.
     BroLogInfo("GraphicsContext - Creating Render View");
-
-
     _pFlyCam = std::make_shared<FlyCam>(Gu::getViewport());
+
+    _pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
+    _pFlyCam->getCam()->setPos(vec3(0, 0, -10));
 
     return isValid();
 }
 
-void GraphicsContext::createManagers(std::shared_ptr<AppBase> rb) {
 
-}
-//void GraphicsContext::update(float delta) {
-//
-//
-//}
 void GraphicsContext::makeVertexFormats() {
 
     v_v3c4x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4x2");
