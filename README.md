@@ -1,2 +1,2 @@
 # Bottle World
-Game engine in progress
+Graphics engine in progress
