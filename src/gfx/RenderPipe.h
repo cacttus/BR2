@@ -58,6 +58,11 @@ protected:
 
     vec4 _vClear;
 
+    PipeBit::e _ePipeBit = PipeBit::e::Full;
+    std::bitset<8> _pipeBits;
+
+    std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+
     bool _bRenderInProgress = false;
 
     void blitDeferredRender();
@@ -83,14 +88,17 @@ protected:
 
     void postProcessDOF();
     void postProcessDeferredRender();
+    void enableDisablePipeBits();
 public:
-    RenderPipe();
+    RenderPipe(std::shared_ptr<GraphicsWindow> w);
     virtual ~RenderPipe() override;
+
+    std::bitset<8> & getPipeBits() { return _pipeBits; }
 
     void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);
     std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
     void renderSceneTexture(PipeBits _pipeBits);
-    void renderScene(PipeBits pipeBits, std::shared_ptr<Drawable> toDraw);
+    void renderScene(std::shared_ptr<Drawable> toDraw);
     void resizeScreenBuffers(int32_t w, int32_t h);
 
     std::shared_ptr<Img32> getResultAsImage();

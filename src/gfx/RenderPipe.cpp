@@ -24,9 +24,9 @@
 
 
 namespace Game {
-//////////////////////////////////////////////////////////////////////////
-RenderPipe::RenderPipe() {
+RenderPipe::RenderPipe(std::shared_ptr<GraphicsWindow> w) {
     _vClear = vec4(0,0,0,1);
+    _pWindow = w;
 }
 RenderPipe::~RenderPipe(){
     releaseFbosAndMesh();
@@ -39,7 +39,6 @@ void RenderPipe::setClear(vec4& v) {
     _pBlittedForward->setClear(_vClear);
     _pBlittedDeferred->setClear(_vClear);
 }
-//////////////////////////////////////////////////////////////////////////
 void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath) {
     BroLogInfo("[RenderPipe] Initializing.");
     if (iWidth <= 0 || iHeight <= 0) {
@@ -291,9 +290,9 @@ void RenderPipe::renderShadows() {
 }
 
 void RenderPipe::beginRenderDeferred() {
-    
-   // _pMsaaForward->clearFb();//Must call before deferre
+    enableDisablePipeBits();
 
+   // _pMsaaForward->clearFb();//Must call before deferre
     _pMsaaDeferred->beginRender();
 }
 void RenderPipe::endRenderDeferred() {
@@ -304,6 +303,22 @@ void RenderPipe::beginRenderForward() {
 }
 void RenderPipe::endRenderForward() {
     _pMsaaForward->endRender();
+}
+void RenderPipe::enableDisablePipeBits() {
+    //TODO: make sure the given input window is in focus.
+    if (_pWindow!=nullptr && _pWindow->hasFocus()) {
+
+        if (Gu::getFingers()->keyPress(SDL_SCANCODE_F8)) {
+            Gu::incrementEnum<PipeBit::e>(_pipeBits, PipeBit::e::MaxPipes);
+            if (_ePipeBit == PipeBit::e::Full) {
+                _pipeBits.set();
+            }
+            else {
+                _pipeBits.reset();
+                _pipeBits.set(_ePipeBit);
+            }
+        }
+    }
 }
 
 void RenderPipe::blitDeferredRender() {
@@ -660,7 +675,7 @@ void RenderPipe::releaseFbosAndMesh(){
     _pShadowFrustumMaster = nullptr;
 }
 
-void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDraw){
+void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw){
     //Re-Init
     if (Gu::getCamera() == nullptr) {
         BroLogError("Camera was not set for renderScene");
@@ -694,7 +709,7 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
         {
             //**This shouldn't be an option ** 
             //Curetly we update lights at the same time as shadows.  this is erroneous
-            if (pipeBits.test(PipeBit::e::Shadow)) {
+            if (_pipeBits.test(PipeBit::e::Shadow)) {
                 renderShadows();
             }
         }
@@ -702,7 +717,7 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
 
         _pMsaaForward->clearFb();
 
-        if (pipeBits.test(PipeBit::e::Deferred)) {
+        if (_pipeBits.test(PipeBit::e::Deferred)) {
             beginRenderDeferred();
             {
                 toDraw->drawDeferred(rp);
@@ -712,7 +727,7 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
             //Blit to forward FB
             blitDeferredRender();
 
-            if (pipeBits.test(PipeBit::e::Transparent)) {
+            if (_pipeBits.test(PipeBit::e::Transparent)) {
                 toDraw->drawTransparent(rp);
             }
 
@@ -741,12 +756,12 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
         endRenderForward();
         }
         */
-        if (pipeBits.test(PipeBit::e::Forward)) {
+        if (_pipeBits.test(PipeBit::e::Forward)) {
             beginRenderForward();
 
             toDraw->drawForward(rp);
 
-            if (pipeBits.test(PipeBit::e::Debug)) {
+            if (_pipeBits.test(PipeBit::e::Debug)) {
                 toDraw->drawDebug(rp);
             }
 
@@ -757,7 +772,7 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
             beginRenderForward();
 
             //UI
-            if (pipeBits.test(PipeBit::e::NonDepth)) {
+            if (_pipeBits.test(PipeBit::e::NonDepth)) {
                 toDraw->drawNonDepth(rp);
             }
 
@@ -772,7 +787,7 @@ void RenderPipe::renderScene( PipeBits pipeBits, std::shared_ptr<Drawable> toDra
         //      endRenderTransparent();
 
 
-        if (pipeBits.test(PipeBit::e::BlitFinal)) {
+        if (_pipeBits.test(PipeBit::e::BlitFinal)) {
             endRenderAndBlit();
         }
     }

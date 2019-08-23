@@ -30,6 +30,7 @@ protected:
     //To mimick the behavior of PoundFile.
     virtual void pkp(std::vector<t_string>& tokens) = 0;
 
+    
 public:
     XmlFile() {}
     XmlFile(t_string loc);

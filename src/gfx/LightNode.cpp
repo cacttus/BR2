@@ -4,6 +4,7 @@
 #include "../base/EngineConfig.h"
 #include "../base/FpsMeter.h"
 #include "../base/Gu.h"
+#include "../base/Perf.h"
 
 #include "../gfx/LightNode.h"
 #include "../gfx/CameraNode.h"
@@ -86,7 +87,7 @@ void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator
     if (getHidden() == true) {
         return;
     }
-    Gu::pushPerf();
+    Perf::pushPerf();
     {
         LightNodeBase::update(delta, mapAnimators);
         if (_pShadowFrustum != nullptr) {
@@ -108,7 +109,7 @@ void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator
         _pGpuLight->_mProj = *_pShadowFrustum->getProjMatrixPtr();
         _pGpuLight->_mPVB = *_pShadowFrustum->getPVBPtr();
     }
-    Gu::popPerf();
+    Perf::popPerf();
 }
 bool LightNodeDir::renderShadows(std::shared_ptr<ShadowFrustum> pf) {
     //**Update shadow map frustum.
@@ -152,7 +153,7 @@ void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animat
     if(getHidden()==true){
         return;
     }
-    Gu::pushPerf();
+    Perf::pushPerf();
     {
         LightNodeBase::update(delta, mapAnimators);
         if (_pShadowBox != nullptr) {
@@ -166,7 +167,7 @@ void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animat
         _pGpuLight->_vDiffuseColor = _color;
 
     }
-    Gu::popPerf();
+    Perf::popPerf();
 }
 bool LightNodePoint::renderShadows(std::shared_ptr<ShadowBox> pf) {
     //**Update shadow map frustum.

@@ -64,7 +64,7 @@ class VulkanApi : public GraphicsApi {
     
     
 public:
-    virtual void createWindow(t_string title) override;
+    virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title) override;
     virtual void getDrawableSize(int* w, int* h) override;
     virtual void swapBuffers() override;
     virtual void makeCurrent() override;

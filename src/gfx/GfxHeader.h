@@ -314,7 +314,7 @@ typedef enum {
 
  class ShaderCache;
 
- class Window;
+ class GraphicsWindow;
 
  class GraphicsContext;
  class VulkanContext;

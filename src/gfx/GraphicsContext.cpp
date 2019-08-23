@@ -1,6 +1,6 @@
 
 #include "../base/FpsMeter.h"
-#include "../base/Engine.h"
+#include "../base/Delta.h"
 #include "../base/FrameSync.h"
 #include "../base/Fingers.h"
 #include "../base/Package.h"
@@ -34,8 +34,6 @@ GraphicsContext::GraphicsContext(){
 GraphicsContext::~GraphicsContext(){
 
 }
-
-
 bool GraphicsContext::load(std::shared_ptr<AppBase> rb) {
     _bValid = true;
     Gu::setRoom(rb);
@@ -52,8 +50,6 @@ bool GraphicsContext::load(std::shared_ptr<AppBase> rb) {
 
     return isValid();
 }
-
-
 void GraphicsContext::makeVertexFormats() {
 
     v_v3c4x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4x2");

@@ -5,23 +5,13 @@
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
 #include "../base/EngineConfigFile.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
-#include "../base/Window.h"
-#include "../gfx/TexCache.h"
-#include "../gfx/LightManager.h"
-#include "../gfx/WindowViewport.h"
-#include "../gfx/GraphicsApi.h"
-
-#include "../gfx/GraphicsContext.h"
-#include "../gfx/RenderSettings.h"
-#include "../gfx/CameraNode.h"
-#include "../gfx/ShaderMaker.h"
-#include "../model/ModelCache.h"
+#include "../app/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/Fingers.h"
@@ -31,25 +21,40 @@
 #include "../base/SoundCache.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+#include "../base/GLContext.h"
+#include "../base/Net.h"
+#include "../base/Delta.h"
+
+#include "../math/Algorithm.h"
+
+#include "../app/ProjectFile.h"
+
+#include "../gfx/TexCache.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/WindowViewport.h"
+#include "../gfx/GraphicsApi.h"
+#include "../gfx/GraphicsContext.h"
+#include "../gfx/RenderSettings.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/FlyCam.h"
-#include "../model/VertexTypes.h"
-#include "../model/VertexFormat.h"
 #include "../gfx/Gui2d.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/Party.h"   
-#include "../world/PhysicsWorld.h"
-
-#include "../base/GLContext.h"
-#include "../math/Algorithm.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
+
+#include "../model/ModelCache.h"
+#include "../model/VertexTypes.h"
+#include "../model/VertexFormat.h"
+
+#include "../world/PhysicsWorld.h"
 
 extern "C" {
     //nothings commented on Apr 12, 2016
     //It's not meant to be #included. Don't #include it, just compile & link it.
     extern int stb_vorbis_decode_filename(const char* filename, int* channels, int* sample_rate, short** output);
 }
-
 
 //don't put this in a header file
 #ifdef __APPLE__
@@ -60,10 +65,8 @@ extern "C" {
 #endif
 #endif
 
-
 namespace Game {
-//////////////////////////////////////////////////////////////////////////
-std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
+//std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
 std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
 std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
 std::shared_ptr<Party> Gu::_pParty = nullptr;
@@ -80,24 +83,18 @@ std::shared_ptr<Picker> Gu::_pPicker = nullptr;
 std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
 std::shared_ptr<Package> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
-std::shared_ptr<Gui2d> Gu::_pGui2d = nullptr;
-std::shared_ptr<RenderPipe> Gu::_pRenderPipe = nullptr;
-std::shared_ptr<Engine> Gu::_pEngine = nullptr;
+//std::shared_ptr<Engine> Gu::_pEngine = nullptr;
 std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
-
-std::stack<Stopwatch> Gu::_stopw;
-
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
+std::shared_ptr<Net> Gu::_pNet = nullptr;
 
 int Gu::_iSupportedDepthSize = 24;
-t_string Gu::_strCachedProf = "";
-//////////////////////////////////////////////////////////////////////////
-std::shared_ptr<GLContext> Gu::getGraphicsContext() {
-    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(_pContext);
-    return ct;
-    //    return _pContext; 
-}
+
+//std::shared_ptr<GLContext> Gu::getGraphicsContext() {
+//    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(_pContext);
+//    return ct;
+//}
 #define _STPROP(x) std::shared_ptr<##x> Gu::get##x() { return _p##x; }
 _STPROP(RenderSettings);
 _STPROP(Package);
@@ -107,34 +104,28 @@ _STPROP(Fingers);
 _STPROP(FpsMeter);
 _STPROP(FrameSync);
 _STPROP(SoundCache);
-
 _STPROP(ShaderMaker);
 std::shared_ptr<AppBase> Gu::getApp() { AssertOrThrow2(_pAppBase != nullptr);  return _pAppBase; }
-
 _STPROP(TexCache);
 _STPROP(LightManager);
 _STPROP(Picker);
-std::shared_ptr<Gui2d> Gu::getGui() { return _pGui2d; }
+//std::shared_ptr<Gui2d> Gu::getGui() { return _pGui2d; }
 _STPROP(PhysicsWorld);
 _STPROP(Party);
 std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
 _STPROP(EngineConfig);
-_STPROP(RenderPipe);
+//_STPROP(RenderPipe);
 _STPROP(Logger);
-_STPROP(Engine);
 _STPROP(GraphicsApi);
-std::shared_ptr<Window> Gu::getWindow() { return Gu::getGraphicsApi()->getWindow(); }
+std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
+std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
 
+_STPROP(Net);
 
-std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getWindow()->getWindowViewport(); }
-
-
-void Gu::setRenderPipe(std::shared_ptr<RenderPipe> r) { AssertOrThrow2(r != nullptr); _pRenderPipe = r; }
 void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
 void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
 void Gu::setRoom(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
-void Gu::setEngine(std::shared_ptr<Engine> engine) { AssertOrThrow2(engine != nullptr); _pEngine = engine; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
 
 void Gu::checkErrorsDbg() {
@@ -225,13 +216,10 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
         OperatingSystem::showConsole();
     }
 }
-void Gu::setContext(std::shared_ptr<GraphicsContext> rb) {
-    Gu::_pContext = rb;
-}
+//void Gu::setContext(std::shared_ptr<GraphicsContext> rb) {
+//    Gu::_pContext = rb;
+//}
 void Gu::deleteGlobals() {
-    // DEL_MEM(_pContext);
-      //DEL_MEM(_pLogger);
-
 }
 
 bool Gu::isBigEndian() {
@@ -337,7 +325,6 @@ void Gu::debugBreak() {
 #endif
 }
 
-
 int Gu::loadSound(std::string path, int& __out_ iChannels, int& __out_ iSampleRate,
     int16_t*& __out_ pData, int& __out_ nSamples, int& __out_ iDataLenBytes) {
     //  it returns the number of
@@ -426,10 +413,6 @@ void Gu::checkMemory() {
 #endif
 #endif
 }
-
-
-
-
 
 t_string Gu::getOperatingSystemName() {
     t_string res;
@@ -572,52 +555,6 @@ void Gu::print(const char* msg) {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
-static int g_bPerfFrame = false;
-void Gu::beginPerf() {
-    if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift)) {
-        if (g_bPerfFrame == 0) {
-            g_bPerfFrame = 1;
-        }
-        else if (g_bPerfFrame == 1) {
-            g_bPerfFrame = 2;//Key held - disable
-        }
-    }
-    else {
-        g_bPerfFrame = 0;
-    }
-}
-void Gu::endPerf() {
-    if (g_bPerfFrame == 1) {
-        BroLogInfo(_strCachedProf);
-        _strCachedProf = "";
-    }
-}
-void Gu::pulsePerf() {
-    if (g_bPerfFrame == 1) {
-        //Add dots
-        int n = (int)_stopw.size();
-        t_string str2 = "";
-        for (int i = 0; i < n; ++i) {
-            str2 += ".";
-        }
-        _strCachedProf = _strCachedProf + str2 + _stopw.top().pulse() + "\n";
-    }
-}
-void Gu::pushPerf() {
-    if (g_bPerfFrame == 1) {
-        Stopwatch sw;
-        sw.start(DebugHelper::getCallingMethod());
-        _stopw.push(sw);
-    }
-}
-void Gu::popPerf() {
-    if (g_bPerfFrame == 1) {
-        pulsePerf();
-        _stopw.pop();
-    }
-}
-
 uint64_t Gu::getFrameNumber() {
     return Gu::getFpsMeter()->getFrameNumber();
 }
@@ -677,20 +614,25 @@ void Gu::createManagers() {
     BroLogInfo("GLContext - Picker");
     _pPicker = std::make_shared<Picker>(Gu::getGraphicsContext());
 
-    BroLogInfo("GLContext - Gui");
+    //BroLogInfo("GLContext - Gui");
  //   _pGui2d = std::make_shared<Gui2d>();
-
 
     BroLogInfo("GLContext - Physics World");
     //Either A) subclass or B) remove genericy thing
    // _pPhysicsWorld = std::make_shared<PhysicsWorld>();
+
+    BroLogInfo("GLContext - Network");
+    _pNet = std::make_shared<Net>();
+
 }
-void Gu::update(float delta) {
+void Gu::updateGlobals() {
+    getDelta()->update();
+
     if (_pSequencer != nullptr) {
         _pSequencer->update();
     }
     if (_pParty != nullptr) {
-        _pParty->update(delta);
+        _pParty->update(getDelta()->get());
     }
     if (_pFpsMeter != nullptr) {
         _pFpsMeter->update();
@@ -701,9 +643,10 @@ void Gu::update(float delta) {
     if (_pPicker != nullptr) {
         _pPicker->update(_pFingers);
     }
-    if (_pGui2d != nullptr) {
-        _pGui2d->update(_pFingers);
+    if (_pNet != nullptr) {
+        _pNet->update();
     }
+
 
 }
 

@@ -19,9 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\app\AppBase.h" />
+    <ClInclude Include="src\app\AppHeader.h" />
     <ClInclude Include="src\app\AppMain.h" />
+    <ClInclude Include="src\app\GraphicsWindow.h" />
+    <ClInclude Include="src\app\OpenGLWindow.h" />
+    <ClInclude Include="src\app\ProjectFile.h" />
+    <ClInclude Include="src\app\Script.h" />
+    <ClInclude Include="src\app\VulkanWindow.h" />
     <ClInclude Include="src\base\Allocator.h" />
-    <ClInclude Include="src\base\AppBase.h" />
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\Base.h" />
     <ClInclude Include="src\base\BaseAll.h" />
@@ -35,7 +41,7 @@
     <ClInclude Include="src\base\DebugHelper.h" />
     <ClInclude Include="src\base\DiskFile.h" />
     <ClInclude Include="src\base\DynamicBuffer.h" />
-    <ClInclude Include="src\base\Engine.h" />
+    <ClInclude Include="src\base\Delta.h" />
     <ClInclude Include="src\base\EngineConfig.h" />
     <ClInclude Include="src\base\EngineConfigFile.h" />
     <ClInclude Include="src\base\Exception.h" />
@@ -61,6 +67,7 @@
     <ClInclude Include="src\base\OperatingSystem.h" />
     <ClInclude Include="src\base\OperatingSystemHeader.h" />
     <ClInclude Include="src\base\Package.h" />
+    <ClInclude Include="src\base\Perf.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
     <ClInclude Include="src\base\SDLUtils.h" />
@@ -79,13 +86,48 @@
     <ClInclude Include="src\base\TreeNode.h" />
     <ClInclude Include="src\base\TypeCast.h" />
     <ClInclude Include="src\base\TypeConv.h" />
-    <ClInclude Include="src\base\Window.h" />
     <ClInclude Include="src\base\XmlFile.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />
     <ClInclude Include="src\ext\pugixml\pugiconfig.hpp" />
     <ClInclude Include="src\ext\pugixml\pugixml.hpp" />
+    <ClInclude Include="src\ext\rapidjson\allocators.h" />
+    <ClInclude Include="src\ext\rapidjson\cursorstreamwrapper.h" />
+    <ClInclude Include="src\ext\rapidjson\document.h" />
+    <ClInclude Include="src\ext\rapidjson\encodedstream.h" />
+    <ClInclude Include="src\ext\rapidjson\encodings.h" />
+    <ClInclude Include="src\ext\rapidjson\error\en.h" />
+    <ClInclude Include="src\ext\rapidjson\error\error.h" />
+    <ClInclude Include="src\ext\rapidjson\filereadstream.h" />
+    <ClInclude Include="src\ext\rapidjson\filewritestream.h" />
+    <ClInclude Include="src\ext\rapidjson\fwd.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\itoa.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\meta.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\pow10.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\regex.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\stack.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\strtod.h" />
+    <ClInclude Include="src\ext\rapidjson\internal\swap.h" />
+    <ClInclude Include="src\ext\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="src\ext\rapidjson\memorybuffer.h" />
+    <ClInclude Include="src\ext\rapidjson\memorystream.h" />
+    <ClInclude Include="src\ext\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="src\ext\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="src\ext\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="src\ext\rapidjson\pointer.h" />
+    <ClInclude Include="src\ext\rapidjson\prettywriter.h" />
+    <ClInclude Include="src\ext\rapidjson\rapidjson.h" />
+    <ClInclude Include="src\ext\rapidjson\reader.h" />
+    <ClInclude Include="src\ext\rapidjson\schema.h" />
+    <ClInclude Include="src\ext\rapidjson\stream.h" />
+    <ClInclude Include="src\ext\rapidjson\stringbuffer.h" />
+    <ClInclude Include="src\ext\rapidjson\writer.h" />
     <ClInclude Include="src\ext\stb_truetype.h" />
     <ClInclude Include="src\gfx\Atlas.h" />
     <ClInclude Include="src\gfx\CameraNode.h" />
@@ -212,10 +254,15 @@
     <ClInclude Include="src\world\WorldHeader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\app\AppBase.cpp" />
     <ClCompile Include="src\app\AppMain.cpp" />
+    <ClCompile Include="src\app\GraphicsWindow.cpp" />
     <ClCompile Include="src\app\Main.cpp" />
+    <ClCompile Include="src\app\OpenGLWindow.cpp" />
+    <ClCompile Include="src\app\ProjectFile.cpp" />
+    <ClCompile Include="src\app\Script.cpp" />
+    <ClCompile Include="src\app\VulkanWindow.cpp" />
     <ClCompile Include="src\base\Allocator.cpp" />
-    <ClCompile Include="src\base\AppBase.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BaseHeader.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
@@ -224,7 +271,7 @@
     <ClCompile Include="src\base\DebugHelper.cpp" />
     <ClCompile Include="src\base\DiskFile.cpp" />
     <ClCompile Include="src\base\DynamicBuffer.cpp" />
-    <ClCompile Include="src\base\Engine.cpp" />
+    <ClCompile Include="src\base\Delta.cpp" />
     <ClCompile Include="src\base\EngineConfig.cpp" />
     <ClCompile Include="src\base\EngineConfigFile.cpp" />
     <ClCompile Include="src\base\Exception.cpp" />
@@ -249,6 +296,7 @@
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />
     <ClCompile Include="src\base\Package.cpp" />
+    <ClCompile Include="src\base\Perf.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
     <ClCompile Include="src\base\SDLUtils.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
@@ -265,7 +313,6 @@
     <ClCompile Include="src\base\TouchInfo.cpp" />
     <ClCompile Include="src\base\TreeNode.cpp" />
     <ClCompile Include="src\base\TypeConv.cpp" />
-    <ClCompile Include="src\base\Window.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />

@@ -1,6 +1,7 @@
 #include "../base/BaseAll.h"
 #include "../base/EngineConfig.h"
 #include "../base/Fingers.h"
+#include "../base/Perf.h"
 
 #include "../gfx/CameraNode.h"
 #include "../gfx/LightManager.h"
@@ -126,7 +127,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
     //Physics world may not be instantiated.
     if (Gu::getPhysicsWorld() != nullptr && Gu::getPhysicsWorld()->getRenderBucket() != nullptr) {
 
-        Gu::pushPerf();
+        Perf::pushPerf();
         int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();//shadowmapmaxinfluences
         int32_t nMaxDirLights = Gu::getConfig()->getMaxDirLights();//shadowmapmaxinfluences
 
@@ -163,7 +164,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
         }
 
         Gu::checkErrorsDbg();
-        Gu::popPerf();
+        Perf::popPerf();
     }
 
 }

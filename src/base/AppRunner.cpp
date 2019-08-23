@@ -6,18 +6,25 @@
 #include "../base/GLContext.h"
 #include "../base/Fingers.h"
 #include "../base/Logger.h"
-#include "../base/Window.h"
+#include "../app/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
-
+#include "../base/Perf.h"
+#include "../base/Delta.h"
+#include "../base/Gu.h"
 #include "../base/oglErr.h"
 #include "../base/OperatingSystem.h"
-#include "../base/Engine.h"
+#include "../base/Delta.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+
+#include "../app/AppBase.h"
+
 #include "../math/MathAll.h"
+
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/OpenGLApi.h"
 #include "../gfx/VulkanApi.h"
+
 #include "../model/ModelCache.h"
 
 
@@ -66,7 +73,7 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
         BroThrowException("Invalid render engine.");
     }
     Gu::setGraphicsApi(api);
-    api->createWindow(windowTitle);
+    api->createWindow(windowTitle, true);
     
 
     initAudio();
@@ -282,7 +289,7 @@ bool AppRunner::handleEvents(SDL_Event * event) {
 
             int n = MathUtils::broMin(10, MathUtils::broMax(-10, event->wheel.y));
 
-            Gu::getEngine()->userZoom(n);
+            Gu::getApp()->userZoom(n);
             n++;
         }
         if (event->wheel.x != 0) {
@@ -296,70 +303,53 @@ bool AppRunner::handleEvents(SDL_Event * event) {
 
     return true;
 }
-void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
+bool AppRunner::handleSDLEvents() {
     SDL_Event event;
     bool done = false;
-    int w, h;
-    
+    while (SDL_PollEvent(&event)) {
+        if (handleEvents(&event) == false) {
+            done = true;
+        }
+    }
+    return done;
+}
+void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
 #ifdef __WINDOWS__
     SDL_ShowCursor(SDL_DISABLE);
 #endif
 
-    std::shared_ptr<Engine> engine = std::make_shared<Engine>();
-    engine->init();
-    Gu::setEngine(engine);
-
-    Gu::getGraphicsApi()->makeCurrent();
-
     //Print the setup time.
     BroLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
 
-    while (done == false) {
-        Gu::beginPerf();
-        Gu::pushPerf();
+    while (true) {
+        Perf::beginPerf();
+        Perf::pushPerf();
         {
-            if (false) {
-                //AV Exception test **doesn't work in anything but debug build.
-                *(int*)0 = 0;
+            if (handleSDLEvents() == false) {
+                break;//SDL_QUIT
             }
-            engine->updateDelta();
 
-            while (SDL_PollEvent(&event)) {
-                if (handleEvents(&event) == false) {
-                    done = true;
-                }
-            }
             Gu::getFingers()->preUpdate();
 
-            doAnnoyingSoundTest();
+            Gu::updateGlobals();
 
-            Gu::getEngine()->updateTouch(Gu::getFingers());
+            for (std::shared_ptr<GraphicsWindow> w : Gu::getGraphicsApi()->getGraphicsWindows()) {
+                w->step();
+            }
 
-            Gu::getGraphicsApi()->getDrawableSize(&w, &h);
-
-            Gu::getWindow()->updateWidthHeight(w, h, false);
-
-            Gu::getEngine()->step();
-
-            Gu::getGraphicsApi()->swapBuffers();
-            
             //Update all button states.
             Gu::getFingers()->postUpdate();
         }
-        Gu::popPerf();
-        Gu::endPerf();
+        Perf::popPerf();
+        Perf::endPerf();
         DebugHelper::checkMemory();
-
 
         //**End of loop error -- Don't Remove** 
         Gu::getGraphicsContext()->chkErrRt();
         //**End of loop error -- Don't Remove** 
     }
 
-    engine->cleanup();
     DebugHelper::checkMemory();
-
-    //quit(0);
 }
 void AppRunner::exitApp(t_string error, int rc) {
     OperatingSystem::showErrorDialog(error + SDLNet_GetError());
@@ -372,21 +362,6 @@ void AppRunner::exitApp(t_string error, int rc) {
     SDL_Quit();
 
     exit(rc);
-}
-void AppRunner::doAnnoyingSoundTest() {
-    // TEST
-    //no
-  //  static bool bSoundTestSpace = false;
-  //  if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
-  //      if (bSoundTestSpace == false) {
-  //          bSoundTestSpace = true;
-  //          std::shared_ptr<SoundSpec> ss = _pEngine->getContext()->getSoundCache()->getOrLoad("./data-dc/snd/ogg-test.ogg");
-  //          ss->play();
-  //      }
-  //  }
-  //  else {
-  //      bSoundTestSpace = false;
-  //  }
 }
 bool AppRunner::argMatch(std::vector<t_string>& args, t_string arg1, int32_t iCount) {
     if (args.size() <= 1) {

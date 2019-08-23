@@ -21,19 +21,24 @@ namespace Game {
 */
 class GraphicsApi : public VirtualMemory {
 protected:
-    std::shared_ptr<Window> _pWindow = nullptr;
+    std::shared_ptr<GraphicsWindow> _pMainWindow = nullptr;
+    std::vector<std::shared_ptr<GraphicsWindow>> _pvecWindows;
 
-    void makeWindow(t_string windowTitle, int render_system);
-    void destroyWindow();
+    void destroyMainWindow();
+    void addWindow(std::shared_ptr<GraphicsWindow> w);
 public:
-    std::shared_ptr<Window> getWindow() { return _pWindow; }
-    virtual void createWindow(t_string title) = 0;
-    virtual void getDrawableSize(int* w, int* h) = 0;
-    virtual void swapBuffers() = 0;
-    virtual void makeCurrent() = 0;
+    std::shared_ptr<GraphicsWindow> getMainWindow() { return _pMainWindow; }
+    virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) = 0;
+    void destroyWindow(std::shared_ptr<GraphicsWindow> w);
+
+    //virtual void getDrawableSize(int* w, int* h) = 0;
+    //virtual void swapBuffers() = 0;
+    //virtual void makeCurrent() = 0;
     
     virtual void cleanup();
     virtual void createContext(std::shared_ptr<AppBase> app) = 0;
+
+    std::vector<std::shared_ptr<GraphicsWindow>> getGraphicsWindows() { return _pvecWindows; }
 
     GraphicsApi();
     virtual ~GraphicsApi() override;

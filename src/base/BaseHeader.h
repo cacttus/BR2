@@ -151,7 +151,7 @@ class TouchInfo;
 class Fingers;
 class GameMemory;
 class AppRunner;
-class Engine;
+class Delta;
 class EngineConfig;
 class EngineConfigFile;
 class TreeNode;

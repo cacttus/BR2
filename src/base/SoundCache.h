@@ -84,6 +84,20 @@ class SoundCache : public VirtualMemory {
     static void my_audio_callback(void *userdata, uint8_t *stream, int len);
 public:
 
+    // TEST
+//no
+//  static bool bSoundTestSpace = false;
+//  if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+//      if (bSoundTestSpace == false) {
+//          bSoundTestSpace = true;
+//          std::shared_ptr<SoundSpec> ss = _pEngine->getContext()->getSoundCache()->getOrLoad("./data-dc/snd/ogg-test.ogg");
+//          ss->play();
+//      }
+//  }
+//  else {
+//      bSoundTestSpace = false;
+//  }
+
     void mixSamplesAsync(uint8_t *stream, int len);
 
     SoundCache();

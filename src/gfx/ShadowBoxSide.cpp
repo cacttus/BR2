@@ -1,4 +1,5 @@
 #include "../base/Base.h"
+#include "../base/Perf.h"
 #include "../math/MathAll.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderMaker.h"
@@ -176,7 +177,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
         return;
     }
 
-    Gu::pushPerf();
+    Perf::pushPerf();
     static int n = 0; if (n == 1) { return; }
 
     //Return if we don't need to update.
@@ -248,7 +249,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
     pMasterBox->endRenderSide();
 
     Gu::checkErrorsDbg();
-    Gu::popPerf();
+    Perf::popPerf();
 }
 
 }//ns Game

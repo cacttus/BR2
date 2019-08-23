@@ -1,4 +1,5 @@
 #include "../base/Base.h"
+#include "../base/Perf.h"
 #include "../math/CollisionEquations.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
@@ -339,7 +340,7 @@ std::shared_ptr<PhysicsNode> PhysicsWorld::getObj(NodeId id) {
     return ite->second;
 }
 void PhysicsWorld::update(float delta) {
-    Gu::pushPerf();
+    Perf::pushPerf();
     for (std::pair<NodeId, std::shared_ptr<PhysicsNode>> p : _mapObjects) {
         //Still update hidden objects (i.e., correct boundbox computation), but don't draw them.
         p.second->update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
@@ -366,7 +367,7 @@ void PhysicsWorld::update(float delta) {
     }
     bcp._fMaxDist = vec3(nw, nh, nw).length2() * dd; // 15 cubes I guess.
     collectVisibleNodes(&bcp);
-    Gu::popPerf();
+    Perf::popPerf();
 }
 void PhysicsWorld::collisionLoopDual(float delta)
 {
@@ -1454,7 +1455,7 @@ void PhysicsWorld::drawForward() {
     }   
 }
 void PhysicsWorld::drawDeferred() {
-    Gu::pushPerf();
+    Perf::pushPerf();
 
     Gu::getGraphicsContext()->pushDepthTest();
     Gu::getGraphicsContext()->pushCullFace();
@@ -1514,10 +1515,10 @@ void PhysicsWorld::drawDeferred() {
     Gu::getGraphicsContext()->popCullFace();
     Gu::getGraphicsContext()->popDepthTest();
 
-    Gu::popPerf();
+    Perf::popPerf();
 }
 void PhysicsWorld::drawTransparent(){
-    Gu::pushPerf();
+    Perf::pushPerf();
 
     Gu::getGraphicsContext()->pushDepthTest();
     Gu::getGraphicsContext()->pushCullFace();
@@ -1537,7 +1538,7 @@ void PhysicsWorld::drawTransparent(){
     Gu::getGraphicsContext()->popCullFace();
     Gu::getGraphicsContext()->popDepthTest();
 
-    Gu::popPerf();
+    Perf::popPerf();
 
 }
 std::shared_ptr<ModelNode> PhysicsWorld::makeObj(std::shared_ptr<ModelSpec> ms) {

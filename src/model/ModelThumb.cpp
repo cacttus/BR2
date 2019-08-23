@@ -3,7 +3,7 @@
 #include "../base/Package.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderPipe.h"
 #include "../gfx/TexCache.h"

@@ -21,7 +21,7 @@ namespace Game {
 *    @class Window
 *    @brief 
 */
-class Window : public VirtualMemory {
+class GraphicsWindow : public VirtualMemoryShared<GraphicsWindow> {
     std::shared_ptr<WindowViewport> _pWindowViewport = nullptr;
     SDL_Window* _pSDLWindow = nullptr;
     bool _bFullscreen = false;
@@ -30,14 +30,35 @@ class Window : public VirtualMemory {
     uint32_t _iFullscreenToggleWidth = 0;
     uint32_t _iFullscreenToggleHeight = 0;
 
+    bool _bIsMainWindow = false;
+
+    std::shared_ptr<Gui2d> _pGui = nullptr;
+
+    friend class GraphicsApi;
+    friend class OpenGLApi;
+    friend class VulkanApi;
+    
+
+    std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
+    void createRenderPipe();
+    void beginRender();
+    void endRender();
+
+    void toggleFullscreen();
+protected:
     void makeSDLWindow(t_string title, int rendersystem);
+    void initRenderSystem();
+
 public:
-    Window(t_string title, int rendersystem);
-    virtual ~Window() override;
+    GraphicsWindow(bool ismain);
+    virtual ~GraphicsWindow() override;
+
+    void step();
+
     SDL_Window* getSDLWindow() { return _pSDLWindow;  }
+    
     void printHelpfulDebug();
     std::shared_ptr<WindowViewport> getWindowViewport() { return _pWindowViewport; }
-    void toggleFullscreen();
     void updateWidthHeight(uint32_t w, uint32_t h, bool force);
 
 };

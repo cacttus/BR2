@@ -3,6 +3,7 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
+#include "../base/Perf.h"
 #include "../math/BoxUtils.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowBox.h"
@@ -107,7 +108,7 @@ void ShadowBox::update()
 
 }
 void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
-    Gu::pushPerf();
+    Perf::pushPerf();
     if (_bMustUpdate == false) {
         return;
     }
@@ -127,7 +128,7 @@ void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
 
     // Copy and blend this into 
     pShadowBoxMaster->copyAndBlendToShadowMap(shared_from_this());
-    Gu::popPerf();
+    Perf::popPerf();
 }
 
 void ShadowBox::debugRender()

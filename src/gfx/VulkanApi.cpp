@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/oglErr.h"
-#include "../base/Window.h"
+#include "../app/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
 
 
@@ -23,7 +23,7 @@ void VulkanApi::swapBuffers() {
 }
 void VulkanApi::makeCurrent() {
 }
-void VulkanApi::createWindow(t_string title) {
+std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(t_string title) {
     makeWindow(title, SDL_WINDOW_VULKAN);
 
     //loadCaps();
@@ -34,6 +34,9 @@ void VulkanApi::createWindow(t_string title) {
     createLogicalDevice();
     makeSwapChain();
     makeImageViews();
+
+    //TODO: later we fix this
+    return nullptr;
 }
 std::vector<const char*> VulkanApi::getValidationLayers() {
     std::vector<const char*> layerNames{};
@@ -46,9 +49,9 @@ std::vector<const char*> VulkanApi::getExtensionNames() {
     std::vector<const char*> extensionNames { };
     //Get initial data.
     uint32_t extensionCount;
-    SDL_Vulkan_GetInstanceExtensions(Gu::getWindow()->getSDLWindow(), &extensionCount, nullptr);
+    SDL_Vulkan_GetInstanceExtensions(Gu::getMainWindow()->getSDLWindow(), &extensionCount, nullptr);
     extensionNames = std::vector<const char*>(extensionCount);
-    SDL_Vulkan_GetInstanceExtensions(Gu::getWindow()->getSDLWindow(), &extensionCount, extensionNames.data());
+    SDL_Vulkan_GetInstanceExtensions(Gu::getMainWindow()->getSDLWindow(), &extensionCount, extensionNames.data());
 
     if (_bEnableValidationLayers) {
         extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -98,7 +101,7 @@ void VulkanApi::createVulkanInstance(t_string title) {
         BroThrowException("Failed to create vulkan instance: " + (int)res);
     }
 
-    if (!SDL_Vulkan_CreateSurface(Gu::getWindow()->getSDLWindow(), instance, &surface)) {
+    if (!SDL_Vulkan_CreateSurface(Gu::getMainWindow()->getSDLWindow(), instance, &surface)) {
         SDLUtils::checkSDLErr();
         BroThrowException("SDL failed to create vulkan window.");
     }

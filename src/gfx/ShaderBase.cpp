@@ -1,4 +1,5 @@
 #include "../base/BaseAll.h"
+#include "../base/Perf.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderSubProgram.h"
@@ -255,10 +256,10 @@ void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
 }
 
 void ShaderBase::draw(std::shared_ptr<MeshNode> mesh, int32_t iCount, GLenum eDrawMode) {
-    Gu::pushPerf();
+    Perf::pushPerf();
 
     draw(mesh->getMeshSpec()->getVaoData(), iCount, eDrawMode);
-    Gu::popPerf();
+    Perf::popPerf();
 }
 void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenum eDrawMode) {
     std::shared_ptr<VaoShader> vs = nullptr;

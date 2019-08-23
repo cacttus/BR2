@@ -1,3 +1,16 @@
+8/23/19
+Remove most of AppBase and move to ProjectFile.
+Move remaining AppBase contents into ProjectFile
+Remove "AppBase" or make it ProjectBase. Sth.
+Generic Windowing for UI popups.
+move RenderPipe to Window
+Rendering multiple windows
+need multiple contexts
+shaders & Everything need to be changed...
+
+8/14/19
+In FlyCam make the FlyCam a Script Run on top of CameraNode
+	Remove FlyCam Class.
 
 8/11/19
 Adding a Window layer,

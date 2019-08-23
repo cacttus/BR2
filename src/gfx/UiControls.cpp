@@ -1730,11 +1730,11 @@ int UiButtonBase::layerIdDown() { return  Gui2d::sortLayer(2); }
 std::shared_ptr<UiImageButton> UiImageButton::create(std::shared_ptr<UiButtonSkin> skin) {
     std::shared_ptr<UiImageButton> bt = std::make_shared<UiImageButton>();
     bt->_pSkin = skin;
+
     bt->init();
     bt->setUp(UiImage::create(skin->_pUp, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
     bt->setHover(UiImage::create(skin->_pHv, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
     bt->setDown(UiImage::create(skin->_pDn, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
-
 
     return bt;
 }

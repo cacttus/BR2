@@ -102,8 +102,6 @@ private:
     std::shared_ptr<UiEventFunc> _upEvt = nullptr;
     ButtonState::e _eMouseState = ButtonState::e::Up;
 
-
-
     float _fLineHeight = 0;
 
     void validateDims();

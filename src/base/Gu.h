@@ -1,4 +1,4 @@
-    /**
+/**
 *
 *    @file Gu.h
 *    @date November 6, 2016
@@ -6,28 +6,26 @@
 *
 *    � 2016 
 *
-*
 */
 #pragma once
 #ifndef __GU_14784108333124451735_H__
 #define __GU_14784108333124451735_H__
 
 #include "../base/BaseHeader.h"
+#include "../app/AppHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathHeader.h"
 #include "../world/WorldHeader.h"
 #include "../base/Stopwatch.h"
 
-
 namespace Game {
 /**
 *    @class Gu
 *    @brief Global Utils For everything.
-*
 */
 class Gu : public GameMemory {
     //Required Globals (cannot be NULL)
-    static std::shared_ptr<GraphicsContext> _pContext;
+  //  static std::shared_ptr<GraphicsContext> _pContext;
     static std::shared_ptr<TexCache> _pTexCache;
     static std::shared_ptr<CameraNode> _pCamera;
     static std::shared_ptr<Party> _pParty;
@@ -44,22 +42,19 @@ class Gu : public GameMemory {
     static std::shared_ptr<PhysicsWorld> _pPhysicsWorld;
     static std::shared_ptr<Package> _pPackage;
     static std::shared_ptr<RenderSettings> _pRenderSettings;
-    static std::shared_ptr<Gui2d> _pGui2d;
-    static std::shared_ptr<RenderPipe> _pRenderPipe;
+   // static std::shared_ptr<Gui2d> _pGui2d;
+    //static std::shared_ptr<RenderPipe> _pRenderPipe; per window
     static std::shared_ptr<EngineConfig> _pEngineConfig;
     static std::shared_ptr<Logger> _pLogger;
-    static std::shared_ptr<Engine> _pEngine;
+   // static std::shared_ptr<Engine> _pEngine;
     static std::shared_ptr<GraphicsApi> _pGraphicsApi;
-
-    static t_string _strCachedProf ;
-    static std::stack<Stopwatch> _stopw;
+    static std::shared_ptr<Net> _pNet;
 
 	static int _iSupportedDepthSize;
 
-    static void pulsePerf();
     
 public: 
-    static std::shared_ptr<GLContext> getGraphicsContext();
+   // static std::shared_ptr<GLContext> getGraphicsContext();
     static std::shared_ptr<RenderSettings> getRenderSettings();
     static std::shared_ptr<Package> getPackage();
     static std::shared_ptr<ModelCache> getModelCache();
@@ -73,32 +68,32 @@ public:
     static std::shared_ptr<TexCache> getTexCache();
     static std::shared_ptr<LightManager> getLightManager();
     static std::shared_ptr<Picker> getPicker();
-    static std::shared_ptr<Gui2d> getGui();
+   // static std::shared_ptr<Gui2d> getGui();
     static std::shared_ptr<PhysicsWorld> getPhysicsWorld();
     static std::shared_ptr<Party> getParty();
     static std::shared_ptr<CameraNode> getCamera();
     static std::shared_ptr<EngineConfig> getConfig();
-    static std::shared_ptr<RenderPipe> getRenderPipe();
+    //static std::shared_ptr<RenderPipe> getRenderPipe(); //Per window
     static std::shared_ptr<Logger> getLogger();
     static std::shared_ptr<EngineConfig> getEngineConfig();
-    static std::shared_ptr<Engine> getEngine();
+    static std::shared_ptr<Delta> getDelta();
     static std::shared_ptr<GraphicsApi> getGraphicsApi();
     static std::shared_ptr<WindowViewport> getViewport();
+    static std::shared_ptr<Net> getNet();
 
-    static std::shared_ptr<Window> getWindow();
+    static std::shared_ptr<GraphicsWindow> getMainWindow();
 
-    static void setContext(std::shared_ptr<GraphicsContext> rb);
-    static void setRenderPipe(std::shared_ptr<RenderPipe> r);
+  //  static void setContext(std::shared_ptr<GraphicsContext> rb);
+    //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
     static void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p);
     static void setCamera(std::shared_ptr<CameraNode> pc);
     static void setRoom(std::shared_ptr<AppBase> b);
-    static void setEngine(std::shared_ptr<Engine> engine);
+   // static void setEngine(std::shared_ptr<Engine> engine);
     static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
 
-    static void update(float dt);
+    static void updateGlobals();
 
     static void createManagers();
-
 
     static void checkErrorsDbg();
     static void checkErrorsRt();
@@ -106,10 +101,7 @@ public:
     static void deleteGlobals();
 
     static void debugBreak();
-    static void beginPerf();
-    static void endPerf();
-    static void pushPerf();
-    static void popPerf();
+
 
     static bool isDebug();
 

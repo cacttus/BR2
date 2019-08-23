@@ -13,7 +13,7 @@
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../base/Package.h"
 
 #include "../math/MathAll.h"
@@ -35,11 +35,8 @@ namespace Game {
 
 GLContext::GLContext() {
     //Do not init here.
-
 }
-
 GLContext::~GLContext() {
-
 }
 bool GLContext::load(std::shared_ptr<AppBase> rb) {
     bool valid = true;

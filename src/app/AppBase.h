@@ -12,7 +12,7 @@
 #ifndef __ROOMBASE_1483942071882744649_H__
 #define __ROOMBASE_1483942071882744649_H__
 
-#include "../base/BaseHeader.h"
+#include "../app/AppHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 namespace Game {
@@ -30,12 +30,11 @@ public:
 
     virtual void drawDebug();
 
-	
     //virtual void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) { };
     virtual void idle(t_timeval us) { }
 
-    virtual void step(float dt) = 0;
-    virtual void teardown() = 0;
+   // virtual void step(float dt) = 0;
+  //  virtual void teardown() = 0;
     virtual void updateTouch(std::shared_ptr<Fingers>, float dt) = 0;
     virtual void userZoom(int amount) = 0;
     virtual t_string getIconFullPath() { return ""; }

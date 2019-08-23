@@ -1,6 +1,7 @@
 #include "../base/Base.h"
 #include "../base/OglErr.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
+#include "../base/Perf.h"
 #include "../math/Random.h"
 #include "../model/OBB.h"
 
@@ -210,14 +211,14 @@ void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& 
 }
 
 void MeshNode::computeSkinFrame() {
-    Gu::pushPerf();
+    Perf::pushPerf();
     Gu::getGraphicsContext()->chkErrDbg();
     copyJointsToGpu();
-    Gu::popPerf();
+    Perf::popPerf();
     // dispatchSkinCompute();
 }
 void MeshNode::copyJointsToGpu() {
-    Gu::pushPerf();
+    Perf::pushPerf();
     AssertOrThrow2(_pArmJoints != nullptr);
     std::vector<mat4> mats;
     std::vector<t_string> names; //TEST
@@ -239,7 +240,7 @@ void MeshNode::copyJointsToGpu() {
         names.push_back(bn->getBoneSpec()->getName());//TEST
     }
     _pArmJoints->copyDataClientServer(mats.size(), mats.data());
-    Gu::popPerf();
+    Perf::popPerf();
 }
 //void MeshNode::dispatchSkinCompute() {
 //    Gu::getGraphicsContext()->chkErrDbg();

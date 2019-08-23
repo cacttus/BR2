@@ -12,8 +12,7 @@
 #ifndef __APPMAIN_1565368851810156743_H__
 #define __APPMAIN_1565368851810156743_H__
 
-#include "../base/AppBase.h"
-
+#include "../app/AppBase.h"
 
 namespace Game {
 /**
@@ -31,15 +30,20 @@ class AppMain : public AppBase {
     bool _bDebugDisableDepthTest = false;
 
     void debugChangeRenderState();
-    std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
     void drawBackgroundImage();
+    std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
     std::shared_ptr<Texture2DSpec> _pTex = nullptr;
+
+    std::shared_ptr<ProjectFile> _pProjectFile;
 
 public:
     AppMain();
     virtual ~AppMain() override;
-    virtual void step(float dt) override {}
-    virtual void teardown() override {}
+
+    std::shared_ptr<ProjectFile> getProjectFile() { return _pProjectFile; }
+    
+   // virtual void step(float dt) override {}
+  //  virtual void teardown() override {}
     virtual void updateTouch(std::shared_ptr<Fingers>, float dt) override {}
     virtual void userZoom(int amount) override {}
 

@@ -36,13 +36,14 @@ private:
     bool handleEvents(SDL_Event * event);
     void runGameLoop(std::shared_ptr<AppBase> rb);
     void exitApp(t_string error, int rc);
-    void doAnnoyingSoundTest();
+
     void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
     bool argMatch(std::vector<t_string>& args,t_string arg, int32_t iCount);
     bool runCommands(std::vector<t_string>& args);
     void printVideoDiagnostics();
     void updateWindowHandleForGamehost();
     void attachToGameHost();
+    bool handleSDLEvents();
 public:
     void runApp(std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
 };

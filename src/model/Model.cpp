@@ -1,7 +1,8 @@
 #include "../base/Base.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
+#include "../base/Perf.h"
 #include "../math/Algorithm.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/CameraNode.h"
@@ -950,7 +951,7 @@ std::shared_ptr<ModelSpec> ModelNode::getModelSpec() {
     return std::dynamic_pointer_cast<ModelSpec>(BaseNode::getSpec());
 }
 void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-    Gu::pushPerf();
+    Perf::pushPerf();
     //Do nothing with input animators.  We use our own animators.
 
     //Update animators
@@ -965,7 +966,7 @@ void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
     for (std::shared_ptr<MeshNode> mn : _vecMeshes) {
         mn->computeAndDispatchSkin();
     }
-    Gu::popPerf();
+    Perf::popPerf();
 }
 
 void ModelNode::drawForward(RenderParams& rp) {

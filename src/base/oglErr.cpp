@@ -1,5 +1,3 @@
-
-
 #include "../base/BaseHeader.h"
 #include "../base/oglErr.h"
 #include "../base/Logger.h"

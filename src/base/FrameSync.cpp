@@ -1,6 +1,6 @@
 #include "../base/FrameSync.h"
 #include "../base/Gu.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
 #include "../gfx/GraphicsContext.h"
