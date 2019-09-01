@@ -15,5 +15,8 @@ UpgradeLog.htm
 
 /bin/.vs/bottle_x64_d/v15
 /bin/logs
-/bin
+/bin/*.dll
+/bin/*.exe
+/bin/*lib
+/bin/*.exp
 /x64

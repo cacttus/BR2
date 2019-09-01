@@ -85,14 +85,14 @@
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <TargetName>SDL2_net_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>..\..\SDL2-2.0.9\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\SDL2\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\lib;$(LibraryPath)</LibraryPath>
     <TargetName>SDL2_net_r</TargetName>
   </PropertyGroup>

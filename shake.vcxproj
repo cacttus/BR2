@@ -502,7 +502,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <TargetName>shake_x64_d</TargetName>
-    <IncludePath>C:\git\bottle-world\external\SDL2_net;C:\git\bottle-world\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
+    <IncludePath>.\external\SDL2_net;.\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;.\external\Mono\include\mono-2.0;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\debug64</IntDir>
     <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>

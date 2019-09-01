@@ -27,7 +27,6 @@ class EngineConfig {
   //  bool _bEnableGpuDebugLogging = true;
     bool _bEnableLogToFile = true;
     bool _bEnableLogToConsole = true;
-    bool _bUseGLMapBuffer = false;
     bool _bStartFullscreen = false;
     int _iDefaultScreenWidth = 800;
     int _iDefaultScreenHeight = 600;
@@ -81,7 +80,6 @@ public:
     int32_t getMsaaSamples() { return _iMsaaSamples; }
     bool getEnableLogToConsole          () { return       _bEnableLogToConsole          ; }
     bool getEnableLogToFile          () { return       _bEnableLogToFile           ; }
-    bool getUseGLMapBuffer          () { return       _bUseGLMapBuffer          ; }
     bool getStartFullscreen         () { return       _bStartFullscreen         ; }
     int getDefaultScreenWidth       () { return      _iDefaultScreenWidth       ; }
     int getDefaultScreenHeight      () { return      _iDefaultScreenHeight      ; }

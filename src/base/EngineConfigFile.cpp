@@ -38,9 +38,7 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
     else if (lcmp(tokens[0], "MaxFrustShadowSamples", 2)) {
         _pConfig->_iMaxFrustShadowSamples = TypeConv::strToInt(getCleanToken(tokens, iind));
     }
-    else if (lcmp(tokens[0], "UseGLMapBuffer", 2)) {
-        _pConfig->_bUseGLMapBuffer = TypeConv::strToBool(getCleanToken(tokens, iind));
-    }
+
     else if (lcmp(tokens[0], "StartFullscreen", 2)) {
         _pConfig->_bStartFullscreen = TypeConv::strToBool(getCleanToken(tokens, iind));
     }
