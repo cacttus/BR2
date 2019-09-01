@@ -21,6 +21,22 @@ namespace Game {
 *    @brief OpenGL render context
 */
 class GLContext : public GraphicsContext {
+public:
+    struct GLProfile : public VirtualMemory {
+    public:
+        int _iDepthBits = 0;
+        int _iMinVersion = 0;
+        int _iMinSubVersion = 0;
+        int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
+        bool _bVsync = true; //Automatic on IOS
+        void make(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
+            _iDepthBits = iDepthBits;
+            _iMinSubVersion = iMinSubver;
+            _iMinVersion = iMinVer;
+            _iProfile = iProfile;
+            _bVsync = bVsync;
+        }
+    };
 private:
     bool _bValid = false;
     bool loadOpenGLFunctions();
@@ -31,11 +47,27 @@ private:
     std::stack<GLenum> _eLastDepthTestStack;
     static const int MaxStackSize = 32;
 
+    SDL_GLContext _context;
+
+    void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
+    void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
+    void loadCheckProc();
+    void printHelpfulDebug();
+
+    GLProfile _profile;
+
+    int _iSupportedDepthSize;
+
 public:
     GLContext();
     virtual ~GLContext() override;
 
-    virtual bool load(std::shared_ptr<AppBase> br) override;
+    int32_t getSupportedDepthSize() { return _iSupportedDepthSize; }
+
+    bool create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile);
+
+    SDL_GLContext getSDLGLContext() { return _context; }
+
     //virtual void update(float delta) override;
     virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false) override;
     virtual bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false) override;
@@ -51,6 +83,7 @@ public:
     void enableBlend(bool enable) override;
     void enableDepthTest(bool enable) override;
 
+    static void setWindowAndOpenGLFlags(GLProfile& prof);
 
     void setLineWidth(float w);
    // void beginWin32InlineDebug();

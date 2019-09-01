@@ -34,7 +34,10 @@ ShaderBase::ShaderBase(t_string strName) {
 ShaderBase::~ShaderBase() {
     deleteUniforms();
     deleteAttributes();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteProgram(_glId);
+    Gu::getGraphicsContext();
+
+
+    Gu::getGraphicsContext()->glDeleteProgram(_glId);
 }
 ///////////////////////////////////////////////////////////////////
 void ShaderBase::init() {

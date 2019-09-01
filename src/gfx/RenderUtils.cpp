@@ -935,32 +935,34 @@ void RenderUtils::createDepthTexture(GLuint* __out_ texId, int32_t w, int32_t h,
 }
 
 GLenum RenderUtils::getSupportedDepthSize() {
+    int32_t depth = Gu::getGraphicsContext()->getSupportedDepthSize();
     //If we don't support requested depth, change it.
-    if (Gu::getSupportedDepthSize() == 16) {
+    if (depth == 16) {
         return GL_DEPTH_COMPONENT16;
     }
-    else if (Gu::getSupportedDepthSize() == 24) {
+    else if (depth == 24) {
         return GL_DEPTH_COMPONENT24;
     }
-    else if (Gu::getSupportedDepthSize() == 32) {
+    else if (depth == 32) {
         return GL_DEPTH_COMPONENT32F;
         //There is also a 32F component, but .. What/s the difference?
         //eDepthSize = GL_DEPTH_COMPONENT32F;
     }
     else {
-        BroThrowException("[222039] Unsupported depth component size " + Gu::getSupportedDepthSize());
+        BroThrowException("[222039] Unsupported depth component size " + depth);
     }
 }
 void RenderUtils::getCompatibleDepthComponent(GLenum eRequestedDepth, std::function<void(GLenum)> func) {
+    int32_t depth = Gu::getGraphicsContext()->getSupportedDepthSize();
     //Shortcut lambda to create something that asks for a GL_DEPTH_COMPONENT enum.
     GLenum eDepthSize;
-    if (eRequestedDepth == GL_DEPTH_COMPONENT32F && Gu::getSupportedDepthSize() < 32) {
+    if (eRequestedDepth == GL_DEPTH_COMPONENT32F && depth < 32) {
         eDepthSize = getSupportedDepthSize();
     }
-    else if (eRequestedDepth == GL_DEPTH_COMPONENT32 && Gu::getSupportedDepthSize() < 32) {
+    else if (eRequestedDepth == GL_DEPTH_COMPONENT32 && depth < 32) {
         eDepthSize = getSupportedDepthSize();
     }
-    else if (eRequestedDepth == GL_DEPTH_COMPONENT24 && Gu::getSupportedDepthSize() < 24) {
+    else if (eRequestedDepth == GL_DEPTH_COMPONENT24 && depth < 24) {
         eDepthSize = getSupportedDepthSize();
     }
     else {

@@ -34,9 +34,8 @@ GraphicsContext::GraphicsContext(){
 GraphicsContext::~GraphicsContext(){
 
 }
-bool GraphicsContext::load(std::shared_ptr<AppBase> rb) {
+bool GraphicsContext::init() {
     _bValid = true;
-    Gu::setRoom(rb);
 
     BroLogInfo("GraphicsContext - Making Vtx Formats.");
     makeVertexFormats();

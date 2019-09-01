@@ -22,7 +22,8 @@ namespace Game {
 */
 class VulkanWindow : public GraphicsWindow {
 public:
-    VulkanWindow();
+    virtual void create(t_string) override {}
+    VulkanWindow(bool ismain);
     virtual ~VulkanWindow() override;
 };
 

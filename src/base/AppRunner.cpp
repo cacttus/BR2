@@ -74,7 +74,6 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
     }
     Gu::setGraphicsApi(api);
     api->createWindow(windowTitle, true);
-    
 
     initAudio();
     SDLUtils::checkSDLErr();
@@ -87,10 +86,14 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
         attachToGameHost();
     }
 
-    api->createContext(app);
-
     BroLogInfo("Creating Managers.");
     Gu::createManagers();
+
+
+    BroLogInfo("Creating Rendere.");
+
+    api->createRenderer();
+
 }
 void AppRunner::doShowError(t_string err, Exception* e) {
     if (e != nullptr) {
@@ -321,11 +324,14 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
     //Print the setup time.
     BroLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
 
+    //test the globals before starting the game loop
+    Gu::updateGlobals();
+
     while (true) {
         Perf::beginPerf();
         Perf::pushPerf();
         {
-            if (handleSDLEvents() == false) {
+            if (handleSDLEvents() == true) {
                 break;//SDL_QUIT
             }
 

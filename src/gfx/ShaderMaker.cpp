@@ -12,7 +12,6 @@
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 
-
 namespace Game {
 ///////////////////////////////////////////////////////////////////
 ShaderMaker::ShaderMaker() {

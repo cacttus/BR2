@@ -22,7 +22,7 @@ namespace Game {
 */
 class VulkanContext : public GraphicsContext {
 public:
-    virtual bool load(std::shared_ptr<AppBase> br) override { return true; }
+   // virtual bool load(std::shared_ptr<AppBase> br) override { return true; }
     //virtual void update(float delta)  override {}
     virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false)  override {return true;}
     virtual bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false) override {return true;}

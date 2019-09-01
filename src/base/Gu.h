@@ -24,8 +24,6 @@ namespace Game {
 *    @brief Global Utils For everything.
 */
 class Gu : public GameMemory {
-    //Required Globals (cannot be NULL)
-  //  static std::shared_ptr<GraphicsContext> _pContext;
     static std::shared_ptr<TexCache> _pTexCache;
     static std::shared_ptr<CameraNode> _pCamera;
     static std::shared_ptr<Party> _pParty;
@@ -42,17 +40,12 @@ class Gu : public GameMemory {
     static std::shared_ptr<PhysicsWorld> _pPhysicsWorld;
     static std::shared_ptr<Package> _pPackage;
     static std::shared_ptr<RenderSettings> _pRenderSettings;
-   // static std::shared_ptr<Gui2d> _pGui2d;
-    //static std::shared_ptr<RenderPipe> _pRenderPipe; per window
     static std::shared_ptr<EngineConfig> _pEngineConfig;
     static std::shared_ptr<Logger> _pLogger;
-   // static std::shared_ptr<Engine> _pEngine;
     static std::shared_ptr<GraphicsApi> _pGraphicsApi;
     static std::shared_ptr<Net> _pNet;
+    static std::shared_ptr<Delta> _pDelta;
 
-	static int _iSupportedDepthSize;
-
-    
 public: 
    // static std::shared_ptr<GLContext> getGraphicsContext();
     static std::shared_ptr<RenderSettings> getRenderSettings();
@@ -80,14 +73,17 @@ public:
     static std::shared_ptr<GraphicsApi> getGraphicsApi();
     static std::shared_ptr<WindowViewport> getViewport();
     static std::shared_ptr<Net> getNet();
-
     static std::shared_ptr<GraphicsWindow> getMainWindow();
-
+    static std::shared_ptr<GLContext> getGraphicsContext();
+    
+    static std::shared_ptr<GraphicsWindow> getActiveWindow();
+    static std::shared_ptr<RenderPipe> getRenderPipe();
+    static std::shared_ptr<Gui2d> getGui();
   //  static void setContext(std::shared_ptr<GraphicsContext> rb);
     //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
     static void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p);
     static void setCamera(std::shared_ptr<CameraNode> pc);
-    static void setRoom(std::shared_ptr<AppBase> b);
+    static void setApp(std::shared_ptr<AppBase> b);
    // static void setEngine(std::shared_ptr<Engine> engine);
     static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
 
@@ -124,8 +120,7 @@ public:
     static void checkMemory();
     static t_string getOperatingSystemName();
     static uint32_t getCurrentThreadId();
-    static int32_t getSupportedDepthSize();
-    static void setSupportedDepthSize(int32_t ee) { _iSupportedDepthSize =ee; }
+
 
     static std::string getCPPVersion();
 

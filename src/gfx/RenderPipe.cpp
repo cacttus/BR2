@@ -306,19 +306,19 @@ void RenderPipe::endRenderForward() {
 }
 void RenderPipe::enableDisablePipeBits() {
     //TODO: make sure the given input window is in focus.
-    if (_pWindow!=nullptr && _pWindow->hasFocus()) {
+    //if (_pWindow!=nullptr && _pWindow->hasFocus()) {
 
-        if (Gu::getFingers()->keyPress(SDL_SCANCODE_F8)) {
-            Gu::incrementEnum<PipeBit::e>(_pipeBits, PipeBit::e::MaxPipes);
-            if (_ePipeBit == PipeBit::e::Full) {
-                _pipeBits.set();
-            }
-            else {
-                _pipeBits.reset();
-                _pipeBits.set(_ePipeBit);
-            }
-        }
-    }
+    //    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F8)) {
+    //        Gu::incrementEnum<PipeBit::e>(_pipeBits, PipeBit::e::MaxPipes);
+    //        if (_ePipeBit == PipeBit::e::Full) {
+    //            _pipeBits.set();
+    //        }
+    //        else {
+    //            _pipeBits.reset();
+    //            _pipeBits.set(_ePipeBit);
+    //        }
+    //    }
+    //}
 }
 
 void RenderPipe::blitDeferredRender() {
@@ -658,8 +658,6 @@ void RenderPipe::debugForceSetPolygonMode() {
 #endif
 #endif
 }
-
-
 void RenderPipe::releaseFbosAndMesh(){
     std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
     _pBlittedDeferred = nullptr;
@@ -678,11 +676,11 @@ void RenderPipe::releaseFbosAndMesh(){
 void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw){
     //Re-Init
     if (Gu::getCamera() == nullptr) {
-        BroLogError("Camera was not set for renderScene");
+        BroLogErrorOnce("Camera was not set for renderScene");
         return;
     }
     if (Gu::getCamera()->getViewport() == nullptr) {
-        BroLogError("Camera Viewport was not set for renderScene");
+        BroLogErrorOnce("Camera Viewport was not set for renderScene");
         return;
     }
     std::shared_ptr<WindowViewport> pv = Gu::getCamera()->getViewport();

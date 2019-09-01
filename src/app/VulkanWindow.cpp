@@ -3,7 +3,7 @@
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-VulkanWindow::VulkanWindow()
+VulkanWindow::VulkanWindow(bool ismain) : GraphicsWindow(ismain)
 {
 
 }

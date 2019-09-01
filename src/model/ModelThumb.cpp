@@ -38,7 +38,7 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
     vec4 savedClear = Gu::getRenderPipe()->getClear();
     Gu::getRenderPipe()->setClear(vec4(0, 0, 0, 0));//Zero alpha
 
-                                                                  //Create an instance of model A
+    //Create an instance of model A
     t_string name = mod->getName();
     std::shared_ptr<ModelNode> wo = Gu::getPhysicsWorld()->makeObj(mod, vec3(0, 0, 0), vec4(0, 0, 1, 0), vec3(1, 1, 1), "");
 
@@ -55,16 +55,14 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
     std::bitset<8> bits;
     bits.set(PipeBit::e::Deferred);
     bits.set(PipeBit::e::Shadow);//I think we need this in order to update lights
-    Gu::getRenderPipe()->renderScene(bits, wo);
+    Gu::getRenderPipe()->renderScene(wo);
     std::shared_ptr<Img32> thumb = Gu::getRenderPipe()->getResultAsImage();
-
 
     //save to disk (debug)
     t_string cached = Gu::getApp()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
     thumb->flipV();
     Gu::saveImage(cached, thumb);
     thumb->flipV();
-
 
     //Cleanup, Restore state
     Gu::getPhysicsWorld()->tryRemoveObj(wo);

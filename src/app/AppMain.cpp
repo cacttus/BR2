@@ -1,4 +1,5 @@
 #include "../app/AppMain.h"
+#include "../app/AppBase.h"
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../model/MeshUtils.h"

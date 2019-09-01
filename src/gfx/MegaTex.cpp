@@ -8,6 +8,7 @@
 #include "../gfx/Gui2d.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/MegaTex.h"
+#include "../app/GraphicsWindow.h"
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../ext/stb_truetype.h"
@@ -265,7 +266,7 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
 
     //Debug - Save texture
     if(false){
-        RenderUtils::saveTexture("./data/cache/saved_TEST.png", Gu::getGui()->getTex()->getGlId(), GL_TEXTURE_2D);
+        RenderUtils::saveTexture("./data/cache/saved_TEST.png", Gu::getActiveWindow()->getGui()->getTex()->getGlId(), GL_TEXTURE_2D);
     }
 
     //**Pos

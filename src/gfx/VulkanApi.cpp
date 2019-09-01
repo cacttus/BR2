@@ -17,14 +17,14 @@ VulkanApi::VulkanApi() {
 }
 VulkanApi::~VulkanApi() {
 }
-void VulkanApi::getDrawableSize(int* w, int* h) {
-}
-void VulkanApi::swapBuffers() {
-}
-void VulkanApi::makeCurrent() {
-}
-std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(t_string title) {
-    makeWindow(title, SDL_WINDOW_VULKAN);
+//void VulkanApi::getDrawableSize(int* w, int* h) {
+//}
+//void VulkanApi::swapBuffers() {
+//}
+//void VulkanApi::makeCurrent() {
+//}
+std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(t_string title, bool isMain ) {
+   // makeWindow(title, SDL_WINDOW_VULKAN);
 
     //loadCaps();
     createVulkanInstance(title);
@@ -134,8 +134,8 @@ void VulkanApi::cleanup() {
 
     GraphicsApi::cleanup();
 }
-void VulkanApi::createContext(std::shared_ptr<AppBase> app) {
-}
+//void VulkanApi::createContext(std::shared_ptr<AppBase> app) {
+//}
 void VulkanApi::setupDebug() {
     if (!_bEnableValidationLayers) {
         return;

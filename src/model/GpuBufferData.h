@@ -14,7 +14,7 @@
 #define __GPUBUFFERDATA_777819900224202740029606_H__
 
 #include "../model/ModelHeader.h"
-//#include "../gpu/GpuHeader.h"
+
 namespace Game {
 /**
 *    @class GpuBufferData
@@ -23,7 +23,7 @@ namespace Game {
 class GpuBufferData : public VirtualMemory {
 protected:
     uint32_t _glId = 0;
-    GLenum    _glBufferType;    // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER
+    GLenum _glBufferType;    // GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER
     
     size_t _iElementSize = 0; // The element size
     size_t _iNumElements = 0; // The number of elements we allocated

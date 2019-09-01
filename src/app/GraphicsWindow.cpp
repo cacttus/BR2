@@ -28,15 +28,13 @@ void GraphicsWindow::makeSDLWindow(t_string windowTitle, int render_system) {
     title = "";
 #elif BRO_OS_WINDOWS
 
-    //int render_system = SDL_WINDOW_OPENGL;
-    //if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::e::Vulkan) {
-    //    render_system = SDL_WINDOW_VULKAN;
-    //}
+    //SDL_WINDOW_OPENGL | SDL_WINDOW_VULKAN;
+
     if (bFullscreen) {
         x = 0; y = 0;
         w = 1920; h = 1080;
         flags = render_system;
-}
+    }
     else {
         x = 100, y = 100, w = 800, h = 600, flags = SDL_WINDOW_SHOWN | render_system | SDL_WINDOW_RESIZABLE;
     }
@@ -53,6 +51,12 @@ void GraphicsWindow::makeSDLWindow(t_string windowTitle, int render_system) {
     }
     SDLUtils::checkSDLErr();
 
+    //Note we may need to adjust for actual start width/height if start width is too large , etc.
+    //*Set room width / height
+    _iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
+    _iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
+    _pWindowViewport = std::make_shared<WindowViewport>(_iLastWidth, _iLastHeight);
+
 #ifdef BRO_OS_WINDOWS
     BroLogError("We are not making the window icon because there's an error somewhere in SDL here.");
     //**There is an error here
@@ -65,13 +69,6 @@ void GraphicsWindow::initRenderSystem() {
     }
 
     SDLUtils::trySetWindowIcon(_pSDLWindow, Gu::getApp()->getIconFullPath());
-
-    //Note we may need to adjust for actual start width/height if start width is too large , etc.
-    //*Set room width / height
-    _iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
-    _iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-
-    _pWindowViewport = std::make_shared<WindowViewport>(_iLastWidth, _iLastHeight);
 
     if (Gu::getConfig()->getForceAspectRatio()) {
         SDL_DisplayMode dm;
@@ -164,7 +161,7 @@ void GraphicsWindow::toggleFullscreen() {
         }
         else {
             _bFullscreen = false;
-           //_pApp->screenChanged(_iLastWidth, _iLastHeight, _bFullscreen);
+            //_pApp->screenChanged(_iLastWidth, _iLastHeight, _bFullscreen);
         }
     }
 
@@ -183,27 +180,6 @@ void GraphicsWindow::printHelpfulDebug() {
     SDL_GL_GetDrawableSize(win, &dw, &dh);
     BroLogInfo("Draw Size     : " + dw + "x" + dh);
 
-    int tmp = 0;
-    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &tmp);
-    BroLogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &tmp);
-    BroLogInfo("SDL_GL_BUFFER_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
-
-    BroLogInfo("SDL_GL_DEPTH_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &tmp);
-    BroLogInfo("SDL_GL_STENCIL_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &tmp);
-    BroLogInfo("SDL_GL_ACCELERATED_VISUAL: " + tmp);
-
-    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &tmp);
-    BroLogInfo("SDL_GL_RED_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &tmp);
-    BroLogInfo("SDL_GL_GREEN_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &tmp);
-    BroLogInfo("SDL_GL_BLUE_SIZE: " + tmp);
-    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &tmp);
-    BroLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
 
     SDLUtils::checkSDLErr();
 }
@@ -216,20 +192,20 @@ void GraphicsWindow::createRenderPipe() {
     _pRenderPipe->getPipeBits().set();
 }
 void GraphicsWindow::beginRender() {
-    
+
     //Make this window current *critical*
     //OPTIMIZE:TODO:NOTE: if there is only 1 window we don't have to call this.
-    Gu::getGraphicsApi()->makeCurrent();
+    makeCurrent();
 
     //Update the widnow size
     int w, h;
-    Gu::getGraphicsApi()->getDrawableSize(&w, &h);
-    Gu::getMainWindow()->updateWidthHeight(w, h, false);
+    getDrawableSize(&w, &h);
+    updateWidthHeight(w, h, false);
 
     Perf::pushPerf();
 }
 void GraphicsWindow::endRender() {
-    Gu::getGraphicsApi()->swapBuffers();
+    swapBuffers();
 
     Perf::popPerf();
 }
@@ -251,7 +227,7 @@ void GraphicsWindow::step() {
            // Gu::getApp()->step((float)_fDelta);
 
             Gu::getGraphicsContext()->setLoopState(EngineLoopState::Render);
-                
+
             //Main Render
             _pRenderPipe->renderScene(Gu::getApp());
         }

@@ -33,11 +33,14 @@ private:
     std::shared_ptr<FlyCam> _pFlyCam = nullptr;
 
     void makeVertexFormats();
+
+protected:
+    virtual bool init();
+
 public:
     GraphicsContext();
     virtual ~GraphicsContext() override;
 
-    virtual bool load(std::shared_ptr<AppBase> br) = 0;
     virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false) = 0;
     virtual bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false) = 0;
 

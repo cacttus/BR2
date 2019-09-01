@@ -21,43 +21,19 @@ namespace Game {
 *
 */
 class OpenGLWindow : public GraphicsWindow {
-    struct GLProfile : public VirtualMemory {
-    public:
-        int _iDepthBits = 0;
-        int _iMinVersion = 0;
-        int _iMinSubVersion = 0;
-        int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
-        bool _bVsync = true; //Automatic on IOS
-        void make(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
-            _iDepthBits = iDepthBits;
-            _iMinSubVersion = iMinSubver;
-            _iMinVersion = iMinVer;
-            _iProfile = iProfile;
-            _bVsync = bVsync;
-        }
-    };
+  //  std::shared_ptr<GLContext> _pContext = nullptr;
 
-private:
+    
 
-    std::shared_ptr<GLContext> _pContext = nullptr;
-    SDL_GLContext _context;
-    std::shared_ptr<GLProfile> _pSelectedProfile;
-    void setWindowAndOpenGLFlags(GLProfile& prof);
-    void initGLContext();
-    void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
-    void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
-    void loadCheckProc();
-    void makeCurrent();
-    void getDrawableSize(int* w, int* h);
-    void cleanup();
-    void swapBuffers();
-    void createContext(std::shared_ptr<AppBase> app);
-
+protected:
+    virtual void getDrawableSize(int* w, int* h) override;
+    virtual void makeCurrent() override;
+    virtual void swapBuffers() override;
 public:
+    virtual void create(t_string title) override;
+    virtual void createRenderer();
 
-    std::shared_ptr<GLContext> getContext() { return _pContext; }
-
-    OpenGLWindow(t_string title, bool is_main = false);
+    OpenGLWindow(bool is_main = false);
     virtual ~OpenGLWindow() override;
 
 };

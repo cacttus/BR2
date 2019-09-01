@@ -12,6 +12,7 @@ GraphicsApi::GraphicsApi() {
 GraphicsApi::~GraphicsApi() {
     cleanup();
 }
+
 void GraphicsApi::addWindow(std::shared_ptr<GraphicsWindow> w) {
     //std::shared_ptr<GraphicsWindow> w = nullptr;
    // w = std::make_shared<GraphicsWindow>(windowTitle, render_system);

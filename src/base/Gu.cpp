@@ -43,6 +43,8 @@
 #include "../gfx/Party.h"   
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
+#include "../gfx/OpenGLApi.h"
+#include "../base/GLContext.h"
 
 #include "../model/ModelCache.h"
 #include "../model/VertexTypes.h"
@@ -88,8 +90,7 @@ std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
-
-int Gu::_iSupportedDepthSize = 24;
+std::shared_ptr<Delta> Gu::_pDelta = nullptr;
 
 //std::shared_ptr<GLContext> Gu::getGraphicsContext() {
 //    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(_pContext);
@@ -104,7 +105,7 @@ _STPROP(Fingers);
 _STPROP(FpsMeter);
 _STPROP(FrameSync);
 _STPROP(SoundCache);
-_STPROP(ShaderMaker);
+std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
 std::shared_ptr<AppBase> Gu::getApp() { AssertOrThrow2(_pAppBase != nullptr);  return _pAppBase; }
 _STPROP(TexCache);
 _STPROP(LightManager);
@@ -120,12 +121,22 @@ _STPROP(GraphicsApi);
 std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
-
 _STPROP(Net);
+std::shared_ptr<GLContext> Gu::getGraphicsContext() { 
+    std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
+    std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
+    return oglapi->getContext();
+}
+std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return Gu::getActiveWindow()->getRenderPipe(); }
+std::shared_ptr<Gui2d> Gu::getGui() {
+    return Gu::getActiveWindow()->getGui();
+}
+_STPROP(Delta);
+std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 
 void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
 void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
-void Gu::setRoom(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
+void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
 
 void Gu::checkErrorsDbg() {
@@ -136,8 +147,9 @@ void Gu::checkErrorsRt() {
 }
 
 bool Gu::is64Bit() {
-    if (sizeof(size_t) == 8)
+    if (sizeof(size_t) == 8) {
         return true;
+    }
     if (sizeof(size_t) == 4)
         return false;
     //WTF
@@ -220,6 +232,33 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, std::vector<std::string>& args
 //    Gu::_pContext = rb;
 //}
 void Gu::deleteGlobals() {
+    //This must be called in order to delete these in order.
+    //Teh GL context needs to come at the end.
+    _pTexCache = nullptr;
+    _pCamera = nullptr;
+    _pParty = nullptr;
+    _pSequencer = nullptr;
+
+    _pSoundCache = nullptr;
+    _pShaderMaker = nullptr;
+    _pLightManager = nullptr;
+    _pModelCache = nullptr;
+    _pPicker = nullptr;
+    _pPhysicsWorld = nullptr;
+    _pRenderSettings = nullptr;
+    _pEngineConfig = nullptr;
+    
+    //System Level
+    _pFingers = nullptr;
+    _pPackage = nullptr;
+    _pLogger = nullptr;
+    _pNet = nullptr;
+    _pDelta = nullptr;
+    _pFpsMeter = nullptr;
+    _pFrameSync = nullptr;
+
+    _pGraphicsApi = nullptr;
+    _pAppBase = nullptr;
 }
 
 bool Gu::isBigEndian() {
@@ -502,19 +541,6 @@ std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delim
     return ret;
 }
 
-int32_t Gu::getSupportedDepthSize() {
-    return Gu::_iSupportedDepthSize;
-
-    //None of these work..
-
-    //int tmp = 0;
-    //SDL_DisplayMode mode;
-    //SDL_GetCurrentDisplayMode(0, &mode);
-    //mode.
-    ////SDL_GL_GetAttribute(i , &tmp);
-    //return tmp;
-}
-
 void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp) {
     //Transforms a quad for the matrix-less gui projection.
 
@@ -621,9 +647,11 @@ void Gu::createManagers() {
     //Either A) subclass or B) remove genericy thing
    // _pPhysicsWorld = std::make_shared<PhysicsWorld>();
 
-    BroLogInfo("GLContext - Network");
+    BroLogInfo("Network");
     _pNet = std::make_shared<Net>();
 
+    BroLogInfo("Delta");
+    _pDelta = std::make_shared<Delta>();
 }
 void Gu::updateGlobals() {
     getDelta()->update();

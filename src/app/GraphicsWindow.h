@@ -49,7 +49,13 @@ protected:
     void makeSDLWindow(t_string title, int rendersystem);
     void initRenderSystem();
 
+    virtual void getDrawableSize(int* w, int* h) = 0;
+    virtual void makeCurrent() = 0;
+    virtual void swapBuffers() = 0;
 public:
+    virtual void create(t_string title) =0;
+
+
     GraphicsWindow(bool ismain);
     virtual ~GraphicsWindow() override;
 
@@ -60,6 +66,13 @@ public:
     void printHelpfulDebug();
     std::shared_ptr<WindowViewport> getWindowViewport() { return _pWindowViewport; }
     void updateWidthHeight(uint32_t w, uint32_t h, bool force);
+    std::shared_ptr<RenderPipe> getRenderPipe() {
+        return _pRenderPipe;
+    }
+
+    std::shared_ptr<Gui2d> getGui() {
+        return _pGui;
+    }
 
 };
 

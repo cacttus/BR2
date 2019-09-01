@@ -11,6 +11,8 @@ int main(int argc, char** argv) {
     {
         //Game::DebugHelper::setBreakAlloc(221975);
         std::shared_ptr<AppMain> cwr = std::make_shared<AppMain>();
+        Gu::setApp(cwr);
+
         std::shared_ptr<AppRunner> ar = std::make_shared<AppRunner>();
         ar->runApp(Gu::argsToVectorOfString(argc, argv), "Shake", cwr);
     }

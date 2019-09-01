@@ -62,14 +62,11 @@ class VulkanApi : public GraphicsApi {
     VkExtFn(vkCreateDebugUtilsMessengerEXT);  //PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
     VkExtFn(vkDestroyDebugUtilsMessengerEXT);  
     
-    
 public:
-    virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title) override;
-    virtual void getDrawableSize(int* w, int* h) override;
-    virtual void swapBuffers() override;
-    virtual void makeCurrent() override;
+    virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) override;
     virtual void cleanup() override;
-    virtual void createContext(std::shared_ptr<AppBase> app) override;
+
+    virtual void createRenderer() {}
 
     VulkanApi();
     virtual ~VulkanApi() override;
