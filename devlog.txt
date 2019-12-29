@@ -1,3 +1,14 @@
+12/29/19
+Began simple port to Make and CMake with gcc.  Fix this in the future.  The one caveat here is still debugging with VS. 
+VS allows a CMake project, but it doesn't appear as lightweight as a simple makefile.
+
+**Previously we removed the custom app class instantiation in preparation for 
+	1 - a scripting engine 
+	2 - Multiple graphics windows 
+	3 - Split window view (blender)
+
+We converted Shake thus to its own EXE.  It's no longer a library.
+
 8/23/19
 Remove most of AppBase and move to ProjectFile.
 Move remaining AppBase contents into ProjectFile

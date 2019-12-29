@@ -10,12 +10,71 @@
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderUtils.h"
-
+#include "../gfx/UiControls.h"
+#include "../gfx/GraphicsApi.h"
+#include "../app/GraphicsWindow.h"
+#include "../base/FpsMeter.h"
+#include "../base/FrameSync.h"
+#include "../gfx/MegaTex.h"
 
 namespace Game {
+ AppUi::AppUi() {
+
+
+#define DEBUG_FONT "EmilysCandy-Regular.ttf"
+     //Debug Label
+    std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(),Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+    
+    Gu::getGui()->getTex()->loadImages();
+
+    _pDebugLabel = UiLabel::create("", debugTextSkin);
+    _pDebugLabel->position() = UiPositionMode::e::Relative;
+    _pDebugLabel->left() = "20px";
+    _pDebugLabel->top() = "100px";
+    _pDebugLabel->width() = "200px";
+    _pDebugLabel->height() = "1800px";
+    _pDebugLabel->enableWordWrap();
+    Gu::getGui()->addChild(_pDebugLabel);
+
+    //Cursor 
+    std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+    pCursorSkin->_pTex = UiTex::create(Gu::getGui(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+    std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
+    cs->width() = "32px";
+    cs->height() = "auto"; // Auto?
+    Gu::getGui()->setCursor(cs);
+
+    Gu::getGui()->getTex()->compile();
+
+}
+void AppUi::clearDebugText() {
+    if (_pDebugLabel != nullptr) {
+        _pDebugLabel->setText("Debug\n");
+    }
+}
+void AppUi::dbgLine(std::string txt) {
+    if (_pDebugLabel != nullptr) {
+        std::string dtxt = _pDebugLabel->getText();
+        dtxt += txt;
+        dtxt += "\r\n";
+        _pDebugLabel->setText(dtxt);
+    }
+
+}
+void AppUi::endDebugText() {
+    if (_pDebugLabel != nullptr) {
+        int nn = 0;
+        nn++;
+    }
+}
+//#######
 AppMain::AppMain() {
 }
 AppMain::~AppMain() {
+}
+void AppMain::init() {
+    _pAppUi = std::make_shared<AppUi>();
+    setDebugMode();
 }
 void AppMain::drawBackgroundImage() {
     if (_pQuadMeshBackground == nullptr) {
@@ -94,8 +153,57 @@ void AppMain::drawShadow(RenderParams& rp) {
 void AppMain::drawDebug(RenderParams& rp) {
 }
 void AppMain::drawNonDepth(RenderParams& rp) {
+    draw2d();
 }
 void AppMain::drawTransparent(RenderParams& rp) {
+}
+void AppMain::draw2d() {
+    drawDebugText();
+
+  //  Gu::getGui()->debugForceLayoutChanged();
+    Gu::getGui()->update(Gu::getFingers());
+    Gu::getGui()->drawForward();
+}
+void AppMain::setDebugMode() {
+    //set some debug vars to make ikte easier
+    _bShowDebugText = true;
+    _bDrawDebug = true;
+    if (Gu::isDebug()) {
+        _bShowDebugText = true;
+        _bDrawDebug = false;
+        //Keep this legit so we can test x , y
+     //   _pFlyCam->setPosAndLookAt(vec3(0, 5, -20), vec3(0, 0, 0));
+    }
+}
+void AppMain::drawDebugText() {
+    int bx = 5;
+    int by = 32 + 34;// 0 is the height of the font
+    int dy = 16;//Also the font size
+    int cy = 0;
+
+    _pAppUi->clearDebugText();
+    if (_bShowDebugText) {
+        size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+
+        //////////////////////////////////////////////////////////////////////////
+#define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
+//////////////////////////////////////////////////////////////////////////
+        DBGL("%.2f", Gu::getFpsMeter()->getFps());
+
+        //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
+        DBGL("Global");
+        DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
+        DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
+        DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
+        DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
+        DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
+        DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+        DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
+
+        DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+
+    }
+    _pAppUi->endDebugText();
 }
 
 

@@ -1,5 +1,3 @@
-
-
 #include "../base/DebugHelper.h"
 #include "../base/AppRunner.h"
 #include "../base/Gu.h"

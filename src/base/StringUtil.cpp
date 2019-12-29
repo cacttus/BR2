@@ -549,11 +549,11 @@ t_string StringUtil::join(t_string delim, std::vector<t_string>& strings) {
 *   @param use_spaces - Use space instead of tab (\t)
 *   @param tab_newlines - Tab the string on newlines.  If False only the beginning of the string is tabified (kind of useless).
 */
-t_string StringUtil::tabify(t_string str_to_tabify, int number_of_tabs, bool use_spaces, bool tab_newlines, LineBreak::e lineBreak) {
+t_string StringUtil::tabify(t_string str_to_tabify, int number_of_tabs, bool use_spaces, bool tab_newlines, LineBreak lineBreak) {
     t_string ret = str_to_tabify;
 
     t_string linebreak = "";
-    if (lineBreak == LineBreak::e::DOS) {
+    if (lineBreak == LineBreak::DOS) {
         linebreak = "\r\n";
     }
     else {
@@ -571,7 +571,7 @@ t_string StringUtil::tabify(t_string str_to_tabify, int number_of_tabs, bool use
     return ret;
 }
 t_string StringUtil::wStrToStr(std::wstring wstr) {
-    using convert_type = std::codecvt_utf8<wchar_t>;
+    using convert_type = std::codecvt<wchar_t, char, std::mbstate_t>;
     std::wstring_convert<convert_type, wchar_t> converter;
 
     //use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)

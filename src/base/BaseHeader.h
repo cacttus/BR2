@@ -128,7 +128,8 @@ typedef enum {
 } e;
 }
 namespace RenderSystem { typedef enum { OpenGL, Vulkan } e; }
-namespace LineBreak { typedef enum { Unix, DOS }e; }
+enum class LineBreak { Unix, DOS };
+//namespace LineBreak { typedef enum { Unix, DOS }e; }
 
 class SoundSpec;
 class SoundInst;

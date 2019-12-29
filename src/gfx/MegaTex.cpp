@@ -480,6 +480,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
             }
             else {
                 //Error
+                //loadImages() wasn't called
                 Gu::debugBreak();
             }
         }

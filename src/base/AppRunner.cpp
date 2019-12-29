@@ -327,6 +327,8 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
     //test the globals before starting the game loop
     Gu::updateGlobals();
 
+    rb->init();
+
     while (true) {
         Perf::beginPerf();
         Perf::pushPerf();

@@ -25,6 +25,8 @@ class AppBase : public Drawable {
 public:
     AppBase();
     virtual ~AppBase() override;
+    virtual void init() = 0; //*Note this is not called right after inst
+
     t_string makeAssetPath(t_string file);
     t_string makeAssetPath(t_string folder, t_string file);
 

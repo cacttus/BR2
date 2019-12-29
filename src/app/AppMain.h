@@ -12,9 +12,19 @@
 #ifndef __APPMAIN_1565368851810156743_H__
 #define __APPMAIN_1565368851810156743_H__
 
+#include "../gfx/RenderIncludes.h"
 #include "../app/AppBase.h"
 
 namespace Game {
+class AppUi : public VirtualMemoryShared<AppUi> {
+    std::shared_ptr<UiLabel> _pDebugLabel = nullptr;
+public:
+    AppUi();
+    virtual ~AppUi() override {}
+    void clearDebugText();
+    void dbgLine(std::string txt);
+    void endDebugText();
+};
 /**
 *    @class AppMain
 *    @brief Application entry point.
@@ -34,16 +44,23 @@ class AppMain : public AppBase {
     std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
     std::shared_ptr<Texture2DSpec> _pTex = nullptr;
 
-    std::shared_ptr<ProjectFile> _pProjectFile;
+    std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
 
+    void drawDebugText();
+    void draw2d();
+
+    std::shared_ptr<AppUi> _pAppUi = nullptr;
+    void setDebugMode();
 public:
+
     AppMain();
     virtual ~AppMain() override;
 
+    virtual void init() override;
     std::shared_ptr<ProjectFile> getProjectFile() { return _pProjectFile; }
-    
-   // virtual void step(float dt) override {}
-  //  virtual void teardown() override {}
+
+    // virtual void step(float dt) override {}
+   //  virtual void teardown() override {}
     virtual void updateTouch(std::shared_ptr<Fingers>, float dt) override {}
     virtual void userZoom(int amount) override {}
 
