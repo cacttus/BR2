@@ -106,7 +106,7 @@ _STPROP(FpsMeter);
 _STPROP(FrameSync);
 _STPROP(SoundCache);
 std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
-std::shared_ptr<AppBase> Gu::getApp() { AssertOrThrow2(_pAppBase != nullptr);  return _pAppBase; }
+std::shared_ptr<AppBase> Gu::getApp() { return _pAppBase; }
 _STPROP(TexCache);
 _STPROP(LightManager);
 _STPROP(Picker);

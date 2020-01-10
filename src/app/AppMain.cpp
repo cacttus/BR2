@@ -15,18 +15,22 @@
 #include "../app/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
+#include "../base/Fingers.h"
 #include "../gfx/MegaTex.h"
 
 namespace Game {
- AppUi::AppUi() {
+AppUi::AppUi() {
 
-
-#define DEBUG_FONT "EmilysCandy-Regular.ttf"
-     //Debug Label
-    std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(),Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+    t_string DEBUG_FONT = "Lato-Regular.ttf";
     
+    //skins first
+    std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+    std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+    pCursorSkin->_pTex = UiTex::create(Gu::getGui(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+
     Gu::getGui()->getTex()->loadImages();
 
+    //debug label
     _pDebugLabel = UiLabel::create("", debugTextSkin);
     _pDebugLabel->position() = UiPositionMode::e::Relative;
     _pDebugLabel->left() = "20px";
@@ -37,8 +41,6 @@ namespace Game {
     Gu::getGui()->addChild(_pDebugLabel);
 
     //Cursor 
-    std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
-    pCursorSkin->_pTex = UiTex::create(Gu::getGui(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
     std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
     cs->width() = "32px";
     cs->height() = "auto"; // Auto?
@@ -96,6 +98,55 @@ void AppMain::drawBackgroundImage() {
 
 }
 void AppMain::debugChangeRenderState() {
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F1)) {
+        if (Gu::getFingers()->shiftHeld()) {
+            _bDebugDisableShadows = !_bDebugDisableShadows;
+        }
+        else {
+            _bShowDebugText = !_bShowDebugText;
+        }
+    }
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F2)) {
+        _bDrawDebug = !_bDrawDebug;
+    }
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F3)) {
+        _bDebugDisableCull = !_bDebugDisableCull;
+    }
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F4)) {
+        _bDebugShowWireframe = !_bDebugShowWireframe;
+    }
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F5)) {
+        _bDebugClearWhite = !_bDebugClearWhite;
+    }
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F6)) {
+        _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
+    }
+    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F7)) {
+        if (Gu::getFrameSync()->isEnabled()) {
+            Gu::getFrameSync()->disable();
+        }
+        else {
+            Gu::getFrameSync()->enable();
+        }
+    }
+    //if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F10)) {
+    //    if (_iF10Pressed == 0) {
+    //        _iF10Pressed = Gu::getMicroSeconds();
+    //    }
+    //    if (Gu::getMicroSeconds() - _iF10Pressed > 1000000) {
+    //        _pWorld25->getConfig()->setRenderBlocks(!_pWorld25->getConfig()->getRenderBlocks());
+    //        BroLogInfo("Block Mode turned " + (_pWorld25->getConfig()->getRenderBlocks() ? "On" : "Off"));
+    //        BroLogInfo("Remaking all grid meshes... be patient.");
+    //        _pWorld25->remakeGridMeshes();
+    //        _iF10Pressed = 0;
+    //    }
+    //}
+    //else {
+    //    _iF10Pressed = 0;
+    //}
+
+
+
 #ifdef BRO_OS_WINDOWS
     //#ifdef _DEBUG
     //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
@@ -160,7 +211,7 @@ void AppMain::drawTransparent(RenderParams& rp) {
 void AppMain::draw2d() {
     drawDebugText();
 
-  //  Gu::getGui()->debugForceLayoutChanged();
+    //  Gu::getGui()->debugForceLayoutChanged();
     Gu::getGui()->update(Gu::getFingers());
     Gu::getGui()->drawForward();
 }

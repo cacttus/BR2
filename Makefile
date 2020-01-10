@@ -5,7 +5,6 @@ CC = g++
 CPPFLAGS = -g -Wall -I "./src"
 
 
-
 libs: SDL2
 LDFLAGS = -lGL -lglut -lpng -lz -lm 
 LDLIBS += $(foreach library,$(libs),-l$(library))
