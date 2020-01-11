@@ -7,6 +7,7 @@ The engine currently supports:
 * A Blender (.blend) model workflow
 * Paths
 * Forward Kinematic Animation
+* Scenegraph
 * Physics (beta)
 * Particles
 * Deferred Lighting
