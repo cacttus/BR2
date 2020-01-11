@@ -17,8 +17,8 @@ The engine currently supports:
 Most systems are in the beginning, or beta stages of development.  The engine is purely experimental at this point, 
 and would likely not facilitate creating any games further than the source code itself.
 
-## Details
-The game is less of an "engine" and more of a graphics facility.  The application does not
+## Further Details
+The current state of Shake is an experimental graphics engine.  The application does not
 yet suport detailed game editing with object placement and a detailed asset system such as Unity and Godot, however
 we are going to leverage Qt's user interface power to make this a possibility in the future.
 
