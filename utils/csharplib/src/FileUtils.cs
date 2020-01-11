@@ -307,7 +307,7 @@ namespace Proteus
             System.IO.FileStream fs = null;
             try
             {
-                fs = new System.IO.FileStream(strFilePath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+                using(var fs = new System.IO.FileStream(strFilePath, System.IO.FileMode.Create, System.IO.FileAccess.Write);
                 using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(fs))
                 {
                     fs = null;
