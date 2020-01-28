@@ -69,7 +69,7 @@ void WorldObj::place(const vec3& r3, vec3& outPos, vec4& outRot) {
 
 std::shared_ptr<ModelSpec> WorldObj::getOrLoadModel() {
     if (_pModelSpec == nullptr) {
-        std::shared_ptr<ModelSpec> ms = Gu::getContext()->getModelCache()->getOrLoadModel(_strMobName, true);
+        std::shared_ptr<ModelSpec> ms = Gu::getModelCache()->getOrLoadModel(_strMobName, true);
         _pModelSpec = ms;
     }
     return _pModelSpec;

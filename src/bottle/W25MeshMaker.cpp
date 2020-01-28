@@ -6,7 +6,7 @@
 #include "../bottle/W25MeshMaker.h"
 #include "../bottle/WorldCell.h"
 #include "../bottle/WorldGrid.h"
-#include "../display/Atlas.h"
+#include "../gfx/Atlas.h"
 #include "../bottle/BottleUtils.h"
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/W25Config.h"
@@ -15,8 +15,8 @@
 
 namespace Game {
 
-W25MeshMaker::W25MeshMaker(std::shared_ptr<GLContext> pContext, std::shared_ptr<Atlas> pAtlas) : 
-    _pWorldAtlas(pAtlas), _pContext(pContext) 
+W25MeshMaker::W25MeshMaker(std::shared_ptr<Atlas> pAtlas) : 
+    _pWorldAtlas(pAtlas)
 {
 
 

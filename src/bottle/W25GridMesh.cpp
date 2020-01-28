@@ -1,14 +1,15 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
+#include "../base/Logger.h"
 
 #include "../math/MathAll.h"
 
-#include "../display/FrustumBase.h"
-#include "../display/CameraNode.h"
-#include "../display/Atlas.h"
-#include "../display/Texture2DSpec.h"
-#include "../display/RenderUtils.h"
-#include "../display/ShaderBase.h"
+#include "../gfx/FrustumBase.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/Atlas.h"
+#include "../gfx/Texture2DSpec.h"
+#include "../gfx/RenderUtils.h"
+#include "../gfx/ShaderBase.h"
 
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
@@ -87,7 +88,7 @@ void W25GridMesh::updateTopology() {
     }
 }
 void W25GridMesh::sendMeshToGpu() {
-    BottleUtils::makeWorldMesh(Gu::getContext(), _pMesh, &_verts, &_indexes);
+    BottleUtils::makeWorldMesh(_pMesh, &_verts, &_indexes);
 }
 void W25GridMesh::draw(RenderParams& rp, int& iDbgNumTrisDrawn) {
     if (getMesh() != nullptr) {

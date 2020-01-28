@@ -1,27 +1,29 @@
 #include "../base/GLContext.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../base/Hash.h"
 #include "../base/FrameSync.h"
 #include "../base/DebugHelper.h"
 #include "../base/SoundCache.h"
+#include "../base/Gu.h"
+#include "../base/Logger.h"
 
 #include "../math/Random.h"
 #include "../math/Algorithm.h"
 #include "../math/CollisionEquations.h"
 
-#include "../display/Viewport.h"
-#include "../display/CameraNode.h"
-#include "../display/FrustumBase.h"
-#include "../display/Gui2d.h"
-#include "../display/Atlas.h"
-#include "../display/QuadBufferMesh.h"
-#include "../display/GpuQuad3.h"
-#include "../display/HappySky.h"
-#include "../display/ShaderBase.h"
-#include "../display/ShaderMaker.h"
-#include "../display/LightNode.h"
-#include "../display/LightManager.h"
-#include "../display/ShadowBox.h"
+#include "../gfx/WindowViewport.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/FrustumBase.h"
+#include "../gfx/Gui2d.h"
+#include "../gfx/Atlas.h"
+#include "../gfx/QuadBufferMesh.h"
+#include "../gfx/GpuQuad3.h"
+#include "../gfx/HappySky.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/LightManager.h"
+#include "../gfx/ShadowBox.h"
 #include "../model/Material.h"
 
 #include "../model/MobFile.h"
@@ -39,7 +41,7 @@
 #include "../bottle/WorldCell.h"
 #include "../bottle/WorldGrid.h"
 #include "../bottle/BottleUtils.h"
-#include "../bottle/BottleRoom.h"
+
 //#include "../bottle/CongaGui.h"
 #include "../bottle/Brain25.h"
 #include "../bottle/Goal25MoveTo.h"
@@ -71,7 +73,7 @@ World25::World25() {
     _pWorld25Plane->getBasisU() = vec3(1, 0, 0);
     _pWorld25Plane->getBasisV() = vec3(0, 0, 1);
 
-    Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "nature_0.ogg"), SoundPlayInfo(true, 0.1f));
+    Gu::getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "nature_0.ogg"), SoundPlayInfo(true, 0.1f));
     //_pNoiseField = new W25NoiseField(this, 999); // Test value
 
   //  _pObjectQuads = new TileMesh25(getContext(), 8192);
@@ -111,15 +113,11 @@ void World25::init(std::shared_ptr<ObFile> obFile) {
     need to load the file before the UI
     make Asset Images
     _pApp->createAssetWindow(imgs)
-
     */
 
-
     BroLogInfo("World25 - Making Mesh Conf");
-    _pMeshMaker = std::make_shared<W25MeshMaker>(Gu::getContext(), _pWorldAtlas);//Must come before grid
+    _pMeshMaker = std::make_shared<W25MeshMaker>(_pWorldAtlas);//Must come before grid
     _pMeshMaker->init();
-    //BroLogInfo("World25 - Making Specs");
-    //makeSpecs(&pf);//Must come before making grid!!
 
     BroLogInfo("World25 - Making Dungeons");
     _pWorldMaker = std::make_shared<WorldMaker>(getThis<World25>(), _pGameFile->getBucket(), _pGameFile->getLairSpecs(), _pGameFile->getWalkerSpecs());
@@ -143,7 +141,7 @@ void World25::init(std::shared_ptr<ObFile> obFile) {
 }
 void World25::convertMobs() {
     for (std::shared_ptr<WorldObj> ws : _pGameFile->getMobSpecs()) {
-        Gu::getContext()->getModelCache()->convertMobToBin(ws->getMobName(), true, ws->getFriendlyName());
+        Gu::getModelCache()->convertMobToBin(ws->getMobName(), true, ws->getFriendlyName());
     }
 }
 void World25::initializeWorldGrid() {
@@ -333,28 +331,28 @@ void World25::makeSky() {
     BroLogInfo("Making sky.");
     ivec2 gsiz;
     gsiz.construct(2, 2);
-    _pSkyBox = std::make_shared<HappySky>(Gu::getContext());
-    _pSkyAtlas = std::make_shared<Atlas>(Gu::getContext(), "SkyBoxAtlas", gsiz);
-    _pSkyAtlas->addImage(0, Gu::getContext()->getRoom()->makeAssetPath("tex", "tx-sb-top.png"));  //top
-    _pSkyAtlas->addImage(1, Gu::getContext()->getRoom()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
-    _pSkyAtlas->addImage(2, Gu::getContext()->getRoom()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
-    _pSkyAtlas->addImage(3, Gu::getContext()->getRoom()->makeAssetPath("tex", "tx-sb-bot.png"));  //bot
+    _pSkyBox = std::make_shared<HappySky>();
+    _pSkyAtlas = std::make_shared<Atlas>("SkyBoxAtlas", gsiz);
+    _pSkyAtlas->addImage(0, Gu::getApp()->makeAssetPath("tex", "tx-sb-top.png"));  //top
+    _pSkyAtlas->addImage(1, Gu::getApp()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
+    _pSkyAtlas->addImage(2, Gu::getApp()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
+    _pSkyAtlas->addImage(3, Gu::getApp()->makeAssetPath("tex", "tx-sb-bot.png"));  //bot
     _pSkyAtlas->compileFiles(true, true);
     _pSkyAtlas->oglSetFilter(TexFilter::e::Linear);
     _pSkyBox->init(_pSkyAtlas, 400, true);
 }
 void World25::makeShaders() {
-    _pTileShader = Gu::getContext()->getShaderMaker()->makeShader(
+    _pTileShader = Gu::getShaderMaker()->makeShader(
         std::vector<t_string>{"d_v3i2n3_tileshader.vs", "d_v3i2n3_tileshader.ps"}
     );
-    _pGridShader = Gu::getContext()->getShaderMaker()->makeShader(
+    _pGridShader = Gu::getShaderMaker()->makeShader(
         std::vector<t_string>{"d_v3n3_grid.vs", "d_v3n3_grid.gs", "d_v3n3_grid.ps"}
     );
 
 }
 
 void World25::makeAtlas() {
-#define MA_P(x) getContext()->getRoom()->makeAssetPath(x)
+#define MA_P(x) getRoom()->makeAssetPath(x)
     //Init Particles
     BroLogInfo("Making Woorld tex.");
 
@@ -417,7 +415,7 @@ void World25::settleLiquids(bool bForce) {
     static t_timeval lastSettle = 0;
 
     //This is now considered offline processing, but it's forced to be caleld 
-    if (bForce || Gu::getContext()->getFpsMeter()->deltaMs(lastSettle, 250 * 1000)) {
+    if (bForce || Gu::getFpsMeter()->deltaMs(lastSettle, 250 * 1000)) {
         vec3 pos = getAwareness()->getAwarenessPos();
         float r2XZ = BottleUtils::getBvhExpensiveUpdateRadiusXZ();
         r2XZ *= r2XZ; // r^2
@@ -445,15 +443,15 @@ void World25::collectObjects(std::multimap<float, std::shared_ptr<ModelNode>>& v
 
 }
 std::shared_ptr<BottleRoom> World25::getRoom() {
-    return std::dynamic_pointer_cast<BottleRoom>(Gu::getContext()->getRoom());
+    return std::dynamic_pointer_cast<BottleRoom>(Gu::getApp());
 }
 //*This method is old, busted
 void World25::updateAndCopyVisibleObjects(float delta, std::multimap<float, std::shared_ptr<ModelNode>> vecCollected) {
     updateHandCursorAndAddToRenderList(delta);//Make sure this comes after clearing
 }
 void World25::updateHandCursorAndAddToRenderList(float delta) {
-    std::shared_ptr<CameraNode> bc = Gu::getContext()->getCamera();
-    vec2 v = Gu::getContext()->getFingers()->getMousePos();
+    std::shared_ptr<CameraNode> bc = Gu::getCamera();
+    vec2 v = Gu::getFingers()->getMousePos();
     Ray_t pr = bc->projectPoint2(v);
 
     ////if (_pHandCursor) {
@@ -659,7 +657,7 @@ void World25::drawForward() {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glEnable(GL_DEPTH_TEST);
             RenderParams rp(_pGridShader);
-            _pGridShader->setCameraUf(Gu::getContext()->getCamera());
+            _pGridShader->setCameraUf(Gu::getCamera());
             uint32_t uiShowSide = (_eShowGrid == GridShow::e::TopSideBot) ? 1 : 0;
             _pGridShader->setUf("_ufShowSide", (void*)&uiShowSide);
 
@@ -679,18 +677,18 @@ void World25::drawForward() {
 }
 void World25::drawSky() {
     //Sky
-    vec3 vCamPos = Gu::getContext()->getCamera()->getPos();
-    std::shared_ptr<CameraNode> bc = Gu::getContext()->getCamera();
+    vec3 vCamPos = Gu::getCamera()->getPos();
+    std::shared_ptr<CameraNode> bc = Gu::getCamera();
 
     //Translate the sky up
     mat4 model = mat4::getTranslation(vCamPos.x, vCamPos.y, vCamPos.z);
 
-    //Gu::getContext()->getShaderMaker()->getDiffuseShader(v_v3n3x2::getVertexFormat())->setCameraUf(bc, &model);
+    //Gu::getShaderMaker()->getDiffuseShader(v_v3n3x2::getVertexFormat())->setCameraUf(bc, &model);
 
     Gu::pushDepthTest();
     {
         glDisable(GL_DEPTH_TEST);
-        RenderParams rp(Gu::getContext()->getShaderMaker()->getDiffuseShader(v_v3n3x2::getVertexFormat()));
+        RenderParams rp(Gu::getShaderMaker()->getDiffuseShader(v_v3n3x2::getVertexFormat()));
         _pSkyBox->draw(rp);
     }
     Gu::popDepthTest();
@@ -711,11 +709,11 @@ void World25::drawWorld() {
     gridwh.w = _pWorldAtlas->getSpriteSize().y;
 
    // _pTileShader->setFreebieDirLightUf();
-    _pTileShader->setCameraUf(Gu::getContext()->getCamera());
+    _pTileShader->setCameraUf(Gu::getCamera());
     _pTileShader->setAtlasUf(_pWorldAtlas);
     //_pTileShader->setLightUf();
 
-    Gu::getContext()->getShaderMaker()->setUfBlock("GpuSprites", gpuTiles, W25_MAX_GPU_SPRITES * sizeof(GpuTile));
+    Gu::getShaderMaker()->setUfBlock("GpuSprites", gpuTiles, W25_MAX_GPU_SPRITES * sizeof(GpuTile));
     //setTileUf(_pTileShader); //**Also we might do this for sprites too
 
     Gu::pushCullFace();
@@ -974,7 +972,7 @@ bool World25::getCellOrObjectUnderRay(Ray_t* out_pr, std::shared_ptr<ModelNode>&
 }
 
 Ray_t World25::getMouseRay(vec2& vMouse) {
-    Ray_t r = Gu::getContext()->getCamera()->projectPoint2(vMouse);
+    Ray_t r = Gu::getCamera()->projectPoint2(vMouse);
     return r;
 }
 

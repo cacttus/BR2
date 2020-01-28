@@ -15,6 +15,8 @@
 #include "../base/BuildConfig.h"
 
 //
+//TODO: move all the include files into their respective sources and headers to speed up compilation
+//
 #define WIN32_LEAN_AND_MEAN
 
 //SDL

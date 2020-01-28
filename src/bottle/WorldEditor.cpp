@@ -2,13 +2,13 @@
 #include "../base/Fingers.h"
 #include "../base/GLContext.h"
 #include "../base/GLContext.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../base/SoundCache.h"
-#include "../display/ShaderBase.h"
-#include "../display/ShaderMaker.h"
-#include "../display/RenderParams.h"
-#include "../display/LightNode.h"
-#include "../display/ShadowBox.h"
+#include "../gfx/ShaderBase.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/RenderParams.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/ShadowBox.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/Model.h"
 #include "../model/MeshNode.h"
@@ -20,7 +20,6 @@
 #include "../bottle/WorldEditor.h"
 #include "../bottle/WorldMaker.h"
 #include "../bottle/WorldEditState.h"
-#include "../bottle/BottleRoom.h"
 #include "../bottle/WorldObj.h"
 #include "../bottle/W25Config.h"
 
@@ -39,15 +38,15 @@ void WorldEditor::init(){
     /*_pHoverShader = Gu::getContext()->getShaderMaker()->makeShader(
         std::vector<t_string>{"d_v3n3_hover.vs", "d_v3n3_hover.gs", "d_v3n3_hover.ps"}
     );*/
-    std::shared_ptr<ModelSpec> pSel = Gu::getContext()->getModelCache()->getOrLoadModel("hover_1");
+    std::shared_ptr<ModelSpec> pSel = Gu::getModelCache()->getOrLoadModel("hover_1");
     if (pSel != nullptr) {
         _pSelector = ModelNode::create(pSel);
         _pSelector->setPos(std::move(vec3(0, 0, 0)));
         _pSelector->playAction("hover_1.Rotate");
 
         _pSelector->setHidden(true);
-        Gu::getContext()->getPhysicsWorld()->addObj(_pSelector, false, false);
-        std::shared_ptr<LightNodePoint> pl = Gu::getContext()->getPhysicsWorld()->makePointLight(vec3(0,1,0), 10, vec4(1,1,0.5,1),"",true);
+        Gu::getPhysicsWorld()->addObj(_pSelector, false, false);
+        std::shared_ptr<LightNodePoint> pl = Gu::getPhysicsWorld()->makePointLight(vec3(0,1,0), 10, vec4(1,1,0.5,1),"",true);
         pl->getShadowBox()->getSmallBoxSize() = 0.03f;
         _pSelector->attachChild(std::dynamic_pointer_cast<TreeNode>(pl));
     }
@@ -620,27 +619,27 @@ void WorldEditor::editBlockVertex(EditTool::e eEditTool, GridMeshLayer::e eMatte
 }
 void WorldEditor::playEditSound(GridMeshLayer::e eMatterMode, bool bDelete) {
     if(bDelete){
-        Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "s-delete.ogg"));
+        Gu::getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "s-delete.ogg"));
     }
     else if (eMatterMode == GridMeshLayer::e::Opaque) {
-        Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "s-block-low.ogg"));
+        Gu::getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "s-block-low.ogg"));
     }
     else if (eMatterMode == GridMeshLayer::e::Transparent) {
-        Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "s-water-splash.ogg"));
+        Gu::getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "s-water-splash.ogg"));
     }
     //    }
     //    else if (eEditMode == EditMode::e::Vertex || eEditMode == EditMode::e::VertexGroup) {
 
     //        if (eMatterMode == GridMeshLayer::e::Opaque) {
-    //            Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "s-click.ogg"));
+    //            Gu::getContext()->getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "s-click.ogg"));
     //        }
     //        else if (eMatterMode == GridMeshLayer::e::Transparent) {
-    //            Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "s-water-splash.ogg"));
+    //            Gu::getContext()->getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "s-water-splash.ogg"));
     //        }
     //    }
     //}
     //else if (eEditTool == EditTool::e::Eraser) {
-    //    Gu::getContext()->getSoundCache()->tryPlay(Gu::getContext()->getRoom()->makeAssetPath("snd", "s-delete.ogg"));
+    //    Gu::getContext()->getSoundCache()->tryPlay(Gu::getApp()->makeAssetPath("snd", "s-delete.ogg"));
     //}
 }
 void WorldEditor::editWorldMouseRelease(std::shared_ptr<Fingers> pFingers) {
@@ -728,33 +727,34 @@ void GridEditHistoryClick::doUndoClick() {
    _pEditor->editWorldEndEdit();
 }
 void GridEditHistoryItem::doUndoItem() {
-    if (_pCell != nullptr) {
-        if (_iPreviousGeom != W25_NO_HISTORY) {
-            //If we're blocks doing this will skip some configs because some of them are already "solid"
-            std::shared_ptr<BottleRoom> br = std::dynamic_pointer_cast<BottleRoom>(Gu::getContext()->getRoom());
-            bool bBlocks = false;
-            if(br!=nullptr){ bBlocks = br->getWorld25()->getConfig()->getRenderBlocks(); }
-            if (bBlocks == true || _pCell->getGeom(_eMatterMode) != _iPreviousGeom) {
-                _pCell->setGeom(_eMatterMode, _iPreviousGeom);
-                _pWorldEditor->editWorldUpdateGrid(_pCell, nullptr, false, false, _eMatterMode);
-            }
-        }
-        if (_iPreviousMaterial != W25_NO_HISTORY) {
-            W25Tile pBase;
-            if (_iPreviousMaterial != -1) {
-                pBase = _iPreviousMaterial;
-                if (_pCell->getTile(_eMatterMode) != pBase) {
-                    _pCell->setTile(_eMatterMode, pBase);
-                    _pWorldEditor->editWorldUpdateGrid(_pCell, nullptr, false, false, _eMatterMode);
-                }
-            }
-        }
-    }
+  BroThrowNotImplementedException();
+    //if (_pCell != nullptr) {
+    //    if (_iPreviousGeom != W25_NO_HISTORY) {
+    //        //If we're blocks doing this will skip some configs because some of them are already "solid"
+    //        std::shared_ptr<BottleRoom> br = std::dynamic_pointer_cast<BottleRoom>(Gu::getApp());
+    //        bool bBlocks = false;
+    //        if(br!=nullptr){ bBlocks = br->getWorld25()->getConfig()->getRenderBlocks(); }
+    //        if (bBlocks == true || _pCell->getGeom(_eMatterMode) != _iPreviousGeom) {
+    //            _pCell->setGeom(_eMatterMode, _iPreviousGeom);
+    //            _pWorldEditor->editWorldUpdateGrid(_pCell, nullptr, false, false, _eMatterMode);
+    //        }
+    //    }
+    //    if (_iPreviousMaterial != W25_NO_HISTORY) {
+    //        W25Tile pBase;
+    //        if (_iPreviousMaterial != -1) {
+    //            pBase = _iPreviousMaterial;
+    //            if (_pCell->getTile(_eMatterMode) != pBase) {
+    //                _pCell->setTile(_eMatterMode, pBase);
+    //                _pWorldEditor->editWorldUpdateGrid(_pCell, nullptr, false, false, _eMatterMode);
+    //            }
+    //        }
+    //    }
+    //}
 }
 void WorldEditor::placeObject(std::shared_ptr<ModelSpec> ms){
     if (_pPlacedObject == nullptr) {
 
-        _pPlacedObject = Gu::getContext()->getPhysicsWorld()->makeObj(ms, vec3(0, 0, 0), vec4(0, 0, 1, 0), vec3(1, 1, 1), "");
+        _pPlacedObject = Gu::getPhysicsWorld()->makeObj(ms, vec3(0, 0, 0), vec4(0, 0, 1, 0), vec3(1, 1, 1), "");
         _pWorldEditState->setEditMode(EditMode::e::PlaceObject);
 
     }

@@ -38,6 +38,7 @@
 //#include "../net/Packet.h"
 
 #include "../bottle/WorldObj.h"
+#include "../bottle/BottleRoom.h"
 #include "../bottle/World25.h"
 #include "../bottle/BottleUtils.h"
 #include "../bottle/WorldEditState.h"

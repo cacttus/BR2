@@ -13,10 +13,10 @@
 #define __DARTHEADER_14848788473239398051_H__
 
 #include "../base/BaseHeader.h"
-#include "../display/DisplayHeader.h"
 #include "../model/ModelHeader.h"
 #include "../world/WorldHeader.h"
 #include "../math/MathAll.h"
+#include "../gfx/GfxHeader.h"
 namespace Game {
 //typedef uint32_t World25GridId;
 //We store materials in the hash32
@@ -150,6 +150,8 @@ class EditButton;
 class EditButtonGroup;
 class TileShader;
 class SpriteShader;
+class Sprite;
+class SpriteSpec;
 //class World25Light    ;
 //class World25LightData;
 class GodCam;

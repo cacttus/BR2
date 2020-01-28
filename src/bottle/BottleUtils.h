@@ -84,8 +84,6 @@ public:
  //   static vec3 i3tov3Cell(const ivec3& iNode, const ivec3& iCell);
     static uint32_t getMaxVisibleObjects() { return 1024; }
 
-
-
     static void addTileQuad2(World25Plane* pPlane, std::shared_ptr<Atlas> pAtlas,
         TileMesh25* qbm, Sprite* pMot,
         vec2& min, vec2& max, float midz, vec3& color0, vec3& color1, vec3& color2, vec3& color3);
@@ -103,7 +101,7 @@ public:
         TileMesh25* qbm, Sprite* pMot, Box3f* pBox,
         vec3& color0, vec3& color1, vec3& color2, vec3& color3);
 
-    static void makeWorldMesh(std::shared_ptr<GLContext> ct, std::shared_ptr<MeshNode>& __out_ pMesh,
+    static void makeWorldMesh( std::shared_ptr<MeshNode>& __out_ pMesh,
         std::vector<W25MeshVert>* _verts, std::vector<v_index32>* _indexes);
 
     static int getNumCellsPerNode();

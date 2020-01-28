@@ -1,16 +1,17 @@
 #include "../base/Gu.h"
 #include "../base/Hash.h"
-#include "../base/AppBase.h"
+#include "../app/AppBase.h"
 #include "../base/GLContext.h"
 #include "../base/oglErr.h"
 #include "../base/FileSystem.h"
+#include "../base/Logger.h"
 
-#include "../display/QuadBufferMesh.h"
-#include "../display/Atlas.h"
-#include "../display/GpuQuad3.h"
-#include "../display/CameraNode.h"
-#include "../display/FrustumBase.h"
-#include "../display/ShaderBase.h"
+#include "../gfx/QuadBufferMesh.h"
+#include "../gfx/Atlas.h"
+#include "../gfx/GpuQuad3.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/FrustumBase.h"
+#include "../gfx/ShaderBase.h"
 
 #include "../model/VaoDataGeneric.h"
 #include "../model/VaoDataGeneric.h"
@@ -26,7 +27,7 @@
 #include "../bottle/WorldGrid.h"
 #include "../bottle/WorldCell.h"
 #include "../bottle/BottleUtils.h"
-#include "../bottle/BottleRoom.h"
+//#include "../bottle/BottleRoom.h"
 #include "../bottle/WorldCellFile.h"
 #include "../bottle/WipGrid.h"
 #include "../bottle/W25MeshMaker.h"
@@ -242,7 +243,7 @@ void WorldGrid::drawGrid(RenderParams& rp, int32_t& __out_ dbgNumTrisDrawn) {
         return;
     }
 
-    std::shared_ptr<FrustumBase> pf = Gu::getContext()->getCamera()->getFrustum();
+    std::shared_ptr<FrustumBase> pf = Gu::getCamera()->getFrustum();
     for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
         if (_pMeshes[iMatter] != nullptr) {
             if (_pMeshes[iMatter]->getMesh() != nullptr) {

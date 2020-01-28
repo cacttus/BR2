@@ -23,7 +23,6 @@ class W25MeshMaker : public VirtualMemoryShared<W25MeshMaker> {
     vec3 _vBlock[8];
 
     std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
-    std::shared_ptr<GLContext> _pContext = nullptr;
 
     enum { Gpu_BL = 0, Gpu_BR = 1, Gpu_TL = 2, Gpu_TR = 3 };
 
@@ -53,8 +52,9 @@ class W25MeshMaker : public VirtualMemoryShared<W25MeshMaker> {
     void addConfigTriangles(std::vector<W25MeshVert>& verts_level, std::vector<v_index32>& inds_level, std::shared_ptr<SpriteBucket> pBucket,
         std::shared_ptr<Atlas> pa, WorldCell* gc, GridMeshLayer::e eMatterMode, float fBlockWidth, float fBlockHeight, vec3* v3CustomBase);
 public:
-    W25MeshMaker(std::shared_ptr<GLContext> pContext, std::shared_ptr<Atlas> pAtlas);
+    W25MeshMaker(std::shared_ptr<Atlas> pAtlas);
     virtual ~W25MeshMaker();
+
     void init();
     std::unique_ptr<W25MeshConf>& getW25Config(W25Geom i) {
         AssertOrThrow2(i < 256);

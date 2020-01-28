@@ -12,7 +12,7 @@
 #ifndef __BOTTLEGUI_15176010892956417418_H__
 #define __BOTTLEGUI_15176010892956417418_H__
 
-#include "../display/Gui2d.h"
+#include "../gfx/Gui2d.h"
 #include "../bottle/BottleHeader.h"
 
 namespace Game {

@@ -17,8 +17,6 @@
 #include "../math/MathAll.h"
 namespace Game {
 
-//typedef  uint32_t SpriteFlags;
-
 namespace SpriteFlags { typedef enum { 
     Shift_V = 0x01
     , Shift_H = 0x02 

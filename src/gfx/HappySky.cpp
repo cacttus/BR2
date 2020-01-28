@@ -14,7 +14,7 @@
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-HappySky::HappySky(std::shared_ptr<GLContext> ct) : _pContext(ct)
+HappySky::HappySky()
 {
 
 }

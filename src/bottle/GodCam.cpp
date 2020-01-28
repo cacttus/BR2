@@ -1,15 +1,17 @@
 #include "../base/GLContext.h"
-#include "../display/CameraNode.h"
-#include "../display/Viewport.h"
+#include "../base/Logger.h"
+#include "../base/Fingers.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/WindowViewport.h"
 #include "../base/TouchInfo.h"
 #include "../bottle/GodCam.h"
-#include "../display/CameraNode.h"
-#include "../display/FrustumBase.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/FrustumBase.h"
 #include "../bottle/BottleUtils.h"
 
 
 namespace Game {
-GodCam::GodCam(std::shared_ptr<GLContext> ct, std::shared_ptr<Viewport> pv): _pContext(ct) {
+GodCam::GodCam(std::shared_ptr<GLContext> ct, std::shared_ptr<WindowViewport> pv): _pContext(ct) {
     BroLogInfo("Creating Camera.");
     _pCamera = CameraNode::create(pv);
     _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
@@ -17,7 +19,7 @@ GodCam::GodCam(std::shared_ptr<GLContext> ct, std::shared_ptr<Viewport> pv): _pC
     _vCamNormal.normalize();
     _vLookAt.construct(0,0,0);
     updateCameraPosition();
-    ct->setCamera(_pCamera);
+    Gu::setCamera(_pCamera);
     _pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 GodCam::~GodCam() { 
@@ -137,7 +139,7 @@ void GodCam::doRotate(float dRot) {
 
     mat4 rot = mat4::getRotationRad(dRot, vec3(0, 1, 0));
 
-    vec3 origPos = _pContext->getCamera()->getPos();
+    vec3 origPos = Gu::getCamera()->getPos();
 
     vec4 mul =
         vec4(_vCamNormal.x,
@@ -152,11 +154,11 @@ void GodCam::doRotate(float dRot) {
 }
 void GodCam::doRotateZ(float dRot) {
 
-    vec3 rn = _pContext->getCamera()->getRightNormal();
+    vec3 rn = Gu::getCamera()->getRightNormal();
 
     mat4 rot = mat4::getRotationRad(dRot, rn);
 
-    vec3 origPos = _pContext->getCamera()->getPos();
+    vec3 origPos = Gu::getCamera()->getPos();
 
     vec4 mul =
         vec4(_vCamNormal.x,
@@ -200,26 +202,26 @@ void GodCam::moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta) {
     }
     float strafeAmt = fabsf(_fCamDist) / (BottleUtils::getNodeWidth() + damp) * factor * delta;
     std::function<void()> moveUp = [this, strafeAmt]() {
-        vec3 dir = Gu::getContext()->getCamera()->getViewNormal().xz().normalized();
+        vec3 dir = Gu::getCamera()->getViewNormal().xz().normalized();
         _vLookAt += dir * strafeAmt;
     };
     std::function<void()> moveDown = [this, strafeAmt]() {
-        vec3 dir = Gu::getContext()->getCamera()->getViewNormal().xz().normalized();
+        vec3 dir = Gu::getCamera()->getViewNormal().xz().normalized();
         _vLookAt += dir * -strafeAmt;
     };
     std::function<void()> moveLeft = [this, strafeAmt]() {
-        vec3 dir = Gu::getContext()->getCamera()->getRightNormal();
+        vec3 dir = Gu::getCamera()->getRightNormal();
         _vLookAt += dir * -strafeAmt;
     };
     std::function<void()> moveRight = [this, strafeAmt]() {
-        vec3 dir = Gu::getContext()->getCamera()->getRightNormal();
+        vec3 dir = Gu::getCamera()->getRightNormal();
         _vLookAt += dir * strafeAmt;
     };
 
     //Mouse scroll
     float amt = 0.03f;
-    float vw = (float)Gu::getContext()->getCamera()->getViewport()->getWidth();
-    float vh = (float)Gu::getContext()->getCamera()->getViewport()->getHeight();
+    float vw = (float)Gu::getCamera()->getViewport()->getWidth();
+    float vh = (float)Gu::getCamera()->getViewport()->getHeight();
     float wa = vw * amt;
     float ha = vh  * amt;
 
@@ -258,7 +260,7 @@ void GodCam::setTarget(vec3& v){
     updateCameraPosition();
 }
 void GodCam::setActive() {
-    _pContext->setCamera(_pCamera);
+    Gu::setCamera(_pCamera);
 }
 
 

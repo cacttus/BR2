@@ -5,6 +5,7 @@
 /bin/data/cache/
 /bin/data/mbi/
 /bin/bottle_x64_d.exe
+/external/nanogui/
 *.ilk
 /bin/bottle_x64_r.exe
 *.iobj

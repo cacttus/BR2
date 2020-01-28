@@ -3,11 +3,11 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/GLContext.h"
-#include "../base/AppBase.h"
+#include "../app/AppMain.h"
 #include "../base/PoundFile.h"
 #include "../base/Img32.h"
 
-#include "../display/Atlas.h"
+#include "../gfx/Atlas.h"
 
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/ObFile.h"

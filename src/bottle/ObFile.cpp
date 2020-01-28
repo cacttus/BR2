@@ -1,4 +1,4 @@
-#include "../base/AppBase.h"
+
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/GLContext.h"
@@ -6,9 +6,13 @@
 #include "../base/Hash.h"
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
+#include "../base/FileSystem.h"
+#include "../app/AppBase.h"
+
 #include "../model/MobFile.h"
 #include "../model/ModelCache.h"
 #include "../model/Model.h"
+
 #include "../bottle/ObFile.h"
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/WorldObj.h"
@@ -176,7 +180,7 @@ void ObFile::parseSprites(std::vector<t_string>& tokens) {
 
                 //Attempt to find absolute path.  If we can't find, then attempt to append path.
                 if (!FileSystem::fileExists(path)) {
-                    path = _pApp->makeAssetPath("spr", path);
+                    path = Gu::getApp()->makeAssetPath("spr", path);
                 }
                 if (FileSystem::fileExists(path)) {
 

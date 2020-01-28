@@ -1,15 +1,16 @@
+#include "../base/Logger.h"
 #include "../base/GLContext.h"
-#include "../display/CameraNode.h"
-#include "../display/GpuQuad3.h"
-#include "../display/QuadBufferMesh.h"
-#include "../display/Atlas.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/GpuQuad3.h"
+#include "../gfx/QuadBufferMesh.h"
+#include "../gfx/Atlas.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/TileMesh25.h"
 #include "../world/PhysicsGrid.h"
 #include "../world/PhysicsWorld.h"
-//
+
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/BottleUtils.h"
 

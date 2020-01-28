@@ -65,7 +65,7 @@ class GodCam : public VirtualMemory {
     //void rotateAndZoomCamera(std::shared_ptr<Fingers> pFingers, float dt);
     void userRotateAndZoom(vec2& v, vec2& vMouse, vec2& vLast, float perUnitRotationRads, float perUnitZoom);
 public:
-    GodCam(std::shared_ptr<GLContext> pc, std::shared_ptr<Viewport> pv);
+    GodCam(std::shared_ptr<GLContext> pc, std::shared_ptr<WindowViewport> pv);
     virtual ~GodCam() override;
 
     void moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta);

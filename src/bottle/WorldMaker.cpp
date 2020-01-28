@@ -7,7 +7,7 @@
 #include "../bottle/World25.h"
 #include "../bottle/W25Config.h"
 #include "../bottle/WorldCellFile.h"
-#include "../bottle/BottleRoom.h"
+//#include "../bottle/BottleRoom.h"
 #include "../bottle/Lair.h"
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/Tile25Spec.h"
@@ -119,7 +119,6 @@ t_string WorldMaker::getWorldGridsDir(t_string strGameName, t_string strWorldNam
     }
     if (StringUtil::isEmpty(strWorldName)) {
         BroThrowException("World name was not selected.");
-
     }
 
     t_string ddir =

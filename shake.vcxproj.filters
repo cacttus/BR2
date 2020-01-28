@@ -28,6 +28,9 @@
     <Filter Include="ext\rapidjson">
       <UniqueIdentifier>{ef2e0bdc-785a-4da5-befb-c555ea9ebd22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="bottle">
+      <UniqueIdentifier>{77097d0a-e19c-4070-85f7-c5bcb4eaba69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\BaseHeader.h">
@@ -729,6 +732,84 @@
     <ClInclude Include="src\app\GraphicsWindow.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="src\bottle\BottleUtils.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Brain25.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\GameFile.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Goal25.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Goal25MoveTo.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Goal25Think.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\GodCam.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Lair.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\ObFile.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\SpriteBucket.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Tile25Spec.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\W25Config.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\W25GridMesh.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\W25MeshMaker.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WalkerSpec.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WipGrid.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\World25.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldCell.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldCellFile.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldEditor.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldEditState.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldGrid.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldMaker.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldObj.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\BlockNode.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\BottleHeader.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BinaryFile.cpp">
@@ -1264,6 +1345,81 @@
     </ClCompile>
     <ClCompile Include="src\app\GraphicsWindow.cpp">
       <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\BottleUtils.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Brain25.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\GameFile.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Goal25.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Goal25MoveTo.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Goal25Think.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\GodCam.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Lair.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\ObFile.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\SpriteBucket.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\Tile25Spec.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\W25Config.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\W25GridMesh.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\W25MeshMaker.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WalkerSpec.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WipGrid.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\World25.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldCell.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldCellFile.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldEditor.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldEditState.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldGrid.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldMaker.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\WorldObj.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\BlockNode.cpp">
+      <Filter>bottle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
