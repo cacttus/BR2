@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="example1.cpp" />
+    <ClCompile Include="sdlgui\button.cpp" />
+    <ClCompile Include="sdlgui\checkbox.cpp" />
+    <ClCompile Include="sdlgui\colorpicker.cpp" />
+    <ClCompile Include="sdlgui\colorwheel.cpp" />
+    <ClCompile Include="sdlgui\combobox.cpp" />
+    <ClCompile Include="sdlgui\common.cpp" />
+    <ClCompile Include="sdlgui\dropdownbox.cpp" />
+    <ClCompile Include="sdlgui\graph.cpp" />
+    <ClCompile Include="sdlgui\imagepanel.cpp" />
+    <ClCompile Include="sdlgui\imageview.cpp" />
+    <ClCompile Include="sdlgui\label.cpp" />
+    <ClCompile Include="sdlgui\layout.cpp" />
+    <ClCompile Include="sdlgui\loadimages.cpp" />
+    <ClCompile Include="sdlgui\messagedialog.cpp" />
+    <ClCompile Include="sdlgui\nanovg.c" />
+    <ClCompile Include="sdlgui\popup.cpp" />
+    <ClCompile Include="sdlgui\popupbutton.cpp" />
+    <ClCompile Include="sdlgui\progressbar.cpp" />
+    <ClCompile Include="sdlgui\resources.cpp" />
+    <ClCompile Include="sdlgui\screen.cpp" />
+    <ClCompile Include="sdlgui\slider.cpp" />
+    <ClCompile Include="sdlgui\stackedwidget.cpp" />
+    <ClCompile Include="sdlgui\switchbox.cpp" />
+    <ClCompile Include="sdlgui\tabheader.cpp" />
+    <ClCompile Include="sdlgui\tabwidget.cpp" />
+    <ClCompile Include="sdlgui\textbox.cpp" />
+    <ClCompile Include="sdlgui\theme.cpp" />
+    <ClCompile Include="sdlgui\vscrollpanel.cpp" />
+    <ClCompile Include="sdlgui\widget.cpp" />
+    <ClCompile Include="sdlgui\window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sdlgui\button.h" />
+    <ClInclude Include="sdlgui\checkbox.h" />
+    <ClInclude Include="sdlgui\colorpicker.h" />
+    <ClInclude Include="sdlgui\colorwheel.h" />
+    <ClInclude Include="sdlgui\combobox.h" />
+    <ClInclude Include="sdlgui\common.h" />
+    <ClInclude Include="sdlgui\dropdownbox.h" />
+    <ClInclude Include="sdlgui\entypo.h" />
+    <ClInclude Include="sdlgui\fontstash.h" />
+    <ClInclude Include="sdlgui\formhelper.h" />
+    <ClInclude Include="sdlgui\graph.h" />
+    <ClInclude Include="sdlgui\imagepanel.h" />
+    <ClInclude Include="sdlgui\imageview.h" />
+    <ClInclude Include="sdlgui\label.h" />
+    <ClInclude Include="sdlgui\layout.h" />
+    <ClInclude Include="sdlgui\messagedialog.h" />
+    <ClInclude Include="sdlgui\nanort.h" />
+    <ClInclude Include="sdlgui\nanovg.h" />
+    <ClInclude Include="sdlgui\nanovg_rt.h" />
+    <ClInclude Include="sdlgui\popup.h" />
+    <ClInclude Include="sdlgui\popupbutton.h" />
+    <ClInclude Include="sdlgui\progressbar.h" />
+    <ClInclude Include="sdlgui\resources.h" />
+    <ClInclude Include="sdlgui\screen.h" />
+    <ClInclude Include="sdlgui\sdlguii.h" />
+    <ClInclude Include="sdlgui\slider.h" />
+    <ClInclude Include="sdlgui\stackedwidget.h" />
+    <ClInclude Include="sdlgui\stb_image.h" />
+    <ClInclude Include="sdlgui\stb_truetype.h" />
+    <ClInclude Include="sdlgui\switchbox.h" />
+    <ClInclude Include="sdlgui\tabheader.h" />
+    <ClInclude Include="sdlgui\tabwidget.h" />
+    <ClInclude Include="sdlgui\textbox.h" />
+    <ClInclude Include="sdlgui\theme.h" />
+    <ClInclude Include="sdlgui\toolbutton.h" />
+    <ClInclude Include="sdlgui\vscrollpanel.h" />
+    <ClInclude Include="sdlgui\widget.h" />
+    <ClInclude Include="sdlgui\window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sdlgui\darwin.mm" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{AC40A3F9-1921-4D2F-9907-9C18865DAD0D}</ProjectGuid>
+    <RootNamespace>nanoguisdl</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\..\nanogui_bin\</OutDir>
+    <IntDir>..\..\tmp\nanogui-sdl\</IntDir>
+    <TargetName>nanogui_sdl_x64d</TargetName>
+    <IncludePath>.\;..\SDL2_image;..\SDL2_ttf;..\SDL2\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\..\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2_x64d.lib;SDL2_ttf_x64d.lib;SDL2_image_x64d.lib;libfreetype_x64.lib;opengl32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

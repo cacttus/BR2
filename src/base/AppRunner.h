@@ -38,14 +38,14 @@ private:
     void exitApp(t_string error, int rc);
 
     void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
-    bool argMatch(std::vector<t_string>& args,t_string arg, int32_t iCount);
-    bool runCommands(std::vector<t_string>& args);
+    bool argMatch(const std::vector<t_string>& args,t_string arg, int32_t iCount);
+    bool runCommands(const std::vector<t_string>& args);
     void printVideoDiagnostics();
     void updateWindowHandleForGamehost();
     void attachToGameHost();
     bool handleSDLEvents();
 public:
-    void runApp(std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
+    void runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
 };
 
 

@@ -60,7 +60,7 @@ t_string StringUtil::createStringFromChars(char* c1, ...)
     return str;
 }
 // - Returns the Lowercase.
-t_string StringUtil::uppercase(t_string in) {
+t_string StringUtil::uppercase(const t_string in) {
     t_string out = "";
     for (size_t n = 0; n < in.length(); ++n) {
         out += toupper(in[n]);
@@ -69,7 +69,7 @@ t_string StringUtil::uppercase(t_string in) {
     return out;
 }
 // - Returns the Lowercase.
-t_string StringUtil::lowercase(t_string in) {
+t_string StringUtil::lowercase(const t_string in) {
     t_string str2(in);
     std::transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
     return str2;

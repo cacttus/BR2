@@ -70,7 +70,7 @@ FORCE_INLINE Quad3x<Tx>::Quad3x(vec2& vTopLeft, vec2& vBottomRight)
 template < class Tx >
 FORCE_INLINE t_string Quad3x<Tx>::toString()
 {
-    return TStr("{", p0().toString(), "},{", p1().toString(), "},{", p2().toString(), "},{", p3().toString(), "}")
+  return Stz "{"+ p0().toString() + "},{" + p1().toString() + "},{" + p2().toString() + "},{" + p3().toString() + "}";
 }
 
 

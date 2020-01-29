@@ -1,0 +1,20 @@
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LIBJPEG-9.DLL
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\libjpeg-9.dll C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LIBPNG16-16.DLL
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\libpng16-16.dll C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LIBTIFF-5.DLL
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\libtiff-5.dll C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LIBWEBP-7.DLL
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\libwebp-7.dll C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LICENSE.JPEG.TXT
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\LICENSE.jpeg.txt C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LICENSE.PNG.TXT
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\LICENSE.png.txt C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LICENSE.TIFF.TXT
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\LICENSE.tiff.txt C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LICENSE.WEBP.TXT
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\LICENSE.webp.txt C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\LICENSE.ZLIB.TXT
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\LICENSE.zlib.txt C:\git\shake\\x64\Debug\
+^C:\GIT\SHAKE\EXTERNAL\SDL2_IMAGE\VISUALC\EXTERNAL\LIB\X64\ZLIB1.DLL
+copy C:\git\shake\external\SDL2_image\VisualC\external\lib\x64\zlib1.dll C:\git\shake\\x64\Debug\

@@ -87,32 +87,6 @@
     <ClInclude Include="src\base\TypeCast.h" />
     <ClInclude Include="src\base\TypeConv.h" />
     <ClInclude Include="src\base\XmlFile.h" />
-    <ClInclude Include="src\bottle\BlockNode.h" />
-    <ClInclude Include="src\bottle\BottleHeader.h" />
-    <ClInclude Include="src\bottle\BottleUtils.h" />
-    <ClInclude Include="src\bottle\Brain25.h" />
-    <ClInclude Include="src\bottle\GameFile.h" />
-    <ClInclude Include="src\bottle\Goal25.h" />
-    <ClInclude Include="src\bottle\Goal25MoveTo.h" />
-    <ClInclude Include="src\bottle\Goal25Think.h" />
-    <ClInclude Include="src\bottle\GodCam.h" />
-    <ClInclude Include="src\bottle\Lair.h" />
-    <ClInclude Include="src\bottle\ObFile.h" />
-    <ClInclude Include="src\bottle\SpriteBucket.h" />
-    <ClInclude Include="src\bottle\Tile25Spec.h" />
-    <ClInclude Include="src\bottle\W25Config.h" />
-    <ClInclude Include="src\bottle\W25GridMesh.h" />
-    <ClInclude Include="src\bottle\W25MeshMaker.h" />
-    <ClInclude Include="src\bottle\WalkerSpec.h" />
-    <ClInclude Include="src\bottle\WipGrid.h" />
-    <ClInclude Include="src\bottle\World25.h" />
-    <ClInclude Include="src\bottle\WorldCell.h" />
-    <ClInclude Include="src\bottle\WorldCellFile.h" />
-    <ClInclude Include="src\bottle\WorldEditor.h" />
-    <ClInclude Include="src\bottle\WorldEditState.h" />
-    <ClInclude Include="src\bottle\WorldGrid.h" />
-    <ClInclude Include="src\bottle\WorldMaker.h" />
-    <ClInclude Include="src\bottle\WorldObj.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />
@@ -340,31 +314,6 @@
     <ClCompile Include="src\base\TreeNode.cpp" />
     <ClCompile Include="src\base\TypeConv.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
-    <ClCompile Include="src\bottle\BlockNode.cpp" />
-    <ClCompile Include="src\bottle\BottleUtils.cpp" />
-    <ClCompile Include="src\bottle\Brain25.cpp" />
-    <ClCompile Include="src\bottle\GameFile.cpp" />
-    <ClCompile Include="src\bottle\Goal25.cpp" />
-    <ClCompile Include="src\bottle\Goal25MoveTo.cpp" />
-    <ClCompile Include="src\bottle\Goal25Think.cpp" />
-    <ClCompile Include="src\bottle\GodCam.cpp" />
-    <ClCompile Include="src\bottle\Lair.cpp" />
-    <ClCompile Include="src\bottle\ObFile.cpp" />
-    <ClCompile Include="src\bottle\SpriteBucket.cpp" />
-    <ClCompile Include="src\bottle\Tile25Spec.cpp" />
-    <ClCompile Include="src\bottle\W25Config.cpp" />
-    <ClCompile Include="src\bottle\W25GridMesh.cpp" />
-    <ClCompile Include="src\bottle\W25MeshMaker.cpp" />
-    <ClCompile Include="src\bottle\WalkerSpec.cpp" />
-    <ClCompile Include="src\bottle\WipGrid.cpp" />
-    <ClCompile Include="src\bottle\World25.cpp" />
-    <ClCompile Include="src\bottle\WorldCell.cpp" />
-    <ClCompile Include="src\bottle\WorldCellFile.cpp" />
-    <ClCompile Include="src\bottle\WorldEditor.cpp" />
-    <ClCompile Include="src\bottle\WorldEditState.cpp" />
-    <ClCompile Include="src\bottle\WorldGrid.cpp" />
-    <ClCompile Include="src\bottle\WorldMaker.cpp" />
-    <ClCompile Include="src\bottle\WorldObj.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
@@ -552,7 +501,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\bin\</OutDir>
-    <TargetName>shake_x64_d</TargetName>
+    <TargetName>shake_x64d</TargetName>
     <IncludePath>.\external\SDL2_net;.\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\debug64</IntDir>
     <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
@@ -606,7 +555,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2_d.lib;SDL2_Net_d.lib;opengl32.lib;vulkan-1.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_x64d.lib;SDL2_Net_x64d.lib;SDL2_ttf_x64d.lib;SDL2_image_x64d.lib;opengl32.lib;vulkan-1.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -1,0 +1,19 @@
+﻿  Ftxcmap.c
+  ftxerr18.c
+  Ftxgasp.c
+  Ftxkern.c
+  ftxpost.c
+  freetype.c
+C:\git\shake\external\freetype\lib\ttapi.c(826,53): warning C4244: '=': conversion from 'Long' to 'UShort', possible loss of data
+C:\git\shake\external\freetype\lib\ttapi.c(827,53): warning C4244: '=': conversion from 'Long' to 'UShort', possible loss of data
+C:\git\shake\external\freetype\lib\ttgload.c(784,24): warning C4018: '<': signed/unsigned mismatch
+C:\git\shake\external\freetype\lib\ttraster.c(915,22): warning C4244: '=': conversion from 'Long' to 'Short', possible loss of data
+C:\git\shake\external\freetype\lib\ttraster.c(2173,24): warning C4244: '=': conversion from 'Long' to 'Short', possible loss of data
+C:\git\shake\external\freetype\lib\ttraster.c(2174,38): warning C4244: '=': conversion from 'Long' to 'Short', possible loss of data
+C:\git\shake\external\freetype\lib\ttraster.c(2202,35): warning C4244: '=': conversion from 'Long' to 'UShort', possible loss of data
+C:\git\shake\external\freetype\lib\ttfile.c(688,3): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(208): message : see declaration of 'fopen'
+C:\git\shake\external\freetype\lib\ttfile.c(816,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(338): message : see declaration of 'strncpy'
+  Generating Code...
+  freetype.vcxproj -> C:\git\shake\external\freetype\lib\arch\win32\.\Debug\freetype.lib

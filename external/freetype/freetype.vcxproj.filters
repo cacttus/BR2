@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lib">
+      <UniqueIdentifier>{3cd160ce-b757-4e7d-8dfd-925a0b7685ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\arch">
+      <UniqueIdentifier>{fa3be838-2673-4e94-9d8e-a931214c6952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\arch\win32">
+      <UniqueIdentifier>{dcd39333-b139-4909-b2ae-a7a03b42a8a7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\ttcmap.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttdebug.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttextend.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttfile.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttgload.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttinterp.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttload.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttmemory.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttmutex.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttobjs.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttraster.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttapi.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttcache.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\ttcalc.c">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\freetype.c">
+      <Filter>lib\arch\win32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\ttcmap.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttconfig.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttdebug.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttengine.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttextend.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttfile.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttgload.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttinterp.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttload.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttmemory.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttmutex.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttobjs.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttraster.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\tttables.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\tttags.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\tttypes.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\freetype.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\fterrid.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ftnameid.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\header.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttcache.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ttcalc.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ft_conf.h">
+      <Filter>lib\arch\win32</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -17,7 +17,6 @@
 
 namespace Game {
 
-
 #ifdef __APPLE__
 #ifdef TARGET_OS_IPHONE
 #define BRO_OS_IPHONE 1
@@ -122,9 +121,9 @@ namespace FileWriteMode { typedef enum { Truncate, Append }e; }
 namespace LoadState { typedef enum { NotLoaded, Loaded, LoadFailed } e; }
 namespace KeyMod {
 typedef enum {
-    None = 0x00,
-    Shift = 0x01, Alt = 0x02, Ctrl = 0x04,
-    ShiftDontCare = 0x08, AltDontCare = 0x10, CtrlDontCare = 0x20
+  None = 0x00,
+  Shift = 0x01, Alt = 0x02, Ctrl = 0x04,
+  ShiftDontCare = 0x08, AltDontCare = 0x10, CtrlDontCare = 0x20
 } e;
 }
 namespace RenderSystem { typedef enum { OpenGL, Vulkan } e; }
@@ -136,7 +135,7 @@ class SoundInst;
 class Sequence;
 class Sequencer;
 class AppBase;
-class _NoInheritClassBase { };
+class _NoInheritClassBase {};
 class Logger;
 class Texture2DSpec;
 class GLContext;
@@ -194,8 +193,8 @@ class FrameSync;
 */
 class GameMemory : DOES_NOT_INHERIT {
 public:
-    NOT_VIRTUAL ~GameMemory() DOES_NOT_OVERRIDE {} // Upon tests - this also will get called when the class is deleted.
-    GameMemory() {}
+  NOT_VIRTUAL ~GameMemory() DOES_NOT_OVERRIDE {} // Upon tests - this also will get called when the class is deleted.
+  GameMemory() {}
 };
 
 /**
@@ -206,50 +205,51 @@ public:
 */
 class VirtualMemory : public GameMemory {
 public:
-    VirtualMemory() {
-    }
-    virtual ~VirtualMemory() DOES_NOT_OVERRIDE {
-    }
+  VirtualMemory() {
+  }
+  virtual ~VirtualMemory() DOES_NOT_OVERRIDE {
+  }
 };
 template < class Tx >
 class VirtualMemoryShared : public std::enable_shared_from_this<Tx> {
 public:
-    VirtualMemoryShared() {
-    }
-    virtual ~VirtualMemoryShared() DOES_NOT_OVERRIDE {
+  VirtualMemoryShared() {
+  }
+  virtual ~VirtualMemoryShared() DOES_NOT_OVERRIDE {
 
-    }
-    template<class Tx> std::shared_ptr<Tx> getThis() { return std::dynamic_pointer_cast<Tx>(shared_from_this()); }
-
+  }
+  template<class Tx> std::shared_ptr<Tx> getThis() {
+    return std::dynamic_pointer_cast<Tx>(this->shared_from_this());
+  }
 };
 class OperatingSystemMemory : DOES_NOT_INHERIT {
 public:
-    OperatingSystemMemory() {
-    }
-    VIRTUAL ~OperatingSystemMemory() DOES_NOT_OVERRIDE {
-    }
+  OperatingSystemMemory() {
+  }
+  VIRTUAL ~OperatingSystemMemory() DOES_NOT_OVERRIDE {
+  }
 };
 class GameMemoryManager : DOES_NOT_INHERIT {
 public:
-    static void* allocBlock(size_t newSize) {
-        char* block = new char[newSize];
-        return (void*)block;
-    }
-    static void freeBlock(void* m) {
-        delete[] m;
-    }
+  static void* allocBlock(size_t newSize) {
+    char* block = new char[newSize];
+    return (void*)block;
+  }
+  static void freeBlock(void* m) {
+    delete[] m;
+  }
 };
 
 class RenderParams;
 //Goes here becauwse TreeNode inherits it.
 class Drawable : public VirtualMemoryShared<Drawable> {
 public:
-    virtual void drawDeferred(RenderParams& rp) = 0;
-    virtual void drawForward(RenderParams& rp) = 0;
-    virtual void drawShadow(RenderParams& rp) = 0;
-    virtual void drawDebug(RenderParams& rp) = 0;
-    virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
-    virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
+  virtual void drawDeferred(RenderParams& rp) = 0;
+  virtual void drawForward(RenderParams& rp) = 0;
+  virtual void drawShadow(RenderParams& rp) = 0;
+  virtual void drawDebug(RenderParams& rp) = 0;
+  virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
+  virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
 };
 
 #define ShowMessageBoxOnce(msg) { \

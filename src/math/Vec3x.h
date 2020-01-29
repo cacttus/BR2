@@ -179,7 +179,6 @@ public:
     FORCE_INLINE STATIC void reflect(const Vec3x<Tx>& v, const Vec3x<Tx>& n, Vec3x<Tx>& __out_ v_r);
 
    
-    void checkNormalOrThrowDbg(); //Throw if the number is not normal (DEBUG ONLY)
     void checkNormalOrZero(); // Set number to zero if it is not normal (component-wise)
     void checkNormalOrZeroAndLimitVector(float fMaxVectorLength, bool bShowWarningMessage); // formats the number to zero if it is not normal, also truncates the vector if it's too long. 
     bool isNormalFloat(); //throw if the number is not normal
@@ -799,14 +798,6 @@ template < typename Tx >
 void Vec3x<Tx>::reflect(const Vec3x<Tx>& v, const Vec3x<Tx>& n, Vec3x<Tx>& __out_ v_r)
 {
     v_r = v - ( n * n.dot(v) ) * 2.0f;
-}
-template < typename Tx >
-void Vec3x<Tx>::checkNormalOrThrowDbg()
-{
-    //Make sure the number is a normal FP number
-#ifdef _DEBUG
-    checkNormalOrThrow();
-#endif
 }
 template < typename Tx >
 void Vec3x<Tx>::checkNormalOrZero()

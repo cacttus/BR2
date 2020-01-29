@@ -1,0 +1,55 @@
+﻿  Copying libjpeg-9.dll
+          1 file(s) copied.
+  Copying libpng16-16.dll
+          1 file(s) copied.
+  Copying libtiff-5.dll
+          1 file(s) copied.
+  Copying libwebp-7.dll
+          1 file(s) copied.
+  Copying LICENSE.jpeg.txt
+          1 file(s) copied.
+  Copying LICENSE.png.txt
+          1 file(s) copied.
+  Copying LICENSE.tiff.txt
+          1 file(s) copied.
+  Copying LICENSE.webp.txt
+          1 file(s) copied.
+  Copying LICENSE.zlib.txt
+          1 file(s) copied.
+  Copying zlib1.dll
+          1 file(s) copied.
+cl : command line warning D9002: ignoring unknown option '/arch:SSE'
+  IMG.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_bmp.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_gif.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_jpg.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_lbm.c
+C:\git\shake\external\SDL2_image\IMG_lbm.c(33,10): fatal error C1083: Cannot open include file: 'SDL_endian.h': No such file or directory
+  IMG_pcx.c
+C:\git\shake\external\SDL2_image\IMG_pcx.c(36,10): fatal error C1083: Cannot open include file: 'SDL_endian.h': No such file or directory
+  IMG_png.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_pnm.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_svg.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_tga.c
+C:\git\shake\external\SDL2_image\IMG_tga.c(26,10): fatal error C1083: Cannot open include file: 'SDL_endian.h': No such file or directory
+  IMG_tif.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_webp.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_WIC.c
+  IMG_xcf.c
+C:\git\shake\external\SDL2_image\IMG_xcf.c(24,10): fatal error C1083: Cannot open include file: 'SDL_endian.h': No such file or directory
+  IMG_xpm.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_xv.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  IMG_xxx.c
+C:\git\shake\external\SDL2_image\SDL_image.h(27,10): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+  Generating Code...
