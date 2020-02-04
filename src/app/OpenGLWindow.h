@@ -22,9 +22,6 @@ namespace Game {
 */
 class OpenGLWindow : public GraphicsWindow {
   //  std::shared_ptr<GLContext> _pContext = nullptr;
-
-    
-
 protected:
     virtual void getDrawableSize(int* w, int* h) override;
     virtual void makeCurrent() override;
@@ -35,7 +32,6 @@ public:
 
     OpenGLWindow(bool is_main = false);
     virtual ~OpenGLWindow() override;
-
 };
 
 }//ns Game

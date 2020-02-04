@@ -7,12 +7,12 @@
 <StartFullscreen value="false"/>
 <DefaultScreenWidth value="800"/>
 <DefaultScreenHeight value="600"/>
+<ForceAspectRatio value="false"/>
 <EnableRuntimeErrorChecking value="true"/>
 <EnableFileLog value="true"/>
 <EnableConsoleLog value="true"/>
 <GameHostTimeoutMs value="5000"/>
 <GameHostPort value="50209"/>
-<ForceAspectRatio value="true"/>
 <GpuDeviceName value="default"/>
 <DefaultFieldOfView value="60"/>
 <ColorSpace value="Linear"/>

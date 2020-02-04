@@ -1,0 +1,5 @@
+Bitmask of Pushed, Focus, and Enabled textures. Render all of them, blended
+for each combination of bitmasks, they create a new texture that has all of them rendered.
+When the texture isn't rendered, call texture->perform, which performs the texture render
+
+theme is just a struct of borders.

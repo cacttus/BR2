@@ -28,6 +28,9 @@
     <Filter Include="ext\rapidjson">
       <UniqueIdentifier>{ef2e0bdc-785a-4da5-befb-c555ea9ebd22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{65abf7ed-5c6b-49fe-9ec4-69eba8d06c75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\BaseHeader.h">
@@ -729,6 +732,18 @@
     <ClInclude Include="src\app\GraphicsWindow.h">
       <Filter>app</Filter>
     </ClInclude>
+    <ClInclude Include="src\ui\UILabel.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\UIHeader.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\UIImage.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\Gui2d.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BinaryFile.cpp">
@@ -1264,6 +1279,18 @@
     </ClCompile>
     <ClCompile Include="src\app\GraphicsWindow.cpp">
       <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UILabel.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIHeader.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIImage.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\Gui2d.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

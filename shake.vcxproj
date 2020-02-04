@@ -244,6 +244,10 @@
     <ClInclude Include="src\model\VertexAdjacencyMap.h" />
     <ClInclude Include="src\model\VertexFormat.h" />
     <ClInclude Include="src\model\VertexTypes.h" />
+    <ClInclude Include="src\ui\Gui2d.h" />
+    <ClInclude Include="src\ui\UIHeader.h" />
+    <ClInclude Include="src\ui\UIImage.h" />
+    <ClInclude Include="src\ui\UILabel.h" />
     <ClInclude Include="src\world\Manifold.h" />
     <ClInclude Include="src\world\PhysicsGrid.h" />
     <ClInclude Include="src\world\PhysicsGridAwareness.h" />
@@ -425,6 +429,10 @@
     <ClCompile Include="src\model\VertexAdjacencyMap.cpp" />
     <ClCompile Include="src\model\VertexFormat.cpp" />
     <ClCompile Include="src\model\VertexTypes.cpp" />
+    <ClCompile Include="src\ui\Gui2d.cpp" />
+    <ClCompile Include="src\ui\UIHeader.cpp" />
+    <ClCompile Include="src\ui\UIImage.cpp" />
+    <ClCompile Include="src\ui\UILabel.cpp" />
     <ClCompile Include="src\world\Manifold.cpp" />
     <ClCompile Include="src\world\PhysicsGrid.cpp" />
     <ClCompile Include="src\world\PhysicsGridAwareness.cpp" />
