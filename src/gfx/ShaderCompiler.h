@@ -2,7 +2,7 @@
 *
 *    @file ShaderParser.h
 *    @date May 5, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

@@ -2,7 +2,7 @@
 *
 *    @file Party.h
 *    @date December 21, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *
@@ -37,7 +37,7 @@ public:
 *    @brief
 *
 */
-class Party : public VirtualMemory {
+class ParticleManager : public VirtualMemory {
 
 private:
     //const int _ciMaxParticles = 1024;
@@ -52,8 +52,8 @@ private:
     void reset();
 public:
 
-    Party(std::shared_ptr<GLContext> pContext);
-    virtual ~Party() override;
+    ParticleManager(std::shared_ptr<GLContext> pContext);
+    virtual ~ParticleManager() override;
     void init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles);
     void make(vec3& pos, int count, Hash32 mat, 
         float minSpeed, float maxSpeed,

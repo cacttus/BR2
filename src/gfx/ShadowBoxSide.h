@@ -2,7 +2,7 @@
 *
 *    @file ShadowFrustumSide.h
 *    @date April 28, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016 
 *

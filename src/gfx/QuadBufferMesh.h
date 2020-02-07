@@ -2,7 +2,7 @@
 *
 *    @file QuadBufferMesh.h
 *    @date March 9, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

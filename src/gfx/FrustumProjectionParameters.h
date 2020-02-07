@@ -2,7 +2,7 @@
 *
 *    @file FrustumProjectionParameters.h
 *    @date December 5, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

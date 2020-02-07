@@ -2,7 +2,7 @@
 *
 *    @file DisplayHeader.h
 *    @date 7/18/2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *
@@ -72,15 +72,17 @@ namespace ProjectionMode { typedef enum {Perspective, Orthographic}e; }
 namespace TexWrap { typedef enum { Clamp, Repeat } e; }
 namespace TexFilter { typedef enum { Linear, Nearest } e; }
 namespace PipeBit { typedef enum { 
-    Deferred, 
-    Shadow, 
-    Forward, 
-    Debug,
-    NonDepth,
-    Transparent,
-    BlitFinal,
-    Full,
-    MaxPipes } e; }
+    Deferred,     // 1 Basic 3D lighted rendering
+    Shadow,       // 2 Shadow step
+    Forward,      // 3 Forward Rendering
+    Debug,        // 4 Debug rendering
+    NonDepth,     // 5 2D rendering, behind the UI
+    UI_Overlay,   // 6 The UI
+    Transparent,  // 7 Transparency Pass
+    BlitFinal,    // 8 Use this to blit to the screen, otherwise, the rendering stays offscreen.
+    DepthOfField, // 9 Depth of Field.
+    MaxPipes 
+} e; }
 
 // - tells us how to orient the camera to destination positions based
 // on the state of the  chraacter.
@@ -212,12 +214,12 @@ typedef enum {
  class FboShader;
  class FramebufferForward;
  class ScreenQuadMesh;
- class Party;
+ class ParticleManager;
  class Atlas;
  class AtlasSprite;
  class FrustumProjectionParameters;
  class PointLight;
- class Party;
+ class ParticleManager;
  class Particle;
  class DeferredFramebuffer;
  class FontTextBuffer;
@@ -240,7 +242,7 @@ typedef enum {
  class GLContext;
  class HappySky;
  class UiElement;
- class Gui2d;
+ class UIManager;
  class SpriteBucket;
  class SpriteSpec;
  class SpriteFrame;
@@ -305,7 +307,8 @@ typedef enum {
  class UiVScrollbarThumb;
  class UiWindow;
  class UiCursor;
- class Gui2d;
+ class UiScreen;
+ class UIManager;
 
  class MegaTex;
  class MtNode;

@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Gu.h"
 
 #include "../math/Box2x.h"
@@ -47,19 +47,19 @@ std::string Orientation::toString(Orientation::e eOr) {
     return "Invalid Enum!";
 }
 //////////////////////////////////////////////////////////////////////////
-void UiDragInfo::update(std::shared_ptr<Fingers> pFingers) {
-    float mw = 1.0f / Gui2d::getDesignMultiplierW();
-    float mh = 1.0f / Gui2d::getDesignMultiplierH();
+void UiDragInfo::update(std::shared_ptr<InputManager> pInput) {
+    float mw = 1.0f / UIManager::getDesignMultiplierW();
+    float mh = 1.0f / UIManager::getDesignMultiplierH();
 
     if (_bDragStart) {
-        if (pFingers->getLmbState() == ButtonState::e::Up) {
+        if (pInput->getLmbState() == ButtonState::e::Up) {
             //Avoid sticking
             _bDrag = false;
             _bDragStart = false;
         }
         else {
             //Check for mouse delta to prevent unnecessary updates.
-            vec2 dp = pFingers->getMousePos() - _vDragStart;
+            vec2 dp = pInput->getMousePos() - _vDragStart;
             if (MathUtils::fuzzyEquals(dp.x, 0.0f) == false || MathUtils::fuzzyEquals(dp.y, 0.0f) == false) {
                 _bDrag = true;
             }
@@ -74,7 +74,7 @@ void UiDragInfo::update(std::shared_ptr<Fingers> pFingers) {
                 _func(dp);
 
                 //Reset drag start
-                _vDragStart = pFingers->getMousePos();
+                _vDragStart = pInput->getMousePos();
             }
         }
     }
@@ -129,7 +129,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
     //    return DimUnit::e::Initial;
     //}
     else {
-        Gui2d::error( Stz "Invalid layout unit " + str);
+        UIManager::error( Stz "Invalid layout unit " + str);
         bSuccess = false;
         return UiDimUnit::e::Pixel;
     }
@@ -137,7 +137,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
 //////////////////////////////////////////////////////////////////////////
 uDim::uDim(char* str) : uDim(std::string(str)) {
     if (str == 0) {
-        Gui2d::error("Passed 0 in for a char* string to uDim");
+        UIManager::error("Passed 0 in for a char* string to uDim");
     }
 }
 uDim::uDim(std::string str) {
@@ -191,13 +191,13 @@ void uDim::setSize(std::string str) {
     float fs;
     if (UiParser::parseSize(str, fs, eunit)) {
         if (eunit == UiDimUnit::e::Percent && ((fs < 0) || (fs > 100))) {
-            Gui2d::error( Stz "Dim %units were not within 0/100" + fs);
+            UIManager::error( Stz "Dim %units were not within 0/100" + fs);
         }
         _units = fs;
         _eDimUnit = eunit;
     }
     else {
-        Gui2d::error("Failed to parse seize.");
+        UIManager::error("Failed to parse seize.");
     }
 
     debugThunk();
@@ -216,7 +216,7 @@ uDim uDim::autoHeight(std::shared_ptr<UiTex> tex) {
         }
     }
     else {
-        Gui2d::error("Tried to auto-height a non-pixel udim");
+        UIManager::error("Tried to auto-height a non-pixel udim");
     }
     return uDim(1.0f, UiDimUnit::e::Pixel);
 }
@@ -231,7 +231,7 @@ uDim uDim::autoWidth(std::shared_ptr<UiTex> tex) {
         }
     }
     else {
-        Gui2d::error("Tried to auto-height a non-pixel udim");
+        UIManager::error("Tried to auto-height a non-pixel udim");
     }
     return uDim(1.0f, UiDimUnit::e::Pixel);
 }

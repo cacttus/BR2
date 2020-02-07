@@ -2,7 +2,7 @@
 *
 *    @file Framebuffer2.h
 *    @date May 5, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *
@@ -29,7 +29,25 @@ public:
 *
 */
 class RenderPipe : public VirtualMemory  {
-    typedef std::bitset<8> PipeBits;
+public:
+  typedef std::bitset<16> PipeBits;
+
+  //std::bitset<8> & getPipeBits() { return _pipeBits; }
+
+  void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);
+  std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
+  void renderSceneTexture(PipeBits _pipeBits);
+  void renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared_ptr<Drawable> toDraw, PipeBits pipeBits);
+  void resizeScreenBuffers(int32_t   w, int32_t h);
+
+  std::shared_ptr<Img32> getResultAsImage();
+
+  const vec4& getClear();
+  void setClear(vec4& v);
+
+  RenderPipe(std::shared_ptr<GraphicsWindow> w);
+  virtual ~RenderPipe() override;
+
 protected:
     bool _bMsaaEnabled = false;
     uint32_t _nMsaaSamples = 0;
@@ -58,8 +76,8 @@ protected:
 
     vec4 _vClear;
 
-    PipeBit::e _ePipeBit = PipeBit::e::Full;
-    std::bitset<8> _pipeBits;
+    //PipeBit::e _ePipeBit = PipeBit::e::Full;
+    //std::bitset<8> _pipeBits;
 
     std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
 
@@ -89,22 +107,6 @@ protected:
     void postProcessDOF();
     void postProcessDeferredRender();
     void enableDisablePipeBits();
-public:
-    RenderPipe(std::shared_ptr<GraphicsWindow> w);
-    virtual ~RenderPipe() override;
-
-    std::bitset<8> & getPipeBits() { return _pipeBits; }
-
-    void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);
-    std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
-    void renderSceneTexture(PipeBits _pipeBits);
-    void renderScene(std::shared_ptr<Drawable> toDraw);
-    void resizeScreenBuffers(int32_t w, int32_t h);
-
-    std::shared_ptr<Img32> getResultAsImage();
-
-    const vec4& getClear();
-    void setClear(vec4& v);
 };
 
 

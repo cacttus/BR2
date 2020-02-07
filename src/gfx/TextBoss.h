@@ -5,7 +5,7 @@
 //    Interface class that allows the drawing
 //    of text to the screen.
 //
-//    Derek Page Dec 3, 2007
+//    MetalMario971 Dec 3, 2007
 //
 //    edit: 8 / 9 / 08
 //    edit: 8 / 14 / 08 - added the integer and float draws

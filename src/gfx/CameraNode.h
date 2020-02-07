@@ -1,6 +1,6 @@
 /**
 *    @file BaseCamera.h
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *    @date january 2010

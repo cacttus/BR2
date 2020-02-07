@@ -2,7 +2,7 @@
 *
 *    @file FlyCam.h
 *    @date April 17, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *
@@ -39,14 +39,14 @@ class FlyCam : public VirtualMemory {
 
     void rotateCameraNormal(float rotX, float rotY);
     void updateCameraPosition();
-    void updateRotate(std::shared_ptr<Fingers> pFingers);
+    void updateRotate(std::shared_ptr<InputManager> pInput);
 public:
     FlyCam(std::shared_ptr<WindowViewport> pv);
     virtual ~FlyCam() override;
 
-    void moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta);
+    void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
     void userZoom(float amt);
-    void update(std::shared_ptr<Fingers> pFingers, float dt);
+    void update(std::shared_ptr<InputManager> pInput, float dt);
     void setActive();
 
     void setPosAndLookAt(vec3&& pos, vec3&& lookat);

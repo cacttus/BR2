@@ -2,7 +2,7 @@
 *
 *    @file Picker.h
 *    @date December 27, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *
@@ -50,7 +50,7 @@ public:
     Picker(std::shared_ptr<GLContext> pc);
     virtual ~Picker() override;
     uint32_t getSelectedPixelId() { return _uiLastSelectedPixelId; }
-    void update(std::shared_ptr<Fingers> pFingers);
+    void update(std::shared_ptr<InputManager> pInput);
     uint32_t genPickId();
 };
 

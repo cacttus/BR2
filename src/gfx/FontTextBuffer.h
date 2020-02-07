@@ -2,7 +2,7 @@
 *
 *    @file FontTextBuffer.h
 *    @date September 28, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014
 *    06 30 2016 added scale to fix font systme

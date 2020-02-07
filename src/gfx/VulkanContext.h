@@ -2,7 +2,7 @@
 *
 *    @file VulkanContext.h
 *    @date August 10, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

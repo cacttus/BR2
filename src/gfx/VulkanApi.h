@@ -2,7 +2,7 @@
 *
 *    @file VulkanApi.h
 *    @date August 6, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *
@@ -66,7 +66,7 @@ public:
     virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) override;
     virtual void cleanup() override;
 
-    virtual void createRenderer() {}
+
 
     VulkanApi();
     virtual ~VulkanApi() override;

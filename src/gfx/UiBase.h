@@ -2,7 +2,7 @@
 *
 *    @file UiBase.h
 *    @date February 17, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *
@@ -37,7 +37,7 @@ public:
     //vec2 _vPosStartPx;
     // Box2f _b2StartBox;//Computed box (design space) of starting position
     DragFunc _func;
-    void update(std::shared_ptr<Fingers> pFingers);
+    void update(std::shared_ptr<InputManager> pInput);
 };
 class UiParser {
 public:

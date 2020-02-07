@@ -2,7 +2,7 @@
 *
 *    @file RenderSettings.h
 *    @date February 23, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

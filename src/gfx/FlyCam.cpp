@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 
@@ -16,7 +16,7 @@ FlyCam::FlyCam(std::shared_ptr<WindowViewport> pv) : _pViewport(pv) {
     _pCamera = CameraNode::create(pv);
     _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
     updateCameraPosition();
-    Gu::setCamera(_pCamera);
+   // Gu::setCamera(_pCamera);
     _vMoveVel.construct(0,0,0);
     _pCamera->setPos(vec3(30,30,30));
     _pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
@@ -38,12 +38,12 @@ void FlyCam::updateCameraPosition(){
     _pCamera->setPos(std::move(_vCamPos));
     _pCamera->setLookAt(std::move(vLookat));
 }
-void FlyCam::moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta){
+void FlyCam::moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta){
     //Damp Slows us a bit when we zoom out.
    // float damp = fabsf(_fCamDist)*0.001f;
     float strafeAmt = 1.05; //fabsf(_fCamDist) / (CongaUtils::getNodeWidth() + damp) * factor;
 
-    if (pFingers->shiftHeld()) {
+    if (pInput->shiftHeld()) {
         strafeAmt = 2.1f;
     }
 
@@ -51,16 +51,16 @@ void FlyCam::moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta){
     strafeAmt *= delta;
     vec3 vel(0,0,0);
 
-    if (pFingers->keyPressOrDown(SDL_SCANCODE_W)) {
+    if (pInput->keyPressOrDown(SDL_SCANCODE_W)) {
         vel += _pCamera->getViewNormal() * strafeAmt;
     }
-    if (pFingers->keyPressOrDown(SDL_SCANCODE_S)) {
+    if (pInput->keyPressOrDown(SDL_SCANCODE_S)) {
         vel += _pCamera->getViewNormal() * -strafeAmt;
     }
-    if (pFingers->keyPressOrDown(SDL_SCANCODE_A)) {
+    if (pInput->keyPressOrDown(SDL_SCANCODE_A)) {
         vel += _pCamera->getRightNormal() * -strafeAmt;
     }
-    if (pFingers->keyPressOrDown(SDL_SCANCODE_D)) {
+    if (pInput->keyPressOrDown(SDL_SCANCODE_D)) {
         vel += _pCamera->getRightNormal() * strafeAmt;
     }
     _vMoveVel += vel;
@@ -68,13 +68,13 @@ void FlyCam::moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta){
 }
 void FlyCam::userZoom(float amt){
 }
-void FlyCam::update(std::shared_ptr<Fingers> pFingers, float dt) {
+void FlyCam::update(std::shared_ptr<InputManager> pInput, float dt) {
     //Capture & u8pdate input
-    ButtonState::e eLmb = pFingers->getLmbState();
-    vec2 vLast = pFingers->getLastMousePos();
+    ButtonState::e eLmb = pInput->getLmbState();
+    vec2 vLast = pInput->getLastMousePos();
     t_timeval us = Gu::getMicroSeconds();
 
-	updateRotate(pFingers);
+	updateRotate(pInput);
 
     //set cam pos
     //vec3 pos = _pCamera->getPos();
@@ -92,16 +92,16 @@ void FlyCam::update(std::shared_ptr<Fingers> pFingers, float dt) {
     //Finalluy update camera
     _pCamera->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
 }    
-void FlyCam::updateRotate(std::shared_ptr<Fingers> pFingers) {
-    vec2 vMouse = pFingers->getMousePos();
-    ButtonState::e eRmb = pFingers->getRmbState();
+void FlyCam::updateRotate(std::shared_ptr<InputManager> pInput) {
+    vec2 vMouse = pInput->getMousePos();
+    ButtonState::e eRmb = pInput->getRmbState();
     vec2 vDelta(0, 0);
 	if (eRmb == ButtonState::Press) {
 		_vMousePress = vMouse;
 	}
 	if (eRmb == ButtonState::Press || eRmb == ButtonState::Down) {
 		vDelta = vMouse - _vMousePress;
-		pFingers->warpMouse((int)_vMousePress.x, (int)_vMousePress.y);
+		pInput->warpMouse((int)_vMousePress.x, (int)_vMousePress.y);
 	}
 	else if (eRmb == ButtonState::Release) {
 	}

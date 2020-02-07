@@ -2,7 +2,7 @@
 *
 *    @file ForwardFramebuffer.h
 *    @date May 26, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

@@ -2,7 +2,7 @@
 *
 *    @file ShadowFrustum.h
 *    @date January 25, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

@@ -2,7 +2,7 @@
 *
 *    @file Particles.h
 *    @date December 5, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

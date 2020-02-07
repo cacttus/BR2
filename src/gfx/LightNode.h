@@ -2,7 +2,7 @@
 *
 *    @file LightNode.h
 *    @date October 4, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

@@ -2,7 +2,7 @@
     View frustum class.
     Calculates the view frustum each
     frame.
-    Programmer: Derek Page
+    Programmer: MetalMario971
     Sept 15, 2007
     Planes:
     n,f,l,r,t,b

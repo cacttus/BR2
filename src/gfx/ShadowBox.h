@@ -2,7 +2,7 @@
 *
 *    @file ShadowMapFrustum.h
 *    @date April 25, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016 
 *

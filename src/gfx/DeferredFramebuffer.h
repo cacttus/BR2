@@ -2,7 +2,7 @@
 *
 *    @file DeferredFramebuffer.h
 *    @date May 28, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

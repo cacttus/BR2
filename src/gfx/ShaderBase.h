@@ -2,7 +2,7 @@
 *
 *    @file ShaderBase.h
 *    @date November 27, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

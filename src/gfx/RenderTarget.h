@@ -2,7 +2,7 @@
 *
 *    @file RenderTarget.h
 *    @date May 27, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

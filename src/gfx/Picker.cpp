@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 #include "../base/FpsMeter.h"
@@ -30,8 +30,8 @@ uint32_t Picker::genPickId() {
 
     return _iid;
 }
-void Picker::update(std::shared_ptr<Fingers> pFingers) {
-    updatePickedPixel((int32_t)pFingers->getMousePos().x, (int32_t)pFingers->getMousePos().y);
+void Picker::update(std::shared_ptr<InputManager> pInput) {
+    updatePickedPixel((int32_t)pInput->getMousePos().x, (int32_t)pInput->getMousePos().y);
 }
 void Picker::updatePickedPixel(int32_t x, int32_t y) {
     if(Gu::getRenderPipe()==nullptr){

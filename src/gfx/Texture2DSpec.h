@@ -2,7 +2,7 @@
 *
 *    @file Texture2D.h
 *    @date August 4, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2011
 *

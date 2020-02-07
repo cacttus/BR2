@@ -2,7 +2,7 @@
 *
 *    @file ShaderCache.h
 *    @date October 22, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

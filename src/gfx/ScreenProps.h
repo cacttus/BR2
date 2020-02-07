@@ -2,7 +2,7 @@
 *
 *    @file ScreenProps.h
 *    @date March 5, 2012
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2012 
 *

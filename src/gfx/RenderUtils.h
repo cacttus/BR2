@@ -2,7 +2,7 @@
 *
 *    @file RenderUtils.h
 *    @date May 16, 2012
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2012 
 *

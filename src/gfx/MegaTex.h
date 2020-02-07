@@ -2,7 +2,7 @@
 *
 *    @file MegaTex.h
 *    @date February 19, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *
