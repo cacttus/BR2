@@ -2,7 +2,7 @@
 *
 *    @file CollisionEquations.h
 *    @date November 16, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *

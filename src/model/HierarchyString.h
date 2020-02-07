@@ -2,7 +2,7 @@
 *
 *    @file HierarchyString.h
 *    @date March 26, 2012
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2012 
 *

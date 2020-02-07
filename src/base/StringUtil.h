@@ -2,7 +2,7 @@
 *
 *    @file StringUtil.h
 *    @date August 23, 2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *   1/8/18 - modified lowercase()

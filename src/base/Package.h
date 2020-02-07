@@ -2,7 +2,7 @@
 *
 *    @file Unpack.h
 *    @date January 8, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

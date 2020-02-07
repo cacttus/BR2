@@ -2,7 +2,7 @@
 *
 *    @file BitHacks.h
 *    @date March 23, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014
 *

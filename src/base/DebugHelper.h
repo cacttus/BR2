@@ -2,7 +2,7 @@
 *
 *    @file DebugHelper.h
 *    @date January 30, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

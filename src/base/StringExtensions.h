@@ -2,7 +2,7 @@
 *
 *    @file StringExtensions.h
 *    @date August 5, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

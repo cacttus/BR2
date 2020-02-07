@@ -2,7 +2,7 @@
 *
 *    @file GpuBufferGeneric.h
 *    @date October 7, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

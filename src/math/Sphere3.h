@@ -2,7 +2,7 @@
 *
 *    @file Sphere3.h
 *    @date August 10, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2014 
 *

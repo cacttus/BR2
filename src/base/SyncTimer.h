@@ -2,7 +2,7 @@
 *
 *    @file SyncTimer.h
 *    @date August 7, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

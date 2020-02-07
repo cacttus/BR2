@@ -63,14 +63,14 @@
 //  int nn = 0;
 //  nn++;
 //}
-//void UiLabel::update(std::shared_ptr<Fingers> pFingers) {
+//void UiLabel::update(std::shared_ptr<Fingers> pInput) {
 //
 //  if (StringUtil::equals(_strTextLast, _strText) == false) {
 //    _strTextLast = _strText;
 //    setLayoutChanged();
 //  }
 //
-//  UiElement::update(pFingers);
+//  UiElement::update(pInput);
 //}
 //void UiLabel::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
 //  UiElement::regenMesh(verts, inds, b2ClipRect);

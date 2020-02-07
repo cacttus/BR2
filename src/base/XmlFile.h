@@ -2,7 +2,7 @@
 *
 *    @file XmlFile.h
 *    @date August 4, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

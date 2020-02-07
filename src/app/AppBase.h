@@ -2,7 +2,7 @@
 *
 *    @file AppBase.h
 *    @date January 9, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *
@@ -37,7 +37,7 @@ public:
 
    // virtual void step(float dt) = 0;
   //  virtual void teardown() = 0;
-    virtual void updateTouch(std::shared_ptr<Fingers>, float dt) = 0;
+    virtual void updateTouch(std::shared_ptr<InputManager>, float dt) = 0;
     virtual void userZoom(int amount) = 0;
     virtual t_string getIconFullPath() { return ""; }
     virtual t_string getConfigPath() = 0;

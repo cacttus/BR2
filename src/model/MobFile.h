@@ -2,7 +2,7 @@
 *
 *    @file MobFile.h
 *    @date December 6, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

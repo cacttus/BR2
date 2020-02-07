@@ -2,7 +2,7 @@
 *
 *    @file OBB.h
 *    @date January 16, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

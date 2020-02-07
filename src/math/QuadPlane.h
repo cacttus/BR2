@@ -1,6 +1,6 @@
 /**
 *    @file QuadPlane.h
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *    @adate 2 / 1 / 2010

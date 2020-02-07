@@ -2,7 +2,7 @@
 *
 *    @file ModelThumb.h
 *    @date February 21, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

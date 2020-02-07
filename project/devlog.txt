@@ -1,3 +1,35 @@
+TODO - Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
+
+General Notes
+Multiple Rendering in a single area is going to be important.
+
+2/7/2020
+Scene
+
+GLContext
+	Shaders, texture, models, renderpipe, particle manager, PhysicsWorld (as its gpu accellerated), picker (uses buffers)
+
+2/6/2020
+Use Screen to represent a UI window.
+Move Gui2d to Gu
+Undo changes.  Gui2d is actually Screen.
+Rename Gui2d to screen
+add Screen(s) to a new Gui2d class.
+
+TabButton - the basic of the UI
+TODO Make the ui text not shrink vertically based on window size.  
+TODO make the window not squash horizontally (keep the horizontal ratio)
+
+We need to make the render system "windows" more modular.  Like, we need to create multiple windows if needed.
+
+*WindowManager
+* Get rid of "OpenGL Api" we don't need that.. right.
+
+Moved Window control to applciation (not in the main core)
+Removed Mob to Bin converter (apprunner.cpp)
+Removed Cycle Logging in Logger.cpp
+
+
 12/29/19
 Began simple port to Make and CMake with gcc.  Fix this in the future.  The one caveat here is still debugging with VS. 
 VS allows a CMake project, but it doesn't appear as lightweight as a simple makefile.
@@ -37,3 +69,4 @@ Need:
 	For split view need
 	Image Dropdown like blender
 	remove "udim"
+

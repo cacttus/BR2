@@ -2,7 +2,7 @@
 *
 *    @file TreeNode.h
 *    @date August 6, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

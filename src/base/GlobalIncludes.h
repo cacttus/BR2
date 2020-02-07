@@ -2,7 +2,7 @@
 *
 *    @file GlobalIncludes.h
 *    @date November 12, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016 
 *

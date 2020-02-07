@@ -2,7 +2,7 @@
 *
 *    @file MbiFile.h
 *    @date January 13, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

@@ -2,7 +2,7 @@
 *
 *    @file Date.h
 *    @date August 23, 2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *

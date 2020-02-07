@@ -2,7 +2,7 @@
 *
 *    @file BoneSpec.h
 *    @date December 11, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

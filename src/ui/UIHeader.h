@@ -2,7 +2,7 @@
 //*
 //*    @file UIHeader.h
 //*    @date February 3, 2020
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2020 
 //*
@@ -36,7 +36,7 @@
 //  //vec2 _vPosStartPx;
 //  // Box2f _b2StartBox;//Computed box (design space) of starting position
 //  DragFunc _func;
-//  void update(std::shared_ptr<Fingers> pFingers);
+//  void update(std::shared_ptr<Fingers> pInput);
 //};
 //class UiParser {
 //public:
@@ -110,3 +110,4 @@
 //
 //
 //#endif
+  

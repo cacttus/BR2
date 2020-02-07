@@ -2,7 +2,7 @@
 *
 *    @file Cube3.h
 *    @date January 1, 208
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 208 
 *

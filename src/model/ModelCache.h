@@ -2,7 +2,7 @@
 *
 *    @file ModelCache.h
 *    @date December 6, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017
 *
@@ -21,14 +21,13 @@ namespace Game {
 *    @brief simple mod cahce
 */
 class ModelCache : public VirtualMemory {
-    std::shared_ptr<GLContext> _pContext = nullptr;
     std::map<Hash32, std::shared_ptr<ModelSpec>> _mapModels;
     //std::map<int32_t, std::shared_ptr<Armature>> _mapArmaturesOrdered;
     //std::map<Hash32, std::shared_ptr<ActionGroup>> _mapActions;
     t_string getFilePathForMobName(t_string mobName, bool bBinary);
     std::shared_ptr<Material> _pDefaultMaterial = nullptr;
 public:
-    ModelCache(std::shared_ptr<GLContext> pc);
+    ModelCache();
     virtual ~ModelCache() override;
     void addSpec(std::shared_ptr<ModelSpec> ms);
     std::shared_ptr<ModelSpec> getModelByName(t_string name);

@@ -16,11 +16,9 @@ namespace Game {
 //////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////
-ModelCache::ModelCache(std::shared_ptr<GLContext> pc) : _pContext(pc) {
+ModelCache::ModelCache() {
     _pDefaultMaterial = std::make_shared<Material>();
     //default material is the initial blender params.
-    
-
 }
 ModelCache::~ModelCache() {
     std::map<Hash32, std::shared_ptr<ModelSpec>>::iterator it = _mapModels.begin();

@@ -2,7 +2,7 @@
 *
 *    @file EngineConfig.h
 *    @date May 8, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

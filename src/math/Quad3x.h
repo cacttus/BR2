@@ -2,7 +2,7 @@
 *
 *    @file Quad3x.h
 *    @date March 31, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

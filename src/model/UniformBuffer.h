@@ -2,7 +2,7 @@
 //*
 //*    @file UniformBuffer.h
 //*    @date May 15, 2017
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2017 
 //*

@@ -2,7 +2,7 @@
 *
 *    @file OperatingSystem.h
 *    @date November 27, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

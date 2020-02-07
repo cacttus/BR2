@@ -2,7 +2,7 @@
 *
 *    @file FrameSync.h
 *    @date November 27, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *
@@ -35,7 +35,6 @@ public:
     void syncBegin();    // Call before you do your frame update
     int syncEnd();        // Call after you do your frame update.
 
-    float getCurrentFrameCap();
 
     //+-- CTOR/DTOR --+
     FrameSync();

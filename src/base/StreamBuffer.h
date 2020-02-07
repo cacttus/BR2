@@ -2,7 +2,7 @@
 *
 *    @file GrowBufferBase.h
 *    @date July 9, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

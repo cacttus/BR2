@@ -3,7 +3,7 @@
 *    @file PhysicsNode.h
 *    @date March 31, 2017- Phy25
 *    @date Jan 4, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

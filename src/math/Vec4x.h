@@ -3,7 +3,7 @@
 *    @file Vec4x.h
 *    @date November 30, 2008
 *    @date November 27, 2015 - Vector4 is now Vec4x - templated
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2015
 *

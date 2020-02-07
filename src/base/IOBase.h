@@ -2,7 +2,7 @@
 *
 *    @file IOBase.h
 *    @date September 8, 2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *

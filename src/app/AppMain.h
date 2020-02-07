@@ -2,7 +2,7 @@
 *
 *    @file AppMain.h
 *    @date August 9, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019
 *
@@ -61,7 +61,7 @@ public:
 
     // virtual void step(float dt) override {}
    //  virtual void teardown() override {}
-    virtual void updateTouch(std::shared_ptr<Fingers>, float dt) override {}
+    virtual void updateTouch(std::shared_ptr<InputManager>, float dt) override {}
     virtual void userZoom(int amount) override {}
 
     virtual t_string getIconFullPath() { return makeAssetPath("tex", "icon.png"); }

@@ -19,15 +19,16 @@ AppBase::~AppBase()
 } 
 ///////////////////////////////////////////////////////////////////
 void AppBase::drawDebug() {
+  RenderUtils::drawGridShader(1, 1, 1, 20, 5.0f);
 
-    if(Gu::getGraphicsContext() != nullptr && Gu::getCamera() != nullptr) {
-        RenderUtils::drawGridShader(1, 1, 1, 20, 5.0f);
-        //RenderUtils::drawAxisShader(8.0f, 4.0f);
-        //RenderUtils::drawWireSphereShader(4.0f, vec4(1, 1, 1, 1), 8, 8);
+    //if(Gu::getGraphicsContext() != nullptr && Gu::getCamera() != nullptr) {
 
-        //   Box3f b(vec3(-10, -10, -10), vec3(10, 10, 10));
-        //  RenderUtils::drawSolidBoxShaded(&b, vec3(0, 0, 0), vec4(1, 0.82, 0.318, 1));
-    }
+    //    //RenderUtils::drawAxisShader(8.0f, 4.0f);
+    //    //RenderUtils::drawWireSphereShader(4.0f, vec4(1, 1, 1, 1), 8, 8);
+
+    //    //   Box3f b(vec3(-10, -10, -10), vec3(10, 10, 10));
+    //    //  RenderUtils::drawSolidBoxShaded(&b, vec3(0, 0, 0), vec4(1, 0.82, 0.318, 1));
+    //}
 }
 
 t_string AppBase::makeAssetPath(t_string file) {

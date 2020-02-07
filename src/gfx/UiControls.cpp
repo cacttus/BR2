@@ -2,6 +2,8 @@
 #include "../base/InputManager.h"
 #include "../base/Img32.h"
 
+#include "../app/GraphicsWindow.h"
+
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
 
@@ -18,6 +20,7 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/MegaTex.h"
 #include "../gfx/RenderSettings.h"
+#include "../base/FrameSync.h"
 
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
@@ -38,12 +41,14 @@ std::shared_ptr<UiEventFunc> UiEventFunc::create(std::function<void(UiEventId::e
 }
 //////////////////////////////////////////////////////////////////////////
 #pragma region UIElement
-std::shared_ptr<UiElement> UiElement::create() {
-  std::shared_ptr<UiElement> ui = std::make_shared<UiElement>();
-  ui->init();
-  return ui;
-}
-UiElement::UiElement() {
+//std::shared_ptr<UiElement> UiElement::create() {
+//  std::shared_ptr<UiElement> ui = std::make_shared<UiElement>();
+//  ui->init();
+//  return ui;
+//}
+UiElement::UiElement(std::shared_ptr<UiScreen> mgr) {
+  _pManager = mgr;
+  init();
 }
 UiElement::~UiElement() {
 }
@@ -228,7 +233,7 @@ bool UiElement::pick(std::shared_ptr<InputManager> InputManager) {
     if (getRenderVisible() == true) {
       if (getIsPickEnabled() == true) {
         if (q.containsPointInclusive(InputManager->getMousePos())) {
-          _iPickedFrameId = Gu::getFrameNumber();
+          _iPickedFrameId = getWindow()->getFpsMeter()->getFrameNumber();
 
           if (getPickRoot()) {
             //Pick root items pick by boundbox
@@ -276,7 +281,7 @@ void UiElement::computepad_unit(float& pt, float dim, uDim& ud) {
     pt = ud.pctOf(bt);
   }
   else {
-    UIManager::error("Invalid value for pad");
+    UiScreen::error("Invalid value for pad");
     pt = 0;
   }
 }
@@ -497,19 +502,19 @@ void UiElement::validateDims() {
   //these must be pixel
   //Validate Element dims.
   if (top().getDimUnit() != UiDimUnit::e::Pixel) {
-    UIManager::error("Ui Element Top was not a pixel unit");
+    UiScreen::error("Ui Element Top was not a pixel unit");
     top() = uDim(0, UiDimUnit::e::Pixel);
   }
   if (bottom().getDimUnit() != UiDimUnit::e::Pixel) {
-    UIManager::error("Ui Element bottom was not a pixel unit");
+    UiScreen::error("Ui Element bottom was not a pixel unit");
     bottom() = uDim(0, UiDimUnit::e::Pixel);
   }
   if (left().getDimUnit() != UiDimUnit::e::Pixel) {
-    UIManager::error("Ui Element left was not a pixel unit");
+    UiScreen::error("Ui Element left was not a pixel unit");
     left() = uDim(0, UiDimUnit::e::Pixel);
   }
   if (right().getDimUnit() != UiDimUnit::e::Pixel) {
-    UIManager::error("Ui Element right was not a pixel unit");
+    UiScreen::error("Ui Element right was not a pixel unit");
     right() = uDim(0, UiDimUnit::e::Pixel);
   }
 
@@ -685,7 +690,7 @@ void UiElement::computewh(float& __out_ wpx, float& __out_ hpx) {
     //   }
   }
   else {
-    UIManager::error("Invalid enum");
+    UiScreen::error("Invalid enum");
   }
 
   //Height
@@ -710,7 +715,7 @@ void UiElement::computewh(float& __out_ wpx, float& __out_ hpx) {
     //    }
   }
   else {
-    UIManager::error("Invalid enum");
+    UiScreen::error("Invalid enum");
   }
   //Make sure it's an actual heght
   if (hpx < 0.0f) {
@@ -733,7 +738,7 @@ float UiElement::getAutoWidth() {
     return 0;
   }
   else {
-    UIManager::error("Auto w/h invlaid");
+    UiScreen::error("Auto w/h invlaid");
   }
   return 0;//?
 }
@@ -744,14 +749,14 @@ void UiElement::validateQuad() {
   if (_right.px() < _left.px()) {
     static int nn = 0;
     if (nn == 0) {
-      UIManager::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
+      UiScreen::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
     }
     _right = _left;
   }
   if (_bottom.px() < _top.px()) {
     static int nn = 0;
     if (nn == 0) {
-      UIManager::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
+      UiScreen::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
     }
     _bottom = _top;
   }
@@ -779,8 +784,8 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Layout Quad (for picking, debug)
   float w1 = 1.0f, h1 = 1.0f;
-  w1 = UIManager::getDesignMultiplierW();
-  h1 = UIManager::getDesignMultiplierH();
+  w1 = UiScreen::getDesignMultiplierW();
+  h1 = UiScreen::getDesignMultiplierH();
 
   //Set to false if we're controllig coordinates of this element (cursor, or window position)
   if (getShouldScalePositionToDesign() == true) {
@@ -799,7 +804,7 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Raster Quad (for drawing)
   _b2RasterQuad = _b2LayoutQuad;
-  Gu::guiQuad2d(_b2RasterQuad, Gu::getCamera()->getViewport());
+  Gu::guiQuad2d(_b2RasterQuad, getWindow()->getViewport());
 }
 
 void UiElement::applyMinMax(float& wpx, float& hpx) {
@@ -904,7 +909,7 @@ void UiElement::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
 
 }
 void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, bool bPickedOnly) {
-  if (bPickedOnly && (_iPickedFrameId != Gu::getFpsMeter()->getFrameNumber())) {
+  if (bPickedOnly && (_iPickedFrameId != getWindow()->getFpsMeter()->getFrameNumber())) {
     //return bc only picked gets showed
     return;
   }
@@ -943,7 +948,7 @@ void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, 
 std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uint32_t uiSort, bool bUpdateLayout, bool bCheckDupes) {
   if (c == nullptr) {
     //Allow this to simply fail this may happen if you fail to specify certain skin requirements.
-    UIManager::error(Stz "Tried to add a null child to UI element " + _strName);
+    UiScreen::error(Stz "Tried to add a null child to UI element " + _strName);
     return nullptr;
   }
 
@@ -972,7 +977,7 @@ bool UiElement::checkDupes(std::shared_ptr<UiElement> childTree) {
     bool b = false;;
     rp->findElement(e, b);
     if (b == true) {
-      UIManager::error(Stz "Gui2d: child '" + e->_strName + "' found multiple times in GUI, please create new GUI element then add.");
+      UiScreen::error(Stz "Gui2d: child '" + e->_strName + "' found multiple times in GUI, please create new GUI element then add.");
       return true;
     }
   }
@@ -1193,8 +1198,8 @@ void UiElement::drawDebug() {
   //Debug Rendering
   if (Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping()) {
     //draws all children
-    Gu::getGraphicsContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(Gu::getGraphicsContext());
+    getWindow()->getGraphicsContext()->setLineWidth(1.0f);
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getGraphicsContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     {
@@ -1206,8 +1211,8 @@ void UiElement::drawDebug() {
 
   if (Gu::getRenderSettings()->getDebug()->getPickGui()) {
     //draws all children
-    Gu::getGraphicsContext()->setLineWidth(2.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(Gu::getGraphicsContext());
+    getWindow()->getGraphicsContext()->setLineWidth(2.0f);
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getGraphicsContext());
     mi->setDefaultColor(vec4(1, 0, 1, 1));
     mi->begin(GL_LINES);
     {
@@ -1239,27 +1244,39 @@ void UiElement::bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLa
   }
   addChild(child, iMaxLayer);
 }
+std::shared_ptr<GraphicsWindow> UiElement::getWindow() {
+  return _pManager->getWindow();
+}
 
 #pragma endregion
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 #pragma region UiImage
-std::shared_ptr<UiImage> UiImage::create(std::shared_ptr<UiTex> tex, UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY) {
-  return UiImage::create(tex, eSizeX, eSizeY, (float)tex->getWidth(), (float)tex->getHeight());
-}
-std::shared_ptr<UiImage> UiImage::create(std::shared_ptr<UiTex> tex, UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY, float fWidthPx, float fHeightPx) {
-  std::shared_ptr<UiImage> pImg = std::make_shared<UiImage>();
-  pImg->init();
-  pImg->width() = "100%";
-  pImg->height() = "100%";
-  pImg->_pTexture = tex;
-  pImg->_fTileWidthPx = fWidthPx;
-  pImg->_fTileHeightPx = fHeightPx;
-  pImg->setSizeMode(eSizeX, eSizeY);
-
-  pImg->_iPickId = Gu::getPicker()->genPickId();
-  return pImg;
-}
-UiImage::UiImage() {
+//std::shared_ptr<UiImage> UiImage::create(std::shared_ptr<UiTex> tex, UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY) {
+//  return UiImage::create(tex, eSizeX, eSizeY, (float)tex->getWidth(), (float)tex->getHeight());
+//}
+//std::shared_ptr<UiImage> UiImage::create(std::shared_ptr<UiTex> tex, UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY, float fWidthPx, float fHeightPx) {
+//  std::shared_ptr<UiImage> pImg = std::make_shared<UiImage>();
+//  pImg->init();
+//  pImg->width() = "100%";
+//  pImg->height() = "100%";
+//  pImg->_pTexture = tex;
+//  pImg->_fTileWidthPx = fWidthPx;
+//  pImg->_fTileHeightPx = fHeightPx;
+//  pImg->setSizeMode(eSizeX, eSizeY);
+//
+//  pImg->_iPickId = pImg->getWindow()->getPicker()->genPickId();
+//  return pImg;
+//}
+UiImage::UiImage(std::shared_ptr<UiScreen> sc, std::shared_ptr<UiTex> tex, UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY, float fWidthPx, float fHeightPx) : UiElement(sc) {
+  this->init();
+  this->width() = "100%";
+  this->height() = "100%";
+  this->_pTexture = tex;
+  this->_fTileWidthPx = fWidthPx;
+  this->_fTileHeightPx = fHeightPx;
+  this->setSizeMode(eSizeX, eSizeY);
+  this->setSizeMode(eSizeX, eSizeY);
+  this->_iPickId = sc->getWindow()->getPicker()->genPickId();
 }
 UiImage::~UiImage() {
 }
@@ -1300,7 +1317,7 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     //Tex coords are computed (used for UiGlyph)
   }
   else {
-    UIManager::error("Invalid layout X image size mode.");
+    UiScreen::error("Invalid layout X image size mode.");
   }
 
   if (_eSizeModeY == UiImageSizeMode::e::Expand) {
@@ -1332,7 +1349,7 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     _q2Tex._p1.y = _q2Tex._p0.y + fh;
   }
   else {
-    UIManager::error("Invalid layout size mode.");
+    UiScreen::error("Invalid layout size mode.");
   }
 
   //if(_pQuad != nullptr) {
@@ -1424,11 +1441,11 @@ bool UiImage::pick(std::shared_ptr<InputManager> InputManager) {
   if (getLayoutVisible()) {
     if (getRenderVisible()) {
       if (_iPickId > 0) {
-        uint32_t pixid = Gu::getPicker()->getSelectedPixelId();
+        uint32_t pixid = getWindow()->getPicker()->getSelectedPixelId();
         if (pixid != 0) {
           if (pixid == _iPickId) {
 
-            _iPickedFrameId = Gu::getFrameNumber();
+            _iPickedFrameId = getWindow()->getFpsMeter()->getFrameNumber();
 
             return true;
           }
@@ -1488,1646 +1505,1664 @@ void UiImage::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& i
 }
 
 #pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiGlyph
-std::shared_ptr<UiGlyph> UiGlyph::create(uint32_t iChar) {
-  std::shared_ptr<UiGlyph> g = std::make_shared<UiGlyph>();
-  //Avoid any init crap becuase we're SUPER SLOW
 
-  //g->init();
-  //g->setName("G");//**Save space?
-  return g;
-}
-void UiGlyph::performLayout(bool bForce) {
-  //Skips UiImage PerformLayout
-  UiElement::performLayout(bForce);
-}
-void UiGlyph::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
-  getQuadVerts(verts, inds, b2ClipRect);
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiLabel
-std::shared_ptr<UiLabel> UiLabel::create(std::string text, std::shared_ptr<UiLabelSkin> inf) {
-  std::shared_ptr<UiLabel> lbl = std::make_shared<UiLabel>();
-  lbl->_pFontInfo = inf;
-  lbl->_strText = text;
-  // lbl->_strText = "UiLabel";
-  lbl->init();
 
-  return lbl;
-}
-void UiLabel::init() {
-  UiElement::init();
-  setName("UiLabel");
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiGlyph
+////std::shared_ptr<UiGlyph> UiGlyph::create(uint32_t iChar) {
+////  std::shared_ptr<UiGlyph> g = std::make_shared<UiGlyph>();
+////  //Avoid any init crap becuase we're SUPER SLOW
+////
+////  //g->init();
+////  //g->setName("G");//**Save space?
+////  return g;
+////}
+//void UiGlyph::performLayout(bool bForce) {
+//  //Skips UiImage PerformLayout
+//  UiElement::performLayout(bForce);
+//}
+//void UiGlyph::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
+//  getQuadVerts(verts, inds, b2ClipRect);
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiLabel
+////std::shared_ptr<UiLabel> UiLabel::create(std::string text, std::shared_ptr<UiLabelSkin> inf) {
+////  std::shared_ptr<UiLabel> lbl = std::make_shared<UiLabel>();
+////  lbl->_pFontInfo = inf;
+////  lbl->_strText = text;
+////  // lbl->_strText = "UiLabel";
+////  lbl->init();
+////
+////  return lbl;
+////}
+//void UiLabel::init() {
+//  UiElement::init();
+//  setName("UiLabel");
+//
+//}
+//void UiLabel::setText(std::string s) {
+//  _strText = s;
+//}
+//
+//void UiLabel::performLayout(bool bForce) {
+//
+//  if (_pFontInfo != nullptr) {
+//    //glyph creation is in performlayout because the HEIGHT of the label needs to be
+//    //calculated first
+//#ifdef _DEBUG
+//    if (StringUtil::contains(_strText, "Apple")) {
+//      int n = 0;
+//      n++;
+//    }
+//    if (StringUtil::contains(_strText, "DOF")) {
+//      int n = 0;
+//      n++;
+//    }
+//#endif
+//
+//
+//    // This has to come before performlayout in order to get the correct width.
+//    createGlyphs();
+//  }
+//  //Use the system to flow the layout.
+//  t_timeval us0 = Gu::getMicroSeconds();
+//  UiElement::performLayout(bForce);
+//  t_timeval us1 = Gu::getMicroSeconds() - us0;
+//  int nn = 0;
+//  nn++;
+//}
+//void UiLabel::update(std::shared_ptr<InputManager> pInputManager) {
+//
+//  if (StringUtil::equals(_strTextLast, _strText) == false) {
+//    _strTextLast = _strText;
+//    setLayoutChanged();
+//  }
+//
+//  UiElement::update(pInputManager);
+//}
+//void UiLabel::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
+//  UiElement::regenMesh(verts, inds, b2ClipRect);
+//}
+//void UiLabel::createGlyphs() {
+//  //Easy out - if text is the same.
+//  //However, we still need to send the mesh becasue we use absolute coordinates instead of a positional uniform.
+//
+//  //Hide glyphs - this is an optimization because adding/removing children was causing major slowdown
+//  for (auto c : getChildren()) {
+//    c.second->setLayoutVisible(false, false);
+//  }
+//
+//  float labelHeight = bottom().px() - top().px();
+//
+//  //Font height is the height of the label.
+//  float fontHeight;
+//  uDim& d = _pFontInfo->getFontSize();
+//  if (d.getDimUnit() == UiDimUnit::e::Pixel) {
+//    fontHeight = d.px();
+//  }
+//  else if (d.getDimUnit() == UiDimUnit::e::Percent) {
+//    fontHeight = d.pctOf(labelHeight);
+//  }
+//  else if (d.getDimUnit() == UiDimUnit::e::Auto) {
+//    fontHeight = labelHeight;
+//  }
+//  std::shared_ptr<MtFont> ft = _pFontInfo->getFont();
+//  /*
+//  lineheight - in the layout the height of space between lines
+//  padding
+//  text-align - top, center, bottom
+//  */
+//  //Add glyphs
+//  float curX = 0, curY = 0;//setting curY = labelHeight SORT OF fixes the issue.  It's not right
+//  Box2f outQuad;
+//  Box2f outTexs;
+//  float outW, outH, outPadT, outPadR, outPadB, outPadL;
+//  bool bNextWrap = false;
+//  int nCh = 0;
+//  float labelWidth = 0;
+//  float labelWidthCur = 0;
+//  //float labelHeight = 0;
+//  //float labelHeightCur = 0;
+//  int32_t cCodePrev = -1;//Previous code for kerning
+//  for (int32_t c : _strText) {
+//    ft->getCharQuad(c, cCodePrev, fontHeight, outW, outH, outTexs, outPadT, outPadR, outPadB, outPadL);
+//    cCodePrev = c;
+//
+//    std::shared_ptr<UiGlyph> g;
+//
+//    if (nCh < getChildren().size()) {
+//      auto it = getChildren().begin();
+//      std::advance(it, nCh);
+//      g = std::dynamic_pointer_cast<UiGlyph>(it->second);
+//      g->setLayoutVisible(true, false);
+//    }
+//    else {
+//      g = std::make_shared<UiGlyph>();//UiGlyph::create(c);
+//      addChild(g, 0, false, false);
+//      g->setSizeMode(UiImageSizeMode::e::Computed, UiImageSizeMode::e::Computed);
+//    }
+//
+//    g->position() = UiPositionMode::Static;
+//    g->width().setDimUnit(UiDimUnit::e::Pixel);
+//    g->height().setDimUnit(UiDimUnit::e::Pixel);
+//
+//    g->width() = outW;
+//    g->height() = outH;
+//
+//    g->getTexs() = outTexs;
+//    g->getColor() = getColor(); //Copy color over Note: font color? I do't know I think we should use gui color
+//
+//  //  g->padRight() = outPadR;
+//    //g->padBottom() = outPadB;
+//    g->padTop() = outPadT;//fontHeight - outH;    //this should never be greater
+//    g->padRight() = outPadR;//fontHeight - outH;    //this should never be greater
+//    g->padBottom() = outPadB;//fontHeight - outH;    //this should never be greater
+//    g->padLeft() = outPadL;//fontHeight - outH;    //this should never be greater
+//
+//    labelWidthCur += g->right().px() - g->left().px() + g->padRight().px() + g->padLeft().px();
+//    ////Don't alter texcoords
+//    if (_bWordWrap) {
+//      //This won't work it'll let chars go past their container.
+//      //I think the only method to make this work is to encapsulate Words within UiElements (simply)
+//      g->display() = UiDisplayMode::e::InlineNoWrap;
+//      if (bNextWrap) {
+//        labelWidth = MathUtils::broMax(labelWidth, labelWidthCur);
+//        labelWidthCur = 0;
+//        g->display() = (UiDisplayMode::e::Block);
+//        bNextWrap = false;
+//      }
+//
+//      if (c == '\r' || c == '\n') {
+//        bNextWrap = true;
+//      }
+//      else if (StringUtil::isWsExceptNewline(c)) {
+//        g->display() = (UiDisplayMode::e::InlineWrap);
+//      }
+//      else {
+//        g->display() = (UiDisplayMode::e::InlineNoWrap);
+//      }
+//    }
+//    else {
+//      g->display() = (UiDisplayMode::e::InlineNoWrap);//Default
+//    }
+//
+//    //Top-Left origin conversion (STB uses bottom left of quad, place our quads at the bottom of the labe.
+//    //*We could even have centering, and other jargon as to where to place the text.  For now just place it at the bottom.
+//   // g->top() = g->top().px() + fontHeight; // add max height to the top element
+//   // g->bottom() = g->bottom().px() + fontHeight; // add max height to the top element
+//
+//
+//    nCh++;
+//  }
+//
+//  if (labelWidth < 0.0f) {
+//    labelWidth = 0.0f;//hasn't happened yet
+//  }
+//  minWidth() = uDim(labelWidth, UiDimUnit::e::Pixel);
+//
+//
+//
+//}
+//
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiButtonBase
+//void UiButtonBase::init() {
+//  std::weak_ptr<UiButtonBase> weak_p = getThis<UiButtonBase>();
+//  setClick([weak_p]() {
+//    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
+//      bt->showUp();
+//    }
+//    });
+//  setDown([weak_p]() {
+//    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
+//      bt->showDown();
+//    }
+//    });
+//  setPress([weak_p]() {
+//    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
+//      bt->showUp();
+//    }
+//    });
+//  setHover([weak_p]() {
+//    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
+//
+//      bt->showHover();
+//    }
+//    });
+//}
+//void UiButtonBase::update(std::shared_ptr<InputManager> pInputManager) {
+//
+//  if (getPickedLastFrame() == false) {
+//    showUp();
+//  }
+//
+//  UiElement::update(pInputManager);
+//}
+//int UiButtonBase::layerIdUp() { return  UiScreen::sortLayer(0); }
+//int UiButtonBase::layerIdHover() { return  UiScreen::sortLayer(1); }
+//int UiButtonBase::layerIdDown() { return  UiScreen::sortLayer(2); }
+//#pragma endregion
+
+
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiImageButton
+////std::shared_ptr<UiImageButton> UiImageButton::create(std::shared_ptr<UiButtonSkin> skin) {
+////  std::shared_ptr<UiImageButton> bt = std::make_shared<UiImageButton>();
+////  bt->_pSkin = skin;
+////
+////  bt->init();
+////  bt->setUp(UiImage::create(skin->_pUp, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
+////  bt->setHover(UiImage::create(skin->_pHv, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
+////  bt->setDown(UiImage::create(skin->_pDn, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
+////
+////  return bt;
+////}
+//void UiImageButton::init() {
+//  UiButtonBase::init();
+//  //Use weak ptr to avoid circular reference
+//}
+//void UiImageButton::setHover(std::shared_ptr<UiImage> img) {
+//  _pHover = img;
+//  addChild(img, UiButtonBase::layerIdHover());//The index is a different layer
+//}
+//void UiImageButton::setUp(std::shared_ptr<UiImage> img) {
+//  _pUp = img;
+//  addChild(img, UiButtonBase::layerIdUp());//The index is a different layer
+//}
+//void UiImageButton::setDown(std::shared_ptr<UiImage> img) {
+//  _pDown = img;
+//  addChild(img, UiButtonBase::layerIdDown());//The index is a different layer
+//}
+//void UiImageButton::showHover() {
+//  if (_eImageState != ImageState::e::Hover) {
+//    _eImageState = ImageState::e::Hover;
+//    if (_pUp != nullptr)    _pUp->hideRender();//Don't use || here - early out breaks the logic
+//    if (_pHover != nullptr) _pHover->showRender();
+//    if (_pDown != nullptr)  _pDown->hideRender();
+//  }
+//}
+//void UiImageButton::showUp() {
+//  if (_eImageState != ImageState::e::Up) {
+//    _eImageState = ImageState::e::Up;
+//    if (_pUp != nullptr)    _pUp->showRender();
+//    if (_pHover != nullptr) _pHover->hideRender();
+//    if (_pDown != nullptr)  _pDown->hideRender();
+//  }
+//}
+//void UiImageButton::showDown() {
+//  if (_eImageState != ImageState::e::Down) {
+//    _eImageState = ImageState::e::Down;
+//    if (_pUp != nullptr)    _pUp->hideRender();
+//    if (_pHover != nullptr) _pHover->hideRender();
+//    if (_pDown != nullptr)  _pDown->showRender();
+//  }
+//}
+//void UiImageButton::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiButtonBase::update(pInputManager);
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiGridRow
+//void UiGridRow::init() {
+//  UiElement::init();
+//  setName("UiGridRow");
+//}
+//std::shared_ptr<UiElement> UiGridRow::getCol(size_t iCol) {
+//  if (iCol >= _cols.size()) {
+//    UiScreen::error(Stz "UiGridRow: Error: tried to access grid column outside of bounds: " + iCol);
+//    return nullptr;
+//  }
+//  return _cols[iCol];
+//}
+//std::shared_ptr<UiElement> UiGridRow::addCol(int nCount, bool bAutoSizeCols, uint32_t iSort) {
+//  std::shared_ptr<UiElement> c = nullptr;
+//  for (int i = 0; i < nCount; ++i) {
+//    c = UiElement::create();
+//    c->setName("UiElement(UiGridCol)");
+//    addChild(c, iSort);
+//    _cols.push_back(c);
+//  }
+//  if (bAutoSizeCols) {
+//    resizeCols();
+//  }
+//
+//  return c;
+//}
+//void UiGridRow::resizeCols() {
+//  if (_cols.size() == 0) {
+//    return;
+//  }
+//  std::string w = Stz 100.0f / (float)(_cols.size()) + "%";
+//  for (std::shared_ptr<UiElement> c : _cols) {
+//    c->width() = w;
+//    c->height() = "100%";
+//  }
+//}
+//void UiGridRow::performLayout(bool bForce) {
+//  UiElement::performLayout(bForce);
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiGrid
+////std::shared_ptr<UiGrid> UiGrid::create(int nr, int nc) {
+////  std::shared_ptr<UiGrid> g = std::make_shared<UiGrid>();
+////  g->init();
+////  g->addRow(nr, nc);
+////  g->setName("UiGrid");
+////  return g;
+////}
+//std::shared_ptr<UiElement> UiGrid::getCell(size_t iRow, size_t iCol) {
+//  if (iRow >= _rows.size()) {
+//    UiScreen::error(Stz "UiGrid: Error: tried to access grid cell outside of bounds tried, (" + iRow + "," + iCol + ") ");
+//    return nullptr;
+//  }
+//  return  _rows[iRow]->getCol(iCol);
+//}
+//void UiGrid::performLayout(bool bForce) {
+//  UiElement::performLayout(bForce);
+//}
+//std::shared_ptr<UiGridRow> UiGrid::addRow(int nr, int nc, bool bAutoSizeRows, uint32_t iSort) {
+//  std::vector<std::shared_ptr<UiGridRow>> added;
+//  std::shared_ptr<UiGridRow> r;
+//  for (int ir = 0; ir < nr; ++ir) {
+//    r = std::make_shared<UiGridRow>();
+//    r->init();
+//    addChild(r, iSort);
+//    _rows.push_back(r);
+//    added.push_back(r);
+//  }
+//
+//  if (bAutoSizeRows) {
+//    resizeRows();
+//  }
+//
+//  if (nc > 0) {
+//    for (std::shared_ptr<UiGridRow> r2 : added) {
+//      r2->addCol(nc);
+//    }
+//  }
+//
+//  return r;
+//}
+//void UiGrid::resizeRows() {
+//  std::string h = Stz 100.0f / (float)(_rows.size()) + "%";
+//  for (std::shared_ptr<UiGridRow> r : _rows) {
+//    r->height() = h;
+//    r->width() = "100%";
+//  }
+//}
+//std::shared_ptr<UiGrid> UiGrid::createImageStack(std::shared_ptr<Ui3Tex> tex, uDim uWorHPx, Orientation::e eOr) {
+//  if (uWorHPx.px() == 0) {
+//    UiScreen::error(Stz "Image stack width or hieght was zero, errors will occur orientation = " + Orientation::toString(eOr));
+//    return nullptr;
+//  }
+//  std::shared_ptr<UiGrid> pg = UiGrid::create(0, 0);
+//
+//  std::shared_ptr<UiElement> c0;
+//  std::shared_ptr<UiElement> c1;
+//  std::shared_ptr<UiElement> c2;
+//  std::shared_ptr<UiImage> imgTopOrLeft;
+//  std::shared_ptr<UiImage> imgMid;
+//  std::shared_ptr<UiImage> imgBotOrRight;
+//
+//  uint32_t iSortLayer = UiScreen::sortLayer(0);
+//
+//  if (eOr == Orientation::e::Vertical) {
+//    pg->setName("UiGrid(UiImage3Stack_Vertical)");
+//    uDim hR0 = uWorHPx.autoHeight(tex->get(0));
+//    uDim hR1 = uWorHPx.autoHeight(tex->get(1));
+//    uDim hR2 = uWorHPx.autoHeight(tex->get(2));
+//    std::shared_ptr<UiGridRow> r0 = pg->addRow(1, 0, false, iSortLayer);
+//    r0->setName("IMAGE_3STACK_ROW0_V");
+//    r0->width() = "100%";
+//    r0->height() = hR0;
+//    std::shared_ptr<UiGridRow> r1 = pg->addRow(1, 0, false, iSortLayer);
+//    r1->setName("IMAGE_3STACK_ROW1_V");
+//    r1->width() = "100%";
+//    r1->height() = "auto";
+//    std::shared_ptr<UiGridRow> r2 = pg->addRow(1, 0, false, iSortLayer);
+//    r2->setName("IMAGE_3STACK_ROW2_V");
+//    r2->width() = "100%";
+//    r2->height() = hR1;
+//    //COLS
+//    c0 = r0->addCol(1, false, iSortLayer);
+//    c0->setName("IMAGE_3STACK_COL0_V");
+//    c0->width() = "100%";
+//    c0->height() = hR0;
+//    c1 = r1->addCol(1, false, iSortLayer);
+//    c1->setName("IMAGE_3STACK_COL1_V");
+//    c1->width() = "100%";
+//    c1->height() = "auto";
+//    c2 = r2->addCol(1, false, iSortLayer);
+//    c2->setName("IMAGE_3STACK_COL2_V");
+//    c2->width() = "100%";
+//    c2->height() = hR2;
+//
+//    imgTopOrLeft = UiImage::create(tex->get(0), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, uWorHPx.px(), hR0.px());
+//    imgMid = UiImage::create(tex->get(1), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Tile, uWorHPx.px(), hR1.px());
+//    imgBotOrRight = UiImage::create(tex->get(2), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, uWorHPx.px(), hR2.px());
+//  }
+//  else if (eOr == Orientation::e::Horizontal) {
+//    pg->setName("UiGrid(UiImage3Stack_Horizontal)");
+//    uDim hR0 = uWorHPx.autoWidth(tex->get(0));
+//    uDim hR1 = uWorHPx.autoWidth(tex->get(1));
+//    uDim hR2 = uWorHPx.autoWidth(tex->get(2));
+//
+//    std::shared_ptr<UiGridRow> r0 = pg->addRow(1, 0, false, iSortLayer);
+//    r0->setName("IMAGE_3STACK_ROW0_H");
+//
+//    c0 = r0->addCol(1, false, iSortLayer);
+//    c0->setName("IMAGE_3STACK_COL0_H");
+//    c0->height() = uWorHPx;
+//    c0->width() = hR0;
+//    c0->display() = (UiDisplayMode::e::InlineNoWrap);
+//    c1 = r0->addCol(1, false, iSortLayer);
+//    c1->setName("IMAGE_3STACK_COL1_H");
+//    c1->height() = uWorHPx;
+//    c1->width() = "auto";
+//    c1->display() = (UiDisplayMode::e::InlineNoWrap);
+//    c2 = r0->addCol(1, false, iSortLayer);
+//    c2->setName("IMAGE_3STACK_COL2_H");
+//    c2->height() = uWorHPx;
+//    c2->width() = hR2;
+//    c2->display() = (UiDisplayMode::e::InlineNoWrap);
+//
+//    imgTopOrLeft = UiImage::create(tex->get(0), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, hR0.px(), uWorHPx.px());
+//    imgMid = UiImage::create(tex->get(1), UiImageSizeMode::e::Tile, UiImageSizeMode::e::Expand, hR1.px(), uWorHPx.px());
+//    imgBotOrRight = UiImage::create(tex->get(2), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, hR2.px(), uWorHPx.px());
+//  }
+//  c0->addChild(imgTopOrLeft, UiScreen::sortLayer(0));
+//  c1->addChild(imgMid, UiScreen::sortLayer(0));
+//  c2->addChild(imgBotOrRight, UiScreen::sortLayer(0));
+//
+//  return pg;
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region Ui9Grid
+////std::shared_ptr<Ui9Grid> Ui9Grid::create(std::shared_ptr<UiBorderDim> dims) {
+////  std::shared_ptr<Ui9Grid> g = std::make_shared<Ui9Grid>();
+////  g->_pBorder = dims;
+////  g->init();
+////  return g;
+////}
+//void Ui9Grid::init() {
+//  UiElement::init();
+//
+//  setName("UiImage9Grid");
+//
+//  std::shared_ptr<UiGridRow> r0 = addRow();
+//  std::shared_ptr<UiGridRow> r1 = addRow();
+//  std::shared_ptr<UiGridRow> r2 = addRow();
+//  r0->addCol(3);
+//  r1->addCol(3);
+//  r2->addCol(3);
+//
+//  setBorderWidth(_pBorder);
+//
+//  //Add content area that fills the container AND is above the background
+//  _pContentContainer = UiElement::create();
+//  _pContentContainer->setName("UiElement(UiContentContainer)");
+//  _pContentContainer->position() = UiPositionMode::e::Static;
+//  _pContentContainer->overflow() = (UiOverflowMode::e::Hide);
+//  _pContentContainer->width() = "100%";
+//  _pContentContainer->height() = "100%";
+//  std::shared_ptr<UiElement> c = getCell(1, 1);
+//  c->addChild(_pContentContainer, UiScreen::sortLayer(Ui9Grid::getContentSortLayer()));
+//}
+//void Ui9Grid::set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer) {
+//
+//  for (int j = 0; j < 3; ++j) {
+//    for (int i = 0; i < 3; ++i) {
+//      size_t ioff = Ui9Grid::cellOff(i, j);
+//      float wpx = (float)texs->get(ioff)->getWidth();
+//      float hpx = (float)texs->get(ioff)->getHeight();
+//
+//      if (wpx == 0 || hpx == 0) {
+//        static int xx = 0;
+//        if (xx == 0) {
+//          //**If this hits, likely you created a UiTex AFTER you called the MegaTex::loadImages().. 
+//          // we need image sizes when craeating the gui, after the skin.
+//          //The order 100% NEEEDED - but it's more sane to do it this way to vet out visual bugs down the road
+//          Gu::debugBreak();
+//        }
+//      }
+//
+//      bool LFix = (ioff == 0 || ioff == 3 || ioff == 6);
+//      bool TFix = (ioff == 0 || ioff == 1 || ioff == 2);
+//      bool RFix = (ioff == 2 || ioff == 5 || ioff == 8);
+//      bool BFix = (ioff == 6 || ioff == 7 || ioff == 8);
+//
+//      //Expand corners, tile borders, tile edges along w/h
+//      UiImageSizeMode::e wSizeMode = UiImageSizeMode::e::Tile;
+//      UiImageSizeMode::e hSizeMode = UiImageSizeMode::e::Tile;
+//      if (LFix) {
+//        wpx = _pBorder->get(GridBorder::e::Left).px();
+//        wSizeMode = UiImageSizeMode::e::Expand;
+//      }
+//      if (RFix) {
+//        wpx = _pBorder->get(GridBorder::e::Right).px();
+//        wSizeMode = UiImageSizeMode::e::Expand;
+//      }
+//
+//      if (BFix) {
+//        hpx = _pBorder->get(GridBorder::e::Bot).px();
+//        hSizeMode = UiImageSizeMode::e::Expand;
+//      }
+//      if (TFix) {
+//        hpx = _pBorder->get(GridBorder::e::Top).px();
+//        hSizeMode = UiImageSizeMode::e::Expand;
+//      }
+//      //So setting this to _fBorderWidth.px() worked for the window not for the button!
+//      //The problem is that image tiling isn't working for the fixed width elements (window corners).  Although it should be because they're fixed
+//      std::shared_ptr<UiImage> img = UiImage::create(texs->get(ioff), UiImageSizeMode::e::Tile, UiImageSizeMode::e::Tile, wpx, hpx);
+//
+//      img->setSizeMode(wSizeMode, hSizeMode);
+//
+//      getCell(j, i)->addChild(img, iLayer);
+//    }
+//  }
+//
+//}
+//void Ui9Grid::iterateCells(std::function<void(std::shared_ptr<UiElement>)> f) {
+//  for (int j = 0; j < 3; ++j) {
+//    for (int i = 0; i < 3; ++i) {
+//      size_t ioff = Ui9Grid::cellOff(i, j);
+//      std::shared_ptr<UiElement> c = getCell(j, i);
+//      f(c);
+//    }
+//  }
+//}
+//void Ui9Grid::setBorderWidth(std::shared_ptr<UiBorderDim> dims) {
+//  *_pBorder = *dims;
+//
+//  for (int i = 0; i < 4; ++i) {
+//    if (_pBorder->get((GridBorder::e)i).getDimUnit() != UiDimUnit::e::Pixel) {
+//      UiScreen::error("Border width for window was not specified in pixels.  Errors will occur");
+//      _pBorder->get((GridBorder::e)i).setDimUnit(UiDimUnit::e::Pixel);
+//    }
+//  }
+//
+//  std::shared_ptr<UiGridRow> r0 = _rows[0];
+//  std::shared_ptr<UiGridRow> r1 = _rows[1];
+//  std::shared_ptr<UiGridRow> r2 = _rows[2];
+//
+//  r0->width() = "100%";
+//  r0->height() = dims->get(GridBorder::e::Top);
+//  r1->width() = "100%";
+//  r1->height() = "auto";
+//  r2->width() = "100%";
+//  r2->height() = dims->get(GridBorder::e::Bot);
+//
+//  r0->getCol(0)->width() = dims->get(GridBorder::e::Left);
+//  r0->getCol(0)->height() = dims->get(GridBorder::e::Top);
+//  r0->getCol(1)->width() = "auto";
+//  r0->getCol(1)->height() = dims->get(GridBorder::e::Top);
+//  r0->getCol(2)->width() = dims->get(GridBorder::e::Right);
+//  r0->getCol(2)->height() = dims->get(GridBorder::e::Top);
+//
+//  r1->getCol(0)->width() = dims->get(GridBorder::e::Left);
+//  r1->getCol(0)->height() = "auto";
+//  r1->getCol(1)->width() = "auto";
+//  r1->getCol(1)->height() = "auto";
+//  r1->getCol(2)->width() = dims->get(GridBorder::e::Right);
+//  r1->getCol(2)->height() = "auto";
+//
+//  r2->getCol(0)->width() = dims->get(GridBorder::e::Left);
+//  r2->getCol(0)->height() = dims->get(GridBorder::e::Bot);
+//  r2->getCol(1)->width() = "auto";
+//  r2->getCol(1)->height() = dims->get(GridBorder::e::Bot);
+//  r2->getCol(2)->width() = dims->get(GridBorder::e::Right);
+//  r2->getCol(2)->height() = dims->get(GridBorder::e::Bot);
+//
+//  //Min Size
+//  minWidth().px(dims->get(GridBorder::e::Left).px() + dims->get(GridBorder::e::Right).px());
+//  minHeight().px(dims->get(GridBorder::e::Top).px() + dims->get(GridBorder::e::Bot).px());
+//}
+//void Ui9Grid::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiGrid::update(pInputManager);
+//}
+//
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiFlexButton
+////std::shared_ptr<UiFlexButton> UiFlexButton::create(std::shared_ptr<UiFlexButtonSkin> skin) {
+////
+////  std::shared_ptr<UiFlexButton> ret = std::make_shared<UiFlexButton>();
+////  ret->_pGrid = Ui9Grid::create(skin->_border);
+////  ret->_pGrid->width() = "100%";
+////  ret->_pGrid->height() = "100%";
+////  ret->_pLabelSkin = skin->_pLabelFont;
+////  ret->init();
+////  ret->setButtonImages(skin->_pUp, skin->_pHv, skin->_pDn);
+////
+////  ret->addChild(ret->_pGrid);
+////  ret->setPickRoot();
+////
+////  return ret;
+////}
+//void UiFlexButton::init() {
+//  UiButtonBase::init();
+//  setName("UiFlexButton");
+//}
+//void UiFlexButton::setButtonImages(std::shared_ptr<Ui9Tex> vecUp, std::shared_ptr<Ui9Tex> vecHv, std::shared_ptr<Ui9Tex> vecDn) {
+//
+//  _pGrid->set9GridImages(vecUp, UiButtonBase::layerIdUp());
+//  _pGrid->set9GridImages(vecHv, UiButtonBase::layerIdHover());
+//  _pGrid->set9GridImages(vecDn, UiButtonBase::layerIdDown());
+//
+//  //Expand all center images (don't tile.
+//  for (auto x : _pGrid->getCell(1, 1)->getChildren()) {
+//    std::shared_ptr<UiImage> img = std::dynamic_pointer_cast<UiImage>(x.second);
+//    if (img != nullptr) {
+//      img->setSizeMode(UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
+//    }
+//  }
+//}
+//void UiFlexButton::showHover() {
+//  if (_eImageState != ImageState::e::Hover) {
+//    _eImageState = ImageState::e::Hover;
+//    _pGrid->iterateCells([&](std::shared_ptr<UiElement> c) {
+//      c->hideLayerRender(UiButtonBase::layerIdUp());
+//      c->showLayerRender(UiButtonBase::layerIdHover());
+//      c->hideLayerRender(UiButtonBase::layerIdDown());
+//      });
+//  }
+//}
+//void UiFlexButton::showUp() {
+//  if (_eImageState != ImageState::e::Up) {
+//    _eImageState = ImageState::e::Up;
+//    _pGrid->iterateCells([&](std::shared_ptr<UiElement> c) {
+//      c->showLayerRender(UiButtonBase::layerIdUp());
+//      c->hideLayerRender(UiButtonBase::layerIdHover());
+//      c->hideLayerRender(UiButtonBase::layerIdDown());
+//      });
+//  }
+//}
+//void UiFlexButton::showDown() {
+//  if (_eImageState != ImageState::e::Down) {
+//    _eImageState = ImageState::e::Down;
+//    _pGrid->iterateCells([&](std::shared_ptr<UiElement> c) {
+//      c->hideLayerRender(UiButtonBase::layerIdUp());
+//      c->hideLayerRender(UiButtonBase::layerIdHover());
+//      c->showLayerRender(UiButtonBase::layerIdDown());
+//      });
+//  }
+//}
+//std::shared_ptr<UiElement> UiFlexButton::getContentContainer() {
+//  return _pGrid->getContentContainer();
+//  //return _pPadGrid->getContentContainer();
+//}
+//void UiFlexButton::setLabel(std::string strText, std::shared_ptr<UiLabelSkin> labelFont) {
+//  if (_pLabelSkin == nullptr && labelFont == nullptr) {
+//    UiScreen::error(("No font specified when calling setLabel on flexbutton"));
+//    return;
+//  }
+//  if (_pLabel == nullptr) {
+//    std::shared_ptr<UiElement> topPad = std::make_shared<UiElement>();
+//    topPad->width() = "100%";
+//    topPad->height() = "auto"; //100%
+//    getContentContainer()->addChild(topPad);
+//
+//
+//    if (labelFont != nullptr) {
+//      _pLabelSkin = labelFont;
+//    }
+//
+//    _pLabel = UiLabel::create(strText, _pLabelSkin);
+//    _pLabel->width() = "100%";
+//    _pLabel->height() = "auto";
+//    getContentContainer()->addChild(_pLabel);
+//
+//    std::shared_ptr<UiElement> botPad = UiElement::create();
+//    botPad->width() = "100%";
+//    botPad->height() = "auto"; //100%
+//    getContentContainer()->addChild(botPad);
+//  }
+//  else {
+//    _pLabel->setText(strText);
+//  }
+//}
+//
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiScrollGenThumb
+//void UiScrubGenThumb::init() {
+//  //basically copying from UiVSCrollbarThumv
+//  position() = UiPositionMode::e::Relative;
+//  left() = "0px";
+//  top() = "0px";
+//
+//  std::weak_ptr<UiScrubGenThumb> wp = getThis<UiScrubGenThumb>();
+//  UiDragInfo::DragFunc scrubFunc = [wp](vec2& dxy) {
+//    if (std::shared_ptr<UiScrubGenThumb> sb = wp.lock()) {
+//      sb->_bPlayerDrag = true;//FOrces this to update when the player drags
+//      if (sb->getOrientation() == Orientation::e::Vertical) {
+//        sb->_fBarLeftOrTopY += dxy.y;
+//      }
+//      if (sb->getOrientation() == Orientation::e::Horizontal) {
+//        sb->_fBarLeftOrTopY += dxy.x;
+//      }
+//      sb->setLayoutChanged();
+//    }
+//  };
+//  enableDrag(scrubFunc);
+//}
+//void UiScrubGenThumb::update(std::shared_ptr<InputManager> pInputManager) {
+//  //Generic UPdate
+//  UiElement::update(pInputManager);
+//
+//  float fMaxWOrH = 1.0f;
+//  float plt = 0.0f;
+//  float prb = 1.0f;
+//  if (getParent() != nullptr) {
+//    if (getOrientation() == Orientation::e::Vertical) {
+//      prb = getParent()->getComputedQuad().bottom();
+//      plt = getParent()->getComputedQuad().top();
+//    }
+//    else {
+//      prb = getParent()->getComputedQuad().right();
+//      plt = getParent()->getComputedQuad().left();
+//    }
+//  }
+//  fMaxWOrH = prb - plt;
+//  float fBarWorH = fMaxWOrH * _fBarSizePct;
+//
+//  uDim* pTorL = nullptr;
+//  uDim* pWorH = nullptr;
+//  if (getOrientation() == Orientation::e::Vertical) {
+//    pTorL = &top();
+//    pWorH = &height();
+//  }
+//  else {
+//    pTorL = &left();
+//    pWorH = &width();
+//  }
+//
+//  *pTorL = uDim(_fBarLeftOrTopY, UiDimUnit::e::Pixel);
+//  if (pTorL->px() + fBarWorH > fMaxWOrH) {
+//    //Scrolled past bottom
+//    *pTorL = uDim(fMaxWOrH - fBarWorH, UiDimUnit::e::Pixel);
+//  }
+//  if (pTorL->px() < 0) {
+//    //Scrollbar is too big for container
+//    *pTorL = "0px";
+//  }
+//  if (pTorL->px() + fBarWorH > fMaxWOrH) {
+//    //Scrollbar is too big for container
+//    fBarWorH = fMaxWOrH;
+//  }
+//
+//  //Set final height
+//  *pWorH = uDim(fBarWorH, UiDimUnit::e::Pixel);
+//
+//  //Send this value to the window'        
+//  float fTopOrLeft = pTorL->px();
+//  float diff = (fMaxWOrH - fBarWorH);
+//  if (diff != 0) {
+//    _fScrollPct = fTopOrLeft / diff;
+//  }
+//  else {
+//    _fScrollPct = 0.0f;
+//  }
+//
+//}
+//void UiScrubGenThumb::setBarSizePct(float pos01) {
+//  if (pos01 < 0.0f || pos01 > 1.0f) {
+//    pos01 = MathUtils::broClamp(pos01, 0.0f, 1.0f);
+//    UiScreen::error("invalid scroll position sent to scrollbar, clamping");
+//  }
+//  _fBarSizePct = pos01;
+//}
+//void UiScrubGenThumb::performLayout(bool bForce) {
+//  UiElement::performLayout(bForce);
+//}
+//float UiScrubGenThumb::getScrollPct() {
+//  return _fScrollPct;
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiScrollGen
+//uint32_t UiScrubGen::getThumbSortLayer() {
+//  return UiScreen::sortLayer(1);
+//}
+//uint32_t UiScrubGen::getBackgroundSortLayer() {
+//  return UiScreen::sortLayer(0);
+//}
+//void UiScrubGen::setBarSizePct(float pos01) {
+//  _pThumb->setBarSizePct(pos01);
+//}
+//void UiScrubGen::init() {
+//  UiElement::init();
+//
+//  if (_pThumb == nullptr) {
+//    _pThumb = createThumb(); // return a thumb to the fiv
+//    addChild(_pThumb, UiScrubGen::getThumbSortLayer());
+//
+//    //Force the scroll func to get called, initializing the scrollbar
+//    _pThumb->setScrubChanged();
+//  }
+//}
+//void UiScrubGen::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiElement::update(pInputManager);
+//
+//  //Call the registered scroll, and barSize events
+//  float bw = 1.0;
+//  if (_barWidthFunc != nullptr) {
+//    bw = _barWidthFunc(getThis<UiScrubGen>());
+//  }
+//  else {
+//    bw = 0.1f; // Trackbars don't have a bar width func  Width of the bar is thus "zero"
+//  }
+//  if (bw >= 1.0 && _bAutoHideWhenMaxed) {
+//    hide();
+//  }
+//  else {
+//    show();
+//    setBarSizePct(bw);
+//    if (_pThumb != nullptr) {
+//      if (_pThumb->scrubChanged()) {
+//        _pThumb->resetScrubChanged();
+//        if (_scrollFunc != nullptr) {
+//          float fMax = maxVal();
+//          float fMin = minVal();
+//          if (fMax < fMin) {
+//            UiScreen::error(Stz "Max '" + fMax + "' was greater than min '" + fMin + "' for scrollgen.");
+//            maxVal() = minVal();
+//          }
+//          float fVal = fMin + (fMax - fMin) * _pThumb->getScrollPct();
+//          _scrollFunc(getThis<UiScrubGen>(), fVal);
+//        }
+//      }
+//    }
+//  }
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiScrollbarThumb
+////Test of VScrollbarThumb
+//std::shared_ptr<UiScrollbarThumb> UiScrollbarThumb::create(std::shared_ptr<UiScrollbarSkin> pSkin) {//std::vector<std::shared_ptr<Texture2DSpec>> imgs, uDim widthPx, Orientation::e eOr) {
+//  std::shared_ptr<UiScrollbarThumb> sbt = std::make_shared<UiScrollbarThumb>();
+//
+//  sbt->_eOrientation = pSkin->_eOrientation;
+//  sbt->init();
+//  sbt->setName("UiScrollbarThumb");
+//  sbt->_pImage = UiGrid::createImageStack(pSkin->_pThumbImgs,
+//    pSkin->_uWidthOrHeightPx,
+//    pSkin->_eOrientation
+//  );
+//  sbt->_pImage->width() = "100%";
+//  sbt->_pImage->height() = "100%";
+//  sbt->addChild(sbt->_pImage);
+//
+//  return sbt;
+//}
+//void UiScrollbarThumb::init() {
+//  UiScrubGenThumb::init();
+//}
+//void UiScrollbarThumb::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiScrubGenThumb::update(pInputManager);
+//}
+//void UiScrollbarThumb::performLayout(bool bForce) {
+//  UiScrubGenThumb::performLayout(bForce);
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiScrollbar
+//std::shared_ptr<UiScrollbar> UiScrollbar::create(std::shared_ptr<UiScrollbarSkin> pSkin, UiScrubGen::BarWidthFunc barFunc,
+//  UiScrubGen::ScrollFunc scrollFunc) {
+//  std::shared_ptr<UiScrollbar> sb = std::make_shared<UiScrollbar>();
+//
+//  sb->_eOrientation = pSkin->_eOrientation;
+//  sb->_pSkin = pSkin;
+//  sb->_bAutoHideWhenMaxed = pSkin->_bAutoHideWhenMaxed;
+//  sb->init();
+//  sb->setName("UiScrollbar");
+//  sb->setBarWidthFunc(barFunc);
+//  sb->setScrollFunc(scrollFunc);
+//
+//  std::shared_ptr<Texture2DSpec> img[3];
+//  if (pSkin->_eOrientation == Orientation::e::Vertical) {
+//    sb->width() = pSkin->_uWidthOrHeightPx;
+//    sb->height() = "auto";
+//  }
+//  else if (pSkin->_eOrientation == Orientation::e::Horizontal) {
+//    sb->height() = pSkin->_uWidthOrHeightPx;
+//    sb->width() = "100%";
+//  }
+//  sb->_pImage = UiGrid::createImageStack(
+//    pSkin->_pBackImgs,
+//    pSkin->_uWidthOrHeightPx,
+//    pSkin->_eOrientation
+//  );
+//  sb->_pImage->width() = "100%";
+//  sb->_pImage->height() = "100%";
+//  sb->addChild(sb->_pImage, UiScrubGen::getBackgroundSortLayer());
+//
+//  return sb;
+//}
+//void UiScrollbar::init() {
+//  UiScrubGen::init();
+//}
+//void UiScrollbar::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiScrubGen::update(pInputManager);
+//}
+//void UiScrollbar::performLayout(bool bForce) {
+//  UiScrubGen::performLayout(bForce);
+//}
+//std::shared_ptr<UiScrubGenThumb> UiScrollbar::createThumb() {
+//  std::shared_ptr<UiScrollbarThumb> thumb = UiScrollbarThumb::create(_pSkin);
+//  return thumb;
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiCheckbox
+//std::shared_ptr<UiCheckbox> UiCheckbox::create(std::shared_ptr<UiCheckboxSkin> pSkin, std::string strlabel) {
+//  if (UiSkinElement::setAndValid(pSkin) == false) {
+//    return nullptr;
+//  }
+//
+//  std::shared_ptr<UiCheckbox> chk = std::make_shared<UiCheckbox>();
+//  chk->init();
+//  chk->setName("UiCheckbox");
+//  chk->width() = "100%";
+//  chk->height() = "32px";
+//
+//  std::shared_ptr<UiFlexButton> bt = UiFlexButton::create(pSkin->_pFlexButtonSkin);
+//  bt->display() = (UiDisplayMode::e::InlineNoWrap);
+//  bt->width() = "32px";
+//  bt->padRight() = "20px";
+//  bt->height() = "100%";
+//  chk->addChild(bt);
+//
+//  chk->_pCheckImg = UiImage::create(pSkin->_pCheckImg, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
+//  chk->_pCheckImg->setRenderVisible(false);//Initially don't show check
+//  chk->_pCheckImg->disablePick();
+//  chk->_pCheckImg->width() = "100%";
+//  chk->_pCheckImg->height() = "100%";
+//  bt->getContentContainer()->addChild(chk->_pCheckImg);
+//
+//  std::shared_ptr<UiLabel> label = UiLabel::create(strlabel, pSkin->_pLabelFont);
+//  label->display() = (UiDisplayMode::e::InlineNoWrap);
+//  label->width() = "auto";
+//  label->height() = "100%";
+//  chk->addChild(label);
+//
+//  std::weak_ptr<UiCheckbox> chk_weak = chk->getThis<UiCheckbox>();
+//  chk->setClick([chk_weak]() {
+//    if (std::shared_ptr<UiCheckbox> chk = chk_weak.lock()) {
+//      chk->doCheck();
+//    }
+//    });
+//  //make the label &c of the checkbox activate it
+//  chk->setPickRoot();
+//
+//  return chk;
+//}
+//void UiCheckbox::doCheck() {
+//  setChecked(!_bChecked);
+//}
+//void UiCheckbox::init() {
+//  UiElement::init();
+//}
+//void UiCheckbox::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiElement::update(pInputManager);
+//}
+//void UiCheckbox::performLayout(bool bForce) {
+//  UiElement::performLayout(bForce);
+//}
+//void UiCheckbox::setChecked(bool b) {
+//  _bChecked = b;
+//  if (_checkFunc) {
+//    _checkFunc(_bChecked);
+//  }
+//  _pCheckImg->setRenderVisible(_bChecked);
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiSliderThumb
+//
+//std::shared_ptr<UiSliderThumb> UiSliderThumb::create(std::shared_ptr<UiSliderSkin> pSkin) {
+//  std::shared_ptr<UiSliderThumb> sbt = std::make_shared<UiSliderThumb>();
+//
+//  sbt->_eOrientation = pSkin->_eOrientation;
+//  sbt->init();
+//  sbt->setName("UiTrackbarThumb");
+//  sbt->_pImage = UiGrid::createImageStack(pSkin->_pThumbImgs,
+//    pSkin->_uWidthOrHeightPx,
+//    //Swap orientation for the thumb since it's a vertical image.
+//    (pSkin->_eOrientation == Orientation::e::Horizontal) ? (Orientation::e::Vertical) : (Orientation::e::Horizontal)
+//  );
+//  sbt->_pImage->width() = "100%";
+//  sbt->_pImage->height() = "100%";
+//  sbt->addChild(sbt->_pImage);
+//
+//  return sbt;
+//}
+//void UiSliderThumb::init() {
+//  UiScrubGenThumb::init();
+//}
+//void UiSliderThumb::update(std::shared_ptr<InputManager> pInputManager) {
+//
+//  //Update height of TB thumb to match parent height.
+//  if (_eOrientation == Orientation::e::Horizontal) {
+//    float h = height().px();
+//    float ph = 10;
+//    if (getParent() != nullptr) {
+//      ph = getParent()->getComputedQuad().height();
+//    }
+//    if (h != ph) {
+//      height() = uDim(ph, UiDimUnit::e::Pixel);
+//    }
+//  }
+//  else { throw 0; }
+//
+//
+//  UiScrubGenThumb::update(pInputManager);
+//}
+//void UiSliderThumb::performLayout(bool bForce) {
+//  UiScrubGenThumb::performLayout(bForce);
+//}
+//#pragma endregion 
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiSlider
+//std::shared_ptr<UiSlider> UiSlider::create(std::shared_ptr<UiSliderSkin> pSkin, UiScrubGen::ScrollFunc sf) {
+//  std::shared_ptr<UiSlider> tb = std::make_shared<UiSlider>();
+//  tb->_eOrientation = pSkin->_eOrientation;
+//  tb->_pSkin = pSkin;
+//  tb->init();
+//  tb->setName("UiTrackbar");
+//
+//  std::weak_ptr<UiSlider> w_s = tb;
+//  UiScrubGen::ScrollFunc s2 = [sf, w_s](std::shared_ptr<UiScrubGen> pScrollbar, float scroll) {
+//    //Update Label
+//    if (std::shared_ptr<UiSlider> s = w_s.lock()) {
+//      if (s->getValueLabel() != nullptr) {
+//        s->getValueLabel()->setText(StringUtil::format("%.2f", scroll));
+//      }
+//    }
+//
+//    //Pass through to user defined function
+//    sf(pScrollbar, scroll);
+//  };
+//  tb->setScrollFunc(s2);
+//  tb->_pImage = UiGrid::createImageStack(
+//    pSkin->_pBackImgs,
+//    pSkin->_uWidthOrHeightPx,//updated later
+//    pSkin->_eOrientation
+//  );
+//
+//  //This is the "container" for the image.  The images are manually sized
+//  tb->addChild(tb->_pImage, UiScrubGen::getBackgroundSortLayer());
+//  return tb;
+//}
+//void UiSlider::init() {
+//  UiScrubGen::init();
+//}
+//void UiSlider::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiScrubGen::update(pInputManager);
+//
+//  //Update height of TB thumb to match parent height.
+//  if (_eOrientation == Orientation::e::Horizontal) {
+//    float h = _pImage->height().px();
+//    float ph = 10;
+//    ph = getComputedQuad().height();
+//    if (h != ph) {
+//      _pImage->height() = uDim(ph, UiDimUnit::e::Pixel);
+//    }
+//  }
+//  else { throw 0; }
+//}
+//void UiSlider::performLayout(bool bForce) {
+//
+//  // a little padding for the left/right of the track makes it look better
+//  if (_eOrientation == Orientation::e::Horizontal) {
+//    float wh = getComputedQuad().width();
+//    float imagePad = getThumb()->width().px() * 0.5f;
+//    _pImage->width() = uDim(wh - imagePad * 2.0f, UiDimUnit::e::Pixel);
+//    _pImage->height() = "100%";
+//    _pImage->padLeft() = uDim(imagePad, UiDimUnit::e::Pixel);
+//    _pImage->padRight() = uDim(imagePad, UiDimUnit::e::Pixel);
+//  }
+//  else {
+//    float wh = getComputedQuad().height();
+//    float imagePad = getThumb()->height().px() * 0.5f;
+//    _pImage->height() = uDim(wh - imagePad * 2.0f, UiDimUnit::e::Pixel);
+//    _pImage->width() = "100%";
+//    _pImage->padTop() = uDim(imagePad, UiDimUnit::e::Pixel);
+//    _pImage->padBottom() = uDim(imagePad, UiDimUnit::e::Pixel);
+//  }
+//
+//  UiScrubGen::performLayout(bForce);
+//
+//
+//}
+//std::shared_ptr<UiScrubGenThumb> UiSlider::createThumb() {
+//  std::shared_ptr<UiSliderThumb> thumb = UiSliderThumb::create(_pSkin);
+//  return thumb;
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiDropdown
+//std::shared_ptr<UiDropdown> UiDropdown::create(std::shared_ptr<UiDropdwonSkin> pSkin) {
+//  std::shared_ptr<UiDropdown> dd = std::make_shared<UiDropdown>();
+//  dd->_pSkin = pSkin;
+//  dd->_pBorder = pSkin->_pBorder;
+//  dd->init();
+//
+//  return dd;
+//}
+//void UiDropdown::init() {
+//  Ui9Grid::init();
+//  setName("UiDropdown");
+//  set9GridImages(_pSkin->_pBorderImgs);
+//
+//  height() = "32px";//just show so we can see
+//  //std::shared_ptr<UiWindowSkin> sk = std::make_shared<UiWindowSkin>();
+//  //sk->_pBorder = _pSkin->_pBorder;
+//  //sk->_pBorderImgs = _pSkin->_pBorderImgs;
+//
+//  _pListContainer = Ui9Grid::create(_pSkin->_pBorder);
+//  //_pListContainer->enableVScrollbar();
+//  _pListContainer->maxHeight() = "200px";
+//  _pListContainer->set9GridImages(_pSkin->_pBorderImgs);
+//  _pListContainer->position() = UiPositionMode::e::Relative;
+//
+//  //Just testing..
+//  _pListContainer->top() = "40px";
+//  _pListContainer->bottom() = "40px";
+//  _pListContainer->width() = "200px";
+//  _pListContainer->height() = "200px";
+//  _pListContainer->hide();
+//
+//  _pArrowButton = UiFlexButton::create(_pSkin->_pArrowButtonSkin);
+//  _pArrowButton->getContentContainer()->addChild(UiImage::create(_pSkin->_arrow, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand));
+//  _pArrowButton->position() = UiPositionMode::e::Static;
+//  _pArrowButton->display() = (UiDisplayMode::e::InlineNoWrap);
+//  _pArrowButton->width() = "32px";
+//  _pArrowButton->height() = "32px";
+//  _pArrowButton->padRight() = "7px";
+//  getContentContainer()->addChild(_pArrowButton);
+//
+//  _pSelectedContainer = UiElement::create();
+//  _pSelectedContainer->position() = UiPositionMode::e::Static;
+//  _pSelectedContainer->display() = (UiDisplayMode::InlineNoWrap);
+//  _pSelectedContainer->width() = "auto";
+//  _pSelectedContainer->height() = "100%";
+//  getContentContainer()->addChild(_pSelectedContainer);
+//
+//  //**This will have errors because until now we assueme gui2d has only windows as children
+//  getManager()->addChild(_pListContainer);
+//
+//  std::weak_ptr<Ui9Grid> cont_w = _pListContainer;
+//  std::weak_ptr<UiDropdown> dd_w = getThis<UiDropdown>();
+//  uDim* contW = &_uListContainerWidth;
+//
+//  std::shared_ptr<UiScreen> mgr = getManager();
+//  //You can click anything, anything you like.
+//  setPickRoot();
+//  setPress([cont_w, dd_w, contW, mgr]() {
+//    //Show container
+//    std::shared_ptr<Ui9Grid> cont = cont_w.lock();
+//    std::shared_ptr<UiDropdown> dd = dd_w.lock();
+//    if (cont && dd) {
+//      cont->left() = dd->getComputedQuad().left();
+//      if (contW->getDimUnit() == UiDimUnit::e::Auto) {
+//        cont->width() = dd->getComputedQuad().right() - dd->getComputedQuad().left();
+//      }
+//      else if (contW->getDimUnit() == UiDimUnit::e::Percent) {
+//        UiScreen::error("Percentage width on dropdown container... is invalid");
+//      }
+//      else {
+//        cont->width() = contW->px();
+//      }
+//      cont->top() = dd->getComputedQuad().bottom();
+//      mgr->bringToFront(cont, true);
+//      cont->overflow() = (UiOverflowMode::e::Hide);
+//      cont->show();
+//    }
+//    });
+//  setClick([cont_w]() {
+//    //Show container
+//    if (std::shared_ptr<Ui9Grid> cont = cont_w.lock()) {
+//      cont->hide();
+//    }
+//    });
+//  //TODO: global release
+//}
+//void UiDropdown::setSelectedItem(std::shared_ptr<UiElement> item) {
+//  if (_pSelected == item) {
+//    return;
+//  }
+//  if (_pListContainer->getContentContainer()->hasChild(item) == false) {
+//    UiScreen::error(Stz "Dropdown didn't have the item you treid to select: " + item->getName());
+//    return;
+//  }
+//
+//  bool b;
+//  if (_pSelected != nullptr) {
+//    b = _pSelectedContainer->removeChild(_pSelected);
+//    _pListContainer->getContentContainer()->addChild(_pSelected);
+//  }
+//  b = _pListContainer->getContentContainer()->removeChild(item);
+//  _pSelectedContainer->addChild(item);
+//
+//  _pSelected = item;
+//}
+//void UiDropdown::addItem(std::shared_ptr<UiElement> item, bool bFitHeight) {
+//
+//  item->position() = UiPositionMode::e::Static;
+//  if (bFitHeight) {
+//    //*For labels..
+//    //**Set fittheight to false if you're making an image or other dropdown.
+//    //
+//    item->height() = height();
+//  }
+//  std::weak_ptr<UiDropdown> dd_w = getThis<UiDropdown>();
+//  std::weak_ptr<Ui9Grid> cont_w = _pListContainer;
+//  std::weak_ptr<UiElement> item_w = item;
+//
+//  item->setPickRoot();
+//  item->setClick([cont_w, dd_w, item_w]() {
+//    std::shared_ptr<UiDropdown> dd = dd_w.lock();
+//    std::shared_ptr<Ui9Grid> cont = cont_w.lock();
+//    std::shared_ptr<UiElement> item = item_w.lock();
+//    if (cont && dd && item) {
+//      dd->setSelectedItem(item);
+//      cont->hide();
+//    }
+//    });
+//  _pListContainer->getContentContainer()->addChild(item);
+//
+//  if (_pSelected == nullptr) {
+//    setSelectedItem(item);
+//  }
+//}
+//void  UiDropdown::performLayout(bool bForce) {
+//  Ui9Grid::performLayout(bForce);
+//
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiContainer
+//std::shared_ptr<UiContainer> UiContainer::create() {
+//  std::shared_ptr<UiContainer> pc = std::make_shared<UiContainer>();
+//  pc->init();
+//  return pc;
+//}
+//void UiContainer::init() {
+//  UiGrid::init();
+//  /*
+//  +-----------------+
+//  |     0       | 1 |
+//  |             |   |
+//  +-----------------+
+//  |  2          | 3 |
+//  +-----------------+
+//  */
+//
+//  //I think we need uigrid here..3/3/18s
+//  std::shared_ptr<UiGridRow> r0 = addRow();
+//  r0->width() = "100%";
+//  r0->height() = "auto";
+//  std::shared_ptr<UiGridRow> r1 = addRow();
+//  r1->width() = "100%";
+//  r1->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
+//  std::shared_ptr<UiElement> c0 = r0->addCol();
+//  c0->width() = "auto";
+//  c0->height() = "100%";
+//  std::shared_ptr<UiElement> c1 = r0->addCol();//HSB
+//  c1->width() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
+//  c1->height() = "100%";
+//
+//  std::shared_ptr<UiElement> c2 = r1->addCol();//VSB
+//  c0->width() = "auto";
+//  c0->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
+//  std::shared_ptr<UiElement> c3 = r1->addCol();//Corner
+//  c1->width() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
+//  c1->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
+//
+//}
+//std::shared_ptr<UiElement> UiContainer::getContentContainer() {
+//  return getCell(0, 0);
+//}
+//void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
+//  //if (pSkin == nullptr) {
+//  //    Gui2d::error("Could not enable scroll bar on window, the skin didn't have one");
+//  //    return;
+//  //}
+//  //detachContentContainer();
+//
+//  //**HACK this is not generic. scale stupid bar to make room on the right
+//  uDim d0w;
+//  uDim d2w;
+//  uDim d0h;
+//  uDim d2h;
+//  uDim d1;
+//  std::shared_ptr<UiElement> pCell = nullptr;
+//  if (pSkin->_eOrientation == Orientation::e::Vertical) {
+//    //float borderRem = MathUtils::broMax(_pBorder->get(GridBorder::e::Right).px() - pSkin->_uWidthOrHeightPx.px(), 0.0f);
+//
+//    d0w = _fBorderWidthPx;//uDim(borderRem, UiDimUnit::e::Pixel);//Left pad %
+//    d0h = "100%";
+//    //  d1 = uDim(_pBorder->get(GridBorder::e::Right).px() * 0.3f, UiDimUnit::e::Pixel);
+//      //  d2w = uDim(_pBorder->get(GridBorder::e::Right).px() * 0.60f, UiDimUnit::e::Pixel);//Right pad %
+//      //  d2h = "auto";
+//    pCell = getCell(0, 1);
+//  }
+//  else if (pSkin->_eOrientation == Orientation::e::Horizontal) {
+//    //float borderRem = MathUtils::broMax(_pBorder->get(GridBorder::e::Bot).px() - pSkin->_uWidthOrHeightPx.px(), 0.0f);
+//
+//    d0w = "100%";
+//    d0h = _fBorderWidthPx; //uDim(borderRem, UiDimUnit::e::Pixel);//Left pad %
+//   // d1 = uDim(_pBorder->get(GridBorder::e::Bot).px() * 0.3f, UiDimUnit::e::Pixel);
+//    //   d2w = "100%";
+//    //   d2h = uDim(_pBorder->get(GridBorder::e::Bot).px() * 0.35f, UiDimUnit::e::Pixel);//Right pad %
+//    pCell = getCell(1, 0);
+//  }
+//  //*padding for the scrollbar to the left of the right column so that it pushes it over
+//  std::shared_ptr<UiElement> scrollLeftOrTopPad = UiElement::create();
+//  scrollLeftOrTopPad->width() = d0w;
+//  scrollLeftOrTopPad->height() = d0h; //100%
+//  pCell->addChild(scrollLeftOrTopPad, UiScreen::sortLayer(2));
+//
+//  std::weak_ptr<UiWindow> weak_win = getThis<UiWindow>();
+//  std::weak_ptr<UiElement> weakControlObject = getContentContainer();
+//  UiScrubGen::BarWidthFunc barWidthfunc = [weakControlObject](std::shared_ptr<UiScrubGen> pScrollbar) {
+//    float fBarSize = 0;
+//    if (std::shared_ptr<UiElement> cont = weakControlObject.lock()) {
+//      std::shared_ptr<UiElement> ccParent = cont->getParent();
+//      float b1wh;
+//      float b2wh;
+//      Box2f b1 = ccParent->getComputedQuad();//9Grid column
+//      Box2f b2 = cont->getContentQuad();
+//      if (pScrollbar->getOrientation() == Orientation::e::Vertical) {
+//        b1wh = b1.height();
+//        b2wh = b2.height();
+//
+//      }
+//      else if (pScrollbar->getOrientation() == Orientation::e::Horizontal) {
+//        b1wh = b1.width();
+//        b2wh = b2.width();
+//
+//      }
+//      //#1 set bar size
+//      //Calculate the width/hight of the thumb bar relative to the scroll percentage. (Zero for trackbar)
+//      if (b2wh > 0) {
+//        fBarSize = b1wh / (b2wh);
+//        fBarSize = MathUtils::broClamp(fBarSize, 0.0f, 1.0f);
+//      }
+//    }
+//    return fBarSize;
+//  };
+//  UiScrubGen::ScrollFunc scrollFunc = [weakControlObject, weak_win](std::shared_ptr<UiScrubGen> pScrollbar, float scrollPct) {
+//    if (std::shared_ptr<UiElement> cont = weakControlObject.lock()) {
+//      if (std::shared_ptr<UiWindow> win = weak_win.lock()) {
+//        //What this does: Move the content container of this window based on the scrollPct of the H or V scrollbar
+//        float ccWh;
+//        float ccWhMinusEof;
+//        float pwh = 0;
+//        uDim* cTorL = nullptr;
+//        uDim* cWorH = nullptr;
+//        if (pScrollbar->getOrientation() == Orientation::e::Vertical) {
+//          ccWh = cont->getContentQuad().height();
+//          if (cont->getParent()) {
+//            pwh = cont->getParent()->getComputedQuad().height();
+//          }
+//          cTorL = &cont->top();
+//          cWorH = &cont->height();
+//        }
+//        else if (pScrollbar->getOrientation() == Orientation::e::Horizontal) {
+//
+//          ccWh = cont->getContentQuad().width();
+//          if (cont->getParent()) {
+//            pwh = cont->getParent()->getComputedQuad().width();
+//          }
+//          cTorL = &cont->left();
+//          cWorH = &cont->width();
+//        }
+//
+//        //Update window contents offset
+//        ccWhMinusEof = ccWh;
+//        if (pScrollbar->getCanScrollPastEof() == false) {
+//          ccWhMinusEof = ccWh - pwh;
+//        }
+//
+//        float ccWorHPct = ccWhMinusEof * scrollPct;
+//        *cTorL = -ccWorHPct;
+//        *cWorH = uDim(ccWh, UiDimUnit::e::Pixel);
+//
+//        win->setLayoutChanged();
+//        win->setLayoutChanged(true);
+//      }
+//    }
+//  };
+//
+//  //add the scrollar
+//  _pVScrollBar = UiScrollbar::create(pSkin, barWidthfunc, scrollFunc);
+//  pCell->addChild(_pVScrollBar, UiScreen::sortLayer(2));
+//
+//  //Right pad
+//  //  std::shared_ptr<UiElement> scrollRightOrBotPad = UiElement::create();
+//  //  scrollRightOrBotPad->width() = d2w;
+//  //  scrollRightOrBotPad->height() = d2h; //100%
+//  //  pCell->addChild(scrollRightOrBotPad, Gui2d::sortLayer(2));
+//
+//  setLayoutChanged();
+//  setLayoutChanged(true);
+//}
+//void UiContainer::enableResize() {
+//  //Use weak ptr to avoid circular reference
+//  std::weak_ptr<UiWindow> win = getThis<UiWindow>();
+//  UiDragInfo::DragFunc sizeFunc = [win](vec2& dxy) {
+//    if (std::shared_ptr<UiWindow> ww = win.lock()) {
+//      ww->width() = ww->width().px() + dxy.x;
+//      ww->height() = ww->height().px() + dxy.y;
+//      ww->setLayoutChanged();
+//    }
+//  };
+//  getCell(1, 1)->enableDrag(sizeFunc);
+//  setLayoutChanged();
+//}
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UIWindow
+//std::shared_ptr<UiElement> UiWindow::getContentContainer() {
+//  return _pContainer->getContentContainer();
+//}
+//std::shared_ptr<UiWindow> UiWindow::create(std::shared_ptr<UiWindowSkin> pSkin) {
+//  if (UiSkinElement::setAndValid(pSkin) == false) {
+//    return nullptr;
+//  }
+//  std::shared_ptr<UiWindow> ui = std::make_shared<UiWindow>();
+//  ui->_pWindowSkin = pSkin;
+//  ui->init();
+//
+//  return ui;
+//}
+//void UiWindow::init() {
+//  UiElement::init();
+//  setName("UiWindow");
+//
+//  position() = UiPositionMode::Relative;
+//  //Set some default position stuff so we can see it.
+//  top() = "100px";
+//  left() = "200px";
+//  width() = "300px";
+//  height() = "400px";
+//
+//
+//  //Create background
+//  _pBackground = Ui9Grid::create(_pWindowSkin->_pBorder);
+//  _pBackground->set9GridImages(_pWindowSkin->_pBorderImgs);
+//  addChild(_pBackground, UiScreen::sortLayer(0));
+//
+//  _pTitleBar = UiElement::create();
+//  _pTitleBar->width() = "100%";
+//  _pTitleBar->height() = "32px";
+//  _pContentArea = UiElement::create();
+//  _pContentArea->width() = "100%";
+//  _pContentArea->height() = "auto";
+//
+//  _pContainer = UiContainer::create();
+//  _pContainer->width() = "100%";
+//  _pContainer->height() = "100%";
+//  _pContentArea->addChild(_pContainer);
+//
+//  addChild(_pTitleBar, UiScreen::sortLayer(1));
+//  addChild(_pContentArea, UiScreen::sortLayer(1));
+//
+//  //Title Bar
+//  _lblTitle = UiLabel::create("Title", _pWindowSkin->_pTitleFont);
+//  _lblTitle->position() = UiPositionMode::Static;
+//  _lblTitle->width() = "100%";
+//  _lblTitle->height() = "30px";
+//  _lblTitle->padLeft() = "20px";
+//  _lblTitle->padTop() = "10px";
+//  _lblTitle->getColor().a() = 0.521f;
+//
+//  _pTitleBar->addChild(_lblTitle);
+//
+//  std::shared_ptr<UiImageButton> bt = UiImageButton::create(_pWindowSkin->_pCloseButton);
+//  //Close Event
+//  std::weak_ptr<UiWindow> winw = getThis<UiWindow>();
+//  bt->addEvent(UiEventId::e::Mouse_Lmb_Release, UiEventFunc::create(
+//    [winw](UiEventId::e evId, void*) {
+//      if (std::shared_ptr<UiWindow> win = winw.lock()) {
+//        win->hide();
+//      }
+//    }
+//  ));
+//  _pTitleBar->addChild(bt);
+//
+//  //BTF
+//  std::weak_ptr<UiWindow> weak_win = getThis<UiWindow>();
+//  std::function<void()> bringToFront = [weak_win]() {
+//    if (std::shared_ptr<UiWindow> win = weak_win.lock()) {
+//      //assumes all windows are on the same layer.
+//      win->getParent()->bringToFront(win, false);
+//    }
+//  };
+//  setPress(bringToFront);
+//
+//}
+//void UiWindow::setTitleLabel(std::string lbl) {
+//  _lblTitle->setText(lbl);
+//}
+//void UiWindow::update(std::shared_ptr<InputManager> pInputManager) {
+//  //Update Childs including VScrollbar
+//  UiElement::update(pInputManager);
+//
+//  //auto expand
+//  _pContainer->width() = uDim(getComputedQuad().right() - getComputedQuad().left(), UiDimUnit::e::Pixel);
+//  _pContainer->height() = uDim(getComputedQuad().bottom() - getComputedQuad().top(), UiDimUnit::e::Pixel);
+//}
+//
+//void UiWindow::enableResize() {
+//  _pContainer->enableResize();
+//}
+//
+//void UiWindow::enableDrag() {
+//
+//  //Use weak ptr to avoid circular reference
+//  std::weak_ptr<UiWindow> win = getThis<UiWindow>();
+//  UiDragInfo::DragFunc moveFunc = [win](vec2& dxy) {
+//    if (std::shared_ptr<UiWindow> ww = win.lock()) {
+//      ww->left() = ww->left().px() + dxy.x;
+//      ww->top() = ww->top().px() + dxy.y;
+//      if (ww->getParent() != nullptr) {
+//        //change layout for parent, window's layout isn't changed
+//        ww->getParent()->setLayoutChanged();
+//      }
+//      else {
+//        ww->setLayoutChanged();
+//      }
+//    }
+//  };
+//
+//  _pTitleBar->enableDrag(moveFunc);
+//  setLayoutChanged();
+//}
+//bool UiWindow::pick(std::shared_ptr<InputManager> InputManager) {
+//  bool b = UiElement::pick(InputManager);
+//
+//  return b;
+//}
+//void UiWindow::performLayout(bool bForce) {
+//  UiElement::performLayout(bForce);
+//}
+//void UiWindow::enableVScrollbar() {
+//  _pContainer->enableScrollbar(_pWindowSkin->_pVScroll);
+//}
+//void UiWindow::enableHScrollbar() {
+//  _pContainer->enableScrollbar(_pWindowSkin->_pHScroll);
+//}
+//
+//#pragma endregion
+////////////////////////////////////////////////////////////////////////////
+//#pragma region UiToolbar
+//std::shared_ptr<UiToolbar> UiToolbar::create(std::shared_ptr<UiToolbarSkin> skin) {
+//  std::shared_ptr<UiToolbar> ui = std::make_shared<UiToolbar>();
+//  ui->_pToolbarSkin = skin;
+//  ui->_pWindowSkin = skin->_pWindowSkin;
+//  // ui->_pBorder = skin->_pWindowSkin->_pBorder;
+//  ui->init();
+//  return ui;
+//
+//}
+//void UiToolbar::init() {
+//  UiWindow::init();
+//  setName("Toolbarf");
+//
+//  _pTitleBar->hide();
+//
+//  position() = UiPositionMode::Relative;
+//  display() = UiDisplayMode::InlineNoWrap;
+//  //Set some default position stuff so we can see it.
+//  top() = "0px";
+//  left() = uDim(getManager()->getDesignSize().getWidth() * 0.1f, UiDimUnit::e::Pixel);
+//  width() = "auto";//uDim(Gu::getGui()->getDesignSize().getWidth() * 0.8f, UiDimUnit::e::Pixel);
+//  height() = "auto";//uDim(Gu::getGui()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
+//
+//}
+//void UiToolbar::update(std::shared_ptr<InputManager> pInputManager) {
+//  UiWindow::update(pInputManager);
+//}
+//void UiToolbar::performLayout(bool bForce) {
+//  UiElement::performLayout(bForce);
+//  for (auto p : getChildren()) {
+//    std::shared_ptr<UiElement> e = p.second;
+//  }
+//}
+//#pragma endregion
+//
+//
 
-}
-void UiLabel::setText(std::string s) {
-  _strText = s;
-}
 
-void UiLabel::performLayout(bool bForce) {
 
-  if (_pFontInfo != nullptr) {
-    //glyph creation is in performlayout because the HEIGHT of the label needs to be
-    //calculated first
-#ifdef _DEBUG
-    if (StringUtil::contains(_strText, "Apple")) {
-      int n = 0;
-      n++;
-    }
-    if (StringUtil::contains(_strText, "DOF")) {
-      int n = 0;
-      n++;
-    }
-#endif
 
-
-    // This has to come before performlayout in order to get the correct width.
-    createGlyphs();
-  }
-  //Use the system to flow the layout.
-  t_timeval us0 = Gu::getMicroSeconds();
-  UiElement::performLayout(bForce);
-  t_timeval us1 = Gu::getMicroSeconds() - us0;
-  int nn = 0;
-  nn++;
-}
-void UiLabel::update(std::shared_ptr<InputManager> pInputManager) {
-
-  if (StringUtil::equals(_strTextLast, _strText) == false) {
-    _strTextLast = _strText;
-    setLayoutChanged();
-  }
-
-  UiElement::update(pInputManager);
-}
-void UiLabel::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
-  UiElement::regenMesh(verts, inds, b2ClipRect);
-}
-void UiLabel::createGlyphs() {
-  //Easy out - if text is the same.
-  //However, we still need to send the mesh becasue we use absolute coordinates instead of a positional uniform.
-
-  //Hide glyphs - this is an optimization because adding/removing children was causing major slowdown
-  for (auto c : getChildren()) {
-    c.second->setLayoutVisible(false, false);
-  }
-
-  float labelHeight = bottom().px() - top().px();
-
-  //Font height is the height of the label.
-  float fontHeight;
-  uDim& d = _pFontInfo->getFontSize();
-  if (d.getDimUnit() == UiDimUnit::e::Pixel) {
-    fontHeight = d.px();
-  }
-  else if (d.getDimUnit() == UiDimUnit::e::Percent) {
-    fontHeight = d.pctOf(labelHeight);
-  }
-  else if (d.getDimUnit() == UiDimUnit::e::Auto) {
-    fontHeight = labelHeight;
-  }
-  std::shared_ptr<MtFont> ft = _pFontInfo->getFont();
-  /*
-  lineheight - in the layout the height of space between lines
-  padding
-  text-align - top, center, bottom
-  */
-  //Add glyphs
-  float curX = 0, curY = 0;//setting curY = labelHeight SORT OF fixes the issue.  It's not right
-  Box2f outQuad;
-  Box2f outTexs;
-  float outW, outH, outPadT, outPadR, outPadB, outPadL;
-  bool bNextWrap = false;
-  int nCh = 0;
-  float labelWidth = 0;
-  float labelWidthCur = 0;
-  //float labelHeight = 0;
-  //float labelHeightCur = 0;
-  int32_t cCodePrev = -1;//Previous code for kerning
-  for (int32_t c : _strText) {
-    ft->getCharQuad(c, cCodePrev, fontHeight, outW, outH, outTexs, outPadT, outPadR, outPadB, outPadL);
-    cCodePrev = c;
-
-    std::shared_ptr<UiGlyph> g;
-
-    if (nCh < getChildren().size()) {
-      auto it = getChildren().begin();
-      std::advance(it, nCh);
-      g = std::dynamic_pointer_cast<UiGlyph>(it->second);
-      g->setLayoutVisible(true, false);
-    }
-    else {
-      g = std::make_shared<UiGlyph>();//UiGlyph::create(c);
-      addChild(g, 0, false, false);
-      g->setSizeMode(UiImageSizeMode::e::Computed, UiImageSizeMode::e::Computed);
-    }
-
-    g->position() = UiPositionMode::Static;
-    g->width().setDimUnit(UiDimUnit::e::Pixel);
-    g->height().setDimUnit(UiDimUnit::e::Pixel);
-
-    g->width() = outW;
-    g->height() = outH;
-
-    g->getTexs() = outTexs;
-    g->getColor() = getColor(); //Copy color over Note: font color? I do't know I think we should use gui color
-
-  //  g->padRight() = outPadR;
-    //g->padBottom() = outPadB;
-    g->padTop() = outPadT;//fontHeight - outH;    //this should never be greater
-    g->padRight() = outPadR;//fontHeight - outH;    //this should never be greater
-    g->padBottom() = outPadB;//fontHeight - outH;    //this should never be greater
-    g->padLeft() = outPadL;//fontHeight - outH;    //this should never be greater
-
-    labelWidthCur += g->right().px() - g->left().px() + g->padRight().px() + g->padLeft().px();
-    ////Don't alter texcoords
-    if (_bWordWrap) {
-      //This won't work it'll let chars go past their container.
-      //I think the only method to make this work is to encapsulate Words within UiElements (simply)
-      g->display() = UiDisplayMode::e::InlineNoWrap;
-      if (bNextWrap) {
-        labelWidth = MathUtils::broMax(labelWidth, labelWidthCur);
-        labelWidthCur = 0;
-        g->display() = (UiDisplayMode::e::Block);
-        bNextWrap = false;
-      }
-
-      if (c == '\r' || c == '\n') {
-        bNextWrap = true;
-      }
-      else if (StringUtil::isWsExceptNewline(c)) {
-        g->display() = (UiDisplayMode::e::InlineWrap);
-      }
-      else {
-        g->display() = (UiDisplayMode::e::InlineNoWrap);
-      }
-    }
-    else {
-      g->display() = (UiDisplayMode::e::InlineNoWrap);//Default
-    }
-
-    //Top-Left origin conversion (STB uses bottom left of quad, place our quads at the bottom of the labe.
-    //*We could even have centering, and other jargon as to where to place the text.  For now just place it at the bottom.
-   // g->top() = g->top().px() + fontHeight; // add max height to the top element
-   // g->bottom() = g->bottom().px() + fontHeight; // add max height to the top element
-
-
-    nCh++;
-  }
-
-  if (labelWidth < 0.0f) {
-    labelWidth = 0.0f;//hasn't happened yet
-  }
-  minWidth() = uDim(labelWidth, UiDimUnit::e::Pixel);
-
-
-
-}
-
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiButtonBase
-void UiButtonBase::init() {
-  std::weak_ptr<UiButtonBase> weak_p = getThis<UiButtonBase>();
-  setClick([weak_p]() {
-    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
-      bt->showUp();
-    }
-    });
-  setDown([weak_p]() {
-    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
-      bt->showDown();
-    }
-    });
-  setPress([weak_p]() {
-    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
-      bt->showUp();
-    }
-    });
-  setHover([weak_p]() {
-    if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
-
-      bt->showHover();
-    }
-    });
-}
-void UiButtonBase::update(std::shared_ptr<InputManager> pInputManager) {
-
-  if (getPickedLastFrame() == false) {
-    showUp();
-  }
-
-  UiElement::update(pInputManager);
-}
-int UiButtonBase::layerIdUp() { return  UIManager::sortLayer(0); }
-int UiButtonBase::layerIdHover() { return  UIManager::sortLayer(1); }
-int UiButtonBase::layerIdDown() { return  UIManager::sortLayer(2); }
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiImageButton
-std::shared_ptr<UiImageButton> UiImageButton::create(std::shared_ptr<UiButtonSkin> skin) {
-  std::shared_ptr<UiImageButton> bt = std::make_shared<UiImageButton>();
-  bt->_pSkin = skin;
-
-  bt->init();
-  bt->setUp(UiImage::create(skin->_pUp, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
-  bt->setHover(UiImage::create(skin->_pHv, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
-  bt->setDown(UiImage::create(skin->_pDn, UiImageSizeMode::Expand, UiImageSizeMode::Expand));
-
-  return bt;
-}
-void UiImageButton::init() {
-  UiButtonBase::init();
-  //Use weak ptr to avoid circular reference
-}
-void UiImageButton::setHover(std::shared_ptr<UiImage> img) {
-  _pHover = img;
-  addChild(img, UiButtonBase::layerIdHover());//The index is a different layer
-}
-void UiImageButton::setUp(std::shared_ptr<UiImage> img) {
-  _pUp = img;
-  addChild(img, UiButtonBase::layerIdUp());//The index is a different layer
-}
-void UiImageButton::setDown(std::shared_ptr<UiImage> img) {
-  _pDown = img;
-  addChild(img, UiButtonBase::layerIdDown());//The index is a different layer
-}
-void UiImageButton::showHover() {
-  if (_eImageState != ImageState::e::Hover) {
-    _eImageState = ImageState::e::Hover;
-    if (_pUp != nullptr)    _pUp->hideRender();//Don't use || here - early out breaks the logic
-    if (_pHover != nullptr) _pHover->showRender();
-    if (_pDown != nullptr)  _pDown->hideRender();
-  }
-}
-void UiImageButton::showUp() {
-  if (_eImageState != ImageState::e::Up) {
-    _eImageState = ImageState::e::Up;
-    if (_pUp != nullptr)    _pUp->showRender();
-    if (_pHover != nullptr) _pHover->hideRender();
-    if (_pDown != nullptr)  _pDown->hideRender();
-  }
-}
-void UiImageButton::showDown() {
-  if (_eImageState != ImageState::e::Down) {
-    _eImageState = ImageState::e::Down;
-    if (_pUp != nullptr)    _pUp->hideRender();
-    if (_pHover != nullptr) _pHover->hideRender();
-    if (_pDown != nullptr)  _pDown->showRender();
-  }
-}
-void UiImageButton::update(std::shared_ptr<InputManager> pInputManager) {
-  UiButtonBase::update(pInputManager);
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiGridRow
-void UiGridRow::init() {
-  UiElement::init();
-  setName("UiGridRow");
-}
-std::shared_ptr<UiElement> UiGridRow::getCol(size_t iCol) {
-  if (iCol >= _cols.size()) {
-    UIManager::error(Stz "UiGridRow: Error: tried to access grid column outside of bounds: " + iCol);
-    return nullptr;
-  }
-  return _cols[iCol];
-}
-std::shared_ptr<UiElement> UiGridRow::addCol(int nCount, bool bAutoSizeCols, uint32_t iSort) {
-  std::shared_ptr<UiElement> c = nullptr;
-  for (int i = 0; i < nCount; ++i) {
-    c = UiElement::create();
-    c->setName("UiElement(UiGridCol)");
-    addChild(c, iSort);
-    _cols.push_back(c);
-  }
-  if (bAutoSizeCols) {
-    resizeCols();
-  }
-
-  return c;
-}
-void UiGridRow::resizeCols() {
-  if (_cols.size() == 0) {
-    return;
-  }
-  std::string w = Stz 100.0f / (float)(_cols.size()) + "%";
-  for (std::shared_ptr<UiElement> c : _cols) {
-    c->width() = w;
-    c->height() = "100%";
-  }
-}
-void UiGridRow::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiGrid
-std::shared_ptr<UiGrid> UiGrid::create(int nr, int nc) {
-  std::shared_ptr<UiGrid> g = std::make_shared<UiGrid>();
-  g->init();
-  g->addRow(nr, nc);
-  g->setName("UiGrid");
-  return g;
-}
-std::shared_ptr<UiElement> UiGrid::getCell(size_t iRow, size_t iCol) {
-  if (iRow >= _rows.size()) {
-    UIManager::error(Stz "UiGrid: Error: tried to access grid cell outside of bounds tried, (" + iRow + "," + iCol + ") ");
-    return nullptr;
-  }
-  return  _rows[iRow]->getCol(iCol);
-}
-void UiGrid::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
-}
-std::shared_ptr<UiGridRow> UiGrid::addRow(int nr, int nc, bool bAutoSizeRows, uint32_t iSort) {
-  std::vector<std::shared_ptr<UiGridRow>> added;
-  std::shared_ptr<UiGridRow> r;
-  for (int ir = 0; ir < nr; ++ir) {
-    r = std::make_shared<UiGridRow>();
-    r->init();
-    addChild(r, iSort);
-    _rows.push_back(r);
-    added.push_back(r);
-  }
-
-  if (bAutoSizeRows) {
-    resizeRows();
-  }
-
-  if (nc > 0) {
-    for (std::shared_ptr<UiGridRow> r2 : added) {
-      r2->addCol(nc);
-    }
-  }
-
-  return r;
-}
-void UiGrid::resizeRows() {
-  std::string h = Stz 100.0f / (float)(_rows.size()) + "%";
-  for (std::shared_ptr<UiGridRow> r : _rows) {
-    r->height() = h;
-    r->width() = "100%";
-  }
-}
-std::shared_ptr<UiGrid> UiGrid::createImageStack(std::shared_ptr<Ui3Tex> tex, uDim uWorHPx, Orientation::e eOr) {
-  if (uWorHPx.px() == 0) {
-    UIManager::error(Stz "Image stack width or hieght was zero, errors will occur orientation = " + Orientation::toString(eOr));
-    return nullptr;
-  }
-  std::shared_ptr<UiGrid> pg = UiGrid::create(0, 0);
-
-  std::shared_ptr<UiElement> c0;
-  std::shared_ptr<UiElement> c1;
-  std::shared_ptr<UiElement> c2;
-  std::shared_ptr<UiImage> imgTopOrLeft;
-  std::shared_ptr<UiImage> imgMid;
-  std::shared_ptr<UiImage> imgBotOrRight;
-
-  uint32_t iSortLayer = UIManager::sortLayer(0);
-
-  if (eOr == Orientation::e::Vertical) {
-    pg->setName("UiGrid(UiImage3Stack_Vertical)");
-    uDim hR0 = uWorHPx.autoHeight(tex->get(0));
-    uDim hR1 = uWorHPx.autoHeight(tex->get(1));
-    uDim hR2 = uWorHPx.autoHeight(tex->get(2));
-    std::shared_ptr<UiGridRow> r0 = pg->addRow(1, 0, false, iSortLayer);
-    r0->setName("IMAGE_3STACK_ROW0_V");
-    r0->width() = "100%";
-    r0->height() = hR0;
-    std::shared_ptr<UiGridRow> r1 = pg->addRow(1, 0, false, iSortLayer);
-    r1->setName("IMAGE_3STACK_ROW1_V");
-    r1->width() = "100%";
-    r1->height() = "auto";
-    std::shared_ptr<UiGridRow> r2 = pg->addRow(1, 0, false, iSortLayer);
-    r2->setName("IMAGE_3STACK_ROW2_V");
-    r2->width() = "100%";
-    r2->height() = hR1;
-    //COLS
-    c0 = r0->addCol(1, false, iSortLayer);
-    c0->setName("IMAGE_3STACK_COL0_V");
-    c0->width() = "100%";
-    c0->height() = hR0;
-    c1 = r1->addCol(1, false, iSortLayer);
-    c1->setName("IMAGE_3STACK_COL1_V");
-    c1->width() = "100%";
-    c1->height() = "auto";
-    c2 = r2->addCol(1, false, iSortLayer);
-    c2->setName("IMAGE_3STACK_COL2_V");
-    c2->width() = "100%";
-    c2->height() = hR2;
-
-    imgTopOrLeft = UiImage::create(tex->get(0), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, uWorHPx.px(), hR0.px());
-    imgMid = UiImage::create(tex->get(1), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Tile, uWorHPx.px(), hR1.px());
-    imgBotOrRight = UiImage::create(tex->get(2), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, uWorHPx.px(), hR2.px());
-  }
-  else if (eOr == Orientation::e::Horizontal) {
-    pg->setName("UiGrid(UiImage3Stack_Horizontal)");
-    uDim hR0 = uWorHPx.autoWidth(tex->get(0));
-    uDim hR1 = uWorHPx.autoWidth(tex->get(1));
-    uDim hR2 = uWorHPx.autoWidth(tex->get(2));
-
-    std::shared_ptr<UiGridRow> r0 = pg->addRow(1, 0, false, iSortLayer);
-    r0->setName("IMAGE_3STACK_ROW0_H");
-
-    c0 = r0->addCol(1, false, iSortLayer);
-    c0->setName("IMAGE_3STACK_COL0_H");
-    c0->height() = uWorHPx;
-    c0->width() = hR0;
-    c0->display() = (UiDisplayMode::e::InlineNoWrap);
-    c1 = r0->addCol(1, false, iSortLayer);
-    c1->setName("IMAGE_3STACK_COL1_H");
-    c1->height() = uWorHPx;
-    c1->width() = "auto";
-    c1->display() = (UiDisplayMode::e::InlineNoWrap);
-    c2 = r0->addCol(1, false, iSortLayer);
-    c2->setName("IMAGE_3STACK_COL2_H");
-    c2->height() = uWorHPx;
-    c2->width() = hR2;
-    c2->display() = (UiDisplayMode::e::InlineNoWrap);
-
-    imgTopOrLeft = UiImage::create(tex->get(0), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, hR0.px(), uWorHPx.px());
-    imgMid = UiImage::create(tex->get(1), UiImageSizeMode::e::Tile, UiImageSizeMode::e::Expand, hR1.px(), uWorHPx.px());
-    imgBotOrRight = UiImage::create(tex->get(2), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, hR2.px(), uWorHPx.px());
-  }
-  c0->addChild(imgTopOrLeft, UIManager::sortLayer(0));
-  c1->addChild(imgMid, UIManager::sortLayer(0));
-  c2->addChild(imgBotOrRight, UIManager::sortLayer(0));
-
-  return pg;
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region Ui9Grid
-std::shared_ptr<Ui9Grid> Ui9Grid::create(std::shared_ptr<UiBorderDim> dims) {
-  std::shared_ptr<Ui9Grid> g = std::make_shared<Ui9Grid>();
-  g->_pBorder = dims;
-  g->init();
-  return g;
-}
-void Ui9Grid::init() {
-  UiElement::init();
-
-  setName("UiImage9Grid");
-
-  std::shared_ptr<UiGridRow> r0 = addRow();
-  std::shared_ptr<UiGridRow> r1 = addRow();
-  std::shared_ptr<UiGridRow> r2 = addRow();
-  r0->addCol(3);
-  r1->addCol(3);
-  r2->addCol(3);
-
-  setBorderWidth(_pBorder);
-
-  //Add content area that fills the container AND is above the background
-  _pContentContainer = UiElement::create();
-  _pContentContainer->setName("UiElement(UiContentContainer)");
-  _pContentContainer->position() = UiPositionMode::e::Static;
-  _pContentContainer->overflow() = (UiOverflowMode::e::Hide);
-  _pContentContainer->width() = "100%";
-  _pContentContainer->height() = "100%";
-  std::shared_ptr<UiElement> c = getCell(1, 1);
-  c->addChild(_pContentContainer, UIManager::sortLayer(Ui9Grid::getContentSortLayer()));
-}
-void Ui9Grid::set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer) {
-
-  for (int j = 0; j < 3; ++j) {
-    for (int i = 0; i < 3; ++i) {
-      size_t ioff = Ui9Grid::cellOff(i, j);
-      float wpx = (float)texs->get(ioff)->getWidth();
-      float hpx = (float)texs->get(ioff)->getHeight();
-
-      if (wpx == 0 || hpx == 0) {
-        static int xx = 0;
-        if (xx == 0) {
-          //**If this hits, likely you created a UiTex AFTER you called the MegaTex::loadImages().. 
-          // we need image sizes when craeating the gui, after the skin.
-          //The order 100% NEEEDED - but it's more sane to do it this way to vet out visual bugs down the road
-          Gu::debugBreak();
-        }
-      }
-
-      bool LFix = (ioff == 0 || ioff == 3 || ioff == 6);
-      bool TFix = (ioff == 0 || ioff == 1 || ioff == 2);
-      bool RFix = (ioff == 2 || ioff == 5 || ioff == 8);
-      bool BFix = (ioff == 6 || ioff == 7 || ioff == 8);
-
-      //Expand corners, tile borders, tile edges along w/h
-      UiImageSizeMode::e wSizeMode = UiImageSizeMode::e::Tile;
-      UiImageSizeMode::e hSizeMode = UiImageSizeMode::e::Tile;
-      if (LFix) {
-        wpx = _pBorder->get(GridBorder::e::Left).px();
-        wSizeMode = UiImageSizeMode::e::Expand;
-      }
-      if (RFix) {
-        wpx = _pBorder->get(GridBorder::e::Right).px();
-        wSizeMode = UiImageSizeMode::e::Expand;
-      }
-
-      if (BFix) {
-        hpx = _pBorder->get(GridBorder::e::Bot).px();
-        hSizeMode = UiImageSizeMode::e::Expand;
-      }
-      if (TFix) {
-        hpx = _pBorder->get(GridBorder::e::Top).px();
-        hSizeMode = UiImageSizeMode::e::Expand;
-      }
-      //So setting this to _fBorderWidth.px() worked for the window not for the button!
-      //The problem is that image tiling isn't working for the fixed width elements (window corners).  Although it should be because they're fixed
-      std::shared_ptr<UiImage> img = UiImage::create(texs->get(ioff), UiImageSizeMode::e::Tile, UiImageSizeMode::e::Tile, wpx, hpx);
-
-      img->setSizeMode(wSizeMode, hSizeMode);
-
-      getCell(j, i)->addChild(img, iLayer);
-    }
-  }
-
-}
-void Ui9Grid::iterateCells(std::function<void(std::shared_ptr<UiElement>)> f) {
-  for (int j = 0; j < 3; ++j) {
-    for (int i = 0; i < 3; ++i) {
-      size_t ioff = Ui9Grid::cellOff(i, j);
-      std::shared_ptr<UiElement> c = getCell(j, i);
-      f(c);
-    }
-  }
-}
-void Ui9Grid::setBorderWidth(std::shared_ptr<UiBorderDim> dims) {
-  *_pBorder = *dims;
-
-  for (int i = 0; i < 4; ++i) {
-    if (_pBorder->get((GridBorder::e)i).getDimUnit() != UiDimUnit::e::Pixel) {
-      UIManager::error("Border width for window was not specified in pixels.  Errors will occur");
-      _pBorder->get((GridBorder::e)i).setDimUnit(UiDimUnit::e::Pixel);
-    }
-  }
-
-  std::shared_ptr<UiGridRow> r0 = _rows[0];
-  std::shared_ptr<UiGridRow> r1 = _rows[1];
-  std::shared_ptr<UiGridRow> r2 = _rows[2];
-
-  r0->width() = "100%";
-  r0->height() = dims->get(GridBorder::e::Top);
-  r1->width() = "100%";
-  r1->height() = "auto";
-  r2->width() = "100%";
-  r2->height() = dims->get(GridBorder::e::Bot);
-
-  r0->getCol(0)->width() = dims->get(GridBorder::e::Left);
-  r0->getCol(0)->height() = dims->get(GridBorder::e::Top);
-  r0->getCol(1)->width() = "auto";
-  r0->getCol(1)->height() = dims->get(GridBorder::e::Top);
-  r0->getCol(2)->width() = dims->get(GridBorder::e::Right);
-  r0->getCol(2)->height() = dims->get(GridBorder::e::Top);
-
-  r1->getCol(0)->width() = dims->get(GridBorder::e::Left);
-  r1->getCol(0)->height() = "auto";
-  r1->getCol(1)->width() = "auto";
-  r1->getCol(1)->height() = "auto";
-  r1->getCol(2)->width() = dims->get(GridBorder::e::Right);
-  r1->getCol(2)->height() = "auto";
-
-  r2->getCol(0)->width() = dims->get(GridBorder::e::Left);
-  r2->getCol(0)->height() = dims->get(GridBorder::e::Bot);
-  r2->getCol(1)->width() = "auto";
-  r2->getCol(1)->height() = dims->get(GridBorder::e::Bot);
-  r2->getCol(2)->width() = dims->get(GridBorder::e::Right);
-  r2->getCol(2)->height() = dims->get(GridBorder::e::Bot);
-
-  //Min Size
-  minWidth().px(dims->get(GridBorder::e::Left).px() + dims->get(GridBorder::e::Right).px());
-  minHeight().px(dims->get(GridBorder::e::Top).px() + dims->get(GridBorder::e::Bot).px());
-}
-void Ui9Grid::update(std::shared_ptr<InputManager> pInputManager) {
-  UiGrid::update(pInputManager);
-}
-
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiFlexButton
-std::shared_ptr<UiFlexButton> UiFlexButton::create(std::shared_ptr<UiFlexButtonSkin> skin) {
-
-  std::shared_ptr<UiFlexButton> ret = std::make_shared<UiFlexButton>();
-  ret->_pGrid = Ui9Grid::create(skin->_border);
-  ret->_pGrid->width() = "100%";
-  ret->_pGrid->height() = "100%";
-  ret->_pLabelSkin = skin->_pLabelFont;
-  ret->init();
-  ret->setButtonImages(skin->_pUp, skin->_pHv, skin->_pDn);
-
-  ret->addChild(ret->_pGrid);
-  ret->setPickRoot();
-
-  return ret;
-}
-void UiFlexButton::init() {
-  UiButtonBase::init();
-  setName("UiFlexButton");
-}
-void UiFlexButton::setButtonImages(std::shared_ptr<Ui9Tex> vecUp, std::shared_ptr<Ui9Tex> vecHv, std::shared_ptr<Ui9Tex> vecDn) {
-
-  _pGrid->set9GridImages(vecUp, UiButtonBase::layerIdUp());
-  _pGrid->set9GridImages(vecHv, UiButtonBase::layerIdHover());
-  _pGrid->set9GridImages(vecDn, UiButtonBase::layerIdDown());
-
-  //Expand all center images (don't tile.
-  for (auto x : _pGrid->getCell(1, 1)->getChildren()) {
-    std::shared_ptr<UiImage> img = std::dynamic_pointer_cast<UiImage>(x.second);
-    if (img != nullptr) {
-      img->setSizeMode(UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
-    }
-  }
-}
-void UiFlexButton::showHover() {
-  if (_eImageState != ImageState::e::Hover) {
-    _eImageState = ImageState::e::Hover;
-    _pGrid->iterateCells([&](std::shared_ptr<UiElement> c) {
-      c->hideLayerRender(UiButtonBase::layerIdUp());
-      c->showLayerRender(UiButtonBase::layerIdHover());
-      c->hideLayerRender(UiButtonBase::layerIdDown());
-      });
-  }
-}
-void UiFlexButton::showUp() {
-  if (_eImageState != ImageState::e::Up) {
-    _eImageState = ImageState::e::Up;
-    _pGrid->iterateCells([&](std::shared_ptr<UiElement> c) {
-      c->showLayerRender(UiButtonBase::layerIdUp());
-      c->hideLayerRender(UiButtonBase::layerIdHover());
-      c->hideLayerRender(UiButtonBase::layerIdDown());
-      });
-  }
-}
-void UiFlexButton::showDown() {
-  if (_eImageState != ImageState::e::Down) {
-    _eImageState = ImageState::e::Down;
-    _pGrid->iterateCells([&](std::shared_ptr<UiElement> c) {
-      c->hideLayerRender(UiButtonBase::layerIdUp());
-      c->hideLayerRender(UiButtonBase::layerIdHover());
-      c->showLayerRender(UiButtonBase::layerIdDown());
-      });
-  }
-}
-std::shared_ptr<UiElement> UiFlexButton::getContentContainer() {
-  return _pGrid->getContentContainer();
-  //return _pPadGrid->getContentContainer();
-}
-void UiFlexButton::setLabel(std::string strText, std::shared_ptr<UiLabelSkin> labelFont) {
-  if (_pLabelSkin == nullptr && labelFont == nullptr) {
-    UIManager::error(("No font specified when calling setLabel on flexbutton"));
-    return;
-  }
-  if (_pLabel == nullptr) {
-    std::shared_ptr<UiElement> topPad = UiElement::create();
-    topPad->width() = "100%";
-    topPad->height() = "auto"; //100%
-    getContentContainer()->addChild(topPad);
-
-
-    if (labelFont != nullptr) {
-      _pLabelSkin = labelFont;
-    }
-
-    _pLabel = UiLabel::create(strText, _pLabelSkin);
-    _pLabel->width() = "100%";
-    _pLabel->height() = "auto";
-    getContentContainer()->addChild(_pLabel);
-
-    std::shared_ptr<UiElement> botPad = UiElement::create();
-    botPad->width() = "100%";
-    botPad->height() = "auto"; //100%
-    getContentContainer()->addChild(botPad);
-  }
-  else {
-    _pLabel->setText(strText);
-  }
-}
-
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiScrollGenThumb
-void UiScrubGenThumb::init() {
-  //basically copying from UiVSCrollbarThumv
-  position() = UiPositionMode::e::Relative;
-  left() = "0px";
-  top() = "0px";
-
-  std::weak_ptr<UiScrubGenThumb> wp = getThis<UiScrubGenThumb>();
-  UiDragInfo::DragFunc scrubFunc = [wp](vec2& dxy) {
-    if (std::shared_ptr<UiScrubGenThumb> sb = wp.lock()) {
-      sb->_bPlayerDrag = true;//FOrces this to update when the player drags
-      if (sb->getOrientation() == Orientation::e::Vertical) {
-        sb->_fBarLeftOrTopY += dxy.y;
-      }
-      if (sb->getOrientation() == Orientation::e::Horizontal) {
-        sb->_fBarLeftOrTopY += dxy.x;
-      }
-      sb->setLayoutChanged();
-    }
-  };
-  enableDrag(scrubFunc);
-}
-void UiScrubGenThumb::update(std::shared_ptr<InputManager> pInputManager) {
-  //Generic UPdate
-  UiElement::update(pInputManager);
-
-  float fMaxWOrH = 1.0f;
-  float plt = 0.0f;
-  float prb = 1.0f;
-  if (getParent() != nullptr) {
-    if (getOrientation() == Orientation::e::Vertical) {
-      prb = getParent()->getComputedQuad().bottom();
-      plt = getParent()->getComputedQuad().top();
-    }
-    else {
-      prb = getParent()->getComputedQuad().right();
-      plt = getParent()->getComputedQuad().left();
-    }
-  }
-  fMaxWOrH = prb - plt;
-  float fBarWorH = fMaxWOrH * _fBarSizePct;
-
-  uDim* pTorL = nullptr;
-  uDim* pWorH = nullptr;
-  if (getOrientation() == Orientation::e::Vertical) {
-    pTorL = &top();
-    pWorH = &height();
-  }
-  else {
-    pTorL = &left();
-    pWorH = &width();
-  }
-
-  *pTorL = uDim(_fBarLeftOrTopY, UiDimUnit::e::Pixel);
-  if (pTorL->px() + fBarWorH > fMaxWOrH) {
-    //Scrolled past bottom
-    *pTorL = uDim(fMaxWOrH - fBarWorH, UiDimUnit::e::Pixel);
-  }
-  if (pTorL->px() < 0) {
-    //Scrollbar is too big for container
-    *pTorL = "0px";
-  }
-  if (pTorL->px() + fBarWorH > fMaxWOrH) {
-    //Scrollbar is too big for container
-    fBarWorH = fMaxWOrH;
-  }
-
-  //Set final height
-  *pWorH = uDim(fBarWorH, UiDimUnit::e::Pixel);
-
-  //Send this value to the window'        
-  float fTopOrLeft = pTorL->px();
-  float diff = (fMaxWOrH - fBarWorH);
-  if (diff != 0) {
-    _fScrollPct = fTopOrLeft / diff;
-  }
-  else {
-    _fScrollPct = 0.0f;
-  }
-
-}
-void UiScrubGenThumb::setBarSizePct(float pos01) {
-  if (pos01 < 0.0f || pos01 > 1.0f) {
-    pos01 = MathUtils::broClamp(pos01, 0.0f, 1.0f);
-    UIManager::error("invalid scroll position sent to scrollbar, clamping");
-  }
-  _fBarSizePct = pos01;
-}
-void UiScrubGenThumb::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
-}
-float UiScrubGenThumb::getScrollPct() {
-  return _fScrollPct;
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiScrollGen
-uint32_t UiScrubGen::getThumbSortLayer() {
-  return UIManager::sortLayer(1);
-}
-uint32_t UiScrubGen::getBackgroundSortLayer() {
-  return UIManager::sortLayer(0);
-}
-void UiScrubGen::setBarSizePct(float pos01) {
-  _pThumb->setBarSizePct(pos01);
-}
-void UiScrubGen::init() {
-  UiElement::init();
-
-  if (_pThumb == nullptr) {
-    _pThumb = createThumb(); // return a thumb to the fiv
-    addChild(_pThumb, UiScrubGen::getThumbSortLayer());
-
-    //Force the scroll func to get called, initializing the scrollbar
-    _pThumb->setScrubChanged();
-  }
-}
-void UiScrubGen::update(std::shared_ptr<InputManager> pInputManager) {
-  UiElement::update(pInputManager);
-
-  //Call the registered scroll, and barSize events
-  float bw = 1.0;
-  if (_barWidthFunc != nullptr) {
-    bw = _barWidthFunc(getThis<UiScrubGen>());
-  }
-  else {
-    bw = 0.1f; // Trackbars don't have a bar width func  Width of the bar is thus "zero"
-  }
-  if (bw >= 1.0 && _bAutoHideWhenMaxed) {
-    hide();
-  }
-  else {
-    show();
-    setBarSizePct(bw);
-    if (_pThumb != nullptr) {
-      if (_pThumb->scrubChanged()) {
-        _pThumb->resetScrubChanged();
-        if (_scrollFunc != nullptr) {
-          float fMax = maxVal();
-          float fMin = minVal();
-          if (fMax < fMin) {
-            UIManager::error(Stz "Max '" + fMax + "' was greater than min '" + fMin + "' for scrollgen.");
-            maxVal() = minVal();
-          }
-          float fVal = fMin + (fMax - fMin) * _pThumb->getScrollPct();
-          _scrollFunc(getThis<UiScrubGen>(), fVal);
-        }
-      }
-    }
-  }
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiScrollbarThumb
-//Test of VScrollbarThumb
-std::shared_ptr<UiScrollbarThumb> UiScrollbarThumb::create(std::shared_ptr<UiScrollbarSkin> pSkin) {//std::vector<std::shared_ptr<Texture2DSpec>> imgs, uDim widthPx, Orientation::e eOr) {
-  std::shared_ptr<UiScrollbarThumb> sbt = std::make_shared<UiScrollbarThumb>();
-
-  sbt->_eOrientation = pSkin->_eOrientation;
-  sbt->init();
-  sbt->setName("UiScrollbarThumb");
-  sbt->_pImage = UiGrid::createImageStack(pSkin->_pThumbImgs,
-    pSkin->_uWidthOrHeightPx,
-    pSkin->_eOrientation
-  );
-  sbt->_pImage->width() = "100%";
-  sbt->_pImage->height() = "100%";
-  sbt->addChild(sbt->_pImage);
-
-  return sbt;
-}
-void UiScrollbarThumb::init() {
-  UiScrubGenThumb::init();
-}
-void UiScrollbarThumb::update(std::shared_ptr<InputManager> pInputManager) {
-  UiScrubGenThumb::update(pInputManager);
-}
-void UiScrollbarThumb::performLayout(bool bForce) {
-  UiScrubGenThumb::performLayout(bForce);
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiScrollbar
-std::shared_ptr<UiScrollbar> UiScrollbar::create(std::shared_ptr<UiScrollbarSkin> pSkin, UiScrubGen::BarWidthFunc barFunc,
-  UiScrubGen::ScrollFunc scrollFunc) {
-  std::shared_ptr<UiScrollbar> sb = std::make_shared<UiScrollbar>();
-
-  sb->_eOrientation = pSkin->_eOrientation;
-  sb->_pSkin = pSkin;
-  sb->_bAutoHideWhenMaxed = pSkin->_bAutoHideWhenMaxed;
-  sb->init();
-  sb->setName("UiScrollbar");
-  sb->setBarWidthFunc(barFunc);
-  sb->setScrollFunc(scrollFunc);
-
-  std::shared_ptr<Texture2DSpec> img[3];
-  if (pSkin->_eOrientation == Orientation::e::Vertical) {
-    sb->width() = pSkin->_uWidthOrHeightPx;
-    sb->height() = "auto";
-  }
-  else if (pSkin->_eOrientation == Orientation::e::Horizontal) {
-    sb->height() = pSkin->_uWidthOrHeightPx;
-    sb->width() = "100%";
-  }
-  sb->_pImage = UiGrid::createImageStack(
-    pSkin->_pBackImgs,
-    pSkin->_uWidthOrHeightPx,
-    pSkin->_eOrientation
-  );
-  sb->_pImage->width() = "100%";
-  sb->_pImage->height() = "100%";
-  sb->addChild(sb->_pImage, UiScrubGen::getBackgroundSortLayer());
-
-  return sb;
-}
-void UiScrollbar::init() {
-  UiScrubGen::init();
-}
-void UiScrollbar::update(std::shared_ptr<InputManager> pInputManager) {
-  UiScrubGen::update(pInputManager);
-}
-void UiScrollbar::performLayout(bool bForce) {
-  UiScrubGen::performLayout(bForce);
-}
-std::shared_ptr<UiScrubGenThumb> UiScrollbar::createThumb() {
-  std::shared_ptr<UiScrollbarThumb> thumb = UiScrollbarThumb::create(_pSkin);
-  return thumb;
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiCheckbox
-std::shared_ptr<UiCheckbox> UiCheckbox::create(std::shared_ptr<UiCheckboxSkin> pSkin, std::string strlabel) {
-  if (UiSkinElement::setAndValid(pSkin) == false) {
-    return nullptr;
-  }
-
-  std::shared_ptr<UiCheckbox> chk = std::make_shared<UiCheckbox>();
-  chk->init();
-  chk->setName("UiCheckbox");
-  chk->width() = "100%";
-  chk->height() = "32px";
-
-  std::shared_ptr<UiFlexButton> bt = UiFlexButton::create(pSkin->_pFlexButtonSkin);
-  bt->display() = (UiDisplayMode::e::InlineNoWrap);
-  bt->width() = "32px";
-  bt->padRight() = "20px";
-  bt->height() = "100%";
-  chk->addChild(bt);
-
-  chk->_pCheckImg = UiImage::create(pSkin->_pCheckImg, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
-  chk->_pCheckImg->setRenderVisible(false);//Initially don't show check
-  chk->_pCheckImg->disablePick();
-  chk->_pCheckImg->width() = "100%";
-  chk->_pCheckImg->height() = "100%";
-  bt->getContentContainer()->addChild(chk->_pCheckImg);
-
-  std::shared_ptr<UiLabel> label = UiLabel::create(strlabel, pSkin->_pLabelFont);
-  label->display() = (UiDisplayMode::e::InlineNoWrap);
-  label->width() = "auto";
-  label->height() = "100%";
-  chk->addChild(label);
-
-  std::weak_ptr<UiCheckbox> chk_weak = chk->getThis<UiCheckbox>();
-  chk->setClick([chk_weak]() {
-    if (std::shared_ptr<UiCheckbox> chk = chk_weak.lock()) {
-      chk->doCheck();
-    }
-    });
-  //make the label &c of the checkbox activate it
-  chk->setPickRoot();
-
-  return chk;
-}
-void UiCheckbox::doCheck() {
-  setChecked(!_bChecked);
-}
-void UiCheckbox::init() {
-  UiElement::init();
-}
-void UiCheckbox::update(std::shared_ptr<InputManager> pInputManager) {
-  UiElement::update(pInputManager);
-}
-void UiCheckbox::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
-}
-void UiCheckbox::setChecked(bool b) {
-  _bChecked = b;
-  if (_checkFunc) {
-    _checkFunc(_bChecked);
-  }
-  _pCheckImg->setRenderVisible(_bChecked);
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiSliderThumb
-
-std::shared_ptr<UiSliderThumb> UiSliderThumb::create(std::shared_ptr<UiSliderSkin> pSkin) {
-  std::shared_ptr<UiSliderThumb> sbt = std::make_shared<UiSliderThumb>();
-
-  sbt->_eOrientation = pSkin->_eOrientation;
-  sbt->init();
-  sbt->setName("UiTrackbarThumb");
-  sbt->_pImage = UiGrid::createImageStack(pSkin->_pThumbImgs,
-    pSkin->_uWidthOrHeightPx,
-    //Swap orientation for the thumb since it's a vertical image.
-    (pSkin->_eOrientation == Orientation::e::Horizontal) ? (Orientation::e::Vertical) : (Orientation::e::Horizontal)
-  );
-  sbt->_pImage->width() = "100%";
-  sbt->_pImage->height() = "100%";
-  sbt->addChild(sbt->_pImage);
-
-  return sbt;
-}
-void UiSliderThumb::init() {
-  UiScrubGenThumb::init();
-}
-void UiSliderThumb::update(std::shared_ptr<InputManager> pInputManager) {
-
-  //Update height of TB thumb to match parent height.
-  if (_eOrientation == Orientation::e::Horizontal) {
-    float h = height().px();
-    float ph = 10;
-    if (getParent() != nullptr) {
-      ph = getParent()->getComputedQuad().height();
-    }
-    if (h != ph) {
-      height() = uDim(ph, UiDimUnit::e::Pixel);
-    }
-  }
-  else { throw 0; }
-
-
-  UiScrubGenThumb::update(pInputManager);
-}
-void UiSliderThumb::performLayout(bool bForce) {
-  UiScrubGenThumb::performLayout(bForce);
-}
-#pragma endregion 
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiSlider
-std::shared_ptr<UiSlider> UiSlider::create(std::shared_ptr<UiSliderSkin> pSkin, UiScrubGen::ScrollFunc sf) {
-  std::shared_ptr<UiSlider> tb = std::make_shared<UiSlider>();
-  tb->_eOrientation = pSkin->_eOrientation;
-  tb->_pSkin = pSkin;
-  tb->init();
-  tb->setName("UiTrackbar");
-
-  std::weak_ptr<UiSlider> w_s = tb;
-  UiScrubGen::ScrollFunc s2 = [sf, w_s](std::shared_ptr<UiScrubGen> pScrollbar, float scroll) {
-    //Update Label
-    if (std::shared_ptr<UiSlider> s = w_s.lock()) {
-      if (s->getValueLabel() != nullptr) {
-        s->getValueLabel()->setText(StringUtil::format("%.2f", scroll));
-      }
-    }
-
-    //Pass through to user defined function
-    sf(pScrollbar, scroll);
-  };
-  tb->setScrollFunc(s2);
-  tb->_pImage = UiGrid::createImageStack(
-    pSkin->_pBackImgs,
-    pSkin->_uWidthOrHeightPx,//updated later
-    pSkin->_eOrientation
-  );
-
-  //This is the "container" for the image.  The images are manually sized
-  tb->addChild(tb->_pImage, UiScrubGen::getBackgroundSortLayer());
-  return tb;
-}
-void UiSlider::init() {
-  UiScrubGen::init();
-}
-void UiSlider::update(std::shared_ptr<InputManager> pInputManager) {
-  UiScrubGen::update(pInputManager);
-
-  //Update height of TB thumb to match parent height.
-  if (_eOrientation == Orientation::e::Horizontal) {
-    float h = _pImage->height().px();
-    float ph = 10;
-    ph = getComputedQuad().height();
-    if (h != ph) {
-      _pImage->height() = uDim(ph, UiDimUnit::e::Pixel);
-    }
-  }
-  else { throw 0; }
-}
-void UiSlider::performLayout(bool bForce) {
-
-  // a little padding for the left/right of the track makes it look better
-  if (_eOrientation == Orientation::e::Horizontal) {
-    float wh = getComputedQuad().width();
-    float imagePad = getThumb()->width().px() * 0.5f;
-    _pImage->width() = uDim(wh - imagePad * 2.0f, UiDimUnit::e::Pixel);
-    _pImage->height() = "100%";
-    _pImage->padLeft() = uDim(imagePad, UiDimUnit::e::Pixel);
-    _pImage->padRight() = uDim(imagePad, UiDimUnit::e::Pixel);
-  }
-  else {
-    float wh = getComputedQuad().height();
-    float imagePad = getThumb()->height().px() * 0.5f;
-    _pImage->height() = uDim(wh - imagePad * 2.0f, UiDimUnit::e::Pixel);
-    _pImage->width() = "100%";
-    _pImage->padTop() = uDim(imagePad, UiDimUnit::e::Pixel);
-    _pImage->padBottom() = uDim(imagePad, UiDimUnit::e::Pixel);
-  }
-
-  UiScrubGen::performLayout(bForce);
-
-
-}
-std::shared_ptr<UiScrubGenThumb> UiSlider::createThumb() {
-  std::shared_ptr<UiSliderThumb> thumb = UiSliderThumb::create(_pSkin);
-  return thumb;
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiDropdown
-std::shared_ptr<UiDropdown> UiDropdown::create(std::shared_ptr<UiDropdwonSkin> pSkin) {
-  std::shared_ptr<UiDropdown> dd = std::make_shared<UiDropdown>();
-  dd->_pSkin = pSkin;
-  dd->_pBorder = pSkin->_pBorder;
-  dd->init();
-
-  return dd;
-}
-void UiDropdown::init() {
-  Ui9Grid::init();
-  setName("UiDropdown");
-  set9GridImages(_pSkin->_pBorderImgs);
-
-  height() = "32px";//just show so we can see
-  //std::shared_ptr<UiWindowSkin> sk = std::make_shared<UiWindowSkin>();
-  //sk->_pBorder = _pSkin->_pBorder;
-  //sk->_pBorderImgs = _pSkin->_pBorderImgs;
-
-  _pListContainer = Ui9Grid::create(_pSkin->_pBorder);
-  //_pListContainer->enableVScrollbar();
-  _pListContainer->maxHeight() = "200px";
-  _pListContainer->set9GridImages(_pSkin->_pBorderImgs);
-  _pListContainer->position() = UiPositionMode::e::Relative;
-
-  //Just testing..
-  _pListContainer->top() = "40px";
-  _pListContainer->bottom() = "40px";
-  _pListContainer->width() = "200px";
-  _pListContainer->height() = "200px";
-  _pListContainer->hide();
-
-  _pArrowButton = UiFlexButton::create(_pSkin->_pArrowButtonSkin);
-  _pArrowButton->getContentContainer()->addChild(UiImage::create(_pSkin->_arrow, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand));
-  _pArrowButton->position() = UiPositionMode::e::Static;
-  _pArrowButton->display() = (UiDisplayMode::e::InlineNoWrap);
-  _pArrowButton->width() = "32px";
-  _pArrowButton->height() = "32px";
-  _pArrowButton->padRight() = "7px";
-  getContentContainer()->addChild(_pArrowButton);
-
-  _pSelectedContainer = UiElement::create();
-  _pSelectedContainer->position() = UiPositionMode::e::Static;
-  _pSelectedContainer->display() = (UiDisplayMode::InlineNoWrap);
-  _pSelectedContainer->width() = "auto";
-  _pSelectedContainer->height() = "100%";
-  getContentContainer()->addChild(_pSelectedContainer);
-
-  //**This will have errors because until now we assueme gui2d has only windows as children
-  Gu::getUIManager()->addChild(_pListContainer);
-
-  std::weak_ptr<Ui9Grid> cont_w = _pListContainer;
-  std::weak_ptr<UiDropdown> dd_w = getThis<UiDropdown>();
-  uDim* contW = &_uListContainerWidth;
-
-  //You can click anything, anything you like.
-  setPickRoot();
-  setPress([cont_w, dd_w, contW]() {
-    //Show container
-    std::shared_ptr<Ui9Grid> cont = cont_w.lock();
-    std::shared_ptr<UiDropdown> dd = dd_w.lock();
-    if (cont && dd) {
-      cont->left() = dd->getComputedQuad().left();
-      if (contW->getDimUnit() == UiDimUnit::e::Auto) {
-        cont->width() = dd->getComputedQuad().right() - dd->getComputedQuad().left();
-      }
-      else if (contW->getDimUnit() == UiDimUnit::e::Percent) {
-        UIManager::error("Percentage width on dropdown container... is invalid");
-      }
-      else {
-        cont->width() = contW->px();
-      }
-      cont->top() = dd->getComputedQuad().bottom();
-      Gu::getUIManager()->bringToFront(cont, true);
-      cont->overflow() = (UiOverflowMode::e::Hide);
-      cont->show();
-    }
-    });
-  setClick([cont_w]() {
-    //Show container
-    if (std::shared_ptr<Ui9Grid> cont = cont_w.lock()) {
-      cont->hide();
-    }
-    });
-  //TODO: global release
-}
-void UiDropdown::setSelectedItem(std::shared_ptr<UiElement> item) {
-  if (_pSelected == item) {
-    return;
-  }
-  if (_pListContainer->getContentContainer()->hasChild(item) == false) {
-    UIManager::error(Stz "Dropdown didn't have the item you treid to select: " + item->getName());
-    return;
-  }
-
-  bool b;
-  if (_pSelected != nullptr) {
-    b = _pSelectedContainer->removeChild(_pSelected);
-    _pListContainer->getContentContainer()->addChild(_pSelected);
-  }
-  b = _pListContainer->getContentContainer()->removeChild(item);
-  _pSelectedContainer->addChild(item);
-
-  _pSelected = item;
-}
-void UiDropdown::addItem(std::shared_ptr<UiElement> item, bool bFitHeight) {
-
-  item->position() = UiPositionMode::e::Static;
-  if (bFitHeight) {
-    //*For labels..
-    //**Set fittheight to false if you're making an image or other dropdown.
-    //
-    item->height() = height();
-  }
-  std::weak_ptr<UiDropdown> dd_w = getThis<UiDropdown>();
-  std::weak_ptr<Ui9Grid> cont_w = _pListContainer;
-  std::weak_ptr<UiElement> item_w = item;
-
-  item->setPickRoot();
-  item->setClick([cont_w, dd_w, item_w]() {
-    std::shared_ptr<UiDropdown> dd = dd_w.lock();
-    std::shared_ptr<Ui9Grid> cont = cont_w.lock();
-    std::shared_ptr<UiElement> item = item_w.lock();
-    if (cont && dd && item) {
-      dd->setSelectedItem(item);
-      cont->hide();
-    }
-    });
-  _pListContainer->getContentContainer()->addChild(item);
-
-  if (_pSelected == nullptr) {
-    setSelectedItem(item);
-  }
-}
-void  UiDropdown::performLayout(bool bForce) {
-  Ui9Grid::performLayout(bForce);
-
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiContainer
-std::shared_ptr<UiContainer> UiContainer::create() {
-  std::shared_ptr<UiContainer> pc = std::make_shared<UiContainer>();
-  pc->init();
-  return pc;
-}
-void UiContainer::init() {
-  UiGrid::init();
-  /*
-  +-----------------+
-  |     0       | 1 |
-  |             |   |
-  +-----------------+
-  |  2          | 3 |
-  +-----------------+
-  */
-
-  //I think we need uigrid here..3/3/18s
-  std::shared_ptr<UiGridRow> r0 = addRow();
-  r0->width() = "100%";
-  r0->height() = "auto";
-  std::shared_ptr<UiGridRow> r1 = addRow();
-  r1->width() = "100%";
-  r1->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
-  std::shared_ptr<UiElement> c0 = r0->addCol();
-  c0->width() = "auto";
-  c0->height() = "100%";
-  std::shared_ptr<UiElement> c1 = r0->addCol();//HSB
-  c1->width() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
-  c1->height() = "100%";
-
-  std::shared_ptr<UiElement> c2 = r1->addCol();//VSB
-  c0->width() = "auto";
-  c0->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
-  std::shared_ptr<UiElement> c3 = r1->addCol();//Corner
-  c1->width() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
-  c1->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
-
-}
-std::shared_ptr<UiElement> UiContainer::getContentContainer() {
-  return getCell(0, 0);
-}
-void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
-  //if (pSkin == nullptr) {
-  //    Gui2d::error("Could not enable scroll bar on window, the skin didn't have one");
-  //    return;
-  //}
-  //detachContentContainer();
-
-  //**HACK this is not generic. scale stupid bar to make room on the right
-  uDim d0w;
-  uDim d2w;
-  uDim d0h;
-  uDim d2h;
-  uDim d1;
-  std::shared_ptr<UiElement> pCell = nullptr;
-  if (pSkin->_eOrientation == Orientation::e::Vertical) {
-    //float borderRem = MathUtils::broMax(_pBorder->get(GridBorder::e::Right).px() - pSkin->_uWidthOrHeightPx.px(), 0.0f);
-
-    d0w = _fBorderWidthPx;//uDim(borderRem, UiDimUnit::e::Pixel);//Left pad %
-    d0h = "100%";
-    //  d1 = uDim(_pBorder->get(GridBorder::e::Right).px() * 0.3f, UiDimUnit::e::Pixel);
-      //  d2w = uDim(_pBorder->get(GridBorder::e::Right).px() * 0.60f, UiDimUnit::e::Pixel);//Right pad %
-      //  d2h = "auto";
-    pCell = getCell(0, 1);
-  }
-  else if (pSkin->_eOrientation == Orientation::e::Horizontal) {
-    //float borderRem = MathUtils::broMax(_pBorder->get(GridBorder::e::Bot).px() - pSkin->_uWidthOrHeightPx.px(), 0.0f);
-
-    d0w = "100%";
-    d0h = _fBorderWidthPx; //uDim(borderRem, UiDimUnit::e::Pixel);//Left pad %
-   // d1 = uDim(_pBorder->get(GridBorder::e::Bot).px() * 0.3f, UiDimUnit::e::Pixel);
-    //   d2w = "100%";
-    //   d2h = uDim(_pBorder->get(GridBorder::e::Bot).px() * 0.35f, UiDimUnit::e::Pixel);//Right pad %
-    pCell = getCell(1, 0);
-  }
-  //*padding for the scrollbar to the left of the right column so that it pushes it over
-  std::shared_ptr<UiElement> scrollLeftOrTopPad = UiElement::create();
-  scrollLeftOrTopPad->width() = d0w;
-  scrollLeftOrTopPad->height() = d0h; //100%
-  pCell->addChild(scrollLeftOrTopPad, UIManager::sortLayer(2));
-
-  std::weak_ptr<UiWindow> weak_win = getThis<UiWindow>();
-  std::weak_ptr<UiElement> weakControlObject = getContentContainer();
-  UiScrubGen::BarWidthFunc barWidthfunc = [weakControlObject](std::shared_ptr<UiScrubGen> pScrollbar) {
-    float fBarSize = 0;
-    if (std::shared_ptr<UiElement> cont = weakControlObject.lock()) {
-      std::shared_ptr<UiElement> ccParent = cont->getParent();
-      float b1wh;
-      float b2wh;
-      Box2f b1 = ccParent->getComputedQuad();//9Grid column
-      Box2f b2 = cont->getContentQuad();
-      if (pScrollbar->getOrientation() == Orientation::e::Vertical) {
-        b1wh = b1.height();
-        b2wh = b2.height();
-
-      }
-      else if (pScrollbar->getOrientation() == Orientation::e::Horizontal) {
-        b1wh = b1.width();
-        b2wh = b2.width();
-
-      }
-      //#1 set bar size
-      //Calculate the width/hight of the thumb bar relative to the scroll percentage. (Zero for trackbar)
-      if (b2wh > 0) {
-        fBarSize = b1wh / (b2wh);
-        fBarSize = MathUtils::broClamp(fBarSize, 0.0f, 1.0f);
-      }
-    }
-    return fBarSize;
-  };
-  UiScrubGen::ScrollFunc scrollFunc = [weakControlObject, weak_win](std::shared_ptr<UiScrubGen> pScrollbar, float scrollPct) {
-    if (std::shared_ptr<UiElement> cont = weakControlObject.lock()) {
-      if (std::shared_ptr<UiWindow> win = weak_win.lock()) {
-        //What this does: Move the content container of this window based on the scrollPct of the H or V scrollbar
-        float ccWh;
-        float ccWhMinusEof;
-        float pwh = 0;
-        uDim* cTorL = nullptr;
-        uDim* cWorH = nullptr;
-        if (pScrollbar->getOrientation() == Orientation::e::Vertical) {
-          ccWh = cont->getContentQuad().height();
-          if (cont->getParent()) {
-            pwh = cont->getParent()->getComputedQuad().height();
-          }
-          cTorL = &cont->top();
-          cWorH = &cont->height();
-        }
-        else if (pScrollbar->getOrientation() == Orientation::e::Horizontal) {
-
-          ccWh = cont->getContentQuad().width();
-          if (cont->getParent()) {
-            pwh = cont->getParent()->getComputedQuad().width();
-          }
-          cTorL = &cont->left();
-          cWorH = &cont->width();
-        }
-
-        //Update window contents offset
-        ccWhMinusEof = ccWh;
-        if (pScrollbar->getCanScrollPastEof() == false) {
-          ccWhMinusEof = ccWh - pwh;
-        }
-
-        float ccWorHPct = ccWhMinusEof * scrollPct;
-        *cTorL = -ccWorHPct;
-        *cWorH = uDim(ccWh, UiDimUnit::e::Pixel);
-
-        win->setLayoutChanged();
-        win->setLayoutChanged(true);
-      }
-    }
-  };
-
-  //add the scrollar
-  _pVScrollBar = UiScrollbar::create(pSkin, barWidthfunc, scrollFunc);
-  pCell->addChild(_pVScrollBar, UIManager::sortLayer(2));
-
-  //Right pad
-  //  std::shared_ptr<UiElement> scrollRightOrBotPad = UiElement::create();
-  //  scrollRightOrBotPad->width() = d2w;
-  //  scrollRightOrBotPad->height() = d2h; //100%
-  //  pCell->addChild(scrollRightOrBotPad, Gui2d::sortLayer(2));
-
-  setLayoutChanged();
-  setLayoutChanged(true);
-}
-void UiContainer::enableResize() {
-  //Use weak ptr to avoid circular reference
-  std::weak_ptr<UiWindow> win = getThis<UiWindow>();
-  UiDragInfo::DragFunc sizeFunc = [win](vec2& dxy) {
-    if (std::shared_ptr<UiWindow> ww = win.lock()) {
-      ww->width() = ww->width().px() + dxy.x;
-      ww->height() = ww->height().px() + dxy.y;
-      ww->setLayoutChanged();
-    }
-  };
-  getCell(1, 1)->enableDrag(sizeFunc);
-  setLayoutChanged();
-}
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UIWindow
-std::shared_ptr<UiElement> UiWindow::getContentContainer() {
-  return _pContainer->getContentContainer();
-}
-std::shared_ptr<UiWindow> UiWindow::create(std::shared_ptr<UiWindowSkin> pSkin) {
-  if (UiSkinElement::setAndValid(pSkin) == false) {
-    return nullptr;
-  }
-  std::shared_ptr<UiWindow> ui = std::make_shared<UiWindow>();
-  ui->_pWindowSkin = pSkin;
-  ui->init();
-
-  return ui;
-}
-void UiWindow::init() {
-  UiElement::init();
-  setName("UiWindow");
-
-  position() = UiPositionMode::Relative;
-  //Set some default position stuff so we can see it.
-  top() = "100px";
-  left() = "200px";
-  width() = "300px";
-  height() = "400px";
-
-
-  //Create background
-  _pBackground = Ui9Grid::create(_pWindowSkin->_pBorder);
-  _pBackground->set9GridImages(_pWindowSkin->_pBorderImgs);
-  addChild(_pBackground, UIManager::sortLayer(0));
-
-  _pTitleBar = UiElement::create();
-  _pTitleBar->width() = "100%";
-  _pTitleBar->height() = "32px";
-  _pContentArea = UiElement::create();
-  _pContentArea->width() = "100%";
-  _pContentArea->height() = "auto";
-
-  _pContainer = UiContainer::create();
-  _pContainer->width() = "100%";
-  _pContainer->height() = "100%";
-  _pContentArea->addChild(_pContainer);
-
-  addChild(_pTitleBar, UIManager::sortLayer(1));
-  addChild(_pContentArea, UIManager::sortLayer(1));
-
-  //Title Bar
-  _lblTitle = UiLabel::create("Title", _pWindowSkin->_pTitleFont);
-  _lblTitle->position() = UiPositionMode::Static;
-  _lblTitle->width() = "100%";
-  _lblTitle->height() = "30px";
-  _lblTitle->padLeft() = "20px";
-  _lblTitle->padTop() = "10px";
-  _lblTitle->getColor().a() = 0.521f;
-
-  _pTitleBar->addChild(_lblTitle);
-
-  std::shared_ptr<UiImageButton> bt = UiImageButton::create(_pWindowSkin->_pCloseButton);
-  //Close Event
-  std::weak_ptr<UiWindow> winw = getThis<UiWindow>();
-  bt->addEvent(UiEventId::e::Mouse_Lmb_Release, UiEventFunc::create(
-    [winw](UiEventId::e evId, void*) {
-      if (std::shared_ptr<UiWindow> win = winw.lock()) {
-        win->hide();
-      }
-    }
-  ));
-  _pTitleBar->addChild(bt);
-
-  //BTF
-  std::weak_ptr<UiWindow> weak_win = getThis<UiWindow>();
-  std::function<void()> bringToFront = [weak_win]() {
-    if (std::shared_ptr<UiWindow> win = weak_win.lock()) {
-      //assumes all windows are on the same layer.
-      win->getParent()->bringToFront(win, false);
-    }
-  };
-  setPress(bringToFront);
-
-}
-void UiWindow::setTitleLabel(std::string lbl) {
-  _lblTitle->setText(lbl);
-}
-void UiWindow::update(std::shared_ptr<InputManager> pInputManager) {
-  //Update Childs including VScrollbar
-  UiElement::update(pInputManager);
-
-  //auto expand
-  _pContainer->width() = uDim(getComputedQuad().right() - getComputedQuad().left(), UiDimUnit::e::Pixel);
-  _pContainer->height() = uDim(getComputedQuad().bottom() - getComputedQuad().top(), UiDimUnit::e::Pixel);
-}
-
-void UiWindow::enableResize() {
-  _pContainer->enableResize();
-}
-
-void UiWindow::enableDrag() {
-
-  //Use weak ptr to avoid circular reference
-  std::weak_ptr<UiWindow> win = getThis<UiWindow>();
-  UiDragInfo::DragFunc moveFunc = [win](vec2& dxy) {
-    if (std::shared_ptr<UiWindow> ww = win.lock()) {
-      ww->left() = ww->left().px() + dxy.x;
-      ww->top() = ww->top().px() + dxy.y;
-      if (ww->getParent() != nullptr) {
-        //change layout for parent, window's layout isn't changed
-        ww->getParent()->setLayoutChanged();
-      }
-      else {
-        ww->setLayoutChanged();
-      }
-    }
-  };
-
-  _pTitleBar->enableDrag(moveFunc);
-  setLayoutChanged();
-}
-bool UiWindow::pick(std::shared_ptr<InputManager> InputManager) {
-  bool b = UiElement::pick(InputManager);
-
-  return b;
-}
-void UiWindow::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
-}
-void UiWindow::enableVScrollbar() {
-  _pContainer->enableScrollbar(_pWindowSkin->_pVScroll);
-}
-void UiWindow::enableHScrollbar() {
-  _pContainer->enableScrollbar(_pWindowSkin->_pHScroll);
-}
-
-#pragma endregion
-//////////////////////////////////////////////////////////////////////////
-#pragma region UiToolbar
-std::shared_ptr<UiToolbar> UiToolbar::create(std::shared_ptr<UiToolbarSkin> skin) {
-  std::shared_ptr<UiToolbar> ui = std::make_shared<UiToolbar>();
-  ui->_pToolbarSkin = skin;
-  ui->_pWindowSkin = skin->_pWindowSkin;
-  // ui->_pBorder = skin->_pWindowSkin->_pBorder;
-  ui->init();
-  return ui;
-
-}
-void UiToolbar::init() {
-  UiWindow::init();
-  setName("Toolbarf");
-
-  _pTitleBar->hide();
-
-  position() = UiPositionMode::Relative;
-  display() = UiDisplayMode::InlineNoWrap;
-  //Set some default position stuff so we can see it.
-  top() = "0px";
-  left() = uDim(Gu::getUIManager()->getDesignSize().getWidth() * 0.1f, UiDimUnit::e::Pixel);
-  width() = "auto";//uDim(Gu::getGui()->getDesignSize().getWidth() * 0.8f, UiDimUnit::e::Pixel);
-  height() = "auto";//uDim(Gu::getGui()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
-
-}
-void UiToolbar::update(std::shared_ptr<InputManager> pInputManager) {
-  UiWindow::update(pInputManager);
-}
-void UiToolbar::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
-  for (auto p : getChildren()) {
-    std::shared_ptr<UiElement> e = p.second;
-  }
-}
-#pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UICursor
-std::shared_ptr<UiCursor> UiCursor::create(std::shared_ptr<UiCursorSkin> ss) {
-  std::shared_ptr<UiCursor> ret = std::make_shared<UiCursor>();
-  ret->_pSkin = ss;
-  ret->init();
-  ret->setName("UiCursor");
-  ret->setTexture(ss->_pTex);
-  ret->setSizeMode(UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
-  ret->setWrapMode(TexWrap::Clamp, TexWrap::Clamp);
-
-  return ret;
+UiCursor::UiCursor(std::shared_ptr<UiScreen> ss, std::shared_ptr<UiTex> tex) : UiImage(ss, tex, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, tex->getWidth(), tex->getHeight()) {
+  this->init();
+  this->setName("UiCursor");
+  this->setTexture(tex);
+  this->setSizeMode(UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
+  this->setWrapMode(TexWrap::Clamp, TexWrap::Clamp);
 }
+//std::shared_ptr<UiCursor> UiCursor::create(std::shared_ptr<UiCursorSkin> ss) {
+//  std::shared_ptr<UiCursor> ret = std::make_shared<UiCursor>();
+//  ret->_pSkin = ss;
+//  ret->init();
+//  ret->setName("UiCursor");
+//  ret->setTexture(ss->_pTex);
+//  ret->setSizeMode(UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand);
+//  ret->setWrapMode(TexWrap::Clamp, TexWrap::Clamp);
+//
+//  return ret;
+//}
 void UiCursor::init() {
   UiImage::init();
 }
@@ -3137,7 +3172,8 @@ void UiCursor::performLayout(bool bForce) {
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiScreen
-UiScreen::UiScreen() {
+UiScreen::UiScreen(std::shared_ptr<GraphicsWindow> pw) : UiElement(nullptr) {
+  _pWindow = pw;
 }
 UiScreen::~UiScreen() {
 }
@@ -3152,7 +3188,7 @@ void UiScreen::init() {
   minWidth() = maxWidth() = _designSize.getWidth() - 1;//right();
   minHeight() = maxHeight() = _designSize.getHeight() - 1;//bottom();
   setName("Gui2d");
-  _pTex = std::make_shared<MegaTex>(Gu::getGraphicsContext());
+  _pTex = std::make_shared<MegaTex>(getWindow()->getGraphicsContext());
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
@@ -3238,7 +3274,7 @@ void UiScreen::drawForward() {
 }
 
 void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
-  rp.setShader(Gu::getShaderMaker()->getGuiShader());
+  rp.setShader(getWindow()->getShaderMaker()->getGuiShader());
 
   //Zero useless params.
   getTex()->bind(TextureChannel::e::Channel0, rp.getShader());
@@ -3249,10 +3285,7 @@ void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   //*Debug
   UiElement::drawDebug();
 }
-void UiScreen::error(std::string errMsg) {
-  BroLogError(errMsg);
-  Gu::debugBreak();
-}
+
 void UiScreen::hideCursor() {
   _pCursor->setLayoutVisible(false);
 }
@@ -3264,6 +3297,18 @@ void UiScreen::setCursor(std::shared_ptr<UiCursor> c) {
   _pCursor = c;
   c->position() = UiPositionMode::Relative;
   //updateCursorPos(Gu::getInputManager()->getMousePos());
+}
+
+void UiScreen::debugForceLayoutChanged() {
+  setLayoutChanged(true);
+  _bDebugForceLayoutChange = true;
+}
+void UiScreen::performForcedLayout() {
+  performLayout(true);
+}
+void UiScreen::error(std::string errMsg) {
+  BroLogError(errMsg);
+  Gu::debugBreak();
 }
 float UiScreen::getDesignMultiplierW() {
   //float dw = Gu::getGui()->getDesignSize().getWidth();
@@ -3279,27 +3324,23 @@ float UiScreen::getDesignMultiplierH() {
   //float h1 = vh / dh;
   //return h1;
 }
-void UiScreen::debugForceLayoutChanged() {
-  setLayoutChanged(true);
-  _bDebugForceLayoutChange = true;
+std::shared_ptr<GraphicsWindow> UiScreen::getWindow() {
+  return _pWindow;
 }
-void UiScreen::performForcedLayout() {
-  performLayout(true);
-}
-
 
 
 #pragma endregion
-
-#pragma region Gui2d
-void UIManager::init() {
-
-}
-void UIManager::update(std::shared_ptr<InputManager> pInputManager) {
-}
-void UIManager::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
-}
-#pragma endregion
+//
+//#pragma region Gui2d
+//void UiScreen::init() {
+//
+//}
+//void UiScreen::update(std::shared_ptr<InputManager> pInputManager) {
+//}
+//void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
+//}
+//
+//#pragma endregion
 
 
 }//ns Game

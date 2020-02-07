@@ -7,7 +7,7 @@
 *    
 *    Update: 2014 10 08    Yep, bye bye old vector system, hello new vector system
 *    @date August 24, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2014 
 *

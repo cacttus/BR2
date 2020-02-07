@@ -2,7 +2,7 @@
 *
 *    @file Crc32.h
 *    @date May 16, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

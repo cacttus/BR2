@@ -2,7 +2,7 @@
 *
 *    @file GpuBufferData.h
 *    @date September 18, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

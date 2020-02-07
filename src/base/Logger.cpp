@@ -136,23 +136,23 @@ void Logger::logWarn(t_string msg, int line, char* file, Game::Exception* e) {
 }
 void Logger::logWarnCycle(t_string msg, int line, char* file, Game::Exception* e, int iCycle) {
     //prevents per-frame logging conundrum
-    if (Gu::getGraphicsContext() != nullptr) {
-        if (Gu::getFpsMeter() != nullptr) {
-            if (Gu::getFpsMeter()->frameMod(iCycle)) {
-                logWarn(msg, line, file, e);
-            }
-        }
-    }
+  /*if (Gu::getGraphicsContext() != nullptr) {
+    if (Gu::getFpsMeter() != nullptr) {
+      if (Gu::getFpsMeter()->frameMod(iCycle)) {*/
+        logWarn(msg, line, file, e);
+  //    }
+  //  }
+  //}
 }
 void Logger::logErrorCycle(t_string msg, int line, char* file, Game::Exception* e, int iCycle) {
     //prevents per-frame logging conundrum
-    if (Gu::getGraphicsContext() != nullptr) {
-        if (Gu::getFpsMeter() != nullptr) {
-            if (Gu::getFpsMeter()->frameMod(iCycle)) {
+    //if (Gu::getGraphicsContext() != nullptr) {
+    //    if (Gu::getFpsMeter() != nullptr) {
+    //        if (Gu::getFpsMeter()->frameMod(iCycle)) {
                 logError(msg, line, file, e);
-            }
-        }
-    }
+    //        }
+    //    }
+    //}
 }
 void Logger::log(t_string msg, t_string header, Game::Exception* e) {
     std::lock_guard<std::mutex> guard(_mtLogWriteMutex);

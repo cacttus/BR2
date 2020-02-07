@@ -2,7 +2,7 @@
 //*
 //*    @file UIImage.h
 //*    @date February 3, 2020
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2020 
 //*

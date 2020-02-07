@@ -1,6 +1,6 @@
 /**
 *    @file Matrix3x3.cpp
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2011 
 *    @date 9 / 7 / 2009

@@ -1,6 +1,6 @@
 /**
 *    @file mgPlane2.h
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *    @date July 20, 2008

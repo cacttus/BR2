@@ -2,7 +2,7 @@
 *
 *    @file MeshSpec.h
 *    @date October 16, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *

@@ -2,7 +2,7 @@
 *
 *    @file BaseHeader.h
 *    @date November 12, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016
 *
@@ -148,7 +148,7 @@ class Exception;
 class SoundSpec;
 class SoundCache;
 class TouchInfo;
-class Fingers;
+class InputManager;
 class GameMemory;
 class AppRunner;
 class Delta;

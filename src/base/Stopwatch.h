@@ -2,7 +2,7 @@
 *
 *    @file Stopwatch.h
 *    @date November 8, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

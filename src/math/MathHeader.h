@@ -2,7 +2,7 @@
 *
 *    @file MathHeader.h
 *    @date November 29, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014
 *

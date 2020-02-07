@@ -2,7 +2,7 @@
 *
 *    @file UtilMeshSphere.h
 *    @date December 12, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

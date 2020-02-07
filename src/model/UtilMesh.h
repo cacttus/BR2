@@ -2,7 +2,7 @@
 *
 *    @file UtilMesh.h
 *    @date November 21, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

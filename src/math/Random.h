@@ -2,7 +2,7 @@
 *
 *    @file Random.h
 *    @date July 15, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *

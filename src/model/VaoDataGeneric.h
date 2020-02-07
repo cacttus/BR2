@@ -2,7 +2,7 @@
 *
 *    @file VaoDataGeneric.h
 *    @date March 24, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

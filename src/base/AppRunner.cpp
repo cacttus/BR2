@@ -4,7 +4,7 @@
 #include "../base/DebugHelper.h"
 #include "../base/SoundCache.h"
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Logger.h"
 #include "../app/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
@@ -16,6 +16,7 @@
 #include "../base/Delta.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+#include "../app/WindowManager.h"
 
 #include "../app/AppBase.h"
 
@@ -29,7 +30,7 @@
 
 
 namespace Game {
-void AppRunner::runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> app) {
+void AppRunner::runApp(const std::vector<t_string>& args, std::shared_ptr<AppBase> app) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
   //Root the engine FIRST so we can find the EngineConfig.dat
@@ -41,7 +42,7 @@ void AppRunner::runApp(const std::vector<t_string>& args, t_string windowTitle, 
   //**Must come first before other logic
   Gu::initGlobals(app, args);
   {
-    initSDL(windowTitle, app);
+    initSDL(app);
 
     if (runCommands(args) == false) {
       runGameLoopTryCatch(app);
@@ -49,7 +50,7 @@ void AppRunner::runApp(const std::vector<t_string>& args, t_string windowTitle, 
   }
   Gu::deleteGlobals();
 }
-void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
+void AppRunner::initSDL(std::shared_ptr<AppBase> app) {
   //Nix main()
   SDL_SetMainReady();
 
@@ -61,19 +62,8 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
 
   printVideoDiagnostics();
 
-  std::shared_ptr<GraphicsApi> api;
-  //Create graphics API
-  if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::OpenGL) {
-    api = std::make_shared<OpenGLApi>();
-  }
-  else if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::Vulkan) {
-    api = std::make_shared<VulkanApi>();
-  }
-  else {
-    BroThrowException("Invalid render engine.");
-  }
-  Gu::setGraphicsApi(api);
-  api->createWindow(windowTitle, true);
+
+
 
   initAudio();
   SDLUtils::checkSDLErr();
@@ -89,10 +79,6 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
   BroLogInfo("Creating Managers.");
   Gu::createManagers();
 
-
-  BroLogInfo("Creating Rendere.");
-
-  api->createRenderer();
 
 }
 void AppRunner::doShowError(t_string err, Exception* e) {
@@ -236,7 +222,7 @@ bool AppRunner::handleEvents(SDL_Event* event) {
   int n = 0;
   vec2 delta;
   SDL_Scancode keyCode;
-  std::shared_ptr<Fingers> pFingers = Gu::getFingers();
+  std::shared_ptr<InputManager> pInput = Gu::getInputManager();
 
   if (event == nullptr)
     return true;
@@ -247,33 +233,33 @@ bool AppRunner::handleEvents(SDL_Event* event) {
     break;
   case SDL_KEYDOWN:
     keyCode = event->key.keysym.scancode;
-    pFingers->setKeyDown(keyCode);
+    pInput->setKeyDown(keyCode);
     break;
   case SDL_KEYUP:
     keyCode = event->key.keysym.scancode;
-    pFingers->setKeyUp(keyCode);
+    pInput->setKeyUp(keyCode);
     break;
   case SDL_MOUSEBUTTONDOWN:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
-      pFingers->setLmbState(ButtonState::Press);
+      pInput->setLmbState(ButtonState::Press);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
-      pFingers->setRmbState(ButtonState::Press);
+      pInput->setRmbState(ButtonState::Press);
       break;
     }
     break;
   case SDL_MOUSEBUTTONUP:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
-      pFingers->setLmbState(ButtonState::Release);
+      pInput->setLmbState(ButtonState::Release);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
-      pFingers->setRmbState(ButtonState::Release);
+      pInput->setRmbState(ButtonState::Release);
       break;
     }
     break;
@@ -334,24 +320,18 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
         break;//SDL_QUIT
       }
 
-      Gu::getFingers()->preUpdate();
+      Gu::getInputManager()->preUpdate();
 
       Gu::updateGlobals();
 
-      for (std::shared_ptr<GraphicsWindow> w : Gu::getGraphicsApi()->getGraphicsWindows()) {
-        w->step();
-      }
+      Gu::getWindowManager()->step();
 
       //Update all button states.
-      Gu::getFingers()->postUpdate();
+      Gu::getInputManager()->postUpdate();
     }
     Perf::popPerf();
     Perf::endPerf();
     DebugHelper::checkMemory();
-
-    //**End of loop error -- Don't Remove** 
-    Gu::getGraphicsContext()->chkErrRt();
-    //**End of loop error -- Don't Remove** 
   }
 
   DebugHelper::checkMemory();
@@ -360,8 +340,6 @@ void AppRunner::exitApp(t_string error, int rc) {
   OperatingSystem::showErrorDialog(error + SDLNet_GetError());
 
   Gu::debugBreak();
-
-  Gu::getGraphicsApi()->cleanup();
 
   SDLNet_Quit();
   SDL_Quit();
@@ -379,14 +357,15 @@ bool AppRunner::argMatch(const std::vector<t_string>& args, t_string arg1, int32
   return false;
 }
 bool AppRunner::runCommands(const std::vector<t_string>& args) {
-  if (argMatch(args, "/c", 4)) {
-    //Convert Mob
-    t_string strMob = args[2];
-    t_string strFriendlyName = args[3];
-    Gu::getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
-    return true;
-  }
-  else if (argMatch(args, "/s", 3)) {
+  //if (argMatch(args, "/c", 4)) {
+  //  //Convert Mob
+  //  t_string strMob = args[2];
+  //  t_string strFriendlyName = args[3];
+  //  Gu::getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
+  //  return true;
+  //}
+  //else 
+    if (argMatch(args, "/s", 3)) {
     //Compile Shader
     // cw.exe /s "ShaderName"  "dir/ShaderFileDesc.dat"
 

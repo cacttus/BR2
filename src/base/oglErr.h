@@ -2,7 +2,7 @@
 *
 *    @file oglErr.h
 *    @date November 22, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

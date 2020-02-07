@@ -1,7 +1,7 @@
 /**
 *    @file TypeConv.hpp
 *    @date August 23, 2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2011 
 * 5/1/2017 reformatted. removed inline. made nice

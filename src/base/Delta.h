@@ -2,7 +2,7 @@
 *
 *    @file Delta.h
 *    @date November 5, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016 
 *
@@ -39,7 +39,7 @@ public:
     //GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
     //void makeTestVao();
     //void userZoom(int iAmount);
-    //void updateTouch(std::shared_ptr<Fingers> pFingers);
+    //void updateTouch(std::shared_ptr<Fingers> pInput);
     
 };
 

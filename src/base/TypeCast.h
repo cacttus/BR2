@@ -2,7 +2,7 @@
 *
 *    @file TypeCast.h
 *    @date April 8, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016
 *

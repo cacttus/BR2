@@ -242,7 +242,6 @@ typedef enum {
  class GLContext;
  class HappySky;
  class UiElement;
- class UIManager;
  class SpriteBucket;
  class SpriteSpec;
  class SpriteFrame;
@@ -278,9 +277,9 @@ typedef enum {
  class LightNodePoint;
  class LightNodeDir;
 
- class GraphicsApi;
- class OpenGLApi;
- class VulkanApi;
+ //class GraphicsApi;
+ //class OpenGLApi;
+ //class VulkanApi;
 
  class RenderSettings;
 
@@ -308,7 +307,6 @@ typedef enum {
  class UiWindow;
  class UiCursor;
  class UiScreen;
- class UIManager;
 
  class MegaTex;
  class MtNode;

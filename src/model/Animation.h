@@ -2,7 +2,7 @@
 *
 *    @file Animation.h
 *    @date December 27, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

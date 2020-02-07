@@ -6,10 +6,10 @@ Delta::Delta() {
 Delta::~Delta() {
 }
 
-//void Engine::updateTouch(std::shared_ptr<Fingers> pFingers) {
+//void Engine::updateTouch(std::shared_ptr<Fingers> pInput) {
 //
 //
-//    Gu::getApp()->updateTouch(pFingers, getFrameDelta());
+//    Gu::getApp()->updateTouch(pInput, getFrameDelta());
 //}
 //void Engine::userZoom(int iAmount) {
 //    Gu::getApp()->userZoom(iAmount);

@@ -2,7 +2,7 @@
 *
 *    @file PhysicsWorld.h
 *    @date January 10, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

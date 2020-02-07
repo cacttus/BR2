@@ -2,7 +2,7 @@
 *
 *    @file RenderBucket.h
 *    @date January 22, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

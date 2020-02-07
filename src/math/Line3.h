@@ -2,7 +2,7 @@
 *
 *    @file Line3.h
 *    @date December 5, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    @file Line3
 *    @date 3 20 2010

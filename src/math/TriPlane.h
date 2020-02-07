@@ -1,6 +1,6 @@
 /**
 *    @file TriPlane.h
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *    @adate 2 / 1 / 2010
@@ -137,7 +137,7 @@ FORCE_INLINE void TriPlane::construct() {
 *    @brief This isn't THAT slow, but it is slower than the one above.
 *    This method works.  Was used in place of the optimized method above.
 *    ***Extensively tested assuming pointOnLine_t does not change*
-*    Implemented: Derek Page 1.19.14
+*    Implemented: MetalMario971 1.19.14
 */
 FORCE_INLINE bool TriPlane::containsPointSlowButWorks(const vec3& cp1, const vec3& cp2, const vec3& cp3, const vec3& point) {
 

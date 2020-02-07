@@ -2,7 +2,7 @@
 *
 *    @file BaseAll.h
 *    @date November 22, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *
@@ -23,7 +23,7 @@
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/Package.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../gfx/Texture2DSpec.h"
 
 #include "../base/Hash.h"

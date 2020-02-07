@@ -2,7 +2,7 @@
 *
 *    @file UtilMeshInline.h
 *    @date April 29, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

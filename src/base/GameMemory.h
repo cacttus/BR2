@@ -2,7 +2,7 @@
 //*
 //*    @file GameMemory.h
 //*    @date November 5, 2016
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2016 
 //*

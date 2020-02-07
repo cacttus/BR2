@@ -6,7 +6,7 @@
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Sequencer.h"
 
 #include "../base/FrameSync.h"
@@ -19,7 +19,7 @@
 #include "../math/MathAll.h"
 
 #include "../gfx/RenderUtils.h"
-#include "../gfx/Party.h"
+#include "../gfx/ParticleManager.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/LightManager.h"

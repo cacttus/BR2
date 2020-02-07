@@ -2,7 +2,7 @@
 *
 *    @file TextBufferMesh.h
 *    @date April 14, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

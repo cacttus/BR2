@@ -2,7 +2,7 @@
 *
 *    @file BuildConfig.h
 *    @date April 3, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    Contains all Build based defines. 
 */

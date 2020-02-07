@@ -2,7 +2,7 @@
 *
 *    @file ProjectedRay.h
 *    @date February 7, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

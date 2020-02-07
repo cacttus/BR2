@@ -4,7 +4,7 @@
 *
 *    @brief Column-major matrix
 *
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *    @date Nov 16, 2007

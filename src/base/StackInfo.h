@@ -2,7 +2,7 @@
 //*
 //*    @file StackInfo.h
 //*    @date May 18, 2014
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2014 
 //*

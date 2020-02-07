@@ -1,6 +1,6 @@
 /**
 *    @file RectList.h
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *    @date 7 / 10 / 2008 - mgRect

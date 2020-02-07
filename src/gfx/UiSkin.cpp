@@ -26,15 +26,15 @@
 
 
 namespace Game {
-#pragma region UiSkinElement
-bool UiSkinElement::setAndValid(std::shared_ptr<UiSkinElement> ele) {
-    bool b = (ele != nullptr && ele->validate());
-    if (b == false) {
-        UIManager::error( Stz "Skin element " + ele->_strName + " was not valid.");
-    }
-    return b;
-}
-#pragma  endregion
+//#pragma region UiSkinElement
+//bool UiSkinElement::setAndValid(std::shared_ptr<UiSkinElement> ele) {
+//    bool b = (ele != nullptr && ele->validate());
+//    if (b == false) {
+//        UIManager::error( Stz "Skin element " + ele->_strName + " was not valid.");
+//    }
+//    return b;
+//}
+//#pragma  endregion
 
 #pragma region UiTex
 int32_t UiTex::getWidth() { return _pTex->getWidth(); }
@@ -43,60 +43,60 @@ float UiTex::getSizeRatio() { return _pTex->getSizeRatio(); }
 void UiTex::setWrapU(TexWrap::e eWrap) { _pTex->setWrapU(eWrap); }
 void UiTex::setWrapV(TexWrap::e eWrap) { _pTex->setWrapV(eWrap); }
 
-std::shared_ptr<UiTex> UiTex::create(std::shared_ptr<UIManager> gui, std::string file, bool bLoadNow) {
-    std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(file, 1, false, bLoadNow);
-    if(mts==nullptr) {
-        return nullptr;
-    }
-    return UiTex::create(mts->getTexs()[0]);
+std::shared_ptr<UiTex> UiTex::create(std::shared_ptr<UiScreen> gui, std::string file, bool bLoadNow) {
+  std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(file, 1, false, bLoadNow);
+  if (mts == nullptr) {
+    return nullptr;
+  }
+  return UiTex::create(mts->getTexs()[0]);
 }
-std::shared_ptr<UiTex> UiTex::create(std::shared_ptr<UIManager> gui, std::shared_ptr<Img32> generated){
-    std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(generated);
-    if (mts == nullptr) {
-        return nullptr;
-    }
-    return UiTex::create(mts->getTexs()[0]);
+std::shared_ptr<UiTex> UiTex::create(std::shared_ptr<UiScreen> gui, std::shared_ptr<Img32> generated) {
+  std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(generated);
+  if (mts == nullptr) {
+    return nullptr;
+  }
+  return UiTex::create(mts->getTexs()[0]);
 }
 std::shared_ptr<UiTex> UiTex::create(std::shared_ptr<MtTex> ptex) {
-    std::shared_ptr<UiTex> tex = std::make_shared<UiTex>();
-    tex->_pTex = ptex;
-    return tex;
+  std::shared_ptr<UiTex> tex = std::make_shared<UiTex>();
+  tex->_pTex = ptex;
+  return tex;
 }
 #pragma  endregion
-
-#pragma region Ui3Tex
-std::shared_ptr<Ui3Tex> Ui3Tex::create(std::shared_ptr<UIManager> gui, std::string file) {
-    std::shared_ptr<Ui3Tex> ret = std::make_shared<Ui3Tex>();
-    std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(file, 3);
-
-    for (int i = 0; i < 3; ++i) {
-        ret->_images[i] = UiTex::create(mts->getTexs()[i]);
-    }
-    return ret;
-}
-#pragma endregion
-
-#pragma region Ui9Tex
-std::shared_ptr<Ui9Tex> Ui9Tex::create(std::shared_ptr<UIManager> gui, std::string file) {
-    std::shared_ptr<Ui9Tex> ret = std::make_shared<Ui9Tex>();
-    std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(file, 9);
-
-    for (int i = 0; i < 9; ++i) {
-        ret->_images[i] = UiTex::create(mts->getTexs()[i]);
-    }
-    return ret;
-}
-#pragma endregion
-
-#pragma region UiLabelSkin
-std::shared_ptr<UiLabelSkin> UiLabelSkin::create(std::shared_ptr<UIManager> gui, std::string name, uDim size) {
-    std::shared_ptr<UiLabelSkin> x = std::make_shared<UiLabelSkin>();
-    x->_strFontName = name;
-    x->_uFontSize = size; 
-    x->_pFont = gui->getTex()->getFont(name);
-    return x;
-}
-#pragma endregion
+//
+//#pragma region Ui3Tex
+//std::shared_ptr<Ui3Tex> Ui3Tex::create(std::shared_ptr<UIManager> gui, std::string file) {
+//    std::shared_ptr<Ui3Tex> ret = std::make_shared<Ui3Tex>();
+//    std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(file, 3);
+//
+//    for (int i = 0; i < 3; ++i) {
+//        ret->_images[i] = UiTex::create(mts->getTexs()[i]);
+//    }
+//    return ret;
+//}
+//#pragma endregion
+//
+//#pragma region Ui9Tex
+//std::shared_ptr<Ui9Tex> Ui9Tex::create(std::shared_ptr<UIManager> gui, std::string file) {
+//    std::shared_ptr<Ui9Tex> ret = std::make_shared<Ui9Tex>();
+//    std::shared_ptr<MtTexPatch> mts = gui->getTex()->getTex(file, 9);
+//
+//    for (int i = 0; i < 9; ++i) {
+//        ret->_images[i] = UiTex::create(mts->getTexs()[i]);
+//    }
+//    return ret;
+//}
+//#pragma endregion
+//
+//#pragma region UiLabelSkin
+//std::shared_ptr<UiLabelSkin> UiLabelSkin::create(std::shared_ptr<UIManager> gui, std::string name, uDim size) {
+//    std::shared_ptr<UiLabelSkin> x = std::make_shared<UiLabelSkin>();
+//    x->_strFontName = name;
+//    x->_uFontSize = size; 
+//    x->_pFont = gui->getTex()->getFont(name);
+//    return x;
+//}
+//#pragma endregion
 
 #pragma region UiSkinFile
 //UiSkinFile::UiSkinFile() {

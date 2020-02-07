@@ -29,7 +29,7 @@ private:
     TCPsocket _gameHostSocket;//Send and receive data
     TCPsocket _server_tcpsock;//Accept connections
 
-    void initSDL(t_string windowTitle, std::shared_ptr<AppBase> app);
+    void initSDL( std::shared_ptr<AppBase> app);
     void doShowError(t_string err, Exception* e=nullptr);
     SDL_bool initAudio();
     void initNet();
@@ -45,7 +45,7 @@ private:
     void attachToGameHost();
     bool handleSDLEvents();
 public:
-    void runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
+    void runApp(const std::vector<t_string>& args, std::shared_ptr<AppBase> rb);
 };
 
 

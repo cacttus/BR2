@@ -2,7 +2,7 @@
 *
 *    @file VertexAdjacencyMap.h
 *    @date June 14, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

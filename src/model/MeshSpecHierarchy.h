@@ -2,7 +2,7 @@
 //*
 //*    @file MeshSpecHierarchy.h
 //*    @date October 19, 2011
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2011 
 //*

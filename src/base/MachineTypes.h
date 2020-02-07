@@ -2,7 +2,7 @@
 *    @file machineTypes.h
 *    @brief Type declarations for different architectures.
 *
-*    @desc Derek Page
+*    @desc MetalMario971
 *    @date May 5, 2008
 *
 *    Update:

@@ -2,7 +2,7 @@
 *
 *    @file VboData.h
 *    @date January 5, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *

@@ -2,7 +2,7 @@
 *
 *    @file Vec3Basis.h
 *    @date December 4, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

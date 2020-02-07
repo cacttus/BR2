@@ -2,7 +2,7 @@
 *
 *    @file Net.h
 *    @date May 9, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

@@ -2,7 +2,7 @@
 *
 *    @file ProjectFile.h
 *    @date August 23, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

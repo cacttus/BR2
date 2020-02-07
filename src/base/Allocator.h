@@ -2,7 +2,7 @@
 *
 *    @file Allocator.h
 *    @date 8/17/2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2011
 *

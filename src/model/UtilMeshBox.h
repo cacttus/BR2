@@ -2,7 +2,7 @@
 *
 *    @file UtilMeshBox.h
 *    @date December 13, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *

@@ -2,7 +2,7 @@
 //*
 //*    @file UtilMeshPickBox.h
 //*    @date March 22, 2016
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2016 
 //*

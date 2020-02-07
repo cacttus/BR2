@@ -27,6 +27,7 @@
     <ClInclude Include="src\app\ProjectFile.h" />
     <ClInclude Include="src\app\Script.h" />
     <ClInclude Include="src\app\VulkanWindow.h" />
+    <ClInclude Include="src\app\WindowManager.h" />
     <ClInclude Include="src\base\Allocator.h" />
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\Base.h" />
@@ -46,7 +47,7 @@
     <ClInclude Include="src\base\EngineConfigFile.h" />
     <ClInclude Include="src\base\Exception.h" />
     <ClInclude Include="src\base\FileSystem.h" />
-    <ClInclude Include="src\base\Fingers.h" />
+    <ClInclude Include="src\base\InputManager.h" />
     <ClInclude Include="src\base\FpsMeter.h" />
     <ClInclude Include="src\base\FrameSync.h" />
     <ClInclude Include="src\base\GameMemory.h" />
@@ -150,7 +151,7 @@
     <ClInclude Include="src\gfx\MegaTex.h" />
     <ClInclude Include="src\gfx\OpenGLApi.h" />
     <ClInclude Include="src\gfx\Particles.h" />
-    <ClInclude Include="src\gfx\Party.h" />
+    <ClInclude Include="src\gfx\ParticleManager.h" />
     <ClInclude Include="src\gfx\Picker.h" />
     <ClInclude Include="src\gfx\QuadBufferMesh.h" />
     <ClInclude Include="src\gfx\RenderParams.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="src\app\ProjectFile.cpp" />
     <ClCompile Include="src\app\Script.cpp" />
     <ClCompile Include="src\app\VulkanWindow.cpp" />
+    <ClCompile Include="src\app\WindowManager.cpp" />
     <ClCompile Include="src\base\Allocator.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BaseHeader.cpp" />
@@ -280,7 +282,7 @@
     <ClCompile Include="src\base\EngineConfigFile.cpp" />
     <ClCompile Include="src\base\Exception.cpp" />
     <ClCompile Include="src\base\FileSystem.cpp" />
-    <ClCompile Include="src\base\Fingers.cpp" />
+    <ClCompile Include="src\base\InputManager.cpp" />
     <ClCompile Include="src\base\FpsMeter.cpp" />
     <ClCompile Include="src\base\FrameSync.cpp" />
     <ClCompile Include="src\base\GameMemory.cpp" />
@@ -340,7 +342,7 @@
     <ClCompile Include="src\gfx\MegaTex.cpp" />
     <ClCompile Include="src\gfx\OpenGLApi.cpp" />
     <ClCompile Include="src\gfx\Particles.cpp" />
-    <ClCompile Include="src\gfx\Party.cpp" />
+    <ClCompile Include="src\gfx\ParticleManager.cpp" />
     <ClCompile Include="src\gfx\Picker.cpp" />
     <ClCompile Include="src\gfx\QuadBufferMesh.cpp" />
     <ClCompile Include="src\gfx\RenderParams.cpp" />
@@ -442,10 +444,7 @@
     <ClCompile Include="src\world\RenderBucket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Roadmap.odt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="devlog.txt" />
+    <Text Include="project\devlog.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>

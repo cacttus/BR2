@@ -2,7 +2,7 @@
 //*
 //*    @file ModFile.h
 //*    @date May 29, 2014
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2014 
 //*

@@ -2,7 +2,7 @@
 //*
 //*    @file OperatingSystemHeader.h
 //*    @date October 9, 2014
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2014 
 //*

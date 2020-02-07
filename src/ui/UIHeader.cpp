@@ -48,19 +48,19 @@
 //  return "Invalid Enum!";
 //}
 ////////////////////////////////////////////////////////////////////////////
-//void UiDragInfo::update(std::shared_ptr<Fingers> pFingers) {
+//void UiDragInfo::update(std::shared_ptr<Fingers> pInput) {
 //  float mw = 1.0f / Gui2d::getDesignMultiplierW();
 //  float mh = 1.0f / Gui2d::getDesignMultiplierH();
 //
 //  if (_bDragStart) {
-//    if (pFingers->getLmbState() == ButtonState::e::Up) {
+//    if (pInput->getLmbState() == ButtonState::e::Up) {
 //      //Avoid sticking
 //      _bDrag = false;
 //      _bDragStart = false;
 //    }
 //    else {
 //      //Check for mouse delta to prevent unnecessary updates.
-//      vec2 dp = pFingers->getMousePos() - _vDragStart;
+//      vec2 dp = pInput->getMousePos() - _vDragStart;
 //      if (MathUtils::fuzzyEquals(dp.x, 0.0f) == false || MathUtils::fuzzyEquals(dp.y, 0.0f) == false) {
 //        _bDrag = true;
 //      }
@@ -75,7 +75,7 @@
 //        _func(dp);
 //
 //        //Reset drag start
-//        _vDragStart = pFingers->getMousePos();
+//        _vDragStart = pInput->getMousePos();
 //      }
 //    }
 //  }

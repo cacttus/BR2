@@ -2,7 +2,7 @@
 *
 *    @file DiskFile.h
 *    @date September 6, 2010
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *

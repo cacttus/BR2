@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
         Gu::setApp(cwr);
 
         std::shared_ptr<AppRunner> ar = std::make_shared<AppRunner>();
-        ar->runApp(Gu::argsToVectorOfString(argc, argv), "Shake", cwr);
+        ar->runApp(Gu::argsToVectorOfString(argc, argv), cwr);
     }
     DebugHelper::debugHeapEnd();
 

@@ -2,7 +2,7 @@
 *
 *    @file Gu.h
 *    @date November 6, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016
 *
@@ -24,68 +24,49 @@ namespace Game {
 *    @brief Global Utils For everything.
 */
 class Gu : public GameMemory {
-  static std::shared_ptr<TexCache> _pTexCache;
-  static std::shared_ptr<CameraNode> _pCamera;
-  static std::shared_ptr<Party> _pParty;
   static std::shared_ptr<Sequencer> _pSequencer;
   static std::shared_ptr<AppBase> _pAppBase;
-  static std::shared_ptr<Fingers> _pFingers;
-  static std::shared_ptr<FpsMeter> _pFpsMeter;
-  static std::shared_ptr<FrameSync> _pFrameSync;
+  static std::shared_ptr<InputManager> _pInput;
   static std::shared_ptr<SoundCache> _pSoundCache;
-  static std::shared_ptr<ShaderMaker> _pShaderMaker;
-  static std::shared_ptr<LightManager> _pLightManager;
-  static std::shared_ptr<ModelCache> _pModelCache;
-  static std::shared_ptr<Picker> _pPicker;
-  static std::shared_ptr<PhysicsWorld> _pPhysicsWorld;
   static std::shared_ptr<Package> _pPackage;
   static std::shared_ptr<RenderSettings> _pRenderSettings;
   static std::shared_ptr<EngineConfig> _pEngineConfig;
   static std::shared_ptr<Logger> _pLogger;
-  static std::shared_ptr<GraphicsApi> _pGraphicsApi;
+
   static std::shared_ptr<Net> _pNet;
-  static std::shared_ptr<Delta> _pDelta;
+
+  static std::shared_ptr<WindowManager> _pWindowManager;
+
 
 public:
+  static std::shared_ptr<WindowManager> getWindowManager();
+
+
   // static std::shared_ptr<GLContext> getGraphicsContext();
   static std::shared_ptr<RenderSettings> getRenderSettings();
   static std::shared_ptr<Package> getPackage();
-  static std::shared_ptr<ModelCache> getModelCache();
+
   static std::shared_ptr<Sequencer> getSequencer();
-  static std::shared_ptr<Fingers> getFingers();
-  static std::shared_ptr<FpsMeter> getFpsMeter();
-  static std::shared_ptr<FrameSync> getFrameSync();
-  static std::shared_ptr<SoundCache> getSoundCache();
-  static std::shared_ptr<ShaderMaker> getShaderMaker();
+
   static std::shared_ptr<AppBase> getApp();
-  static std::shared_ptr<TexCache> getTexCache();
-  static std::shared_ptr<LightManager> getLightManager();
-  static std::shared_ptr<Picker> getPicker();
-  // static std::shared_ptr<Gui2d> getGui();
-  static std::shared_ptr<PhysicsWorld> getPhysicsWorld();
-  static std::shared_ptr<Party> getParty();
-  static std::shared_ptr<CameraNode> getCamera();
+  static std::shared_ptr<InputManager> getInputManager();
+  static std::shared_ptr<SoundCache> getSoundCache();
   static std::shared_ptr<EngineConfig> getConfig();
-  //static std::shared_ptr<RenderPipe> getRenderPipe(); //Per window
   static std::shared_ptr<Logger> getLogger();
   static std::shared_ptr<EngineConfig> getEngineConfig();
-  static std::shared_ptr<Delta> getDelta();
-  static std::shared_ptr<GraphicsApi> getGraphicsApi();
-  static std::shared_ptr<WindowViewport> getViewport();
   static std::shared_ptr<Net> getNet();
-  static std::shared_ptr<GraphicsWindow> getMainWindow();
-  static std::shared_ptr<GLContext> getGraphicsContext();
 
+  //These are all context specific
+  static std::shared_ptr<GraphicsWindow> getMainWindow();
   static std::shared_ptr<GraphicsWindow> getActiveWindow();
-  static std::shared_ptr<RenderPipe> getRenderPipe();
-  static std::shared_ptr<Gui2d> getGui();
+
+
+  //static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
+
   //  static void setContext(std::shared_ptr<GraphicsContext> rb);
     //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
-  static void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p);
-  static void setCamera(std::shared_ptr<CameraNode> pc);
   static void setApp(std::shared_ptr<AppBase> b);
   // static void setEngine(std::shared_ptr<Engine> engine);
-  static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
 
   static void updateGlobals();
 
@@ -127,7 +108,7 @@ public:
   static void print(char msg);
   static void print(const char* msg);
   static void print(const t_string& msg);
-  static uint64_t getFrameNumber();
+  //static uint64_t getFrameNumber();
 
   static void guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp);//Transforms a quad for the matrix-less 
 

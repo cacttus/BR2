@@ -13,53 +13,57 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
 #include "../app/GraphicsWindow.h"
+#include "../app/WindowManager.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../gfx/MegaTex.h"
 
 namespace Game {
 AppUi::AppUi() {
-
   t_string DEBUG_FONT = "Lato-Regular.ttf";
 
-  //skins first
-  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
-  std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
-  pCursorSkin->_pTex = UiTex::create(Gu::getGui(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+  std::shared_ptr<GraphicsWindow> w = Gu::getWindowManager()->createWindow("shake");
+  std::shared_ptr<UiScreen> screen = w->getScreen();
 
-  Gu::getGui()->getTex()->loadImages();
+  //skins first
+ // std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getUIManager(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+  //std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+  //pCursorSkin->_pTex = UiTex::create(Gu::getUIManager(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+
+  screen->getTex()->loadImages();
 
   //debug label
-  _pDebugLabel = UiLabel::create("", debugTextSkin);
-  _pDebugLabel->position() = UiPositionMode::e::Relative;
-  _pDebugLabel->left() = "20px";
-  _pDebugLabel->top() = "100px";
-  _pDebugLabel->width() = "200px";
-  _pDebugLabel->height() = "1800px";
-  _pDebugLabel->enableWordWrap();
-  Gu::getGui()->addChild(_pDebugLabel);
+  //_pDebugLabel = std::make_shared<UiLabel>("", debugTextSkin);
+  //_pDebugLabel->position() = UiPositionMode::e::Relative;
+  //_pDebugLabel->left() = "20px";
+  //_pDebugLabel->top() = "100px";
+  //_pDebugLabel->width() = "200px";
+  //_pDebugLabel->height() = "1800px";
+  //_pDebugLabel->enableWordWrap();
+  //screen->addChild(_pDebugLabel);
+
 
   //Cursor 
-  std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
+  std::shared_ptr<UiTex> cursor_tex = UiTex::create(screen, Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+  std::shared_ptr<UiCursor> cs = std::make_shared<UiCursor>(screen, cursor_tex);
   cs->width() = "32px";
   cs->height() = "auto"; // Auto?
-  Gu::getGui()->setCursor(cs);
+  screen->setCursor(cs);
 
-  Gu::getGui()->getTex()->compile();
-
+  //Compile the UI
+  screen->getTex()->compile();
 }
 void AppUi::clearDebugText() {
   if (_pDebugLabel != nullptr) {
-    _pDebugLabel->setText("Debug\n");
+   // _pDebugLabel->setText("Debug\n");
   }
 }
 void AppUi::dbgLine(std::string txt) {
   if (_pDebugLabel != nullptr) {
-    std::string dtxt = _pDebugLabel->getText();
-    dtxt += txt;
-    dtxt += "\r\n";
-    _pDebugLabel->setText(dtxt);
+ //   std::string dtxt = _pDebugLabel->getText();
+ //   dtxt += txt;
+ //   dtxt += "\r\n";
   }
 }
 void AppUi::endDebugText() {
@@ -78,55 +82,55 @@ void AppMain::init() {
   setDebugMode();
 }
 void AppMain::drawBackgroundImage() {
-  if (_pQuadMeshBackground == nullptr) {
-    _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
-  }
-  std::shared_ptr<CameraNode> bc = Gu::getCamera();
-  Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-  Gu::getShaderMaker()->getImageShader_F()->beginRaster();
-  {
-    //We want depth test so we can see what's in front.
-    //glEnable(GL_DEPTH_TEST);
-    _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
+  //if (_pQuadMeshBackground == nullptr) {
+  //  _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
+  //    Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
+  //  _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+  //}
+  //std::shared_ptr<CameraNode> bc = Gu::getCamera();
+  //Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
+  //Gu::getShaderMaker()->getImageShader_F()->beginRaster();
+  //{
+  //  //We want depth test so we can see what's in front.
+  //  //glEnable(GL_DEPTH_TEST);
+  //  _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
 
-    Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
-  }
-  Gu::getShaderMaker()->getImageShader_F()->endRaster();
+  //  Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+  //}
+  //Gu::getShaderMaker()->getImageShader_F()->endRaster();
 
 }
 void AppMain::debugChangeRenderState() {
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F1)) {
-    if (Gu::getFingers()->shiftHeld()) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F1)) {
+    if (Gu::getInputManager()->shiftHeld()) {
       _bDebugDisableShadows = !_bDebugDisableShadows;
     }
     else {
       _bShowDebugText = !_bShowDebugText;
     }
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F2)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F2)) {
     _bDrawDebug = !_bDrawDebug;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F3)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F3)) {
     _bDebugDisableCull = !_bDebugDisableCull;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F4)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F4)) {
     _bDebugShowWireframe = !_bDebugShowWireframe;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F5)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F5)) {
     _bDebugClearWhite = !_bDebugClearWhite;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F6)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F6)) {
     _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F7)) {
-    if (Gu::getFrameSync()->isEnabled()) {
-      Gu::getFrameSync()->disable();
-    }
-    else {
-      Gu::getFrameSync()->enable();
-    }
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F7)) {
+    //if (Gu::getFrameSync()->isEnabled()) {
+    //  Gu::getFrameSync()->disable();
+    //}
+    //else {
+    //  Gu::getFrameSync()->enable();
+    //}
   }
   //if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F10)) {
   //    if (_iF10Pressed == 0) {
@@ -158,16 +162,16 @@ void AppMain::debugChangeRenderState() {
     glPolygonMode(GL_BACK, GL_FILL);
   }
   if (_bDebugClearWhite == true) {
-    Graphics->getClearR() = 1.f;
-    Graphics->getClearG() = 1.f;
-    Graphics->getClearB() = 1.f;
-    Graphics->getClearA() = 1.f;
-  }
-  else {
-    Graphics->getClearR() = 0.01f;
-    Graphics->getClearG() = 0.01f;
-    Graphics->getClearB() = 0.01f;
-    Graphics->getClearA() = 1.0f;
+  //  Graphics->getClearR() = 1.f;
+  //  Graphics->getClearG() = 1.f;
+  //  Graphics->getClearB() = 1.f;
+  //  Graphics->getClearA() = 1.f;
+  //}
+  //else {
+  //  Graphics->getClearR() = 0.01f;
+  //  Graphics->getClearG() = 0.01f;
+  //  Graphics->getClearB() = 0.01f;
+  //  Graphics->getClearA() = 1.0f;
   }
   //#endif
 #endif
@@ -192,8 +196,8 @@ void AppMain::drawForward(RenderParams& rp) {
 
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+      rp.getWindow()->getCamera()->getViewport()->getWidth(), rp.getWindow()->getCamera()->getViewport()->getHeight());
+    _pTex = rp.getWindow()->getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
   }
 
   RenderUtils::drawAxisShader();
@@ -210,9 +214,7 @@ void AppMain::drawTransparent(RenderParams& rp) {
 void AppMain::draw2d() {
   drawDebugText();
 
-  //  Gu::getGui()->debugForceLayoutChanged();
-  Gu::getGui()->update(Gu::getFingers());
-  Gu::getGui()->drawForward();
+
 }
 void AppMain::setDebugMode() {
   //set some debug vars to make ikte easier
@@ -238,7 +240,7 @@ void AppMain::drawDebugText() {
     //////////////////////////////////////////////////////////////////////////
 #define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
 //////////////////////////////////////////////////////////////////////////
-    DBGL("%.2f", Gu::getFpsMeter()->getFps());
+    //DBGL("%.2f", Gu::getFpsMeter()->getFps());
 
     //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
     DBGL("Global");
@@ -247,10 +249,10 @@ void AppMain::drawDebugText() {
     DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
     DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
     DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-    DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+   // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
     DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
 
-    DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
 
   }
   _pAppUi->endDebugText();

@@ -2,7 +2,7 @@
 *
 *    @file SoundCache.h
 *    @date January 19, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

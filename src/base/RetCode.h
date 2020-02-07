@@ -2,7 +2,7 @@
 *
 *    @file SystemErrorDefs.h
 *    @date September 21, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *

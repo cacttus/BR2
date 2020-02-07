@@ -2,7 +2,7 @@
 *
 *    @file IndexBufferData.h
 *    @date September 26, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

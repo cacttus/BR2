@@ -2,7 +2,7 @@
 *
 *    @file Sequencer.h
 *    @date December 23, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

@@ -2,7 +2,7 @@
 *
 *    @file ObjectFile.h
 *    @date May 9, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

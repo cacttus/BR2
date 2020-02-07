@@ -2,7 +2,7 @@
 *
 *    @file TextParser.h
 *    @date July 20, 2011
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011 
 *

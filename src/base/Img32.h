@@ -2,7 +2,7 @@
 *    @file BaseImage.h
 *    //@file imgImage.h
 *
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2011
 *    @date 7 / 9 / 2008

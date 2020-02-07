@@ -2,7 +2,7 @@
 //*
 //*    @file UILabel.h
 //*    @date February 3, 2020
-//*    @author Derek Page
+//*    @author MetalMario971
 //*
 //*    © 2020 
 //*
@@ -50,7 +50,7 @@
 //  void setText(std::string s);
 //  virtual void performLayout(bool bForce) override;
 //  void enableWordWrap() { _bWordWrap = true; }
-//  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+//  virtual void update(std::shared_ptr<Fingers> pInput) override;
 //};
 //}//ns Game
 //

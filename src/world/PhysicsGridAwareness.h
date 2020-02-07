@@ -2,7 +2,7 @@
 *
 *    @file PhysicsGridAwareness.h
 *    @date January 11, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

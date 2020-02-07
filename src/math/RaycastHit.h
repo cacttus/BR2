@@ -2,7 +2,7 @@
 *
 *    @file RaycastHit.h
 *    @date May 26, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2016 
 *

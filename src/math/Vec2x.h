@@ -2,7 +2,7 @@
 *
 *    @file Vec2x.h
 *    @date February 26, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2015
 *

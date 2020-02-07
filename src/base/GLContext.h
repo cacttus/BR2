@@ -2,7 +2,7 @@
 *
 *    @file GLContext.h
 *    @date November 19, 2016
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    � 2016
 *

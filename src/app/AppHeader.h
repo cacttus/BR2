@@ -2,7 +2,7 @@
 *
 *    @file AppHeader.h
 *    @date August 23, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *
@@ -19,6 +19,10 @@ class ProjectFile;
 class Script;
 class AppBase;
 class AppMain;
+class GraphicsWindow;
+class OpenGLWindow;
+class VulkanWindow;
+class WindowManager;
 
 }//ns Game
 

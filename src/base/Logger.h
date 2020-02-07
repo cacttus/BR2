@@ -2,7 +2,7 @@
 *
 *    @file Logger.h
 *    @date December 14, 2013
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2013
 *

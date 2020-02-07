@@ -2,7 +2,7 @@
 *
 *    @file IboData.h
 *    @date March 30, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *

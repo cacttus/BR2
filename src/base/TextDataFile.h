@@ -2,7 +2,7 @@
 *
 *    @file TextDataFile.h
 *    @date November 22, 2014
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2014 
 *
