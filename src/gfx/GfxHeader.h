@@ -48,6 +48,8 @@ typedef enum {
     ,Pick
 } RenderMode;
 
+//Bits that turn on/off render layers.
+typedef std::bitset<16> PipeBits;
 
 namespace ShaderClass { typedef enum { Shadow, Diffuse } e; }
 
@@ -214,12 +216,12 @@ typedef enum {
  class FboShader;
  class FramebufferForward;
  class ScreenQuadMesh;
- class ParticleManager;
+ class ParticleMaker;
  class Atlas;
  class AtlasSprite;
  class FrustumProjectionParameters;
  class PointLight;
- class ParticleManager;
+ class ParticleMaker;
  class Particle;
  class DeferredFramebuffer;
  class FontTextBuffer;
@@ -240,7 +242,7 @@ typedef enum {
  class Texture2DSpec;
  class TextureAtlas2d;
  class GLContext;
- class HappySky;
+ class SkyBox;
  class UiElement;
  class SpriteBucket;
  class SpriteSpec;
@@ -254,7 +256,7 @@ typedef enum {
  class ShaderCache;
  class ShaderUniform;
  class ShaderAttribute;
- class RenderPipe;
+ class RenderPipeline;
  class LightNodePoint;
  class LightNodeBase;
  class LightManager;
@@ -266,7 +268,7 @@ typedef enum {
  class ForwardFramebuffer;
  class FlyCam;
  class GpuComputeSync;
- class RenderTarget;
+ class BufferRenderTarget;
  class Picker;
  //class PickFramebuffer;
  class ShadowFrustum;
@@ -407,6 +409,23 @@ typedef enum {
      float _fFocalRange;
      float _pad2;
      float _pad3;
+ };
+
+/**
+* @class HasGraphicsContext
+* @brief Inherit for all OpenGL classes that use the OpenGL context.
+*/
+ template < class Tx >
+ class HasGraphicsContext : public VirtualMemoryShared<Tx> {
+ public:
+   std::shared_ptr<GraphicsContext> getGraphicsContext() { return _pContext; }
+   HasGraphicsContext(std::shared_ptr<GraphicsContext> g) {
+     _pContext = g;
+   }
+   virtual ~HasGraphicsContext() override {
+   }
+ private:
+   std::shared_ptr<GraphicsContext> _pContext = nullptr;
  };
 
 }//ns game

@@ -11,7 +11,7 @@
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/RenderSettings.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/MeshNode.h"
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"

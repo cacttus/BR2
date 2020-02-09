@@ -6,13 +6,13 @@
 #include "../base/Gu.h"
 #include "../gfx/WindowViewport.h"
 #include "../gfx/Texture2DSpec.h"
-#include "../gfx/RenderPipe.h"
+#include "../gfx/RenderPipeline.h"
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/ForwardFramebuffer.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/RenderTarget.h"
+#include "../gfx/BufferRenderTarget.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowFrustum.h"
@@ -25,22 +25,22 @@
 #include "../model/VertexFormat.h"
 
 namespace Game {
-RenderPipe::RenderPipe(std::shared_ptr<GraphicsWindow> w) {
+RenderPipeline::RenderPipeline(std::shared_ptr<GraphicsWindow> w) {
   _vClear = vec4(0, 0, 0, 1);
   _pWindow = w;
 }
-RenderPipe::~RenderPipe() {
+RenderPipeline::~RenderPipeline() {
   releaseFbosAndMesh();
 }
-const vec4& RenderPipe::getClear() {
+const vec4& RenderPipeline::getClear() {
   return _vClear;
 }
-void RenderPipe::setClear(vec4& v) {
+void RenderPipeline::setClear(vec4& v) {
   _vClear = v;;
   _pBlittedForward->setClear(_vClear);
   _pBlittedDeferred->setClear(_vClear);
 }
-void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath) {
+void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath) {
   BroLogInfo("[RenderPipe] Initializing.");
   if (iWidth <= 0 || iHeight <= 0) {
     BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
@@ -150,7 +150,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
   }
 }
 
-void RenderPipe::saveScreenshot() {
+void RenderPipeline::saveScreenshot() {
   if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F9)) {
     if (Gu::getInputManager()->shiftHeld()) {
       BroLogInfo("[RenderPipe] Saving all MRTs.");
@@ -193,14 +193,14 @@ void RenderPipe::saveScreenshot() {
       }
 
       iTarget = 0;
-      for (std::shared_ptr<RenderTarget> pTarget : _pBlittedDeferred->getTargets()) {
+      for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedDeferred->getTargets()) {
         t_string fname = FileSystem::getScreenshotFilename();
         fname = fname + "_deferred_" + pTarget->getName() + "_" + iTarget++ + "_.png";
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
         BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
       }
       iTarget = 0;
-      for (std::shared_ptr<RenderTarget> pTarget : _pBlittedForward->getTargets()) {
+      for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedForward->getTargets()) {
         t_string fname = FileSystem::getScreenshotFilename();
         fname = fname + "_forward_" + pTarget->getName() + "_" + iTarget++ + "_.png";
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
@@ -217,7 +217,7 @@ void RenderPipe::saveScreenshot() {
   }
 }
 
-void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted) {
+void RenderPipeline::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted) {
   //Downsize the MSAA sample buffer.
   if (_bMsaaEnabled) {
     std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, NULL);
@@ -228,7 +228,7 @@ void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::sha
     std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, blitted->getGlId());
     Gu::getGraphicsContext()->chkErrDbg();
 
-    for (std::shared_ptr<RenderTarget> inf : msaa->getTargets()) {
+    for (std::shared_ptr<BufferRenderTarget> inf : msaa->getTargets()) {
       GLenum blendMode;
       GLbitfield bitMask;
       if (inf->getTargetType() == RenderTargetType::e::Depth) {
@@ -255,13 +255,13 @@ void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::sha
 
   }
 }
-void RenderPipe::resizeScreenBuffers(int32_t w, int32_t h) {
+void RenderPipeline::resizeScreenBuffers(int32_t w, int32_t h) {
   //Simply called neow by new camera vp size.
   //recreate everything
   init(w, h, "");
 }
 
-void RenderPipe::beginRenderShadows() {
+void RenderPipeline::beginRenderShadows() {
   //See GLLightManager in BRO
   Gu::getGraphicsContext()->pushDepthTest();
   Gu::getGraphicsContext()->pushBlend();
@@ -272,36 +272,36 @@ void RenderPipe::beginRenderShadows() {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 }
-void RenderPipe::endRenderShadows() {
+void RenderPipeline::endRenderShadows() {
 
   glCullFace(GL_BACK);
   Gu::getGraphicsContext()->popDepthTest();
   Gu::getGraphicsContext()->popBlend();
   Gu::getGraphicsContext()->popCullFace();
 }
-void RenderPipe::renderShadows() {
+void RenderPipeline::renderShadows() {
   Gu::getLightManager()->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
 
   //Force refresh teh viewport.
   Gu::getCamera()->getViewport()->updateChanged(true);
 }
 
-void RenderPipe::beginRenderDeferred() {
+void RenderPipeline::beginRenderDeferred() {
   enableDisablePipeBits();
 
   // _pMsaaForward->clearFb();//Must call before deferre
   _pMsaaDeferred->beginRender();
 }
-void RenderPipe::endRenderDeferred() {
+void RenderPipeline::endRenderDeferred() {
   _pMsaaDeferred->endRender();
 }
-void RenderPipe::beginRenderForward() {
+void RenderPipeline::beginRenderForward() {
   _pMsaaForward->beginRender();
 }
-void RenderPipe::endRenderForward() {
+void RenderPipeline::endRenderForward() {
   _pMsaaForward->endRender();
 }
-void RenderPipe::enableDisablePipeBits() {
+void RenderPipeline::enableDisablePipeBits() {
   //TODO: make sure the given input window is in focus.
   //if (_pWindow!=nullptr && _pWindow->hasFocus()) {
 
@@ -318,7 +318,7 @@ void RenderPipe::enableDisablePipeBits() {
   //}
 }
 
-void RenderPipe::blitDeferredRender() {
+void RenderPipeline::blitDeferredRender() {
   //NOTE:
   //Bind the forward framebuffer (_pBlittedForward is equal to _pMsaaForward if MSAA is disabled, if it isn't we call copyMSAASamples later)
   Gu::getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
@@ -334,7 +334,7 @@ void RenderPipe::blitDeferredRender() {
     // - Clear the color and depth buffers (back and front buffers not the Mrts)
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (std::shared_ptr<RenderTarget> inf : _pMsaaDeferred->getTargets()) {
+    for (std::shared_ptr<BufferRenderTarget> inf : _pMsaaDeferred->getTargets()) {
       std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(inf->getTextureChannel());
       Gu::getGraphicsContext()->chkErrDbg();
       glBindTexture(inf->getTextureTarget(), inf->getTexId());
@@ -357,7 +357,7 @@ void RenderPipe::blitDeferredRender() {
   _pDeferredShader->endRaster();
 
 }
-void RenderPipe::setShadowUf() {
+void RenderPipeline::setShadowUf() {
   int32_t iMaxTexs = 0;
   glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &iMaxTexs);
 
@@ -474,7 +474,7 @@ DOFFbo::~DOFFbo() {
   std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteFramebuffers(1, &_uiDOFFboId);
   glDeleteTextures(1, &_uiTexId0);
 }
-void RenderPipe::postProcessDOF() {
+void RenderPipeline::postProcessDOF() {
   //If MSAA is enabled downsize the MSAA buffer to the _pBlittedForward buffer so we can execute post processing.
   //copyMsaaSamples(_pMsaaForward, _pBlittedForward);
 
@@ -486,8 +486,8 @@ void RenderPipe::postProcessDOF() {
     return;
   }
   vec3 pos = pCam->getFinalPos();
-  std::shared_ptr<RenderTarget> rtPos = _pMsaaDeferred->getTargetByName("Position");
-  std::shared_ptr<RenderTarget> rtColor = _pMsaaForward->getTargetByName("Color");//**Note** Forward
+  std::shared_ptr<BufferRenderTarget> rtPos = _pMsaaDeferred->getTargetByName("Position");
+  std::shared_ptr<BufferRenderTarget> rtColor = _pMsaaForward->getTargetByName("Color");//**Note** Forward
 
   //Blend color + position and store it in the color.
   pDofShader->beginRaster();
@@ -548,7 +548,7 @@ void RenderPipe::postProcessDOF() {
   glBindTexture(GL_TEXTURE_2D, 0);
 
 }
-void RenderPipe::endRenderAndBlit() {
+void RenderPipeline::endRenderAndBlit() {
 
   //Do not bind anything - default framebuffer.
   Gu::getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
@@ -585,13 +585,13 @@ void RenderPipe::endRenderAndBlit() {
   _pForwardShader->endRaster();
 
 }
-void RenderPipe::createQuadMesh(int w, int h) {
+void RenderPipeline::createQuadMesh(int w, int h) {
 
   //    DEL_MEM(_pQuadMesh);
   _pQuadMesh = nullptr;
   _pQuadMesh = MeshUtils::createScreenQuadMesh(w, h);
 }
-void RenderPipe::checkDeviceCaps(int iWidth, int iHeight) {
+void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
   //TODO: later we'll create this async.
   //  Gd::verifyRenderThread();
 
@@ -619,7 +619,7 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight) {
 
   checkMultisampleParams();
 }
-void RenderPipe::checkMultisampleParams() {
+void RenderPipeline::checkMultisampleParams() {
   GLint iMaxSamples;
   glGetIntegerv(GL_MAX_SAMPLES, &iMaxSamples);
   BroLogInfo(Stz "Max OpenGL MSAA Samples " + iMaxSamples);
@@ -638,7 +638,7 @@ void RenderPipe::checkMultisampleParams() {
     }
   }
 }
-void RenderPipe::debugForceSetPolygonMode() {
+void RenderPipeline::debugForceSetPolygonMode() {
 
 #ifdef __WINDOWS__
 #ifdef _DEBUG
@@ -648,7 +648,7 @@ void RenderPipe::debugForceSetPolygonMode() {
 #endif
 #endif
 }
-void RenderPipe::releaseFbosAndMesh() {
+void RenderPipeline::releaseFbosAndMesh() {
   std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
   _pBlittedDeferred = nullptr;
   _pBlittedForward = nullptr;
@@ -663,7 +663,7 @@ void RenderPipe::releaseFbosAndMesh() {
   _pShadowFrustumMaster = nullptr;
 }
 
-void RenderPipe::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared_ptr<Drawable> toDraw, RenderPipe::PipeBits pipeBits) {
+void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared_ptr<Drawable> toDraw, RenderPipeline::PipeBits pipeBits) {
   //Re-Init
   if (Gu::getCamera() == nullptr) {
     BroLogErrorOnce("Camera was not set for renderScene");
@@ -795,14 +795,14 @@ void RenderPipe::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared_ptr
   }
   _bRenderInProgress = false;
 }
-std::shared_ptr<Img32> RenderPipe::getResultAsImage() {
+std::shared_ptr<Img32> RenderPipeline::getResultAsImage() {
   std::shared_ptr<Img32> bi = std::make_shared<Img32>();
 
   //so wer'e having problem rendering the alpha of rthe forward buffer
   //its probably a trivial bug, but my brain is dead once again
   //so i'm just exporting the colors of the deferred for now
 
-  std::shared_ptr<RenderTarget> pTarget;
+  std::shared_ptr<BufferRenderTarget> pTarget;
   pTarget = _pBlittedForward->getTargetByName("Color");
   if (RenderUtils::getTextureDataFromGpu(bi, pTarget->getGlTexId(), GL_TEXTURE_2D) == true) {
     //the GL tex image must be flipped to show upriht/

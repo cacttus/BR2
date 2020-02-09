@@ -18,13 +18,11 @@
 #include "../gfx/ShadowFrustum.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/MeshNode.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
-
-
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
@@ -34,9 +32,6 @@ ShaderBase::ShaderBase(t_string strName) {
 ShaderBase::~ShaderBase() {
     deleteUniforms();
     deleteAttributes();
-    Gu::getGraphicsContext();
-
-
     Gu::getGraphicsContext()->glDeleteProgram(_glId);
 }
 ///////////////////////////////////////////////////////////////////
@@ -115,7 +110,6 @@ void ShaderBase::recreateProgram() {
 
 void ShaderBase::getProgramErrorLog(std::vector<t_string>& __out_ errs) {
     //GLShaderProgram* psp = (GLShaderProgram*)sp;
-
 
     // - Do your stuff
     GLsizei buf_size;

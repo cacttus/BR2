@@ -17,8 +17,8 @@
 #include "../gfx/ScreenProps.h"
 namespace Game {
 /**
-*    @class Viewport
-*    @brief Viewport class.
+*    @class WindowViewport
+*    @brief Viewport for rendering to a window.
 *
 */
 class WindowViewport : public VirtualMemory /*This is contained by RenderWindow, do not accept window param events */{

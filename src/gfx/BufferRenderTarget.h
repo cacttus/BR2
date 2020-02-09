@@ -20,8 +20,26 @@ namespace Game {
 *
 */
 //Storage class for OpenGL render target data.
-class RenderTarget : public VirtualMemory {
+class BufferRenderTarget : public VirtualMemory {
     friend class FramebufferBase;
+public:
+  BufferRenderTarget(bool bShared) : _bShared(bShared) {}
+  virtual ~BufferRenderTarget() override;
+
+  bool getShared() { return _bShared; }
+  GLuint getGlTexId() { return _iGlTexId; }
+  t_string getName() { return _strName; }
+  GLenum getTextureChannel() { return _eTextureChannel; }
+  GLenum getAttachment() { return _eAttachment; }
+  GLenum getTextureTarget() { return _eTextureTarget; }
+  GLuint getTexId() { return _iGlTexId; }
+  GLint getLayoutIndex() { return _iLayoutIndex; }
+  RenderTargetType::e getTargetType() { return _eTargetType; }
+  GLenum getBlitBit() { return _eBlitBit; }
+  bool getMsaaEnabled();
+
+  void bind(GLenum eAttachment = 0);
+
 private:
     t_string _strName;
     GLuint _iGlTexId;    // Texture Id
@@ -32,23 +50,7 @@ private:
     GLenum _eBlitBit; // GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
     RenderTargetType::e _eTargetType;
     bool _bShared = false;
-public:
-    RenderTarget(bool bShared) : _bShared(bShared) { }
-    virtual ~RenderTarget() override;
 
-    bool getShared() {return _bShared; }
-    GLuint getGlTexId() { return _iGlTexId; }
-    t_string getName() { return _strName; }
-    GLenum getTextureChannel() { return _eTextureChannel; }
-    GLenum getAttachment() { return _eAttachment; }
-    GLenum getTextureTarget() { return _eTextureTarget; }
-    GLuint getTexId() { return _iGlTexId; }
-    GLint getLayoutIndex() { return _iLayoutIndex; }
-    RenderTargetType::e getTargetType() { return _eTargetType; }
-    GLenum getBlitBit() { return _eBlitBit; }
-    bool getMsaaEnabled();
-
-    void bind(GLenum eAttachment = 0);
 };
 
 

@@ -5,7 +5,7 @@
 #include "../base/TypeConv.h"
 #include "../base/StringUtil.h"
 #include "../model/MeshUtils.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/VertexFormat.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"
@@ -139,8 +139,8 @@ bool parseGenParams(t_string genString, MeshGenParams& __out_ params) {
 *    @fn generateFromParameters
 *    @brief
 */
-std::shared_ptr<MeshSpec> MeshUtils::generateFromParameters(MeshGenParams* pgp) {
-    std::shared_ptr<MeshSpec> ret_spec = NULL;
+std::shared_ptr<MeshData> MeshUtils::generateFromParameters(MeshGenParams* pgp) {
+    std::shared_ptr<MeshData> ret_spec = NULL;
     MeshGenType::e mga = pgp->getGenType();
 
     int px = 0;
@@ -186,9 +186,9 @@ std::shared_ptr<MeshSpec> MeshUtils::generateFromParameters(MeshGenParams* pgp) 
 *    @fn generate_arc_segment
 *    Generate an arc segment -  a square mapped onto a paraboloid
 */
-std::shared_ptr<MeshSpec> MeshUtils::makeArcSegment(float radius, float radius2, float refHeight, vec3 refPos, int32_t slices)
+std::shared_ptr<MeshData> MeshUtils::makeArcSegment(float radius, float radius2, float refHeight, vec3 refPos, int32_t slices)
 {
-    std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());//VertexFormatType::V_V3C4N3X2,IndexFormatType::INDEX_32_BIT_TYPE);
+    std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(StringUtil::generate(), MeshMakerVert::getVertexFormat());//VertexFormatType::V_V3C4N3X2,IndexFormatType::INDEX_32_BIT_TYPE);
     int32_t nVerts = (slices + 1)*(slices + 1);
     int32_t nIndexes = (slices)*(slices) * 2 * 3;
     int32_t nFaces = nIndexes / 3;
@@ -321,7 +321,7 @@ std::shared_ptr<MeshSpec> MeshUtils::makeArcSegment(float radius, float radius2,
 
     return ma;
 }
-std::shared_ptr<MeshSpec> MeshUtils::makeBox(Box3f* pCube, vec4* color, Matrix4x4* applyMat, vec3* offset)
+std::shared_ptr<MeshData> MeshUtils::makeBox(Box3f* pCube, vec4* color, Matrix4x4* applyMat, vec3* offset)
 {
     vec3 vi = pCube->_min;
     vec3 va = pCube->_max;
@@ -338,7 +338,7 @@ std::shared_ptr<MeshSpec> MeshUtils::makeBox(Box3f* pCube, vec4* color, Matrix4x
 
     return makeBox(f, color, applyMat, offset);
 }
-std::shared_ptr<MeshSpec> MeshUtils::makeBox(float length, vec4* color, mat4* applyMat, vec3* offset)
+std::shared_ptr<MeshData> MeshUtils::makeBox(float length, vec4* color, mat4* applyMat, vec3* offset)
 {
     vec3 f[8];
     f[BoxPoint::FBL] = vec3(-1.0f, -1.0f, -1.0f);
@@ -356,9 +356,9 @@ std::shared_ptr<MeshSpec> MeshUtils::makeBox(float length, vec4* color, mat4* ap
 
     return makeBox(f, color, applyMat, offset);
 }
-std::shared_ptr<MeshSpec> MeshUtils::makeBox(vec3(&extents)[8], Color4f* color, Matrix4x4* applyMat, vec3* offset)
+std::shared_ptr<MeshData> MeshUtils::makeBox(vec3(&extents)[8], Color4f* color, Matrix4x4* applyMat, vec3* offset)
 {
-    std::shared_ptr<MeshSpec> ms = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
+    std::shared_ptr<MeshData> ms = std::make_shared<MeshData>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
     ms->allocMesh(6 * 4, 2 * 6 * 3);
     // - Instantiate everything
    //ms->allocateFaceNormals(6 * 2);
@@ -505,10 +505,10 @@ std::shared_ptr<MeshSpec> MeshUtils::makeBox(vec3(&extents)[8], Color4f* color, 
     vOffset = translates all points to the given offset
 *    blnDoNormals = optimization routine - set to false to avoid normal square roots
 */
-std::shared_ptr<MeshSpec> MeshUtils::makeSphere(float radius, int32_t slices, int32_t stacks, Color4f* color, vec3* vOffset, bool blnDoNormals) {
+std::shared_ptr<MeshData> MeshUtils::makeSphere(float radius, int32_t slices, int32_t stacks, Color4f* color, vec3* vOffset, bool blnDoNormals) {
     AssertOrThrow2(slices >= 3 && stacks >= 3);
     AssertOrThrow2(radius > 0.0);
-    std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
+    std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
 
     //Store Minimax for contact box
     vec3 vmin = Vec3f::VEC3X_MAX();
@@ -696,10 +696,10 @@ std::shared_ptr<MeshSpec> MeshUtils::makeSphere(float radius, int32_t slices, in
 *
 *    CCW Winding
 */
-std::shared_ptr<MeshSpec> MeshUtils::makeCone(float radius, float h, int32_t slices) {
+std::shared_ptr<MeshData> MeshUtils::makeCone(float radius, float h, int32_t slices) {
     AssertOrThrow2(slices >= 3);
     AssertOrThrow2(radius > 0.0);
-    std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
+    std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
 
     // - Exactly the same as generating two circles, one with height.
 
@@ -776,11 +776,11 @@ std::shared_ptr<MeshSpec> MeshUtils::makeCone(float radius, float h, int32_t sli
 *
 *    CCW Winding
 */
-std::shared_ptr<MeshSpec> MeshUtils::makeCircle(float radius, int32_t slices) {
+std::shared_ptr<MeshData> MeshUtils::makeCircle(float radius, int32_t slices) {
     AssertOrThrow2(slices >= 3);
     AssertOrThrow2(radius > 0.0);
 
-    std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
+    std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
 
     ma->allocMesh(slices + 1, (slices) * 3);
 
@@ -828,10 +828,10 @@ std::shared_ptr<MeshSpec> MeshUtils::makeCircle(float radius, int32_t slices) {
 *
 *    @param translateYToBottomOfBillboard) - translates the Y value to the bottom of the billboard for grass objects.
 */
-std::shared_ptr<MeshSpec> MeshUtils::makeBillboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard)
+std::shared_ptr<MeshData> MeshUtils::makeBillboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard)
 {
     MeshMakerVert p[4];
-    std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
+    std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
     ma->allocMesh(8, 12);
 
     int ip = 0;
@@ -910,9 +910,9 @@ std::shared_ptr<MeshSpec> MeshUtils::makeBillboardXY(float xscale, float yscale,
 *    @fn
 *    @brief Generates a X cross billboard.
 */
-std::shared_ptr<MeshSpec> MeshUtils::makeCrossboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard) {
-    std::shared_ptr<MeshSpec> a = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);
-    std::shared_ptr<MeshSpec> b = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);
+std::shared_ptr<MeshData> MeshUtils::makeCrossboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard) {
+    std::shared_ptr<MeshData> a = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);
+    std::shared_ptr<MeshData> b = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);
 
     mat4 m = mat4::getRotationDeg(90, 0, 1, 0);
 
@@ -931,7 +931,7 @@ std::shared_ptr<MeshSpec> MeshUtils::makeCrossboardXY(float xscale, float yscale
     return a;
 }
 
-void MeshUtils::finalizeSpec(std::shared_ptr<MeshSpec> ms, vec3* minV, vec3* maxV)
+void MeshUtils::finalizeSpec(std::shared_ptr<MeshData> ms, vec3* minV, vec3* maxV)
 {
     //TODO: remove the contact box crap (opr is  it needed for OBBs? )
     //_pContactManager->generateDefaultBoundaryContactBoxForMesh(ms, minV, maxV);
@@ -969,7 +969,7 @@ std::shared_ptr<MeshNode> MeshUtils::createScreenQuadMesh(int w, int h) {
     inds.push_back(3);
     inds.push_back(2);
 
-    quadMesh = MeshNode::create(std::make_shared<MeshSpec>(verts.data(),
+    quadMesh = MeshNode::create(std::make_shared<MeshData>(verts.data(),
         verts.size(), inds.data(), inds.size(), v_v3x2::getVertexFormat(), nullptr
         )
         );

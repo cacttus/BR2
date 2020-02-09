@@ -1,7 +1,7 @@
 #include "../base/Base.h"
 #include "../model/UtilMesh.h"
 #include "../model/FragmentBufferData.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/IndexBufferData.h"
 #include "../model/VaoDataGeneric.h"
 #include "../gfx/CameraNode.h" 
@@ -21,7 +21,7 @@ UtilMesh::~UtilMesh() {
     cleanup();
 }
 //////////////////////////////////////////////////////////////////////////
-void UtilMesh::copyFromSpec(std::shared_ptr<MeshSpec> sp){
+void UtilMesh::copyFromSpec(std::shared_ptr<MeshData> sp){
     _pVaoData = nullptr;
     //    DEL_MEM(_pVaoData);
     _pVerts = nullptr;

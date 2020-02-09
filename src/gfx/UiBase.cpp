@@ -19,7 +19,7 @@
 #include "../gfx/UiBase.h"
 
 #include "../model/MeshNode.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/TextBufferMesh.h"
 

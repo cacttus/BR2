@@ -12,7 +12,7 @@
 #include "../gfx/FlyCam.h"
 #include "../gfx/Gui2d.h"   
 #include "../gfx/Picker.h"   
-#include "../gfx/ParticleManager.h"   
+#include "../gfx/ParticleMaker.h"   
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"
@@ -32,7 +32,12 @@ GraphicsContext::GraphicsContext(){
     _fClearA = 1.0f;
 }
 GraphicsContext::~GraphicsContext(){
-
+  _pParticleMaker = nullptr;
+  _pTexCache = nullptr;
+  _pShaderMaker = nullptr;
+  _pPicker = nullptr;
+  _pLightManager = nullptr;
+  _pModelCache = nullptr;
 }
 bool GraphicsContext::init() {
     _bValid = true;

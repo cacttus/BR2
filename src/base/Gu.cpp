@@ -41,7 +41,7 @@
 #include "../gfx/FlyCam.h"
 #include "../gfx/Gui2d.h"   
 #include "../gfx/Picker.h"   
-#include "../gfx/ParticleManager.h"   
+#include "../gfx/ParticleMaker.h"   
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/OpenGLApi.h"

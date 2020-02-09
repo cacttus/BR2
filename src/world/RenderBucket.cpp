@@ -4,7 +4,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../base/GLContext.h"
 #include "../model/MeshNode.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/Material.h"
 #include "../world/PhysicsGrid.h"
 #include "../world/RenderBucket.h"

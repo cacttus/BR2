@@ -1,7 +1,7 @@
 #include "../base/Base.h"
 
 #include "../math/Random.h"
-#include "../gfx/ParticleManager.h"
+#include "../gfx/ParticleMaker.h"
 #include "../gfx/Atlas.h"
 #include "../gfx/QuadBufferMesh.h"
 #include "../gfx/GpuQuad3.h"
@@ -12,10 +12,10 @@
 #include "../model/VertexFormat.h"
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-ParticleManager::ParticleManager(std::shared_ptr<GLContext> pContext) : _pContext(pContext)
+ParticleMaker::ParticleMaker(std::shared_ptr<GLContext> pContext) : _pContext(pContext)
 {
 }
-ParticleManager::~ParticleManager()
+ParticleMaker::~ParticleMaker()
 {
   //  DEL_MEM(_pQuadBufferMesh);
 //    DEL_MEM(_pParticleAtlas);
@@ -23,7 +23,7 @@ ParticleManager::~ParticleManager()
    // DEL_MEM(_pPartyShader);
 }
 ///////////////////////////////////////////////////////////////////
-void ParticleManager::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles)  {
+void ParticleMaker::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles)  {
     _iMaxParticles = iMaxParticles;
     _pParticles = std::make_unique<Particle[]>(_iMaxParticles);
 
@@ -35,13 +35,13 @@ void ParticleManager::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles)  {
    // _pPartyShader>load("./data/party.vs", "./data/party.ps");
     reset();
 }
-void ParticleManager::reset() {
+void ParticleMaker::reset() {
     t_timeval tv = Gu::getMicroSeconds();
     for (int i = 0; i < _iMaxParticles; ++i) {
         _pParticles[i]._bUsed = false;
     }
 }
-void ParticleManager::make(vec3& pos, int count, Hash32 mat, 
+void ParticleMaker::make(vec3& pos, int count, Hash32 mat, 
     float minSpeed, float maxSpeed, 
     float minLife, float maxLife, 
     float minScl, float maxScl,
@@ -86,7 +86,7 @@ void ParticleManager::make(vec3& pos, int count, Hash32 mat,
         }
     }
 }
-void ParticleManager::update(float delta) {
+void ParticleMaker::update(float delta) {
     Quad3f worldQuad;
     Box2f tex;
     std::shared_ptr<CameraNode> bc = Gu::getCamera();
@@ -155,7 +155,7 @@ void ParticleManager::update(float delta) {
         }
     }
 }
-void ParticleManager::draw(std::shared_ptr<ShaderBase> pShader) {
+void ParticleMaker::draw(std::shared_ptr<ShaderBase> pShader) {
 
     _pQuadBufferMesh->copyToGpu(_pQuadBufferMesh->getQuadCount());
     Graphics->pushCullFace();

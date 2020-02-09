@@ -25,7 +25,7 @@ class UtilMeshSphere : public UtilMesh {
     vec3 _vOffset;
     vec4 _vColor;
     bool _blnWireFrame;
-    std::shared_ptr<MeshSpec> _pSpec = nullptr; 
+    std::shared_ptr<MeshData> _pSpec = nullptr; 
     int32_t _nSlices,_nStacks;
 public:
     UtilMeshSphere(std::shared_ptr<GLContext> ctx, float radius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks);

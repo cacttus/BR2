@@ -3,7 +3,7 @@
 #include "../gfx/Texture2DSpec.h"
 #include "../model/Material.h"
 #include "../model/MobFile.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/Model.h"
 #include "../model/MeshCache.h"
 #include "../model/ModelCache.h"
@@ -93,7 +93,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
             ms->getArmatures().push_back(pms);
             ms->getArmatureMapOrdered().insert(std::make_pair(pms->getArmatureId(), pms));
         }
-        for (std::shared_ptr<MeshSpec> pms : mdd->_setMeshSpecs) {
+        for (std::shared_ptr<MeshData> pms : mdd->_setMeshSpecs) {
             pms->allocSkinMobFile(ms);
             ms->getMeshes().push_back(pms);
         }
@@ -333,7 +333,7 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<t_string>& tokens) {
             mb->parseErr("Cur OBJ data was null", true, false);
         }
         else {
-            std::shared_ptr<MeshSpec> ms = _pCurMeshData->makeSpec(mb);
+            std::shared_ptr<MeshData> ms = _pCurMeshData->makeSpec(mb);
             _setMeshSpecs.insert(ms);
             _pCurMeshData->resetData();
             //   DEL_MEM(_pCurObjData);
@@ -726,7 +726,7 @@ int32_t MeshSpecData::addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni)
 
     return newIndex;
 }
-std::shared_ptr<MeshSpec> MeshSpecData::makeSpec(MobFile* mb) {
+std::shared_ptr<MeshData> MeshSpecData::makeSpec(MobFile* mb) {
     BroLogInfo("Adding mesh part '" + _strName + "'");
 
     std::shared_ptr<PhysicsShape> pShape = makePhysicsShapeForSpec();
@@ -737,7 +737,7 @@ std::shared_ptr<MeshSpec> MeshSpecData::makeSpec(MobFile* mb) {
         n++;
     }
 #endif
-    std::shared_ptr<MeshSpec> pSpec = std::make_shared<MeshSpec>(_strName, fmt, nullptr, pShape);
+    std::shared_ptr<MeshData> pSpec = std::make_shared<MeshData>(_strName, fmt, nullptr, pShape);
     pSpec->setBind(_matBasis);
     pSpec->setParentName(_strParentName, _eParentType);
     pSpec->setParentInverse(_matParentInverse);
@@ -776,7 +776,7 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
         return v_v3::getVertexFormat();
     }
 }
-void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pSpec) {
+void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pSpec) {
     if (_pMatData != nullptr) {
         std::shared_ptr<AppBase> pRoom = Gu::getApp();
         AssertOrThrow2(pRoom != nullptr);
@@ -848,7 +848,7 @@ std::shared_ptr<PhysicsShape> MeshSpecData::makePhysicsShapeForSpec() {
 
     return pRet;
 }
-void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
+void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
     t_timeval t0;
 
     if (_bFlipTris) {

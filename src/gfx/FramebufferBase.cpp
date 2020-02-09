@@ -9,7 +9,7 @@
 #include "../gfx/WindowViewport.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/RenderTarget.h"
+#include "../gfx/BufferRenderTarget.h"
 #include "../model/ModelHeader.h"
 #include "../model/VertexFormat.h"
 #include "../model/MeshNode.h"
@@ -27,8 +27,8 @@ FramebufferBase::~FramebufferBase(){
 
 }
 ///////////////////////////////////////////////////////////////////
-std::shared_ptr<RenderTarget> FramebufferBase::getTargetByName(std::string name){
-    for(std::shared_ptr<RenderTarget> rt : _vecTargets){
+std::shared_ptr<BufferRenderTarget> FramebufferBase::getTargetByName(std::string name){
+    for(std::shared_ptr<BufferRenderTarget> rt : _vecTargets){
         if(rt->getName() == name){
             return rt;
         }
@@ -58,7 +58,7 @@ void FramebufferBase::checkFramebufferComplete() {
     }
 }
 void FramebufferBase::attachAllTargets() {
-    for (std::shared_ptr<RenderTarget> inf : _vecTargets) {
+    for (std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
         inf->bind();
         //_pContext->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, inf->getAttachment(), inf->getTextureTarget(), inf->getTexId(), 0);
         //_pContext->chkErrRt();
@@ -100,14 +100,14 @@ void FramebufferBase::addTarget(t_string strName, GLenum internalFormat, GLenum 
     GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType) {
     int iIndex = (int)_vecTargets.size();
 
-    std::shared_ptr<RenderTarget> inf = createTarget(strName, internalFormat, texFormat, dataType, w, h, 
+    std::shared_ptr<BufferRenderTarget> inf = createTarget(strName, internalFormat, texFormat, dataType, w, h, 
         eTargetType, iIndex, _bMsaaEnabled, _nMsaaSamples);
     _vecTargets.push_back(inf);
 }
-void FramebufferBase::addTarget(std::shared_ptr<RenderTarget> other) {
+void FramebufferBase::addTarget(std::shared_ptr<BufferRenderTarget> other) {
     int iIndex = (int)_vecTargets.size();
 
-    std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(true);
+    std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(true);
     inf->_strName = other->_strName;
     inf->_iLayoutIndex = iIndex;
     inf->_eTextureTarget = other->_eTextureTarget;
@@ -119,10 +119,10 @@ void FramebufferBase::addTarget(std::shared_ptr<RenderTarget> other) {
 
     _vecTargets.push_back(inf);
 }
-std::shared_ptr<RenderTarget> FramebufferBase::createTarget(t_string strName, GLenum internalFormat, GLenum texFormat,
+std::shared_ptr<BufferRenderTarget> FramebufferBase::createTarget(t_string strName, GLenum internalFormat, GLenum texFormat,
     GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType, int32_t iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
 
-    std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(false);
+    std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(false);
     inf->_strName = strName;
     inf->_iLayoutIndex = iIndex;
     inf->_eTextureTarget = GL_TEXTURE_2D;
@@ -143,8 +143,8 @@ std::shared_ptr<RenderTarget> FramebufferBase::createTarget(t_string strName, GL
 
     return inf;
 }
-std::shared_ptr<RenderTarget> FramebufferBase::createDepthTarget(t_string strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
-    std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(true);
+std::shared_ptr<BufferRenderTarget> FramebufferBase::createDepthTarget(t_string strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
+    std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(true);
     inf->_strName = strName;
     //**Note: index doesn't matter for depth target since we simply bind it to GL_Depth_attachment.  It confused the fuck out of me. 2/9/18
     inf->_iLayoutIndex = iIndex;

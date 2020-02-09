@@ -24,7 +24,7 @@ AppUi::AppUi() {
   t_string DEBUG_FONT = "Lato-Regular.ttf";
 
   std::shared_ptr<GraphicsWindow> w = Gu::getWindowManager()->createWindow("shake");
-  std::shared_ptr<UiScreen> screen = w->getScreen();
+  std::shared_ptr<UiScreen> screen = w->getUiScreen();
 
   //skins first
  // std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getUIManager(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");

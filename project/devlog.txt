@@ -1,4 +1,33 @@
+## TODO list
 TODO - Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
+TODO - Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
+
+
+
+## Currently Working On..
+1. Essentially our MeshNode/MeshSpec, should really be one class.  to create new meshes, we'd do a shallow copy of the class.
+2. The same goes for all the Spec/Data model classes.
+3. Additionally, we need to remove class inheritance, and favor composition like Unity does.
+4. WorldObject will be composited by other items and not inherited.
+5. Adding "SCENE" to the world.  
+
+## Design Changes
+Gu owns the window manager.  Window manager owns windows.  Windows point to scenes.
+	Window ->
+		Scene->
+			<GameObject>
+			PhysicsWorld
+				PhysicsNode : GameObject
+
+Scene owns the camera (currently, window owns camera).  Camera is a property on the RenderTarget.
+
+RenderPipe is part of a rendertarget.  A rendertarget can be a window, or buffer.
+GraphicsWindow :: RenderTarget
+RenderTarget
+	RenderPipe 
+
+
+Every window (the system window blender runs in) has a screen property. Every screen in turn has a scene property which defines the active editable scene.
 
 General Notes
 Multiple Rendering in a single area is going to be important.

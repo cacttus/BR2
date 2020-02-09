@@ -5,7 +5,7 @@
 #include "../base/BinaryFile.h"
 #include "../model/MeshNode.h"
 #include "../model/VertexFormat.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 
 namespace Game {
 
@@ -118,7 +118,7 @@ void ObjectFile::parseGeom(BinaryFile& pBufferedFile, t_string& tok)
     if(tok.length()>0)
     {
         addCurrentSpec();
-        _pCurrentSpec = std::make_shared<MeshSpec>(tok, ModelVertexType::getVertexFormat(), shared_from_this());
+        _pCurrentSpec = std::make_shared<MeshData>(tok, ModelVertexType::getVertexFormat(), shared_from_this());
 //        _pCurrentSpec->setFileName(_sFileName);
     }
 }
@@ -251,7 +251,7 @@ void ObjectFile::addCurrentSpec()
     
 }
 
-void ObjectFile::copySpecFragments(std::shared_ptr<MeshSpec> pSpec)
+void ObjectFile::copySpecFragments(std::shared_ptr<MeshData> pSpec)
 {
     if (_bFlipWinding) {
         for (size_t iInd = 0; iInd < _vecMeshIndexes.size(); iInd += 3) {

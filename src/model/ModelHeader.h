@@ -59,7 +59,7 @@ class PRSAnimation;
 class RotateTo;
 class MeshNode;
 class ShaderStorageBuffer;
-class MeshSpec;
+class MeshData;
 class UtilMesh;
 class UtilMeshBox;
 class UtilMeshAxis;

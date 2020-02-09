@@ -19,7 +19,7 @@ void UtilMeshBox::generate()
 {
     mat4 m = mat4::identity();
     //Note: to copy everything is too slow.  We will just keep the spec here and delete it when done
-    std::shared_ptr<MeshSpec> ms = MeshUtils::makeBox(_pCube, &_vColor, &m, &_vOffset);
+    std::shared_ptr<MeshData> ms = MeshUtils::makeBox(_pCube, &_vColor, &m, &_vOffset);
     copyFromSpec(ms);
 }
 void UtilMeshBox::preDraw()

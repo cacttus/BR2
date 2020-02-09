@@ -23,7 +23,7 @@
 #include "../base/FrameSync.h"
 
 #include "../model/MeshNode.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/TextBufferMesh.h"
 #include "../model/VaoDataGeneric.h"
@@ -3193,7 +3193,7 @@ void UiScreen::init() {
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
   _pMesh = MeshNode::create(
-    std::make_shared<MeshSpec>(
+    std::make_shared<MeshData>(
       verts.data(), verts.size(),
       inds.data(), inds.size(),
       v_GuiVert::getVertexFormat(), nullptr)

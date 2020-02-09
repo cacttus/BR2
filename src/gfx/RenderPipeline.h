@@ -24,16 +24,15 @@ public:
     virtual ~DOFFbo();
 };
 /**
-*    @class RenderPipe
-*    @brief Manages teh render pipeline.
+*  @class RenderPipe
+*  @brief Manages the render pipeline.
+*  TODO: Each render pass should be a set of classes, giving us the ability to swap render passes in/out of the render pipeline.
 *
 */
-class RenderPipe : public VirtualMemory  {
+class RenderPipeline : public VirtualMemory  {
 public:
-  typedef std::bitset<16> PipeBits;
-
-  //std::bitset<8> & getPipeBits() { return _pipeBits; }
-
+  RenderPipeline(std::shared_ptr<GraphicsWindow> w);
+  virtual ~RenderPipeline() override;
   void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);
   std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
   void renderSceneTexture(PipeBits _pipeBits);
@@ -45,9 +44,6 @@ public:
   const vec4& getClear();
   void setClear(vec4& v);
 
-  RenderPipe(std::shared_ptr<GraphicsWindow> w);
-  virtual ~RenderPipe() override;
-
 protected:
     bool _bMsaaEnabled = false;
     uint32_t _nMsaaSamples = 0;
@@ -57,9 +53,9 @@ protected:
 
     int32_t _iLastWidth, _iLastHeight;  //Last weidth/height gotten from the screen manager.
 
-    std::shared_ptr<RenderTarget> _pMsaaDepth = nullptr;
-    std::shared_ptr<RenderTarget> _pBlittedDepth = nullptr;
-    std::shared_ptr<RenderTarget> _pPick = nullptr;
+    std::shared_ptr<BufferRenderTarget> _pMsaaDepth = nullptr;
+    std::shared_ptr<BufferRenderTarget> _pBlittedDepth = nullptr;
+    std::shared_ptr<BufferRenderTarget> _pPick = nullptr;
    // std::shared_ptr<RenderTarget> _pPickDepth = nullptr;
 
     std::shared_ptr<DeferredFramebuffer> _pMsaaDeferred = nullptr; //If no multisampling is enabled this is equal to the blittedFramebuffer object

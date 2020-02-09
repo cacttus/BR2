@@ -4,7 +4,7 @@
 #include "../base/Img32.h"
 
 #include "../gfx/CameraNode.h"
-#include "../gfx/RenderPipe.h"
+#include "../gfx/RenderPipeline.h"
 
 #include "../model/ModelCache.h"
 #include "../model/Model.h"

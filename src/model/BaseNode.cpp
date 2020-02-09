@@ -11,7 +11,7 @@
 #include "../model/Model.h"
 #include "../model/OBB.h"
 #include "../model/UtilMeshInline.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../gfx/LightNode.h"
 #include "../math/MathAll.h"
 #include "../world/RenderBucket.h"

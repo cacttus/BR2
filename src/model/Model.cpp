@@ -16,7 +16,7 @@
 #include "../model/MobFile.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshCache.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/MeshNode.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/FragmentBufferData.h"
@@ -715,7 +715,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
     fb->readInt32(nMeshes);
     for (int32_t iMesh = 0; iMesh < nMeshes; ++iMesh) {
         BroLogInfo("  Mesh " + iMesh + "..");
-        std::shared_ptr<MeshSpec> pMesh = std::make_shared<MeshSpec>();
+        std::shared_ptr<MeshData> pMesh = std::make_shared<MeshData>();
         pMesh->deserialize(fb);
         getMeshes().push_back(pMesh);
     }
@@ -752,7 +752,7 @@ void ModelSpec::serialize( std::shared_ptr<BinaryFile> fb) {
     }
 
     fb->writeInt32((int32_t)getMeshes().size());
-    for (std::shared_ptr<MeshSpec> ms : getMeshes()) {
+    for (std::shared_ptr<MeshData> ms : getMeshes()) {
         ms->serialize(fb);
     }
 
@@ -795,7 +795,7 @@ void ModelSpec::postMobConversion() {
     //for(std::shared_ptr<Armature> pa : _vecArmatures){
     //    getBoundBoxObject()->genExpandByBox(pa->getBoundBoxObject());
     //}
-    for (std::shared_ptr<MeshSpec> pa : _vecMeshes) {
+    for (std::shared_ptr<MeshData> pa : _vecMeshes) {
         //this is already called in copyspecfragments.
         //pa->computeBox();
         getBoundBoxObject()->genExpandByBox(pa->getBoundBoxObject());
@@ -852,7 +852,7 @@ void ModelNode::init(){
         //}
     }
     //Create meshes
-    for (std::shared_ptr<MeshSpec> pMeshSpec : getData<ModelSpec>()->getMeshes()) {
+    for (std::shared_ptr<MeshData> pMeshSpec : getData<ModelSpec>()->getMeshes()) {
         std::shared_ptr<MeshNode> pMeshnode = MeshNode::create(pMeshSpec, getThis<ModelNode>());
         _vecMeshes.push_back(pMeshnode);
         addNodeToCache(pMeshnode);
@@ -1111,7 +1111,7 @@ void ModelSpec::cacheMeshBones() {
         }
     }
     int nNotFound = 0;
-    for (std::shared_ptr<MeshSpec> ms : getMeshes()) {
+    for (std::shared_ptr<MeshData> ms : getMeshes()) {
         ms->beginEdit();
         {
             ms->getBoneCache().clear();

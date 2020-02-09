@@ -22,9 +22,9 @@
 #include "../model/ShaderStorageBuffer.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/Model.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
 #include "../model/VaoDataGeneric.h"
@@ -37,10 +37,10 @@ namespace Game {
 
 ///////////////////////////////////////////////////////////////////
 
-MeshNode::MeshNode(std::shared_ptr<MeshSpec> ms) : MeshNode(ms, nullptr) {
+MeshNode::MeshNode(std::shared_ptr<MeshData> ms) : MeshNode(ms, nullptr) {
    // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
 }
-MeshNode::MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : BaseNode(ps) {
+MeshNode::MeshNode(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn) : BaseNode(ps) {
     _pModelNode = mn;
 }
 
@@ -67,12 +67,12 @@ MeshNode::~MeshNode()
 }
 
 ///////////////////////////////////////////////////////////////////
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn){
+std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn){
     std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(ps, mn);
     m->init();
     return m;
 }
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> pd){
+std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshData> pd){
     std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(pd);
     m->init();
     return m;
@@ -98,7 +98,7 @@ void MeshNode::init() {
     _iPickId = Gu::getPicker()->genPickId();
 }
 
-std::shared_ptr<MeshSpec> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshSpec>(BaseNode::getSpec()); }
+std::shared_ptr<MeshData> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshData>(BaseNode::getSpec()); }
 
 void MeshNode::printDataToStdout(){
     GpuAnimatedMeshWeightData* wdat = new GpuAnimatedMeshWeightData[getMeshSpec()->getWeightOffsetsGpu()->getNumElements()];

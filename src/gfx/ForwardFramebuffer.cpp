@@ -4,7 +4,7 @@
 #include "../gfx/RenderUtils.h"
 #include "../gfx/WindowViewport.h"
 #include "../gfx/ForwardFramebuffer.h"
-#include "../gfx/RenderTarget.h"
+#include "../gfx/BufferRenderTarget.h"
 
 
 namespace Game {
@@ -19,7 +19,7 @@ GLuint ForwardFramebuffer::getGlColorBufferTexId() {
     AssertOrThrow2(_vecTargets.size()>0);
     return _vecTargets[0]->getGlTexId(); 
 }
-void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<RenderTarget> sharedDepth, std::shared_ptr<RenderTarget> sharedPick) {
+void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) {
     deleteTargets();
 
     Gu::getShaderMaker()->shaderBound(nullptr);

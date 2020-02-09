@@ -90,11 +90,11 @@ private:
     int32_t parseFaceComponent(MobFile* pMobFile,t_string& tok, int32_t& strlind, int32_t iComponent);
     void addFaceVertex(MobFile* pMobFile, int32_t iVertex, int32_t iTCoord, int32_t iNormal);
    // void addCurrentSpec();
-    void copySpecFragments(std::shared_ptr<MeshSpec> pSpec);
+    void copySpecFragments(std::shared_ptr<MeshData> pSpec);
     int32_t addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni);
     void parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmName,  t_string strWeights);
    // mat4 parseMat4(t_string tok);
-    void makeMaterialForSpec(MobFile*, std::shared_ptr<MeshSpec> ms);
+    void makeMaterialForSpec(MobFile*, std::shared_ptr<MeshData> ms);
     bool tkMaterial(MobFile* pMobFile, std::vector<t_string>& tokens);
     std::shared_ptr<PhysicsShape> makePhysicsShapeForSpec();
     std::shared_ptr<VertexFormat> getVertexFormatForSpec(MobFile* mb);
@@ -103,7 +103,7 @@ public:
     void setParentType(ParentType::e pt){ _eParentType = pt;}
 
     bool tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens);
-    std::shared_ptr<MeshSpec> makeSpec(MobFile* mb);
+    std::shared_ptr<MeshData> makeSpec(MobFile* mb);
 
     void resetData();
     void setName(t_string name) { _strName = name; }
@@ -118,7 +118,7 @@ public:
     t_string _strModName;
     int32_t _iFrameRate=24;
     float _fVersion = 0.0f;
-    std::set<std::shared_ptr<MeshSpec>> _setMeshSpecs;
+    std::set<std::shared_ptr<MeshData>> _setMeshSpecs;
     std::set<std::shared_ptr<Armature>> _setArmDatas;
     std::set<std::shared_ptr<ActionGroup>> _setActions;
     //std::set<std::shared_ptr<ActionGroup>> _setActions;

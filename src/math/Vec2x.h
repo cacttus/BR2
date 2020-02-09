@@ -15,7 +15,6 @@
 #include "../math/MathHeader.h"
 
 namespace Game {
-;
 
 template < class Tx >
 class Vec2x : public PureMemory {

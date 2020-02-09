@@ -37,7 +37,7 @@ public:
 *    @brief
 *
 */
-class ParticleManager : public VirtualMemory {
+class ParticleMaker : public VirtualMemory {
 
 private:
     //const int _ciMaxParticles = 1024;
@@ -52,8 +52,8 @@ private:
     void reset();
 public:
 
-    ParticleManager(std::shared_ptr<GLContext> pContext);
-    virtual ~ParticleManager() override;
+    ParticleMaker(std::shared_ptr<GLContext> pContext);
+    virtual ~ParticleMaker() override;
     void init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles);
     void make(vec3& pos, int count, Hash32 mat, 
         float minSpeed, float maxSpeed,

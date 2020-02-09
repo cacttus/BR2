@@ -24,6 +24,32 @@ namespace Game {
 *    Superclass of @cBaseCamera2D, @cBaseCamera3D
 */
 class CameraNode  : public PhysicsNode {
+public:
+  CameraNode(std::shared_ptr<WindowViewport> ppViewport);
+  static std::shared_ptr<CameraNode> create(std::shared_ptr<WindowViewport> ppViewport);
+  virtual ~CameraNode() override;
+
+  void zoom(float amt);
+  const vec3& getLookAt() { return _vLookAt; }
+  void setLookAt(vec3&& v) { _vLookAt = v; }
+  const mat4& getView() { return _mView; }
+  const mat4& getProj() { return _mProj; }
+  void setWorldUp(vec3&& v) { _vWorldUp = v; }
+  void setProjectionMode(ProjectionMode::e eMode) { _eProjectionMode = eMode; }
+  vec3 getLookAtOffset();
+
+  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;            // - Main update function, must be called if you override it.
+  void setupProjectionMatrix();// - Manipulate the view projection matrix to project points 
+  void setupViewMatrix();    // - Manipulate the modelview matrix to orient the camera
+  ProjectedRay projectPoint(vec2& mouse);    // - Project a ray into the screen.
+  Ray_t projectPoint2(vec2& mouse);
+  void setFOV(t_radians fov);        // - Set Field of View
+  float getFOV() const { return _f_hfov; }
+  std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }
+  const vec3& getRightNormal() { return _vRight; }
+  const vec3& getUpNormal() { return _vUp; }
+  std::shared_ptr<FrustumBase> getFrustum() { return _pMainFrustum; }
+
 protected:
     std::shared_ptr<WindowViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
     float _f_hfov = 60;            // - Field of view.
@@ -42,31 +68,7 @@ protected:
     vec3 _vWorldUp;
     ProjectionMode::e _eProjectionMode = ProjectionMode::e::Perspective;
 
-public:
-    CameraNode(std::shared_ptr<WindowViewport> ppViewport);
-    static std::shared_ptr<CameraNode> create(std::shared_ptr<WindowViewport> ppViewport);
-    virtual ~CameraNode() override;
 
-    void zoom(float amt);
-    const vec3& getLookAt() { return _vLookAt ; }
-    void setLookAt(vec3&& v) {_vLookAt = v;}
-    const mat4& getView() {return _mView;}
-    const mat4& getProj() {return _mProj;}
-    void setWorldUp(vec3&& v){ _vWorldUp = v; }
-    void setProjectionMode(ProjectionMode::e eMode) { _eProjectionMode = eMode; }
-    vec3 getLookAtOffset();
-
-    virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;            // - Main update function, must be called if you override it.
-    void setupProjectionMatrix();// - Manipulate the view projection matrix to project points 
-    void setupViewMatrix();    // - Manipulate the modelview matrix to orient the camera
-    ProjectedRay projectPoint(vec2& mouse);    // - Project a ray into the screen.
-    Ray_t projectPoint2(vec2& mouse);
-    void setFOV(t_radians fov);        // - Set Field of View
-    float getFOV() const {  return _f_hfov;  }            
-    std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }
-    const vec3& getRightNormal() { return _vRight;  }
-    const vec3& getUpNormal() { return _vUp;  }
-    std::shared_ptr<FrustumBase> getFrustum() {return _pMainFrustum; } 
 
 
 };

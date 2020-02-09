@@ -4,7 +4,7 @@
 *    @date November 26, 2016
 *    @author MetalMario971
 *
-*    © 2016 
+*    © 2016
 *
 *
 */
@@ -22,42 +22,41 @@ namespace Game {
 *
 */
 class TexCache : public VirtualMemory {
-    typedef std::map<Hash32, std::shared_ptr<Texture2DSpec>> TexMap;
-    TexMap _cache;
-    std::shared_ptr<Texture2DSpec> _pBound = nullptr; //NOT reliable
-    std::shared_ptr<GLContext> _pContext;
-
-    GLuint _i1x1DummyCubeTexture=0;
-    GLuint _i1x2Dummy2DTexture=0;
-    GLuint _i1x1DummyBump2DTexture = 0;
 public:
+  ///Initialize in CPP file
+  static const std::string WorldGrass;
+  static const std::string WorldDirt;
+  static const std::string WorldPlank;
+  static const std::string WorldBrick;
+  static const std::string Selector;
+  static const std::string Brick64Des;
+  static const std::string SelectorRed;
+  static const std::string WalWd;
+  static const std::string RockWd;
+  static const std::string GrassWd;
+  static const std::string RopeWd;
+  static const std::string LadderWd;
+  static const std::string MdWoodItem;
 
-    ///Initialize in CPP file
-    static const std::string WorldGrass;
-    static const std::string WorldDirt ;
-    static const std::string WorldPlank;
-    static const std::string WorldBrick;
-    static const std::string Selector  ;
-    static const std::string Brick64Des;
-    static const std::string SelectorRed;
-    static const std::string WalWd;
-    static const std::string RockWd;
-    static const std::string GrassWd;
-    static const std::string RopeWd;
-    static const std::string LadderWd;
-    static const std::string MdWoodItem;
+  TexCache(std::shared_ptr<GLContext> ctx);
+  virtual ~TexCache() override;
 
-    TexCache(std::shared_ptr<GLContext> ctx);
-    virtual ~TexCache() override;
-    std::shared_ptr<Texture2DSpec> getOrLoad(std::string texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
-    std::vector<std::shared_ptr<Texture2DSpec>> getOrLoad(std::vector<std::string> texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
-    //void bindIfDifferent(std::shared_ptr<Texture2DSpec> tex);
-    bool add(t_string name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
-    std::shared_ptr<Texture2DSpec> addAsGeneratedImage(t_string name, const std::shared_ptr<Img32> ss);
-    GLuint getDummy1x1TextureCube() { return _i1x1DummyCubeTexture; }
-    GLuint getDummy1x1Texture2D() { return _i1x2Dummy2DTexture; }
-    GLuint getDummy1x1NormalTexture2D() { return _i1x1DummyBump2DTexture; }
-    //std::shared_ptr<Texture2DSpec> getDummy1x1Tex();
+  std::shared_ptr<Texture2DSpec> getOrLoad(std::string texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
+  std::vector<std::shared_ptr<Texture2DSpec>> getOrLoad(std::vector<std::string> texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
+  bool add(t_string name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
+  std::shared_ptr<Texture2DSpec> addAsGeneratedImage(t_string name, const std::shared_ptr<Img32> ss);
+  GLuint getDummy1x1TextureCube() { return _i1x1DummyCubeTexture; }
+  GLuint getDummy1x1Texture2D() { return _i1x2Dummy2DTexture; }
+  GLuint getDummy1x1NormalTexture2D() { return _i1x1DummyBump2DTexture; }
+private:
+  typedef std::map<Hash32, std::shared_ptr<Texture2DSpec>> TexMap;
+  TexMap _cache;
+  std::shared_ptr<Texture2DSpec> _pBound = nullptr; //NOT reliable
+  std::shared_ptr<GLContext> _pContext;
+
+  GLuint _i1x1DummyCubeTexture = 0;
+  GLuint _i1x2Dummy2DTexture = 0;
+  GLuint _i1x1DummyBump2DTexture = 0;
 };
 
 }//ns Game

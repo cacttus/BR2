@@ -8,7 +8,7 @@
 #include "../gfx/WindowViewport.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/DeferredFramebuffer.h"
-#include "../gfx/RenderPipe.h"
+#include "../gfx/RenderPipeline.h"
 #include "../gfx/WindowViewport.h"
 #include "../gfx/CameraNode.h"
 

@@ -598,7 +598,7 @@ bool Vec4x<Tx>::operator<=(const Vec4x<Tx>& v)
 
 //
 //
-//
+// 
 template < class Tx >
 bool Vec4x<Tx>::operator>(const Tx& f)
 {

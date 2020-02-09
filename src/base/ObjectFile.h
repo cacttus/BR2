@@ -34,8 +34,8 @@ class ObjectFile : public VirtualMemoryShared<ObjectFile> {
         MissingIndexValue = -1
     };
 
-    std::vector<std::shared_ptr<MeshSpec>> _vecMeshes;
-    std::shared_ptr<MeshSpec> _pCurrentSpec = nullptr;
+    std::vector<std::shared_ptr<MeshData>> _vecMeshes;
+    std::shared_ptr<MeshData> _pCurrentSpec = nullptr;
     std::shared_ptr<GLContext> _pContext = nullptr;
 
     mat4 _matLocalMatrix;
@@ -66,13 +66,13 @@ class ObjectFile : public VirtualMemoryShared<ObjectFile> {
     int32_t parseFaceComponent(t_string& tok, int32_t& strlind, int32_t iComponent);
     void addFaceVertex(int32_t iVertex, int32_t iTCoord, int32_t iNormal);
     void addCurrentSpec();
-    void copySpecFragments(std::shared_ptr<MeshSpec> pSpec);
+    void copySpecFragments(std::shared_ptr<MeshData> pSpec);
     int32_t addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni);
     mat4 parseMat4(BinaryFile& bf);
 
 public:
     void load(t_string& strFilePath, bool flipWinding);
-    std::vector<std::shared_ptr<MeshSpec>>& getMeshSpecs() { return _vecMeshes; }
+    std::vector<std::shared_ptr<MeshData>>& getMeshSpecs() { return _vecMeshes; }
 
     //Box3f* getBoundBoxObject() { return &_boundBoxObject; }
 

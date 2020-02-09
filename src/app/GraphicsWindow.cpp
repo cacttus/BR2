@@ -11,11 +11,11 @@
 #include "../gfx/WindowViewport.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/Picker.h"
-#include "../gfx/ParticleManager.h"
+#include "../gfx/ParticleMaker.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/GraphicsApi.h"
-#include "../gfx/RenderPipe.h"
+#include "../gfx/RenderPipeline.h"
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/OpenGLApi.h"
@@ -37,13 +37,7 @@ GraphicsWindow::GraphicsWindow(bool ismain, t_string title, RenderSystem::e sys)
 }
 GraphicsWindow::~GraphicsWindow() {
   //Delete Global Managers
-  _pTexCache = nullptr;
   _pCamera = nullptr;
-  _pParty = nullptr;
-  _pShaderMaker = nullptr;
-  _pLightManager = nullptr;
-  _pModelCache = nullptr;
-  _pPicker = nullptr;
   _pPhysicsWorld = nullptr;
   _pDelta = nullptr;
   _pFpsMeter = nullptr;
@@ -81,7 +75,7 @@ void GraphicsWindow::createManagers() {
   _pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
 
   BroLogInfo("GLContext - Creating Particles");
-  _pParty = std::make_shared<ParticleManager>(getGraphicsContext());
+  _pParticleMaker = std::make_shared<ParticleMaker>(getGraphicsContext());
 
   BroLogInfo("GLContext - Creating FpsMeter");
   _pFpsMeter = std::make_shared<FpsMeter>();
@@ -323,7 +317,7 @@ void GraphicsWindow::printHelpfulDebug() {
 }
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
-  _pRenderPipe = std::make_shared<RenderPipe>(getThis<GraphicsWindow>());
+  _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
   _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
   // Gu::setRenderPipe(_pRenderPipe);
 
@@ -353,8 +347,8 @@ void GraphicsWindow::step() {
   if (_pDelta != nullptr) {
     _pDelta->update();
   }
-  if (_pParty != nullptr) {
-    _pParty->update(getDelta()->get());
+  if (_pParticleMaker != nullptr) {
+    _pParticleMaker->update(getDelta()->get());
   }
   if (_pFpsMeter != nullptr) {
     _pFpsMeter->update();
@@ -381,7 +375,7 @@ void GraphicsWindow::step() {
 
       getGraphicsContext()->setLoopState(EngineLoopState::Render);
 
-      RenderPipe::PipeBits pipebits;
+      RenderPipeline::PipeBits pipebits;
       pipebits.set();
       //Gu::getRenderSettings()->getDOF()
 

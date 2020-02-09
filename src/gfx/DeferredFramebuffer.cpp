@@ -6,7 +6,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/WindowViewport.h"
-#include "../gfx/RenderTarget.h"
+#include "../gfx/BufferRenderTarget.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderBase.h"
 
@@ -27,7 +27,7 @@ DeferredFramebuffer::DeferredFramebuffer( std::shared_ptr<GLContext> pc, uint32_
 DeferredFramebuffer::~DeferredFramebuffer(){
 }
 ///////////////////////////////////////////////////////////////////
-void DeferredFramebuffer::init(int32_t w, int32_t h, std::shared_ptr<RenderTarget> pSharedDepthTarget, std::shared_ptr<RenderTarget> sharedPick) {
+void DeferredFramebuffer::init(int32_t w, int32_t h, std::shared_ptr<BufferRenderTarget> pSharedDepthTarget, std::shared_ptr<BufferRenderTarget> sharedPick) {
     deleteTargets();
 
     bool _bUseRenderBuffer = false;
@@ -74,7 +74,7 @@ bool DeferredFramebuffer::getIsBloomEnabled()
 }
 int DeferredFramebuffer::getNumNonDepthTargets(){
     int ret = 0;
-    for(std::shared_ptr<RenderTarget> inf : _vecTargets) {
+    for(std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
         if(inf->getTargetType() != RenderTargetType::e::Depth) {
             ret++;
         }
@@ -90,8 +90,8 @@ int DeferredFramebuffer::getNumTargets() {
     //}
     //return ret;
 }
-std::shared_ptr<RenderTarget> DeferredFramebuffer::getTarget(RenderTargetType::e eType) {
-    for (std::shared_ptr<RenderTarget> inf : _vecTargets) {
+std::shared_ptr<BufferRenderTarget> DeferredFramebuffer::getTarget(RenderTargetType::e eType) {
+    for (std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
         if (inf->getTargetType() == eType) {
             return inf;
         }

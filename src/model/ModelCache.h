@@ -11,14 +11,14 @@
 #pragma once
 #ifndef __MODELCACHE_1512579301228390014_H__
 #define __MODELCACHE_1512579301228390014_H__
+
 #include "../base/BaseHeader.h"
 #include "../model/ModelHeader.h"
 
-
 namespace Game {
 /**
-*    @class ModelCache
-*    @brief simple mod cahce
+*  @class ModelCache
+*  @brief Handles meshes, and caches meshes on the GPU.  Also imports meshes, and converts them to proprietary mesh format.
 */
 class ModelCache : public VirtualMemory {
     std::map<Hash32, std::shared_ptr<ModelSpec>> _mapModels;
@@ -41,7 +41,6 @@ public:
     void convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::string strFriendlyName);
     void unloadModel(t_string strMobName, bool bErrorIfFailed = true);
     std::shared_ptr<Material> getDefaultMaterial() { return _pDefaultMaterial; }
-
 };
 
 }//ns Game

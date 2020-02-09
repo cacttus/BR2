@@ -16,6 +16,10 @@
 #include "../model/ModelHeader.h"
 
 namespace Game {
+/**
+* @class LightManager
+* @brief Stores deferred light data on the GPU, and renders shadows.
+*/
 class LightManager : public VirtualMemory {
     static const int c_iMaxLights = 64;
     std::shared_ptr<GLContext> _pContext = nullptr;

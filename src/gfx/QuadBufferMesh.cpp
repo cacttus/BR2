@@ -5,7 +5,7 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../model/MeshNode.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/VertexFormat.h"
 
 namespace Game {
@@ -88,7 +88,7 @@ void QuadBufferMesh::allocateQuads(int32_t count)
     assignIndexes();
 
     _pMesh = MeshNode::create(
-        std::make_shared<MeshSpec>(_verts.data(), _verts.size(),
+        std::make_shared<MeshData>(_verts.data(), _verts.size(),
         _indexes.data(), _indexes.size(),
         v_v3n3x2::getVertexFormat(), nullptr)
         );

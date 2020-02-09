@@ -3,7 +3,7 @@
 #include "../model/UtilMeshSphere.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/MeshUtils.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 
 namespace Game {
 UtilMeshSphere::UtilMeshSphere(std::shared_ptr<GLContext> ctx, float radius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks) :

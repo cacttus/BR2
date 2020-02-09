@@ -18,6 +18,9 @@ namespace Game {
 *   @brief The entry point of the application from main()
 */
 class AppRunner : public VirtualMemory {
+public:
+  void runApp(const std::vector<t_string>& args, std::shared_ptr<AppBase> rb);
+
 private:
    // std::shared_ptr<Engine> _pEngine = nullptr;
    // std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
@@ -44,8 +47,7 @@ private:
     void updateWindowHandleForGamehost();
     void attachToGameHost();
     bool handleSDLEvents();
-public:
-    void runApp(const std::vector<t_string>& args, std::shared_ptr<AppBase> rb);
+
 };
 
 

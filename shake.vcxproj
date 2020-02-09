@@ -145,19 +145,19 @@
     <ClInclude Include="src\gfx\GpuQuad3.h" />
     <ClInclude Include="src\gfx\GraphicsApi.h" />
     <ClInclude Include="src\gfx\Gui2d.h" />
-    <ClInclude Include="src\gfx\HappySky.h" />
+    <ClInclude Include="src\gfx\SkyBox.h" />
     <ClInclude Include="src\gfx\LightManager.h" />
     <ClInclude Include="src\gfx\LightNode.h" />
     <ClInclude Include="src\gfx\MegaTex.h" />
     <ClInclude Include="src\gfx\OpenGLApi.h" />
     <ClInclude Include="src\gfx\Particles.h" />
-    <ClInclude Include="src\gfx\ParticleManager.h" />
+    <ClInclude Include="src\gfx\ParticleMaker.h" />
     <ClInclude Include="src\gfx\Picker.h" />
     <ClInclude Include="src\gfx\QuadBufferMesh.h" />
     <ClInclude Include="src\gfx\RenderParams.h" />
-    <ClInclude Include="src\gfx\RenderPipe.h" />
+    <ClInclude Include="src\gfx\RenderPipeline.h" />
     <ClInclude Include="src\gfx\RenderSettings.h" />
-    <ClInclude Include="src\gfx\RenderTarget.h" />
+    <ClInclude Include="src\gfx\BufferRenderTarget.h" />
     <ClInclude Include="src\gfx\RenderUtils.h" />
     <ClInclude Include="src\gfx\ScreenProps.h" />
     <ClInclude Include="src\gfx\ShaderAttribute.h" />
@@ -218,7 +218,7 @@
     <ClInclude Include="src\model\MbiFile.h" />
     <ClInclude Include="src\model\MeshCache.h" />
     <ClInclude Include="src\model\MeshNode.h" />
-    <ClInclude Include="src\model\MeshSpec.h" />
+    <ClInclude Include="src\model\MeshData.h" />
     <ClInclude Include="src\model\MeshSpecHierarchy.h" />
     <ClInclude Include="src\model\MeshUtils.h" />
     <ClInclude Include="src\model\MobFile.h" />
@@ -256,7 +256,9 @@
     <ClInclude Include="src\world\PhysicsShapes.h" />
     <ClInclude Include="src\world\PhysicsWorld.h" />
     <ClInclude Include="src\world\RenderBucket.h" />
+    <ClInclude Include="src\world\Scene.h" />
     <ClInclude Include="src\world\WorldHeader.h" />
+    <ClInclude Include="src\world\WorldObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\app\AppBase.cpp" />
@@ -336,19 +338,19 @@
     <ClCompile Include="src\gfx\GpuQuad3.cpp" />
     <ClCompile Include="src\gfx\GraphicsApi.cpp" />
     <ClCompile Include="src\gfx\Gui2d.cpp" />
-    <ClCompile Include="src\gfx\HappySky.cpp" />
+    <ClCompile Include="src\gfx\SkyBox.cpp" />
     <ClCompile Include="src\gfx\LightManager.cpp" />
     <ClCompile Include="src\gfx\LightNode.cpp" />
     <ClCompile Include="src\gfx\MegaTex.cpp" />
     <ClCompile Include="src\gfx\OpenGLApi.cpp" />
     <ClCompile Include="src\gfx\Particles.cpp" />
-    <ClCompile Include="src\gfx\ParticleManager.cpp" />
+    <ClCompile Include="src\gfx\ParticleMaker.cpp" />
     <ClCompile Include="src\gfx\Picker.cpp" />
     <ClCompile Include="src\gfx\QuadBufferMesh.cpp" />
     <ClCompile Include="src\gfx\RenderParams.cpp" />
-    <ClCompile Include="src\gfx\RenderPipe.cpp" />
+    <ClCompile Include="src\gfx\RenderPipeline.cpp" />
     <ClCompile Include="src\gfx\RenderSettings.cpp" />
-    <ClCompile Include="src\gfx\RenderTarget.cpp" />
+    <ClCompile Include="src\gfx\BufferRenderTarget.cpp" />
     <ClCompile Include="src\gfx\RenderUtils.cpp" />
     <ClCompile Include="src\gfx\ScreenProps.cpp" />
     <ClCompile Include="src\gfx\ShaderAttribute.cpp" />
@@ -405,7 +407,7 @@
     <ClCompile Include="src\model\MbiFile.cpp" />
     <ClCompile Include="src\model\MeshCache.cpp" />
     <ClCompile Include="src\model\MeshNode.cpp" />
-    <ClCompile Include="src\model\MeshSpec.cpp" />
+    <ClCompile Include="src\model\MeshData.cpp" />
     <ClCompile Include="src\model\MeshSpecHierarchy.cpp" />
     <ClCompile Include="src\model\MeshUtils.cpp" />
     <ClCompile Include="src\model\MobFile.cpp" />
@@ -442,6 +444,8 @@
     <ClCompile Include="src\world\PhysicsShapes.cpp" />
     <ClCompile Include="src\world\PhysicsWorld.cpp" />
     <ClCompile Include="src\world\RenderBucket.cpp" />
+    <ClCompile Include="src\world\Scene.cpp" />
+    <ClCompile Include="src\world\WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="project\devlog.txt" />

@@ -39,7 +39,7 @@ private:
     std::shared_ptr<VaoDataGeneric> getVaoData() { return _pVaoData; }
 protected:
     void copyBuffersToVao();
-    void copyFromSpec(std::shared_ptr<MeshSpec> sp);
+    void copyFromSpec(std::shared_ptr<MeshData> sp);
     std::shared_ptr<IndexBufferData> getIndexes() { return _pIndexes; }
     std::shared_ptr<FragmentBufferData> getVerts() { return _pVerts; }
     void setDrawMode(GLenum e) { _eDrawMode = e; }

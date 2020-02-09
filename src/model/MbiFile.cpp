@@ -3,14 +3,14 @@
 #include "../base/Img32.h"
 #include "../app/AppBase.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/RenderPipe.h"
+#include "../gfx/RenderPipeline.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/Material.h"
 #include "../model/MbiFile.h"
 #include "../world/PhysicsWorld.h"
@@ -115,7 +115,7 @@ bool MbiFile::loadAndParse(t_string file) {
     //Resolve textures.
     BroLogInfo("  Resolving textures..");
     for (std::shared_ptr<ModelSpec> ms : _vecModels) {
-        for (std::shared_ptr<MeshSpec> mesh : ms->getMeshes()) {
+        for (std::shared_ptr<MeshData> mesh : ms->getMeshes()) {
             if (mesh->getMaterial() != nullptr) {
                 for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : mesh->getMaterial()->getTextureSlots()) {
                     std::map<Hash32, std::shared_ptr<Texture2DSpec>>::iterator it = texs.find(p.second->_iTexFileHashed);
@@ -179,7 +179,7 @@ void MbiFile::save(t_string file) {
     //Collect textures
     std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs;
     for (std::shared_ptr<ModelSpec> ms : _vecModels) {
-        for (std::shared_ptr<MeshSpec> mesh : ms->getMeshes()) {
+        for (std::shared_ptr<MeshData> mesh : ms->getMeshes()) {
             if (mesh->getMaterial() != nullptr) {
                 for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : mesh->getMaterial()->getTextureSlots()) {
                     if (p.second->_iTexFileHashed != 0) {

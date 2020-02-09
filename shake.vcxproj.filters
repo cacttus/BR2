@@ -318,9 +318,6 @@
     <ClInclude Include="src\model\MeshNode.h">
       <Filter>model</Filter>
     </ClInclude>
-    <ClInclude Include="src\model\MeshSpec.h">
-      <Filter>model</Filter>
-    </ClInclude>
     <ClInclude Include="src\model\MeshSpecHierarchy.h">
       <Filter>model</Filter>
     </ClInclude>
@@ -471,9 +468,6 @@
     <ClInclude Include="src\gfx\Gui2d.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\HappySky.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\LightManager.h">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -498,13 +492,7 @@
     <ClInclude Include="src\gfx\RenderParams.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderPipe.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\RenderSettings.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\RenderTarget.h">
       <Filter>graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\RenderUtils.h">
@@ -738,14 +726,32 @@
     <ClInclude Include="src\ui\Gui2d.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\ParticleManager.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\InputManager.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\app\WindowManager.h">
       <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ParticleMaker.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderPipeline.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Scene.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\MeshData.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\SkyBox.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\WorldObject.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\BufferRenderTarget.h">
+      <Filter>graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -983,9 +989,6 @@
     <ClCompile Include="src\model\MeshNode.cpp">
       <Filter>model</Filter>
     </ClCompile>
-    <ClCompile Include="src\model\MeshSpec.cpp">
-      <Filter>model</Filter>
-    </ClCompile>
     <ClCompile Include="src\model\MeshSpecHierarchy.cpp">
       <Filter>model</Filter>
     </ClCompile>
@@ -1130,9 +1133,6 @@
     <ClCompile Include="src\gfx\Gui2d.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\HappySky.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\LightManager.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -1157,13 +1157,7 @@
     <ClCompile Include="src\gfx\RenderParams.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\RenderPipe.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\RenderSettings.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gfx\RenderTarget.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\RenderUtils.cpp">
@@ -1289,14 +1283,32 @@
     <ClCompile Include="src\ui\Gui2d.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\ParticleManager.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\InputManager.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\app\WindowManager.cpp">
       <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ParticleMaker.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderPipeline.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\Scene.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model\MeshData.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\SkyBox.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\WorldObject.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\BufferRenderTarget.cpp">
+      <Filter>graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
