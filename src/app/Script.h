@@ -1,12 +1,7 @@
 /**
-*
-*    @file Script.h
-*    @date August 23, 2019
-*    @author MetalMario971
-*
-*    © 2019
-*
-*
+*  @file Script.h
+*  @date August 23, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SCRIPT_15665746341154937548_H__

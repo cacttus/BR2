@@ -1,12 +1,7 @@
 /**
-*
-*    @file AppBase.h
-*    @date January 9, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file AppBase.h
+*  @date January 9, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __ROOMBASE_1483942071882744649_H__

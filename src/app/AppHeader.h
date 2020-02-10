@@ -1,12 +1,7 @@
 /**
-*
-*    @file AppHeader.h
-*    @date August 23, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file AppHeader.h
+*  @date August 23, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __APPHEADER_15665753201409273383_H__

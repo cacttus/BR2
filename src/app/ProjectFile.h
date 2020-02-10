@@ -1,12 +1,7 @@
 /**
-*
-*    @file ProjectFile.h
-*    @date August 23, 2019
-*    @author MetalMario971
-*
-*    © 2019
-*
-*
+*  @file ProjectFile.h
+*  @date August 23, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PROJECTFILE_15665753691467122366_H__

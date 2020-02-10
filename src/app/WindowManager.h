@@ -1,12 +1,7 @@
 /**
-*
-*    @file WindowManager.h
-*    @date February 7, 2020
-*    @author MetalMario971
-*
-*    © 2020
-*
-*
+*  @file WindowManager.h
+*  @date February 7, 2020
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __WINDOWMANAGER_1581056461792934002_H__
