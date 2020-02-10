@@ -1,12 +1,7 @@
 /**
-*
-*    @file Allocator.h
-*    @date 8/17/2010
-*    @author MetalMario971
-*
-*    � 2011
-*
-*
+*  @file Allocator.h
+*  @date 8/17/2010
+*  @author MetalMario971
 */
 #pragma once
 
