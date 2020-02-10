@@ -432,7 +432,7 @@ typedef enum {
 
 extern "C" {
 
-//DereK: note if you are updating stb_truetype, make sure to comment these structs out 2/7/18
+//Note if you are updating stb_truetype, make sure to comment these structs out 2/7/18
 //STB namespace
 typedef struct
 {
