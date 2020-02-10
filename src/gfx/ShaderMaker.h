@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderMaker.h
-*    @date May 5, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file ShaderMaker.h
+*  @date May 5, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADERMAKER_14940026902175372902_H__

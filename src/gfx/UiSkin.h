@@ -1,12 +1,7 @@
 /**
-*
-*    @file UiSkin.h
-*    @date February 17, 2018
-*    @author MetalMario971
-*
-*    © 2018
-*
-*
+*  @file UiSkin.h
+*  @date February 17, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UISKIN_15188874023298355212_H__

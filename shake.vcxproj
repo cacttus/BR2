@@ -176,7 +176,7 @@
     <ClInclude Include="src\gfx\UiBase.h" />
     <ClInclude Include="src\gfx\UiControls.h" />
     <ClInclude Include="src\gfx\UiSkin.h" />
-    <ClInclude Include="src\gfx\WindowViewport.h" />
+    <ClInclude Include="src\gfx\RenderViewport.h" />
     <ClInclude Include="src\gfx\VulkanApi.h" />
     <ClInclude Include="src\gfx\VulkanContext.h" />
     <ClInclude Include="src\math\Algorithm.h" />
@@ -369,7 +369,7 @@
     <ClCompile Include="src\gfx\UiBase.cpp" />
     <ClCompile Include="src\gfx\UiControls.cpp" />
     <ClCompile Include="src\gfx\UiSkin.cpp" />
-    <ClCompile Include="src\gfx\WindowViewport.cpp" />
+    <ClCompile Include="src\gfx\RenderViewport.cpp" />
     <ClCompile Include="src\gfx\VulkanApi.cpp" />
     <ClCompile Include="src\gfx\VulkanContext.cpp" />
     <ClCompile Include="src\math\Algorithm.cpp" />

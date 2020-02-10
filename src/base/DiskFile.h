@@ -1,12 +1,7 @@
 /**
-*
-*    @file DiskFile.h
-*    @date September 6, 2010
-*    @author MetalMario971
-*
-*    © 2011
-*
-*
+*  @file DiskFile.h
+*  @date September 6, 2010
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __DISKFILE_22684246896097193333998_H__

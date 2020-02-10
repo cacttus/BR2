@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderUniform.h
-*    @date May 5, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file ShaderUniform.h
+*  @date May 5, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADERUNIFORM_14940165762940726006_H__

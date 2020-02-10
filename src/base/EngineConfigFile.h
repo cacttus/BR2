@@ -1,12 +1,7 @@
 /**
-*
-*    @file EngineConfig.h
-*    @date May 6, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file EngineConfig.h
+*  @date May 6, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __ENGINECONFIG_14940903882644616215_H__

@@ -1,12 +1,7 @@
 /**
-*
-*    @file HashMap.h
-*    @date February 13, 2015
-*    @author MetalMario971
-*
-*    © 2015
-*
-*
+*  @file HashMap.h
+*  @date February 13, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __HASHMAP_2256332660273822544327474_H__

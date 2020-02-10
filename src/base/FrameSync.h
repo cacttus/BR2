@@ -1,12 +1,7 @@
 /**
-*
-*    @file FrameSync.h
-*    @date November 27, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file FrameSync.h
+*  @date November 27, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FRAMESYNC_27052177462681769929099_H__

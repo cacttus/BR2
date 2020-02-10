@@ -26,7 +26,7 @@ void RenderUtils::resetRenderState()
 {
     RenderUtils::debugGetRenderState();
     {
-        Gu::getShaderMaker()->shaderBound(nullptr);
+        getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);
 
         //glUseProgram(NULL);//DO NOT CALL - we must maintain consistency on the gpu driver
         std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
@@ -414,11 +414,11 @@ void RenderUtils::debugGetBufferState(t_string& strState)
     appendLine(strState, Stz "Bound Vertex Array Object Id:" + iVertexArrayBinding);
     appendLine(strState, Stz "Bound Shader Program Id:" + iCurrentProgram);
     std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-    if (Gu::getShaderMaker()->getBound() != nullptr) {
+    if (getGraphicsContext()->getShaderMaker()->getBound() != nullptr) {
         appendLine(strState, Stz "Bound Shader Name:" +
-            Gu::getShaderMaker()->getBound()->getProgramName());
-        RenderUtils::debugPrintActiveUniforms(Gu::getShaderMaker()->getBound()->getGlId(), strState);
-        // appendLine(strState, Gu::getShaderMaker()->getBound()->debugGetUniformValues());
+            getGraphicsContext()->getShaderMaker()->getBound()->getProgramName());
+        RenderUtils::debugPrintActiveUniforms(getGraphicsContext()->getShaderMaker()->getBound()->getGlId(), strState);
+        // appendLine(strState, getGraphicsContext()->getShaderMaker()->getBound()->debugGetUniformValues());
 
     }
     else {
@@ -511,9 +511,9 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
         }
 
         //Data
-        if (Gu::getShaderMaker()->getBound() != nullptr) {
+        if (getGraphicsContext()->getShaderMaker()->getBound() != nullptr) {
 
-            std::shared_ptr<ShaderUniform> uf = Gu::getShaderMaker()->getBound()->getUniformByName(uniformName);
+            std::shared_ptr<ShaderUniform> uf = getGraphicsContext()->getShaderMaker()->getBound()->getUniformByName(uniformName);
             if (uf != nullptr) {
                 appendLine(strState, ("  Buffer Data:"));
                 if (uf->hasBeenSet() == false) {

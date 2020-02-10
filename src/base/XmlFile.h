@@ -1,12 +1,7 @@
 /**
-*
-*    @file XmlFile.h
-*    @date August 4, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file XmlFile.h
+*  @date August 4, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __XMLFILE_15649469792082348406_H__

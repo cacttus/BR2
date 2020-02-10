@@ -1,12 +1,7 @@
 /**
-*
-*    @file Picker.h
-*    @date December 27, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file Picker.h
+*  @date December 27, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PICKER_15143971382984040801_H__

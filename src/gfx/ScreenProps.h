@@ -1,12 +1,8 @@
 /**
-*
-*    @file ScreenProps.h
-*    @date March 5, 2012
-*    @author MetalMario971
-*
-*    © 2012 
-*
-*    Render properties of the window.
+*  @file ScreenProps.h
+*  @date March 5, 2012
+*  @author MetalMario971
+*  Render properties of the window.
 */
 #pragma once
 #ifndef __SCREENPROPS_751578542347261859456_H__
@@ -19,22 +15,22 @@ namespace Game {
 
 // - This enum tells the window what to do with the rendering viewport
 //    when the size changes.
-typedef enum {
+enum class ViewportConstraint {
     VP_DONOTCHANGE,    // - The viewport will stay the same as it did from startup
     VP_MAINTAIN_ASPECT_RATIO,    // - The aspect ratio will maintain, but the render target will change size.
     VP_FILL_WINDOW,    // - The aspect ratio changes to fill the entire window. (this will distort objects in the scene)
-}ViewportConstraint;
+};
 
 // - Location of the viewport when window is resized
 // This does not apply to WR_FILL_WINDOW
-typedef enum {
+enum class ViewportLocation {
     // val            aspect ratio
     VIEWPORT_TOPLEFTCORNER,
     VIEWPORT_CENTER_V,    // - Centers the viewport vertically
     VIEWPORT_CENTER_H,    // - Centers the viewport horizontally
     VIEWPORT_CENTER_HV,    // - Centers the viewport horizontally and vertically
     VIEWPORT_CENTER_NONE,
-}VIEWPORT_LOCATION;
+};
 
 // - Screen Resolution
 typedef enum {

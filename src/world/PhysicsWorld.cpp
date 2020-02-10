@@ -1474,7 +1474,7 @@ void PhysicsWorld::drawDeferred() {
         //if we have skin draw normally.
         //_pRenderBucket->sortAndDrawMeshes(
         //    [](std::shared_ptr<VertexFormat> vf) {
-        //        return Gu::getShaderMaker()->getDiffuseShader(vf);
+        //        return getGraphicsContext()->getShaderMaker()->getDiffuseShader(vf);
         //    },
         //    [&](std::shared_ptr<ShaderBase> sb) {
         //        sb->bind();

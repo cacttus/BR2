@@ -1,12 +1,7 @@
 /**
-*
-*    @file GrowBufferBase.h
-*    @date July 9, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file GrowBufferBase.h
+*  @date July 9, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GROWBUFFERBASE_14681206432405686591_H__

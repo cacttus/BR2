@@ -1,12 +1,7 @@
 /**
-*
-*    @file Logger.h
-*    @date December 14, 2013
-*    @author MetalMario971
-*
-*    © 2013
-*
-*
+*  @file Logger.h
+*  @date December 14, 2013
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __LOGGER_16421047220665463212149_H__

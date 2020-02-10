@@ -245,7 +245,7 @@ void MeshNode::copyJointsToGpu() {
 //void MeshNode::dispatchSkinCompute() {
 //    Gu::getGraphicsContext()->chkErrDbg();
 //
-//    std::shared_ptr<ShaderBase> pSkinShader = Gu::getShaderMaker()->getSkinComputeShader();
+//    std::shared_ptr<ShaderBase> pSkinShader = getGraphicsContext()->getShaderMaker()->getSkinComputeShader();
 //    AssertOrThrow2(pSkinShader != nullptr);
 //    pSkinShader->bind();
 //
@@ -363,10 +363,10 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     //Bind a new shader based on format.
     std::shared_ptr<ShaderBase> pShader;
     if (_pMaterial && _pMaterial->getEnableTransparency() && bTransparent) {
-        pShader = Gu::getShaderMaker()->getGlassShader(meshFmt);
+        pShader = getGraphicsContext()->getShaderMaker()->getGlassShader(meshFmt);
     }
     else {
-        pShader = Gu::getShaderMaker()->getDiffuseShader(meshFmt);
+        pShader = getGraphicsContext()->getShaderMaker()->getDiffuseShader(meshFmt);
     }
     if(pShader==nullptr) {
         BroLogWarnCycle("Could not find shader for mesh '" + (getSpec() ? getSpec()->getName() : "") + "'");
@@ -420,7 +420,7 @@ void MeshNode::drawForward(RenderParams& rp) {
         std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
         mat4 mat_mesh;
         getMeshLocalMatrix(mat_mesh);
-        std::shared_ptr<ShaderBase> pShader = Gu::getShaderMaker()->getNormalsShader_v3n3();
+        std::shared_ptr<ShaderBase> pShader = getGraphicsContext()->getShaderMaker()->getNormalsShader_v3n3();
         pShader->bind();
         rp.setShader(pShader);
         std::shared_ptr<CameraNode> bc = Gu::getCamera();

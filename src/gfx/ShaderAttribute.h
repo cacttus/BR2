@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderAttribute.h
-*    @date May 5, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file ShaderAttribute.h
+*  @date May 5, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADERATTRIBUTE_1494032876996691758_H__

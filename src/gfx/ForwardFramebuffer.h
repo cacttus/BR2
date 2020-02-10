@@ -1,12 +1,7 @@
 /**
-*
-*    @file ForwardFramebuffer.h
-*    @date May 26, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file ForwardFramebuffer.h
+*  @date May 26, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FORWARDFRAMEBUFFER_14958495541236280687_H__

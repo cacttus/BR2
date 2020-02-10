@@ -1,12 +1,7 @@
 /**
-*
-*    @file LightNode.h
-*    @date October 4, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file LightNode.h
+*  @date October 4, 2014
+*  @author MetalMario971
 */
 #pragma once
 #pragma once

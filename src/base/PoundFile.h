@@ -1,12 +1,7 @@
 /**
-*
-*    @file PoundFile.h
-*    @date October 9, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file PoundFile.h
+*  @date October 9, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __POUNDFILE_15666252306464270808067_H__

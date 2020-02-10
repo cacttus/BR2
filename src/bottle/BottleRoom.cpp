@@ -7,7 +7,7 @@
 
 #include "../gfx/Atlas.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/Party.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
@@ -270,10 +270,10 @@ void BottleRoom::drawForward(RenderParams& rp) {
     }
 
     if (Gu::getRenderSettings()->getDebug()->getShowShadowBox()) {
-        for (std::shared_ptr<ShadowBox> sb : Gu::getLightManager()->getAllShadowBoxes()) {
+        for (std::shared_ptr<ShadowBox> sb : getGraphicsContext()->getLightManager()->getAllShadowBoxes()) {
             sb->debugRender();
         }
-        for (std::shared_ptr<ShadowFrustum> sb : Gu::getLightManager()->getAllShadowFrustums()) {
+        for (std::shared_ptr<ShadowFrustum> sb : getGraphicsContext()->getLightManager()->getAllShadowFrustums()) {
             sb->debugRender();
         }
     }
@@ -797,16 +797,16 @@ void WorldSelect::draw2d() {
 }
 void WorldSelect::drawBackgroundImage() {
     std::shared_ptr<CameraNode> bc = Gu::getCamera();
-    Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-    Gu::getShaderMaker()->getImageShader_F()->beginRaster();
+    getGraphicsContext()->getShaderMaker()->getImageShader_F()->setCameraUf(bc);
+    getGraphicsContext()->getShaderMaker()->getImageShader_F()->beginRaster();
     {
         //We want depth test so we can see what's in front.
         //glEnable(GL_DEPTH_TEST);
-        _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
+        _pTex->bind(TextureChannel::e::Channel0, getGraphicsContext()->getShaderMaker()->getImageShader_F());
 
-        Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+        getGraphicsContext()->getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
     }
-    Gu::getShaderMaker()->getImageShader_F()->endRaster();
+    getGraphicsContext()->getShaderMaker()->getImageShader_F()->endRaster();
 
 }
 void WorldSelect::drawText() {

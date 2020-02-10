@@ -1,12 +1,7 @@
 /**
-*
-*    @file GLContext.h
-*    @date November 19, 2016
-*    @author MetalMario971
-*
-*    � 2016
-*
-*
+*  @file GLContext.h
+*  @date November 19, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GLCONTEXT_14795781163972161943_H__
@@ -17,7 +12,7 @@
 namespace Game {
 /**
 * @struct GLProfile
-* @brief A Graphics profile that can be tested against the Gpu capabilities.
+* @brief A Graphics profile that can be tested against the Gpu
 */
 struct GLProfile : public VirtualMemory {
 public:
@@ -40,11 +35,8 @@ public:
 *    @brief OpenGL render context
 */
 class GLContext : public GraphicsContext {
-public:
-
 private:
   bool _bValid = false;
-  bool loadOpenGLFunctions();
 
   //Render Stack.
   std::stack<GLenum> _eLastCullFaceStack;
@@ -53,15 +45,15 @@ private:
   static const int MaxStackSize = 32;
 
   SDL_GLContext _context;
+  GLProfile _profile;
+  int _iSupportedDepthSize;
 
+  bool loadOpenGLFunctions();
   void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
   void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
   void loadCheckProc();
   void printHelpfulDebug();
 
-  GLProfile _profile;
-
-  int _iSupportedDepthSize;
 public:
   GLContext();
   virtual ~GLContext() override;

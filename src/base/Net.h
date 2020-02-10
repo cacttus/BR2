@@ -1,12 +1,7 @@
 /**
-*
-*    @file Net.h
-*    @date May 9, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file Net.h
+*  @date May 9, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __NET_15574636493489018174_H__

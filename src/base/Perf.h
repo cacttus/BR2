@@ -1,12 +1,7 @@
 /**
-*
-*    @file Perf.h
-*    @date August 23, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file Perf.h
+*  @date August 23, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PERF_15665765533990554672_H__

@@ -1,12 +1,7 @@
 /**
-*
-*    @file RenderParams.h
-*    @date May 18, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file RenderParams.h
+*  @date May 18, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __RENDERPARAMS_14951219313732568565_H__
@@ -33,7 +28,8 @@ class RenderParams : public VirtualMemory {
   std::shared_ptr<VaoShader> _pVaoShader = nullptr;
   // std::shared_ptr<Material> _pMaterial = nullptr;
 
-  std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+  
+  //std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
 
 public:
   RenderParams() {}
@@ -49,8 +45,8 @@ public:
   void setShader(std::shared_ptr<ShaderBase> sb) { _pShader = sb; }
   //    void addTexture(std::shared_ptr<Texture2DSpec> ps) { _setTextures.push_back(ps);}
 
-  void setWindow(std::shared_ptr<GraphicsWindow> w) { _pWindow = w; }
-  std::shared_ptr<GraphicsWindow>  getWindow() { return _pWindow; }
+  //void setWindow(std::shared_ptr<GraphicsWindow> w) { _pWindow = w; }
+  //std::shared_ptr<GraphicsWindow>  getWindow() { return _pWindow; }
 
   //void setMaterial(std::shared_ptr<Material> ms) { _pMaterial = ms; }
   void setMesh(std::shared_ptr<MeshNode> x) { _pMeshNode = x; }

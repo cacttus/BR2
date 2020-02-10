@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderBase.h
-*    @date November 27, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file ShaderBase.h
+*  @date November 27, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADERBASE_14802955721654117059_H__
@@ -24,7 +19,7 @@ namespace Game {
 *    @brief
 *
 */
-class ShaderBase : public VirtualMemoryShared<ShaderBase> {
+class ShaderBase : public HasGraphicsContext<ShaderBase> {
 private:
     ShaderStatus::e _eProgramStatus = ShaderStatus::e::Uninitialized;
     GLuint _glId;
@@ -42,7 +37,7 @@ private:
     void setShadowUf();
 
 public:
-    ShaderBase(t_string strName);
+    ShaderBase(std::shared_ptr<GraphicsContext> ct, t_string strName);
     virtual ~ShaderBase() override ;
 
     void init();
@@ -85,7 +80,7 @@ public:
     void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
     t_string debugGetUniformValues();
 
-    void beginRaster();
+    void beginRaster(int iOrthoWidth, int iOrthoHeight);
     void endRaster();
 
     void dispatchCompute();//Compute Shader Only

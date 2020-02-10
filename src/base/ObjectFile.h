@@ -1,12 +1,7 @@
 /**
-*
-*    @file ObjectFile.h
-*    @date May 9, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file ObjectFile.h
+*  @date May 9, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __OBJECTFILE_1462849533491139354_H__

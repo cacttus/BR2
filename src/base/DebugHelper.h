@@ -1,12 +1,7 @@
 /**
-*
-*    @file DebugHelper.h
-*    @date January 30, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file DebugHelper.h
+*  @date January 30, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __DEBUGHELPER_280862031362642290319991_H__

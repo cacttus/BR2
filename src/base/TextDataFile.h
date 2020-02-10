@@ -1,12 +1,7 @@
 /**
-*
-*    @file TextDataFile.h
-*    @date November 22, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file TextDataFile.h
+*  @date November 22, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __BASEDATAFILE_210628895103872956110227_H__

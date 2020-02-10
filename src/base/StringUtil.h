@@ -1,12 +1,7 @@
 /**
-*
-*    @file StringUtil.h
-*    @date August 23, 2010
-*    @author MetalMario971
-*
-*    © 2011
-*   1/8/18 - modified lowercase()
-*
+*  @file StringUtil.h
+*  @date August 23, 2010
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __STRING_286311063321698159639017_H__

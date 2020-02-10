@@ -1,12 +1,7 @@
 /**
-*
-*    @file SyncTimer.h
-*    @date August 7, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file SyncTimer.h
+*  @date August 7, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SYNCTIMER_1565162047291700213_H__

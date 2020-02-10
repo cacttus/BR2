@@ -44,7 +44,7 @@ void Texture2DSpec::calculateTextureFormat() {
   _eTextureMipmapFormat = GL_RGBA8;
 }
 void Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
-  std::dynamic_pointer_cast<GLContext>(getGraphicsContext())->glActiveTexture(GL_TEXTURE0 + eChannel);
+  getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + eChannel);
   glBindTexture(GL_TEXTURE_2D, getGlId());
 
   if (pShader != nullptr) {

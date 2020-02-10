@@ -1,11 +1,7 @@
 /**
-*
-*    @file Unpack.h
-*    @date January 8, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
+*  @file Unpack.h
+*  @date January 8, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UNPACK_15154667791053603878_H__

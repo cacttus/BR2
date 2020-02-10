@@ -5,7 +5,7 @@
 #include "../gfx/ShadowFrustum.h"
 
 #include "../gfx/FrustumBase.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShadowBox.h"
@@ -39,7 +39,7 @@ ShadowFrustum::~ShadowFrustum()
 ///////////////////////////////////////////////////////////////////
 void ShadowFrustum::init() {
 
-    _pViewport = std::make_shared<WindowViewport>(60, 60
+    _pViewport = std::make_shared<RenderViewport>(60, 60
         , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
         , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
         );
@@ -71,7 +71,7 @@ void ShadowFrustum::update()
     //    return;
     //}
 
-    std::shared_ptr<LightManager> pLightMan = Gu::getLightManager();
+    std::shared_ptr<LightManager> pLightMan = getGraphicsContext()->getLightManager();
 
     //Update the camera for each ShadowFrustum side if the light has changed position or radius.
     //See also: debugInvalidateAllLightProjections
@@ -362,7 +362,7 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
 
         _pVisibleSet->sortAndDrawMeshes(
             [](std::shared_ptr<VertexFormat> vf) {
-            return Gu::getShaderMaker()->getShadowShader(vf);
+            return getGraphicsContext()->getShaderMaker()->getShadowShader(vf);
         },
             [&](std::shared_ptr<ShaderBase> sb) {
             sb->bind();

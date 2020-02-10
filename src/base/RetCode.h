@@ -1,12 +1,7 @@
 /**
-*
-*    @file SystemErrorDefs.h
-*    @date September 21, 2011
-*    @author MetalMario971
-*
-*    © 2011
-*
-*
+*  @file SystemErrorDefs.h
+*  @date September 21, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SYSTEMERRORDEFS_27745226362187691023999_H__

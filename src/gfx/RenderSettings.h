@@ -1,12 +1,7 @@
 /**
-*
-*    @file RenderSettings.h
-*    @date February 23, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file RenderSettings.h
+*  @date February 23, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __RENDERSETTINGS_1519414886985932822_H__

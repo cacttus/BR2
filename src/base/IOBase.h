@@ -1,12 +1,8 @@
 /**
-*
-*    @file IOBase.h
-*    @date September 8, 2010
-*    @author MetalMario971
-*
-*    © 2011
-*
-*   2016 07 09 Renamed to IOBase
+*  @file IOBase.h
+*  @date September 8, 2010
+*  @author MetalMario971
+* 2016 07 09 Renamed to IOBase
 */
 #pragma once
 #ifndef __IOFILE_2872614527326632257223491_H__

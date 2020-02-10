@@ -1,12 +1,12 @@
 #include "../base/GLContext.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../base/Gu.h"
 
 namespace Game {
-CameraNode::CameraNode(std::shared_ptr<WindowViewport> ppViewport) : PhysicsNode(nullptr),
-_pViewport(ppViewport) {
+CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(nullptr) {
+  _pViewport = ppViewport;
   _vWorldUp.construct(0, 1, 0);
 
   _pMainFrustum = std::make_shared<FrustumBase>(ppViewport, _f_hfov);
@@ -14,7 +14,7 @@ _pViewport(ppViewport) {
   _vLookAt = vec3(0, 0, 0);
   setPos(vec3(-100, -100, -100));
 }
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<WindowViewport> ppViewport) {
+std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport) {
   std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
   cn->init();
   return cn;
@@ -140,7 +140,8 @@ void CameraNode::zoom(float amt) {
   finalPt = vec3(
     Alg::cerp_1D(minPt.x, maxPt.x, tVal),
     Alg::cerp_1D(minPt.y, maxPt.y, tVal),
-    Alg::cerp_1D(minPt.z, maxPt.z, tVal));
+    Alg::cerp_1D(minPt.z, maxPt.z, tVal)
+  );
 
 
 

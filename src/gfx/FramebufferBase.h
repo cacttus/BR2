@@ -1,12 +1,7 @@
 /**
-*
-*    @file FramebufferBase.h
-*    @date May 8, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file FramebufferBase.h
+*  @date May 8, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FRAMEBUFFERBASE_14942908062084042827_H__

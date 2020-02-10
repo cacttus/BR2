@@ -1,12 +1,7 @@
 /**
-*
-*    @file Date.h
-*    @date August 23, 2010
-*    @author MetalMario971
-*
-*    © 2011 
-*
-*
+*  @file Date.h
+*  @date August 23, 2010
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __DATE_2689426881206782656826687_H__

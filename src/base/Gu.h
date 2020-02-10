@@ -1,11 +1,7 @@
 /**
-*
-*    @file Gu.h
-*    @date November 6, 2016
-*    @author MetalMario971
-*
-*    � 2016
-*
+*  @file Gu.h
+*  @date November 6, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GU_14784108333124451735_H__
@@ -110,7 +106,7 @@ public:
   static void print(const t_string& msg);
   //static uint64_t getFrameNumber();
 
-  static void guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp);//Transforms a quad for the matrix-less 
+  static void guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp);//Transforms a quad for the matrix-less 
 
   template < typename Tx >
   static bool addIfDoesNotContain(std::vector<Tx>& vec, Tx& rhs) {

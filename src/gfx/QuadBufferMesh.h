@@ -1,12 +1,7 @@
 /**
-*
-*    @file QuadBufferMesh.h
-*    @date March 9, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file QuadBufferMesh.h
+*  @date March 9, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __QUADBUFFERMESH_308121747560101184222802_H__

@@ -8,7 +8,7 @@
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBoxSide.h"
 #include "../gfx/RenderUtils.h"
@@ -79,7 +79,7 @@ void ShadowBox::update()
         return;
     }
 
-    std::shared_ptr<LightManager> pLightMan = Gu::getLightManager();
+    std::shared_ptr<LightManager> pLightMan = getGraphicsContext()->getLightManager();
 
     //Update the camera for each shadowbox side if the light has changed position or radius.
     //See also: debugInvalidateAllLightProjections
@@ -251,7 +251,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox)
 
     if (pBox->getGlTexId() != 0) {
         if (Gu::getRenderSettings()->getSmoothShadows()) {
-            std::shared_ptr<ShaderBase> pDofShader = Gu::getShaderMaker()->getSmoothGenShader();
+            std::shared_ptr<ShaderBase> pDofShader = getGraphicsContext()->getShaderMaker()->getSmoothGenShader();
             std::shared_ptr<MeshNode> pQuadMesh = MeshUtils::createScreenQuadMesh(_iFboWidthPixels, _iFboHeightPixels);
 
             //Blend color + position and store it in the color.

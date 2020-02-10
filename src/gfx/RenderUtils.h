@@ -1,12 +1,7 @@
 /**
-*
-*    @file RenderUtils.h
-*    @date May 16, 2012
-*    @author MetalMario971
-*
-*    © 2012 
-*
-*
+*  @file RenderUtils.h
+*  @date May 16, 2012
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __RENDERUTILS_215792320710911295042735_H__

@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/ForwardFramebuffer.h"
 #include "../gfx/BufferRenderTarget.h"
 
@@ -22,7 +22,7 @@ GLuint ForwardFramebuffer::getGlColorBufferTexId() {
 void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) {
     deleteTargets();
 
-    Gu::getShaderMaker()->shaderBound(nullptr);
+    getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);
     _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
     _pContext->chkErrRt();
     _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -42,7 +42,7 @@ void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<B
     checkFramebufferComplete();
 
     //Return to default.
-    Gu::getShaderMaker()->shaderBound(nullptr);
+    getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);
     _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
     _pContext->chkErrRt();
     _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//. The value zero is reserved, but there is no default renderbuffer object. Instead, renderbuffer set to zero effectively unbinds any renderbuffer object previously bound. 

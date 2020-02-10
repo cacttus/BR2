@@ -32,7 +32,7 @@
 
 #include "../gfx/TexCache.h"
 #include "../gfx/LightManager.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
@@ -110,7 +110,7 @@ std::shared_ptr<WindowManager> Gu::_pWindowManager = nullptr;
 
 //std::shared_ptr < RenderSettings> Gu::getRenderSetings() { return _pRenderSettings; }
 //
-//std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
+//std::shared_ptr<ShaderMaker> getGraphicsContext()->getShaderMaker() { return _pShaderMaker; }
 //std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
 //std::shared_ptr<GLContext> Gu::getGraphicsContext() {
 //  std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
@@ -528,7 +528,7 @@ std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delim
   return ret;
 }
 
-void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp) {
+void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp) {
   //Transforms a quad for the matrix-less gui projection.
 
   //The resulting coordinates for the GPU are -0.5 +0.5 in both axes with the center being in the center of the screen

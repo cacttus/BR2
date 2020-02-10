@@ -1,12 +1,7 @@
 /**
-*
-*    @file VulkanApi.h
-*    @date August 6, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file VulkanApi.h
+*  @date August 6, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VULKANAPI_15651062481484433440_H__

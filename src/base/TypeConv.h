@@ -1,9 +1,7 @@
 /**
-*    @file TypeConv.hpp
-*    @date August 23, 2010
-*    @author MetalMario971
-*
-*    � 2011 
+*  @file TypeConv.hpp
+*  @date August 23, 2010
+*  @author MetalMario971
 * 5/1/2017 reformatted. removed inline. made nice
 */
 #pragma once

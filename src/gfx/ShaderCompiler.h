@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderParser.h
-*    @date May 5, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file ShaderParser.h
+*  @date May 5, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADERPARSER_14940011921511191713_H__

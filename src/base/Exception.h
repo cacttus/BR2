@@ -1,12 +1,7 @@
 /**
-*
-*    @file Exception.h
-*    @date November 22, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file Exception.h
+*  @date November 22, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __EXCEPTION_1479867204359778176_H__

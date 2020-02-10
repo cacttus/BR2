@@ -1,12 +1,7 @@
 /**
-*
-*    @file VulkanContext.h
-*    @date August 10, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file VulkanContext.h
+*  @date August 10, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VULKANCONTEXT_15654533273371902995_H__

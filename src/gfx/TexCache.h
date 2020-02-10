@@ -1,12 +1,7 @@
 /**
-*
-*    @file TexCache.h
-*    @date November 26, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file TexCache.h
+*  @date November 26, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __TEXCACHE_1480188610676155930_H__

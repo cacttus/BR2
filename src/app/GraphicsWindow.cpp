@@ -8,7 +8,7 @@
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
 
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ParticleMaker.h"
@@ -30,10 +30,9 @@
 namespace Game {
 
 //Called exclusively by the graphics API
-GraphicsWindow::GraphicsWindow(bool ismain, t_string title, RenderSystem::e sys) {
+GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, t_string title, RenderSystem::e sys) : HasGraphicsContext(context) {
   this->_bIsMainWindow = ismain;
   _title = title;
-
 }
 GraphicsWindow::~GraphicsWindow() {
   //Delete Global Managers
@@ -44,7 +43,7 @@ GraphicsWindow::~GraphicsWindow() {
   _pFrameSync = nullptr;
 
   //_pGraphicsApi = nullptr;
-
+  
   if (_pSDLWindow != nullptr) {
     SDL_DestroyWindow(_pSDLWindow);
     _pSDLWindow = nullptr;
@@ -194,7 +193,7 @@ void GraphicsWindow::makeSDLWindow(t_string windowTitle, int render_system) {
   //*Set room width / height
   _iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
   _iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pWindowViewport = std::make_shared<WindowViewport>(_iLastWidth, _iLastHeight);
+  _pWindowViewport = std::make_shared<RenderViewport>(_iLastWidth, _iLastHeight);
 
 #ifdef BRO_OS_WINDOWS
   BroLogError("We are not making the window icon because there's an error somewhere in SDL here.");
@@ -318,7 +317,7 @@ void GraphicsWindow::printHelpfulDebug() {
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
-  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
+  _pRenderPipe->init(getWindowViewport()->getWidth(), getWindowViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
   // Gu::setRenderPipe(_pRenderPipe);
 
   //_pRenderPipe->getPipeBits().set();
@@ -347,14 +346,15 @@ void GraphicsWindow::step() {
   if (_pDelta != nullptr) {
     _pDelta->update();
   }
-  if (_pParticleMaker != nullptr) {
-    _pParticleMaker->update(getDelta()->get());
-  }
+
   if (_pFpsMeter != nullptr) {
     _pFpsMeter->update();
   }
   if (_pPicker != nullptr) {
     _pPicker->update(Gu::getInputManager());
+  }
+  if (_pParticleMaker != nullptr) {
+    _pParticleMaker->update(getDelta()->get());
   }
 
   beginRender();
@@ -375,7 +375,7 @@ void GraphicsWindow::step() {
 
       getGraphicsContext()->setLoopState(EngineLoopState::Render);
 
-      RenderPipeline::PipeBits pipebits;
+      PipeBits pipebits;
       pipebits.set();
       //Gu::getRenderSettings()->getDOF()
 

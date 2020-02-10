@@ -1,12 +1,7 @@
 /**
-*
-*    @file FontTextBuffer.h
-*    @date September 28, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*    06 30 2016 added scale to fix font systme
-*
+*  @file FontTextBuffer.h
+*  @date September 28, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FONTTEXTBUFFER_1778616551277491261427268_H__

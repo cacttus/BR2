@@ -10,7 +10,7 @@
 #include "../gfx/Gui2d.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
@@ -804,7 +804,7 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Raster Quad (for drawing)
   _b2RasterQuad = _b2LayoutQuad;
-  Gu::guiQuad2d(_b2RasterQuad, getWindow()->getViewport());
+  Gu::guiQuad2d(_b2RasterQuad, getWindow()->getWindowViewport());
 }
 
 void UiElement::applyMinMax(float& wpx, float& hpx) {

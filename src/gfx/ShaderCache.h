@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderCache.h
-*    @date October 22, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file ShaderCache.h
+*  @date October 22, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __ShaderCache_434517993163531317228885_H__

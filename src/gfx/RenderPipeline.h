@@ -1,12 +1,7 @@
 /**
-*
-*    @file Framebuffer2.h
-*    @date May 5, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file Framebuffer2.h
+*  @date May 5, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FRAMEBUFFER2_14939705342264419216_H__
@@ -16,27 +11,27 @@
 #include "../model/ModelHeader.h"
 
 namespace Game {
-class DOFFbo{
+class DOFFbo : public HasGraphicsContext<DOFFbo> {
 public:
+    
     GLuint _uiDOFFboId;
     GLuint _uiTexId0;
-    DOFFbo(int32_t w, int32_t h);
+    DOFFbo(std::shared_ptr<GLContext> ct, int32_t w, int32_t h);
     virtual ~DOFFbo();
 };
 /**
 *  @class RenderPipe
 *  @brief Manages the render pipeline.
 *  TODO: Each render pass should be a set of classes, giving us the ability to swap render passes in/out of the render pipeline.
-*
 */
-class RenderPipeline : public VirtualMemory  {
+class RenderPipeline : public HasGraphicsContext<RenderPipeline>  {
 public:
   RenderPipeline(std::shared_ptr<GraphicsWindow> w);
   virtual ~RenderPipeline() override;
   void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);
   std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
   void renderSceneTexture(PipeBits _pipeBits);
-  void renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared_ptr<Drawable> toDraw, PipeBits pipeBits);
+  void renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBits);
   void resizeScreenBuffers(int32_t   w, int32_t h);
 
   std::shared_ptr<Img32> getResultAsImage();
@@ -79,7 +74,7 @@ protected:
 
     bool _bRenderInProgress = false;
 
-    void blitDeferredRender();
+    void blitDeferredRender(std::shared_ptr<CameraNode> cam);
     void createQuadMesh(int w, int h);
     void checkMultisampleParams();
     void checkDeviceCaps(int iWidth, int iHeight);
@@ -94,13 +89,13 @@ protected:
     void endRenderDeferred();
     void beginRenderForward();
     void endRenderForward();
-    void renderShadows();
+    void renderShadows(std::shared_ptr<CameraNode> cam);
     void beginRenderShadows();
     void endRenderShadows();
 
-    void endRenderAndBlit();
+    void endRenderAndBlit(std::shared_ptr<CameraNode> pCam);
 
-    void postProcessDOF();
+    void postProcessDOF(std::shared_ptr<CameraNode> cam);
     void postProcessDeferredRender();
     void enableDisablePipeBits();
 };

@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShadowFrustumSide.h
-*    @date April 28, 2016
-*    @author MetalMario971
-*
-*    � 2016 
-*
-*
+*  @file ShadowFrustumSide.h
+*  @date April 28, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADOWFRUSTUMSIDE_14618979642881895404_H__
@@ -28,7 +23,7 @@ namespace Game {
 */
 class ShadowBoxSide : public VirtualMemory { 
 private:
-    std::shared_ptr<WindowViewport> _pViewport = nullptr;
+    std::shared_ptr<RenderViewport> _pViewport = nullptr;
     BoxSide::e _eSide;
     std::shared_ptr<FrustumBase> _pFrustum = nullptr;
     std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
@@ -50,7 +45,7 @@ public:
     OVERRIDES ~ShadowBoxSide() OVERRIDE;
 
     bool getMustUpdate() { return _bMustUpdate; }
-    std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }
+    std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
     std::shared_ptr<FrustumBase> getFrustum() { return _pFrustum; }
     std::shared_ptr<LightNodePoint> getLight() { return _pLightSource; }
     mat4* getProjectionMatrix() { return &_projMatrix; }

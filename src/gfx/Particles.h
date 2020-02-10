@@ -1,12 +1,7 @@
 /**
-*
-*    @file Particles.h
-*    @date December 5, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file Particles.h
+*  @date December 5, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PARTICLES_14809610022765256194_H__

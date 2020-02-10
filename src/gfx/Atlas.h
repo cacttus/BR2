@@ -1,12 +1,7 @@
 /**
-*
-*    @file Atlas.h
-*    @date December 9, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file Atlas.h
+*  @date December 9, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __ATLAS_14813066743083963786_H__

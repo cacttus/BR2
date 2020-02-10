@@ -1,12 +1,7 @@
 /**
-*
 *    @file UiBase.h
 *    @date February 17, 2018
 *    @author MetalMario971
-*
-*    © 2018 
-*
-*
 */
 #pragma once
 #ifndef __UIBASE_15188874021299537968_H__

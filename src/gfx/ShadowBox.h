@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShadowMapFrustum.h
-*    @date April 25, 2016
-*    @author MetalMario971
-*
-*    � 2016 
-*
-*
+*  @file ShadowMapFrustum.h
+*  @date April 25, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADOWMAPFRUSTUM_14616351763757858195_H__

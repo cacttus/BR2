@@ -1,12 +1,7 @@
 /**
-*
-*    @file GlobalIncludes.h
-*    @date November 12, 2016
-*    @author MetalMario971
-*
-*    � 2016 
-*
-*
+*  @file GlobalIncludes.h
+*  @date November 12, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GLOBALINCLUDES_14789744473709794265_H__

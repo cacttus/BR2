@@ -4,7 +4,7 @@
 #include "../base/Img32.h"
 #include "../base/InputManager.h"
 #include "../base/Gu.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/RenderPipeline.h"
 #include "../gfx/DeferredFramebuffer.h"
@@ -23,6 +23,7 @@
 #include "../model/MeshNode.h"
 #include "../model/MeshUtils.h"
 #include "../model/VertexFormat.h"
+#include "../world/Scene.h"
 
 namespace Game {
 RenderPipeline::RenderPipeline(std::shared_ptr<GraphicsWindow> w) {
@@ -69,7 +70,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTextur
 
   if (_bMsaaEnabled) {
     glEnable(GL_MULTISAMPLE);
-    Gu::getGraphicsContext()->chkErrRt();
+    getGraphicsContext()->chkErrRt();
   }
 
   //Mesh
@@ -78,19 +79,19 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTextur
 
   //Shaders
   if (_pDeferredShader == nullptr) {
-    _pDeferredShader = Gu::getShaderMaker()->makeShader(std::vector<t_string>{
+    _pDeferredShader = getGraphicsContext()->getShaderMaker()->makeShader(std::vector<t_string>{
       "d_v3x2_lighting.vs", "d_v3x2_lighting.ps" });
   }
   if (_pForwardShader == nullptr) {
-    _pForwardShader = Gu::getShaderMaker()->makeShader(std::vector<t_string>{
+    _pForwardShader = getGraphicsContext()->getShaderMaker()->makeShader(std::vector<t_string>{
       "f_v3x2_fbo.vs", "f_v3x2_fbo.ps"});
   }
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  Gu::getGraphicsContext()->chkErrDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-  Gu::getGraphicsContext()->chkErrDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-  Gu::getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+  getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  getGraphicsContext()->chkErrDbg();
 
   //Guess what?  Headache time.
   //This deletion of the shared stuff is super important 2/9/18
@@ -113,10 +114,10 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTextur
   //Do not cahnge "Pick" name.  This is shared.
   _pPick = FramebufferBase::createTarget("Pick", GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, iWidth, iHeight, RenderTargetType::e::Pick, 0, 0, 0);//4
 
-  _pBlittedDeferred = std::make_shared<DeferredFramebuffer>(_pWindow->getGraphicsContext(), iWidth, iHeight, false, 0, _vClear);
+  _pBlittedDeferred = std::make_shared<DeferredFramebuffer>(getGraphicsContext(), iWidth, iHeight, false, 0, _vClear);
   _pBlittedDeferred->init(iWidth, iHeight, _pBlittedDepth, _pPick);
 
-  _pBlittedForward = std::make_shared<ForwardFramebuffer>(_pWindow->getGraphicsContext(), iWidth, iHeight, false, 0, _vClear);
+  _pBlittedForward = std::make_shared<ForwardFramebuffer>(getGraphicsContext(), iWidth, iHeight, false, 0, _vClear);
   _pBlittedForward->init(iWidth, iHeight, _pBlittedDepth, _pPick);
 
   _pDOFFbo = std::make_shared<DOFFbo>(iWidth, iHeight);
@@ -125,9 +126,9 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTextur
   if (_bMsaaEnabled == true) {
     BroLogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
     _pMsaaDepth = FramebufferBase::createDepthTarget("depth msaa", iWidth, iHeight, 0, _bMsaaEnabled, _nMsaaSamples);
-    _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(_pWindow->getGraphicsContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
+    _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(getGraphicsContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
     _pMsaaDeferred->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
-    _pMsaaForward = std::make_shared<ForwardFramebuffer>(_pWindow->getGraphicsContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
+    _pMsaaForward = std::make_shared<ForwardFramebuffer>(getGraphicsContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
     _pMsaaForward->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
   }
   else {
@@ -146,7 +147,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTextur
   _pShadowFrustumMaster->init();
 
   if (StringUtil::isNotEmpty(strEnvTexturePath)) {
-    _pEnvTex = Gu::getTexCache()->getOrLoad(strEnvTexturePath, false, true, true);
+    _pEnvTex = getGraphicsContext()->getTexCache()->getOrLoad(strEnvTexturePath, false, true, true);
   }
 }
 
@@ -165,7 +166,7 @@ void RenderPipeline::saveScreenshot() {
       //    BroLogInfo("[RenderPipe] Screenshot '", fname, "' saved");
       //}
       iTarget = 0;
-      for (std::shared_ptr<ShadowFrustum> sf : Gu::getLightManager()->getAllShadowFrustums()) {
+      for (std::shared_ptr<ShadowFrustum> sf : getGraphicsContext()->getLightManager()->getAllShadowFrustums()) {
         t_string fname = FileSystem::getScreenshotFilename();
         fname = fname + "_shadow_frustum_" + iTarget + "_.png";
         RenderUtils::saveTexture(std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
@@ -173,7 +174,7 @@ void RenderPipeline::saveScreenshot() {
         iTarget++;
       }
       iTarget = 0;
-      for (std::shared_ptr<ShadowBox> sb : Gu::getLightManager()->getAllShadowBoxes()) {
+      for (std::shared_ptr<ShadowBox> sb : getGraphicsContext()->getLightManager()->getAllShadowBoxes()) {
         for (int i = 0; i < 6; ++i) {
           t_string fname = FileSystem::getScreenshotFilename();
 
@@ -220,13 +221,13 @@ void RenderPipeline::saveScreenshot() {
 void RenderPipeline::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted) {
   //Downsize the MSAA sample buffer.
   if (_bMsaaEnabled) {
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, NULL);
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->glBindRenderbuffer(GL_RENDERBUFFER, NULL);
+    getGraphicsContext()->chkErrDbg();
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_READ_FRAMEBUFFER, msaa->getGlId());
-    Gu::getGraphicsContext()->chkErrDbg();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, blitted->getGlId());
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, msaa->getGlId());
+    getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, blitted->getGlId());
+    getGraphicsContext()->chkErrDbg();
 
     for (std::shared_ptr<BufferRenderTarget> inf : msaa->getTargets()) {
       GLenum blendMode;
@@ -237,9 +238,9 @@ void RenderPipeline::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std:
       }
       else {
         glReadBuffer(inf->getAttachment());
-        Gu::getGraphicsContext()->chkErrDbg();
+        getGraphicsContext()->chkErrDbg();
         glDrawBuffer(inf->getAttachment());
-        Gu::getGraphicsContext()->chkErrDbg();
+        getGraphicsContext()->chkErrDbg();
         blendMode = GL_LINEAR;
       }
 
@@ -248,10 +249,10 @@ void RenderPipeline::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std:
       bitMask = inf->getBlitBit();
 
       //GL_DEPTH_BUFFER_BIT;
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBlitFramebuffer(0, 0, _iLastWidth, _iLastHeight, 0, 0, _iLastWidth, _iLastHeight, bitMask, blendMode);
-      Gu::getGraphicsContext()->chkErrDbg();
+      getGraphicsContext()->glBlitFramebuffer(0, 0, _iLastWidth, _iLastHeight, 0, 0, _iLastWidth, _iLastHeight, bitMask, blendMode);
+      getGraphicsContext()->chkErrDbg();
     }
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->chkErrDbg();
 
   }
 }
@@ -263,9 +264,9 @@ void RenderPipeline::resizeScreenBuffers(int32_t w, int32_t h) {
 
 void RenderPipeline::beginRenderShadows() {
   //See GLLightManager in BRO
-  Gu::getGraphicsContext()->pushDepthTest();
-  Gu::getGraphicsContext()->pushBlend();
-  Gu::getGraphicsContext()->pushCullFace();
+  getGraphicsContext()->pushDepthTest();
+  getGraphicsContext()->pushBlend();
+  getGraphicsContext()->pushCullFace();
   glCullFace(GL_FRONT);
 
   glEnable(GL_DEPTH_TEST);
@@ -275,15 +276,15 @@ void RenderPipeline::beginRenderShadows() {
 void RenderPipeline::endRenderShadows() {
 
   glCullFace(GL_BACK);
-  Gu::getGraphicsContext()->popDepthTest();
-  Gu::getGraphicsContext()->popBlend();
-  Gu::getGraphicsContext()->popCullFace();
+  getGraphicsContext()->popDepthTest();
+  getGraphicsContext()->popBlend();
+  getGraphicsContext()->popCullFace();
 }
-void RenderPipeline::renderShadows() {
-  Gu::getLightManager()->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
+void RenderPipeline::renderShadows(std::shared_ptr<CameraNode> cam) {
+  getGraphicsContext()->getLightManager()->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
 
   //Force refresh teh viewport.
-  Gu::getCamera()->getViewport()->updateChanged(true);
+  cam->getViewport()->updateChanged(true);
 }
 
 void RenderPipeline::beginRenderDeferred() {
@@ -318,32 +319,34 @@ void RenderPipeline::enableDisablePipeBits() {
   //}
 }
 
-void RenderPipeline::blitDeferredRender() {
+void RenderPipeline::blitDeferredRender(std::shared_ptr<CameraNode> cam) {
   //NOTE:
   //Bind the forward framebuffer (_pBlittedForward is equal to _pMsaaForward if MSAA is disabled, if it isn't we call copyMSAASamples later)
-  Gu::getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, _pMsaaForward->getGlId());
-  Gu::getGraphicsContext()->chkErrDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  Gu::getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
+  getGraphicsContext()->glBindFramebuffer(GL_FRAMEBUFFER, _pMsaaForward->getGlId());
+  getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  getGraphicsContext()->chkErrDbg();
 
+  int rasterW = cam->getViewport()->getWidth();
+  int rasterH = cam->getViewport()->getHeight();
 
-  _pDeferredShader->beginRaster();
+  _pDeferredShader->beginRaster(rasterW, rasterH);
   {
     //*The clear here isn't necessary. If we're copying all of the contents of the deferred buffer.
     // - Clear the color and depth buffers (back and front buffers not the Mrts)
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for (std::shared_ptr<BufferRenderTarget> inf : _pMsaaDeferred->getTargets()) {
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(inf->getTextureChannel());
-      Gu::getGraphicsContext()->chkErrDbg();
+      getGraphicsContext()->glActiveTexture(inf->getTextureChannel());
+      getGraphicsContext()->chkErrDbg();
       glBindTexture(inf->getTextureTarget(), inf->getTexId());
-      Gu::getGraphicsContext()->chkErrDbg();
+      getGraphicsContext()->chkErrDbg();
 
       if (inf->getTargetType() == RenderTargetType::e::Color || inf->getTargetType() == RenderTargetType::e::Shadow) {
         //Don't set depth target.
         _pDeferredShader->setTextureUf(inf->getLayoutIndex());
-        Gu::getGraphicsContext()->chkErrDbg();
+        getGraphicsContext()->chkErrDbg();
       }
 
     }
@@ -352,7 +355,7 @@ void RenderPipeline::blitDeferredRender() {
     _pDeferredShader->setLightUf();
     setShadowUf();
     _pDeferredShader->draw(_pQuadMesh);
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->chkErrDbg();
   }
   _pDeferredShader->endRaster();
 
@@ -371,21 +374,21 @@ void RenderPipeline::setShadowUf() {
   int32_t iTextureIndex;
 
   //We loop this way because we MUST fill all texture units in the GPU
-  if (Gu::getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowBoxes) {
+  if (getGraphicsContext()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowBoxes) {
     BroLogWarnCycle("More than " + iNumGpuShadowBoxes + " boxes - some shadows will not show.");
   }
   for (int iShadowBox = 0; iShadowBox < iNumGpuShadowBoxes; ++iShadowBox) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
     if (iTextureIndex < iMaxTexs) {
-      GLuint texId = Gu::getTexCache()->getDummy1x1TextureCube();;
-      if (iShadowBox < Gu::getLightManager()->getGpuShadowBoxes().size()) {
-        std::shared_ptr<ShadowBox> pBox = Gu::getLightManager()->getGpuShadowBoxes()[iShadowBox];
+      GLuint texId = getGraphicsContext()->getTexCache()->getDummy1x1TextureCube();;
+      if (iShadowBox < getGraphicsContext()->getLightManager()->getGpuShadowBoxes().size()) {
+        std::shared_ptr<ShadowBox> pBox = getGraphicsContext()->getLightManager()->getGpuShadowBoxes()[iShadowBox];
         if (pBox != nullptr) {
           texId = pBox->getGlTexId();
         }
       }
       boxSamples.push_back(iTextureIndex);
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
+      getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
       Gu::checkErrorsDbg();
       glBindTexture(GL_TEXTURE_CUBE_MAP, texId);
       Gu::checkErrorsDbg();
@@ -399,21 +402,21 @@ void RenderPipeline::setShadowUf() {
   Gu::checkErrorsDbg();
 
   //We loop this way because we MUST fill all texture units in the GPU
-  if (Gu::getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowFrustums) {
+  if (getGraphicsContext()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowFrustums) {
     BroLogWarnCycle("More than " + iNumGpuShadowFrustums + " frustum - some shadows will not show.");
   }
   for (int iShadowFrustum = 0; iShadowFrustum < iNumGpuShadowFrustums; ++iShadowFrustum) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
     if (iTextureIndex < iMaxTexs) {
-      GLuint texId = Gu::getTexCache()->getDummy1x1Texture2D();
-      if (iShadowFrustum < Gu::getLightManager()->getGpuShadowFrustums().size()) {
-        std::shared_ptr<ShadowFrustum> pFrust = Gu::getLightManager()->getGpuShadowFrustums()[iShadowFrustum];
+      GLuint texId = getGraphicsContext()->getTexCache()->getDummy1x1Texture2D();
+      if (iShadowFrustum < getGraphicsContext()->getLightManager()->getGpuShadowFrustums().size()) {
+        std::shared_ptr<ShadowFrustum> pFrust = getGraphicsContext()->getLightManager()->getGpuShadowFrustums()[iShadowFrustum];
         if (pFrust != nullptr) {
           texId = pFrust->getGlTexId();
         }
       }
       frustSamples.push_back(iTextureIndex);
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
+      getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
       Gu::checkErrorsDbg();
       glBindTexture(GL_TEXTURE_2D, texId);
       Gu::checkErrorsDbg();
@@ -430,7 +433,7 @@ void RenderPipeline::setShadowUf() {
   if (_pEnvTex != nullptr) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
     if (iTextureIndex < iMaxTexs) {
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
+      getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
       glBindTexture(GL_TEXTURE_2D, _pEnvTex->getGlId());
       _pDeferredShader->setUf("_ufTexEnv0", (GLvoid*)&iTextureIndex);
       iIndex++;
@@ -444,17 +447,17 @@ void RenderPipeline::setShadowUf() {
     Gu::debugBreak();
   }
 }
-DOFFbo::DOFFbo(int32_t w, int32_t h) {
+DOFFbo::DOFFbo(std::shared_ptr<GLContext> ct, int32_t w, int32_t h) : HasGraphicsContext(ct) {
   //Create Quick FBO
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGenFramebuffers(1, &_uiDOFFboId);
+  getGraphicsContext()->glGenFramebuffers(1, &_uiDOFFboId);
   Gu::checkErrorsDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, _uiDOFFboId);
+  getGraphicsContext()->glBindFramebuffer(GL_FRAMEBUFFER, _uiDOFFboId);
   Gu::checkErrorsDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, w);
+  getGraphicsContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, w);
   Gu::checkErrorsDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, h);
+  getGraphicsContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, h);
   Gu::checkErrorsDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+  getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
   Gu::checkErrorsDbg();
 
   //Texurev
@@ -471,16 +474,16 @@ DOFFbo::DOFFbo(int32_t w, int32_t h) {
 
 }
 DOFFbo::~DOFFbo() {
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteFramebuffers(1, &_uiDOFFboId);
+  getGraphicsContext()->glDeleteFramebuffers(1, &_uiDOFFboId);
   glDeleteTextures(1, &_uiTexId0);
 }
-void RenderPipeline::postProcessDOF() {
+void RenderPipeline::postProcessDOF(std::shared_ptr<CameraNode> pCam) {
   //If MSAA is enabled downsize the MSAA buffer to the _pBlittedForward buffer so we can execute post processing.
   //copyMsaaSamples(_pMsaaForward, _pBlittedForward);
 
 
-  std::shared_ptr<ShaderBase> pDofShader = Gu::getShaderMaker()->getDepthOfFieldShader();
-  std::shared_ptr<CameraNode> pCam = Gu::getCamera();
+  std::shared_ptr<ShaderBase> pDofShader = getGraphicsContext()->getShaderMaker()->getDepthOfFieldShader();
+  
   if (pDofShader == nullptr || pCam == nullptr) {
     BroLogErrorCycle("Error: nullptrs 348957");
     return;
@@ -489,31 +492,34 @@ void RenderPipeline::postProcessDOF() {
   std::shared_ptr<BufferRenderTarget> rtPos = _pMsaaDeferred->getTargetByName("Position");
   std::shared_ptr<BufferRenderTarget> rtColor = _pMsaaForward->getTargetByName("Color");//**Note** Forward
 
+  int rasterW = pCam->getViewport()->getWidth();
+  int rasterH = pCam->getViewport()->getHeight();
+
   //Blend color + position and store it in the color.
-  pDofShader->beginRaster();
+  pDofShader->beginRaster(rasterW,rasterH);
   {
     //This could be removed if we used Texture2DSpec for the RenderTarget texturs..
     GLuint i0;
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+    getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, rtPos->getGlTexId());
     i0 = 0;
     pDofShader->setUf("_ufTextureId_i0", (GLvoid*)&i0);
 
     //This could be removed if we used Texture2DSpec for the RenderTarget texturs..
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+    getGraphicsContext()->glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, rtColor->getGlTexId());
     i0 = 1;
     pDofShader->setUf("_ufTextureId_i1", (GLvoid*)&i0);
 
     //Camera params
-    //pDofShader->setUf("_fFocalDepth", (GLvoid*)&Gu::getLightManager()->getDeferredParams()->_fFocalDepth);
-    pDofShader->setUf("_fFocalRange", (GLvoid*)&Gu::getLightManager()->getDeferredParams()->_fFocalRange);
+    //pDofShader->setUf("_fFocalDepth", (GLvoid*)&getGraphicsContext()->getLightManager()->getDeferredParams()->_fFocalDepth);
+    pDofShader->setUf("_fFocalRange", (GLvoid*)&getGraphicsContext()->getLightManager()->getDeferredParams()->_fFocalRange);
     //View pos
     pDofShader->setUf("_ufViewPos", (void*)&pos);
 
     //Draw Round 1
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pDOFFbo->_uiDOFFboId);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _pDOFFbo->_uiTexId0, 0);
+    getGraphicsContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pDOFFbo->_uiDOFFboId);
+    getGraphicsContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _pDOFFbo->_uiTexId0, 0);
     GLint horiz = 0;
     pDofShader->setUf("_ufHorizontal", (GLvoid*)&horiz);
     pDofShader->draw(_pQuadMesh);
@@ -521,11 +527,11 @@ void RenderPipeline::postProcessDOF() {
 
     //Draw Round 2
     //Bind rtColor back to the output.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pDOFFbo->_uiDOFFboId);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtColor->getGlTexId(), 0);
+    getGraphicsContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pDOFFbo->_uiDOFFboId);
+    getGraphicsContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rtColor->getGlTexId(), 0);
 
     //Bind the previously rendered color to the color buffer so we can pingpong it back.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+    getGraphicsContext()->glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _pDOFFbo->_uiTexId0);
 
     i0 = 1;
@@ -541,46 +547,55 @@ void RenderPipeline::postProcessDOF() {
   Gu::checkErrorsDbg();
 
   //Unbind / Delete
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+  getGraphicsContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, 0);
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+  getGraphicsContext()->glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, 0);
 
 }
-void RenderPipeline::endRenderAndBlit() {
+void RenderPipeline::endRenderAndBlit(std::shared_ptr<RenderTarget> target) {
+  //Blit the render to the given target.
 
   //Do not bind anything - default framebuffer.
-  Gu::getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  Gu::getGraphicsContext()->chkErrDbg();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  Gu::getGraphicsContext()->chkErrDbg();
+  if (target->render) {
+    getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
+    getGraphicsContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    getGraphicsContext()->chkErrDbg();
+  }
+  else {
+    BroThrowNotImplementedException();
+  }
 
   // - Clear the color and depth buffers (back and front buffers not the Mrts)
   glClearColor(getClear().x, getClear().y, getClear().z, getClear().w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  Gu::getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->chkErrDbg();
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
-  Gu::getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
+  getGraphicsContext()->chkErrDbg();
   glBindTexture(GL_TEXTURE_2D, _pBlittedForward->getGlColorBufferTexId());
-  Gu::getGraphicsContext()->chkErrDbg();
+  getGraphicsContext()->chkErrDbg();
 
-  _pForwardShader->beginRaster();
+  int iW  = pCam->getViewport()->getWidth();
+  int iH  = pCam->getViewport()->getHeight();
+
+  _pForwardShader->beginRaster(iW,iH);
   {
     saveScreenshot();
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->chkErrDbg();
 
     debugForceSetPolygonMode();
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->chkErrDbg();
 
     _pForwardShader->setTextureUf(0);
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->chkErrDbg();
 
     //draw a screen quad to the default OpenGL framebuffer
     _pForwardShader->draw(_pQuadMesh);
-    Gu::getGraphicsContext()->chkErrDbg();
+    getGraphicsContext()->chkErrDbg();
   }
   _pForwardShader->endRaster();
 
@@ -649,7 +664,7 @@ void RenderPipeline::debugForceSetPolygonMode() {
 #endif
 }
 void RenderPipeline::releaseFbosAndMesh() {
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  getGraphicsContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
   _pBlittedDeferred = nullptr;
   _pBlittedForward = nullptr;
   _pBlittedDepth = nullptr;
@@ -663,17 +678,19 @@ void RenderPipeline::releaseFbosAndMesh() {
   _pShadowFrustumMaster = nullptr;
 }
 
-void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared_ptr<Drawable> toDraw, RenderPipeline::PipeBits pipeBits) {
+void RenderPipeline::renderScene(std::shared_ptr<RenderTarget> target, std::shared_ptr<Scene> pScene, PipeBits pipeBits) {
   //Re-Init
-  if (Gu::getCamera() == nullptr) {
+  std::shared_ptr<CameraNode> cam = pScene->getActiveCamera();
+
+  if (cam == nullptr) {
     BroLogErrorOnce("Camera was not set for renderScene");
     return;
   }
-  if (Gu::getCamera()->getViewport() == nullptr) {
+  if (cam->getViewport() == nullptr) {
     BroLogErrorOnce("Camera Viewport was not set for renderScene");
     return;
   }
-  std::shared_ptr<WindowViewport> pv = Gu::getCamera()->getViewport();
+  std::shared_ptr<RenderViewport> pv = cam->getViewport();
   if (pv->getWidth() != _iLastWidth || pv->getHeight() != _iLastHeight) {
     init(pv->getWidth(), pv->getHeight(), "");
   }
@@ -688,7 +705,7 @@ void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared
   _bRenderInProgress = true;
   {
     RenderParams rp;
-    rp->setWindow(gw);
+    //rp->setWindow(gw);
 
     //This doesn't conform ot the new ability to render individual objects.
     //This draws all scene shadows
@@ -699,7 +716,7 @@ void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared
       //**This shouldn't be an option ** 
       //Curetly we update lights at the same time as shadows.  this is erroneous
       if (pipeBits.test(PipeBit::e::Shadow)) {
-        renderShadows();
+        renderShadows(cam);
       }
     }
     endRenderShadows();
@@ -710,15 +727,15 @@ void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared
     if (pipeBits.test(PipeBit::e::Deferred)) {
       beginRenderDeferred();
       {
-        toDraw->drawDeferred(rp);
+        pScene->drawDeferred(rp);
       }
       endRenderDeferred();
 
       //Blit to forward FB
-      blitDeferredRender();
+      blitDeferredRender(cam);
 
       if (pipeBits.test(PipeBit::e::Transparent)) {
-        toDraw->drawTransparent(rp);
+        pScene->drawTransparent(rp);
       }
 
       //Do post processing
@@ -750,11 +767,11 @@ void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared
     if (pipeBits.test(PipeBit::e::Forward)) {
       beginRenderForward();
 
-      toDraw->drawForward(rp);
+      pScene->drawForward(rp);
 
       //2.1 - Debug
       if (pipeBits.test(PipeBit::e::Debug)) {
-        toDraw->drawDebug(rp);
+        pScene->drawDebug(rp);
       }
 
       //**TODO: DOF should be a pipe bit.
@@ -769,7 +786,7 @@ void RenderPipeline::renderScene(std::shared_ptr<GraphicsWindow> gw, std::shared
 
       //3. Orthographic, Behind the UI 
       if (pipeBits.test(PipeBit::e::NonDepth)) {
-        toDraw->drawNonDepth(rp);
+        pScene->drawNonDepth(rp);
       }
 
       //4. The UI

@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShaderSubProgram.h
-*    @date May 5, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file ShaderSubProgram.h
+*  @date May 5, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADERSUBPROGRAM_1494036432164858316_H__

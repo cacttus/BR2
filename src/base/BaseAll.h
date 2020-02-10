@@ -1,12 +1,7 @@
 /**
-*
 *    @file BaseAll.h
 *    @date November 22, 2016
 *    @author MetalMario971
-*
-*    © 2016 
-*
-*
 */
 #pragma once
 #ifndef __BASEALL_14798660603847465029_H__

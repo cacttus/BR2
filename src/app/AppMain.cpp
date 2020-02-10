@@ -4,7 +4,7 @@
 #include "../base/GLContext.h"
 #include "../model/MeshUtils.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
@@ -56,14 +56,14 @@ AppUi::AppUi() {
 }
 void AppUi::clearDebugText() {
   if (_pDebugLabel != nullptr) {
-   // _pDebugLabel->setText("Debug\n");
+    // _pDebugLabel->setText("Debug\n");
   }
 }
 void AppUi::dbgLine(std::string txt) {
   if (_pDebugLabel != nullptr) {
- //   std::string dtxt = _pDebugLabel->getText();
- //   dtxt += txt;
- //   dtxt += "\r\n";
+    //   std::string dtxt = _pDebugLabel->getText();
+    //   dtxt += txt;
+    //   dtxt += "\r\n";
   }
 }
 void AppUi::endDebugText() {
@@ -88,16 +88,16 @@ void AppMain::drawBackgroundImage() {
   //  _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
   //}
   //std::shared_ptr<CameraNode> bc = Gu::getCamera();
-  //Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-  //Gu::getShaderMaker()->getImageShader_F()->beginRaster();
+  //getGraphicsContext()->getShaderMaker()->getImageShader_F()->setCameraUf(bc);
+  //getGraphicsContext()->getShaderMaker()->getImageShader_F()->beginRaster();
   //{
   //  //We want depth test so we can see what's in front.
   //  //glEnable(GL_DEPTH_TEST);
-  //  _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
+  //  _pTex->bind(TextureChannel::e::Channel0, getGraphicsContext()->getShaderMaker()->getImageShader_F());
 
-  //  Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+  //  getGraphicsContext()->getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
   //}
-  //Gu::getShaderMaker()->getImageShader_F()->endRaster();
+  //getGraphicsContext()->getShaderMaker()->getImageShader_F()->endRaster();
 
 }
 void AppMain::debugChangeRenderState() {
@@ -162,16 +162,16 @@ void AppMain::debugChangeRenderState() {
     glPolygonMode(GL_BACK, GL_FILL);
   }
   if (_bDebugClearWhite == true) {
-  //  Graphics->getClearR() = 1.f;
-  //  Graphics->getClearG() = 1.f;
-  //  Graphics->getClearB() = 1.f;
-  //  Graphics->getClearA() = 1.f;
-  //}
-  //else {
-  //  Graphics->getClearR() = 0.01f;
-  //  Graphics->getClearG() = 0.01f;
-  //  Graphics->getClearB() = 0.01f;
-  //  Graphics->getClearA() = 1.0f;
+    //  Graphics->getClearR() = 1.f;
+    //  Graphics->getClearG() = 1.f;
+    //  Graphics->getClearB() = 1.f;
+    //  Graphics->getClearA() = 1.f;
+    //}
+    //else {
+    //  Graphics->getClearR() = 0.01f;
+    //  Graphics->getClearG() = 0.01f;
+    //  Graphics->getClearB() = 0.01f;
+    //  Graphics->getClearA() = 1.0f;
   }
   //#endif
 #endif
@@ -213,8 +213,6 @@ void AppMain::drawTransparent(RenderParams& rp) {
 }
 void AppMain::draw2d() {
   drawDebugText();
-
-
 }
 void AppMain::setDebugMode() {
   //set some debug vars to make ikte easier
@@ -249,7 +247,7 @@ void AppMain::drawDebugText() {
     DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
     DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
     DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-   // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
     DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
 
     //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());

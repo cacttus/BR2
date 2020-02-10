@@ -1,12 +1,7 @@
 /**
-*
-*    @file TouchInfo.h
-*    @date March 7, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file TouchInfo.h
+*  @date March 7, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __TOUCHINFO_14889145022426931010_H__

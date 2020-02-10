@@ -1,12 +1,7 @@
 /**
-*
-*    @file TreeNode.h
-*    @date August 6, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file TreeNode.h
+*  @date August 6, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __TREENODE_2292922995327663144523481_H__

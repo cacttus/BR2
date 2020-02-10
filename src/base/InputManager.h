@@ -1,12 +1,7 @@
 /**
-*
-*    @file Fingers.h
-*    @date March 9, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file Fingers.h
+*  @date March 9, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FINGERS_1489072950597086515_H__

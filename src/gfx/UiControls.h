@@ -1,12 +1,7 @@
 /**
-*
-*    @file UiControls.h
-*    @date February 17, 2018
-*    @author MetalMario971
-*
-*    © 2018
-*
-*
+*  @file UiControls.h
+*  @date February 17, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UICONTROLS_15188874023404093923_H__

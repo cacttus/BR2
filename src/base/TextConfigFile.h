@@ -1,12 +1,7 @@
 /**
-*
-*    @file TextConfigFile.h
-*    @date August 4, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file TextConfigFile.h
+*  @date August 4, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PARSABLEFILE_156494899751183385_H__

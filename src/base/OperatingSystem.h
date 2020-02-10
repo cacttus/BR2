@@ -1,12 +1,7 @@
 /**
-*
-*    @file OperatingSystem.h
-*    @date November 27, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file OperatingSystem.h
+*  @date November 27, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __OPERATINGSYSTEM_30289979527355844012131_H__

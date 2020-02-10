@@ -1,11 +1,7 @@
 /**
-*
-*    @file TextParser.h
-*    @date July 20, 2011
-*    @author MetalMario971
-*
-*    © 2011 
-*
+*  @file TextParser.h
+*  @date July 20, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __BUFPARSER_235220395253811918026664_H__

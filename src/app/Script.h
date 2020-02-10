@@ -4,7 +4,7 @@
 *    @date August 23, 2019
 *    @author MetalMario971
 *
-*    © 2019 
+*    © 2019
 *
 *
 */
@@ -16,16 +16,16 @@
 
 namespace Game {
 /**
-*    @class Script
-*    @brief
+*  @class Script
+*  @brief
 *
 */
 class Script : public VirtualMemory {
 public:
-    Script();
-    virtual ~Script() override;
+  Script();
+  virtual ~Script() override;
 
-    void compileScripts();
+  void compileScripts();
 
 };
 

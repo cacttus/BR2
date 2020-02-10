@@ -1,12 +1,7 @@
 /**
-*
-*    @file Delta.h
-*    @date November 5, 2016
-*    @author MetalMario971
-*
-*    � 2016 
-*
-*
+*  @file Delta.h
+*  @date November 5, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __DELTA_14783644163757421765_H__

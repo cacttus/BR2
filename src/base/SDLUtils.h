@@ -1,12 +1,7 @@
 /**
-*
-*    @file SDLUtils.h
-*    @date August 11, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file SDLUtils.h
+*  @date August 11, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SDL_15655475192235209788_H__

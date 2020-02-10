@@ -9,7 +9,7 @@
 #include "../gfx/Gui2d.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"

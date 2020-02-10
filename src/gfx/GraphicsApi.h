@@ -1,12 +1,7 @@
 /**
-*
-*    @file GraphicsApi.h
-*    @date August 5, 2019
-*    @author MetalMario971
-*
-*    © 2019
-*
-*
+*  @file GraphicsApi.h
+*  @date August 5, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GraphicsApi_1565057965514614365_H__

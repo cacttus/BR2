@@ -1,18 +1,8 @@
 /**
 *    @file FileSystem.h
 *    @date August 24, 2013
-*    @author MetalMario971
-*
-*    © 2013
-*
-*
-*    @file FileSystem.h
 *    @date January 19, 2017
 *    @author MetalMario971
-*
-*    © 2017 
-*
-*
 */
 #pragma once
 #ifndef __FILESYSTEM_14848814891654953164_H__

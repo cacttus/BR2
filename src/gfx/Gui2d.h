@@ -1,12 +1,7 @@
 /**
-*
-*    @file World2d.h
-*    @date January 19, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*       Gui2d.h (rename 2/1/18)
-*
+*  @file Gui2d.h
+*  @date January 19, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GUI2D_14848761024167790571_H__

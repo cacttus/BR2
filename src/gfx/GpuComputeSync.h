@@ -1,12 +1,7 @@
 /**
-*
-*    @file GpuComputeSync.h
-*    @date October 7, 2014
-*    @author MetalMario971
-*
-*    � 2014 
-*
-*
+*  @file GpuComputeSync.h
+*  @date October 7, 2014
+*  @author MetalMario971
 */
 #pragma once
 #pragma once

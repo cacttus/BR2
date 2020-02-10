@@ -9,7 +9,7 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShadowBox.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshData.h"

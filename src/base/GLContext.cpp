@@ -358,7 +358,7 @@ void GLContext::popDepthTest() {
 //#ifdef _WIN32
 //#ifdef _DEBUG
 //    //**INLINE MODE -- REMOVE FOR RELEASE
-//    Gu::getShaderMaker()->shaderBound(nullptr);
+//    getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);
 //    glBindBuffer(GL_ARRAY_BUFFER, 0);
 //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 //    glBindVertexArray(0);

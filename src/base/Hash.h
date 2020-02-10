@@ -1,12 +1,7 @@
 /**
-*
-*    @file Hash.h
-*    @date February 13, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file Hash.h
+*  @date February 13, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __HASH_170808485161582608310807_H__

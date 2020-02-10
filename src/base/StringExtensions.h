@@ -1,12 +1,7 @@
 /**
-*
-*    @file StringExtensions.h
-*    @date August 5, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file StringExtensions.h
+*  @date August 5, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __STRINGEXTENSIONS_1565033595646069092_H__

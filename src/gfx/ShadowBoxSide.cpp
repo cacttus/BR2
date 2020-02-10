@@ -6,7 +6,7 @@
 #include "../gfx/RenderParams.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShadowBoxSide.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
@@ -34,7 +34,7 @@ ShadowBoxSide::ShadowBoxSide(
     _bMustUpdate = true;
     _pLightSource = pLightSource;
 
-    _pViewport = std::make_shared<WindowViewport>(_pParentBox->getFboWidth()
+    _pViewport = std::make_shared<RenderViewport>(_pParentBox->getFboWidth()
         , _pParentBox->getFboHeight()
         , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
         , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
@@ -189,7 +189,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
     {
         _pVisibleSet->sortAndDrawMeshes(
             [](std::shared_ptr<VertexFormat> fmt) {
-            return Gu::getShaderMaker()->getShadowShader(fmt);
+            return getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
         },
             [&](std::shared_ptr<ShaderBase> sb) {
             sb->bind();
@@ -211,7 +211,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
             if (mn != nullptr) {
                 if (mn->getMeshSpec() != nullptr) {
                     std::shared_ptr<VertexFormat> fmt = mn->getMeshSpec()->getVertexFormat();
-                    sb = Gu::getShaderMaker()->getShadowShader(fmt);
+                    sb = getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
                     if(sb!=nullptr){
                         break;
 
@@ -231,7 +231,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
                 if (mn != nullptr) {
                     if (mn->getMeshSpec() != nullptr) {
                         std::shared_ptr<VertexFormat> fmt = mn->getMeshSpec()->getVertexFormat();
-                        std::shared_ptr<ShaderBase> sb = Gu::getShaderMaker()->getShadowShader(fmt);
+                        std::shared_ptr<ShaderBase> sb = getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
                         if (sb != nullptr) {
                             RenderParams rp;
                             rp.setShader(sb);

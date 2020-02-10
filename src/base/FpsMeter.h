@@ -1,12 +1,7 @@
 /**
-*
-*    @file FpsMeter.h
-*    @date August 10, 2019
-*    @author MetalMario971
-*
-*    © 2019 
-*
-*
+*  @file FpsMeter.h
+*  @date August 10, 2019
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FPSMETER_15654546452638750759_H__

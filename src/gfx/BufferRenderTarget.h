@@ -1,12 +1,7 @@
 /**
-*
-*    @file RenderTarget.h
-*    @date May 27, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file RenderTarget.h
+*  @date May 27, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __RENDERTARGET_149586780355650870_H__

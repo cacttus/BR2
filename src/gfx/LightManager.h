@@ -1,12 +1,7 @@
 /**
-*
-*    @file LightManager.h
-*    @date May 6, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file LightManager.h
+*  @date May 6, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __LIGHTMANAGER_14940893702945849424_H__

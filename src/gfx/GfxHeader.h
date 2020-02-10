@@ -1,11 +1,7 @@
 /**
-*
 *    @file DisplayHeader.h
 *    @date 7/18/2010
 *    @author MetalMario971
-*
-*    © 2011 
-*
 *    This file holds the platform rendering system.
 */
 
@@ -210,7 +206,7 @@ typedef enum {
  //FWDDCL
  class ShaderSubProgram;
  class CameraNode;
- class WindowViewport;
+ class RenderViewport;
  class FrustumBase;
  class ShaderBase;
  class FboShader;
@@ -418,11 +414,12 @@ typedef enum {
  template < class Tx >
  class HasGraphicsContext : public VirtualMemoryShared<Tx> {
  public:
-   std::shared_ptr<GraphicsContext> getGraphicsContext() { return _pContext; }
+   std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
    HasGraphicsContext(std::shared_ptr<GraphicsContext> g) {
      _pContext = g;
    }
    virtual ~HasGraphicsContext() override {
+     _pContext = nullptr;
    }
  private:
    std::shared_ptr<GraphicsContext> _pContext = nullptr;

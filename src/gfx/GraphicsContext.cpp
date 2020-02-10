@@ -25,6 +25,12 @@
 
 
 namespace Game {
+std::shared_ptr<LightManager> GraphicsContext::_pLightManager = nullptr;
+std::shared_ptr<ModelCache> GraphicsContext::_pModelCache = nullptr;
+std::shared_ptr<TexCache> GraphicsContext::_pTexCache = nullptr;
+std::shared_ptr<ParticleMaker> GraphicsContext::_pParticleMaker = nullptr;
+std::shared_ptr<ShaderMaker> GraphicsContext::_pShaderMaker = nullptr;
+
 GraphicsContext::GraphicsContext(){
     _fClearR = 0.02f;
     _fClearG = 0.02f;
@@ -44,13 +50,6 @@ bool GraphicsContext::init() {
 
     BroLogInfo("GraphicsContext - Making Vtx Formats.");
     makeVertexFormats();
-
-    //In the future we will replace this witht he active object.
-    BroLogInfo("GraphicsContext - Creating Render View");
-    _pFlyCam = std::make_shared<FlyCam>(Gu::getViewport());
-
-    _pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
-    _pFlyCam->getCam()->setPos(vec3(0, 0, -10));
 
     return isValid();
 }

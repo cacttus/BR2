@@ -1,12 +1,7 @@
 /**
-*
-*    @file HappySky.h
-*    @date December 9, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file HappySky.h
+*  @date December 9, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __HAPPYSKY_14813313153843142444_H__

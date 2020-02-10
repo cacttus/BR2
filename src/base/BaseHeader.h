@@ -1,12 +1,7 @@
 /**
-*
-*    @file BaseHeader.h
-*    @date November 12, 2016
-*    @author MetalMario971
-*
-*    � 2016
-*
-*
+*  @file BaseHeader.h
+*  @date November 12, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __BASEHEADER_1478973884162863251_H__

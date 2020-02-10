@@ -4,7 +4,7 @@
 *    @date August 23, 2019
 *    @author MetalMario971
 *
-*    © 2019 
+*    © 2019
 *
 *
 */
@@ -17,17 +17,17 @@
 
 namespace Game {
 /**
-*    @class ProjectFile
-*    @brief
+*  @class ProjectFile
+*  @brief
 *
 */
 class ProjectFile : public XmlFile {
 public:
-    ProjectFile();
-    virtual ~ProjectFile() override;
+  ProjectFile();
+  virtual ~ProjectFile() override;
 
-    t_string _name;
-    t_string _path;
+  t_string _name;
+  t_string _path;
 
 };
 

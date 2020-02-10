@@ -1,12 +1,7 @@
 /**
-*
-*    @file Party.h
-*    @date December 21, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file Party.h
+*  @date December 21, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PARTY_14823443362825418313_H__

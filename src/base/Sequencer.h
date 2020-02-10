@@ -1,12 +1,7 @@
 /**
-*
-*    @file Sequencer.h
-*    @date December 23, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file Sequencer.h
+*  @date December 23, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SEQUENCER_14825455351090302744_H__

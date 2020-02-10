@@ -1,12 +1,7 @@
 /**
-*
-*    @file GpuQuad2.h
-*    @date March 10, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file GpuQuad2.h
+*  @date March 10, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GPUQUAD2_1926533372616313719120_H__

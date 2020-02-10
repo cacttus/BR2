@@ -4,7 +4,6 @@
 *
 *    @author MetalMario971
 *
-*    © 2011
 *    @date 7 / 9 / 2008
 *    modified: 2/21/2010
 *

@@ -1,12 +1,7 @@
 /**
-*
-*    @file SoundCache.h
-*    @date January 19, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file SoundCache.h
+*  @date January 19, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SOUNDCACHE_1484887033955700376_H__

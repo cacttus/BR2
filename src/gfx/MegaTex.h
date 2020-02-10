@@ -1,12 +1,7 @@
 /**
-*
-*    @file MegaTex.h
-*    @date February 19, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file MegaTex.h
+*  @date February 19, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MEGATEX_151906300468150670_H__

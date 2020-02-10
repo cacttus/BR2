@@ -1,12 +1,7 @@
 /**
-*
-*    @file DeferredFramebuffer.h
-*    @date May 28, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file DeferredFramebuffer.h
+*  @date May 28, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __DEFERREDFRAMEBUFFER_1464419631987791295_H__

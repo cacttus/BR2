@@ -16,8 +16,8 @@
 #include "../base/Delta.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../app/WindowManager.h"
 
+#include "../app/WindowManager.h"
 #include "../app/AppBase.h"
 
 #include "../math/MathAll.h"

@@ -1,12 +1,7 @@
 /**
-*
-*    @file TypeCast.h
-*    @date April 8, 2016
-*    @author MetalMario971
-*
-*    � 2016
-*
-*
+*  @file TypeCast.h
+*  @date April 8, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __TYPECAST_14601720251282440992_H__

@@ -4,7 +4,7 @@
 *    @date February 7, 2020
 *    @author MetalMario971
 *
-*    © 2020 
+*    © 2020
 *
 *
 */
@@ -16,17 +16,16 @@
 
 namespace Game {
 /**
-*    @class WindowManager
-*    @brief
-*
+*  @class WindowManager
+*  @brief
 */
 class WindowManager : public VirtualMemory {
   std::vector<std::shared_ptr<GraphicsWindow>> _windows;
 public:
-    WindowManager();
-    virtual ~WindowManager() override;
-    std::shared_ptr<GraphicsWindow> createWindow(std::string title, RenderSystem::e re = RenderSystem::e::OpenGL);
-    void step();
+  WindowManager();
+  virtual ~WindowManager() override;
+  std::shared_ptr<GraphicsWindow> createWindow(std::string title, RenderSystem::e re = RenderSystem::e::OpenGL);
+  void step();
 };
 
 }//ns Game

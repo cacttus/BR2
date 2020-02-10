@@ -1,12 +1,7 @@
 /**
-*
-*    @file ShadowFrustum.h
-*    @date January 25, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file ShadowFrustum.h
+*  @date January 25, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __SHADOWFRUSTUM_15169135621311229167_H__
@@ -37,7 +32,7 @@ class ShadowFrustum : public VirtualMemoryShared<ShadowFrustum> {
 
     int32_t _iShadowFrustumId;
     std::shared_ptr<FrustumBase> _pFrustum = nullptr;
-    std::shared_ptr<WindowViewport> _pViewport = nullptr;
+    std::shared_ptr<RenderViewport> _pViewport = nullptr;
     mat4 _projMatrix;    // Frustum, Proj, View - basic camera parameters
     mat4 _viewMatrix;    //
     mat4 _PVB;

@@ -71,7 +71,7 @@ void UtilMesh::copyBuffersToVao() {
 }
 std::shared_ptr<ShaderBase> UtilMesh::getShader() { 
     if(_pShader == nullptr) { 
-        return Gu::getShaderMaker()->getFlatShader(_pVertexFormat);
+        return getGraphicsContext()->getShaderMaker()->getFlatShader(_pVertexFormat);
     }
     return _pShader; 
 }

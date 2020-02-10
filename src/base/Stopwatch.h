@@ -1,12 +1,7 @@
 /**
-*
-*    @file Stopwatch.h
-*    @date November 8, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file Stopwatch.h
+*  @date November 8, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __STOPWATCH_11036904868224987022_H__
