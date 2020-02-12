@@ -16,12 +16,10 @@ Some design and implementation notes since the devlog was getting too big.
 * Gu
     * OpenGL Contexts
 	* Window Manager
-* AppRunner
-    * _Initializes globals and loads Package, creates scene from package, creates window, attaches main window to scene_
+* AppRunner _Initializes globals, loads Package, creates scene from package, creates main window, attaches window to scene_
 	* GraphicsWindow
 	* Scene
-		* UiScreen
-		* _This is the root of the user interface.  There is one of these per window.
+		* UiScreen _This is the root of the user interface.  There is one of these per window.
 
 
 ## Additional Notes
