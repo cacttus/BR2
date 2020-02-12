@@ -11,7 +11,7 @@
 #include "../base/IOBase.h"
 
 
-namespace Game {
+namespace BR2 {
 /**
 *   @class DynamicBuffer
 *   @details 

@@ -1,7 +1,7 @@
 #include "WorldObject.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 WorldObject::WorldObject()
 {

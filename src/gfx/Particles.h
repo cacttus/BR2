@@ -11,7 +11,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Particles
 *    @brief

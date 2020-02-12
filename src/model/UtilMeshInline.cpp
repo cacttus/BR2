@@ -5,7 +5,7 @@
 #include "../model/FragmentBufferData.h"
 //#include "../gfx/GLRenderSystem.h"
 
-namespace Game {
+namespace BR2 {
 UtilMeshInline::UtilMeshInline(std::shared_ptr<GLContext> ctx) :
   UtilMesh(ctx, v_v3c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
 {

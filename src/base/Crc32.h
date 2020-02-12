@@ -11,7 +11,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Crc32
 *  @brief

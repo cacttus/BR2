@@ -14,7 +14,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class OBB
 *    @brief Oriented bounding box.

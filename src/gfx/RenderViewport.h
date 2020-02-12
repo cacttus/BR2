@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../gfx/ScreenProps.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class WindowViewport
 *  @brief Viewport for rendering to a window.

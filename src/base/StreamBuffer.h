@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../base/IOBase.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class StreamBuffer
 *    @brief Stream Buffer.  Grows/shrinks.

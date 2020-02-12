@@ -10,7 +10,7 @@
 #include "../gfx/ShaderBase.h"
 
 
-namespace Game {
+namespace BR2 {
 ShaderCache::GLProgramBinary::GLProgramBinary(ShaderCache* cc, size_t binLength) :
 	_pShaderCache(cc),
 	_binaryLength(binLength),

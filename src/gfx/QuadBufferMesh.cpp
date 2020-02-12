@@ -8,7 +8,7 @@
 #include "../model/MeshData.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 QuadBufferMesh::QuadBufferMesh( std::shared_ptr<GLContext> c, int32_t count ) : _pContext(c) {
     allocateQuads(count);
     _iCurrentQuadIndex = 0;

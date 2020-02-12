@@ -16,7 +16,7 @@
 
 
 
-namespace Game {
+namespace BR2 {
 ;
 //////////////////////////////////////////////////////////////////////////
 LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNode(nullptr) {

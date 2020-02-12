@@ -17,7 +17,7 @@
 #include "../math/Vec4x.h"
 //Don't include mathal.
 
-namespace Game {
+namespace BR2 {
 //Minimax
 template < class Tx >
 class MinimaxParam;

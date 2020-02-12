@@ -10,7 +10,7 @@
 #include "../base/TextConfigFile.h"
 #include "../base/HashMap.h"
 
-namespace Game {
+namespace BR2 {
 class XmlConfigAttribute : public VirtualMemory {
 public:
   string_t _attrib_name;

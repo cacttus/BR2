@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 * @class LightManager
 * @brief Stores deferred light data on the GPU, and renders shadows.

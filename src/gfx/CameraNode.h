@@ -14,7 +14,7 @@
 #include "../math/MathAll.h"
 #include "../world/PhysicsNode.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class BaseCamera
 *    @brief Base class for cameras in the GL.

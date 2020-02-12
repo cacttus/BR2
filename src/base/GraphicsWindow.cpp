@@ -29,7 +29,7 @@
 
 #include "../world/Scene.h"
 
-namespace Game {
+namespace BR2 {
 
 //Called exclusively by the graphics API
 GraphicsWindow::GraphicsWindow(std::shared_ptr<GLContext> context, bool ismain, string_t title, RenderSystem::e sys) {

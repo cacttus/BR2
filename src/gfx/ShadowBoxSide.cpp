@@ -17,7 +17,7 @@
 #include "../world/PhysicsWorld.h"
 #include "../world/PhysicsGrid.h"
 
-namespace Game {
+namespace BR2 {
 ShadowBoxSide::ShadowBoxSide(
     std::shared_ptr<ShadowBox> pParentBox
     , std::shared_ptr<LightNodePoint> pLightSource

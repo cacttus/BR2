@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Stopwatch
 *    @brief A utility class to measure microseconds of execution.

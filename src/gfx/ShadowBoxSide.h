@@ -14,7 +14,7 @@
 //#include "../material/MaterialHeader.h"
 //#include "../scene/BvhHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class ShadowFrustumSide
 *    @brief Side of a shadow cube frustum.

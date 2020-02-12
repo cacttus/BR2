@@ -24,7 +24,7 @@
 #include "../world/PhysicsWorld.h"
 
 
-namespace Game {
+namespace BR2 {
 std::shared_ptr<ModelCache> GraphicsContext::_pModelCache = nullptr;
 std::shared_ptr<TexCache> GraphicsContext::_pTexCache = nullptr;
 std::shared_ptr<ParticleMaker> GraphicsContext::_pParticleMaker = nullptr;

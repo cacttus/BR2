@@ -26,7 +26,7 @@
 
 
 
-namespace Game {
+namespace BR2 {
 std::multimap<float, std::shared_ptr<PhysicsGrid>>& PhysicsWorld::getVisibleGrids() { return _pRenderBucket->getGrids(); }
 std::multimap<float, std::shared_ptr<BaseNode>>& PhysicsWorld::getVisibleNodes() { return _pRenderBucket->getObjs(); }
 ///////////////////////////////////////////////////////////////////

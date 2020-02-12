@@ -1,6 +1,6 @@
 #include "../base/Delta.h"
 
-namespace Game {
+namespace BR2 {
 Delta::Delta() {
 }
 Delta::~Delta() {

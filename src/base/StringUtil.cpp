@@ -11,7 +11,7 @@
 #include <string>
 
 
-namespace Game {
+namespace BR2 {
 
 StringUtil::StringUtil()
 {

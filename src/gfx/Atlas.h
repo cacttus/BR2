@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../math/MathAll.h"
-namespace Game {
+namespace BR2 {
 
 namespace SpriteFlags { typedef enum { 
     Shift_V = 0x01

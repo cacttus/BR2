@@ -13,7 +13,7 @@
 #include "../math/Vec4x.h"
 #include "../math/PlaneEx3.h"
 #include "../math/Algorithm.h"
-namespace Game {
+namespace BR2 {
 
 
 /**

@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class SyncTimer
 *    @brief  A timer that runs synchronous with the game clock.  Updates to the lambda get called on the engine's update() routine.

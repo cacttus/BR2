@@ -14,7 +14,7 @@
 
 
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Gui2d
 *    @brief

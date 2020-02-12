@@ -23,7 +23,7 @@
 #include "../world/PhysicsShapes.h"
 #include "../world/PhysicsShapes.h"
 
-namespace Game {
+namespace BR2 {
 ;
 //////////////////////////////////////////////////////////////////////////
 MeshData::MeshData(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName)

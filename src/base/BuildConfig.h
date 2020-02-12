@@ -9,7 +9,7 @@
 #pragma once
 #ifndef __BUILDCONFIG_14597134672299218799_H__
 #define __BUILDCONFIG_14597134672299218799_H__
-namespace Game {
+namespace BR2 {
 
 #ifdef _DEBUG
 

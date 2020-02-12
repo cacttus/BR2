@@ -13,7 +13,7 @@
 #include "../math/Matrix4x4.h"
 #include "../math/Vec4x.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class ShaderBase
 *    @brief

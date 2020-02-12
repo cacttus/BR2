@@ -12,7 +12,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Scene
 *    @brief The scenegraph holding all relevant objects.
@@ -28,8 +28,6 @@ public:
   std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
   std::shared_ptr<PhysicsWorld> getPhysicsWorld() { return _pPhysicsWorld; }
   void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }
-  //Returns the camera to render to.
-  std::shared_ptr<UiScreen> getUiScreen() { return _pUiScreen; }
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
 
@@ -39,6 +37,7 @@ public:
   virtual void drawDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override; // draw the non-depth test items (last)
   virtual void drawTransparent(RenderParams& rp) override; //These come after the way after, the very end
+  virtual void drawUI(RenderParams& rp) override;
 
 private:
   bool _bDebugDisableCull = false;

@@ -6,7 +6,7 @@
 #include "../base/SDLUtils.h"
 
 
-namespace Game {
+namespace BR2 {
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
   VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
   VkDebugUtilsMessageTypeFlagsEXT messageType,

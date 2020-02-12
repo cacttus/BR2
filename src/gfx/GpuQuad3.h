@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../math/MathHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *    @class GpuQuad3 
 *    @brief

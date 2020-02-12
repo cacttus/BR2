@@ -13,7 +13,7 @@
 #include "../math/TriPlane.h"
 #include "../math/PlaneEx3.h"
 
-namespace Game{
+namespace BR2{
 
 
 /**

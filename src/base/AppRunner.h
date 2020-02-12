@@ -11,7 +11,7 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 
 /**
 *   @class AppRunner

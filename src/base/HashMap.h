@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../base/Hash.h"
-namespace Game {
+namespace BR2 {
 /**
 *    @class HashMap
 *    @brief Maps strings to items.  This allows you to use

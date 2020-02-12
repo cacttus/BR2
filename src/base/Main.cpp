@@ -5,7 +5,7 @@
 #include "../base/Gu.h"
 #include "../base/AppMain.h"
 
-using namespace Game;
+using namespace BR2;
 int main(int argc, char** argv) {
 
   DebugHelper::debugHeapBegin(false);

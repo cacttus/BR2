@@ -11,7 +11,7 @@
 #include "../base/Allocator.h"
 #include "../base/DynamicBuffer.h"
 
-namespace Game {
+namespace BR2 {
 //Stub for when we add this.
 //template < class Tx >
 //class DynamicBuffer : public VirtualMemory {

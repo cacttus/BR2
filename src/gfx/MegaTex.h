@@ -11,7 +11,7 @@
 #include "../ext/stb_truetype.h"
 
 
-namespace Game {
+namespace BR2 {
 namespace MtTexType { typedef enum { Image, Font } e; }
 
 class MtNode : public VirtualMemoryShared<MtNode> {

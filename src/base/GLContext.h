@@ -9,7 +9,7 @@
 
 #include "../gfx/GraphicsContext.h"
 
-namespace Game {
+namespace BR2 {
 /**
 * @struct GLProfile
 * @brief A Graphics profile that can be tested against the Gpu

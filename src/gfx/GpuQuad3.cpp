@@ -2,7 +2,7 @@
 #include "../math/MathAll.h"
 
 #include "../model/VertexFormat.h"
-namespace Game {
+namespace BR2 {
 GpuQuad3::GpuQuad3()
 {
     for (int i = 0; i < 4; ++i) {

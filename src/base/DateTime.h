@@ -8,7 +8,7 @@
 #define __DATE_2689426881206782656826687_H__
 
 #include "../base/BaseHeader.h"
-namespace Game {
+namespace BR2 {
 
 #define TIME_HH_RSH (0)
 #define TIME_MM_RSH (6)

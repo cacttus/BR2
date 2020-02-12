@@ -34,7 +34,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
 
-namespace Game {
+namespace BR2 {
 
 GLContext::GLContext() {
 }

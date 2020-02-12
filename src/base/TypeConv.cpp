@@ -4,7 +4,7 @@
 
 #include "../base/Logger.h"
 //#endif
-namespace Game {
+namespace BR2 {
 //////////////////////////////////////////////////////////////////////////
 //Explicit versions
 bool TypeConv::strToBool(string_t& s1, bool bThrowIfInvalid)

@@ -14,7 +14,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 //moved defs to mathheader
 class BoxUtils : public VirtualMemory {
 public:

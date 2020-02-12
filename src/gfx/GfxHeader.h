@@ -16,7 +16,7 @@
 #include "../math/Vec4x.h"
 #include "../math/Matrix4x4.h"
 
-namespace Game {
+namespace BR2 {
 // - Channel 1 is depth texture, 0 is base textures
 #define GFX_TEXTURE_CHANNEL_BASE TEXTURE_CHANNEL_0
 #define GFX_TEXTURE_CHANNEL_NORMAL TEXTURE_CHANNEL_1

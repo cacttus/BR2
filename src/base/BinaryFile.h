@@ -10,7 +10,7 @@
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class BinaryFile
 *    @brief Binary parsed file which is loaded into a static buffer in memory via the memory manager.

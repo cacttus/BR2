@@ -1,7 +1,7 @@
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 
 RenderViewport::RenderViewport(
   int32_t w,

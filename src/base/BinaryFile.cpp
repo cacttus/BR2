@@ -7,7 +7,7 @@
 #include "../base/FileSystem.h"
 #include "../base/DiskFile.h"
 
-namespace Game {
+namespace BR2 {
 BinaryFile::BinaryFile() :
     iFilePos(0)
 {

@@ -16,7 +16,7 @@
 #include "../base/TreeNode.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 //GPU Types
 typedef int32_t GpuInt;
 typedef float GpuFloat;

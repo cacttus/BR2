@@ -12,7 +12,7 @@
 
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class WorldObject
 *    @brief Essentially this is a "PhysicsNode".  We should combine these classes.  Then we will add the necessary modifiers as composites.

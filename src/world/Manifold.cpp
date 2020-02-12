@@ -2,7 +2,7 @@
 #include "../world/Manifold.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 void NodeManifold::remove(std::shared_ptr<PhysicsNode> ob) {
     std::set<std::shared_ptr<PhysicsNode>>::iterator obit;

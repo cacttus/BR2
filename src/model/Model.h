@@ -18,7 +18,7 @@
 #include "../model/BaseNode.h"
 #include "../world/PhysicsNode.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class KeyFrame
 *  @brief A keyframe for a 3D mesh animation.

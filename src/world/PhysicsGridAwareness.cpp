@@ -4,7 +4,7 @@
 #include "../world/PhysicsGridAwareness.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 PhysicsGridAwareness::PhysicsGridAwareness(MpFloat rxz, float incXZ, MpFloat ry, float incY) {
     _vLastAwarenessPos = getAwarenessPos();

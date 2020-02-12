@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class TextParser
 *    @brief Parse Text.  Takes a pointer to the text data to parse and increments its own internal copy of the pointer.

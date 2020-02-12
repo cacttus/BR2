@@ -10,7 +10,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/GraphicsWindow.h"
 
-namespace Game {
+namespace BR2 {
 Logger::Logger() {
 }
 Logger::~Logger() {
@@ -52,14 +52,14 @@ void Logger::logInfo(const char* msg) {
 
   logInfo(string_t(msg));
 }
-void Logger::logError(const char* msg, Game::Exception* e) {
+void Logger::logError(const char* msg, BR2::Exception* e) {
   if (_bEnabled == false) {
     return;
   }
 
   logError(string_t(msg), e);
 }
-void Logger::logWarn(const char* msg, Game::Exception* e) {
+void Logger::logWarn(const char* msg, BR2::Exception* e) {
   if (_bEnabled == false) {
     return;
   }
@@ -82,7 +82,7 @@ void Logger::logDebug(string_t msg, int line, char* file) {
 
   log(msg, createMessageHead(LogLevel::Debug), NULL);
 }
-void Logger::logError(string_t msg, Game::Exception* e) {
+void Logger::logError(string_t msg, BR2::Exception* e) {
   if (_bEnabled == false) {
     return;
   }
@@ -92,7 +92,7 @@ void Logger::logError(string_t msg, Game::Exception* e) {
 
   log(msg, createMessageHead(LogLevel::Error), e);
 }
-void Logger::logError(string_t msg, int line, char* file, Game::Exception* e, bool hideStackTrace) {
+void Logger::logError(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace) {
   if (_bEnabled == false) {
     return;
   }
@@ -120,14 +120,14 @@ void Logger::logInfo(string_t msg, int line, char* file) {
   addLineFileToMsg(msg, line, file);
   log(msg, createMessageHead(LogLevel::Info), NULL);
 }
-void Logger::logWarn(string_t msg, Game::Exception* e) {
+void Logger::logWarn(string_t msg, BR2::Exception* e) {
   if (_bEnabled == false) {
     return;
   }
   SetLoggerColor_Warn();
   log(msg, createMessageHead(LogLevel::Warn), e);
 }
-void Logger::logWarn(string_t msg, int line, char* file, Game::Exception* e) {
+void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e) {
   if (_bEnabled == false) {
     return;
   }
@@ -135,7 +135,7 @@ void Logger::logWarn(string_t msg, int line, char* file, Game::Exception* e) {
   addLineFileToMsg(msg, line, file);
   log(msg, createMessageHead(LogLevel::Warn), e);
 }
-void Logger::logWarnCycle(string_t msg, int line, char* file, Game::Exception* e, int iCycle) {
+void Logger::logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle) {
   //prevents per-frame logging conundrum
   if (Gu::getMainWindow() && Gu::getMainWindow()->getGraphicsContext()) {
     if (Gu::getMainWindow()->getGraphicsContext()->getFpsMeter()->frameMod(iCycle)) {
@@ -143,14 +143,14 @@ void Logger::logWarnCycle(string_t msg, int line, char* file, Game::Exception* e
     }
   }
 }
-void Logger::logErrorCycle(string_t msg, int line, char* file, Game::Exception* e, int iCycle) {
+void Logger::logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle) {
   if (Gu::getMainWindow() && Gu::getMainWindow()->getGraphicsContext()) {
     if (Gu::getMainWindow()->getGraphicsContext()->getFpsMeter()->frameMod(iCycle)) {
       logError(msg, line, file, e);
     }
   }
 }
-void Logger::log(string_t msg, string_t header, Game::Exception* e) {
+void Logger::log(string_t msg, string_t header, BR2::Exception* e) {
   std::lock_guard<std::mutex> guard(_mtLogWriteMutex);
 
   string_t m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";

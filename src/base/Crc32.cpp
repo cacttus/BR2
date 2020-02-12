@@ -1,7 +1,7 @@
 #include "../base/Crc32.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 Crc32::Crc32(uint32_t polynomial, uint32_t seed) :
   _uiPolynomial(polynomial)

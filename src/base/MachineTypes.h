@@ -25,7 +25,7 @@
 
 #include "../base/GlobalIncludes.h"
 
-namespace Game {
+namespace BR2 {
 
 typedef std::string string_t;
 typedef std::wstring wstring_t;

@@ -13,7 +13,7 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../ext/stb_truetype.h"
 
-namespace Game {
+namespace BR2 {
 //////////////////////////////////////////////////////////////////////////
 #pragma region MtTex
 

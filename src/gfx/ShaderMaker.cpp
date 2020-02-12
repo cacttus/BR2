@@ -12,7 +12,7 @@
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 ShaderMaker::ShaderMaker() {
 }
 ShaderMaker::~ShaderMaker() {

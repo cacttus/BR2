@@ -17,7 +17,7 @@
 #include "../gfx/RenderUtils.h"
 
 
-namespace Game {
+namespace BR2 {
 VaoShader::VaoShader(std::shared_ptr<GLContext> ctx, std::shared_ptr<ShaderBase> pShader, std::shared_ptr<VertexFormat> fmt) :
   _pVertexFormat(fmt), _pShader(pShader), _pContext(ctx) {
 }

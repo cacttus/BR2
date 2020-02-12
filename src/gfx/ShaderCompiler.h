@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 struct ShaderIncludeRef {
     string_t* str;
     size_t lineNo;

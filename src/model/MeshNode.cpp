@@ -33,7 +33,7 @@
 #include "../world/RenderBucket.h"
 #include "../gfx/Picker.h"
 
-namespace Game {
+namespace BR2 {
 
 ///////////////////////////////////////////////////////////////////
 

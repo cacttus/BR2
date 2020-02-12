@@ -11,7 +11,7 @@
 #include "../model/ModelHeader.h"
 #include "../model/BaseNode.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class MeshNode
 *  @brief Basically this is MeshNode*

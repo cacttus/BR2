@@ -3,7 +3,7 @@
 #include "../gfx/BufferRenderTarget.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 BufferRenderTarget::~BufferRenderTarget() {
   glDeleteTextures(1, &_iGlTexId);

@@ -13,7 +13,7 @@
 #define __BITHACKS_90737118105551832723055_H__
 
 #include "../base/MachineTypes.h"
-namespace Game {
+namespace BR2 {
 
 //low level bit stuff
 class BitHacks {

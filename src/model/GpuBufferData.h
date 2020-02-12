@@ -15,7 +15,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class GpuBufferData
 *  @brief Generic data for the GPU buffer.

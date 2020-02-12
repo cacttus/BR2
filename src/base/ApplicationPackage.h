@@ -11,7 +11,7 @@
 #include "../base/HashMap.h"
 #include "../base/XmlFile.h"
 
-namespace Game {
+namespace BR2 {
 class ProjectPackageFileEntry {
 public:
   std::string _strUnformattedPath;

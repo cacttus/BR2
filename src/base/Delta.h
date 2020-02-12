@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Delta
 *  @brief The delta is the timekeeper of the engine.  It represents the seconds since the previous frame code has finished, up to the point that you call it.  

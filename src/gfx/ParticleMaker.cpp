@@ -10,7 +10,7 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/RenderParams.h"
 #include "../model/VertexFormat.h"
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 ParticleMaker::ParticleMaker() {
 }

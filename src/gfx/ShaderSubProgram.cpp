@@ -2,7 +2,7 @@
 #include "../gfx/ShaderSubProgram.h"
 
 
-namespace Game {
+namespace BR2 {
 ShaderSubProgram::ShaderSubProgram() {
 }
 ShaderSubProgram::~ShaderSubProgram() {

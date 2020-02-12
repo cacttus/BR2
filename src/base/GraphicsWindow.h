@@ -11,7 +11,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 //Pass Scene + RenderTarget to the RenderPipe
 class RenderTarget : public VirtualMemoryShared<RenderTarget> {
 public:

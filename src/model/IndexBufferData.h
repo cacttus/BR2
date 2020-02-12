@@ -14,7 +14,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class IndexBufferData
 *    @brief stores indexes in a generic buffer with either a 16 or 32 bit index format.

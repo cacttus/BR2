@@ -14,7 +14,7 @@
 
 #include "../math/MathHeader.h"
 #include "../math/Vec3x.h"
-namespace Game {
+namespace BR2 {
 
 
 class ProjectedRay : public VirtualMemory { 

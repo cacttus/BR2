@@ -31,7 +31,7 @@
 #include "../model/IboData.h"
 
 
-namespace Game {
+namespace BR2 {
 
 //////////////////////////////////////////////////////////////////////////
 std::shared_ptr<UiEventFunc> UiEventFunc::create(std::function<void(UiEventId::e eventId, void*)> f) {

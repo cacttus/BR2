@@ -11,7 +11,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Context
 *  @brief Graphics state information.  Contains the OpenGL Context, and the shared data between contexts.

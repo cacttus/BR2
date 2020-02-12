@@ -1,7 +1,7 @@
 #include "../model/FragmentBufferData.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 FragmentBufferData::FragmentBufferData(std::shared_ptr<VertexFormat> vft) : _pVertexFormat(vft) {
   _v2f1 = _pVertexFormat->getComponentForUserType(VertexUserType::e::v2_01);
   _v3f1 = _pVertexFormat->getComponentForUserType(VertexUserType::e::v3_01);

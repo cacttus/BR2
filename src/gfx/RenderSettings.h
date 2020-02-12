@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 
 
-namespace Game {
+namespace BR2 {
 class RenderDebug : public VirtualMemoryShared<RenderDebug> {
     bool _bShadowHelpVisible = false;
     bool _bShowBoneBoxes = false;

@@ -14,7 +14,7 @@
 
 #include "../model/UtilMesh.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class UtilMeshGrid
 *  @brief draws a grid.

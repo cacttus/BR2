@@ -6,7 +6,7 @@
 #include "../base/GLContext.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 TextBufferMesh::TextBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : _pContext(c) {
   _iMaxQuads = count;
   _iCurrentQuadIndex = 0;

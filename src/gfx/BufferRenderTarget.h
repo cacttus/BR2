@@ -8,7 +8,7 @@
 #define __RENDERTARGET_149586780355650870_H__
 
 #include "../gfx/GfxHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *    @class RenderTarget
 *    @brief

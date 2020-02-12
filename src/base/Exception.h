@@ -9,7 +9,7 @@
 
 #include "../base/MachineTypes.h"
 
-namespace Game {
+namespace BR2 {
 class Exception {
     int _line;
     string_t _msg;

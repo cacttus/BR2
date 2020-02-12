@@ -68,7 +68,7 @@ extern "C" {
 #endif
 #endif
 
-namespace Game {
+namespace BR2 {
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
 std::shared_ptr<InputManager> Gu::_pInput = nullptr;
 std::shared_ptr<ApplicationPackage> Gu::_pAppPackage = nullptr;
@@ -99,11 +99,11 @@ bool Gu::is64Bit() {
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
-    Gu::getEngineConfig()->setShowConsole(Game::TypeConv::strToBool(value));
+    Gu::getEngineConfig()->setShowConsole(BR2::TypeConv::strToBool(value));
     BroLogInfo("Overriding show console window: " + value);
   }
   else if (key == "--game-host") {
-    Gu::getEngineConfig()->setGameHostAttached(Game::TypeConv::strToBool(value));
+    Gu::getEngineConfig()->setGameHostAttached(BR2::TypeConv::strToBool(value));
     BroLogInfo("Overriding game host: " + value);
   }
   else {

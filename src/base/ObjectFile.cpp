@@ -7,7 +7,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/MeshData.h"
 
-namespace Game {
+namespace BR2 {
 
 ///////////////////////////////////////////////////////////////////
 ObjectFile::ObjectFile(std::shared_ptr<GLContext> c) : 

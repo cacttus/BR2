@@ -2,7 +2,7 @@
 #include "../world/PhysicsShapes.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 
 

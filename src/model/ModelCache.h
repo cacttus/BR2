@@ -15,7 +15,7 @@
 #include "../base/BaseHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class ModelCache
 *  @brief Handles meshes, and caches meshes on the GPU.  Also imports meshes, and converts them to proprietary mesh format.

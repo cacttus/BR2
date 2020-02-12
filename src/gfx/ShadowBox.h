@@ -10,7 +10,7 @@
 
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class PointLightShadowBox
 *    @brief Shadow map box for a point light.

@@ -14,7 +14,7 @@
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 
 /**
 *  @class Material

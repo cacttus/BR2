@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 
 
-namespace Game {
+namespace BR2 {
 SyncTimer::SyncTimer(bool start) {
     _bRunning = start;
 }

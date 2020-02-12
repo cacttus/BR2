@@ -11,7 +11,7 @@
 #include "../model/ModelHeader.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 class MatData : public VirtualMemory {
 public:
   string_t _strMatName = "";

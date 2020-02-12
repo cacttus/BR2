@@ -3,7 +3,7 @@
 #include "../gfx/ShaderBase.h"
 
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 ShaderAttribute::ShaderAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_t attribIndex) :
     _iGLLocation(NoAttribLocationFound)

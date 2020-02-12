@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
 
-namespace Game {
+namespace BR2 {
 XmlFile::XmlFile() {
 }
 XmlFile::XmlFile(string_t loc) : TextConfigFile(loc) {

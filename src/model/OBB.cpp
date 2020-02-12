@@ -2,7 +2,7 @@
 #include "../model/UtilMeshInline.h"
 
 
-namespace Game {
+namespace BR2 {
 OBB::OBB() {
 }
 OBB::~OBB() {

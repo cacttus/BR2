@@ -14,7 +14,7 @@
 
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class PhysicsGridAwareness
 *    @brief

@@ -5,7 +5,7 @@
 #include "../base/FileSystem.h"
 #include "../base/Logger.h"
 
-namespace Game {
+namespace BR2 {
 void TextDataFile::msg(string_t msg, bool error) {
   _vecMessages.push_back(Stz(error ? "ERROR:" : "") + _fileName + ": " + msg);
 }

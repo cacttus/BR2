@@ -8,7 +8,7 @@
 #define __DISKFILE_22684246896097193333998_H__
 
 #include "../base/IOBase.h"
-namespace Game {
+namespace BR2 {
 
 /**
 *   @class DiskFile

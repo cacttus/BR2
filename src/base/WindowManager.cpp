@@ -3,7 +3,7 @@
 #include "../gfx/GraphicsApi.h"
 #include "../base/GraphicsWindow.h"
 
-namespace Game {
+namespace BR2 {
 WindowManager::WindowManager() {
 }
 WindowManager::~WindowManager() {

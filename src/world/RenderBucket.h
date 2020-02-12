@@ -17,7 +17,7 @@
 
 
 
-namespace Game {
+namespace BR2 {
 class BvhCollectionParams : public VirtualMemory {
 public:
     std::shared_ptr<FrustumBase> _pFrustum = nullptr;    // the frustum to collect from

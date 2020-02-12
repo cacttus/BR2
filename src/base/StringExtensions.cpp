@@ -1,7 +1,7 @@
 #include "../base/StringExtensions.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 
 
 std::string operator+(const std::string& str, const char& rhs) {

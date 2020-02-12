@@ -3,7 +3,7 @@
 
 #include "../base/Gu.h"   
 
-namespace Game {
+namespace BR2 {
 //////////////////////////////////////////////////////////////////////////
 TreeNode::TreeNode() :
     _pParent(NULL)

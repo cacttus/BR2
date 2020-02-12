@@ -7,7 +7,7 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/RenderSettings.h"  
 
-namespace Game {
+namespace BR2 {
 Material::Material(string_t name) {
   _strName = name;
   _v4Spec.construct(1, 1, 1, 1);

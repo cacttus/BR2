@@ -10,7 +10,7 @@
 #include "../base/XmlFile.h"
 //#include "../base/PoundFile.h"
 
-namespace Game {
+namespace BR2 {
 
 class EngineConfigFile : public XmlFile {
 protected:

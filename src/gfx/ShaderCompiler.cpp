@@ -6,7 +6,7 @@
 #include "../gfx/ShaderSubProgram.h"
 
 
-namespace Game {
+namespace BR2 {
 ShaderCompiler::ShaderCompiler(std::shared_ptr<GLContext> ct, string_t fileDir) : _fileDir(fileDir), _pContext(ct)
 {
 }

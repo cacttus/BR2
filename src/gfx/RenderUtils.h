@@ -11,7 +11,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class RenderUtils
 *    @brief    This class supplies some basic utility functions to render default

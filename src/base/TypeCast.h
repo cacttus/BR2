@@ -9,7 +9,7 @@
 
 //#include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 
 
 template < typename Tx, typename Ty >

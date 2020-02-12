@@ -2,15 +2,15 @@
 
 #include "../base/Logger.h"
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 InputManager::InputManager()
 {
     //Keyboard keys init
     for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
-        _kbKeys[i] = Game::ButtonState::Up;
+        _kbKeys[i] = BR2::ButtonState::Up;
     }
-    _eRmb = _eLmb = Game::ButtonState::Up;
+    _eRmb = _eLmb = BR2::ButtonState::Up;
 
 }
 InputManager::~InputManager()
@@ -52,7 +52,7 @@ void InputManager::setKeyDown(SDL_Scancode keyCode) {
         BroLogError("scancode outside range:" + keyCode);
     }
     else {
-        _kbKeys[keyCode] = Game::ButtonState::e::Press;
+        _kbKeys[keyCode] = BR2::ButtonState::e::Press;
     }
 
     // SDL_bool withControl = !!(event->key.keysym.mod & KMOD_CTRL);
@@ -67,7 +67,7 @@ void InputManager::setKeyUp(SDL_Scancode keyCode)
         BroLogError("scancode outside range: " + keyCode);
     }
     else {
-        _kbKeys[keyCode] = Game::ButtonState::Release;
+        _kbKeys[keyCode] = BR2::ButtonState::Release;
     }
 }
 void InputManager::setLmbState(ButtonState::e bs) {
@@ -93,12 +93,12 @@ void InputManager::postUpdate() {
 
     _vLastMousePos = _vMousePos;
 }
-void InputManager::updateButtState(Game::ButtonState::e &eState) {
-    if (eState == Game::ButtonState::e::Press) {
-        eState = Game::ButtonState::e::Down;
+void InputManager::updateButtState(BR2::ButtonState::e &eState) {
+    if (eState == BR2::ButtonState::e::Press) {
+        eState = BR2::ButtonState::e::Down;
     }
-    else if (eState == Game::ButtonState::Release) {
-        eState = Game::ButtonState::e::Up;
+    else if (eState == BR2::ButtonState::Release) {
+        eState = BR2::ButtonState::e::Up;
     }
 }
 bool InputManager::keyState(SDL_Scancode key, ButtonState::e bs) {

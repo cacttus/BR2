@@ -11,7 +11,7 @@
 #include "../model/IndexBufferData.h"
 #include "../model/MeshNode.h"
 
-namespace Game {
+namespace BR2 {
 
 /**
 *    @fn parseGenParams

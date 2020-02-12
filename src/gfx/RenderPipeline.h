@@ -10,21 +10,23 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
-class DOFFbo : public HasGraphicsContext<DOFFbo> {
+namespace BR2 {
+class DOFFbo : public VirtualMemoryShared<DOFFbo> {
 public:
-    
-    GLuint _uiDOFFboId;
-    GLuint _uiTexId0;
-    DOFFbo(std::shared_ptr<GLContext> ct, int32_t w, int32_t h);
-    virtual ~DOFFbo();
+  DOFFbo(std::shared_ptr<GLContext> ct, int32_t w, int32_t h);
+  virtual ~DOFFbo();
+  GLuint _uiDOFFboId;
+  GLuint _uiTexId0;
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
+private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 /**
 *  @class RenderPipe
 *  @brief Manages the render pipeline.
 *  TODO: Each render pass should be a set of classes, giving us the ability to swap render passes in/out of the render pipeline.
 */
-class RenderPipeline : public HasGraphicsContext<RenderPipeline>  {
+class RenderPipeline : public VirtualMemoryShared<RenderPipeline> {
 public:
   RenderPipeline(std::shared_ptr<GraphicsWindow> w);
   virtual ~RenderPipeline() override;
@@ -40,64 +42,66 @@ public:
   void setClear(vec4& v);
 
 protected:
-    bool _bMsaaEnabled = false;
-    uint32_t _nMsaaSamples = 0;
-    std::shared_ptr<MeshNode> _pQuadMesh = nullptr;
-    std::shared_ptr<ShaderBase> _pDeferredShader = nullptr;
-    std::shared_ptr<ShaderBase> _pForwardShader = nullptr;
+  bool _bMsaaEnabled = false;
+  uint32_t _nMsaaSamples = 0;
+  std::shared_ptr<MeshNode> _pQuadMesh = nullptr;
+  std::shared_ptr<ShaderBase> _pDeferredShader = nullptr;
+  std::shared_ptr<ShaderBase> _pForwardShader = nullptr;
 
-    int32_t _iLastWidth, _iLastHeight;  //Last weidth/height gotten from the screen manager.
+  int32_t _iLastWidth, _iLastHeight;  //Last weidth/height gotten from the screen manager.
 
-    std::shared_ptr<BufferRenderTarget> _pMsaaDepth = nullptr;
-    std::shared_ptr<BufferRenderTarget> _pBlittedDepth = nullptr;
-    std::shared_ptr<BufferRenderTarget> _pPick = nullptr;
-   // std::shared_ptr<RenderTarget> _pPickDepth = nullptr;
+  std::shared_ptr<BufferRenderTarget> _pMsaaDepth = nullptr;
+  std::shared_ptr<BufferRenderTarget> _pBlittedDepth = nullptr;
+  std::shared_ptr<BufferRenderTarget> _pPick = nullptr;
+  // std::shared_ptr<RenderTarget> _pPickDepth = nullptr;
 
-    std::shared_ptr<DeferredFramebuffer> _pMsaaDeferred = nullptr; //If no multisampling is enabled this is equal to the blittedFramebuffer object
-    std::shared_ptr<DeferredFramebuffer> _pBlittedDeferred = nullptr;
+  std::shared_ptr<DeferredFramebuffer> _pMsaaDeferred = nullptr; //If no multisampling is enabled this is equal to the blittedFramebuffer object
+  std::shared_ptr<DeferredFramebuffer> _pBlittedDeferred = nullptr;
 
-    std::shared_ptr<ForwardFramebuffer> _pMsaaForward = nullptr;
-    std::shared_ptr<ForwardFramebuffer> _pBlittedForward = nullptr;
+  std::shared_ptr<ForwardFramebuffer> _pMsaaForward = nullptr;
+  std::shared_ptr<ForwardFramebuffer> _pBlittedForward = nullptr;
 
-    std::shared_ptr<ShadowBox> _pShadowBoxFboMaster = nullptr;
-    std::shared_ptr<ShadowFrustum> _pShadowFrustumMaster = nullptr;
+  std::shared_ptr<ShadowBox> _pShadowBoxFboMaster = nullptr;
+  std::shared_ptr<ShadowFrustum> _pShadowFrustumMaster = nullptr;
 
-    std::shared_ptr<DOFFbo> _pDOFFbo = nullptr;
-    std::shared_ptr<Texture2DSpec> _pEnvTex = nullptr;//Enviro map - for mirrors (coins)
+  std::shared_ptr<DOFFbo> _pDOFFbo = nullptr;
+  std::shared_ptr<Texture2DSpec> _pEnvTex = nullptr;//Enviro map - for mirrors (coins)
 
-    vec4 _vClear;
+  vec4 _vClear;
 
-    //PipeBit::e _ePipeBit = PipeBit::e::Full;
-    //std::bitset<8> _pipeBits;
+  //PipeBit::e _ePipeBit = PipeBit::e::Full;
+  //std::bitset<8> _pipeBits;
 
-    std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+  std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
 
-    bool _bRenderInProgress = false;
+  bool _bRenderInProgress = false;
 
-    void blitDeferredRender(std::shared_ptr<CameraNode> cam);
-    void createQuadMesh(int w, int h);
-    void checkMultisampleParams();
-    void checkDeviceCaps(int iWidth, int iHeight);
+  std::shared_ptr<GLContext> getContext();
 
-    void saveScreenshot();
-    void copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted);
-    void debugForceSetPolygonMode();
-    void releaseFbosAndMesh();
-    void setShadowUf();
+  void blitDeferredRender(std::shared_ptr<CameraNode> cam);
+  void createQuadMesh(int w, int h);
+  void checkMultisampleParams();
+  void checkDeviceCaps(int iWidth, int iHeight);
 
-    void beginRenderDeferred();
-    void endRenderDeferred();
-    void beginRenderForward();
-    void endRenderForward();
-    void renderShadows(std::shared_ptr<CameraNode> cam);
-    void beginRenderShadows();
-    void endRenderShadows();
+  void saveScreenshot();
+  void copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted);
+  void debugForceSetPolygonMode();
+  void releaseFbosAndMesh();
+  void setShadowUf();
 
-    void endRenderAndBlit(std::shared_ptr<CameraNode> pCam);
+  void beginRenderDeferred();
+  void endRenderDeferred();
+  void beginRenderForward();
+  void endRenderForward();
+  void renderShadows(std::shared_ptr<CameraNode> cam);
+  void beginRenderShadows();
+  void endRenderShadows();
 
-    void postProcessDOF(std::shared_ptr<CameraNode> cam);
-    void postProcessDeferredRender();
-    void enableDisablePipeBits();
+  void endRenderAndBlit(std::shared_ptr<CameraNode> pCam);
+
+  void postProcessDOF(std::shared_ptr<CameraNode> cam);
+  void postProcessDeferredRender();
+  void enableDisablePipeBits();
 };
 
 

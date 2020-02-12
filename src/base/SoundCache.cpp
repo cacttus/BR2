@@ -5,7 +5,7 @@
 #include "../base/FileSystem.h"
 
 
-namespace Game {
+namespace BR2 {
 #pragma region SoundSpec
 SoundSpec::SoundSpec(string_t sFIle) : _sFilePath(sFIle)
 {

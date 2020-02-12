@@ -10,7 +10,7 @@
 #include "../base/TextConfigFile.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class PoundFile
 *    @brief A file that uses # as comments.

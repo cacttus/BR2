@@ -7,7 +7,7 @@
 #include "../base/GLContext.h"
 #include "../base/GraphicsWindow.h"
 
-namespace Game {
+namespace BR2 {
 FrameSync::FrameSync(std::shared_ptr<GLContext> ct) {
   _bVsyncDisabled = false;
   _pContext = ct;

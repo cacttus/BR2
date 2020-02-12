@@ -8,7 +8,7 @@
 #define __FRAMESYNC_27052177462681769929099_H__
 
 #include "../gfx/GfxHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class FrameSync
 *  @brief Synchronize the number of updates or "frames" per second in a running application (i.e. in a while loop).  

@@ -12,7 +12,7 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderParams.h"
 
-namespace Game {
+namespace BR2 {
 SkyBox::SkyBox() {
 }
 SkyBox::~SkyBox() {

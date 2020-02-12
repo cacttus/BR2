@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Sequencer
 *    @brief manages sequenceas of actions (lambdas)

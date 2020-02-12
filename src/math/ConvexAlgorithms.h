@@ -14,7 +14,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 
 class ConvexUtils {
 public:

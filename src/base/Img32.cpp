@@ -5,7 +5,7 @@
 #include "../base/Logger.h"
 #include "../base/BinaryFile.h"
 
-namespace Game {
+namespace BR2 {
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -374,9 +374,9 @@ Pixel4ub Img32::normalizePixel(int32_t x, int32_t y, float depth) {
     Fv /= len;
     depth /= len;
 
-    pix.r() = (t_byte)(Game::MathUtils::round(Fh*255.0f));
-    pix.g() = (t_byte)(Game::MathUtils::round(Fv*255.0f));
-    pix.b() = (t_byte)(Game::MathUtils::round(depth*255.0f));
+    pix.r() = (t_byte)(BR2::MathUtils::round(Fh*255.0f));
+    pix.g() = (t_byte)(BR2::MathUtils::round(Fv*255.0f));
+    pix.b() = (t_byte)(BR2::MathUtils::round(depth*255.0f));
     pix.a() = 255;
 
     return pix;

@@ -14,7 +14,7 @@
 //#include "../bottle/WorldGrid.h"
 //#include "../bottle/W25Manifold.h"
 
-namespace Game {
+namespace BR2 {
 PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps) : BaseNode(ps)
 {
     _fMass = ps->getMass();

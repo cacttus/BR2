@@ -11,7 +11,7 @@
 #include <TlHelp32.h>
 #endif
 
-namespace Game {
+namespace BR2 {
 HANDLE hCrtLog;
 bool _bDoDebug = false;
 

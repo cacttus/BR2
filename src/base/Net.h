@@ -10,7 +10,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Net
 *    @brief

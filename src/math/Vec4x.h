@@ -10,7 +10,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @struct Vec4x
 *    @brief 4D vector class.

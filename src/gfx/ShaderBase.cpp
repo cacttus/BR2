@@ -24,7 +24,7 @@
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 ShaderBase::ShaderBase(std::shared_ptr<GraphicsContext> ct, string_t strName) : HasGraphicsContext(ct) {
   setProgramName(strName);

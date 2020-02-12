@@ -15,7 +15,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class HierarchyString
 *    @brief A string "flat file" hierarchy.  Sort of like an L system string it parses

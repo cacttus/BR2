@@ -16,7 +16,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class TileBuffer
 *  @brief This is an old system, and likely, isn't needed anymore.

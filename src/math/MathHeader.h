@@ -14,7 +14,7 @@
 
 //No includes
 #include "../base/BaseHeader.h"
-namespace Game {
+namespace BR2 {
 //////////////////////////////////////////////////////////////////////////
 
 //define for float instead of double data structres

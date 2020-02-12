@@ -17,7 +17,7 @@
 
 #include "../math/Vec3x.h"
 
-namespace Game {
+namespace BR2 {
 
 /**
 *    @class Sphere3f

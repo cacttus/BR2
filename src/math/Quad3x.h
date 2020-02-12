@@ -14,7 +14,7 @@
 
 #include "../math/Vec3x.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Quad3x
 *    @brief 3D plane quad.  In 3 space with a normal.

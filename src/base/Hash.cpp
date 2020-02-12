@@ -3,7 +3,7 @@
 #include "../math/Algorithm.h"
 #include "../base/Gu.h"
 
-namespace Game {
+namespace BR2 {
 ;
 
 //Prime Numbers

@@ -3,7 +3,7 @@
 #include "../math/Vec3x.h"
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 
 

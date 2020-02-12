@@ -14,7 +14,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../base/RetCode.h"
-namespace Game {
+namespace BR2 {
 ;
 /**
 *    @class BaseImage

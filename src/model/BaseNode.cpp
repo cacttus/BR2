@@ -16,7 +16,7 @@
 #include "../math/MathAll.h"
 #include "../world/RenderBucket.h"
 
-namespace Game {
+namespace BR2 {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSpec::BaseSpec(string_t strName) {

@@ -12,7 +12,7 @@
 #include "../base/MachineTypes.h"
 #include "../base/Exception.h"
 #include "../base/TypeCast.h"
-namespace Game {
+namespace BR2 {
 
 #define frameStampToStr(x) uint64ToStr(x)
 

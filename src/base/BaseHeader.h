@@ -10,7 +10,7 @@
 #include "../base/MachineTypes.h"
 #include "../base/ConsoleColors.h"
 
-namespace Game {
+namespace BR2 {
 
 //Operating System global defines
 //We can use either SDL's defines, or use the defines in the expected OS headers
@@ -250,6 +250,7 @@ public:
   virtual void drawDebug(RenderParams& rp) = 0;
   virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
   virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
+  virtual void drawUI(RenderParams& rp) = 0;
 };
 
 #define ShowMessageBoxOnce(msg) { \

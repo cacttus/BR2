@@ -5,7 +5,7 @@
 #include "../base/SDLUtils.h"
 
 
-namespace Game {
+namespace BR2 {
 Net::Net() {
     init();
 }

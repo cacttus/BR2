@@ -18,6 +18,7 @@
 
 #include "../base/GraphicsWindow.h"
 #include "../base/WindowManager.h"
+#include "../base/ApplicationPackage.h"
 
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
@@ -29,7 +30,7 @@
 #include "../gfx/FlyCam.h"
 
 
-namespace Game {
+namespace BR2 {
 Scene::Scene() {
   //In the future we will replace this witht he active object.
   BroLogInfo("Creating Flying Camera");
@@ -144,7 +145,7 @@ void Scene::drawForward(RenderParams& rp) {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getContext()->getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+    _pTex = Gu::getContext()->getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
   }
 
   RenderUtils::drawAxisShader();
@@ -157,6 +158,10 @@ void Scene::drawNonDepth(RenderParams& rp) {
   draw2d();
 }
 void Scene::drawTransparent(RenderParams& rp) {
+}
+void Scene::drawUI(RenderParams& rp) {
+  _pUiScreen->update(Gu::getInputManager());
+  _pUiScreen->drawForward();
 }
 void Scene::draw2d() {
   drawDebugText();

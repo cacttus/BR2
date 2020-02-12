@@ -15,7 +15,7 @@
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 namespace VertexUserType { typedef enum { v2_01, v3_01, v4_01, v4_02, v4_03, c4_01, c3_01, n3_01, x2_01, i2_01, u2_01, None } e; }
 typedef uint32_t v_index32;
 

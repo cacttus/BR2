@@ -14,7 +14,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 
 //PRS animation
 class PRSAnimation : public VirtualMemory {

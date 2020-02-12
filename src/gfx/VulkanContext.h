@@ -9,7 +9,7 @@
 
 #include "../gfx/GraphicsContext.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class VulkanContext
 *    @brief

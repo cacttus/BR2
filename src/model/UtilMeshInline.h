@@ -14,7 +14,7 @@
 
 #include "../model/UtilMesh.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class UtilMeshInline
 *    @brief A substitute for inline OpenGL draw calls.

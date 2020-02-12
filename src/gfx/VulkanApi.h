@@ -9,7 +9,7 @@
 
 #include "../gfx/GraphicsApi.h"
 
-namespace Game {
+namespace BR2 {
 #define VkExtFn(_vkFn) PFN_##_vkFn _vkFn = nullptr;
 /**
 *    @class VulkanApi

@@ -10,7 +10,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 #ifdef BRO_OS_WINDOWS
 typedef unsigned short mode_t;
 #endif

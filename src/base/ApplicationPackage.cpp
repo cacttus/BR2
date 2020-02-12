@@ -7,7 +7,7 @@
 #include "../base/XmlFile.h"
 #include "../base/OperatingSystem.h"
 
-namespace Game {
+namespace BR2 {
 string_t ApplicationPackage::_strCacheFolderName = "";
 string_t ApplicationPackage::_strEngineConfigFileName = "";
 string_t ApplicationPackage::_strDataPath = "";

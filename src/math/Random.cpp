@@ -1,7 +1,7 @@
 #include "../math/Random.h"
 #include "../base/TypeConv.h"
 
-namespace Game {
+namespace BR2 {
 int32_t Random::_last=1283094874;//Arbitrary
 
 string_t Random::randomNumericString( int nDigits ){

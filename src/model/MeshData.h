@@ -12,7 +12,7 @@
 #include "../model/BaseNode.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class MeshSpec
 *    @brief Describes a geometry mesh.

@@ -9,7 +9,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Vec2x 
 *  @brief 2D vector class.

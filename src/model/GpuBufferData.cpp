@@ -7,7 +7,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../model/GpuBufferData.h"
 
-namespace Game {
+namespace BR2 {
 GpuBufferData::GpuBufferData(std::shared_ptr<GLContext> ct, GLenum bufferType, size_t iElementSize) :
   _glBufferType(bufferType)
   , _iElementSize(iElementSize)

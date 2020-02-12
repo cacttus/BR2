@@ -12,7 +12,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Texture2D
 *  @brief Stores information about a texture map on the GPU.
@@ -63,7 +63,6 @@ private:
   bool _bLoadFailed = false;
   TexFilter::e _eFilter = TexFilter::e::Linear;
   bool _bTransparent = false;
-  std::shared_ptr<GLContext> _pContext = nullptr;
 
   void load(string_t loc, bool bRepeatU, bool bRepeatV);
   void load(std::shared_ptr<Img32> s);

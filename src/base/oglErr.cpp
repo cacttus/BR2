@@ -6,7 +6,7 @@
 #include "../base/EngineConfig.h"
 #include "../base/SDLUtils.h"
 
-namespace Game {
+namespace BR2 {
 bool OglErr::chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool doNotLog){
     if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking() == true) {
         return handleErrors(ctx, true, bDoNotBreak, doNotLog);

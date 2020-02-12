@@ -29,7 +29,7 @@
 #include "../model/ModelCache.h"
 
 
-namespace Game {
+namespace BR2 {
 void AppRunner::runApp(const std::vector<string_t>& args) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
@@ -40,7 +40,7 @@ void AppRunner::runApp(const std::vector<string_t>& args) {
   loadAppPackage();
 
   //**Must come first before other logic
-  Gu::initGlobals(Gu::getAppPackage()->getCacheDir(), Gu::getAppPackage()->getConfigPath(), args);
+  Gu::initGlobals(args);
   {
     initSDL();
 

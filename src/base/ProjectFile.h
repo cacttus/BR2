@@ -10,7 +10,7 @@
 #include "../base/AppHeader.h"
 #include "../base/XmlFile.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class ProjectFile
 *  @brief

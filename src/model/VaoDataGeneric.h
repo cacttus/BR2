@@ -16,7 +16,7 @@
 #include "../model/ModelHeader.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 
 //This is a VAO for each shader.  It matches the Vertex Format to the
 //given shader's inputs.

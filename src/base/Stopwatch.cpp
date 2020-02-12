@@ -5,7 +5,7 @@
 #include "../base/Gu.h"
 
 
-namespace Game {
+namespace BR2 {
 
 Stopwatch::Stopwatch(string_t strName, bool bStart) :
   _tA(0)

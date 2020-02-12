@@ -8,7 +8,7 @@
 
 #include "../base/DateTime.h"
 
-namespace Game {
+namespace BR2 {
 string_t FileSystem::_strExePath = "";
 ///////////////////////////////////////////////////////////////////
 FileSystem::FileSystem() {

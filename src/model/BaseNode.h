@@ -21,7 +21,7 @@
 #include "../math/Matrix4x4.h"
 #include "../base/TreeNode.h"
 
-namespace Game {
+namespace BR2 {
 class UtilMeshInline;
 class BaseSpec : public VirtualMemoryShared<BaseSpec> {
 public:

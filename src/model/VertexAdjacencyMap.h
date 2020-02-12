@@ -17,7 +17,7 @@
 //#include "../topo/IndexTypes.h"
 //#include "../topo/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class VertexAdjacencyMap
 *    @brief Mapping of vertexes to adjacent faces.  Adjacent faces are offsets into the index buffer.

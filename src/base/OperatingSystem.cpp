@@ -10,7 +10,7 @@
 #include <commdlg.h>
 #endif
 
-namespace Game {
+namespace BR2 {
 
 int32_t OperatingSystem::getNumberOfProcessors() {
 #ifdef BRO_OS_WINDOWS
