@@ -15,73 +15,68 @@
 //#include "../bottle/CongaUtils.h"
 
 namespace Game {
-;
-//////////////////////////////////////////////////////////////////////////
 TileMesh25::TileMesh25(std::shared_ptr<GLContext> c, int32_t nQuads) : _pContext(c), _nQuads(nQuads) {
+  _pVaoData = std::make_shared<VaoDataGeneric>(c, TileMeshVert::getVertexFormat());
 
-    _pVaoData = std::make_shared<VaoDataGeneric>(c, TileMeshVert::getVertexFormat());
-
-    allocateData();
-    copyToGpu(true);
+  allocateData();
+  copyToGpu(true);
 }
 TileMesh25::~TileMesh25() {
-    _pVaoData = nullptr;
-    //DEL_MEM(_pVaoData);
-    freeData();
+  _pVaoData = nullptr;
+  //DEL_MEM(_pVaoData);
+  freeData();
 }
-//////////////////////////////////////////////////////////////////////////
 void TileMesh25::draw(RenderParams& rp) {
-    rp.setCount(_iCurrentQuadIndex*6);
-    rp.setVaoGeneric(_pVaoData);
-    rp.draw();//(getShader()->draw(, _iCurrentQuadIndex * 6);
+  rp.setCount(_iCurrentQuadIndex * 6);
+  rp.setVaoGeneric(_pVaoData);
+  rp.draw();//(getShader()->draw(, _iCurrentQuadIndex * 6);
 }
 void TileMesh25::freeData() {
-    _verts.resize(0);
-   _indexes.resize(0);
+  _verts.resize(0);
+  _indexes.resize(0);
 }
 void TileMesh25::allocateData() {
-    freeData();
+  freeData();
 
-    int nVerts = _nQuads * 4;
-    int nIndexes = _nQuads * 6;
+  int nVerts = _nQuads * 4;
+  int nIndexes = _nQuads * 6;
 
-    _indexes.reserve(nIndexes);
-    _verts.reserve(nVerts);
+  _indexes.reserve(nIndexes);
+  _verts.reserve(nVerts);
 
-    for (int i = 0; i < nIndexes; ++i) {
-        _indexes.push_back(0);
-    }
-    for (int i = 0; i < nVerts; i++) {
-        _verts.push_back(TileMeshVert());
-    }
+  for (int i = 0; i < nIndexes; ++i) {
+    _indexes.push_back(0);
+  }
+  for (int i = 0; i < nVerts; i++) {
+    _verts.push_back(TileMeshVert());
+  }
 
-    size_t iInd = 0;
-    size_t vind = 0;
-    for(int i=0; i<_nQuads; ++i){
-        _indexes[iInd++] = (v_index32)vind + 0; //Tri1 CCW
-        _indexes[iInd++] = (v_index32)vind + 1;
-        _indexes[iInd++] = (v_index32)vind + 3;
-        _indexes[iInd++] = (v_index32)vind + 0; //Tri2 CCW
-        _indexes[iInd++] = (v_index32)vind + 3;
-        _indexes[iInd++] = (v_index32)vind + 2;
-        vind+=4;
-    }
+  size_t iInd = 0;
+  size_t vind = 0;
+  for (int i = 0; i < _nQuads; ++i) {
+    _indexes[iInd++] = (v_index32)vind + 0; //Tri1 CCW
+    _indexes[iInd++] = (v_index32)vind + 1;
+    _indexes[iInd++] = (v_index32)vind + 3;
+    _indexes[iInd++] = (v_index32)vind + 0; //Tri2 CCW
+    _indexes[iInd++] = (v_index32)vind + 3;
+    _indexes[iInd++] = (v_index32)vind + 2;
+    vind += 4;
+  }
 
 }
 void TileMesh25::copyToGpu(bool bInit) {
-    if(bInit) {
-        _pVaoData->fillData(_verts.data(), _verts.size(), _indexes.data(), _indexes.size());
-    }
-    else{
-        _pVaoData->fillData(_verts.data(), _iCurrentQuadIndex*4, nullptr, 0);
-    }
+  if (bInit) {
+    _pVaoData->fillData(_verts.data(), _verts.size(), _indexes.data(), _indexes.size());
+  }
+  else {
+    _pVaoData->fillData(_verts.data(), _iCurrentQuadIndex * 4, nullptr, 0);
+  }
 }
-void TileMesh25::getQuad(TileMeshVert*& p0, TileMeshVert*& p1, TileMeshVert*& p2, TileMeshVert*& p3)
-{
-    p0 = &_verts[_iCurrentQuadIndex*4 + 0];
-    p1 = &_verts[_iCurrentQuadIndex*4 + 1];
-    p2 = &_verts[_iCurrentQuadIndex*4 + 2];
-    p3 = &_verts[_iCurrentQuadIndex*4 + 3];
+void TileMesh25::getQuad(TileMeshVert*& p0, TileMeshVert*& p1, TileMeshVert*& p2, TileMeshVert*& p3) {
+  p0 = &_verts[_iCurrentQuadIndex * 4 + 0];
+  p1 = &_verts[_iCurrentQuadIndex * 4 + 1];
+  p2 = &_verts[_iCurrentQuadIndex * 4 + 2];
+  p3 = &_verts[_iCurrentQuadIndex * 4 + 3];
 }
 
 

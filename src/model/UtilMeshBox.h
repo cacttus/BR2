@@ -21,20 +21,21 @@ namespace Game {
 *
 */
 class UtilMeshBox : public UtilMesh {
+public:
+  UtilMeshBox(std::shared_ptr<GLContext> ctx, Box3f* pCube, vec3& vOffset, Color4f& vColor);
+  virtual ~UtilMeshBox() override;
+  void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
+
+  OVERRIDES void generate();
+  OVERRIDES void preDraw();
+  OVERRIDES void postDraw();
+
 private:
     float _fSize;
     vec3 _vOffset;
     vec4 _vColor;
     bool _blnWireFrame;
     Box3f* _pCube;
-public:
-    UtilMeshBox(std::shared_ptr<GLContext> ctx, Box3f* pCube, vec3& vOffset, Color4f& vColor);
-    virtual ~UtilMeshBox() override ;
-    void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
-
-    OVERRIDES void generate();
-    OVERRIDES void preDraw();
-    OVERRIDES void postDraw();
 };
 
 }//ns game

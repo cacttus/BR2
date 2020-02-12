@@ -19,11 +19,9 @@ namespace Game {
 */
 class AppRunner : public VirtualMemory {
 public:
-  void runApp(const std::vector<string_t>& args, std::shared_ptr<AppBase> rb);
+  void runApp(const std::vector<string_t>& args);
 
 private:
-  // std::shared_ptr<Engine> _pEngine = nullptr;
-  // std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
   SDL_AudioSpec _audioSpec;
 
   t_timeval _tvInitStartTime = 0;
@@ -32,22 +30,21 @@ private:
   TCPsocket _gameHostSocket;//Send and receive data
   TCPsocket _server_tcpsock;//Accept connections
 
-  void initSDL(std::shared_ptr<AppBase> app);
+  void initSDL();
   void doShowError(string_t err, Exception* e = nullptr);
   SDL_bool initAudio();
   void initNet();
   bool handleEvents(SDL_Event* event);
-  void runGameLoop(std::shared_ptr<AppBase> rb);
+  void runApplication();
   void exitApp(string_t error, int rc);
-
-  void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
+  void runApplicationTryCatch();
   bool argMatch(const std::vector<string_t>& args, string_t arg, int32_t iCount);
   bool runCommands(const std::vector<string_t>& args);
   void printVideoDiagnostics();
   void updateWindowHandleForGamehost();
   void attachToGameHost();
   bool handleSDLEvents();
-
+  void loadAppPackage();
 };
 
 

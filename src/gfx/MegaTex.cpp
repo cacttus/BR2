@@ -2,7 +2,7 @@
 #include "../base/Base.h"
 #include "../base/Hash.h"
 #include "../base/Allocator.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/BinaryFile.h"
 #include "../base/GLContext.h"
 #include "../gfx/Gui2d.h"
@@ -117,7 +117,7 @@ void MtFont::createFont() {
     BroLogInfo("Creating font '" + getName() + "'. size=" + _atlasWidth + "x" + _atlasHeight + ".  Baked Char Size =" + _iBakedCharSizePixels);
 
     _pFontBuffer = std::make_shared<BinaryFile>();
-    if (Gu::getPackage()->getFile(getName(), _pFontBuffer) == false) {
+    if (Gu::getAppPackage()->getFile(getName(), _pFontBuffer) == false) {
         BroLogError("Failed to get font file '" + getName() + "'");
         Gu::debugBreak();
         return;

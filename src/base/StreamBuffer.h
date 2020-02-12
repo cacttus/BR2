@@ -18,43 +18,33 @@ namespace Game {
 *    REMOVES - From the beginning.
 */
 class StreamBuffer : public IOBase<char> {
-private:
-    size_t _iAddCountBytes; // bytes in the buffer
-    size_t _iChunkSizeBytes; // Amount to allocate when running out of room
-    Allocator<char> _data;
+public:
+  StreamBuffer(int32_t chunkSize = 512);
+  virtual ~StreamBuffer() override;
 
-    void checkToGrow();
-    void checkToShrink();
-    //void checkToGrowOrShrink();
+  bool getIsEmpty() { return _iAddCountBytes == 0; }
+
+  void copyFrom(StreamBuffer* rhs);
+  virtual RetCode write(const char* bytes, size_t len, int32_t offset = -1);
+  virtual RetCode read(char* buf, size_t len, int64_t buflen = -1, int32_t offset = -1);
+
+  virtual void clear();
+  Allocator<char>* getData();
+  void shiftOutFirstByte();
+  void next(size_t allocCount);
+  string_t toString();
 
 protected:
-    size_t getAddedByteCount() { return _iAddCountBytes; }
+  size_t getAddedByteCount() { return _iAddCountBytes; }
 
-public:
+private:
+  size_t _iAddCountBytes; // bytes in the buffer
+  size_t _iChunkSizeBytes; // Amount to allocate when running out of room
+  Allocator<char> _data;
 
-    StreamBuffer(int32_t chunkSize = 512);
-    virtual ~StreamBuffer() override;
-
-    bool getIsEmpty() { return _iAddCountBytes == 0; }
-
-    void copyFrom(StreamBuffer* rhs);
-    virtual RetCode write(
-        const char* bytes
-        , size_t len
-        , int32_t offset = -1
-    );
-    virtual RetCode read(
-        char* buf
-        , size_t len
-        , int64_t buflen = -1
-        , int32_t offset = -1
-    );
-
-    virtual void clear();
-    Allocator<char>* getData();
-    void shiftOutFirstByte();
-    void next(size_t allocCount);
-    string_t toString();
+  void checkToGrow();
+  void checkToShrink();
+  //void checkToGrowOrShrink();
 };
 
 }//ns Game

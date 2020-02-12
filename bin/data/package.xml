@@ -1,0 +1,6 @@
+
+<TextureDirectory value="./tex/"/>
+<CacheDirectory value="./cache/"/>
+<ShaderDirectory value="./shaders/"/>
+<ModelsTextDirectory value="./mob/"/>
+<ModelsBinDirectory value="./mbi/"/>

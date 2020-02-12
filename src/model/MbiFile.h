@@ -4,7 +4,7 @@
 *    @date January 13, 2018
 *    @author MetalMario971
 *
-*    © 2018 
+*    © 2018
 *
 *
 */
@@ -17,28 +17,25 @@
 
 namespace Game {
 /**
-*    @class MbiFile
-*    @brief Mob Binary file.  The main file for all models.
-*
+*  @class MbiFile
+*  @brief Mob Binary file.  The main file for all models.
 */
 class MbiFile : public VirtualMemory {
 public:
-    const float c_fVersion = 0.3f;
+  const float c_fVersion = 0.3f;
+  std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModels; }
 
+  bool loadAndParse(string_t file);
+  void save(string_t file);
+  MbiFile();
+  virtual ~MbiFile() override;
 
 private:
-    std::vector<std::shared_ptr<ModelSpec>> _vecModels;
-    void parseErr(string_t str, bool bDebugBreak, bool bFatal);
-     std::shared_ptr<BinaryFile> _pFile = nullptr;
-    string_t _fileLoc;
-    void postLoad();
-public:
-    std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModels;}
-
-    bool loadAndParse(string_t file);
-    void save( string_t file);
-    MbiFile();
-    virtual ~MbiFile() override;
+  std::vector<std::shared_ptr<ModelSpec>> _vecModels;
+  void parseErr(string_t str, bool bDebugBreak, bool bFatal);
+  std::shared_ptr<BinaryFile> _pFile = nullptr;
+  string_t _fileLoc;
+  void postLoad();
 };
 
 }//ns Game

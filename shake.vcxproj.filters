@@ -129,9 +129,6 @@
     <ClInclude Include="src\base\OperatingSystemHeader.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\Package.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\PoundFile.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -753,6 +750,9 @@
     <ClInclude Include="src\gfx\RenderViewport.h">
       <Filter>graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\ApplicationPackage.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BinaryFile.cpp">
@@ -828,9 +828,6 @@
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\OperatingSystem.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\Package.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\PoundFile.cpp">
@@ -1309,6 +1306,9 @@
     </ClCompile>
     <ClCompile Include="src\gfx\RenderViewport.cpp">
       <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\ApplicationPackage.cpp">
+      <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

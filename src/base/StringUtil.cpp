@@ -5,6 +5,12 @@
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 
+//For wstring conversion
+#include <locale>
+#include <codecvt>
+#include <string>
+
+
 namespace Game {
 
 StringUtil::StringUtil()
@@ -577,7 +583,13 @@ string_t StringUtil::wStrToStr(std::wstring wstr) {
     //use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
     std::string str = converter.to_bytes(wstr);
     return str;
-
+}
+wstring_t StringUtil::strToWStr(std::string str) {
+  //oh..stackoverflow
+  //https://stackoverflow.com/questions/2573834/c-convert-string-or-char-to-wstring-or-wchar-t/26914562
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  std::wstring wide = converter.from_bytes(str);
+  return wide;
 }
 
 }//nS GAME

@@ -1,12 +1,7 @@
 /**
-*
 *    @file Vec2x.h
 *    @date February 26, 2015
 *    @author MetalMario971
-*
-*    � 2015
-*
-*    20160124 - added aliases
 */
 #pragma once
 #ifndef __VEC2X_2283131541297662696812355_H__
@@ -15,7 +10,10 @@
 #include "../math/MathHeader.h"
 
 namespace Game {
-
+/**
+*  @class Vec2x 
+*  @brief 2D vector class.
+*/
 template < class Tx >
 class Vec2x : public PureMemory {
 public:

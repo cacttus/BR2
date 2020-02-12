@@ -1,17 +1,11 @@
 /**
-*
 *    @file MeshSpec.h
 *    @date October 16, 2011
 *    @author MetalMario971
-*
-*    © 2011
-*
-*
 */
 #pragma once
 #ifndef __MESHSPEC_157287882194863255526453_H__
 #define __MESHSPEC_157287882194863255526453_H__
-
 
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"

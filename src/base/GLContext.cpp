@@ -14,7 +14,7 @@
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
 #include "../app/AppBase.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 
 #include "../math/MathAll.h"
 

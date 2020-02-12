@@ -4,7 +4,7 @@
 *    @date November 21, 2015
 *    @author MetalMario971
 *
-*    © 2015 
+*    © 2015
 *
 *
 */
@@ -16,27 +16,28 @@
 
 namespace Game {
 /**
-*    @class UtilMeshGrid
-*    @brief draws a grid.
-*
+*  @class UtilMeshGrid
+*  @brief draws a grid.
 */
 class UtilMeshGrid : public UtilMesh {
-    Color4f _color;
-    int32_t _nSlices;
-    float _fSliceWidth;
-    Vec3f _center;
-    float _lineWidth;
 public:
-    OVERRIDES void generate();
-    OVERRIDES void preDraw();
-    OVERRIDES void postDraw();
+  OVERRIDES void generate();
+  OVERRIDES void preDraw();
+  OVERRIDES void postDraw();
 
-    //+-- CTOR/DTOR --+
-    UtilMeshGrid(std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f,
-                int32_t nSlices = 60,
-                float fSliceWidth = 20.0f,
-                Vector3& center = Vector3(0, 0, 0));
-    virtual ~UtilMeshGrid() override ;
+  //+-- CTOR/DTOR --+
+  UtilMeshGrid(std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f,
+    int32_t nSlices = 60,
+    float fSliceWidth = 20.0f,
+    Vector3& center = Vector3(0, 0, 0));
+  virtual ~UtilMeshGrid() override;
+private:
+  Color4f _color;
+  int32_t _nSlices;
+  float _fSliceWidth;
+  Vec3f _center;
+  float _lineWidth;
+
 };
 
 }//ns game

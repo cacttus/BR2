@@ -3,24 +3,18 @@
 
 
 namespace Game {
-///////////////////////////////////////////////////////////////////
-OBB::OBB()
-{
-
+OBB::OBB() {
 }
-OBB::~OBB()
-{
-
+OBB::~OBB() {
 }
-///////////////////////////////////////////////////////////////////
-void OBB::calc(mat4& mat, const Box3f* base){
-    //calc transform.
-    base->getPoints(_verts,8);
-    for(int i=0; i<8; ++i){
-        vec3 v = mat * vec4(_verts[i], 1);
-        _verts[i] = v;
-    }
-    _bInvalid = false;
+void OBB::calc(mat4& mat, const Box3f* base) {
+  //calc transform.
+  base->getPoints(_verts, 8);
+  for (int i = 0; i < 8; ++i) {
+    vec3 v = mat * vec4(_verts[i], 1);
+    _verts[i] = v;
+  }
+  _bInvalid = false;
 }
 //void OBB::drawForward(UtilMeshInline& mi) {
 //    vec3* v = _verts; //shorthand

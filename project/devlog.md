@@ -23,6 +23,7 @@ Moved contextual managers back into GLContext.
 Removed generic "GraphicsContext" in favor of using GLContext (sorry, vulkan, maybe later).
 Moved the app's filesystem directories into Package.
 Moved more stuff around.
+Renamed Package to ApplicationPackage.  It's an application, but it's also 'packed' so settled on AppPackage.
 
 *2/7/2020*
 Scene

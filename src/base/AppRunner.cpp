@@ -16,9 +16,9 @@
 #include "../base/Delta.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+#include "../base/ApplicationPackage.h"
 
 #include "../app/WindowManager.h"
-#include "../app/AppBase.h"
 
 #include "../math/MathAll.h"
 
@@ -30,24 +30,40 @@
 
 
 namespace Game {
-void AppRunner::runApp(const std::vector<string_t>& args, std::shared_ptr<AppBase> app) {
+void AppRunner::runApp(const std::vector<string_t>& args) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
-  //Root the engine FIRST so we can find the EngineConfig.dat
+  //Root the engine FIRST so we can find the config.xml
   FileSystem::init(args[0]);
 
+  //Must come before globals to get the cache directory.
+  loadAppPackage();
+
   //**Must come first before other logic
-  Gu::initGlobals(app, args);
+  Gu::initGlobals(Gu::getAppPackage()->getCacheDir(), Gu::getAppPackage()->getConfigPath(), args);
   {
-    initSDL(app);
+    initSDL();
 
     if (runCommands(args) == false) {
-      runGameLoopTryCatch(app);
+      runApplicationTryCatch();
     }
   }
   Gu::deleteGlobals();
 }
-void AppRunner::initSDL(std::shared_ptr<AppBase> app) {
+void AppRunner::loadAppPackage() {
+  string_t file = OperatingSystem::showOpenFileDialog("Open project package.", "(*.xml)\0*.xml\0\0", "*.xml", FileSystem::getExecutableDirectory());
+
+  if (StringUtil::isNotEmpty(file)) {
+    BroLogInfo("Building Package");
+    std::shared_ptr<ApplicationPackage> pack = std::make_shared<ApplicationPackage>();
+    pack->build(FileSystem::getExecutableFullPath());
+    Gu::setPackage(pack);
+  }
+  else {
+    BroLogInfo("Package could not be loaded.  Folder not selected, or invalid path.");
+  }
+}
+void AppRunner::initSDL() {
   //Nix main()
   SDL_SetMainReady();
 
@@ -73,6 +89,7 @@ void AppRunner::initSDL(std::shared_ptr<AppBase> app) {
   BroLogInfo("Creating Managers.");
   Gu::createManagers();
 }
+
 void AppRunner::doShowError(string_t err, Exception* e) {
   if (e != nullptr) {
     OperatingSystem::showErrorDialog(e->what() + err);
@@ -190,7 +207,7 @@ void AppRunner::initNet() {
 void SignalHandler(int signal) {
   BroThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
 }
-void AppRunner::runGameLoopTryCatch(std::shared_ptr<AppBase> rb) {
+void AppRunner::runApplicationTryCatch() {
   typedef void(*SignalHandlerPointer)(int);
 
   //Attempt to catch segfaults that doesn't really work.
@@ -200,7 +217,7 @@ void AppRunner::runGameLoopTryCatch(std::shared_ptr<AppBase> rb) {
 
   BroLogInfo("Entering Game Loop");
   try {
-    runGameLoop(rb);
+    runApplication();
   }
   catch (Exception * e) {
     doShowError("Runtime Error", e);
@@ -267,7 +284,10 @@ bool AppRunner::handleEvents(SDL_Event* event) {
 
       int n = MathUtils::broMin(10, MathUtils::broMax(-10, event->wheel.y));
 
-      Gu::getApp()->userZoom(n);
+      //This should really instigate a script
+      if (Gu::getAppPackage()) {
+        Gu::getAppPackage()->userZoom(n);
+      }
       n++;
     }
     if (event->wheel.x != 0) {
@@ -291,7 +311,7 @@ bool AppRunner::handleSDLEvents() {
   }
   return done;
 }
-void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
+void AppRunner::runApplication() {
 #ifdef __WINDOWS__
   SDL_ShowCursor(SDL_DISABLE);
 #endif
@@ -301,8 +321,6 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
 
   //test the globals before starting the game loop
   Gu::updateGlobals();
-
-  rb->init();
 
   while (true) {
     Perf::beginPerf();

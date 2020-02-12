@@ -4,7 +4,7 @@
 *    @date June 14, 2014
 *    @author MetalMario971
 *
-*    © 2014 
+*    © 2014
 *
 *
 */
@@ -23,22 +23,19 @@ namespace Game {
 *    @brief Mapping of vertexes to adjacent faces.  Adjacent faces are offsets into the index buffer.
 *
 */
-class VertexAdjacencyMap : public VirtualMemory  {
+class VertexAdjacencyMap : public VirtualMemory {
 public:
-    typedef std::set<v_index32> FaceList;
-    typedef std::map<v_index32, FaceList* > AdjacencyMap;
+  typedef std::set<v_index32> FaceList;
+  typedef std::map<v_index32, FaceList* > AdjacencyMap;
+public:
+  VertexAdjacencyMap();
+  virtual ~VertexAdjacencyMap() override;
+  //void addMapping( t_index index, uint32_t face_index);
+  void addMappingIgnoreDupes(v_index32 index, uint32_t face_index);
+  FaceList* getVertexIndexMapping(v_index32 index);
 private:
 
-    AdjacencyMap* _vmap = nullptr;    // Maps vertex indexes to face indexes in a face buffer.
-public:
-
-    //void addMapping( t_index index, uint32_t face_index);
-    void addMappingIgnoreDupes(v_index32 index, uint32_t face_index);
-    FaceList* getVertexIndexMapping(v_index32 index);
-
-    //+-- CTOR/DTOR --+
-    VertexAdjacencyMap();
-    virtual ~VertexAdjacencyMap() override ;
+  AdjacencyMap* _vmap = nullptr;    // Maps vertex indexes to face indexes in a face buffer.
 };
 
 }//ns game

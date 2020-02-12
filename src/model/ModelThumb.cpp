@@ -1,6 +1,6 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../app/AppBase.h"

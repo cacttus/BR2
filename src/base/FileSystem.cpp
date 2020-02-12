@@ -1,7 +1,7 @@
 #include "../base/FileSystem.h"
 #include "../base/GLContext.h"
 #include "../app/AppBase.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
@@ -23,7 +23,7 @@ void FileSystem::init(string_t executablePath) {
   string_t b = FileSystem::getCurrentDirectory();
 }
 string_t FileSystem::appendCachePathToFile(const string_t& strFileName) {
-  std::shared_ptr<Package> rb = Gu::getPackage();
+  std::shared_ptr<ApplicationPackage> rb = Gu::getAppPackage();
   string_t ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
   return ret;
 }
@@ -466,7 +466,6 @@ void FileSystem::SDLFileFree(char*& pOutData) {
   pOutData = nullptr;
 }
 int FileSystem::SDLFileRead(std::string fname, char*& pOutData, int64_t& _iOutSizeBytes, bool addNull) {
-
   fname = getFilePath(fname);
 
   SDL_RWops* rw = SDL_RWFromFile(fname.c_str(), "rb");

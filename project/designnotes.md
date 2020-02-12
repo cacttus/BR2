@@ -17,12 +17,13 @@ Some design and implementation notes since the devlog was getting too big.
 
 * Gu
     * Package (1)
-    * GLContext(s) (1+)
+    * GLContext (1+)
 	    * Texture Manager (1, static)
 		* Mesh Manager (1, static)
         * ShaderManager (1, static)
         * FrameSync (1)
         * Delta (1)
+        * RenderPipeline (1) 
 	* Window Manager (1)
         * GraphicsWindow (1+)
 		    * GLContext (1, ref)

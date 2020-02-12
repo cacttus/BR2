@@ -60,14 +60,14 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, st
         return;
     }
 
-    if (!Gu::getPackage()->fileExists((string_t)location))
+    if (!Gu::getAppPackage()->fileExists((string_t)location))
     {
         pSubProg->setStatus(ShaderStatus::e::CompileError);
         Gu::debugBreak();
         BroThrowException("Could not find shader file or #include file, " + location);
     }
     // - Store the greater modify time for shader cache.
-    modTime = Gu::getPackage()->getLastModifyTime((string_t)location);
+    modTime = Gu::getAppPackage()->getLastModifyTime((string_t)location);
     greatestModifyTime = MathUtils::broMax(modTime, greatestModifyTime);
 
     // - Load all source bytes
@@ -209,7 +209,7 @@ ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<string_t>& li
     return _includes;
 }
 void ShaderCompiler::loadSourceData(string_t& location, std::shared_ptr<BinaryFile> __out_ sourceData) {
-    if(!Gu::getPackage()->fileExists(location)){
+    if(!Gu::getAppPackage()->fileExists(location)){
         sourceData = NULL;
         _loadStatus = ShaderStatus::e::FileNotFound;
         BroLogError("Shader Source File not found : " + location);
@@ -217,7 +217,7 @@ void ShaderCompiler::loadSourceData(string_t& location, std::shared_ptr<BinaryFi
         return;
     }
 
-    Gu::getPackage()->getFile(location, sourceData, true);
+    Gu::getAppPackage()->getFile(location, sourceData, true);
   //  sourceData.fread(location, true);
     //DiskFile::readAllBytes(location, sourceData);
 

@@ -12,8 +12,6 @@
 namespace Game {
 class ProjectFile;
 class Script;
-class AppBase;
-class AppMain;
 class GraphicsWindow;
 class OpenGLWindow;
 class VulkanWindow;

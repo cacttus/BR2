@@ -68,6 +68,8 @@ public:
   static void showConsole();
   static void hideConsole();
   static int strCaseCmp(const string_t& str1, const string_t& str2);
+  static string_t showOpenFolderDialog(string_t baseFolder);
+  static string_t showOpenFileDialog(string_t title, string_t filter, string_t defaultext, string_t basePath);
   //  static bool keyDown(int code);
 };
 

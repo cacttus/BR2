@@ -12,42 +12,31 @@
 namespace Game {
 /**
 *    @class Stopwatch
-*    @brief
-*
+*    @brief A utility class to measure microseconds of execution.
 */
 class Stopwatch : public VirtualMemory {
-    t_timeval _tA,_tB; //DWORD
-    string_t _strName;
-    string_t _strCache;
 public:
-    Stopwatch(string_t name = "", bool bStart = false );
-    virtual ~Stopwatch() override ;
+  Stopwatch(string_t name = "", bool bStart = false);
+  virtual ~Stopwatch() override;
 
-    void start(string_t name = "");
-    virtual string_t stop(bool bLogMillis = false, bool bFancy = false);
-    bool pulse(t_timeval isGreaterThanMs);
+  void start(string_t name = "");
+  virtual string_t stop(bool bLogMillis = false, bool bFancy = false);
+  bool pulse(t_timeval isGreaterThanMs);
 
-    t_timeval getStart() { return _tA; }
-    void setStart(t_timeval a) { _tA = a; }
-    void print(string_t& st);//print to stdout
-    t_timeval deltaMicroseconds();
-    t_timeval deltaMicrosecondsRemainder();
-    t_timeval deltaMilliseconds();
-    string_t toString(bool bFancy = true);
-    string_t pulse(bool bLog = false, bool bFancy = false);    // convert current delta to string and restart the counter.
+  t_timeval getStart() { return _tA; }
+  void setStart(t_timeval a) { _tA = a; }
+  void print(string_t& st);//print to stdout
+  t_timeval deltaMicroseconds();
+  t_timeval deltaMicrosecondsRemainder();
+  t_timeval deltaMilliseconds();
+  string_t toString(bool bFancy = true);
+  string_t pulse(bool bLog = false, bool bFancy = false);    // convert current delta to string and restart the counter.
+
+private:
+  t_timeval _tA, _tB; //DWORD
+  string_t _strName;
+  string_t _strCache;
 };
-
-//class PerformanceCounter : public Stopwatch {
-//    
-//public:
-//    PerformanceCounter(t_string name = "");
-//    virtual ~PerformanceCounter() override;
-//
-//    void start(t_string name = "");
-//    virtual t_string stop(bool bLogMillis = false) override;
-//
-//};
-
 
 }//ns game
 

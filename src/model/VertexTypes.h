@@ -20,15 +20,17 @@ namespace VertexUserType { typedef enum { v2_01, v3_01, v4_01, v4_02, v4_03, c4_
 typedef uint32_t v_index32;
 
 class v_v2c4x2 {
+public:
+  vec2 v;
+  vec4 c;
+  vec2 x;
+  float _xpad0;
+  float _xpad1;
+  STATIC std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
+private:
     friend class GraphicsContext;
     static std::shared_ptr<VertexFormat> _pVertexFormat;
-public:
-    vec2 v;
-    vec4 c;
-    vec2 x;
-    float _xpad0;
-    float _xpad1;
-    STATIC std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
+
 };
 
 

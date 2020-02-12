@@ -17,7 +17,7 @@
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/InputManager.h"
 #include "../gfx/Texture2DSpec.h"
 

@@ -67,7 +67,7 @@
     <ClInclude Include="src\base\oglErr.h" />
     <ClInclude Include="src\base\OperatingSystem.h" />
     <ClInclude Include="src\base\OperatingSystemHeader.h" />
-    <ClInclude Include="src\base\Package.h" />
+    <ClInclude Include="src\base\ApplicationPackage.h" />
     <ClInclude Include="src\base\Perf.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
@@ -303,7 +303,7 @@
     <ClCompile Include="src\base\ObjectFile.cpp" />
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />
-    <ClCompile Include="src\base\Package.cpp" />
+    <ClCompile Include="src\base\ApplicationPackage.cpp" />
     <ClCompile Include="src\base\Perf.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
     <ClCompile Include="src\base\SDLUtils.cpp" />

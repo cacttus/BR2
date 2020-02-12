@@ -18,6 +18,8 @@ namespace Game {
 #endif
 #elif __WINDOWS__
 #define BRO_OS_WINDOWS 1
+#else
+#pragma error Error: Incorrect operating system, or undefined system.
 #endif
 
 #define OVERRIDES virtual 
@@ -129,7 +131,7 @@ class SoundSpec;
 class SoundInst;
 class Sequence;
 class Sequencer;
-class AppBase;
+//class AppBase;
 class _NoInheritClassBase {};
 class Logger;
 class Texture2DSpec;
@@ -150,7 +152,7 @@ class Delta;
 class EngineConfig;
 class EngineConfigFile;
 class TreeNode;
-class Package;
+class ApplicationPackage;
 class Crc32;
 
 

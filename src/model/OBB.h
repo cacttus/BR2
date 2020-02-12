@@ -4,7 +4,7 @@
 *    @date January 16, 2018
 *    @author MetalMario971
 *
-*    © 2018 
+*    © 2018
 *
 *
 */
@@ -17,21 +17,20 @@
 namespace Game {
 /**
 *    @class OBB
-*    @brief 
+*    @brief Oriented bounding box.
 */
 class OBB : public VirtualMemory {
-    vec3 _verts[8];
-    bool _bInvalid = false;
 public:
-    OBB();
-    virtual ~OBB() override;
-    void setInvalid() { _bInvalid = true; }
-    bool getInvalid() { return  _bInvalid; }
-    void calc(mat4& mat, const Box3f* base);
-   // void drawForward(UtilMeshInline& mi);
-    vec3* getVerts() { return _verts;}
-
-
+  OBB();
+  virtual ~OBB() override;
+  void setInvalid() { _bInvalid = true; }
+  bool getInvalid() { return  _bInvalid; }
+  void calc(mat4& mat, const Box3f* base);
+  // void drawForward(UtilMeshInline& mi);
+  vec3* getVerts() { return _verts; }
+private:
+  vec3 _verts[8];
+  bool _bInvalid = false;
 };
 
 }//ns Game

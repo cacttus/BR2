@@ -21,21 +21,19 @@ namespace Game {
 */
 class Gu : public GameMemory {
   static std::shared_ptr<Sequencer> _pSequencer;
-  static std::shared_ptr<AppBase> _pAppBase;
   static std::shared_ptr<InputManager> _pInput;
   static std::shared_ptr<SoundCache> _pSoundCache;
-  static std::shared_ptr<Package> _pPackage;
+  static std::shared_ptr<ApplicationPackage> _pAppPackage;
   static std::shared_ptr<RenderSettings> _pRenderSettings;
   static std::shared_ptr<EngineConfig> _pEngineConfig;
   static std::shared_ptr<Logger> _pLogger;
   static std::shared_ptr<Net> _pNet;
   static std::shared_ptr<WindowManager> _pWindowManager;
   static std::shared_ptr<GLContext> _pActiveContext;
-  static std::shared_ptr<Package> _pPackage;
 
 public:
-  static std::shared_ptr<Package> getPackage() { return _pPackage; }
-  static void setPackage(std::shared_ptr<Package> x) { _pPackage = x; }
+  static std::shared_ptr<ApplicationPackage> getAppPackage() { return _pAppPackage; }
+  static void setPackage(std::shared_ptr<ApplicationPackage> x) { _pAppPackage = x; }
 
   static std::shared_ptr<WindowManager> getWindowManager();
 
@@ -45,11 +43,10 @@ public:
 
   // static std::shared_ptr<GLContext> getGraphicsContext();
   static std::shared_ptr<RenderSettings> getRenderSettings();
-  static std::shared_ptr<Package> getPackage();
 
   static std::shared_ptr<Sequencer> getSequencer();
 
-  static std::shared_ptr<AppBase> getApp();
+  //static std::shared_ptr<AppBase> getApp();
   static std::shared_ptr<InputManager> getInputManager();
   static std::shared_ptr<SoundCache> getSoundCache();
   static std::shared_ptr<EngineConfig> getConfig();
@@ -76,7 +73,7 @@ public:
 
   static void checkErrorsDbg();
   static void checkErrorsRt();
-  static void initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>& args);
+  static void initGlobals(string_t cache, string_t config, const std::vector<std::string>& args);
   static void deleteGlobals();
 
   static void debugBreak();

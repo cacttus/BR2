@@ -1,32 +1,23 @@
 /**
-*
 *    @file Vec3x.h
 *    Update: May 5, 2008
 *            Changed the return types to the machine types.
 *            Excluded interpolation.
 *    
-*    Update: 2014 10 08    Yep, bye bye old vector system, hello new vector system
+*    Update: 2014 10 08 
 *    @date August 24, 2014
 *    @author MetalMario971
-*
-*    � 2014 
-*
-*
 */
 #pragma once
 #ifndef __VEC3I_1793212932844915478412_H__
 #define __VEC3I_1793212932844915478412_H__
 
 #include "../math/MathHeader.h"
-namespace Game {
 
+namespace Game {
 /**
 *    @struct Vec3x
-*    @brief 3 Component Generic vector
-*    TODO: Mat3x, Mat4x, Vec4x
-*    @details A structure to deal with vectors in 3 dimensions.
-*    20160124 - added aliases
-*
+*    @brief 3D vector class.
 */
 template < class Tx >
 class Vec3x : public PureMemory {

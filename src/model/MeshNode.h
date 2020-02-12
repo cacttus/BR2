@@ -1,12 +1,7 @@
 /**
-*
 *    @file MeshNode.h
 *    @date March 26, 2017
 *    @author MetalMario971
-*
-*    � 2017
-*
-*
 */
 #pragma once
 #ifndef __MeshNode_1490572482630426783_H__
@@ -17,11 +12,10 @@
 #include "../model/BaseNode.h"
 
 namespace Game {
-
 /**
-*    @class MeshNode
-*    @brief Basically this is MeshNode*
-*       We carete this from tnhse meshspec class..
+*  @class MeshNode
+*  @brief Basically this is MeshNode*
+*     We carete this from tnhse meshspec class..
 */
 class MeshNode : public BaseNode {
 public:

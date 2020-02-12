@@ -3,7 +3,7 @@
 #include "../base/Delta.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
 #include "../base/SoundCache.h"

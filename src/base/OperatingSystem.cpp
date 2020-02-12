@@ -3,6 +3,13 @@
 #include "../base/BaseAll.h"
 #include "../base/OperatingSystem.h"
 
+#ifdef BRO_OS_WINDOWS
+//For opening folder
+#include <Shlobj.h>
+#include <Shlobj_core.h>
+#include <commdlg.h>
+#endif
+
 namespace Game {
 int32_t OperatingSystem::getNumberOfProcessors() {
 #ifdef BRO_OS_WINDOWS
@@ -561,7 +568,67 @@ void OperatingSystem::hideConsole() {
 #endif
 }
 
+string_t OperatingSystem::showOpenFolderDialog(string_t saved_path) {
+#ifdef BRO_OS_WINDOWS
+  WCHAR path[MAX_PATH];
 
+  const char* path_param = saved_path.c_str();
+
+  BROWSEINFO bi = { 0 };
+  bi.lpszTitle = L"Browse for folder...";
+  bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+  bi.lpfn = [](HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData) {
+    if (uMsg == BFFM_INITIALIZED) {
+      std::string tmp = (const char*)lpData;
+      std::cout << "path: " << tmp << std::endl;
+      SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+    }
+    return 0;
+  };
+  bi.lParam = (LPARAM)path_param;
+
+  LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+  if (pidl != 0) {
+    //get the name of the folder and put it in path
+    SHGetPathFromIDList(pidl, path);
+
+    //free memory used
+    IMalloc* imalloc = 0;
+    if (SUCCEEDED(SHGetMalloc(&imalloc))) {
+      imalloc->Free(pidl);
+      imalloc->Release();
+    }
+
+    return StringUtil::wStrToStr(std::wstring(path));
+  }
+
+#else
+#endif
+
+  return "";
+}
+
+string_t OperatingSystem::showOpenFileDialog(string_t title, string_t filter, string_t defaultext, string_t basePath) {
+  OPENFILENAMEW ofn = { 0 };
+  WCHAR openFileNameReturnString[MAX_PATH];	// the filename will go here from the openfile dialog
+  ZeroMemory(openFileNameReturnString, MAX_PATH);
+
+  ofn.lStructSize = sizeof(OPENFILENAMEA);
+  ofn.lpstrFileTitle = openFileNameReturnString;
+  ofn.nMaxFileTitle = MAX_PATH;
+  ofn.lpstrTitle = title.length() ? StringUtil::strToWStr(title).c_str() : 0;
+  ofn.lpstrFilter = filter.length() ? StringUtil::strToWStr(filter).c_str() : 0;//"COLLADA Files (*.DAE)\0*.DAE\0\0";
+  ofn.lpstrInitialDir = basePath.length() ? StringUtil::strToWStr(basePath).c_str() : 0;
+  ofn.lpstrDefExt = defaultext.length() ? StringUtil::strToWStr(defaultext).c_str() : 0;//"DAE";
+  ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
+
+  if (!GetOpenFileNameW(&ofn)) {
+    return "";
+  }
+  string_t converted = StringUtil::wStrToStr(openFileNameReturnString);
+  return converted;
+}
 //bool OperatingSystem::keyDown(int code)
 //{
 //#ifdef BRO_OS_WINDOWS

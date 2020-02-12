@@ -22,10 +22,10 @@ public:
 *  @brief The game project settings, and filesystem, which may be packed to the end of the game project for convenience.
 *  @note The game project root is defined where the config.xml file is placed in your project directory.
 */
-class Package : public VirtualMemory {
+class ApplicationPackage : public VirtualMemory {
 public:
-  Package();
-  virtual ~Package() override;
+  ApplicationPackage();
+  virtual ~ApplicationPackage() override;
 
   bool isPackage() { return _bIsPacked; }
   bool getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull = false);
@@ -33,6 +33,8 @@ public:
   string_t debugPrint();
   bool fileExists(string_t file);
   time_t getLastModifyTime(string_t str);
+
+  void load(string_t file_path);
 
   string_t makeAssetPath(string_t file);
   string_t makeAssetPath(string_t folder, string_t file);
@@ -47,6 +49,7 @@ public:
   string_t getEnvTexturePath() { return _strEnvTexturePath; }
   string_t getTextureDir() { return _strTextureDir; }
 
+  void userZoom(float amt);
 private:
   std::vector<ProjectPackageFileEntry*> _vecEntries;
   int32_t _iExeLenBytes = 0;
@@ -72,7 +75,7 @@ private:
   std::string parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off);
   ProjectPackageFileEntry* getEntry(std::string fileLoc);
   bool loadExe(std::shared_ptr<BinaryFile> fb);
-
+  void setSz(string_t name, string_t& value, HashMap<XmlConfigEntry> entries);
 
 };
 

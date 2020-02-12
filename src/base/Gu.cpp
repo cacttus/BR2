@@ -15,7 +15,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
 #include "../base/SoundCache.h"
@@ -70,66 +70,23 @@ extern "C" {
 
 namespace Game {
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
-std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
 std::shared_ptr<InputManager> Gu::_pInput = nullptr;
-
-std::shared_ptr<Package> Gu::_pPackage = nullptr;
+std::shared_ptr<ApplicationPackage> Gu::_pAppPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
 std::shared_ptr<WindowManager> Gu::_pWindowManager = nullptr;
 std::shared_ptr<GLContext> Gu::_pActiveContext = nullptr;
-std::shared_ptr<GLContext> Gu::getContext() {
-  return _pActiveContext;
-}
-void Gu::setContext(std::shared_ptr<GLContext> ct) {
-  _pActiveContext = ct;
-}
-//_STPROP(ModelCache);
-//_STPROP(InputManager);
-//_STPROP(FpsMeter);
-//_STPROP(FrameSync);
-//_STPROP(SoundCache);
-//_STPROP(TexCache);
-//_STPROP(LightManager);
-//_STPROP(Picker);
-//_STPROP(PhysicsWorld);
-//_STPROP(ParticleManager);
-//
 
-//std::shared_ptr < RenderSettings> Gu::getRenderSetings() { return _pRenderSettings; }
-//
-//std::shared_ptr<ShaderMaker> getGraphicsContext()->getShaderMaker() { return _pShaderMaker; }
-//std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
-//std::shared_ptr<GLContext> Gu::getGraphicsContext() {
-//  std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
-//  std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
-//  return oglapi->getContext();
-//}
-//std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return Gu::getActiveWindow()->getRenderPipe(); }
-//std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
-//void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
-//void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
-
-std::shared_ptr < Package> Gu::getPackage() { return _pPackage; }
-std::shared_ptr < Sequencer> Gu::getSequencer() { return _pSequencer; }
-std::shared_ptr < WindowManager> Gu::getWindowManager() { return _pWindowManager; }
-std::shared_ptr<AppBase> Gu::getApp() { return _pAppBase; }
+void Gu::setContext(std::shared_ptr<GLContext> ct) { _pActiveContext = ct; }
+std::shared_ptr<ApplicationPackage> Gu::getAppPackage() { return _pAppPackage; }
+std::shared_ptr<Sequencer> Gu::getSequencer() { return _pSequencer; }
+std::shared_ptr<WindowManager> Gu::getWindowManager() { return _pWindowManager; }
 std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
-std::shared_ptr<Logger>       Gu::getLogger() { return _pLogger; }
-//std::shared_ptr<GraphicsApi>  Gu::getGraphicsApi() { return _pGraphicsApi; }
-//std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
+std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
-
-//std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
-
-
-void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
-//void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
-
-
 
 bool Gu::is64Bit() {
   if (sizeof(size_t) == 8) {
@@ -175,10 +132,9 @@ void parsearg(std::string arg) {
   parsearg(key, value);
 }
 
-void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>& args) {
-  //Try to create teh cache dir.
-  //Make sure to check this on IOS
-  FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
+void Gu::initGlobals(string_t cacheDir, string_t configPath, const std::vector<std::string>& args) {
+  //Try to create the cache (temp) folder. Make sure to check this on IOS
+  FileSystem::createDirectoryRecursive(FileSystem::formatPath(cacheDir));
 
   _pAppBase = rb;
 
@@ -188,7 +144,7 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>
 
   //Config
   EngineConfigFile ef;
-  ef.loadAndParse(rb->getConfigPath());
+  ef.loadAndParse(configDir);
   Gu::_pEngineConfig = ef.getConfig();
 
   //Override EngineConfig
@@ -229,12 +185,12 @@ void Gu::deleteGlobals() {
 
   //System Level
   _pInput = nullptr;
-  _pPackage = nullptr;
+  _pAppPackage = nullptr;
   _pLogger = nullptr;
   _pNet = nullptr;
 
 
- // _pGraphicsApi = nullptr;
+  // _pGraphicsApi = nullptr;
   _pAppBase = nullptr;
 }
 
@@ -254,7 +210,7 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
   std::shared_ptr<Img32> ret = nullptr;
 
   std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
-  if (Gu::getPackage()->getFile(imgLoc, fb)) {
+  if (Gu::getAppPackage()->getFile(imgLoc, fb)) {
     //decode
     err = lodepng_decode32(&image, &width, &height, (unsigned char*)fb->getData().ptr(), fb->getData().count());
     if (err != 0) {
@@ -580,12 +536,6 @@ std::string Gu::getCPPVersion() {
 void Gu::createManagers() {
   _pRenderSettings = RenderSettings::create();
 
-  BroLogInfo("Building Package");
-  _pPackage = std::make_shared<Package>();
-  _pPackage->build(FileSystem::getExecutableFullPath());
-
-  BroLogInfo("Creating TextBoss");
-
   BroLogInfo("Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
 
@@ -601,8 +551,8 @@ void Gu::createManagers() {
 
   //*Note: Packages are supposed to be projects.  This creates a 'default' package.
   BroLogInfo("Creating Package");
-  _pPackage = std::make_shared<Package>();
-  _pPackage->loadProject("./");
+  _pAppPackage = std::make_shared<ApplicationPackage>();
+  _pAppPackage->loadProject("./");
 
 }
 void Gu::updateGlobals() {

@@ -274,13 +274,12 @@ void GraphicsWindow::printHelpfulDebug() {
   SDL_GL_GetDrawableSize(win, &dw, &dh);
   BroLogInfo("Draw Size     : " + dw + "x" + dh);
 
-
   SDLUtils::checkSDLErr();
 }
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
-  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getPackage()->getEnvTexturePath());
+  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getAppPackage()->getEnvTexturePath());
   // Gu::setRenderPipe(_pRenderPipe);
 
   //_pRenderPipe->getPipeBits().set();

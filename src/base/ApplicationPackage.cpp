@@ -1,21 +1,46 @@
 #include "../base/Exception.h"
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/StringUtil.h"
 #include "../base/BinaryFile.h"
+#include "../base/XmlFile.h"
 
 namespace Game {
-Package::Package() {
+ApplicationPackage::ApplicationPackage() {
   makeDefaultPaths();
 }
-Package::~Package() {
+ApplicationPackage::~ApplicationPackage() {
   for (ProjectPackageFileEntry* fe : _vecEntries) {
     delete fe;
   }
   _vecEntries.resize(0);
 }
-void Package::makeDefaultPaths() {
+void ApplicationPackage::load(string_t file_path) {
+  //Load a given package.
+  HashMap<XmlConfigEntry> ents = XmlFile::getXMLConfiguration(file_path);
+  setSz("TextureDirectory", _strTextureDir, ents);
+  setSz("CacheDirectory", _strCacheDir, ents);
+  setSz("ShaderDirectory", _strShadersDir, ents);
+  setSz("ModelsTextDirectory", _strModelsTextDir, ents);
+  setSz("ModelsBinDirectory", _strModelsBinDir, ents);
+}
+void ApplicationPackage::setSz(string_t name, string_t& value, HashMap<XmlConfigEntry> entries) {
+  bool set = false;
+  //Set the given value to the first attribute in the given tag identified by 'name'
+  HashMap<XmlConfigEntry>::RefItem<XmlConfigEntry> ent = entries.find("TextureDirectory");
+  if (ent.hasValue()) {
+    if (ent.value()._attrs.size() > 0) {
+      XmlConfigAttribute attr = *(ent.value()._attrs.begin());
+      value = attr._attrib_value;
+      set = true;
+    }
+  }
+  if (set == false) {
+    BroLogWarn("Failed to set Package item for attribute '" + name + "'");
+  }
+}
+void ApplicationPackage::makeDefaultPaths() {
   FileSystem::getExecutableDirectory();
   _strAssetsDir = FileSystem::combinePath(FileSystem::getExecutableDirectory(), "/data/");
 
@@ -25,20 +50,20 @@ void Package::makeDefaultPaths() {
   _strModelsTextDir = FileSystem::combinePath(_strAssetsDir, "/mob/");
   _strModelsBinDir = FileSystem::combinePath(_strAssetsDir, "/mbi/");
 
-  _strConfigPath = FileSystem::combinePath(_strAssetsDir, "config.xml");
+  _strConfigPath = FileSystem::combinePath(_strAssetsDir, "engine.xml");
   _strIconPath = FileSystem::combinePath(_strAssetsDir, "icon.png");
   _strEnvTexturePath = FileSystem::combinePath(_strTextureDir, "env1_huge.png");
 }
-string_t Package::makeAssetPath(string_t file) {
+string_t ApplicationPackage::makeAssetPath(string_t file) {
   string_t ret = FileSystem::combinePath(getAssetsDir(), file);
   return ret;
 }
-string_t Package::makeAssetPath(string_t folder, string_t file) {
+string_t ApplicationPackage::makeAssetPath(string_t folder, string_t file) {
   string_t fold = FileSystem::combinePath(getAssetsDir(), folder);
   string_t ret = FileSystem::combinePath(fold, file);
   return ret;
 }
-void Package::build(std::string exeLoc) {
+void ApplicationPackage::build(std::string exeLoc) {
   _strExeLoc = exeLoc;
   std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
   loadExe(fb);
@@ -80,7 +105,7 @@ void Package::build(std::string exeLoc) {
     _vecEntries.push_back(fe);
   }
 }
-bool Package::getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
+bool ApplicationPackage::getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
   if (fb == nullptr) {
     BroLogError("Buffered file was nullptr, no file was read.  Make sur to initialize fb.");
     Gu::debugBreak();
@@ -93,7 +118,7 @@ bool Package::getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool 
     return loadPackedFile(fileLoc, fb, bAddNull);
   }
 }
-bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
+bool ApplicationPackage::loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
   //Open executable with fstream
   //then seek to the file, copy file contents to buffer, exit.
   ProjectPackageFileEntry* fe = getEntry(fileLoc);
@@ -122,13 +147,13 @@ bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb
 
   return true;
 }
-int32_t Package::parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off) {
+int32_t ApplicationPackage::parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off) {
   int32_t ret;
   ret = *((int32_t*)(fb->getData().ptr() + off));
   off += sizeof(int32_t);
   return ret;
 }
-std::string Package::parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off) {
+std::string ApplicationPackage::parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off) {
   int32_t iCount = parseInt32(fb, off);
 
   char* tmp = new char[iCount + 1];
@@ -142,7 +167,7 @@ std::string Package::parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off) {
 
   return ret;
 }
-ProjectPackageFileEntry* Package::getEntry(std::string fileLoc) {
+ProjectPackageFileEntry* ApplicationPackage::getEntry(std::string fileLoc) {
   std::string locLow = StringUtil::lowercase(FileSystem::formatPath(fileLoc));
 
   for (ProjectPackageFileEntry* fe : _vecEntries) {
@@ -153,10 +178,10 @@ ProjectPackageFileEntry* Package::getEntry(std::string fileLoc) {
   }
   return nullptr;
 }
-bool Package::loadExe(std::shared_ptr<BinaryFile> fb) {
+bool ApplicationPackage::loadExe(std::shared_ptr<BinaryFile> fb) {
   return fb->loadFromDisk(_strExeLoc);
 }
-string_t Package::debugPrint() {
+string_t ApplicationPackage::debugPrint() {
   string_t ret;
   ret += "Files:\r\n";
   for (ProjectPackageFileEntry* fe : _vecEntries) {
@@ -174,7 +199,7 @@ string_t Package::debugPrint() {
   }
   return ret;
 }
-bool Package::fileExists(string_t file) {
+bool ApplicationPackage::fileExists(string_t file) {
   if (isPackage() == false) {
     return FileSystem::fileExists(file);
   }
@@ -183,7 +208,7 @@ bool Package::fileExists(string_t file) {
   }
 }
 
-time_t Package::getLastModifyTime(string_t str) {
+time_t ApplicationPackage::getLastModifyTime(string_t str) {
   if (isPackage() == false) {
     return FileSystem::getLastModifyTime(str);
   }

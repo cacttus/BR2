@@ -28,6 +28,7 @@
 namespace Game {
 
 typedef std::string string_t;
+typedef std::wstring wstring_t;
 
 //#endif
 #define memsize_max (size_t)(-1)

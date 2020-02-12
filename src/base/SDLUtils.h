@@ -17,12 +17,12 @@ namespace Game {
 *
 */
 class SDLUtils : public VirtualMemory {
-    static void createSurfaceFromImage(const string_t strImage, std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
-    static SDL_Surface* createSurfaceFromImage(const std::shared_ptr<Img32> bi);
+  static void createSurfaceFromImage(const string_t strImage, std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface);
+  static SDL_Surface* createSurfaceFromImage(const std::shared_ptr<Img32> bi);
 public:
-    static void trySetWindowIcon(SDL_Window* w, string_t iconPath);
+  static void trySetWindowIcon(SDL_Window* w, string_t iconPath);
 
-    static void checkSDLErr(bool log = true);
+  static void checkSDLErr(bool log = true);
 
 };
 
