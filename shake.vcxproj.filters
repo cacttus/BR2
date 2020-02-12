@@ -1312,7 +1312,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="designnotes.md" />
     <Text Include="project\devlog.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project\designnotes.md" />
   </ItemGroup>
 </Project>
