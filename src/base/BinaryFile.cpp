@@ -419,7 +419,7 @@ RetCode BinaryFile::read(const char* buf, size_t count, size_t bufcount, size_t 
 }
 //////////////////////////////////////////////////////////////////////////
 void BinaryFile::writeBool(bool&& val, size_t offset) {
-    int8_t b = (val > 0) ? 1 : 0;
+    int8_t b = (int8_t)((val > 0) ? 1 : 0);
     writeByte(std::move(b), offset);
 }
 void BinaryFile::writeByte(int8_t&& val, size_t offset) {

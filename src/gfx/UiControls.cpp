@@ -2,7 +2,7 @@
 #include "../base/InputManager.h"
 #include "../base/Img32.h"
 
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
@@ -3262,7 +3262,7 @@ void UiScreen::updateMesh() {
   _pMesh->getMeshSpec()->getVaoData()->getIbo()->copyDataClientServer(inds.size(), inds.data());
 
 }
-void UiScreen::screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) {
+void UiScreen::screenChanged(uint32_t uiWidth, uint32_t uiHeight) {
   //Mark all children as dirty
   setLayoutChanged(true);
 }

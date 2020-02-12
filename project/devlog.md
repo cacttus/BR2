@@ -17,6 +17,17 @@
 	*having context on Gu is simple, but things like RenderPipe need to have a specific context since they have their own data that isn't shared between contexts.
 10. makeAssetPath - needs to be defined in the "project" or package level.
 
+*2/12/2020*
+Removed the app package's cache, and config.  these should really be hard coded.
+New file structure looks like this.
+/My Documents
+  /BR2
+    config.xml
+    /projects
+      /default
+        /cache
+        package.xml
+
 *2/11/2020*
 Removed "app"
 Moved contextual managers back into GLContext.

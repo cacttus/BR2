@@ -17,7 +17,7 @@ namespace Game {
 *  @class Texture2D
 *  @brief Stores information about a texture map on the GPU.
 */
-class Texture2DSpec : public HasGraphicsContext<Texture2DSpec> {
+class Texture2DSpec : public VirtualMemoryShared<Texture2DSpec> {
 public:
   Texture2DSpec(std::shared_ptr<GLContext> ct);
   Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV);
@@ -63,6 +63,7 @@ private:
   bool _bLoadFailed = false;
   TexFilter::e _eFilter = TexFilter::e::Linear;
   bool _bTransparent = false;
+  std::shared_ptr<GLContext> _pContext = nullptr;
 
   void load(string_t loc, bool bRepeatU, bool bRepeatV);
   void load(std::shared_ptr<Img32> s);

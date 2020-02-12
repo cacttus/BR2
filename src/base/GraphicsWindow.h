@@ -17,9 +17,9 @@ class RenderTarget : public VirtualMemoryShared<RenderTarget> {
 public:
   std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
   std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
-private:
+protected:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
-  std::shared_ptr<GraphicsContext> _pContext = nullptr;
+  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
 /**
@@ -28,11 +28,13 @@ private:
 */
 class GraphicsWindow : public RenderTarget {
 public:
-  GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, string_t title, RenderSystem::e sys);
+  GraphicsWindow(std::shared_ptr<GLContext> context, bool ismain, string_t title, RenderSystem::e sys);
   virtual ~GraphicsWindow() override;
 
   void init();
   void step();
+  void idle(int64_t us);
+
   SDL_Window* getSDLWindow() { return _pSDLWindow; }
   void printHelpfulDebug();
   void updateWidthHeight(uint32_t w, uint32_t h, bool force);

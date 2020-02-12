@@ -1,7 +1,7 @@
 #include "../base/Base.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/Perf.h"
 #include "../math/Algorithm.h"
 #include "../gfx/Texture2DSpec.h"

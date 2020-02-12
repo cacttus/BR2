@@ -35,25 +35,6 @@ public:
 *    @brief OpenGL render context
 */
 class GLContext : public GraphicsContext {
-private:
-  bool _bValid = false;
-
-  //Render Stack.
-  std::stack<GLenum> _eLastCullFaceStack;
-  std::stack<GLenum> _eLastBlendStack;
-  std::stack<GLenum> _eLastDepthTestStack;
-  static const int MaxStackSize = 32;
-
-  SDL_GLContext _context;
-  GLProfile _profile;
-  int _iSupportedDepthSize;
-
-  bool loadOpenGLFunctions();
-  void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
-  void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
-  void loadCheckProc();
-  void printHelpfulDebug();
-
 public:
   GLContext();
   virtual ~GLContext() override;
@@ -81,8 +62,30 @@ public:
 
   static void setWindowAndOpenGLFlags(GLProfile& prof);
 
+  std::shared_ptr<GraphicsWindow> getWindow() { return _pWindow; }
   void setLineWidth(float w);
-  // void beginWin32InlineDebug();
+private:
+  bool _bValid = false;
+
+  //Render Stack.
+  std::stack<GLenum> _eLastCullFaceStack;
+  std::stack<GLenum> _eLastBlendStack;
+  std::stack<GLenum> _eLastDepthTestStack;
+  static const int MaxStackSize = 32;
+
+  std::shared_ptr<GraphicsWindow> _pWindow = nullptr; //This may be null, for storage contexts.
+
+  SDL_GLContext _context;
+  GLProfile _profile;
+  int _iSupportedDepthSize;
+
+  bool loadOpenGLFunctions();
+  void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
+  void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
+  void loadCheckProc();
+  void printHelpfulDebug();
+
+public:
 
   PFNGLUSEPROGRAMPROC         glUseProgram = nullptr;
   PFNGLBINDBUFFERARBPROC      glBindBuffer = nullptr;

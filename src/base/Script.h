@@ -7,7 +7,7 @@
 #ifndef __SCRIPT_15665746341154937548_H__
 #define __SCRIPT_15665746341154937548_H__
 
-#include "../app/AppHeader.h"
+#include "../base/AppHeader.h"
 
 namespace Game {
 /**

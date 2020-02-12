@@ -1,7 +1,7 @@
 #include "../base/Gu.h"
-#include "../app/WindowManager.h"
+#include "../base/WindowManager.h"
 #include "../gfx/GraphicsApi.h"
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 
 namespace Game {
 WindowManager::WindowManager() {

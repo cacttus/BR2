@@ -13,7 +13,7 @@
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/ApplicationPackage.h"
 
 #include "../math/MathAll.h"
@@ -28,7 +28,7 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/GraphicsContext.h"
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/Logger.h" 
 
 #include "../model/VertexFormat.h"
@@ -46,6 +46,7 @@ GLContext::~GLContext() {
 }
 bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile) {
   _profile = profile;
+  _pWindow = pMainWindow;
   _context = SDL_GL_CreateContext(pMainWindow->getSDLWindow());
   if (!_context) {
     BroThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
@@ -96,14 +97,12 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
 
   return true;
 }
-
-
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
   //Enable runtime errors.
-  return OglErr::chkErrRt(shared_from_this(), bDoNotBreak, doNotLog);
+  return OglErr::chkErrRt(getThis<GLContext>(), bDoNotBreak, doNotLog);
 }
 bool GLContext::chkErrDbg(bool bDoNotBreak, bool doNotLog) {
-  return OglErr::chkErrDbg(shared_from_this(), bDoNotBreak, doNotLog);
+  return OglErr::chkErrDbg(getThis<GLContext>(), bDoNotBreak, doNotLog);
 }
 bool GLContext::loadOpenGLFunctions() {
   bool bValid = true;

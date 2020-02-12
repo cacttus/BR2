@@ -19,11 +19,11 @@ template < class Tx, class TKey>
 class _HashMap : public VirtualMemory {
 public:
   template < class Ta >
-  struct RefItem {
+  struct HashMapItem {
     Ta* _val;
     bool hasValue() { return _val != nullptr; }
     Ta value() { return _val ? (*_val) : nullptr; }
-    RefItem(Ta* t) : _val(t) {}
+    HashMapItem(Ta* t) : _val(t) {}
   };
   typedef std::map<TKey, Tx> HashMapType;
   typedef typename HashMapType::iterator iterator;
@@ -37,7 +37,7 @@ public:
   iterator end() { return _map.end(); }
   void add(string_t key, Tx& x);//Can't be const
   bool remove(string_t key);
-  RefItem<Tx> find(string_t key);
+  HashMapItem<Tx> find(string_t key);
   size_t size() { return _map.size(); }
   void erase(const_iterator _Where) { _map.erase(_Where); }
   void clear() { _map.clear(); }
@@ -99,19 +99,19 @@ bool _HashMap<Tx, TKey>::remove(string_t key) {
 *   @brief finds a string.  Returns a nullptr RefItem if not found.
 */
 template < class Tx, class TKey >
-_HashMap<Tx, TKey>::RefItem<Tx> _HashMap<Tx, TKey>::find(string_t key) {
+_HashMap<Tx, TKey>::HashMapItem<Tx> _HashMap<Tx, TKey>::find(string_t key) {
   TKey n = computeHash(key, key.getHashAlgorithmIndex());
 
   typename HashMapType::iterator ite = _map.find(n);
   if (ite == _map.end()) {
-    return RefItem<Tx>(nullptr);
+    return HashMapItem<Tx>(nullptr);
   }
 
-  return RefItem<Tx>(&(ite->second));
+  return HashMapItem<Tx>(&(ite->second));
 }
 template < class Tx, class TKey >
 bool _HashMap<Tx, TKey>::contains(string_t key) {
-  RefItem<Tx> ri = find(str);
+  HashMapItem<Tx> ri = find(str);
   if (ri._val == nullptr) {
     return false;
   }

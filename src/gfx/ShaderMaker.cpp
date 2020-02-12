@@ -1,5 +1,5 @@
 #include "../base/Base.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/GLContext.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"

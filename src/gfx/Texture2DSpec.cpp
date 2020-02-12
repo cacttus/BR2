@@ -11,16 +11,16 @@
 #include "../gfx/RenderUtils.h"
 
 namespace Game {
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ct) : HasGraphicsContext(ct) {
+Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ct) {
 }
-Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : HasGraphicsContext(ctx) {
+Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV)  {
   load(loc, bRepeatU, bRepeatV);
 }
-Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : HasGraphicsContext(ctx) {
+Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter){
   create((unsigned char*)sp->getData()->ptr(), sp->getWidth(), sp->getHeight(), false, false, false);
   oglSetFilter(eFilter);
 }
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps) : HasGraphicsContext(ctx) {
+Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps)  {
   create(texData, iWidth, iHeight, mipmaps, false, false);
 }
 Texture2DSpec::~Texture2DSpec() {
@@ -44,7 +44,7 @@ void Texture2DSpec::calculateTextureFormat() {
   _eTextureMipmapFormat = GL_RGBA8;
 }
 void Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
-  getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + eChannel);
+  _pContext->glActiveTexture(GL_TEXTURE0 + eChannel);
   glBindTexture(GL_TEXTURE_2D, getGlId());
 
   if (pShader != nullptr) {

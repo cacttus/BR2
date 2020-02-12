@@ -1,5 +1,5 @@
-#include "../app/AppMain.h"
-#include "../app/AppBase.h"
+#include "../base/AppMain.h"
+#include "../base/AppBase.h"
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
@@ -16,8 +16,8 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
 
-#include "../app/GraphicsWindow.h"
-#include "../app/WindowManager.h"
+#include "../base/GraphicsWindow.h"
+#include "../base/WindowManager.h"
 
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
@@ -206,7 +206,11 @@ void Scene::drawDebugText() {
 //  _pAppUi->endDebugText();
 }
 
-
+void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
+  _pScreen->screenChanged(w, h);
+}
+void Scene::idle(int64_t us) {
+}
 
 
 

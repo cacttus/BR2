@@ -12,7 +12,7 @@
 //#ifndef __OPENGLWINDOW_15665854371549001192_H__
 //#define __OPENGLWINDOW_15665854371549001192_H__
 //
-//#include "../app/GraphicsWindow.h"
+//#include "../base/GraphicsWindow.h"
 //
 //namespace Game {
 ///**

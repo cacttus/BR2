@@ -22,6 +22,9 @@ public:
   Scene();
   virtual ~Scene() override;
 
+  void idle(int64_t us);
+  void updateWidthHeight(int32_t w, int32_t h, bool bForce);
+
   std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
   std::shared_ptr<PhysicsWorld> getPhysicsWorld() { return _pPhysicsWorld; }
   void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }

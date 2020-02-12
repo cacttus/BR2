@@ -5,8 +5,13 @@
 #include "../base/StringUtil.h"
 #include "../base/BinaryFile.h"
 #include "../base/XmlFile.h"
+#include "../base/OperatingSystem.h"
 
 namespace Game {
+string_t ApplicationPackage::_strCacheFolderName = "";
+string_t ApplicationPackage::_strEngineConfigFileName = "";
+string_t ApplicationPackage::_strDataPath = "";
+
 ApplicationPackage::ApplicationPackage() {
   makeDefaultPaths();
 }
@@ -20,7 +25,6 @@ void ApplicationPackage::load(string_t file_path) {
   //Load a given package.
   HashMap<XmlConfigEntry> ents = XmlFile::getXMLConfiguration(file_path);
   setSz("TextureDirectory", _strTextureDir, ents);
-  setSz("CacheDirectory", _strCacheDir, ents);
   setSz("ShaderDirectory", _strShadersDir, ents);
   setSz("ModelsTextDirectory", _strModelsTextDir, ents);
   setSz("ModelsBinDirectory", _strModelsBinDir, ents);
@@ -28,10 +32,10 @@ void ApplicationPackage::load(string_t file_path) {
 void ApplicationPackage::setSz(string_t name, string_t& value, HashMap<XmlConfigEntry> entries) {
   bool set = false;
   //Set the given value to the first attribute in the given tag identified by 'name'
-  HashMap<XmlConfigEntry>::RefItem<XmlConfigEntry> ent = entries.find("TextureDirectory");
+  HashMap<XmlConfigEntry>::HashMapItem<XmlConfigEntry> ent = entries.find("TextureDirectory");
   if (ent.hasValue()) {
     if (ent.value()._attrs.size() > 0) {
-      XmlConfigAttribute attr = *(ent.value()._attrs.begin());
+      XmlConfigAttribute attr = ent.value()._attrs.begin()->second;
       value = attr._attrib_value;
       set = true;
     }
@@ -45,12 +49,10 @@ void ApplicationPackage::makeDefaultPaths() {
   _strAssetsDir = FileSystem::combinePath(FileSystem::getExecutableDirectory(), "/data/");
 
   _strTextureDir = FileSystem::combinePath(_strTextureDir, "/tex/");
-  _strCacheDir = FileSystem::combinePath(_strAssetsDir, "/cache/");
   _strShadersDir = FileSystem::combinePath(_strAssetsDir, "/shaders/");
   _strModelsTextDir = FileSystem::combinePath(_strAssetsDir, "/mob/");
   _strModelsBinDir = FileSystem::combinePath(_strAssetsDir, "/mbi/");
 
-  _strConfigPath = FileSystem::combinePath(_strAssetsDir, "engine.xml");
   _strIconPath = FileSystem::combinePath(_strAssetsDir, "icon.png");
   _strEnvTexturePath = FileSystem::combinePath(_strTextureDir, "env1_huge.png");
 }
@@ -207,7 +209,6 @@ bool ApplicationPackage::fileExists(string_t file) {
     BroThrowNotImplementedException();
   }
 }
-
 time_t ApplicationPackage::getLastModifyTime(string_t str) {
   if (isPackage() == false) {
     return FileSystem::getLastModifyTime(str);
@@ -216,7 +217,26 @@ time_t ApplicationPackage::getLastModifyTime(string_t str) {
     return 0;
   }
 }
-
-
+void ApplicationPackage::userZoom(float amt) {
+  //nothing
+}
+string_t ApplicationPackage::getDataPath() {
+  if (StringUtil::isEmpty(_strDataPath)) {
+    _strDataPath = FileSystem::combinePath(FileSystem::getExecutableDirectory(), "/data/");
+  }
+  return _strDataPath;
+}
+string_t ApplicationPackage::getCacheFolder() {
+  if (StringUtil::isEmpty(_strCacheFolderName)) {
+    _strCacheFolderName = FileSystem::combinePath(getDataPath(), "/cache/");
+  }
+  return _strCacheFolderName;
+}
+string_t ApplicationPackage::getEngineConfigFilePath() {
+  if (StringUtil::isEmpty(_strEngineConfigFileName)) {
+    _strEngineConfigFileName = FileSystem::combinePath(getDataPath(), "config.xml");
+  }
+  return _strEngineConfigFileName;
+}
 
 }//ns Game

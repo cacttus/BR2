@@ -8,6 +8,8 @@
 #define __UNPACK_15154667791053603878_H__
 
 #include "../base/BaseHeader.h"
+#include "../base/HashMap.h"
+#include "../base/XmlFile.h"
 
 namespace Game {
 class ProjectPackageFileEntry {
@@ -27,6 +29,7 @@ public:
   ApplicationPackage();
   virtual ~ApplicationPackage() override;
 
+
   bool isPackage() { return _bIsPacked; }
   bool getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull = false);
   void build(std::string exeLoc);
@@ -39,15 +42,16 @@ public:
   string_t makeAssetPath(string_t file);
   string_t makeAssetPath(string_t folder, string_t file);
 
-  string_t getConfigPath() { return _strConfigPath; }
   string_t getAssetsDir() { return _strAssetsDir; }
-  string_t getCacheDir() { return _strCacheDir; }
   string_t getIconPath() { return _strIconPath; }
   string_t getShadersDir() { return _strShadersDir; }
   string_t getModelsTextDir() { return _strModelsTextDir; }
   string_t getModelsBinDir() { return _strModelsBinDir; }
   string_t getEnvTexturePath() { return _strEnvTexturePath; }
   string_t getTextureDir() { return _strTextureDir; }
+  static string_t getCacheFolder();
+  static string_t getEngineConfigFilePath();
+  static string_t getDataPath();
 
   void userZoom(float amt);
 private:
@@ -57,11 +61,12 @@ private:
   int32_t _iTableLenBytes = 0;
   bool _bIsPacked = false;
 
-  string_t _strConfigPath = "";
+  static string_t _strCacheFolderName;
+  static string_t _strEngineConfigFileName;
+  static string_t _strDataPath;
+
   string_t _strIconPath = "";
   string_t _strAssetsDir = "";
-  string_t _strCacheDir = "";
-  string_t _strIconPath = "";
   string_t _strShadersDir = "";
   string_t _strModelsTextDir = "";
   string_t _strModelsBinDir = "";
@@ -69,7 +74,6 @@ private:
   string_t _strTextureDir = "";
 
   void makeDefaultPaths();
-
   bool loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull);
   int32_t parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off);
   std::string parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off);

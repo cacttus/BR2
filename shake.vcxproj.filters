@@ -19,9 +19,6 @@
     <Filter Include="ext\pugixml">
       <UniqueIdentifier>{d2658863-2ad1-453a-8f53-18210e73b8c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="app">
-      <UniqueIdentifier>{a2fca983-dd27-4701-907f-87ac3ae2f2d5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ext\rapidjson">
       <UniqueIdentifier>{ef2e0bdc-785a-4da5-befb-c555ea9ebd22}</UniqueIdentifier>
     </Filter>
@@ -429,9 +426,6 @@
     <ClInclude Include="src\world\PhysicsNode.h">
       <Filter>world</Filter>
     </ClInclude>
-    <ClInclude Include="src\app\AppMain.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\DeferredFramebuffer.h">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -573,15 +567,6 @@
     <ClInclude Include="src\base\SDLUtils.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\app\Script.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\AppHeader.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\ProjectFile.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="src\ext\rapidjson\allocators.h">
       <Filter>ext\rapidjson</Filter>
     </ClInclude>
@@ -696,18 +681,6 @@
     <ClInclude Include="src\base\Delta.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\app\AppBase.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\OpenGLWindow.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\VulkanWindow.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\GraphicsWindow.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="src\ui\UILabel.h">
       <Filter>ui</Filter>
     </ClInclude>
@@ -722,9 +695,6 @@
     </ClInclude>
     <ClInclude Include="src\base\InputManager.h">
       <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\app\WindowManager.h">
-      <Filter>app</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\ParticleMaker.h">
       <Filter>graphics</Filter>
@@ -751,6 +721,33 @@
       <Filter>graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\base\ApplicationPackage.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\GraphicsWindow.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\OpenGLWindow.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\ProjectFile.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Script.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\VulkanWindow.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\WindowManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\AppBase.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\AppHeader.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\AppMain.h">
       <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1094,12 +1091,6 @@
     <ClCompile Include="src\world\PhysicsShapes.cpp">
       <Filter>world</Filter>
     </ClCompile>
-    <ClCompile Include="src\app\Main.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\AppMain.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\DeferredFramebuffer.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -1241,29 +1232,11 @@
     <ClCompile Include="src\base\SDLUtils.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\app\Script.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\ProjectFile.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\Perf.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\Delta.cpp">
       <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\AppBase.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\VulkanWindow.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\OpenGLWindow.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\GraphicsWindow.cpp">
-      <Filter>app</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\UILabel.cpp">
       <Filter>ui</Filter>
@@ -1279,9 +1252,6 @@
     </ClCompile>
     <ClCompile Include="src\base\InputManager.cpp">
       <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\app\WindowManager.cpp">
-      <Filter>app</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\ParticleMaker.cpp">
       <Filter>graphics</Filter>
@@ -1308,6 +1278,33 @@
       <Filter>graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\base\ApplicationPackage.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Main.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\OpenGLWindow.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\ProjectFile.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Script.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\VulkanWindow.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\WindowManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\AppBase.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\AppMain.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\GraphicsWindow.cpp">
       <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>

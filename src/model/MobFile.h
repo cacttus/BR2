@@ -12,7 +12,6 @@
 #include "../world/WorldHeader.h"
 
 namespace Game {
-
 class MatData : public VirtualMemory {
 public:
   string_t _strMatName = "";
@@ -28,7 +27,6 @@ public:
   bool _bTransparency = false;
   float _fTpIor = 1, _fTpFilter = 1, _fTpAlpha = 0;
   MatData() {
-
   }
 };
 //Data ofr obj file - meshes

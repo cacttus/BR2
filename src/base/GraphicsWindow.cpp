@@ -1,5 +1,5 @@
 #include "../base/Base.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
@@ -24,13 +24,15 @@
 
 #include "../model/ModelCache.h"
 
-#include "../app/GraphicsWindow.h"
-#include "../app/OpenGLWindow.h"
+#include "../base/GraphicsWindow.h"
+#include "../base/OpenGLWindow.h"
+
+#include "../world/Scene.h"
 
 namespace Game {
 
 //Called exclusively by the graphics API
-GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, string_t title, RenderSystem::e sys) {
+GraphicsWindow::GraphicsWindow(std::shared_ptr<GLContext> context, bool ismain, string_t title, RenderSystem::e sys) {
   this->_bIsMainWindow = ismain;
   _title = title;
 }
@@ -42,6 +44,11 @@ GraphicsWindow::~GraphicsWindow() {
 }
 void GraphicsWindow::init() {
   createManagers();
+}
+void GraphicsWindow::idle(int64_t us) {
+  if (_pScene) {
+    _pScene->idle(us);
+  }
 }
 void GraphicsWindow::createManagers() {
   //BroLogInfo("Creating Graphics API.");
@@ -156,7 +163,7 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
   //*Set room width / height
   _iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
   _iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pWindowViewport = std::make_shared<RenderViewport>(_iLastWidth, _iLastHeight);
+  _pViewport = std::make_shared<RenderViewport>(_iLastWidth, _iLastHeight);
 
 #ifdef BRO_OS_WINDOWS
   BroLogError("We are not making the window icon because there's an error somewhere in SDL here.");
@@ -169,7 +176,7 @@ void GraphicsWindow::initRenderSystem() {
     BroThrowException("You need to make the SDL window before initializing render system.");
   }
 
-  SDLUtils::trySetWindowIcon(_pSDLWindow, Gu::getApp()->getIconFullPath());
+  SDLUtils::trySetWindowIcon(_pSDLWindow, Gu::getAppPackage()->getIconPath());
 
   if (Gu::getConfig()->getForceAspectRatio()) {
     SDL_DisplayMode dm;
@@ -203,9 +210,9 @@ void GraphicsWindow::initRenderSystem() {
 void GraphicsWindow::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
   if (_iLastWidth != w || bForce) {
-    _pWindowViewport->setWidth(w);
+    _pViewport->setWidth(w);
     if (_iLastHeight != h || bForce) {
-      _pWindowViewport->setHeight(h);
+      _pViewport->setHeight(h);
     }
     if (_iLastHeight != h || _iLastWidth != w || bForce) {
       if (_pRenderPipe != nullptr) {
@@ -213,8 +220,8 @@ void GraphicsWindow::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
       }
       //   _pApp->screenChanged(w, h, _bFullscreen);
 
-      if (_pScreen) {
-        _pScreen->screenChanged(w, h, _bFullscreen);
+      if (_pScene) {
+        _pScene->updateWidthHeight(w, h, bForce);
       }
 
     }

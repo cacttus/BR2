@@ -17,7 +17,7 @@ namespace Game {
 */
 class FrameSync : public VirtualMemory {
 public:
-  FrameSync();
+  FrameSync(std::shared_ptr<GLContext> ct);
   virtual ~FrameSync() override;
   void disable();
   void enable();
@@ -26,6 +26,7 @@ public:
   void syncBegin();    // Call before you do your frame update
   int syncEnd();        // Call after you do your frame update.
 private:
+  std::shared_ptr<GLContext> _pContext;
   t_timeval _syncStart;
   t_timeval _syncEnd;
   bool _bVsyncDisabled = false;

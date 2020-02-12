@@ -8,7 +8,7 @@
 #define __GU_14784108333124451735_H__
 
 #include "../base/BaseHeader.h"
-#include "../app/AppHeader.h"
+#include "../base/AppHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathHeader.h"
 #include "../world/WorldHeader.h"
@@ -20,18 +20,8 @@ namespace Game {
 *    @brief Global Utils For everything.
 */
 class Gu : public GameMemory {
-  static std::shared_ptr<Sequencer> _pSequencer;
-  static std::shared_ptr<InputManager> _pInput;
-  static std::shared_ptr<SoundCache> _pSoundCache;
-  static std::shared_ptr<ApplicationPackage> _pAppPackage;
-  static std::shared_ptr<RenderSettings> _pRenderSettings;
-  static std::shared_ptr<EngineConfig> _pEngineConfig;
-  static std::shared_ptr<Logger> _pLogger;
-  static std::shared_ptr<Net> _pNet;
-  static std::shared_ptr<WindowManager> _pWindowManager;
-  static std::shared_ptr<GLContext> _pActiveContext;
-
 public:
+  static string_t getEngineName() { return "BR2"; }
   static std::shared_ptr<ApplicationPackage> getAppPackage() { return _pAppPackage; }
   static void setPackage(std::shared_ptr<ApplicationPackage> x) { _pAppPackage = x; }
 
@@ -58,27 +48,13 @@ public:
   static std::shared_ptr<GraphicsWindow> getMainWindow();
   static std::shared_ptr<GraphicsWindow> getActiveWindow();
 
-
-
-  //static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
-
-  //  static void setContext(std::shared_ptr<GraphicsContext> rb);
-    //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
-  static void setApp(std::shared_ptr<AppBase> b);
-  // static void setEngine(std::shared_ptr<Engine> engine);
-
   static void updateGlobals();
-
   static void createManagers();
-
   static void checkErrorsDbg();
   static void checkErrorsRt();
-  static void initGlobals(string_t cache, string_t config, const std::vector<std::string>& args);
+  static void initGlobals(const std::vector<std::string>& args);
   static void deleteGlobals();
-
   static void debugBreak();
-
-
   static bool isDebug();
 
   static t_timeval  getMicroSeconds();
@@ -101,13 +77,11 @@ public:
   static string_t getOperatingSystemName();
   static uint32_t getCurrentThreadId();
 
-
   static std::string getCPPVersion();
 
   static void print(char msg);
   static void print(const char* msg);
   static void print(const string_t& msg);
-  //static uint64_t getFrameNumber();
 
   static void guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp);//Transforms a quad for the matrix-less 
 
@@ -129,6 +103,20 @@ public:
     }
   }
 
+private:
+  static std::shared_ptr<Sequencer> _pSequencer;
+  static std::shared_ptr<InputManager> _pInput;
+  static std::shared_ptr<SoundCache> _pSoundCache;
+  static std::shared_ptr<ApplicationPackage> _pAppPackage;
+  static std::shared_ptr<RenderSettings> _pRenderSettings;
+  static std::shared_ptr<EngineConfig> _pEngineConfig;
+  static std::shared_ptr<Logger> _pLogger;
+  static std::shared_ptr<Net> _pNet;
+  static std::shared_ptr<WindowManager> _pWindowManager;
+  static std::shared_ptr<GLContext> _pActiveContext;
+
+  static void createCache();
+  static void loadConfig(const std::vector<std::string>& args);
 };
 
 #define Graphics Gu::getGraphicsContext()

@@ -6,8 +6,8 @@
 //#include "../base/Logger.h"
 //#include "../base/oglErr.h"
 //#include "../base/GLContext.h"
-//#include "../app/GraphicsWindow.h"
-//#include "../app/OpenGLWindow.h"
+//#include "../base/GraphicsWindow.h"
+//#include "../base/OpenGLWindow.h"
 //#include "../gfx/OpenGLApi.h"
 //
 //namespace Game {

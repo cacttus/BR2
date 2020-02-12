@@ -1,6 +1,6 @@
 #include "../base/Base.h"
 #include "../base/OglErr.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/Perf.h"
 #include "../math/Random.h"
 #include "../model/OBB.h"

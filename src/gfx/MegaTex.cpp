@@ -8,7 +8,7 @@
 #include "../gfx/Gui2d.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/MegaTex.h"
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../ext/stb_truetype.h"

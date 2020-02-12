@@ -1,6 +1,6 @@
 #include "../base/FileSystem.h"
 #include "../base/GLContext.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/ApplicationPackage.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
@@ -21,11 +21,6 @@ void FileSystem::init(string_t executablePath) {
   string_t a = FileSystem::getCurrentDirectory();
   FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
   string_t b = FileSystem::getCurrentDirectory();
-}
-string_t FileSystem::appendCachePathToFile(const string_t& strFileName) {
-  std::shared_ptr<ApplicationPackage> rb = Gu::getAppPackage();
-  string_t ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
-  return ret;
 }
 string_t FileSystem::getExecutableFullPath() {
   //  t_string ret;
@@ -87,22 +82,29 @@ bool FileSystem::createFile(const string_t& filename, bool trunc, bool bLog) {
 }
 
 bool FileSystem::createDirectoryRecursive(string_t dirName) {
+  //returns true if successful, false if one or more directories could not be created.
   string_t dirCpy;
   bool bRet = true;
-  dirCpy.assign(dirName);
-  dirCpy = formatPath(dirCpy);
+  try {
 
-  if (directoryExists(dirName) == true) {
-    return true;
+    dirCpy.assign(dirName);
+    dirCpy = formatPath(dirCpy);
+
+    if (directoryExists(dirName) == true) {
+      return true;
+    }
+
+    std::vector<string_t> dirs = StringUtil::split(dirCpy, '/');
+    string_t strDir = dirs[0];
+    for (size_t i = 1; i < dirs.size(); ++i) {
+      strDir = FileSystem::combinePath(strDir, dirs[i]);
+      bRet = bRet && FileSystem::createDirectorySingle(strDir);
+    }
   }
-
-  std::vector<string_t> dirs = StringUtil::split(dirCpy, '/');
-  string_t strDir = dirs[0];
-  for (size_t i = 1; i < dirs.size(); ++i) {
-    strDir = FileSystem::combinePath(strDir, dirs[i]);
-    bRet = bRet && FileSystem::createDirectorySingle(strDir);
+  catch (Exception * ex) {
+    Gu::getLogger()->logError("Failed to create directory recursive '" + dirName + "'");
+    bRet = false;
   }
-
   return bRet;
 }
 bool FileSystem::directoryExists(string_t dirName) {
@@ -440,7 +442,7 @@ string_t FileSystem::getScreenshotFilename() {
   string_t fname = DateTime::dateTimeToStr(DateTime::getDateTime()) + "_" + FileSystem::getExecutableName() + "_frame.png";
   fname = FileSystem::replaceInvalidCharsFromFilename(fname);
   fname = StringUtil::replaceAll(fname, " ", "_");
-  fname = FileSystem::appendCachePathToFile(fname);
+  fname = FileSystem::combinePath(ApplicationPackage::getCacheFolder(), fname);
 
   return fname;
 }

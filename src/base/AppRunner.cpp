@@ -6,7 +6,7 @@
 #include "../base/GLContext.h"
 #include "../base/InputManager.h"
 #include "../base/Logger.h"
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
 #include "../base/Perf.h"
 #include "../base/Delta.h"
@@ -18,7 +18,7 @@
 #include "../base/EngineConfig.h"
 #include "../base/ApplicationPackage.h"
 
-#include "../app/WindowManager.h"
+#include "../base/WindowManager.h"
 
 #include "../math/MathAll.h"
 

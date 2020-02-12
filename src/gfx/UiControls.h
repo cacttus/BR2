@@ -644,7 +644,7 @@ public:
   void setCursor(std::shared_ptr<UiCursor> c);
   void hideCursor();
   void showCursor();
-  void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen);
+  void screenChanged(uint32_t uiWidth, uint32_t uiHeight);
   static void error(std::string errMsg);
   static uint32_t sortLayer(uint32_t n) {
     //Mnemonic wich gves you the base sort layer, provided n will return additional layers.

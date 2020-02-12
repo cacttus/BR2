@@ -4,7 +4,7 @@
 #include "../base/EngineConfig.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 
 namespace Game {
 GraphicsApi::GraphicsApi() {

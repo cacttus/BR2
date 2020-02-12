@@ -1,6 +1,6 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 
 #include "../gfx/GpuQuad3.h"
 #include "../gfx/ShaderBase.h"

@@ -2,7 +2,7 @@
 //#include "../base/Gu.h"
 //#include "../base/GLContext.h"
 //#include "../gfx/GraphicsContext.h"
-//#include "../app/OpenGLWindow.h"
+//#include "../base/OpenGLWindow.h"
 //#include "../gfx/GraphicsApi.h"
 //#include "../gfx/OpenGLApi.h"
 //

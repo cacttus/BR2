@@ -1,12 +1,16 @@
 #include "../base/FrameSync.h"
 #include "../base/Gu.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
 #include "../gfx/GraphicsContext.h"
+#include "../base/GLContext.h"
+#include "../base/GraphicsWindow.h"
 
 namespace Game {
-FrameSync::FrameSync() :_bVsyncDisabled(false) {
+FrameSync::FrameSync(std::shared_ptr<GLContext> ct) {
+  _bVsyncDisabled = false;
+  _pContext = ct;
 }
 FrameSync::~FrameSync() {
 }
@@ -40,8 +44,8 @@ int FrameSync::syncEnd() {
     while (elapsedUs < waitUs) {
       // - If we have an idle processor execute some extra computations
       // while we wait for next frame to come around.
-      if (Gu::getApp() != nullptr) {
-        Gu::getApp()->idle(waitUs - elapsedUs);//**MUST BE US
+      if (_pContext->getWindow() != nullptr) {
+        _pContext->getWindow()->idle(waitUs - elapsedUs);//**MUST BE US
       }
 
       // - update elapsed
@@ -50,7 +54,9 @@ int FrameSync::syncEnd() {
   }
   else {
     //Still call the idle() method so stuff don't get missed
-    Gu::getApp()->idle(0);
+    if (_pContext->getWindow() != nullptr) {
+      _pContext->getWindow()->idle(0);
+    }
   }
   return 0;
 }

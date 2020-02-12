@@ -5,13 +5,13 @@
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
 #include "../base/EngineConfigFile.h"
-#include "../app/AppBase.h"
+#include "../base/AppBase.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
-#include "../app/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
@@ -27,8 +27,8 @@
 
 #include "../math/Algorithm.h"
 
-#include "../app/ProjectFile.h"
-#include "../app/WindowManager.h"
+#include "../base/ProjectFile.h"
+#include "../base/WindowManager.h"
 
 #include "../gfx/TexCache.h"
 #include "../gfx/LightManager.h"
@@ -132,26 +132,15 @@ void parsearg(std::string arg) {
   parsearg(key, value);
 }
 
-void Gu::initGlobals(string_t cacheDir, string_t configPath, const std::vector<std::string>& args) {
-  //Try to create the cache (temp) folder. Make sure to check this on IOS
-  FileSystem::createDirectoryRecursive(FileSystem::formatPath(cacheDir));
-
-  _pAppBase = rb;
+void Gu::initGlobals(const std::vector<std::string>& args) {
+  createCache();
 
   //Log
   Gu::_pLogger = std::make_shared<Logger>();
-  Gu::_pLogger->init(rb);
+  Gu::_pLogger->init(ApplicationPackage::getCacheFolder());
 
   //Config
-  EngineConfigFile ef;
-  ef.loadAndParse(configDir);
-  Gu::_pEngineConfig = ef.getConfig();
-
-  //Override EngineConfig
-  for (std::string arg : args) {
-    //TODO: skip arg 0 (app)
-    parsearg(arg);
-  }
+  loadConfig(args);
 
   //Setup Global Configruation
   getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
@@ -168,30 +157,47 @@ void Gu::initGlobals(string_t cacheDir, string_t configPath, const std::vector<s
     OperatingSystem::showConsole();
   }
 }
+void Gu::createCache() {
+  //Try to create the cache (temp) folder. Make sure to check this on IOS
+  string_t strCache = FileSystem::formatPath(ApplicationPackage::getCacheFolder());
+  BroLogInfo("Creating cache: '" + strCache + "'");
+  if (FileSystem::createDirectoryRecursive(strCache) == false) {
+    BroThrowException("Failed to create cache folder in '" + strCache + "'.");
+  }
+}
+void Gu::loadConfig(const std::vector<std::string>& args) {
+  string_t configPath = ApplicationPackage::getEngineConfigFilePath();
+  BroLogInfo("Loading config from '" + configPath + "'");
+  if (!FileSystem::fileExists(configPath)) {
+    BroThrowException("Engine configuration file '" + configPath + "' does not exist.");
+  }
+  else {
+    EngineConfigFile ef;
+    ef.loadAndParse(configPath);
+    Gu::_pEngineConfig = ef.getConfig();
+  }
+
+  //Override the EngineConfig
+  for (std::string arg : args) {
+    parsearg(arg);//TODO: skip arg 0 (app)
+  }
+
+}
 //void Gu::setContext(std::shared_ptr<GraphicsContext> rb) {
 //    Gu::_pContext = rb;
 //}
 void Gu::deleteGlobals() {
   //This must be called in order to delete these in order.
   //Teh GL context needs to come at the end.
-
-
   _pSequencer = nullptr;
-
   _pSoundCache = nullptr;
-
   _pRenderSettings = nullptr;
   _pEngineConfig = nullptr;
-
   //System Level
   _pInput = nullptr;
   _pAppPackage = nullptr;
   _pLogger = nullptr;
   _pNet = nullptr;
-
-
-  // _pGraphicsApi = nullptr;
-  _pAppBase = nullptr;
 }
 
 bool Gu::isBigEndian() {
@@ -504,7 +510,6 @@ void Gu::print(char msg) {
 void Gu::print(const string_t& msg) {
   print(msg.c_str());
 }
-
 void Gu::print(const char* msg) {
   if (Gu::getEngineConfig() == nullptr) {
     std::cout << msg;
@@ -513,8 +518,6 @@ void Gu::print(const char* msg) {
     std::cout << msg;
   }
 }
-
-
 std::string Gu::getCPPVersion() {
   //https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
 
@@ -532,7 +535,6 @@ std::string Gu::getCPPVersion() {
   }
   return Stz "pre-standard C++";
 }
-
 void Gu::createManagers() {
   _pRenderSettings = RenderSettings::create();
 
@@ -549,11 +551,11 @@ void Gu::createManagers() {
   BroLogInfo("Creating Network");
   _pNet = std::make_shared<Net>();
 
-  //*Note: Packages are supposed to be projects.  This creates a 'default' package.
+  //Packages are supposed to be projects.  This creates a 'default' package.
   BroLogInfo("Creating Package");
   _pAppPackage = std::make_shared<ApplicationPackage>();
-  _pAppPackage->loadProject("./");
-
+  string_t defaultPackageLocation = FileSystem::combinePath(ApplicationPackage::getDataPath(), "package.xml");
+  _pAppPackage->load(defaultPackageLocation);
 }
 void Gu::updateGlobals() {
 
