@@ -448,7 +448,8 @@
     <ClCompile Include="src\world\WorldObject.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="project\devlog.txt" />
+    <Text Include="designnotes.md" />
+    <Text Include="project\devlog.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>

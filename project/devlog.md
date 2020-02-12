@@ -17,40 +17,12 @@
 	*having context on Gu is simple, but things like RenderPipe need to have a specific context since they have their own data that isn't shared between contexts.
 10. makeAssetPath - needs to be defined in the "project" or package level.
 
-Removed APP
+*2/11/2020*
+Removed "app"
+Moved contextual managers back into GLContext.
+Removed generic "GraphicsContext" in favor of using GLContext (sorry, vulkan, maybe later).
 Moved the app's filesystem directories into Package.
 Moved more stuff around.
-
-Curent problem: I have 1 camera, rendering to 2 different windows, or surfaces.  How do I give it the viewport if the viewport is different per surface?  
-It needs a viewport driver of some kind.  The AR of the cameras are all fixed to a specific AR.
-
-* So, mouse projection must be done on the window, using the current Scene camera. Each window has 1 scene.  The scene has 1 active camera.
-* Cameras will then use Aspect Ratio to determine the frustum data.
-* To render, we must pass in a RenderTarget, like a window, to the pipeline's RenderScene method.
-
-## Design Changes
-Gu owns the window manager.  Window manager owns windows.  Windows point to scenes.
-	Window ->
-		Scene->
-			<GameObject>
-			PhysicsWorld
-				PhysicsNode : GameObject
-
-	Scene owns the camera (currently, window owns camera).  Camera is a property on the RenderTarget.
-
-	RenderPipe is part of a rendertarget.  A rendertarget can be a window, or buffer.
-	GraphicsWindow :: RenderTarget
-	RenderTarget
-		RenderPipe 
-
-
-	Every window (the system window blender runs in) has a screen property. Every screen in turn has a scene property which defines the active editable scene.
-
-## General Notes
-* Multiple Rendering in a single area is going to be important.
-* PBOs allow for async texture rendering.  PBO stands for Pixel Buffer Object. It allows you to upload a texture to GL in a asynchronous fashion which means that calls to glTexImage2D are instantaneous. 
-"https://www.khronos.org/opengl/wiki/OpenGL_and_multithreading"
-* VAOs and Framebuffers cannot be shared.
 
 *2/7/2020*
 Scene
@@ -90,7 +62,7 @@ VS allows a CMake project, but it doesn't appear as lightweight as a simple make
 
 We converted Shake thus to its own EXE.  It's no longer a library.
 
-# 8/23/19
+*8/23/19*
 Remove most of AppBase and move to ProjectFile.
 Move remaining AppBase contents into ProjectFile
 Remove "AppBase" or make it ProjectBase. Sth.
@@ -104,7 +76,7 @@ shaders & Everything need to be changed...
 In FlyCam make the FlyCam a Script Run on top of CameraNode
 	Remove FlyCam Class.
 
-8/11/19
+*8/11/19*
 Adding a Window layer,
 replacing Viewport with WindowViewport to differentiate between window and render viewport 
 this is in preparation for multiple viewports for the UI system.
