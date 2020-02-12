@@ -11,7 +11,7 @@
 
 namespace Game {
 struct ShaderIncludeRef {
-    t_string* str;
+    string_t* str;
     size_t lineNo;
 };
 
@@ -28,22 +28,22 @@ class ShaderCompiler : public VirtualMemory {
     char** ySrcPtr;    // - The pointer to a the source code.
 
     ShaderStatus::e _loadStatus;    //for temp errors
-    t_string _error;//for temp errors
-    t_string _fileDir;
+    string_t _error;//for temp errors
+    string_t _fileDir;
                     //void expandIncludes(char*& data,size_t& dataSize );
-    virtual IncludeVec getIncludes(std::vector<t_string>& lines);
-    void debugPrintShaderSource(t_string& loc, std::vector<t_string>& sourceLines);//PRINTS ENTIRE INCLUDED SOURCE
+    virtual IncludeVec getIncludes(std::vector<string_t>& lines);
+    void debugPrintShaderSource(string_t& loc, std::vector<string_t>& sourceLines);//PRINTS ENTIRE INCLUDED SOURCE
 
-    void searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, std::vector<t_string>& lines, time_t& greatestModifyTime);
-    void loadSource_r(std::shared_ptr<ShaderSubProgram> subProg, t_string& location, std::vector<t_string>& out_lines, time_t& greatestModifyTime);
-    void parseSourceIntoLines(std::shared_ptr<BinaryFile>, std::vector<t_string>& out_lines);
-    void loadSourceData(t_string& location, std::shared_ptr<BinaryFile> __out_ data);
-    void addSourceLineAt(size_t pos, std::vector<t_string>& vec, t_string line);
+    void searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, std::vector<string_t>& lines, time_t& greatestModifyTime);
+    void loadSource_r(std::shared_ptr<ShaderSubProgram> subProg, string_t& location, std::vector<string_t>& out_lines, time_t& greatestModifyTime);
+    void parseSourceIntoLines(std::shared_ptr<BinaryFile>, std::vector<string_t>& out_lines);
+    void loadSourceData(string_t& location, std::shared_ptr<BinaryFile> __out_ data);
+    void addSourceLineAt(size_t pos, std::vector<string_t>& vec, string_t line);
 public:
-    ShaderCompiler(std::shared_ptr<GLContext> ct, t_string fileDir);
+    ShaderCompiler(std::shared_ptr<GLContext> ct, string_t fileDir);
     virtual ~ShaderCompiler() { }
     virtual void loadSource(std::shared_ptr<ShaderSubProgram>);
-    virtual std::vector<t_string> getErrorList(const std::shared_ptr<ShaderSubProgram> shader) const;        // - Returns a vector of error strings.
+    virtual std::vector<string_t> getErrorList(const std::shared_ptr<ShaderSubProgram> shader) const;        // - Returns a vector of error strings.
     virtual void compile(std::shared_ptr<ShaderSubProgram>);
 
 };

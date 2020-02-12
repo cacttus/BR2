@@ -24,7 +24,7 @@ public:
     float getMass() { return 0.0f; } //PHY_STATIC_MASS
     float getHollow() { return false; }
     PhysicsSpec() { } //deserialize ctor
-    PhysicsSpec(t_string strName) : BaseSpec(strName) { }
+    PhysicsSpec(string_t strName) : BaseSpec(strName) { }
     virtual ~PhysicsSpec() override { }
     virtual void serialize( std::shared_ptr<BinaryFile> fb) override;
     virtual void deserialize( std::shared_ptr<BinaryFile> fb) override;

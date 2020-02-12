@@ -27,7 +27,7 @@
 
 namespace Game {
 
-typedef std::string t_string;
+typedef std::string string_t;
 
 //#endif
 #define memsize_max (size_t)(-1)

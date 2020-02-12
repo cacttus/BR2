@@ -41,7 +41,7 @@ void RenderPipeline::setClear(vec4& v) {
   _pBlittedForward->setClear(_vClear);
   _pBlittedDeferred->setClear(_vClear);
 }
-void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath) {
+void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath) {
   BroLogInfo("[RenderPipe] Initializing.");
   if (iWidth <= 0 || iHeight <= 0) {
     BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
@@ -79,11 +79,11 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, t_string strEnvTextur
 
   //Shaders
   if (_pDeferredShader == nullptr) {
-    _pDeferredShader = getGraphicsContext()->getShaderMaker()->makeShader(std::vector<t_string>{
+    _pDeferredShader = getGraphicsContext()->getShaderMaker()->makeShader(std::vector<string_t>{
       "d_v3x2_lighting.vs", "d_v3x2_lighting.ps" });
   }
   if (_pForwardShader == nullptr) {
-    _pForwardShader = getGraphicsContext()->getShaderMaker()->makeShader(std::vector<t_string>{
+    _pForwardShader = getGraphicsContext()->getShaderMaker()->makeShader(std::vector<string_t>{
       "f_v3x2_fbo.vs", "f_v3x2_fbo.ps"});
   }
   getGraphicsContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -167,7 +167,7 @@ void RenderPipeline::saveScreenshot() {
       //}
       iTarget = 0;
       for (std::shared_ptr<ShadowFrustum> sf : getGraphicsContext()->getLightManager()->getAllShadowFrustums()) {
-        t_string fname = FileSystem::getScreenshotFilename();
+        string_t fname = FileSystem::getScreenshotFilename();
         fname = fname + "_shadow_frustum_" + iTarget + "_.png";
         RenderUtils::saveTexture(std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
         BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
@@ -176,9 +176,9 @@ void RenderPipeline::saveScreenshot() {
       iTarget = 0;
       for (std::shared_ptr<ShadowBox> sb : getGraphicsContext()->getLightManager()->getAllShadowBoxes()) {
         for (int i = 0; i < 6; ++i) {
-          t_string fname = FileSystem::getScreenshotFilename();
+          string_t fname = FileSystem::getScreenshotFilename();
 
-          t_string side;
+          string_t side;
           if (i + GL_TEXTURE_CUBE_MAP_POSITIVE_X == GL_TEXTURE_CUBE_MAP_POSITIVE_X) side = "+X";
           else if (i + GL_TEXTURE_CUBE_MAP_POSITIVE_X == GL_TEXTURE_CUBE_MAP_POSITIVE_Y) side = "+Y";
           else if (i + GL_TEXTURE_CUBE_MAP_POSITIVE_X == GL_TEXTURE_CUBE_MAP_POSITIVE_Z) side = "+Z";
@@ -195,14 +195,14 @@ void RenderPipeline::saveScreenshot() {
 
       iTarget = 0;
       for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedDeferred->getTargets()) {
-        t_string fname = FileSystem::getScreenshotFilename();
+        string_t fname = FileSystem::getScreenshotFilename();
         fname = fname + "_deferred_" + pTarget->getName() + "_" + iTarget++ + "_.png";
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
         BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
       }
       iTarget = 0;
       for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedForward->getTargets()) {
-        t_string fname = FileSystem::getScreenshotFilename();
+        string_t fname = FileSystem::getScreenshotFilename();
         fname = fname + "_forward_" + pTarget->getName() + "_" + iTarget++ + "_.png";
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
         BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
@@ -211,7 +211,7 @@ void RenderPipeline::saveScreenshot() {
     }
     else {
       //Basic Forward Screenshot
-      t_string fname = FileSystem::getScreenshotFilename();
+      string_t fname = FileSystem::getScreenshotFilename();
       RenderUtils::saveTexture(std::move(fname), _pBlittedForward->getGlId(), GL_TEXTURE_2D);
       BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
     }

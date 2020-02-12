@@ -8,7 +8,7 @@
 #include "../gfx/RenderSettings.h"  
 
 namespace Game {
-Material::Material(t_string name) {
+Material::Material(string_t name) {
     _strName = name;
     _v4Spec.construct(1, 1, 1, 1);
     _v4Diffuse.construct(1, 1, 1, 1);
@@ -87,8 +87,8 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
     if (u != nullptr) {
         std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Color);
         if (ts == nullptr) {
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1Texture2D());
+            Gu::getContext()->glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, Gu::getContext()->getTexCache()->getDummy1x1Texture2D());
             //Material has no normal map, set it to the default texture.
             pShader->setTextureUf(0);
         }
@@ -103,8 +103,8 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
     if (u2 != nullptr) {
         std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Normal);
         if (ts == nullptr) {
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1NormalTexture2D());
+            Gu::getContext()->glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, Gu::getContext()->getTexCache()->getDummy1x1NormalTexture2D());
             //Material has no normal map, set it to the default texture.
             pShader->setTextureUf(1);
         }
@@ -205,7 +205,7 @@ void TextureSlot::deserialize( std::shared_ptr<BinaryFile> fb) {
 }
 void TextureSlot::serialize( std::shared_ptr<BinaryFile> fb) {
     if (_pTex != nullptr) {
-        t_string fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
+        string_t fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
         if (StringUtil::isNotEmpty(_pTex->getLocation())) {
             Hash32 h = STRHASH(fn);
             _strDebugTextureFileName = fn;

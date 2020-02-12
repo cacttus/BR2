@@ -82,8 +82,8 @@ namespace Game {
 
 #define MaxStaticStringBufferSize 16384
 
-void staticDebugBreak(t_string str);
-void runtimeAssertion(t_string str);
+void staticDebugBreak(string_t str);
+void runtimeAssertion(string_t str);
 #define TIME_T_MIN (0)
 #ifdef _DEBUG
 #define AssertOrThrow2(x) do{ if(!(x)) { staticDebugBreak(Stz "Debug Time Assertion: '" + #x + "'. "); } }while(0)
@@ -166,10 +166,10 @@ class StreamBuffer;
 class Net;
 class SyncTimer;
 
-typedef std::string t_string;
+typedef std::string string_t;
 typedef uint64_t t_timeval;
 
-typedef t_string DiskLoc;
+typedef string_t DiskLoc;
 typedef int32_t t_date;            // - Date information [m][d][y1][y2] = [8][27][198][7]
 typedef int64_t t_datetime;        // - A Date + the time.[m][d][y1][y2][h][m][s][ms]
 typedef uint32_t t_time;

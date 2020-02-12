@@ -69,33 +69,23 @@ extern "C" {
 #endif
 
 namespace Game {
-//std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
-//std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
-//std::shared_ptr<ParticleManager> Gu::_pParty = nullptr;
-//std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
-//std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
-//std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
-//std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
-//std::shared_ptr<LightManager> Gu::_pLightManager = nullptr;
-//std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
-//std::shared_ptr<Picker> Gu::_pPicker = nullptr;
-//std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
-//std::shared_ptr<Delta> Gu::_pDelta = nullptr;
-
-//std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
 std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
 std::shared_ptr<InputManager> Gu::_pInput = nullptr;
 
 std::shared_ptr<Package> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
-//std::shared_ptr<Engine> Gu::_pEngine = nullptr;
-//std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
 std::shared_ptr<WindowManager> Gu::_pWindowManager = nullptr;
-
+std::shared_ptr<GLContext> Gu::_pActiveContext = nullptr;
+std::shared_ptr<GLContext> Gu::getContext() {
+  return _pActiveContext;
+}
+void Gu::setContext(std::shared_ptr<GLContext> ct) {
+  _pActiveContext = ct;
+}
 //_STPROP(ModelCache);
 //_STPROP(InputManager);
 //_STPROP(FpsMeter);
@@ -440,8 +430,8 @@ void Gu::checkMemory() {
 #endif
 }
 
-t_string Gu::getOperatingSystemName() {
-  t_string res;
+string_t Gu::getOperatingSystemName() {
+  string_t res;
 #ifdef BRO_OS_WINDOWS
   OSVERSIONINFOEX vex;
   vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
@@ -513,14 +503,14 @@ bool Gu::isDebug() {
   return false;
 #endif
 }
-std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
+std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
   int squot = 0, dquot = 0;
 
   //todo - fix the delimiter thing
-  std::vector<t_string> ret;
+  std::vector<string_t> ret;
   for (int i = 0; i < argc; ++i) {
 
-    t_string str(argv[i]);
+    string_t str(argv[i]);
 
 
     ret.push_back(str);
@@ -555,7 +545,7 @@ void Gu::print(char msg) {
   c[1] = 0;
   print((char*)c);
 }
-void Gu::print(const t_string& msg) {
+void Gu::print(const string_t& msg) {
   print(msg.c_str());
 }
 
@@ -606,9 +596,14 @@ void Gu::createManagers() {
   BroLogInfo("Creating SoundCache");
   _pSoundCache = std::make_shared<SoundCache>();
 
-
   BroLogInfo("Creating Network");
   _pNet = std::make_shared<Net>();
+
+  //*Note: Packages are supposed to be projects.  This creates a 'default' package.
+  BroLogInfo("Creating Package");
+  _pPackage = std::make_shared<Package>();
+  _pPackage->loadProject("./");
+
 }
 void Gu::updateGlobals() {
 

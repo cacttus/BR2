@@ -23,35 +23,35 @@ namespace Game {
 class TypeConv {
 public:
     //ToVal
-    STATIC bool strToBool(t_string& s, bool bThrowIfInvalid = false);
-    STATIC long strToLong(t_string& s);
-    STATIC int32_t strToInt(t_string& s);
-    STATIC bool strToInt(t_string& s, int32_t& out);//Similar to .net' parseInt
-    STATIC uint32_t strToUint(t_string& s);
-    STATIC int8_t strToByte(t_string& s) ;
-    STATIC float strToFloat(t_string& s);
-    STATIC double strToDouble(t_string& s);
+    STATIC bool strToBool(string_t& s, bool bThrowIfInvalid = false);
+    STATIC long strToLong(string_t& s);
+    STATIC int32_t strToInt(string_t& s);
+    STATIC bool strToInt(string_t& s, int32_t& out);//Similar to .net' parseInt
+    STATIC uint32_t strToUint(string_t& s);
+    STATIC int8_t strToByte(string_t& s) ;
+    STATIC float strToFloat(string_t& s);
+    STATIC double strToDouble(string_t& s);
 
     //Silent Fail Verions
-    STATIC float strToFloat(t_string& s, bool bFailed);
-    STATIC double strToDouble(t_string& s, bool bFailed);
+    STATIC float strToFloat(string_t& s, bool bFailed);
+    STATIC double strToDouble(string_t& s, bool bFailed);
 
     //ToStr
-    STATIC t_string intToStr(const int32_t i);
-    STATIC t_string intToStr(const int64_t i);
-    STATIC t_string intToStr(const uint64_t i);
-    STATIC t_string intToStr(const uint32_t i);
-    STATIC t_string sizetToStr(const size_t i);
-    STATIC t_string longToStr(const long& i);
-    STATIC t_string ulongToStr(const unsigned long& i);
-    STATIC t_string int64ToStr(const int64_t& i);
-    STATIC t_string uint64ToStr(const uint64_t& i);
-    STATIC t_string floatToStr(const float i);
-    STATIC t_string dblToStr(const double i);
-    STATIC t_string wstrToStr(wchar_t* wstr);
+    STATIC string_t intToStr(const int32_t i);
+    STATIC string_t intToStr(const int64_t i);
+    STATIC string_t intToStr(const uint64_t i);
+    STATIC string_t intToStr(const uint32_t i);
+    STATIC string_t sizetToStr(const size_t i);
+    STATIC string_t longToStr(const long& i);
+    STATIC string_t ulongToStr(const unsigned long& i);
+    STATIC string_t int64ToStr(const int64_t& i);
+    STATIC string_t uint64ToStr(const uint64_t& i);
+    STATIC string_t floatToStr(const float i);
+    STATIC string_t dblToStr(const double i);
+    STATIC string_t wstrToStr(wchar_t* wstr);
 
     //Format Verions
-    STATIC t_string intToStr(const  int32_t i, char* fmt);
+    STATIC string_t intToStr(const  int32_t i, char* fmt);
 };
 
 

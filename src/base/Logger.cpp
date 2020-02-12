@@ -21,8 +21,8 @@ void Logger::init(std::shared_ptr<AppBase> rb) {
      //*Note: do not call the #define shortcuts here.
     logInfo(Stz  "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
 }
-t_string Logger::createMessageHead(LogLevel level) {
-    t_string str;
+string_t Logger::createMessageHead(LogLevel level) {
+    string_t str;
     if (level == LogLevel::Debug) {
         str = "DBG";
     }
@@ -42,37 +42,37 @@ void Logger::logDebug(const char* msg) {
         return;
     }
 
-    logDebug(t_string(msg));
+    logDebug(string_t(msg));
 }
 void Logger::logInfo(const char* msg) {
     if (_bEnabled == false) {
         return;
     }
 
-    logInfo(t_string(msg));
+    logInfo(string_t(msg));
 }
 void Logger::logError(const char* msg, Game::Exception* e) {
     if (_bEnabled == false) {
         return;
     }
 
-    logError(t_string(msg), e);
+    logError(string_t(msg), e);
 }
 void Logger::logWarn(const char* msg, Game::Exception* e) {
     if (_bEnabled == false) {
         return;
     }
 
-    logWarn(t_string(msg), e);
+    logWarn(string_t(msg), e);
 }
-void Logger::logDebug(t_string msg) {
+void Logger::logDebug(string_t msg) {
     if (_bEnabled == false) {
         return;
     }
     SetLoggerColor_Debug();
     log(msg, createMessageHead(LogLevel::Debug), NULL);
 }
-void Logger::logDebug(t_string msg, int line, char* file) {
+void Logger::logDebug(string_t msg, int line, char* file) {
     if (_bEnabled == false) {
         return;
     }
@@ -81,7 +81,7 @@ void Logger::logDebug(t_string msg, int line, char* file) {
 
     log(msg, createMessageHead(LogLevel::Debug), NULL);
 }
-void Logger::logError(t_string msg, Game::Exception* e) {
+void Logger::logError(string_t msg, Game::Exception* e) {
     if (_bEnabled == false) {
         return;
     }
@@ -91,7 +91,7 @@ void Logger::logError(t_string msg, Game::Exception* e) {
 
     log(msg, createMessageHead(LogLevel::Error), e);
 }
-void Logger::logError(t_string msg, int line, char* file, Game::Exception* e, bool hideStackTrace) {
+void Logger::logError(string_t msg, int line, char* file, Game::Exception* e, bool hideStackTrace) {
     if (_bEnabled == false) {
         return;
     }
@@ -104,14 +104,14 @@ void Logger::logError(t_string msg, int line, char* file, Game::Exception* e, bo
 
     log(msg, createMessageHead(LogLevel::Error), e);
 }
-void Logger::logInfo(t_string msg) {
+void Logger::logInfo(string_t msg) {
     if (_bEnabled == false) {
         return;
     }
     SetLoggerColor_Info();
     log(msg, createMessageHead(LogLevel::Info), NULL);
 }
-void Logger::logInfo(t_string msg, int line, char* file) {
+void Logger::logInfo(string_t msg, int line, char* file) {
     if (_bEnabled == false) {
         return;
     }
@@ -119,14 +119,14 @@ void Logger::logInfo(t_string msg, int line, char* file) {
     addLineFileToMsg(msg, line, file);
     log(msg, createMessageHead(LogLevel::Info), NULL);
 }
-void Logger::logWarn(t_string msg, Game::Exception* e) {
+void Logger::logWarn(string_t msg, Game::Exception* e) {
     if (_bEnabled == false) {
         return;
     }
     SetLoggerColor_Warn();
     log(msg, createMessageHead(LogLevel::Warn), e);
 }
-void Logger::logWarn(t_string msg, int line, char* file, Game::Exception* e) {
+void Logger::logWarn(string_t msg, int line, char* file, Game::Exception* e) {
     if (_bEnabled == false) {
         return;
     }
@@ -134,7 +134,7 @@ void Logger::logWarn(t_string msg, int line, char* file, Game::Exception* e) {
     addLineFileToMsg(msg, line, file);
     log(msg, createMessageHead(LogLevel::Warn), e);
 }
-void Logger::logWarnCycle(t_string msg, int line, char* file, Game::Exception* e, int iCycle) {
+void Logger::logWarnCycle(string_t msg, int line, char* file, Game::Exception* e, int iCycle) {
     //prevents per-frame logging conundrum
   /*if (Gu::getGraphicsContext() != nullptr) {
     if (Gu::getFpsMeter() != nullptr) {
@@ -144,7 +144,7 @@ void Logger::logWarnCycle(t_string msg, int line, char* file, Game::Exception* e
   //  }
   //}
 }
-void Logger::logErrorCycle(t_string msg, int line, char* file, Game::Exception* e, int iCycle) {
+void Logger::logErrorCycle(string_t msg, int line, char* file, Game::Exception* e, int iCycle) {
     //prevents per-frame logging conundrum
     //if (Gu::getGraphicsContext() != nullptr) {
     //    if (Gu::getFpsMeter() != nullptr) {
@@ -154,10 +154,10 @@ void Logger::logErrorCycle(t_string msg, int line, char* file, Game::Exception* 
     //    }
     //}
 }
-void Logger::log(t_string msg, t_string header, Game::Exception* e) {
+void Logger::log(string_t msg, string_t header, Game::Exception* e) {
     std::lock_guard<std::mutex> guard(_mtLogWriteMutex);
 
-    t_string m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";
+    string_t m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";
 
     if (_bLogToConsole) {
         Gu::print(m);
@@ -188,7 +188,7 @@ void Logger::log(t_string msg, t_string header, Game::Exception* e) {
 
     SetLoggerColor_Info();
 }
-t_string Logger::addStackTrace(t_string msg) {
+string_t Logger::addStackTrace(string_t msg) {
     msg += "\r\n";
     msg += DebugHelper::getStackTrace();
     return msg;
@@ -201,7 +201,7 @@ void Logger::enableLogToFile(bool bLogToFile) {
     _bLogToFile = bLogToFile;
     _bEnabled = _bLogToConsole || _bLogToFile;
 }
-void Logger::addLineFileToMsg(t_string msg, int line, char* file) {
+void Logger::addLineFileToMsg(string_t msg, int line, char* file) {
     if (_bSuppressLineFileDisplay == false) {
         msg = msg + "  (" + FileSystem::getFileNameFromPath(file) + " : " + line + ")";
     }

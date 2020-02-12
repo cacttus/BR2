@@ -1434,7 +1434,7 @@ void PhysicsWorld::sweepGridFrustum_r(std::function<void(ivec3&)> func, std::sha
 //        }
 //    }
 //}
-std::shared_ptr<PhysicsNode> PhysicsWorld::findNode(t_string specName) {
+std::shared_ptr<PhysicsNode> PhysicsWorld::findNode(string_t specName) {
     //Returns the FIRST node by the given spec name.
     Hash32 h = STRHASH(specName);
     for (std::pair<NodeId, std::shared_ptr<PhysicsNode>> p : _mapObjects) {
@@ -1562,7 +1562,7 @@ std::shared_ptr<ModelNode> PhysicsWorld::makeObj(std::shared_ptr<ModelSpec> ms, 
 
     return mn;
 }
-std::shared_ptr<LightNodePoint> PhysicsWorld::makePointLight(vec3&& pos, float radius, vec4&& color, t_string action, bool bShadowsEnabled) {
+std::shared_ptr<LightNodePoint> PhysicsWorld::makePointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled) {
     std::shared_ptr<LightNodePoint> lp = LightNodePoint::create(bShadowsEnabled);
     lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
     lp->setPos(std::move(pos));
@@ -1575,7 +1575,7 @@ std::shared_ptr<LightNodePoint> PhysicsWorld::makePointLight(vec3&& pos, float r
     return lp;
 }
 
-std::shared_ptr<LightNodeDir> PhysicsWorld::makeDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const t_string action, bool bShadowsEnabled) {
+std::shared_ptr<LightNodeDir> PhysicsWorld::makeDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled) {
     std::shared_ptr<LightNodeDir> dir = LightNodeDir::create(bShadowsEnabled);
     dir->setMaxDistance(fDist);
     dir->setPos(std::move(pos));

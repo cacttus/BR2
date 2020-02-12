@@ -41,7 +41,7 @@ bool DiskFile::checkEOF()
 *
 *    TODO: Remove this function.  It is superfluous and does nothing important.
 */
-RetCode DiskFile::create(t_string szloc, size_t offset) {
+RetCode DiskFile::create(string_t szloc, size_t offset) {
     std::fstream fs;
 
     this->off = offset;
@@ -73,7 +73,7 @@ RetCode DiskFile::create(t_string szloc, size_t offset) {
 *    @brief Open file for read storing the pointer to the file.
 */
 RetCode DiskFile::openForRead(DiskLoc& szloc) {
-    t_string l;
+    string_t l;
 
     if((state != file_closed) && (state != file_created) && (state != file_empty)){
         BroThrowException("File was in a bad state.");
@@ -122,7 +122,7 @@ RetCode DiskFile::openForRead(DiskLoc& szloc) {
 *    @brief Open file for write storing state in pointer.
 */
 RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
-    t_string l;
+    string_t l;
 
     if((state != file_closed) && (state != file_created) && (state != file_empty)){
         BroThrowException("File " + szloc + " was in a bad state.");
@@ -138,8 +138,8 @@ RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
     if(mode == FileWriteMode::Truncate)  {
         appOrTrunc = std::ios::trunc;
         //THis was causing windows to generate error 183
-        if(FileSystem::fileExists((t_string)l)) {
-            FileSystem::deleteFile((t_string)l);
+        if(FileSystem::fileExists((string_t)l)) {
+            FileSystem::deleteFile((string_t)l);
         }
     }
     else if(mode == FileWriteMode::Append) {
@@ -195,7 +195,7 @@ RetCode DiskFile::write(const char* bytes, size_t len, size_t offset)
 *   @fn writeStr
 *   @brief Writes a string like a pascal string, with [length(32bit)][str...]
 */
-RetCode DiskFile::writeStrWithLen(const t_string& str)
+RetCode DiskFile::writeStrWithLen(const string_t& str)
 {
     AssertOrThrow2(state == file_opened_write);
 
@@ -211,7 +211,7 @@ RetCode DiskFile::writeStrWithLen(const t_string& str)
 *    @fn
 *    @brief Writes string directly as plain byte text.
 */
-RetCode DiskFile::writeStrText(const t_string& str)
+RetCode DiskFile::writeStrText(const string_t& str)
 {
     AssertOrThrow2(state == file_opened_write);
 
@@ -289,7 +289,7 @@ RetCode DiskFile::read(char* buf, size_t len, size_t buflen, size_t offset)
 *       FLIE_BUFFEROVERFLOW: The supplied buffer was too small.
 *       GR_OK: success
 */
-RetCode DiskFile::readTo(char* buf, const t_string& delims, size_t buflen) {
+RetCode DiskFile::readTo(char* buf, const string_t& delims, size_t buflen) {
     AssertOrThrow2(state == file_opened_read);
 
 #ifdef _DEBUG   
@@ -387,7 +387,7 @@ RetCode DiskFile::getReadStream(std::fstream& newStream) {
 
     return GR_OK;
 }
-RetCode DiskFile::readAllBytes(t_string loc, Allocator<char>& __out_ outBuf){
+RetCode DiskFile::readAllBytes(string_t loc, Allocator<char>& __out_ outBuf){
     if(!FileSystem::fileExists(loc)){
         BroLogError("File "+ loc+ " did not exist.");
         return GR_FILE_NOT_FOUND_ON_DISK;
@@ -411,7 +411,7 @@ RetCode DiskFile::readAllBytes(t_string loc, Allocator<char>& __out_ outBuf){
 
     return GR_OK;
 }
-RetCode DiskFile::writeAllBytes(t_string loc, Allocator<char>& __out_ outBuf) {
+RetCode DiskFile::writeAllBytes(string_t loc, Allocator<char>& __out_ outBuf) {
     //Unnecessary to create file.  We truncate it later.
     //if (!FileSystem::fileExists(loc)) {
     //    t_string strPath = FileSystem::getPathFromPath(loc);

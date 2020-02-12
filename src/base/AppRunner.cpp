@@ -30,14 +30,11 @@
 
 
 namespace Game {
-void AppRunner::runApp(const std::vector<t_string>& args, std::shared_ptr<AppBase> app) {
+void AppRunner::runApp(const std::vector<string_t>& args, std::shared_ptr<AppBase> app) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
   //Root the engine FIRST so we can find the EngineConfig.dat
-  FileSystem::setExecutablePath(args[0]);
-  t_string a = FileSystem::getCurrentDirectory();
-  FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
-  t_string b = FileSystem::getCurrentDirectory();
+  FileSystem::init(args[0]);
 
   //**Must come first before other logic
   Gu::initGlobals(app, args);
@@ -62,9 +59,6 @@ void AppRunner::initSDL(std::shared_ptr<AppBase> app) {
 
   printVideoDiagnostics();
 
-
-
-
   initAudio();
   SDLUtils::checkSDLErr();
 
@@ -78,10 +72,8 @@ void AppRunner::initSDL(std::shared_ptr<AppBase> app) {
 
   BroLogInfo("Creating Managers.");
   Gu::createManagers();
-
-
 }
-void AppRunner::doShowError(t_string err, Exception* e) {
+void AppRunner::doShowError(string_t err, Exception* e) {
   if (e != nullptr) {
     OperatingSystem::showErrorDialog(e->what() + err);
   }
@@ -336,7 +328,7 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
 
   DebugHelper::checkMemory();
 }
-void AppRunner::exitApp(t_string error, int rc) {
+void AppRunner::exitApp(string_t error, int rc) {
   OperatingSystem::showErrorDialog(error + SDLNet_GetError());
 
   Gu::debugBreak();
@@ -346,7 +338,7 @@ void AppRunner::exitApp(t_string error, int rc) {
 
   exit(rc);
 }
-bool AppRunner::argMatch(const std::vector<t_string>& args, t_string arg1, int32_t iCount) {
+bool AppRunner::argMatch(const std::vector<string_t>& args, string_t arg1, int32_t iCount) {
   if (args.size() <= 1) {
     return false;
   }
@@ -356,7 +348,7 @@ bool AppRunner::argMatch(const std::vector<t_string>& args, t_string arg1, int32
   }
   return false;
 }
-bool AppRunner::runCommands(const std::vector<t_string>& args) {
+bool AppRunner::runCommands(const std::vector<string_t>& args) {
   //if (argMatch(args, "/c", 4)) {
   //  //Convert Mob
   //  t_string strMob = args[2];
@@ -365,7 +357,7 @@ bool AppRunner::runCommands(const std::vector<t_string>& args) {
   //  return true;
   //}
   //else 
-    if (argMatch(args, "/s", 3)) {
+  if (argMatch(args, "/s", 3)) {
     //Compile Shader
     // cw.exe /s "ShaderName"  "dir/ShaderFileDesc.dat"
 

@@ -24,11 +24,11 @@ namespace Game {
     gen.cone(1,1,1)
 
 */
-bool MeshGenParams::logAndExit(t_string str) {
+bool MeshGenParams::logAndExit(string_t str) {
     BroLogError(str);
     return false;
 }
-bool MeshGenParams::parse(t_string genString) {
+bool MeshGenParams::parse(string_t genString) {
     // - 
     char* cx = new char[genString.length() + 1];
     int bufsiz = 128;
@@ -54,7 +54,7 @@ bool MeshGenParams::parse(t_string genString) {
         {
             //if(parseMode==0);
             if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");
-            _strClass = t_string(buf);
+            _strClass = string_t(buf);
             memset(buf, 0, bufsiz);
             bufind = 0;
             parseMode = 1;
@@ -64,7 +64,7 @@ bool MeshGenParams::parse(t_string genString) {
             if (!(parseMode == 1)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");
             if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");
             iparameter = 0;
-            t_string algorithm = t_string(buf);
+            string_t algorithm = string_t(buf);
 
             _eGenType = getGenerationAlgorithmFromString(algorithm);
 
@@ -77,7 +77,7 @@ bool MeshGenParams::parse(t_string genString) {
             if (!(parseMode == 2)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
             if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
             if (!(iparameter < MeshGenParams::MaxParams)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
-            _strParams[iparameter++] = t_string(buf);
+            _strParams[iparameter++] = string_t(buf);
             memset(buf, 0, bufsiz);
             bufind = 0;
             parseMode = 2;
@@ -87,7 +87,7 @@ bool MeshGenParams::parse(t_string genString) {
             if (!(parseMode == 2)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
             if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
             if (!(iparameter < MeshGenParams::MaxParams)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
-            _strParams[iparameter++] = t_string(buf);
+            _strParams[iparameter++] = string_t(buf);
             memset(buf, 0, bufsiz);
             bufind = 0;
             parseMode = 3;
@@ -105,7 +105,7 @@ bool MeshGenParams::parse(t_string genString) {
 
     return true;
 }
-MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(t_string str) {
+MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(string_t str) {
     if (str == "cone")
         return MeshGenType::e::MGA_CONE;
     else if (str == "sphere")
@@ -130,7 +130,7 @@ MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(t_string str) {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-bool parseGenParams(t_string genString, MeshGenParams& __out_ params) {
+bool parseGenParams(string_t genString, MeshGenParams& __out_ params) {
     return params.parse(genString);
 }
 

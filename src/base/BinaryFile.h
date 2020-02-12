@@ -41,8 +41,8 @@ public:
 
     void rewind();    // - Rewinds the file pointer.
     int32_t get();
-    t_string getTok();    // - Returns a string token
-    t_string getTokSameLineOrReturnEmpty();    // - Returns a string token only if the token is on the same line.
+    string_t getTok();    // - Returns a string token
+    string_t getTokSameLineOrReturnEmpty();    // - Returns a string token only if the token is on the same line.
     bool eatWs();        // - Eat Whitespace (ALSO EATS \n, \r and spaces!!!)
     bool eatWsExceptNewline();        // - Eat Whitespace Does not eat \n
     bool eatLine();    // - Eats past \n and \r
@@ -82,9 +82,9 @@ public:
     void write(const char* buf, size_t bufsiz, size_t offset = memsize_max);
 
     //- File Operations
-    bool loadFromDisk( t_string fileLoc, bool bAddNull = false );        // - Read the whole file into the buffer.
-    bool loadFromDisk(t_string fileLoc, size_t offset, int64_t length, bool bAddNull = false);        // - Read a part of the file.
-    bool writeToDisk(t_string fileLoc);        // - Read a part of the file.
+    bool loadFromDisk( string_t fileLoc, bool bAddNull = false );        // - Read the whole file into the buffer.
+    bool loadFromDisk(string_t fileLoc, size_t offset, int64_t length, bool bAddNull = false);        // - Read a part of the file.
+    bool writeToDisk(string_t fileLoc);        // - Read a part of the file.
    
     std::string toString();
 

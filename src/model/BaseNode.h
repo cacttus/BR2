@@ -26,24 +26,24 @@ class UtilMeshInline;
 class BaseSpec : public VirtualMemoryShared<BaseSpec> {
 protected:
     Box3f* _pBox = nullptr;//Base Box.
-    t_string _strName;
+    string_t _strName;
     Hash32 _iNameHashed;
     mat4 _mInvBind;
     mat4 _mBind;
     mat4 _mParentInverse;   //This is just for mesh objects that have mesh parents.
     //mat4 _mBasis;//Where the object is - base rotation &c.
-    t_string _strParentName;
+    string_t _strParentName;
     ParentType::e _eParentType = ParentType::e::None;
     void setParentType(ParentType::e pt) { _eParentType = pt; }
 
 public:
     BaseSpec() { } //Serialized version
-    BaseSpec(t_string strName);
+    BaseSpec(string_t strName);
     virtual ~BaseSpec() override;
     ParentType::e getParentType() { return _eParentType; }
     Box3f* getBoundBoxObject() { return _pBox; }
 
-    t_string getName() { return _strName; }
+    string_t getName() { return _strName; }
     Hash32 getNameHashed() { return _iNameHashed; }
     //void setBasis(mat4& basis){
     //    _mBasis = basis;
@@ -61,8 +61,8 @@ public:
         //_mBind = bind;
         _mInvBind = bind;
     }
-    void setParentName(t_string str, ParentType::e ee) { _strParentName = str; setParentType(ee); }
-    t_string getParentName() { return _strParentName; }
+    void setParentName(string_t str, ParentType::e ee) { _strParentName = str; setParentType(ee); }
+    string_t getParentName() { return _strParentName; }
     virtual void serialize(std::shared_ptr<BinaryFile> fb);
     virtual void deserialize(std::shared_ptr<BinaryFile> fb);
 
@@ -168,7 +168,7 @@ public:
     bool isLightNode();
     bool isModelNode();
     bool isCameraNode();
-    t_string getSpecName();
+    string_t getSpecName();
     Hash32 getSpecNameHashed();
     void drawBoxes(std::shared_ptr<UtilMeshInline> mi);
     void drawBox(std::shared_ptr<UtilMeshInline> mi);

@@ -39,7 +39,7 @@ public:
     FORCE_INLINE VecType& p1(){ return _p[1]; }
     FORCE_INLINE VecType& p2(){ return _p[2]; }
     FORCE_INLINE VecType& p3(){ return _p[3]; }
-    FORCE_INLINE t_string toString();
+    FORCE_INLINE string_t toString();
 
     FORCE_INLINE Quad3x();
     FORCE_INLINE Quad3x(vec2& vTopLeft, vec2& vBottomRight);
@@ -68,7 +68,7 @@ FORCE_INLINE Quad3x<Tx>::Quad3x(vec2& vTopLeft, vec2& vBottomRight)
     _p[0].z = 0;
 }
 template < class Tx >
-FORCE_INLINE t_string Quad3x<Tx>::toString()
+FORCE_INLINE string_t Quad3x<Tx>::toString()
 {
   return Stz "{"+ p0().toString() + "},{" + p1().toString() + "},{" + p2().toString() + "},{" + p3().toString() + "}";
 }

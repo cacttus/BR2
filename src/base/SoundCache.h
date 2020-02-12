@@ -22,7 +22,7 @@ public:
 };
 class SoundSpec : public VirtualMemory {
     std::vector<std::shared_ptr<SoundInst>> _vecInstances;
-    t_string _sFilePath;
+    string_t _sFilePath;
     //    Mix_Music* _pMusic = nullptr;
     //Mix_Chunk* _pChunk = nullptr;
     int32_t _iChannels = 0;
@@ -36,11 +36,11 @@ public:
 
     std::vector<std::shared_ptr<SoundInst>>& getInstances() { return _vecInstances; }
 
-    SoundSpec(t_string sFile);
+    SoundSpec(string_t sFile);
     virtual ~SoundSpec() override;
 
     void update();
-    void load(t_string file);
+    void load(string_t file);
     std::shared_ptr<SoundInst> play(SoundPlayInfo inf);
 };
 class SoundInst : public VirtualMemory {

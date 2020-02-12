@@ -20,7 +20,7 @@ bool OglErr::chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool do
     return false;
 }
 
-t_string OglErr::glErrToStr(GLenum err) {
+string_t OglErr::glErrToStr(GLenum err) {
     switch(err) { 
 		case 0     : return  "GL_NO_ERROR         ";      		
 		case 0x0500: return  "GL_INVALID_ENUM     ";  		
@@ -120,7 +120,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
         ids.resize(numFound);
         lengths.resize(numFound);
 
-        std::vector<t_string> messages;
+        std::vector<string_t> messages;
         messages.reserve(numFound);
 
         std::vector<GLchar>::iterator currPos = msgData.begin();
@@ -141,10 +141,10 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
             else if (id == 0x07){ return ; }// glLineWidth Deprecated (other driver)
 
 
-            t_string strMsg = std::string(currPos, currPos + lengths[iMsg] - 1);
-            t_string strSrc = glDebugGetErrorSource(sources[iMsg]);
-            t_string strType = glDebugGetMessageType(types[iMsg]);
-            t_string strSev = glDebugGetMessageSeverity(severities[iMsg]);
+            string_t strMsg = std::string(currPos, currPos + lengths[iMsg] - 1);
+            string_t strSrc = glDebugGetErrorSource(sources[iMsg]);
+            string_t strType = glDebugGetMessageType(types[iMsg]);
+            string_t strSev = glDebugGetMessageSeverity(severities[iMsg]);
 
             if (doNotLog == false) {
                 strMsg = "GPU LOG\r\n ID: "+ StringUtil::toHex(id, true)+ "\r\n Msg: "+ strMsg;
@@ -153,17 +153,17 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
                 GLenum type = types[iMsg];
                 if (type == GL_DEBUG_TYPE_ERROR)
                 {
-                    t_string _strStackInfo = DebugHelper::getStackTrace();
+                    string_t _strStackInfo = DebugHelper::getStackTrace();
                     BroLogError(strMsg+ "\r\n" + _strStackInfo);
                 }
                 else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
                 {
-                    t_string _strStackInfo = DebugHelper::getStackTrace();
+                    string_t _strStackInfo = DebugHelper::getStackTrace();
                     BroLogInfo(strMsg + "\r\n" + _strStackInfo);
                 }
                 else
                 {
-                    t_string _strStackInfo = DebugHelper::getStackTrace();
+                    string_t _strStackInfo = DebugHelper::getStackTrace();
                     BroLogWarn(strMsg + "\r\n" + _strStackInfo);
                 }
             }
@@ -172,7 +172,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
         }
     } while (numFound > 0);
 }
-t_string OglErr::glDebugGetErrorSource(int eCode) {
+string_t OglErr::glDebugGetErrorSource(int eCode) {
     switch (eCode)
     {
     case GL_DEBUG_SOURCE_API: return " SOURCE API"; break;
@@ -184,7 +184,7 @@ t_string OglErr::glDebugGetErrorSource(int eCode) {
     }
     return ("*No Enum*");
 }
-t_string OglErr::glDebugGetMessageType(int eCode) {
+string_t OglErr::glDebugGetMessageType(int eCode) {
     switch (eCode)
     {
     case GL_DEBUG_TYPE_ERROR: return (" ERROR"); break;
@@ -199,7 +199,7 @@ t_string OglErr::glDebugGetMessageType(int eCode) {
     }
     return ("*No Enum*");
 }
-t_string OglErr::glDebugGetMessageSeverity(int eCode) {
+string_t OglErr::glDebugGetMessageSeverity(int eCode) {
     switch (eCode)
     {
     case GL_DEBUG_SEVERITY_HIGH: return (" HIGH"); break;

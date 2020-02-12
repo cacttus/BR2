@@ -28,15 +28,20 @@ class Gu : public GameMemory {
   static std::shared_ptr<RenderSettings> _pRenderSettings;
   static std::shared_ptr<EngineConfig> _pEngineConfig;
   static std::shared_ptr<Logger> _pLogger;
-
   static std::shared_ptr<Net> _pNet;
-
   static std::shared_ptr<WindowManager> _pWindowManager;
-
+  static std::shared_ptr<GLContext> _pActiveContext;
+  static std::shared_ptr<Package> _pPackage;
 
 public:
+  static std::shared_ptr<Package> getPackage() { return _pPackage; }
+  static void setPackage(std::shared_ptr<Package> x) { _pPackage = x; }
+
   static std::shared_ptr<WindowManager> getWindowManager();
 
+  //Make the graphics context current.
+  static void setContext(std::shared_ptr<GLContext> ct);
+  static std::shared_ptr<GLContext> getContext();
 
   // static std::shared_ptr<GLContext> getGraphicsContext();
   static std::shared_ptr<RenderSettings> getRenderSettings();
@@ -55,6 +60,7 @@ public:
   //These are all context specific
   static std::shared_ptr<GraphicsWindow> getMainWindow();
   static std::shared_ptr<GraphicsWindow> getActiveWindow();
+
 
 
   //static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
@@ -90,12 +96,12 @@ public:
 
   static int loadSound(std::string path, int& iChannels, int& iSampleRate, int16_t*& pData, int& nSamples, int& iDataLenBytes);
 
-  static std::vector<t_string> argsToVectorOfString(int argc, char** argv, char delimiter = '=');
+  static std::vector<string_t> argsToVectorOfString(int argc, char** argv, char delimiter = '=');
 
   static void inlineDrawBoxCont(const Box3f* b);
   static float fade(float t);
   static void checkMemory();
-  static t_string getOperatingSystemName();
+  static string_t getOperatingSystemName();
   static uint32_t getCurrentThreadId();
 
 
@@ -103,7 +109,7 @@ public:
 
   static void print(char msg);
   static void print(const char* msg);
-  static void print(const t_string& msg);
+  static void print(const string_t& msg);
   //static uint64_t getFrameNumber();
 
   static void guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp);//Transforms a quad for the matrix-less 

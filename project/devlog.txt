@@ -11,9 +11,18 @@
 5. Adding "SCENE" to the world.  
 6. Simplifying the UI to work with the UI design for this game.
 7. Camera needs to have a separate viewport from the window.
+8. Replacing AppMain() with Scene()
+9. Graphics Context - So, we can have a ContextManager, which has a STATIC graphics context in it.  When we call SwitchContext(ctx) the static is set.
+	Then we can call global references to TexCache, and the like without having to get the context explicitly from the window (or something).
+	*having context on Gu is simple, but things like RenderPipe need to have a specific context since they have their own data that isn't shared between contexts.
+10. makeAssetPath - needs to be defined in the "project" or package level.
 
-Curent problem: I have 1 camera, rendering to 2 different windows, or surfaces.  How do I give it the viewport if the viewport is different per surface?  It needs a viewport driver of some kind.  The AR of the cameras
-are all fixed to a specific AR.
+Removed APP
+Moved the app's filesystem directories into Package.
+Moved more stuff around.
+
+Curent problem: I have 1 camera, rendering to 2 different windows, or surfaces.  How do I give it the viewport if the viewport is different per surface?  
+It needs a viewport driver of some kind.  The AR of the cameras are all fixed to a specific AR.
 
 * So, mouse projection must be done on the window, using the current Scene camera. Each window has 1 scene.  The scene has 1 active camera.
 * Cameras will then use Aspect Ratio to determine the frustum data.

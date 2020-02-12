@@ -28,6 +28,7 @@ public:
   //Returns the camera to render to.
   std::shared_ptr<UiScreen> getUiScreen() { return _pUiScreen; }
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
+  std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
 
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp)override;
@@ -35,7 +36,7 @@ public:
   virtual void drawDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override; // draw the non-depth test items (last)
   virtual void drawTransparent(RenderParams& rp) override; //These come after the way after, the very end
-  
+
 private:
   bool _bDebugDisableCull = false;
   bool _bDrawDebug = false;
@@ -45,6 +46,7 @@ private:
   bool _bDebugDisableShadows = false;
   bool _bDebugDisableDepthTest = false;
 
+  std::shared_ptr<LightManager> _pLightManager;
   std::shared_ptr<UiScreen> _pScreen = nullptr;
   std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;

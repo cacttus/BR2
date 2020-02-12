@@ -22,6 +22,8 @@ public:
   GraphicsContext();
   virtual ~GraphicsContext() override;
 
+  void update();
+
   virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false) = 0;
   virtual bool chkErrDbg(bool bDoNotBreak = false, bool doNotLog = false) = 0;
 
@@ -46,26 +48,35 @@ public:
   float& getClearB() { return _fClearB; }
   float& getClearA() { return _fClearA; }
 
+  std::shared_ptr<FpsMeter> getFpsMeter() { return _pFpsMeter; }
+  std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
+  std::shared_ptr<Delta> getDelta() { return _pDelta; }
+
   std::shared_ptr<RenderPipeline> getRenderPipe() { return _pRenderPipe; }
   std::shared_ptr<Picker> getPicker() { return _pPicker; }
 
-  //Shared managers. These aren't static, I believe making these static would promote bad practice, especially if we need to separate these from their in the future (esp. due to future Vulkan implementation).
-  std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
+  // Shared managers store data accessible across ALL OpenGL graphics contexts.
+  // https://stackoverflow.com/questions/51366693/are-pbos-shared-across-opengl-contexts
   std::shared_ptr<ModelCache> getModelCache() { return _pModelCache; }
   std::shared_ptr<ShaderMaker> getShaderMaker() { return _pShaderMaker; }
   std::shared_ptr<TexCache> getTexCache() { return _pTexCache; }
   std::shared_ptr<ParticleMaker> getParty() { return _pParticleMaker; }
-
+  
 protected:
   virtual bool init();
 
 private:
   //Shared context data.
-  static std::shared_ptr<LightManager> _pLightManager;
+  static bool _bCreatedManagers;
   static std::shared_ptr<ModelCache> _pModelCache;
   static std::shared_ptr<TexCache> _pTexCache;
   static std::shared_ptr<ParticleMaker> _pParticleMaker;
   static std::shared_ptr<ShaderMaker> _pShaderMaker;
+
+  //One per context, this essentially calculates glSwapBuffers performance
+  std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
+  std::shared_ptr<Delta> _pDelta = nullptr;
+  std::shared_ptr<FrameSync> _pFrameSync = nullptr;
 
   EngineLoopState::e _eLoopState = EngineLoopState::Update;
   float _fClearR = 1.0f;
@@ -79,10 +90,7 @@ private:
   std::shared_ptr<Picker> _pPicker = nullptr;
 
   void makeVertexFormats();
-
-
-
-
+  void createManagers();
 };
 
 }//ns Game

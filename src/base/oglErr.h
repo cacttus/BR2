@@ -21,11 +21,11 @@ namespace Game {
 *
 */
 class OglErr  {
-    static t_string glDebugGetErrorSource(int eCode);
-    static t_string glDebugGetMessageType(int eCode);
-    static t_string glDebugGetMessageSeverity(int eCode);
+    static string_t glDebugGetErrorSource(int eCode);
+    static string_t glDebugGetMessageType(int eCode);
+    static string_t glDebugGetMessageSeverity(int eCode);
     static void printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog);
-    static t_string glErrToStr(GLenum err);
+    static string_t glErrToStr(GLenum err);
     static bool handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog = true);
     static bool checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog = true);
 

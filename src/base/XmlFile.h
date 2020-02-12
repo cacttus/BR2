@@ -23,12 +23,12 @@ protected:
     virtual void parse(char* buf, int64_t size) override;
     
     //To mimick the behavior of PoundFile.
-    virtual void pkp(std::vector<t_string>& tokens) = 0;
+    virtual void pkp(std::vector<string_t>& tokens) = 0;
 
     
 public:
     XmlFile() {}
-    XmlFile(t_string loc);
+    XmlFile(string_t loc);
     virtual ~XmlFile() override;
 };
 

@@ -25,19 +25,19 @@ private:
     GLuint _glId;
     time_t _compileTime;
 
-    t_string _strProgramName;
+    string_t _strProgramName;
     Hash32 _iNameHashed;
     std::map<Hash32, std::shared_ptr<ShaderUniform>> _vecUniforms;
     std::map<Hash32, std::shared_ptr<ShaderUniformBlock>> _vecUniformBlocks; //These are shared with ShaderMaker
     std::set<ShaderAttribute*> _setAttributes;
-    std::vector<t_string> _vecLinkErrors;  
+    std::vector<string_t> _vecLinkErrors;  
     std::vector<std::shared_ptr<ShaderSubProgram>> _vecSubPrograms;
     void bindAllUniforms();
     
     void setShadowUf();
 
 public:
-    ShaderBase(std::shared_ptr<GraphicsContext> ct, t_string strName);
+    ShaderBase(std::shared_ptr<GraphicsContext> ct, string_t strName);
     virtual ~ShaderBase() override ;
 
     void init();
@@ -47,13 +47,13 @@ public:
     void setProgramStatus(ShaderStatus::e sp) { _eProgramStatus = sp; }
     ShaderStatus::e getProgramStatus() { return _eProgramStatus; }
     Hash32 getNameHashed() { return _iNameHashed; }
-    t_string getProgramName() { return _strProgramName; }
+    string_t getProgramName() { return _strProgramName; }
     time_t getCompileTime() { return _compileTime; }
     std::vector<std::shared_ptr<ShaderSubProgram>>& getSubPrograms() { return _vecSubPrograms; }
-    std::vector<t_string>& getLinkErrors() { return _vecLinkErrors; }
+    std::vector<string_t>& getLinkErrors() { return _vecLinkErrors; }
     std::map<Hash32, std::shared_ptr<ShaderUniformBlock>>& getUniformBlocks() { return _vecUniformBlocks; }
-    void getProgramErrorLog(std::vector<t_string>& __out_ errs);
-    void setProgramName(t_string n);
+    void getProgramErrorLog(std::vector<string_t>& __out_ errs);
+    void setProgramName(string_t n);
     void bind();
     void unbind();
     void unbindAllUniforms();
@@ -66,8 +66,8 @@ public:
     std::map<Hash32, std::shared_ptr<ShaderUniform>>& getUniforms() { return _vecUniforms; }
     std::set<ShaderAttribute*>& getAttributes() { return _setAttributes; }
 
-    std::shared_ptr<ShaderUniform> getUniformByName(t_string name);
-    void setUf(t_string name, void* value, GLint count = -1, bool bIgnore = false);//SetUniformByName
+    std::shared_ptr<ShaderUniform> getUniformByName(string_t name);
+    void setUf(string_t name, void* value, GLint count = -1, bool bIgnore = false);//SetUniformByName
     void setCameraUf(std::shared_ptr<CameraNode> cam, mat4* model = nullptr);
     void setAtlasUf(std::shared_ptr<Atlas> pa);
     void verifyBound();
@@ -78,7 +78,7 @@ public:
     void draw(std::shared_ptr<MeshNode> mesh, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
     void draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
     void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
-    t_string debugGetUniformValues();
+    string_t debugGetUniformValues();
 
     void beginRaster(int iOrthoWidth, int iOrthoHeight);
     void endRaster();

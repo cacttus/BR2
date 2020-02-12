@@ -30,7 +30,7 @@ namespace Game {
 //};
 class StackMod {
 public:
-    t_string name;
+    string_t name;
     size_t addr;
 };
 /**
@@ -42,14 +42,14 @@ public:
 *    http://blogs.msdn.com/b/webdav_101/archive/2008/03/31/detecting-application-memory-leaks-in-unmanaged-c-with-4-lines-of-code.aspx
 */
 class DebugHelper : public VirtualMemory {
-    static t_string modList();
+    static string_t modList();
 public:
     DebugHelper();
     virtual ~DebugHelper() override;
 
-    static t_string getStackTrace();
+    static string_t getStackTrace();
     static std::vector<std::string> getCallStack(bool bIncludeFrameId = false);
-    static t_string getCallingMethod();
+    static string_t getCallingMethod();
     static void debugHeapBegin(bool bDoDebug);
     static void debugHeapEnd();
     static void setBreakAlloc(int allocNum);

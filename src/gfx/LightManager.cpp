@@ -10,11 +10,12 @@
 #include "../model/ShaderStorageBuffer.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
+#include "../world/Scene.h"
 
 namespace Game {
-LightManager::LightManager(std::shared_ptr<GLContext> tc) {
+LightManager::LightManager(std::shared_ptr<Scene> scene) {
+  _pScene = scene;
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();
-  _pContext = tc;
   if (Gu::getConfig()->getColorSpace() == ColorSpace::e::SRGB) {
     //If SRGB is enabled we want to nullify the exponent
     //_pGpuDeferredParams->_fHdrToneMapExp = 0.899999976;
@@ -92,10 +93,8 @@ void LightManager::updateRenderData() {
   _pGpuDeferredParams->_fFogDivisor = MathUtils::broClamp(_pGpuDeferredParams->_fFogDivisor, 0.0f, FLT_MAX);
   _pGpuDeferredParams->_fAmbientIntensity = MathUtils::broClamp(_pGpuDeferredParams->_fAmbientIntensity, 0.0f, 1.0f);
 
-
-
   //    _pGpuDeferredParams->_iPointLightCount
-  std::shared_ptr<CameraNode> pCam = Gu::getCamera();
+  std::shared_ptr<CameraNode> pCam = _pScene->getActiveCamera();
   //Set world view / proj
   if (pCam != nullptr) {
     //  _pGpuDeferredParams->_mWorldProj = pCam->getProj();
@@ -118,7 +117,7 @@ void LightManager::update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowF
 // - Main function to be called on the scene to set up all the lights.
 void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf) {
   //Physics world may not be instantiated.
-  if (Gu::getPhysicsWorld() != nullptr && Gu::getPhysicsWorld()->getRenderBucket() != nullptr) {
+  if (_pScene->getPhysicsWorld() != nullptr && _pScene->getPhysicsWorld()->getRenderBucket() != nullptr) {
 
     Perf::pushPerf();
     int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();//shadowmapmaxinfluences
@@ -133,7 +132,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
 
     //Note: we collect all lights in the physics world collection step.
     //Update all lights that collide with the main frustum
-    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : Gu::getPhysicsWorld()->getRenderBucket()->getPointLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getPointLights()) {
       std::shared_ptr<LightNodePoint> pPointLight = p.second;
       if (_pGpuDeferredParams->_iPointLightCount < nMaxPointLights) {
         pPointLight->renderShadows(pf);
@@ -144,7 +143,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
         _vecGpuPointLights.push_back(*(pPointLight->getGpuLight().get()));
       }
     }
-    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : Gu::getPhysicsWorld()->getRenderBucket()->getDirLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getDirLights()) {
       std::shared_ptr<LightNodeDir> pDirLight = p.second;
       if (_pGpuDeferredParams->_iDirLightCount < nMaxDirLights) {
         pDirLight->renderShadows(mf);
@@ -163,7 +162,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
 }
 std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
   std::vector<std::shared_ptr<ShadowBox>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : Gu::getPhysicsWorld()->getRenderBucket()->getPointLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getPointLights()) {
     if (p.second->getShadowBox()) {
       sbs.push_back(p.second->getShadowBox());
     }
@@ -173,7 +172,7 @@ std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
 }
 std::vector<std::shared_ptr<ShadowFrustum>> LightManager::getAllShadowFrustums() {
   std::vector<std::shared_ptr<ShadowFrustum>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : Gu::getPhysicsWorld()->getRenderBucket()->getDirLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getDirLights()) {
     if (p.second->getShadowFrustum()) {
       sbs.push_back(p.second->getShadowFrustum());
     }

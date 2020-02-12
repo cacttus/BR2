@@ -221,7 +221,7 @@ void MeshNode::copyJointsToGpu() {
     Perf::pushPerf();
     AssertOrThrow2(_pArmJoints != nullptr);
     std::vector<mat4> mats;
-    std::vector<t_string> names; //TEST
+    std::vector<string_t> names; //TEST
     mat4 mtmp;
    // static bool copyLocal = false;
     for (std::shared_ptr<BoneNode> bn : _vecBoneNodesOrdered)

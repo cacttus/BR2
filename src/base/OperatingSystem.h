@@ -11,19 +11,14 @@
 #include "../base/BaseHeader.h"
 
 namespace Game {
-
 /**
-*    @class OperatingSystem
-*    @brief Wraps OS kernel calls.
-*            Provides OS information.
-*            
-*            Put all OS methods in this class.
-*
+*  @class OperatingSystem
+*  @brief Wraps OS kernel calls. Provides OS information. Put all OS methods in this class.
 */
 class OperatingSystem : public VirtualMemory {
 public:
-    enum ErrorCode {
-        //Note:Remember to add these codes to suppressError()
+  enum ErrorCode {
+    //Note:Remember to add these codes to suppressError()
 #ifdef BRO_OS_WINDOWS
     NoError = 0,
     FileNotFound = 2,
@@ -40,39 +35,39 @@ public:
 #else
 
 #endif
-    };
+  };
   //  static RuntimeEnvironment getRuntimeEnvironment();// Returns windows/linux 32/64 environment.
-    static t_string getRuntimeEnvironmentStr();// Returns windows/linux 32/64 environment.
-   // static void suspendThread(uint32_t millis); // Suspends the currend thread this method is called in for the specified number of milliseconds.
-  //  static uint32_t getCurrentThreadId();
-   // static ThreadHandle createThread(ThreadCallbackMethod myCallback, void* parameter=NULL, uint32_t* threadId=NULL);
-   // static void terminateThread(ThreadHandle handle);
-   // static OsWindowMessage processThreadMessages();    // Win32 message pump.
-   // static OsWindowMessage processThreadMessagesIgnore();    // Win32 message pump.
-  //  static int64_t getTickCount64();
-   // static size_t getAvailableMemory();
-   // static size_t getProcessMemoryUsage();
-   // static int32_t getError(); // gets the current operating system error code.
-    //static void osed( int line, char* file, bool bThrow = false);    // Error debug.  Removed in release versions.
- //   static void oser( int line, char* file, bool bThrow = false);    // Error debug.  Removed in release versions.
-  //  static void clearAllErrors();
-  //  static void suppressError(int error, const char* message, bool bWriteMessage=true); //Suppress the given operating system error code and write this message to the log.
-  //  static void suppressError(int error, t_string& message, bool bWriteMessage=true); //Suppress the given operating system error code and write this message to the log.
-  //  static void suppressError(ErrorCode, bool bWriteMessage=true); //Suppress the given operating system error code and write this message to the log.
-  //  static void getScreenDims(Quad2f*); // - Get the window dimensions.
-    static void showErrorDialog(t_string& str, t_string title = t_string("Error"));    
-   // static t_string getUserFolderPath();
-    static t_string getGamesFolderPath();
-    static void createDirectory(t_string& dir);
-    static void showMouseCursor();
-    static void hideMouseCursor();
-    static bool getMouseCursorIsVisible();
-    static int32_t getNumberOfProcessors();
-    static bool isVistaOrGreater();
-    static t_string  getOperatingSystemName();
-    static void showConsole();
-    static void hideConsole();
-    static int strCaseCmp(const t_string& str1, const t_string& str2);
+  static string_t getRuntimeEnvironmentStr();// Returns windows/linux 32/64 environment.
+ // static void suspendThread(uint32_t millis); // Suspends the currend thread this method is called in for the specified number of milliseconds.
+//  static uint32_t getCurrentThreadId();
+ // static ThreadHandle createThread(ThreadCallbackMethod myCallback, void* parameter=NULL, uint32_t* threadId=NULL);
+ // static void terminateThread(ThreadHandle handle);
+ // static OsWindowMessage processThreadMessages();    // Win32 message pump.
+ // static OsWindowMessage processThreadMessagesIgnore();    // Win32 message pump.
+//  static int64_t getTickCount64();
+ // static size_t getAvailableMemory();
+ // static size_t getProcessMemoryUsage();
+ // static int32_t getError(); // gets the current operating system error code.
+  //static void osed( int line, char* file, bool bThrow = false);    // Error debug.  Removed in release versions.
+//   static void oser( int line, char* file, bool bThrow = false);    // Error debug.  Removed in release versions.
+ //  static void clearAllErrors();
+ //  static void suppressError(int error, const char* message, bool bWriteMessage=true); //Suppress the given operating system error code and write this message to the log.
+ //  static void suppressError(int error, t_string& message, bool bWriteMessage=true); //Suppress the given operating system error code and write this message to the log.
+ //  static void suppressError(ErrorCode, bool bWriteMessage=true); //Suppress the given operating system error code and write this message to the log.
+ //  static void getScreenDims(Quad2f*); // - Get the window dimensions.
+  static void showErrorDialog(string_t& str, string_t title = string_t("Error"));
+  // static t_string getUserFolderPath();
+  static string_t getGamesFolderPath();
+  static void createDirectory(string_t& dir);
+  static void showMouseCursor();
+  static void hideMouseCursor();
+  static bool getMouseCursorIsVisible();
+  static int32_t getNumberOfProcessors();
+  static bool isVistaOrGreater();
+  static string_t  getOperatingSystemName();
+  static void showConsole();
+  static void hideConsole();
+  static int strCaseCmp(const string_t& str1, const string_t& str2);
   //  static bool keyDown(int code);
 };
 

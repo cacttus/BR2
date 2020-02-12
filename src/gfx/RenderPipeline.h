@@ -28,7 +28,7 @@ class RenderPipeline : public HasGraphicsContext<RenderPipeline>  {
 public:
   RenderPipeline(std::shared_ptr<GraphicsWindow> w);
   virtual ~RenderPipeline() override;
-  void init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath);
+  void init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath);
   std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
   void renderSceneTexture(PipeBits _pipeBits);
   void renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBits);

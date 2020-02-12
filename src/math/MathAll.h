@@ -250,9 +250,9 @@ Vec2x<Tx> Vec2x<Tx>::maxv(const Vec2x<Tx>& v_a, const Vec2x<Tx>& v_b)
     return out;
 }
 template < class Tx >
-t_string Vec2x<Tx>::toString(int precis) const
+string_t Vec2x<Tx>::toString(int precis) const
 {
-    t_string tmp;
+    string_t tmp;
     std::ostringstream out;
     std::streamsize prec;
     if (precis == -1){
@@ -266,9 +266,9 @@ t_string Vec2x<Tx>::toString(int precis) const
     return out.str();
 }
 template < class Tx >
-t_string Vec3x<Tx>::toString(int precis) const
+string_t Vec3x<Tx>::toString(int precis) const
 {
-    t_string tmp;
+    string_t tmp;
     std::ostringstream out;
     std::streamsize prec;
     if (precis == -1){

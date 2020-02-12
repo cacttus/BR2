@@ -24,7 +24,7 @@ MobFile::~MobFile()
     //    DEL_MEM(ml);
     //}
 }
-void MobFile::pkp(std::vector<t_string>& tokens) {
+void MobFile::pkp(std::vector<string_t>& tokens) {
     int iind = 1;
     if (lcmp(tokens[0], "mod_beg", 3)) {
         if (_pCurModDataLoad == nullptr) {
@@ -75,8 +75,8 @@ void  MobFile::postLoad() {
 
     cacheObjectsAndComputeBoxes();
 }
-t_string MobFile::getMobDir() {
-    t_string path = FileSystem::getPathFromPath(this->_fileLoc);
+string_t MobFile::getMobDir() {
+    string_t path = FileSystem::getPathFromPath(this->_fileLoc);
     return path;
 }
 void MobFile::cacheObjectsAndComputeBoxes() {
@@ -121,7 +121,7 @@ ModDataLoad::~ModDataLoad() {
     _pCurMeshData = nullptr;
   //  DEL_MEM(_pCurMeshData);//Lame but this is do because objf ile uses all verts in file.
 }
-bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
+bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
     int iind = 1;
 
     if (mb->lcmp(tokens[0], "act_beg", 3)) { //I.E. the motion
@@ -129,8 +129,8 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
             mb->parseErr("Cur action keys data was not null", true, false);
         }
         else {
-            t_string actName = mb->getCleanToken(tokens, iind);
-            t_string objName = mb->getCleanToken(tokens, iind);
+            string_t actName = mb->getCleanToken(tokens, iind);
+            string_t objName = mb->getCleanToken(tokens, iind);
 
             //Try to create the gruop
             Hash32 ah = STRHASH(actName);
@@ -175,9 +175,9 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
         }
         else {
             //Parse crap
-            t_string strType = mb->getCleanToken(tokens, iind);
+            string_t strType = mb->getCleanToken(tokens, iind);
             int iTime = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
-            t_string strData = mb->getCleanToken(tokens, iind);
+            string_t strData = mb->getCleanToken(tokens, iind);
 
             KeyframeInterpolation::e eInterp;
             eInterp = KeyframeInterpolation::e::Linear;
@@ -224,7 +224,7 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
     }
     return true;
 }
-bool ModDataLoad::tkArms(MobFile* mb, std::vector<t_string>& tokens) {
+bool ModDataLoad::tkArms(MobFile* mb, std::vector<string_t>& tokens) {
     int iind = 1;
 
     if (mb->lcmp(tokens[0], "arm_beg", 5)) {
@@ -232,9 +232,9 @@ bool ModDataLoad::tkArms(MobFile* mb, std::vector<t_string>& tokens) {
             mb->parseErr("Cur ARM data was not null", true, false);
         }
         else {
-            t_string strName = mb->getCleanToken(tokens, iind);
-            t_string strParentName = mb->getCleanToken(tokens, iind);
-            t_string strParentType = mb->getCleanToken(tokens, iind);
+            string_t strName = mb->getCleanToken(tokens, iind);
+            string_t strParentName = mb->getCleanToken(tokens, iind);
+            string_t strParentType = mb->getCleanToken(tokens, iind);
             int32_t iId = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
             //t_string strParent = mb->getCleanToken(tokens, iind);
             _pCurArmData = std::make_shared<Armature>(strName, iId);
@@ -274,7 +274,7 @@ bool ModDataLoad::tkArms(MobFile* mb, std::vector<t_string>& tokens) {
     }
     return true;
 }
-ParentType::e MobFile::parseParentType(t_string strParentType){
+ParentType::e MobFile::parseParentType(string_t strParentType){
     if (StringUtil::equalsi(strParentType, "BONE")) {
         return ParentType::e::Bone;
     }
@@ -293,12 +293,12 @@ ParentType::e MobFile::parseParentType(t_string strParentType){
     }
 
 }
-bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<t_string>& tokens) {
+bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
     int iind = 1;
     if (mb->lcmp(tokens[0], "mpt_beg", 4)) {
-        t_string strName = mb->getCleanToken(tokens, iind);
-        t_string strParent = mb->getCleanToken(tokens, iind);
-        t_string strParentType = mb->getCleanToken(tokens, iind);
+        string_t strName = mb->getCleanToken(tokens, iind);
+        string_t strParent = mb->getCleanToken(tokens, iind);
+        string_t strParentType = mb->getCleanToken(tokens, iind);
 
         if (StringUtil::equalsi(strName, "mt_test.Cube.006")) {
             int ii = 0;
@@ -380,7 +380,7 @@ void MeshSpecData::resetData() {
     _matBasis = mat4::identity();
     _matParentInverse = mat4::identity();
 }
-bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
+bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
     int iind = 1;
     if (tkMaterial(pMobFile, tokens))
         ;
@@ -422,7 +422,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
 
             int32_t iArmId = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
             int32_t iCount = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
-            t_string strWeights = pMobFile->getCleanToken(tokens, iind);
+            string_t strWeights = pMobFile->getCleanToken(tokens, iind);
 
             if (iCount > 0) {
                 parseWeights(pMobFile, vw, iArmId, strWeights);
@@ -454,7 +454,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
         _matParentInverse = pMobFile->parseMat4(pMobFile->getCleanToken(tokens, iind));
     }
     else if (pMobFile->lcmp(tokens[0], "physics_shape", 4)) {
-        t_string strBody = pMobFile->getCleanToken(tokens, iind);
+        string_t strBody = pMobFile->getCleanToken(tokens, iind);
         _bKinematicShape = TypeConv::strToBool(pMobFile->getCleanToken(tokens, iind));
         _bDynamicShape = TypeConv::strToBool(pMobFile->getCleanToken(tokens, iind));
         if (StringUtil::equalsi(strBody, "sphere")) {
@@ -479,7 +479,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
 
     return true;
 }
-bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<t_string>& tokens) {
+bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<string_t>& tokens) {
     int iind = 1;
 
     if (pMobFile->lcmp(tokens[0], "mtllib", 2)) {
@@ -585,12 +585,12 @@ bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<t_string>& tokens) 
     }
     return true;
 }
-void MeshSpecData::parseFace(MobFile* pMobFile, t_string t0, t_string t1, t_string t2)
+void MeshSpecData::parseFace(MobFile* pMobFile, string_t t0, string_t t1, string_t t2)
 {
-    std::vector <t_string> strVec;
+    std::vector <string_t> strVec;
     int32_t iComp;
     int32_t indices[3];
-    t_string tok;
+    string_t tok;
 
     // - Parse face groups x,y,z:  x/x/x  y/y/y  z/z/z
     for (int igroup = 0; igroup < 3; ++igroup)
@@ -616,14 +616,14 @@ void MeshSpecData::parseFace(MobFile* pMobFile, t_string t0, t_string t1, t_stri
         strVec.clear();
     }
 }
-int32_t MeshSpecData::parseFaceComponent(MobFile* pMobFile, t_string& tok, int32_t& strlind, int32_t iComponent)
+int32_t MeshSpecData::parseFaceComponent(MobFile* pMobFile, string_t& tok, int32_t& strlind, int32_t iComponent)
 {
     size_t strind = 0;// current index of '/'
     int32_t idx; // parsed vertex face index
-    t_string rt;
+    string_t rt;
 
     strind = tok.find_first_of('/', strlind);
-    if (strind == t_string::npos) {
+    if (strind == string_t::npos) {
         //Last item in the 3 element list.
         strind = tok.length();
     }
@@ -786,7 +786,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pS
         //create material
 
         std::shared_ptr<Material> mat = std::make_shared<Material>( _pMatData->_strMatName);
-        t_string path;
+        string_t path;
 
         if (StringUtil::isNotEmpty(_pMatData->_strDiffuseTex)) {
 
@@ -1000,10 +1000,10 @@ void MeshSpecData::clearVertexCache()
     }
     _mapVertexCache.clear();
 }
-void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId, t_string strWeights) {
+void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId, string_t strWeights) {
     size_t n = 0;
     char c;
-    t_string val = "";
+    string_t val = "";
     bool joint = true;    // - True if we are parsing joint ID, false if weight.
     float fWeight;
     int32_t iJointId;

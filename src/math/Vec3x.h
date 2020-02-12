@@ -89,7 +89,7 @@ public:
     //static Vec3x<Tx> minv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b);    // - Returns the minimum vector from the given two
     //static Vec3x<Tx> maxv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b);    // returns maximujm vector of given t2o
 
-    FORCE_INLINE t_string        toString(int precis = -1) const;
+    FORCE_INLINE string_t        toString(int precis = -1) const;
 
     FORCE_INLINE static Vec3x<Tx> zero();
     FORCE_INLINE static Vec3x<Tx> VEC3X_MIN();
@@ -864,9 +864,9 @@ void Vec3x<Tx>::checkNormalOrZeroAndLimitVector(float fMaxLength, bool bShowWarn
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-STATIC FORCE_INLINE t_string tstr(const vec3& x) { return x.toString(); }
-STATIC FORCE_INLINE t_string tstr(const ivec3& x) { return x.toString(); }
-STATIC FORCE_INLINE t_string tstr(const uvec3& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const vec3& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const ivec3& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const uvec3& x) { return x.toString(); }
 
 
 

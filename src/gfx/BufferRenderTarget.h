@@ -23,7 +23,7 @@ public:
 
   bool getShared() { return _bShared; }
   GLuint getGlTexId() { return _iGlTexId; }
-  t_string getName() { return _strName; }
+  string_t getName() { return _strName; }
   GLenum getTextureChannel() { return _eTextureChannel; }
   GLenum getAttachment() { return _eAttachment; }
   GLenum getTextureTarget() { return _eTextureTarget; }
@@ -36,7 +36,7 @@ public:
   void bind(GLenum eAttachment = 0);
 
 private:
-    t_string _strName;
+    string_t _strName;
     GLuint _iGlTexId;    // Texture Id
     GLenum _eTextureTarget; //GL_TEXTURE_2D, or other
     GLenum _eAttachment;//GL_COLORATTACHMENT_0 + n

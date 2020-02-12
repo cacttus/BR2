@@ -9,33 +9,23 @@
 
 #include "../base/BaseHeader.h"
 
-
 namespace Game {
-
 /**
-*    @class Delta
-*    @brief Store and retrieve the frame delta per thread
-*
+*  @class Delta
+*  @brief The delta is the timekeeper of the engine.  It represents the seconds since the previous frame code has finished, up to the point that you call it.  
+*  Delta is used for all the animation in the engine.
 */
 class Delta : public GameMemory {
-private:
-    Uint64 _iDeltaNow=0, _iDeltaLast=0;
-    double _fDelta = 0;
-
 public:
-    Delta();
-    virtual ~Delta();
-   
-//    std::shared_ptr<Viewport> getViewport() { return _pViewport; }
+  Delta();
+  virtual ~Delta();
+  void update();
+  float get() { return (float)_fDelta; }
 
-    //void init();
-    void update();// updateDelta(); //**Call before step()
-    float get() { return (float)_fDelta; }
-    //GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path);
-    //void makeTestVao();
-    //void userZoom(int iAmount);
-    //void updateTouch(std::shared_ptr<Fingers> pInput);
-    
+private:
+  uint64_t _iDeltaNow = 0;
+  uint64_t _iDeltaLast = 0;
+  double _fDelta = 0;
 };
 
 }//ns Game

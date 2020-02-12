@@ -13,11 +13,13 @@
 
 namespace Game {
 //Pass Scene + RenderTarget to the RenderPipe
-class RenderTarget : public HasGraphicsContext<RenderTarget> {
+class RenderTarget : public VirtualMemoryShared<RenderTarget> {
 public:
   std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
+  std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
 private:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
+  std::shared_ptr<GraphicsContext> _pContext = nullptr;
 };
 
 /**
@@ -26,7 +28,7 @@ private:
 */
 class GraphicsWindow : public RenderTarget {
 public:
-  GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, t_string title, RenderSystem::e sys);
+  GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, string_t title, RenderSystem::e sys);
   virtual ~GraphicsWindow() override;
 
   void init();
@@ -36,29 +38,23 @@ public:
   void updateWidthHeight(uint32_t w, uint32_t h, bool force);
   void checkErrorsDbg();
   void checkErrorsRt();
-
+  
+  void setScene(std::shared_ptr<Scene> s) { _pScene=s; }
   std::shared_ptr<Scene> getScene() { return _pScene; }
-  void setScene(std::shared_ptr<Scene> s) { _pScene = s; }
-  std::shared_ptr<FpsMeter> getFpsMeter() { return _pFpsMeter; }
-  std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
-  std::shared_ptr<Delta> getDelta() { return _pDelta; }
+  std::shared_ptr<Picker> getPicker() { return _pPicker; }
 
 protected:
-  void makeSDLWindow(t_string title, int rendersystem);
+  void makeSDLWindow(string_t title, int rendersystem);
   void initRenderSystem();
   void swapBuffers();
   void makeCurrent();
   void getDrawableSize(int* w, int* h);
 
 private:
-  t_string _title = "";
+  string_t _title = "";
   std::shared_ptr<Scene> _pScene = nullptr; //The scene we render.
-
-  std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
-  std::shared_ptr<Delta> _pDelta = nullptr;
-  std::shared_ptr<FrameSync> _pFrameSync = nullptr;
   std::shared_ptr<GLContext> _pContext = nullptr;
-  //std::shared_ptr<CameraNode> _pCamera = nullptr;//this is part of scene.
+  std::shared_ptr<Picker> _pPicker = nullptr;
 
   //Renderpipe should be on the window, or at least, on a renderable "target"
   std::shared_ptr<RenderPipeline> _pRenderPipe = nullptr;
@@ -77,7 +73,7 @@ private:
   void endRender();
   void toggleFullscreen();
   void createManagers();
-  void createSDL_OpenGLWindow(t_string title);
+  void createSDL_OpenGLWindow(string_t title);
 };
 
 }//ns Game

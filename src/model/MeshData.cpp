@@ -26,7 +26,7 @@
 namespace Game {
 ;
 //////////////////////////////////////////////////////////////////////////
-MeshData::MeshData(t_string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName)
+MeshData::MeshData(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName)
 {
     _pVertexFormat = vf;
     _pObjectFile = objFile;

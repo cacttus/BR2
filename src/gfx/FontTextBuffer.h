@@ -16,18 +16,18 @@ namespace Game {
 */
 class FontTextBuffer : public VirtualMemory {
 private:
-    t_string _strText;
+    string_t _strText;
     FontSize _iFontSize = 16;
     vec2 _pos;
-    t_string _fontName;    // Pointer to the name of the font.
+    string_t _fontName;    // Pointer to the name of the font.
     vec4 _fontColor;
 
 public:
-    FontTextBuffer(t_string& txt, int32_t x, int32_t y, Color4f& cFont, t_string fontName, FontSize fontsize);
+    FontTextBuffer(string_t& txt, int32_t x, int32_t y, Color4f& cFont, string_t fontName, FontSize fontsize);
     virtual ~FontTextBuffer() override;
     vec4 getFontColor() { return _fontColor; }
-    t_string getFontName() { return _fontName; }
-    t_string getText() { return _strText; }
+    string_t getFontName() { return _fontName; }
+    string_t getText() { return _strText; }
     vec2 getPos() { return _pos; }
     FontSize getFontSize() { return _iFontSize; }
 };

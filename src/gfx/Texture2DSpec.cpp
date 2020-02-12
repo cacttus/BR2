@@ -13,7 +13,7 @@
 namespace Game {
 Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ct) : HasGraphicsContext(ct) {
 }
-Texture2DSpec::Texture2DSpec(t_string loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : HasGraphicsContext(ctx) {
+Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : HasGraphicsContext(ctx) {
   load(loc, bRepeatU, bRepeatV);
 }
 Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : HasGraphicsContext(ctx) {
@@ -26,7 +26,7 @@ Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texD
 Texture2DSpec::~Texture2DSpec() {
   dispose();
 }
-void Texture2DSpec::load(t_string imgLoc, bool bRepeatU, bool bRepeatV) {
+void Texture2DSpec::load(string_t imgLoc, bool bRepeatU, bool bRepeatV) {
   _strLocation = imgLoc;
   std::shared_ptr<Img32> sp = Gu::loadImage(imgLoc);
   if (sp != nullptr) {

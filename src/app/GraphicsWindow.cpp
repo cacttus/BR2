@@ -30,20 +30,11 @@
 namespace Game {
 
 //Called exclusively by the graphics API
-GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, t_string title, RenderSystem::e sys) : HasGraphicsContext(context) {
+GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsContext> context, bool ismain, string_t title, RenderSystem::e sys) {
   this->_bIsMainWindow = ismain;
   _title = title;
 }
 GraphicsWindow::~GraphicsWindow() {
-  //Delete Global Managers
-  _pCamera = nullptr;
-  _pPhysicsWorld = nullptr;
-  _pDelta = nullptr;
-  _pFpsMeter = nullptr;
-  _pFrameSync = nullptr;
-
-  //_pGraphicsApi = nullptr;
-  
   if (_pSDLWindow != nullptr) {
     SDL_DestroyWindow(_pSDLWindow);
     _pSDLWindow = nullptr;
@@ -70,44 +61,15 @@ void GraphicsWindow::createManagers() {
   BroLogInfo("Creating SDL Window");
   createSDL_OpenGLWindow(_title);
 
-  BroLogInfo("Creating Window UI");
-  _pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
-
-  BroLogInfo("GLContext - Creating Particles");
-  _pParticleMaker = std::make_shared<ParticleMaker>(getGraphicsContext());
-
-  BroLogInfo("GLContext - Creating FpsMeter");
-  _pFpsMeter = std::make_shared<FpsMeter>();
-
-  BroLogInfo("GLContext - Creating FrameSync");
-  _pFrameSync = std::make_shared<FrameSync>();
-
-  //This was commented out.  Why? 11/6
-  BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
-  _pShaderMaker = std::make_shared<ShaderMaker>();
-  _pShaderMaker->initialize(Gu::getApp());
-
-  BroLogInfo("GLContext - Creating Texture Cache");
-  _pTexCache = std::make_shared<TexCache>(getGraphicsContext());
-
-  BroLogInfo("GLContext -  Lights");
-  _pLightManager = std::make_shared<LightManager>(getGraphicsContext());
-
-  BroLogInfo("GLContext - Model Cache");
-  _pModelCache = std::make_shared<ModelCache>();
-
   BroLogInfo("GLContext - Picker");
   _pPicker = std::make_shared<Picker>(getGraphicsContext());
-
-  BroLogInfo("Delta");
-  _pDelta = std::make_shared<Delta>();
 }
-void GraphicsWindow::createSDL_OpenGLWindow(t_string windowTitle) {
+void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
 
   int minGLVersion;
   int minGLSubversion;
   const int c_iMax_Profs = 2;
-  GLContext::GLProfile profs[c_iMax_Profs];
+  GLProfile profs[c_iMax_Profs];
   int iProfile = SDL_GL_CONTEXT_PROFILE_CORE;
   bool bVsync = false;
 
@@ -148,6 +110,7 @@ void GraphicsWindow::createSDL_OpenGLWindow(t_string windowTitle) {
 
 void GraphicsWindow::makeCurrent() {
   SDL_GL_MakeCurrent(getSDLWindow(), getGraphicsContext()->getSDLGLContext());
+  Gu::setContext(getGraphicsContext());
 }
 void GraphicsWindow::getDrawableSize(int* w, int* h) {
   SDL_GL_GetDrawableSize(getSDLWindow(), w, h);
@@ -156,8 +119,8 @@ void GraphicsWindow::swapBuffers() {
   SDL_GL_SwapWindow(getSDLWindow());
 }
 
-void GraphicsWindow::makeSDLWindow(t_string windowTitle, int render_system) {
-  t_string title;
+void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
+  string_t title;
   bool bFullscreen = false;
 
   int x, y, w, h, flags;
@@ -317,7 +280,7 @@ void GraphicsWindow::printHelpfulDebug() {
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
-  _pRenderPipe->init(getWindowViewport()->getWidth(), getWindowViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
+  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getPackage()->getEnvTexturePath());
   // Gu::setRenderPipe(_pRenderPipe);
 
   //_pRenderPipe->getPipeBits().set();
@@ -343,18 +306,11 @@ void GraphicsWindow::endRender() {
 void GraphicsWindow::step() {
   
   //Managers
-  if (_pDelta != nullptr) {
-    _pDelta->update();
-  }
+  Gu::setContext(_pContext);
+  _pContext->update();
 
-  if (_pFpsMeter != nullptr) {
-    _pFpsMeter->update();
-  }
   if (_pPicker != nullptr) {
     _pPicker->update(Gu::getInputManager());
-  }
-  if (_pParticleMaker != nullptr) {
-    _pParticleMaker->update(getDelta()->get());
   }
 
   beginRender();

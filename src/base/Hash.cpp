@@ -38,7 +38,7 @@ Hash::Hash() {
 Hash::~Hash() {
 }
 
-Hash32 Hash::computeStringHash32bit(const t_string& str, uint32_t iAlgorithmIndex)
+Hash32 Hash::computeStringHash32bit(const string_t& str, uint32_t iAlgorithmIndex)
 {
     AssertOrThrow2(iAlgorithmIndex < FNV_MAX_ALGORITHMS_32);
 
@@ -50,7 +50,7 @@ Hash32 Hash::computeStringHash32bit(const t_string& str, uint32_t iAlgorithmInde
     }
     return (Hash32)n;
 }
-uint64_t Hash::computeStringHash64bit(const t_string& str, uint64_t iAlgorithmIndex)
+uint64_t Hash::computeStringHash64bit(const string_t& str, uint64_t iAlgorithmIndex)
 {
     AssertOrThrow2(iAlgorithmIndex < FNV_MAX_ALGORITHMS_64);
 

@@ -407,23 +407,6 @@ typedef enum {
      float _pad3;
  };
 
-/**
-* @class HasGraphicsContext
-* @brief Inherit for all OpenGL classes that use the OpenGL context.
-*/
- template < class Tx >
- class HasGraphicsContext : public VirtualMemoryShared<Tx> {
- public:
-   std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
-   HasGraphicsContext(std::shared_ptr<GraphicsContext> g) {
-     _pContext = g;
-   }
-   virtual ~HasGraphicsContext() override {
-     _pContext = nullptr;
-   }
- private:
-   std::shared_ptr<GraphicsContext> _pContext = nullptr;
- };
 
 }//ns game
 

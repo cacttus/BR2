@@ -31,7 +31,7 @@ protected:
     uint32_t _iWidth = 0;        // - Width of the image in pixels.
     uint32_t _iHeight = 0;        // - Height of the image in pixels.
     Allocator<uint8_t>* _pData = nullptr;
-    t_string _strNameOrFilePath;
+    string_t _strNameOrFilePath;
 
     virtual void freeData();    // - Override from ResourceData
     void releaseData();
@@ -39,7 +39,7 @@ protected:
 
 public:
     Img32() {}
-    Img32(t_string path, bool bLoad = false);    // - Creates this class with no image data.
+    Img32(string_t path, bool bLoad = false);    // - Creates this class with no image data.
     Img32(int w, int h, uint8_t* data = nullptr);    // - Creates this class with no image data.
     virtual ~Img32() override;
 
@@ -57,7 +57,7 @@ public:
     int32_t getGMask() const;
     int32_t getBMask() const;
     int32_t getAMask() const;
-    t_string getName() { return _strNameOrFilePath; }
+    string_t getName() { return _strNameOrFilePath; }
 
     // Copy
     void clearTo(Pixel4ub);  // Clear the image to a single color

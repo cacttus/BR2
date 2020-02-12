@@ -19,7 +19,7 @@ EngineConfigFile::~EngineConfigFile()
 }
 ///////////////////////////////////////////////////////////////////
 
-void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
+void EngineConfigFile::pkp(std::vector<string_t>& tokens) {
     int iind = 1;
 
     //
@@ -82,7 +82,7 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
         _pConfig->_fDefaultFieldOfView = TypeConv::strToFloat(getCleanToken(tokens, iind));
     }
     else if (lcmp(tokens[0], "ColorSpace", 2)) {
-        t_string csp = getCleanToken(tokens, iind);
+        string_t csp = getCleanToken(tokens, iind);
         if (StringUtil::equalsi(csp, "SRGB")) {
             _pConfig->_eColorSpace = ColorSpace::e::SRGB;
         }
@@ -192,7 +192,7 @@ void EngineConfigFile::pkp(std::vector<t_string>& tokens) {
         if (_pConfig->_iMaxSoftwareOutgoingBufferSizeBytes > 9999999) _pConfig->_iMaxSoftwareOutgoingBufferSizeBytes = 9999999;
     }
     else if (lcmp(tokens[0], "RenderSystem", 2)) {
-        t_string tok = getCleanToken(tokens, iind);
+        string_t tok = getCleanToken(tokens, iind);
         
         _pConfig->_eRenderSystem = RenderSystem::OpenGL;
         if (StringUtil::equalsi(tok, "Vulkan")) {

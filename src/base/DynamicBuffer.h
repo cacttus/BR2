@@ -50,7 +50,7 @@ public:
     Allocator<Tx>* getData();
     void shiftOutFirstElement();
     void add(size_t nItemsToAdd); //Add items to the end
-    t_string toString();
+    string_t toString();
 };
 //////////////////////////////////////////////////////////////////////////
 template < class Tx >
@@ -162,9 +162,9 @@ void DynamicBuffer<Tx>::add(size_t nItemsToAdd)
     checkToGrow(nItemsToAdd);
 }
 template < class Tx >
-t_string DynamicBuffer<Tx>::toString()
+string_t DynamicBuffer<Tx>::toString()
 {
-    t_string ret(getBuffer()->ptr(), getBuffer()->count()*TSize);
+    string_t ret(getBuffer()->ptr(), getBuffer()->count()*TSize);
     return ret;
 }
 template < class Tx >

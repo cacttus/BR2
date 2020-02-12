@@ -3,7 +3,7 @@
 
 namespace Game {
 
-XmlFile::XmlFile(t_string loc) : TextConfigFile(loc)
+XmlFile::XmlFile(string_t loc) : TextConfigFile(loc)
 {
 }
 XmlFile::~XmlFile()
@@ -33,13 +33,13 @@ void XmlFile::parse(char* buf, int64_t size) {
         for (auto it_child = it->children().begin(); it_child != it->children().end(); it_child++) {
             _vecTokens.clear();
            
-            t_string key = it_child->name();
+            string_t key = it_child->name();
             _vecTokens.push_back(key);
 
             //loop attrs
             //This is donk.  We should use a more formal key/value system but for now just hack it.
             for (auto it_attr = it_child->attributes().begin(); it_attr != it_child->attributes().end(); it_attr++) {
-                t_string val = it_attr->value();
+                string_t val = it_attr->value();
                 _vecTokens.push_back(val);
             }
 

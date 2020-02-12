@@ -19,11 +19,11 @@ namespace Game {
 */
 class TextDataFile : public VirtualMemory {
 protected:
-    t_string _fileName;
-    t_string _fileLoc;
+    string_t _fileName;
+    string_t _fileLoc;
     char* _fileData = nullptr;
     int64_t _fileSize = 0;
-    std::vector<t_string> _vecMessages;
+    std::vector<string_t> _vecMessages;
 
 
 
@@ -35,17 +35,17 @@ protected:
     virtual void parse(char* buf, int64_t filesize)=0;
     virtual void postLoad(bool success)=0;
 
-    void msg(t_string msg, bool error = false);
+    void msg(string_t msg, bool error = false);
 public:
 
-    t_string& getFileLoc(){ return _fileLoc; } //This is used don't change
+    string_t& getFileLoc(){ return _fileLoc; } //This is used don't change
     void loadAndParse();// - If empty is specified then we use _fileLoc
-    void loadAndParse(t_string& loc);// - If empty is specified then we use _fileLoc
-    virtual void save(t_string& loc);
+    void loadAndParse(string_t& loc);// - If empty is specified then we use _fileLoc
+    virtual void save(string_t& loc);
 
     //+-- CTOR/DTOR --+
     TextDataFile();
-    TextDataFile(t_string& loc);
+    TextDataFile(string_t& loc);
     virtual ~TextDataFile() override ;
 };
 

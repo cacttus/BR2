@@ -69,7 +69,7 @@ public:
     FORCE_INLINE STATIC vec3 rv301();//same as nextVec3(0,1)
     FORCE_INLINE STATIC vec3 rv311();//same as nextVec3(-1,1)
 
-    STATIC t_string randomNumericString(int32_t nDigits);    // - Returns a random hash code (not unique)
+    STATIC string_t randomNumericString(int32_t nDigits);    // - Returns a random hash code (not unique)
 
     FORCE_INLINE Random();
     FORCE_INLINE virtual ~Random() override ;

@@ -186,9 +186,9 @@ bool BinaryFile::eatTo(int8_t k)
     return 1;
 }
 //- Return the next whitespace separated token
-t_string BinaryFile::getTok()
+string_t BinaryFile::getTok()
 {
-    t_string ret;
+    string_t ret;
 
     if (!eatWs())
         return ret;
@@ -207,9 +207,9 @@ t_string BinaryFile::getTok()
     return ret;
 }
 /// - Returns empty string if we hit a newline character.
-t_string BinaryFile::getTokSameLineOrReturnEmpty()
+string_t BinaryFile::getTokSameLineOrReturnEmpty()
 {
-    t_string ret;
+    string_t ret;
 
     if (!eatWsExceptNewline())
         return ret;
@@ -250,10 +250,10 @@ int32_t BinaryFile::get()
         return (int32_t)(iFilePos = -1);
     return (int32_t)(*(getData().ptr() + iFilePos++));
 }
-bool BinaryFile::loadFromDisk(t_string fileLoc, bool bAddNull) {
+bool BinaryFile::loadFromDisk(string_t fileLoc, bool bAddNull) {
     return loadFromDisk(fileLoc, 0, -1, bAddNull);
 }
-bool BinaryFile::loadFromDisk(t_string fileLoc, size_t offset, int64_t length, bool bAddNull) {
+bool BinaryFile::loadFromDisk(string_t fileLoc, size_t offset, int64_t length, bool bAddNull) {
     //DiskFile df;
     //df.openForRead(fileLoc);
 
@@ -525,7 +525,7 @@ RetCode BinaryFile::write(const char* buf, size_t count, size_t bufcount, size_t
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-bool BinaryFile::writeToDisk(t_string fileLoc){
+bool BinaryFile::writeToDisk(string_t fileLoc){
     if(FileSystem::SDLFileWrite(fileLoc, _data.ptr(), _data.count()) == 0){
         return true;
     }

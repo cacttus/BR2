@@ -70,7 +70,7 @@ public:
     FORCE_INLINE Tx       distance2(const Vec4x<Tx>& v1) const;
     FORCE_INLINE void     construct(const Tx& dx, const Tx& dy, const Tx& dz, const Tx& dw);
     FORCE_INLINE Tx       combine() const;
-    FORCE_INLINE t_string toString() const;
+    FORCE_INLINE string_t toString() const;
 
     FORCE_INLINE static Vec4x<Tx> zero();
     FORCE_INLINE static Vec4x<Tx> Vec4x_MIN();
@@ -622,7 +622,7 @@ bool Vec4x<Tx>::operator<=(const Tx& f)
 
 
 template < class Tx >
-t_string Vec4x<Tx>::toString() const
+string_t Vec4x<Tx>::toString() const
 {
     return Stz x + "," + y + "," + z + "," + w;
 }
@@ -687,9 +687,9 @@ Vec4x<Tx>& Vec4x<Tx>::saturate()
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-STATIC FORCE_INLINE t_string tstr(const vec4& x) { return x.toString(); }
-STATIC FORCE_INLINE t_string tstr(const ivec4& x) { return x.toString(); }
-STATIC FORCE_INLINE t_string tstr(const uvec4& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const vec4& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const ivec4& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const uvec4& x) { return x.toString(); }
 //FORCE_INLINE Vec4f normalize(const Vec4f& v1) {return Vec4f(v1).normalize();}
 //FORCE_INLINE float dot(const Vec4f& v1, const Vec4f& v2) {return Vec4f(v1).dot(Vec4f(v2));}
 //

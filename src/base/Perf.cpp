@@ -9,7 +9,7 @@ namespace Game {
 static int g_bPerfFrame = false;
 
 std::stack<Stopwatch> Perf::_stopw;
-t_string Perf::_strCachedProf = "";
+string_t Perf::_strCachedProf = "";
 
 void Perf::beginPerf() {
     if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift)) {
@@ -34,7 +34,7 @@ void Perf::pulsePerf() {
     if (g_bPerfFrame == 1) {
         //Add dots
         int n = (int)_stopw.size();
-        t_string str2 = "";
+        string_t str2 = "";
         for (int i = 0; i < n; ++i) {
             str2 += ".";
         }

@@ -41,8 +41,8 @@ public:
 
     //Fnv Algorithm and an awesome website
     //http://isthe.com/chongo/tech/comp/fnv/#FNV-1a
-    STATIC Hash32 computeStringHash32bit(const t_string& str, uint32_t iAlgorithmIndex=0);
-    STATIC uint64_t computeStringHash64bit(const t_string& str, uint64_t iAlgorithmIndex=0);
+    STATIC Hash32 computeStringHash32bit(const string_t& str, uint32_t iAlgorithmIndex=0);
+    STATIC uint64_t computeStringHash64bit(const string_t& str, uint64_t iAlgorithmIndex=0);
 
     
 };

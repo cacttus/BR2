@@ -24,26 +24,13 @@ public:
     virtual ~AppBase() override;
     virtual void init() = 0; //*Note this is not called right after inst
 
-    t_string makeAssetPath(t_string file);
-    t_string makeAssetPath(t_string folder, t_string file);
-
     virtual void drawDebug();
 
     //virtual void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) { };
     virtual void idle(t_timeval us) { }
 
-   // virtual void step(float dt) = 0;
-  //  virtual void teardown() = 0;
     virtual void updateTouch(std::shared_ptr<InputManager>, float dt) = 0;
     virtual void userZoom(int amount) = 0;
-    virtual t_string getIconFullPath() { return ""; }
-    virtual t_string getConfigPath() = 0;
-    virtual t_string getAssetsDir() = 0;
-    virtual t_string getShadersDir() = 0; //This is relative to the getAssetsDir.  E.g. "/shr/"
-    virtual t_string getCacheDir() = 0; // the place where we store cached shaders, and generated images
-    virtual t_string getModelsTextDir() = 0; // MOB dir 
-    virtual t_string getModelsBinDir() = 0; // MBI DIr
-    virtual t_string getEnvTexturePath() = 0;
 
     virtual void serverPacketReceived(std::shared_ptr<Packet> temp) = 0;
 };

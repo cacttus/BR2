@@ -8,7 +8,7 @@
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-ShaderUniform::ShaderUniform(std::shared_ptr<GLContext> ct, GLenum eType, GLint location, t_string name, size_t iArraySize) :
+ShaderUniform::ShaderUniform(std::shared_ptr<GLContext> ct, GLenum eType, GLint location, string_t name, size_t iArraySize) :
      _pContext(ct)
 {
     _glType = eType;
@@ -70,7 +70,7 @@ void ShaderUniform::validate()
 {
     validateSystemTypeEqualsOpenGlType(_systemType, _glType);
 }
-t_string ShaderUniform::debugGetUniformValueAsString() {
+string_t ShaderUniform::debugGetUniformValueAsString() {
     switch (_systemType) {
     case OpenGLShaderVarType::e::GpuInt1:   return Stz ((*((int32_t*)_pStorage->ptr()))); break;
     case OpenGLShaderVarType::e::GpuInt2:   return Stz ((*((ivec2*)_pStorage->ptr()))); break;
@@ -267,7 +267,7 @@ void ShaderUniform::bindUniformFast() {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-ShaderUniformBlock::ShaderUniformBlock(std::shared_ptr<GLContext> ct, t_string name, GLint iBlockIndex, GLint iBindingIndex, size_t iBufferByteSize) :
+ShaderUniformBlock::ShaderUniformBlock(std::shared_ptr<GLContext> ct, string_t name, GLint iBlockIndex, GLint iBindingIndex, size_t iBufferByteSize) :
 _pContext(ct),
 _iBlockIndex(iBlockIndex),
 _iBindingIndex(iBindingIndex)

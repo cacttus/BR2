@@ -78,7 +78,7 @@ public:
 *  @brief Key frames for each object: mesh, armature, or bone
 */
 class ActionKeys : public VirtualMemory {
-  t_string _strObjectName;//armature or mesh
+  string_t _strObjectName;//armature or mesh
   Hash32 _iNameHashed;
   std::vector<std::shared_ptr<KeyFrame>> _vecKeys;
   //t_string _sName;
@@ -88,10 +88,10 @@ class ActionKeys : public VirtualMemory {
   // void slerpKeys(float ct, std::shared_ptr<KeyFrame> f1, std::shared_ptr<KeyFrame> f2, mat4& mOut);
 public:
   ActionKeys() {}
-  ActionKeys(t_string objName);
+  ActionKeys(string_t objName);
   virtual ~ActionKeys() override;
 
-  t_string getObjectName() { return _strObjectName; }
+  string_t getObjectName() { return _strObjectName; }
   int32_t getObjectNameHash() { return _iNameHashed; }
   std::vector<std::shared_ptr<KeyFrame>>& getKeyFrames() { return _vecKeys; }
   void scaleKeys(int32_t iBasFps, float& fMaxEndTime);
@@ -108,17 +108,17 @@ public:
 */
 class ActionGroup : public VirtualMemory {
   int32_t _iBaseFps = 0;
-  t_string _strName;
+  string_t _strName;
   Hash32 _iNameHashed = 0;
   std::map<Hash32, std::shared_ptr<ActionKeys>> _mapActions;
   float _fEndTime = 1.0f;
 
 public:
   ActionGroup() {}
-  ActionGroup(t_string strName, int32_t iBaseFps);
+  ActionGroup(string_t strName, int32_t iBaseFps);
   int32_t getFps() { return _iBaseFps; }
   void setFps(int32_t x) { _iBaseFps = x; }
-  t_string getName() { return _strName; }
+  string_t getName() { return _strName; }
   int32_t getNameHash() { return _iNameHashed; }
   void addActionKeys(std::shared_ptr<ActionKeys> a);
   std::shared_ptr<ActionKeys> getActionKeys(Hash32 iObjectNameHashed);
@@ -200,7 +200,7 @@ private:
   std::shared_ptr<BoneSpec> getParent() { return _pParent; }
 public:
   BoneSpec() {}
-  BoneSpec(t_string name, int32_t id);
+  BoneSpec(string_t name, int32_t id);
   virtual ~BoneSpec() override;
   void setParent(std::shared_ptr<BoneSpec> bs);
   void addChild(std::shared_ptr<BoneSpec> bs);
@@ -265,18 +265,18 @@ private:
 
  // void processKeyframes(std::shared_ptr<BoneSpec> pb, t_string animName);
   void compileHierarchy();
-  std::shared_ptr<BoneSpec> getCachedBoneByName(t_string name);
+  std::shared_ptr<BoneSpec> getCachedBoneByName(string_t name);
 public:
   int32_t getArmatureId() { return _iArmatureId; }
   Armature() {}
-  Armature(t_string strName, int32_t iId);
+  Armature(string_t strName, int32_t iId);
   virtual ~Armature();
 
   BoneCache* getBoneCacheOrdered() { return &_mapBoneCacheOrdered; }
   std::shared_ptr<BoneSpec> getRootBone() { return _pArmRoot; }
-  std::shared_ptr<BoneSpec> getBoneSpec(t_string boneName);
+  std::shared_ptr<BoneSpec> getBoneSpec(string_t boneName);
 
-  bool tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens);
+  bool tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens);
   //std::set<Hash32>* getActions() {  return &_setActions; }
   virtual void deserialize(std::shared_ptr<BinaryFile> fb) override;
   virtual void serialize(std::shared_ptr<BinaryFile> fb) override;
@@ -323,7 +323,7 @@ class ModelSpec : public PhysicsSpec {
   std::string _strFriendlyName;
 public:
   ModelSpec() {}//serialize only.
-  ModelSpec(t_string name, int32_t frameRate);
+  ModelSpec(string_t name, int32_t frameRate);
   virtual ~ModelSpec();
   int32_t getFrameRate() { return _iFrameRate; }
   std::vector<std::shared_ptr<MeshData>>& getMeshes() { return _vecMeshes; }
@@ -350,9 +350,9 @@ class ModelNode : public PhysicsNode {
   // std::shared_ptr<Animator> _pAnimator = nullptr;
   std::map<Hash32, std::shared_ptr<Animator>> _mapAnimators;
   std::map<Hash32, std::shared_ptr<BaseNode>> _mapNodes;//Cache of all nodes appended including bones.  
-  std::shared_ptr<BaseNode> getNodeByName(t_string name);
+  std::shared_ptr<BaseNode> getNodeByName(string_t name);
   void addNodeToCache(std::shared_ptr<BaseNode> bn);
-  std::shared_ptr<Animator> getAnimator(t_string actName);
+  std::shared_ptr<Animator> getAnimator(string_t actName);
   void buildNodeParents();
 protected:
   virtual void init() override;
@@ -362,10 +362,10 @@ public:
   static std::shared_ptr<ModelNode> create(std::shared_ptr<ModelSpec>);
   virtual ~ModelNode();
 
-  void playAction(t_string name);
+  void playAction(string_t name);
   bool isPlaying();
-  bool isPlaying(t_string actName);
-  void stopAction(t_string actName);
+  bool isPlaying(string_t actName);
+  void stopAction(string_t actName);
   void stopAllActions();
   std::shared_ptr<ModelSpec> getModelSpec();
   void attachToNode(std::shared_ptr<BaseNode> pNode) { _pWorldNode = pNode; }

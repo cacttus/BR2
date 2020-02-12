@@ -17,7 +17,7 @@ ShaderAttribute::ShaderAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_
 */
 void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_t attribIndex)
 {
-    t_string err;
+    string_t err;
     static const int NBUFSIZ = 512;
     char buf[NBUFSIZ];
     GLsizei buflen;
@@ -26,7 +26,7 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
     memset(buf, 0, 512);
 
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveAttrib(
+    Gu::getContext()->glGetActiveAttrib(
         pShaderBase->getGlId()
         , attribIndex
         , NBUFSIZ
@@ -38,14 +38,14 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
 
     AssertOrThrow2(buflen < NBUFSIZ);
 
-    _strName = t_string(buf);
+    _strName = string_t(buf);
     _iNameHashed = STRHASH(_strName);
 
     if(isOpenGLBuiltInAttrib(_strName)) {
         _bIsBuiltInAttrib = true;
     }
     else {
-        _iGLLocation = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetAttribLocation(pShaderBase->getGlId(), getName().c_str());
+        _iGLLocation = Gu::getContext()->glGetAttribLocation(pShaderBase->getGlId(), getName().c_str());
 
         _eUserType = parseUserType(_strName);
 
@@ -62,7 +62,7 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
         }
     }
 }
-bool ShaderAttribute::isOpenGLBuiltInAttrib(t_string strName){
+bool ShaderAttribute::isOpenGLBuiltInAttrib(string_t strName){
     if (StringUtil::equals(strName, "gl_VertexID")) { return true; }
     else if (StringUtil::equals(strName, "gl_InstanceID")) { return true; }
     else if (StringUtil::equals(strName, "gl_DrawID")) { return true; }
@@ -70,11 +70,11 @@ bool ShaderAttribute::isOpenGLBuiltInAttrib(t_string strName){
     else if (StringUtil::equals(strName, "gl_BaseInstance")) { return true; }
     return false;
 }
-VertexUserType::e ShaderAttribute::parseUserType(t_string& name) {
+VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
     VertexUserType::e ret = VertexUserType::e::None;
 
     //Validate some errors
-    t_string err = "";
+    string_t err = "";
     if (_strName.length() <4) {
         err += Stz "  Invalid attribute identifier: '" + _strName + "'\r\n";
     }
@@ -82,10 +82,10 @@ VertexUserType::e ShaderAttribute::parseUserType(t_string& name) {
         err += Stz "  Invalid attribute identifier pattern: '" + _strName + "'\r\n";
     }
     else {
-        t_string strValue = _strName.substr(1, 4);
-        t_string strComponent = strValue.substr(0, 1);
-        t_string strVectorSize = strValue.substr(1, 1);
-        t_string strIndex = strValue.substr(2, 2);
+        string_t strValue = _strName.substr(1, 4);
+        string_t strComponent = strValue.substr(0, 1);
+        string_t strVectorSize = strValue.substr(1, 1);
+        string_t strIndex = strValue.substr(2, 2);
 
         //validate component size.
         if (_eGLAttribType      == GL_FLOAT_VEC2 && !(strVectorSize == "2")){ err += Stz "  Vertex component for '"+ strValue+ "' is invalid.\r\n";  }

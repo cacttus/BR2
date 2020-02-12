@@ -7,9 +7,9 @@
 namespace Game {
 //////////////////////////////////////////////////////////////////////////
 //Explicit versions
-bool TypeConv::strToBool(t_string& s1, bool bThrowIfInvalid)
+bool TypeConv::strToBool(string_t& s1, bool bThrowIfInvalid)
 {
-    t_string s = StringUtil::lowercase(s1);
+    string_t s = StringUtil::lowercase(s1);
 
     if( StringUtil::equals(s,"1") )
         return true;
@@ -38,7 +38,7 @@ bool TypeConv::strToBool(t_string& s1, bool bThrowIfInvalid)
 
     return false;
 }
-long TypeConv::strToLong(t_string& s) {
+long TypeConv::strToLong(string_t& s) {
     long ret;
     try {
         ret = std::stol(s);
@@ -50,7 +50,7 @@ long TypeConv::strToLong(t_string& s) {
     }
     return ret;
 }
-bool TypeConv::strToInt(t_string& s, int32_t& out) {
+bool TypeConv::strToInt(string_t& s, int32_t& out) {
     try {
         out = std::stoi(s);
     }
@@ -60,7 +60,7 @@ bool TypeConv::strToInt(t_string& s, int32_t& out) {
     }
     return true;
 }
-int32_t TypeConv::strToInt(t_string& s) {
+int32_t TypeConv::strToInt(string_t& s) {
     int32_t ret;
     try {
         ret = std::stoi(s);
@@ -72,7 +72,7 @@ int32_t TypeConv::strToInt(t_string& s) {
     }
     return ret;
 }
-float TypeConv::strToFloat(t_string& s) {
+float TypeConv::strToFloat(string_t& s) {
     float ret;
     try {
         ret = std::stof(s);
@@ -84,7 +84,7 @@ float TypeConv::strToFloat(t_string& s) {
     }
     return ret;
 }
-uint32_t TypeConv::strToUint(t_string& s) {
+uint32_t TypeConv::strToUint(string_t& s) {
     uint32_t ret;
     try {
         ret = (uint32_t)std::stoi(s);
@@ -96,7 +96,7 @@ uint32_t TypeConv::strToUint(t_string& s) {
     }
     return ret;
 }
-double TypeConv::strToDouble(t_string& s) {
+double TypeConv::strToDouble(string_t& s) {
     double ret;
     try {
         ret = std::stod(s);
@@ -110,7 +110,7 @@ double TypeConv::strToDouble(t_string& s) {
     return ret;
 }
 
-int8_t TypeConv::strToByte(t_string& s) {
+int8_t TypeConv::strToByte(string_t& s) {
     int32_t i = strToInt(s);
     return (t_byte)i;
 }
@@ -124,13 +124,13 @@ int8_t TypeConv::strToByte(t_string& s) {
 
 //////////////////////////////////////////////////////////////////////////
 //Silent Fail Versions
-float TypeConv::strToFloat(t_string& s, bool bFailed) {
+float TypeConv::strToFloat(string_t& s, bool bFailed) {
     char* pend;
     float ret = (float)strtod(s.c_str(), &pend);
     bFailed = (bool)(*pend != '\0');
     return ret;
 }
-double TypeConv::strToDouble(t_string& s, bool bFailed) {
+double TypeConv::strToDouble(string_t& s, bool bFailed) {
     char* pend;
     double ret = strtod(s.c_str(), &pend);
     bFailed = (bool)(*pend != '\0');
@@ -139,54 +139,54 @@ double TypeConv::strToDouble(t_string& s, bool bFailed) {
 
 //////////////////////////////////////////////////////////////////////////
 //ToStr
-t_string TypeConv::intToStr(const int32_t i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::intToStr(const int32_t i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::intToStr(const uint32_t i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::intToStr(const uint32_t i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::intToStr(const int64_t i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::intToStr(const int64_t i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::intToStr(const uint64_t i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::intToStr(const uint64_t i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::TypeConv::floatToStr(const float i){
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::TypeConv::floatToStr(const float i){
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::dblToStr(const double i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::dblToStr(const double i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::sizetToStr(const size_t i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::sizetToStr(const size_t i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::longToStr(const long& i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::longToStr(const long& i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::ulongToStr(const unsigned long& i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::ulongToStr(const unsigned long& i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::int64ToStr(const int64_t& i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::int64ToStr(const int64_t& i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
-t_string TypeConv::uint64ToStr(const uint64_t& i) {
-    t_string ret = t_string(std::to_string(i));
+string_t TypeConv::uint64ToStr(const uint64_t& i) {
+    string_t ret = string_t(std::to_string(i));
     return ret;
 }
 
 
-t_string TypeConv::wstrToStr(wchar_t* wstr) {
-    t_string ret;
+string_t TypeConv::wstrToStr(wchar_t* wstr) {
+    string_t ret;
 
     char str[BRO_MAX_PATH];
     wcstombs(str, wstr, BRO_MAX_PATH);
@@ -205,12 +205,12 @@ t_string TypeConv::wstrToStr(wchar_t* wstr) {
 //    return t_string((char*)buf);
 //}
 
-t_string TypeConv::intToStr(const  int32_t i, char* fmt) {
+string_t TypeConv::intToStr(const  int32_t i, char* fmt) {
     int32_t cpy = i;
     char buf[32];
     snprintf((char*)buf, 32, fmt, i);
 
-    return t_string((char*)buf);
+    return string_t((char*)buf);
 }
 
 

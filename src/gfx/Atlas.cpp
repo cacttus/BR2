@@ -8,10 +8,10 @@
 
 namespace Game {
 ///////////////////////////////////////////////////////////////////
-Atlas::Atlas(std::shared_ptr<GLContext> ct, t_string na, ivec2& ivGridSize) : _strName(na), Texture2DSpec(ct) {
+Atlas::Atlas(std::shared_ptr<GLContext> ct, string_t na, ivec2& ivGridSize) : _strName(na), Texture2DSpec(ct) {
     _vGridSize = ivGridSize; //_pSpriteMap->getGridDimensions();
 }
-Atlas::Atlas(std::shared_ptr<GLContext> ct, t_string na, ivec2& viSpriteSize, t_string strImageLoc) : _strName(na), Texture2DSpec(ct), _strPrecompileFileLocation(strImageLoc) {
+Atlas::Atlas(std::shared_ptr<GLContext> ct, string_t na, ivec2& viSpriteSize, string_t strImageLoc) : _strName(na), Texture2DSpec(ct), _strPrecompileFileLocation(strImageLoc) {
     _vSpriteSize = viSpriteSize;
     //_vGridSize = ivGridSize; //_pSpriteMap->getGridDimensions();
 }
@@ -23,13 +23,13 @@ Atlas::~Atlas() {
     //}
 }
 ///////////////////////////////////////////////////////////////////
-t_string Atlas::getGeneratedFileName() {
+string_t Atlas::getGeneratedFileName() {
     return "generated";
 }
 std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
     time_t greatestDependencyModifyTime;
     time_t cachedImageModifyTime;
-    t_string cachedImageLoc;
+    string_t cachedImageLoc;
     std::shared_ptr<Img32> bi = nullptr;
 
     cachedImageLoc = getCachedImageFilePath();
@@ -57,7 +57,7 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies() {
     time_t greatestModifyTime;
     time_t currentModifyTime;
     time_t cacheModifyTime;
-    t_string cachedImageLoc;
+    string_t cachedImageLoc;
 
     cachedImageLoc = getCachedImageFilePath();
     if (FileSystem::fileExists(cachedImageLoc) == false) {
@@ -71,7 +71,7 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies() {
     ImgMap::iterator ite = _mapImages.begin();
     for (; ite != _mapImages.end(); ite++)//t_vecsize iImage=0; iImage<_vecTexFiles.size(); ++iImage)
     {
-        t_string strPath = ite->second->_imgLoc;
+        string_t strPath = ite->second->_imgLoc;
 
         if (ite->second->getIsGenerated() == false) {
             //  spriteFileLoc = getAtlasSpriteFullpath(ite->second);
@@ -110,11 +110,11 @@ void Atlas::compilePrecompiled(bool bMipmaps) {
 
     finishCompile(bi, bMipmaps);
 }
-t_string Atlas::constructPrecompiledSpriteName(int32_t ix, int32_t iy) {
+string_t Atlas::constructPrecompiledSpriteName(int32_t ix, int32_t iy) {
     return Stz ix + "_" + iy;
 }
 void Atlas::addImagePrecompiled(int32_t ix, int32_t iy) {
-    t_string strSpriteName;
+    string_t strSpriteName;
     Hash32 iHash;
 
     //Generate a stupid hash in the form x_y
@@ -163,7 +163,7 @@ void Atlas::finishCompile(std::shared_ptr<Img32> sp, bool bMipmaps) {
     getGraphicsContext()->getTexCache()->add(getName(), getThis<Atlas>());
     Gu::freeImage(sp);
 }
-void Atlas::addImage(Hash32 en, t_string loc) {
+void Atlas::addImage(Hash32 en, string_t loc) {
     std::shared_ptr<AtlasSprite> sp = std::make_shared<AtlasSprite>(getThis<Atlas>());
     sp->_iId = en;
     sp->_imgLoc = loc;
@@ -171,7 +171,7 @@ void Atlas::addImage(Hash32 en, t_string loc) {
     AssertOrThrow2(_mapImages.find(en) == _mapImages.end());
     _mapImages.insert(std::make_pair(en, sp));
 }
-void Atlas::addImage(Hash32 en, t_string loc, std::shared_ptr<Img32> imgData) {
+void Atlas::addImage(Hash32 en, string_t loc, std::shared_ptr<Img32> imgData) {
     std::shared_ptr<AtlasSprite> sp = std::make_shared<AtlasSprite>(getThis<Atlas>());
     sp->_iId = en;
     sp->_imgLoc = Atlas::getGeneratedFileName();
@@ -216,7 +216,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
         try {
             //t_string strPath = getAtlasSpriteFullpath(ite->second);
             if (pSprite->getIsGenerated() == false) {
-                t_string strPath = ite->second->_imgLoc;
+                string_t strPath = ite->second->_imgLoc;
                 pCopy = Gu::loadImage(strPath);
             }
             else {
@@ -259,15 +259,15 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
 
     if (bCache) {
         BroLogInfo("Saving atlas '" + getName() + "' to '" + getCachedImageFilePath() + "'.");
-        t_string strFileName = getCachedImageFilePath();
+        string_t strFileName = getCachedImageFilePath();
         Gu::saveImage(strFileName, masterImage);
     }
 
 
     return masterImage;
 }
-t_string Atlas::getCachedImageFilePath() {
-    t_string fn;
+string_t Atlas::getCachedImageFilePath() {
+    string_t fn;
     fn = getName() + ".png";
     fn = FileSystem::appendCachePathToFile(fn);
     return fn;

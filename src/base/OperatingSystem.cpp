@@ -4,145 +4,135 @@
 #include "../base/OperatingSystem.h"
 
 namespace Game {
-int32_t OperatingSystem::getNumberOfProcessors()
-{
+int32_t OperatingSystem::getNumberOfProcessors() {
 #ifdef BRO_OS_WINDOWS
-    SYSTEM_INFO si;
-    GetSystemInfo(&si);
-    return (int32_t) si.dwNumberOfProcessors;
+  SYSTEM_INFO si;
+  GetSystemInfo(&si);
+  return (int32_t)si.dwNumberOfProcessors;
 #elif BRO_OS_ANDROID
-    return android_getCpuCount();
+  return android_getCpuCount();
 #else
-    #error "Operating System Error"
+#error "Operating System Error"
 #endif
 }
-void OperatingSystem::showMouseCursor()
-{
+void OperatingSystem::showMouseCursor() {
 #ifdef BRO_OS_WINDOWS
-    CURSORINFO ci;
-    ci.cbSize = sizeof(CURSORINFO);
-
-    int nFailover=10000;
-    
-    do
-    {
-        GetCursorInfo(&ci);
-        ShowCursor(true); //ShowCursor is not a boolean method - it increments/decrements a display counter
-        nFailover--;
-    } while( (ci.flags & CURSOR_SHOWING)==0 && (nFailover>0));
-#else
-    #error "Operating System Error"
-#endif
-}
-void OperatingSystem::hideMouseCursor()
-{
-#ifdef BRO_OS_WINDOWS
-    CURSORINFO ci;
-    ci.cbSize = sizeof(CURSORINFO);
-    int nFailover=10000;
-    do
-    {
-        GetCursorInfo(&ci);
-        ShowCursor(false);//ShowCursor is not a boolean method - it increments/decrements a display counter
-        nFailover--;
-    } while( (ci.flags & CURSOR_SHOWING)>0 && (nFailover>0));
-#else
-    #error "Operating System Error"
-#endif
-}
-bool OperatingSystem::getMouseCursorIsVisible()
-{
-#ifdef BRO_OS_WINDOWS
-    CURSORINFO ci;
-    ci.cbSize = sizeof(ci); 
+  CURSORINFO ci;
+  ci.cbSize = sizeof(CURSORINFO);
+  int nFailover = 10000;
+  do {
     GetCursorInfo(&ci);
-    return (ci.flags & CURSOR_SHOWING)>0;
+    ShowCursor(true); //ShowCursor is not a boolean method - it increments/decrements a display counter
+    nFailover--;
+  } while ((ci.flags & CURSOR_SHOWING) == 0 && (nFailover > 0));
 #else
-
-    #error "Operating System Error"
+#error "Operating System Error"
 #endif
 }
-t_string  OperatingSystem::getOperatingSystemName()
-{
-    t_string res;
-//#ifdef BRO_OS_WINDOWS
-//    OSVERSIONINFOEX vex;
-//    vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-//    GetVersionExA((OSVERSIONINFO*)&vex);
-//
-//   // CheckOsErrorsDbg();
-//
-//    if(vex.dwMajorVersion==6 && vex.dwMinorVersion==3)
-//    {
-//        res.append(" Windows 8.1");
-//    }
-//    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==2)
-//    {
-//        res.append(" Windows 8");
-//    }
-//    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==1)
-//    {
-//        res.append(" Windows 7");
-//    }
-//    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==0)
-//    {
-//        res.append(" Windows Vista");
-//    }
-//    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==2)
-//    {
-//        res.append(" Windows XP Pro 64 bit");
-//    }
-//    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==1)
-//    {
-//        res.append(" Windows XP");
-//    }
-//    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==0)
-//    {
-//        res.append(" Windows 2000");
-//    }
-//    else
-//    {
-//        res.append(" OS Unknown.  Note: Mac / Linux are not supported.");
-//    }
-//
-//    if(vex.wServicePackMajor != 0)
-//        res += TStr(", Service Pack ",vex.wServicePackMajor,".",vex.wServicePackMinor);
-//    else
-//        res += TStr(", No service pack");
-//
-//    if( vex.wProductType== VER_NT_DOMAIN_CONTROLLER )
-//        res.append(", Domain Controller, note operating system may be incorrect as this is not supported");
-//    else if( vex.wProductType== VER_NT_SERVER )
-//        res.append(", Server, note operating system may be incorrect as this is not supported");
-//    else if( vex.wProductType== VER_NT_WORKSTATION )
-//        res.append(", Workstation");
-//
-//#else
-//    #error "Operating System Error"
-//#endif
-//    CheckOsErrorsDbg();
-    return res;
+void OperatingSystem::hideMouseCursor() {
+#ifdef BRO_OS_WINDOWS
+  CURSORINFO ci;
+  ci.cbSize = sizeof(CURSORINFO);
+  int nFailover = 10000;
+  do {
+    GetCursorInfo(&ci);
+    ShowCursor(false);//ShowCursor is not a boolean method - it increments/decrements a display counter
+    nFailover--;
+  } while ((ci.flags & CURSOR_SHOWING) > 0 && (nFailover > 0));
+#else
+#error "Operating System Error"
+#endif
 }
-void OperatingSystem::createDirectory(t_string& dir)
-{
-    /*
-        //S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
-    //TODO: File Permissions and directory permissions.
-    //Should be POSIX compliant
-    //int ret;
-    //
-    //do 
-    //{
-    //    ret = _mkdir(dirName.c_str());
-    //    if(ret==-1)
-    //        BroThrowException(TStr("Mkdir failed for directory ",dirName));
-    //    if(ret==EEXIST)
-    //    {
-    //    }
-    //    if(ret==ENOENT)
-    //    {
-    //        BroThrowException(TStr("Failed to make directory ",dirName," the parameters to mkdir did not create the full hierarchy before calling"));
-    //    }
+bool OperatingSystem::getMouseCursorIsVisible() {
+#ifdef BRO_OS_WINDOWS
+  CURSORINFO ci;
+  ci.cbSize = sizeof(ci);
+  GetCursorInfo(&ci);
+  return (ci.flags & CURSOR_SHOWING) > 0;
+#else
+
+#error "Operating System Error"
+#endif
+}
+string_t  OperatingSystem::getOperatingSystemName() {
+  string_t res;
+  //#ifdef BRO_OS_WINDOWS
+  //    OSVERSIONINFOEX vex;
+  //    vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+  //    GetVersionExA((OSVERSIONINFO*)&vex);
+  //
+  //   // CheckOsErrorsDbg();
+  //
+  //    if(vex.dwMajorVersion==6 && vex.dwMinorVersion==3)
+  //    {
+  //        res.append(" Windows 8.1");
+  //    }
+  //    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==2)
+  //    {
+  //        res.append(" Windows 8");
+  //    }
+  //    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==1)
+  //    {
+  //        res.append(" Windows 7");
+  //    }
+  //    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==0)
+  //    {
+  //        res.append(" Windows Vista");
+  //    }
+  //    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==2)
+  //    {
+  //        res.append(" Windows XP Pro 64 bit");
+  //    }
+  //    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==1)
+  //    {
+  //        res.append(" Windows XP");
+  //    }
+  //    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==0)
+  //    {
+  //        res.append(" Windows 2000");
+  //    }
+  //    else
+  //    {
+  //        res.append(" OS Unknown.  Note: Mac / Linux are not supported.");
+  //    }
+  //
+  //    if(vex.wServicePackMajor != 0)
+  //        res += TStr(", Service Pack ",vex.wServicePackMajor,".",vex.wServicePackMinor);
+  //    else
+  //        res += TStr(", No service pack");
+  //
+  //    if( vex.wProductType== VER_NT_DOMAIN_CONTROLLER )
+  //        res.append(", Domain Controller, note operating system may be incorrect as this is not supported");
+  //    else if( vex.wProductType== VER_NT_SERVER )
+  //        res.append(", Server, note operating system may be incorrect as this is not supported");
+  //    else if( vex.wProductType== VER_NT_WORKSTATION )
+  //        res.append(", Workstation");
+  //
+  //#else
+  //    #error "Operating System Error"
+  //#endif
+  //    CheckOsErrorsDbg();
+  return res;
+}
+void OperatingSystem::createDirectory(string_t& dir) {
+  /*
+      //S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+  //TODO: File Permissions and directory permissions.
+  //Should be POSIX compliant
+  //int ret;
+  //
+  //do
+  //{
+  //    ret = _mkdir(dirName.c_str());
+  //    if(ret==-1)
+  //        BroThrowException(TStr("Mkdir failed for directory ",dirName));
+  //    if(ret==EEXIST)
+  //    {
+  //    }
+  //    if(ret==ENOENT)
+  //    {
+  //        BroThrowException(TStr("Failed to make directory ",dirName," the parameters to mkdir did not create the full hierarchy before calling"));
+  //    }
 #ifdef BRO_OS_WINDOWS
     //SECURITY_ATTRIBUTES sc;
     //sc.nLength = sizeof(sc);
@@ -182,28 +172,26 @@ t_string OperatingSystem::getUserFolderPath()
     CheckOsErrorsDbg();
     return ret;*/
 }
-bool OperatingSystem::isVistaOrGreater()
-{
-    bool ret = false;
+bool OperatingSystem::isVistaOrGreater() {
+  bool ret = false;
 #ifdef BRO_OS_WINDOWS
-    //if( IsWindowsVistaOrGreater(void) )
-    //    ret = true;
+  //if( IsWindowsVistaOrGreater(void) )
+  //    ret = true;
 #endif
-    return ret;
+  return ret;
 }
 /**
-*    @fn 
+*    @fn
 *    @brief This is shit.
 *    isn't used by anybody
 *        use "My Games" instaed.
 *    FOLDERID_Games doesn't work.
 */
-t_string OperatingSystem::getGamesFolderPath()
-{
-    
-    t_string ret;
-    /*
-   // CheckOsErrorsDbg();
+string_t OperatingSystem::getGamesFolderPath() {
+
+  string_t ret;
+  /*
+ // CheckOsErrorsDbg();
 #ifdef BRO_OS_WINDOWS
     PWSTR lpwstrPath = NULL;
     HRESULT result;
@@ -221,7 +209,7 @@ t_string OperatingSystem::getGamesFolderPath()
     ret = t_string("/usr/games/");
 #endif
     CheckOsErrorsDbg();*/
-    return ret;
+  return ret;
 }
 //void OperatingSystem::suppressError(int error, t_string& message,bool bWriteMessage)
 //{
@@ -232,45 +220,42 @@ t_string OperatingSystem::getGamesFolderPath()
 //            BroLogInfo(message,__LINE__,__FILE__);
 //    }
 //}
-void OperatingSystem::showErrorDialog(t_string& str, t_string title)
-{
+void OperatingSystem::showErrorDialog(string_t& str, string_t title) {
 #ifdef BRO_OS_WINDOWS
-    t_string dialogPath =
-        FileSystem::combinePath(
-            FileSystem::getExecutableDirectory(), t_string("WindowsErrorDialog.exe")
-            );
+  string_t dialogPath =
+    FileSystem::combinePath(
+      FileSystem::getExecutableDirectory(), string_t("WindowsErrorDialog.exe")
+    );
 
-    if(FileSystem::fileExists(dialogPath))
-    {
-        t_string logDir = Gu::getLogger()->getLogPath();//FileSystem::getLogDirectory();
-        t_string dialogExeCommand;
-        dialogExeCommand = dialogPath;
-        
-        title  = StringUtil::replaceAll(title  , "\n" ,  "\\n" );
-        str    = StringUtil::replaceAll(str    , "\n" ,  "\\n" );
-        logDir = StringUtil::replaceAll(logDir , "\n" ,  "\\n" );
-                                                         
-        title  = StringUtil::replaceAll(title  , "\r" ,  "\\r" );
-        str    = StringUtil::replaceAll(str    , "\r" ,  "\\r" );
-        logDir = StringUtil::replaceAll(logDir , "\r" ,  "\\r" );
-                                                         
-                                                         
-        title  = StringUtil::replaceAll(title ,  "\"" ,  "\"\"\"" );
-        str    = StringUtil::replaceAll(str   ,  "\"" ,  "\"\"\"" );
-        logDir = StringUtil::replaceAll(logDir,  "\"" ,  "\"\"\"" );
+  if (FileSystem::fileExists(dialogPath)) {
+    string_t logDir = Gu::getLogger()->getLogPath();//FileSystem::getLogDirectory();
+    string_t dialogExeCommand;
+    dialogExeCommand = dialogPath;
+
+    title = StringUtil::replaceAll(title, "\n", "\\n");
+    str = StringUtil::replaceAll(str, "\n", "\\n");
+    logDir = StringUtil::replaceAll(logDir, "\n", "\\n");
+
+    title = StringUtil::replaceAll(title, "\r", "\\r");
+    str = StringUtil::replaceAll(str, "\r", "\\r");
+    logDir = StringUtil::replaceAll(logDir, "\r", "\\r");
 
 
-        dialogExeCommand += Stz " \"" + title +"\"" ;
-        dialogExeCommand += Stz " \"" + str   +"\"" ;
-        dialogExeCommand += Stz " \"" + logDir+"\"" ;
-        system( dialogExeCommand.c_str() );
-    }
-    else
-    {
-        MessageBoxA(NULL, str.c_str(), title.c_str(), MB_ICONEXCLAMATION|MB_OK);
-    }
+    title = StringUtil::replaceAll(title, "\"", "\"\"\"");
+    str = StringUtil::replaceAll(str, "\"", "\"\"\"");
+    logDir = StringUtil::replaceAll(logDir, "\"", "\"\"\"");
+
+
+    dialogExeCommand += Stz " \"" + title + "\"";
+    dialogExeCommand += Stz " \"" + str + "\"";
+    dialogExeCommand += Stz " \"" + logDir + "\"";
+    system(dialogExeCommand.c_str());
+  }
+  else {
+    MessageBoxA(NULL, str.c_str(), title.c_str(), MB_ICONEXCLAMATION | MB_OK);
+  }
 #else
-    #error "Operating System Error"
+#error "Operating System Error"
 #endif
 }
 //void OperatingSystem::getScreenDims(Quad2f* ret)
@@ -511,18 +496,17 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title)
 //    throw new NotImplementedException();
 //#endif
 //}
-t_string OperatingSystem::getRuntimeEnvironmentStr()
-{
+string_t OperatingSystem::getRuntimeEnvironmentStr() {
 #ifdef _WIN32 
-    return t_string("Windows 32 Bit");
+  return string_t("Windows 32 Bit");
 #elif _WIN64
-    return t_string("Windows 64 Bit");
+  return string_t("Windows 64 Bit");
 #elif defined(__LP32__) || defined(_LP32)
-    return t_string("Linux 32 Bit");
+  return string_t("Linux 32 Bit");
 #elif defined(__LP64__) || defined(_LP64)
-    return t_string("Linux 64 Bit");
+  return string_t("Linux 64 Bit");
 #else
-    throw new NotImplementedException();
+  throw new NotImplementedException();
 #endif
 }
 //void OperatingSystem::suspendThread(uint32_t millis)
@@ -551,30 +535,29 @@ t_string OperatingSystem::getRuntimeEnvironmentStr()
 //    __asm { int 3 }
 //#endif
 //}
-int OperatingSystem::strCaseCmp(const t_string& str1, const t_string& str2)
-{
+int OperatingSystem::strCaseCmp(const string_t& str1, const string_t& str2) {
 #ifdef BRO_OS_WINDOWS
-    //win32 only
-    return _stricmp(str1.c_str(), str2.c_str());
+  //win32 only
+  return _stricmp(str1.c_str(), str2.c_str());
 #else
-    //POSIX standard
-    return strcasecmp(str1.c_str(), str2.c_str());
+  //POSIX standard
+  return strcasecmp(str1.c_str(), str2.c_str());
 #endif
 }
 
 
-void OperatingSystem::showConsole(){
+void OperatingSystem::showConsole() {
 #ifdef BRO_OS_WINDOWS
-    ShowWindow( GetConsoleWindow(), SW_SHOW );
+  ShowWindow(GetConsoleWindow(), SW_SHOW);
 #else
-    #error "Operating System Error"
+#error "Operating System Error"
 #endif
 }
-void OperatingSystem::hideConsole(){
+void OperatingSystem::hideConsole() {
 #ifdef BRO_OS_WINDOWS
-    ShowWindow( GetConsoleWindow(), SW_HIDE );
+  ShowWindow(GetConsoleWindow(), SW_HIDE);
 #else
-    #error "Operating System Error"
+#error "Operating System Error"
 #endif
 }
 

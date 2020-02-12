@@ -108,9 +108,9 @@ void StreamBuffer::next(size_t nBytesToAdd)
     _iAddCountBytes += nBytesToAdd;
     checkToGrow();
 }
-t_string StreamBuffer::toString()
+string_t StreamBuffer::toString()
 {
-    t_string ret(_data.ptr(), _data.count());
+    string_t ret(_data.ptr(), _data.count());
 
     return ret;
 }

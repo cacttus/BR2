@@ -17,7 +17,7 @@ namespace Game {
 *
 */
 class Perf {
-    static t_string _strCachedProf;
+    static string_t _strCachedProf;
     static std::stack<Stopwatch> _stopw;
     static void pulsePerf();
 public:

@@ -11,7 +11,7 @@ Crc32::Crc32(uint32_t polynomial, uint32_t seed) :
 Crc32::~Crc32() {
 }
 ///////////////////////////////////////////////////////////////////
-uint32_t Crc32::compute(const t_string& buffer) {
+uint32_t Crc32::compute(const string_t& buffer) {
   uint32_t hash = ~calculateHash(_uiTable, _uiSeed, buffer.c_str(), 0, buffer.length());
 
   return hash;

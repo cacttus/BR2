@@ -47,7 +47,7 @@ class VulkanApi : public GraphicsApi {
     bool extensionSupported(std::string ext);
     void setupDebug();
     void loadExtensions();
-    void createVulkanInstance(t_string title);
+    void createVulkanInstance(string_t title);
     void pickPhysicalDevice();
     void findQueueFamilies();
     void createLogicalDevice();
@@ -58,7 +58,7 @@ class VulkanApi : public GraphicsApi {
     VkExtFn(vkDestroyDebugUtilsMessengerEXT);  
     
 public:
-    virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) override;
+    virtual std::shared_ptr<GraphicsWindow> createWindow(string_t title, bool isMain = false) override;
     virtual void cleanup() override;
 
 

@@ -7,7 +7,7 @@ ShaderSubProgram::ShaderSubProgram() {
 }
 ShaderSubProgram::~ShaderSubProgram() {
 }
-void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, t_string loc, ShaderType::e type) {
+void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, string_t loc, ShaderType::e type) {
     ctx->chkErrRt();
     GLenum eShaderType;
 
@@ -37,9 +37,9 @@ void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, t_string loc, Shader
         setStatus(ShaderStatus::e::CreateComplete);
     }
 }
-t_string ShaderSubProgram::getHumanReadableErrorString() const
+string_t ShaderSubProgram::getHumanReadableErrorString() const
 {
-    t_string str;
+    string_t str;
 
     str += "Errors loading ";
     str += _sourceLocation;
@@ -55,19 +55,19 @@ t_string ShaderSubProgram::getHumanReadableErrorString() const
 }
 void ShaderSubProgram::debugPrintShaderSource() const
 {
-    t_string str = "\n";
+    string_t str = "\n";
     str += Stz "Source For: " + _sourceLocation;
     str += "\n";
     for (size_t iLine = 0; iLine<_sourceLines.size(); ++iLine)
     {
-        str += t_string(StringUtil::getZeroPaddedNumber((int32_t)iLine + 0, 4));
+        str += string_t(StringUtil::getZeroPaddedNumber((int32_t)iLine + 0, 4));
         str += " ";
-        t_string nl = StringUtil::removeNewline(_sourceLines[iLine]);//.substr(0, _sourceLines[i].length() - 2);
+        string_t nl = StringUtil::removeNewline(_sourceLines[iLine]);//.substr(0, _sourceLines[i].length() - 2);
         if(nl.length() != 0) {
             //Zero length strings will add \0 which will terminate.  
             str += nl;
         }
-        str += t_string("\n");
+        str += string_t("\n");
     }
     BroLogDebug(str);
 }
@@ -77,23 +77,23 @@ ShaderType::e ShaderSubProgram::getShaderTypeByFileLocation(DiskLoc& loc)
 
     // - Get type by filename
 
-    t_string other;
+    string_t other;
     size_t off = loc.rfind('.');
 
-    AssertOrThrow2(off != t_string::npos);
+    AssertOrThrow2(off != string_t::npos);
 
     for (size_t x = off + 1; x<loc.size(); x++)
         other += loc.at(x);
 
-    if (!(other.compare(t_string("vs"))))
+    if (!(other.compare(string_t("vs"))))
         type = ShaderType::e::st_vertex;
-    else if (!(other.compare(t_string("ps"))))
+    else if (!(other.compare(string_t("ps"))))
         type = ShaderType::e::st_fragment;
-    else if (!(other.compare(t_string("fs"))))
+    else if (!(other.compare(string_t("fs"))))
         type = ShaderType::e::st_fragment;
-    else if (!(other.compare(t_string("gs"))))
+    else if (!(other.compare(string_t("gs"))))
         type = ShaderType::e::st_geometry;
-    else if (!(other.compare(t_string("cs"))))
+    else if (!(other.compare(string_t("cs"))))
         type = ShaderType::e::st_compute;
     else
         _generalErrors.push_back(Stz "[error] Shader file type '"+ other+ "' not recognized.");

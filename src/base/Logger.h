@@ -24,8 +24,8 @@ class Logger : public OperatingSystemMemory {
         Error,
     }LogLevel;
 private:
-    t_string _logDir;
-    t_string _logFileName;
+    string_t _logDir;
+    string_t _logFileName;
     int32_t _nMsg = 0;    // - Profiling variables.  We increment them when we log.
 
     std::atomic_bool _bSuppressLineFileDisplay = false;
@@ -35,10 +35,10 @@ private:
     bool _bLogToFile = false;
     bool _bLogToConsole = false;
 
-    void addLineFileToMsg(t_string msg, int line, char* file);
-    t_string createMessageHead(LogLevel level);
-    void log(t_string msg, t_string header, Game::Exception* e);    // - Log an error with exception contents.
-    t_string addStackTrace(t_string msg);
+    void addLineFileToMsg(string_t msg, int line, char* file);
+    string_t createMessageHead(LogLevel level);
+    void log(string_t msg, string_t header, Game::Exception* e);    // - Log an error with exception contents.
+    string_t addStackTrace(string_t msg);
 public:
     Logger();
     virtual ~Logger() override;
@@ -48,24 +48,24 @@ public:
     void enableLogToConsole(bool bLogToConsole);
     void enableLogToFile(bool bLogToFile);
 
-    void logError(t_string msg, Game::Exception* e = NULL);    // - Log an error with exception contents.
-    void logWarn(t_string msg, Game::Exception* e = NULL);    // - Log an error with exception contents.
-    void logDebug(t_string msg);
-    void logInfo(t_string msg);
+    void logError(string_t msg, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logWarn(string_t msg, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logDebug(string_t msg);
+    void logInfo(string_t msg);
 
-    void logError(t_string msg, int line, char* file, Game::Exception* e = NULL, bool hideStackTrace = false);    // - Log an error with exception contents.
-    void logWarn(t_string msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
-    void logWarnCycle(t_string msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-    void logErrorCycle(t_string msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-    void logDebug(t_string msg, int line, char* file);
-    void logInfo(t_string msg, int line, char* file);
+    void logError(string_t msg, int line, char* file, Game::Exception* e = NULL, bool hideStackTrace = false);    // - Log an error with exception contents.
+    void logWarn(string_t msg, int line, char* file, Game::Exception* e = NULL);    // - Log an error with exception contents.
+    void logWarnCycle(string_t msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+    void logErrorCycle(string_t msg, int line, char* file, Game::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+    void logDebug(string_t msg, int line, char* file);
+    void logInfo(string_t msg, int line, char* file);
 
     void logInfo(const char* msg);
     void logDebug(const char* msg);
     void logError(const char* msg, Game::Exception* e = NULL);
     void logWarn(const char* msg, Game::Exception* e = NULL);
 
-    t_string getLogPath() { return _logDir; }
+    string_t getLogPath() { return _logDir; }
 };
 
 }//ns game

@@ -32,13 +32,20 @@
 namespace Game {
 Scene::Scene() {
   //In the future we will replace this witht he active object.
-  BroLogInfo("GraphicsContext - Creating Render View");
+  BroLogInfo("Creating Flying Camera");
   _pFlyCam = std::make_shared<FlyCam>(Gu::getViewport());
 
   _pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
   _pFlyCam->getCam()->setPos(vec3(0, 0, -10));
+
+  BroLogInfo("Creating Window UI");
+  _pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
+
+  BroLogInfo("GLContext -  Lights");
+  _pLightManager = std::make_shared<LightManager>();
 }
 Scene::~Scene() {
+  _pLightManager = nullptr;
 }
 void Scene::debugChangeRenderState() {
   if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F1)) {
@@ -136,8 +143,8 @@ void Scene::drawForward(RenderParams& rp) {
 
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      rp.getWindow()->getCamera()->getViewport()->getWidth(), rp.getWindow()->getCamera()->getViewport()->getHeight());
-    _pTex = rp.getWindow()->getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+      getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
+    _pTex = Gu::getContext()->getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
   }
 
   RenderUtils::drawAxisShader();
@@ -154,10 +161,10 @@ void Scene::drawTransparent(RenderParams& rp) {
 void Scene::draw2d() {
   drawDebugText();
 }
-void AppMain::draw2d() {
+void Scene::draw2d() {
   drawDebugText();
 }
-void AppMain::setDebugMode() {
+void Scene::setDebugMode() {
   //set some debug vars to make ikte easier
   _bShowDebugText = true;
   _bDrawDebug = true;
@@ -168,35 +175,35 @@ void AppMain::setDebugMode() {
  //   _pFlyCam->setPosAndLookAt(vec3(0, 5, -20), vec3(0, 0, 0));
   }
 }
-void AppMain::drawDebugText() {
+void Scene::drawDebugText() {
   int bx = 5;
   int by = 32 + 34;// 0 is the height of the font
   int dy = 16;//Also the font size
   int cy = 0;
 
-  _pAppUi->clearDebugText();
-  if (_bShowDebugText) {
-    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-
-    //////////////////////////////////////////////////////////////////////////
-#define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
-//////////////////////////////////////////////////////////////////////////
-    //DBGL("%.2f", Gu::getFpsMeter()->getFps());
-
-    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-    DBGL("Global");
-    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-
-    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
-
-  }
-  _pAppUi->endDebugText();
+//  _pAppUi->clearDebugText();
+//  if (_bShowDebugText) {
+//    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+//
+//    //////////////////////////////////////////////////////////////////////////
+//#define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
+////////////////////////////////////////////////////////////////////////////
+//    //DBGL("%.2f", Gu::getFpsMeter()->getFps());
+//
+//    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
+//    DBGL("Global");
+//    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
+//    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
+//    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
+//    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
+//    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
+//    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+//    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
+//
+//    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+//
+//  }
+//  _pAppUi->endDebugText();
 }
 
 

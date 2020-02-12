@@ -31,16 +31,6 @@ void AppBase::drawDebug() {
     //}
 }
 
-t_string AppBase::makeAssetPath(t_string file) {
-    t_string ret = FileSystem::combinePath(getAssetsDir(), file);
-    return ret;
-}
-
-t_string AppBase::makeAssetPath(t_string folder, t_string file) {
-    t_string fold = FileSystem::combinePath(getAssetsDir(), folder);
-    t_string ret = FileSystem::combinePath(fold, file);
-    return ret;
-}
 
 
 }//ns Game

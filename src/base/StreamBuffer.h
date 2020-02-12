@@ -54,7 +54,7 @@ public:
     Allocator<char>* getData();
     void shiftOutFirstByte();
     void next(size_t allocCount);
-    t_string toString();
+    string_t toString();
 };
 
 }//ns Game

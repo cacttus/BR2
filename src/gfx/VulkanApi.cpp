@@ -23,7 +23,7 @@ VulkanApi::~VulkanApi() {
 //}
 //void VulkanApi::makeCurrent() {
 //}
-std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(t_string title, bool isMain) {
+std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(string_t title, bool isMain) {
   // makeWindow(title, SDL_WINDOW_VULKAN);
 
    //loadCaps();
@@ -58,7 +58,7 @@ std::vector<const char*> VulkanApi::getExtensionNames() {
   }
   return extensionNames;
 }
-void VulkanApi::createVulkanInstance(t_string title) {
+void VulkanApi::createVulkanInstance(string_t title) {
   std::vector<const char*> layerNames = getValidationLayers();
   std::vector<const char*> extensionNames = getExtensionNames();
 

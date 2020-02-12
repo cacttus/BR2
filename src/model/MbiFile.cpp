@@ -26,8 +26,8 @@ MbiFile::~MbiFile() {
     //DEL_MEM(_pFile);
 }
 ///////////////////////////////////////////////////////////////////
-void MbiFile::parseErr(t_string str, bool bDebugBreak, bool bFatal) {
-    t_string strhead = Stz "Error: '" + _fileLoc + "': line " + _pFile->pos() + "\r\n  ";
+void MbiFile::parseErr(string_t str, bool bDebugBreak, bool bFatal) {
+    string_t strhead = Stz "Error: '" + _fileLoc + "': line " + _pFile->pos() + "\r\n  ";
     str = strhead + str;
     //Throw this if you wnt to have an error in your file.
     if (bFatal) {
@@ -50,7 +50,7 @@ void MbiFile::postLoad() {
     }
 
 }
-bool MbiFile::loadAndParse(t_string file) {
+bool MbiFile::loadAndParse(string_t file) {
     _fileLoc = file;
     std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
     Gu::getPackage()->getFile(file, fb, false);
@@ -105,7 +105,7 @@ bool MbiFile::loadAndParse(t_string file) {
         std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>(Gu::getGraphicsContext());
         pTex->deserialize(fb);
         if (Gu::getTexCache()->add(pTex->getLocation(), pTex, false) == false) {
-            t_string loc = pTex->getLocation();
+            string_t loc = pTex->getLocation();
             //DEL_MEM(pTex);
             pTex = nullptr;
             pTex = Gu::getTexCache()->getOrLoad(loc);
@@ -156,7 +156,7 @@ bool MbiFile::loadAndParse(t_string file) {
 
     return true;
 }
-void MbiFile::save(t_string file) {
+void MbiFile::save(string_t file) {
     _fileLoc = file;
     std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
     fb->rewind();
@@ -204,7 +204,7 @@ void MbiFile::save(t_string file) {
     fb->writeByte('I');
     fb->writeByte('F');
 
-    t_string dir = FileSystem::getPathFromPath(file);
+    string_t dir = FileSystem::getPathFromPath(file);
     FileSystem::createDirectoryRecursive(dir);
     fb->writeToDisk(file);
 

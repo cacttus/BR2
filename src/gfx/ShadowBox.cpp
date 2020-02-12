@@ -79,7 +79,7 @@ void ShadowBox::update()
         return;
     }
 
-    std::shared_ptr<LightManager> pLightMan = getGraphicsContext()->getLightManager();
+    std::shared_ptr<LightManager> pLightMan = Gu::getContext()->getLightManager();
 
     //Update the camera for each shadowbox side if the light has changed position or radius.
     //See also: debugInvalidateAllLightProjections
@@ -153,9 +153,9 @@ void ShadowBox::createFbo()
     RenderUtils::createDepthTexture(&_glDepthTextureId, _iFboWidthPixels, _iFboHeightPixels, false, 0, GL_DEPTH_COMPONENT24);
 
     //Bind framebuffer and attach depth texture.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGenFramebuffers(1, &_glFrameBufferId);
+    Gu::getContext()->glGenFramebuffers(1, &_glFrameBufferId);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, _glFrameBufferId);
+    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _glFrameBufferId);
     Gu::checkErrorsRt();
 
     // Create the cube map
@@ -185,19 +185,19 @@ void ShadowBox::createFbo()
     Gu::checkErrorsRt();
 
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, _glShadowCubeMapId, 0);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, _glShadowCubeMapId, 0);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, _glShadowCubeMapId, 0);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, _glShadowCubeMapId, 0);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, _glShadowCubeMapId, 0);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, _glShadowCubeMapId, 0);
     Gu::checkErrorsRt();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _glDepthTextureId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _glDepthTextureId, 0);
     Gu::checkErrorsRt();
 
 
@@ -212,7 +212,7 @@ void ShadowBox::createFbo()
     Gu::checkErrorsRt();
 
 
-    GLenum status = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    GLenum status = Gu::getContext()->glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
@@ -220,7 +220,7 @@ void ShadowBox::createFbo()
         Gu::checkErrorsRt();
     }
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     Gu::checkErrorsRt();
 
@@ -232,13 +232,13 @@ void ShadowBox::deleteFbo() {
     }
 
     if (_glFrameBufferId != 0) {
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteFramebuffers(1, &_glFrameBufferId);
+        Gu::getContext()->glDeleteFramebuffers(1, &_glFrameBufferId);
     }
     if (_glDepthTextureId != 0) {
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteTextures(1, &_glDepthTextureId);
+        Gu::getContext()->glDeleteTextures(1, &_glDepthTextureId);
     }
     if (_glShadowCubeMapId != 0) {
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteTextures(1, &_glShadowCubeMapId);
+        Gu::getContext()->glDeleteTextures(1, &_glShadowCubeMapId);
     }
 
 }
@@ -264,7 +264,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox)
                     {
                         //This could be removed if we used Texture2DSpec for the RenderTarget texturs..
                         GLuint i0;
-                        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+                        Gu::getContext()->glActiveTexture(GL_TEXTURE0);
                         Gu::checkErrorsDbg();
                         glBindTexture(GL_TEXTURE_CUBE_MAP, _glShadowCubeMapId);
                         Gu::checkErrorsDbg();
@@ -289,7 +289,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox)
 
         }
         else{
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCopyImageSubData(
+            Gu::getContext()->glCopyImageSubData(
                 _glShadowCubeMapId//FROM
                 , GL_TEXTURE_CUBE_MAP //GL_TEXTURE_CUBE_MAP_POSITIVE_X+iFace
                 , 0
@@ -328,10 +328,10 @@ void ShadowBox::beginRenderShadowBox()
         return;
     }
     //Gd::verifyRenderThread();
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _glFrameBufferId);
+    Gu::getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _glFrameBufferId);
     Gu::checkErrorsDbg();
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    Gu::getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
     Gu::checkErrorsDbg();
 
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -345,7 +345,7 @@ void ShadowBox::beginRenderSide(BoxSide::e side)
     //Gd::verifyRenderThread();
     GLenum glSide = (GLenum)BoxUtils::cubeSideToGlCubeMapEnum(side);
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, glSide, _glShadowCubeMapId, 0);
+    Gu::getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, glSide, _glShadowCubeMapId, 0);
 
     Gu::checkErrorsDbg();
 
@@ -385,7 +385,7 @@ void ShadowBox::endRenderShadowBox()
 
     //Gd::verifyRenderThread();
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
     Gu::checkErrorsDbg();
 }
 void ShadowBox::smoothShadows(){
@@ -395,15 +395,15 @@ void ShadowBox::smoothShadows(){
     //                                                                                    
     //    //Create Quick FBO
     //    GLuint uiBLendFboId;
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGenFramebuffers(1, &uiBLendFboId);
+    //    Gu::getContext()->glGenFramebuffers(1, &uiBLendFboId);
     //    Gu::checkErrorsDbg();
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, uiBLendFboId);
+    //    Gu::getContext()->glBindFramebuffer(GL_FRAMEBUFFER, uiBLendFboId);
     //    Gu::checkErrorsDbg();
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, _iFboWidthPixels);
+    //    Gu::getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, _iFboWidthPixels);
     //    Gu::checkErrorsDbg();
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, _iFboHeightPixels);
+    //    Gu::getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, _iFboHeightPixels);
     //    Gu::checkErrorsDbg();
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+    //    Gu::getContext()->glActiveTexture(GL_TEXTURE0);
     //    Gu::checkErrorsDbg();
 
     //    //Texure
@@ -422,12 +422,12 @@ void ShadowBox::smoothShadows(){
 
 
     //    //Unbind / Delete
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+    //    Gu::getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    //    Gu::getContext()->glActiveTexture(GL_TEXTURE0);
     //    glBindTexture(GL_TEXTURE_2D, 0);
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+    //    Gu::getContext()->glActiveTexture(GL_TEXTURE1);
     //    glBindTexture(GL_TEXTURE_2D, 0);
-    //    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteFramebuffers(1, &uiBLendFboId);
+    //    Gu::getContext()->glDeleteFramebuffers(1, &uiBLendFboId);
     //    glDeleteTextures(1, &uiTexId0);
     //    Gu::checkErrorsDbg();
     //}

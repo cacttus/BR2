@@ -18,7 +18,7 @@ namespace Game {
 void RenderUtils::setLineWidth(float width)
 {
     //This is deprecated. so, idk.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->setLineWidth(width);
+    Gu::getContext()->setLineWidth(width);
     //This is deprecated..?
    // Gd::setLineWidth(width);
 }
@@ -29,22 +29,22 @@ void RenderUtils::resetRenderState()
         getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);
 
         //glUseProgram(NULL);//DO NOT CALL - we must maintain consistency on the gpu driver
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, NULL);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, NULL);
 
         int iMaxTextures = 0;
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint*)&iMaxTextures);
         for (int iTex = 0; iTex < iMaxTextures; iTex++)
         {
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glActiveTexture(GL_TEXTURE0 + iTex);
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glActiveTexture(GL_TEXTURE0 + iTex);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
 
         //  VaoData::debugDisableAllAttribArrays();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindVertexArray(0);
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, 0);
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glActiveTexture(GL_TEXTURE0);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindVertexArray(0);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, 0);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glActiveTexture(GL_TEXTURE0);
 
         //Note: Client textures are deprecated
       //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -100,7 +100,7 @@ void RenderUtils::renderTexturedQuadAttrib(float size) {
 
     static const int _nIndexes = 6;
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glActiveTexture(GL_TEXTURE0);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glActiveTexture(GL_TEXTURE0);
 
     GLuint bdVerts,
         bdColors,
@@ -109,42 +109,42 @@ void RenderUtils::renderTexturedQuadAttrib(float size) {
         bdIndexes,
         vaoIndexes;
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGenVertexArrays(1, (GLuint*)&vaoIndexes);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindVertexArray(vaoIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGenVertexArrays(1, (GLuint*)&vaoIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindVertexArray(vaoIndexes);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGenBuffers(1, (GLuint*)&bdVerts);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGenBuffers(1, (GLuint*)&bdColors);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGenBuffers(1, (GLuint*)&bdTextures);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGenBuffers(1, (GLuint*)&bdNormals);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGenBuffers(1, (GLuint*)&bdIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGenBuffers(1, (GLuint*)&bdVerts);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGenBuffers(1, (GLuint*)&bdColors);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGenBuffers(1, (GLuint*)&bdTextures);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGenBuffers(1, (GLuint*)&bdNormals);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGenBuffers(1, (GLuint*)&bdIndexes);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBufferData(GL_ARRAY_BUFFER,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBufferData(GL_ARRAY_BUFFER,
         4 * sizeof(GLfloat) * 3,
         _vertexes,
         GL_STATIC_DRAW);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBufferData(GL_ARRAY_BUFFER,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBufferData(GL_ARRAY_BUFFER,
         4 * sizeof(GLfloat) * 4,
         _colors,
         GL_STATIC_DRAW);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBufferData(GL_ARRAY_BUFFER,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBufferData(GL_ARRAY_BUFFER,
         4 * sizeof(GLfloat) * 3,
         _normals,
         GL_STATIC_DRAW);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBufferData(GL_ARRAY_BUFFER,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBufferData(GL_ARRAY_BUFFER,
         4 * sizeof(GLfloat) * 2,
         _tcoords,
         GL_STATIC_DRAW);
 
     //Hmm...
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBufferData(GL_ELEMENT_ARRAY_BUFFER,
         6 * sizeof(GL_UNSIGNED_SHORT),
         _indexes,
         GL_STATIC_DRAW);
@@ -157,33 +157,33 @@ void RenderUtils::renderTexturedQuadAttrib(float size) {
     // MUST USE VBOS WITH VERTEX ATTRIBS
 
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glEnableVertexAttribArray(attr_v);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glVertexAttribPointer(attr_v,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glEnableVertexAttribArray(attr_v);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glVertexAttribPointer(attr_v,
         3,
         GL_FLOAT,
         GL_FALSE,
         sizeof(GLfloat) * 3,
         NULL);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glEnableVertexAttribArray(attr_c);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glVertexAttribPointer(attr_c,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glEnableVertexAttribArray(attr_c);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glVertexAttribPointer(attr_c,
         4,
         GL_FLOAT,
         GL_FALSE,
         sizeof(GLfloat) * 4,
         NULL);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glEnableVertexAttribArray(attr_n);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glVertexAttribPointer(attr_n,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glEnableVertexAttribArray(attr_n);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glVertexAttribPointer(attr_n,
         3,
         GL_FLOAT,
         GL_FALSE,
         sizeof(GLfloat) * 3,
         NULL);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glEnableVertexAttribArray(attr_t);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glVertexAttribPointer(attr_t,
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glEnableVertexAttribArray(attr_t);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glVertexAttribPointer(attr_t,
         2,
         GL_FLOAT,
         GL_FALSE,
@@ -197,37 +197,37 @@ void RenderUtils::renderTexturedQuadAttrib(float size) {
          //std::cout<<_tcoords<<std::endl;
          //std::cout<<_indexes<<std::endl;
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindVertexArray(vaoIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindVertexArray(vaoIndexes);
     glDrawElements(GL_TRIANGLES, _nIndexes, GL_UNSIGNED_SHORT, NULL);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindBuffer(GL_ARRAY_BUFFER, NULL);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindBuffer(GL_ARRAY_BUFFER, NULL);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteBuffers(1, (GLuint*)&bdVerts);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteBuffers(1, (GLuint*)&bdColors);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteBuffers(1, (GLuint*)&bdTextures);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteBuffers(1, (GLuint*)&bdNormals);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteBuffers(1, (GLuint*)&bdIndexes);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteVertexArrays(1, (GLuint*)&vaoIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glDeleteBuffers(1, (GLuint*)&bdVerts);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glDeleteBuffers(1, (GLuint*)&bdColors);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glDeleteBuffers(1, (GLuint*)&bdTextures);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glDeleteBuffers(1, (GLuint*)&bdNormals);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glDeleteBuffers(1, (GLuint*)&bdIndexes);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glDeleteVertexArrays(1, (GLuint*)&vaoIndexes);
 }
 void RenderUtils::drawAxisShader(float scale, float lineWidth, mat4& transform)
 {
-    UtilMeshAxis* ax = new UtilMeshAxis(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), scale, lineWidth, transform);
+    UtilMeshAxis* ax = new UtilMeshAxis(Gu::getContext(), scale, lineWidth, transform);
     ax->init();
     ax->draw();
     delete ax;
 }
 //void RenderUtils::drawWireSphereShader(float fRadius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks)
 //{
-//    UtilMeshSphere* ax = new UtilMeshSphere(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), fRadius, vOffset, vColor, nSlices, nStacks);
+//    UtilMeshSphere* ax = new UtilMeshSphere(Gu::getContext(), fRadius, vOffset, vColor, nSlices, nStacks);
 //    ax->init();
 //    ax->draw();
 //    delete ax;
 //}
 void RenderUtils::drawWireSphereShader(float fRadius, vec4& vColor, int32_t nSlices, int32_t nStacks, mat4* pMatrix)
 {
-    UtilMeshSphere* ax = new UtilMeshSphere(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
+    UtilMeshSphere* ax = new UtilMeshSphere(Gu::getContext(), fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
     ax->init();
     if (pMatrix != nullptr) {
         ax->setModelMatrix(*pMatrix);
@@ -237,14 +237,14 @@ void RenderUtils::drawWireSphereShader(float fRadius, vec4& vColor, int32_t nSli
 }
 void RenderUtils::drawWireBoxShader(Box3f* box, vec3& vOffset, vec4& vColor)
 {
-    UtilMeshBox* ax = new UtilMeshBox(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), box, vOffset, vColor);
+    UtilMeshBox* ax = new UtilMeshBox(Gu::getContext(), box, vOffset, vColor);
     ax->init();
     ax->draw();
     delete ax;
 }
 void RenderUtils::drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor)
 {
-    UtilMeshBox* ax = new UtilMeshBox(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), box, vOffset, vColor);
+    UtilMeshBox* ax = new UtilMeshBox(Gu::getContext(), box, vOffset, vColor);
     ax->setWireFrame(false);
     ax->init();
     ax->draw();
@@ -252,7 +252,7 @@ void RenderUtils::drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor)
 }
 //void RenderUtils::drawPickBox(Box3f* box, uint32_t uiColorId)
 //{
-//    UtilMeshPickBox* ax = new UtilMeshPickBox(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), box, uiColorId);
+//    UtilMeshPickBox* ax = new UtilMeshPickBox(Gu::getContext(), box, uiColorId);
 //    ax->init();
 //    ax->draw();
 //    delete ax;
@@ -272,7 +272,7 @@ void RenderUtils::drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor)
 //}
 void RenderUtils::drawGridShader(float r, float g, float b, int32_t nSlices, float fSliceWidth, vec3& center, std::shared_ptr<ShaderBase> pShader)
 {
-    UtilMeshGrid* pGrid = new UtilMeshGrid(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), r, g, b, nSlices, fSliceWidth, center);
+    UtilMeshGrid* pGrid = new UtilMeshGrid(Gu::getContext(), r, g, b, nSlices, fSliceWidth, center);
     pGrid->init();
     pGrid->draw();
     delete pGrid;
@@ -281,7 +281,7 @@ void RenderUtils::drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avCol
 {
     setLineWidth(3.0f);
 
-    UtilMeshInline mi(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()));
+    UtilMeshInline mi(Gu::getContext());
     Color4f c4 = avColor;
     mi.begin(GL_LINES);
     {
@@ -310,17 +310,17 @@ void RenderUtils::drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avCol
 #pragma region Debug Output
 
 
-void appendLine(t_string& st, char* c) {
+void appendLine(string_t& st, char* c) {
     st += c;
     st += "\r\n";
 }
-void appendLine(t_string& st, t_string& c) {
+void appendLine(string_t& st, string_t& c) {
     st += c;
     st += "\r\n";
 }
 
 
-t_string RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, bool bSaveFramebufferTexture)
+string_t RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, bool bSaveFramebufferTexture)
 {
     //This method is called in frames to drag down the debug arrow
     // and we skip it unless we force it to run.
@@ -328,7 +328,7 @@ t_string RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, b
     if (!bForceRun) {
         return "";//Do not comment
     }
-    t_string strState = "";
+    string_t strState = "";
 
     // Gd::verifyRenderThread();//We must be in render thread
 
@@ -349,32 +349,32 @@ t_string RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, b
     appendLine(strState, Stz " Depth Test:" + (iDepthTest ? "ENABLED" : "DISABLED"));
 
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     RenderUtils::debugGetLegacyViewAndMatrixStack(strState);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     RenderUtils::debugGetBufferState(strState);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     //RenderUtils::debugGetAttribState(); // This is redundant with vertexarraystate
     //    CheckGpuErrorsDbg();
     RenderUtils::debugGetTextureState(strState);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     RenderUtils::debugGetVertexArrayState(strState);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     RenderUtils::debugGetFramebufferAttachmentState(strState);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     if (bPrintToStdout) {
         Gu::print(strState);
     }
     if (bSaveFramebufferTexture) {
-        t_string fname = FileSystem::getScreenshotFilename();
+        string_t fname = FileSystem::getScreenshotFilename();
         saveFramebufferAsPng(std::move(fname));
     }
 
     return strState;
 }
-void RenderUtils::debugGetLegacyViewAndMatrixStack(t_string& strState)
+void RenderUtils::debugGetLegacyViewAndMatrixStack(string_t& strState)
 {
     GLint iScissorBox[4];
     GLint iViewportBox[4];
@@ -385,9 +385,9 @@ void RenderUtils::debugGetLegacyViewAndMatrixStack(t_string& strState)
     appendLine(strState, Stz "Scissor: " + iScissorBox[0] + "," + iScissorBox[1] + "," + iScissorBox[2] + "," + iScissorBox[3]);
     appendLine(strState, Stz "Viewport: " + iViewportBox[0] + "," + iViewportBox[1] + "," + iViewportBox[2] + "," + iViewportBox[3]);
     //TODO: legacy matrix array state.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 }
-void RenderUtils::debugGetBufferState(t_string& strState)
+void RenderUtils::debugGetBufferState(string_t& strState)
 {
     appendLine(strState, "--------------------------------------");
     appendLine(strState, "--SHADER STATE");
@@ -405,7 +405,7 @@ void RenderUtils::debugGetBufferState(t_string& strState)
     glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &iUniformBufferBinding);
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &iVertexArrayBinding);
     glGetIntegerv(GL_CURRENT_PROGRAM, &iCurrentProgram);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     appendLine(strState, Stz "Bound Vertex Array Buffer Id (VBO):" + iBoundBuffer);
     appendLine(strState, Stz "Bound Element Array Buffer Id (IBO):" + iElementArrayBufferBinding);
@@ -413,7 +413,7 @@ void RenderUtils::debugGetBufferState(t_string& strState)
     appendLine(strState, Stz "Bound Uniform Buffer Object Id:" + iUniformBufferBinding);
     appendLine(strState, Stz "Bound Vertex Array Object Id:" + iVertexArrayBinding);
     appendLine(strState, Stz "Bound Shader Program Id:" + iCurrentProgram);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     if (getGraphicsContext()->getShaderMaker()->getBound() != nullptr) {
         appendLine(strState, Stz "Bound Shader Name:" +
             getGraphicsContext()->getShaderMaker()->getBound()->getProgramName());
@@ -427,10 +427,10 @@ void RenderUtils::debugGetBufferState(t_string& strState)
 
 
 }
-void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
+void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, string_t& strState)
 {
     GLint nUniforms;
-    t_string uniformName;
+    string_t uniformName;
     char name[256];
     GLint name_len = -1;
     GLint iArraySize = -1;
@@ -442,13 +442,13 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
     GLint nMaxComponentsComp;
 
     // - Get the number of uniforms
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORMS, &nUniforms);
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORM_BLOCKS, (GLint*)&nActiveUniformBlocks);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORMS, &nUniforms);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORM_BLOCKS, (GLint*)&nActiveUniformBlocks);
     glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, (GLint*)&nMaxUniformLocations);
     glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, (GLint*)&nMaxComponentsVert);
     glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, (GLint*)&nMaxComponentsFrag);
     glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_COMPONENTS, (GLint*)&nMaxComponentsComp);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     appendLine(strState, Stz "# Active Uniforms: " + nUniforms);
     appendLine(strState, Stz "# Active Uniform Blocks: " + nActiveUniformBlocks);
@@ -464,12 +464,12 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
     for (int32_t i = 0; i < nUniforms; ++i)
     {
         //Get name an d type
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniform(iGlProgramId, (GLuint)i, 256, &name_len, &iArraySize, &uniformType, (char*)name);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetActiveUniform(iGlProgramId, (GLuint)i, 256, &name_len, &iArraySize, &uniformType, (char*)name);
         name[name_len] = 0;
-        uniformName = t_string(name);
+        uniformName = string_t(name);
 
         //get location
-        GLint glLocation = std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetUniformLocation((GLuint)iGlProgramId, (GLchar*)uniformName.c_str());
+        GLint glLocation = std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetUniformLocation((GLuint)iGlProgramId, (GLchar*)uniformName.c_str());
 
         appendLine(strState, Stz "  Name: " + uniformName);
         appendLine(strState, Stz "  Type: " + RenderUtils::openGlTypeToString(uniformType));
@@ -477,10 +477,10 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
         appendLine(strState, Stz "  Array Size: " + iArraySize);
 
         // Uniform Block Data.
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
 
         GLuint iCurrentBlockIdx;
-        iCurrentBlockIdx = std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetUniformBlockIndex(iGlProgramId, uniformName.c_str());
+        iCurrentBlockIdx = std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetUniformBlockIndex(iGlProgramId, uniformName.c_str());
 
         if (iCurrentBlockIdx != GL_INVALID_INDEX)
         {
@@ -490,17 +490,17 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
             int iBlockActiveUniforms;
             int iBlockActiveUniformIndices;
 
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_BINDING, (GLint*)&iBlockBinding);
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_DATA_SIZE, (GLint*)&iBlockDataSize);
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_NAME_LENGTH, (GLint*)&iBlockNameLength);
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, (GLint*)&iBlockActiveUniforms);
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, (GLint*)&iBlockActiveUniformIndices);
-            std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+            Gu::getContext()->chkErrRt();
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_BINDING, (GLint*)&iBlockBinding);
+            Gu::getContext()->chkErrRt();
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_DATA_SIZE, (GLint*)&iBlockDataSize);
+            Gu::getContext()->chkErrRt();
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_NAME_LENGTH, (GLint*)&iBlockNameLength);
+            Gu::getContext()->chkErrRt();
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, (GLint*)&iBlockActiveUniforms);
+            Gu::getContext()->chkErrRt();
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, (GLint*)&iBlockActiveUniformIndices);
+            Gu::getContext()->chkErrRt();
 
             appendLine(strState, Stz "  Block Index:" + iCurrentBlockIdx);
             appendLine(strState, Stz "  Block Binding:" + iBlockBinding);
@@ -530,7 +530,7 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
         appendLine(strState, (""));
     }
 }
-t_string RenderUtils::openGlTypeToString(GLenum type)
+string_t RenderUtils::openGlTypeToString(GLenum type)
 {
     switch (type) {
     case GL_UNSIGNED_INT: return ("GL_UNSIGNED_INT        "); break;
@@ -567,7 +567,7 @@ t_string RenderUtils::openGlTypeToString(GLenum type)
     }
     return Stz "Undefined " + (int)type;
 }
-void RenderUtils::debugGetAttribState(t_string& strState)
+void RenderUtils::debugGetAttribState(string_t& strState)
 {
     //// - print bound attributes
     //int iMaxAttribs;
@@ -580,7 +580,7 @@ void RenderUtils::debugGetAttribState(t_string& strState)
     //    std::cout<<"attrib "<<xx<<": "<<iBoundAttrib<<std::endl;
     //}
 }
-void RenderUtils::debugGetTextureState(t_string& strState)
+void RenderUtils::debugGetTextureState(string_t& strState)
 {
     appendLine(strState, ("----------------------------------"));
     appendLine(strState, ("--TEXTURE STATE"));
@@ -609,7 +609,7 @@ void RenderUtils::debugGetTextureState(t_string& strState)
     // - Get bound texture units.
     for (int i = 0; i < iMaxVertexTextureUnits; ++i)
     {
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glActiveTexture(GL_TEXTURE0 + i);
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glActiveTexture(GL_TEXTURE0 + i);
         appendLine(strState, Stz "  Channel " + i);
         glGetIntegerv(GL_TEXTURE_BINDING_1D, &iTextureBinding); if (iTextureBinding > 0) appendLine(strState, Stz "     1D: " + (int)iTextureBinding);
         iTextureBinding = 0;
@@ -632,7 +632,7 @@ void RenderUtils::debugGetTextureState(t_string& strState)
         glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &iTextureBinding); if (iTextureBinding > 0) appendLine(strState, Stz"     RECTANGLE: " + (int)iTextureBinding);
     }
 }
-void RenderUtils::debugGetFramebufferAttachmentState(t_string& strState)
+void RenderUtils::debugGetFramebufferAttachmentState(string_t& strState)
 {
     appendLine(strState, "-----------------------------------");
     appendLine(strState, "--FRAMEBUFFERS");
@@ -658,7 +658,7 @@ void RenderUtils::debugGetFramebufferAttachmentState(t_string& strState)
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFramebuffer);
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     appendLine(strState, Stz " # Max Color Attachments: " + maxColorAttachments);
     appendLine(strState, Stz " Current Bound Framebuffer: " + boundFramebuffer);
@@ -684,13 +684,13 @@ void RenderUtils::debugGetFramebufferAttachmentState(t_string& strState)
     RenderUtils::debugPrintFBOAttachment(strState, GL_STENCIL_ATTACHMENT);
 
 }
-void RenderUtils::debugPrintFBOAttachment(t_string& strState, GLenum attachment) {
+void RenderUtils::debugPrintFBOAttachment(string_t& strState, GLenum attachment) {
 
     GLint attachmentName = 0;
     GLint attachmentType = 0;
     GLint mipmapLevel = 0;
 
-    t_string strAttachment;
+    string_t strAttachment;
     if (attachment == GL_DEPTH_ATTACHMENT) {
         strAttachment = ("GL_DEPTH_ATTACHMENT");
     }
@@ -703,32 +703,32 @@ void RenderUtils::debugPrintFBOAttachment(t_string& strState, GLenum attachment)
 
     appendLine(strState, Stz "  Attachment: " + strAttachment);
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachmentType);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachmentType);
+    Gu::getContext()->chkErrRt();
     if (attachmentType == GL_NONE)
     {
         appendLine(strState, Stz "    Type: " + "GL_NONE");
     }
     else if (attachmentType == GL_RENDERBUFFER)
     {
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
+        Gu::getContext()->chkErrRt();
         appendLine(strState, Stz "    Type: " + "GL_RENDERBUFFER");
         appendLine(strState, Stz "    Name: " + attachmentName);
 
     }
     else if (attachmentType == GL_TEXTURE)
     {
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL, &mipmapLevel);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
+        Gu::getContext()->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL, &mipmapLevel);
+        Gu::getContext()->chkErrRt();
         appendLine(strState, Stz "    Type: " + "GL_TEXTURE");
         appendLine(strState, Stz "    Name: " + attachmentName);
         appendLine(strState, Stz "    Mipmap Level: " + mipmapLevel);
     }
 }
-void RenderUtils::debugGetVertexArrayState(t_string& strState)
+void RenderUtils::debugGetVertexArrayState(string_t& strState)
 {
     appendLine(strState, ("----------------------------------------"));
     appendLine(strState, ("--VERTEX ARRAY STATE"));
@@ -742,7 +742,7 @@ void RenderUtils::debugGetVertexArrayState(t_string& strState)
     appendLine(strState, Stz("---------------------------------------"));
     appendLine(strState, Stz("--Active Vertex Attribs: "));
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     // - Disable all arrays by default.
     for (int iAttrib = 0; iAttrib < nMaxAttribs; ++iAttrib) {
@@ -762,21 +762,21 @@ void RenderUtils::debugGetVertexArrayState(t_string& strState)
         memset(iCurAttrib, 0, sizeof(GLint) * 4);
         memset(uiCurAttrib, 0, sizeof(GLuint) * 4);
 
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, (GLint*)&iArrayBufferBinding);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_ENABLED, (GLint*)&iArrayEnabled);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_SIZE, (GLint*)&iAttribArraySize);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&iAttribArrayType);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*)&iAttribArrayStride);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_INTEGER, (GLint*)&iAttribArrayInteger);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, (GLint*)&iArrayBufferBinding);
+        Gu::getContext()->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_ENABLED, (GLint*)&iArrayEnabled);
+        Gu::getContext()->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_SIZE, (GLint*)&iAttribArraySize);
+        Gu::getContext()->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&iAttribArrayType);
+        Gu::getContext()->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*)&iAttribArrayStride);
+        Gu::getContext()->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_INTEGER, (GLint*)&iAttribArrayInteger);
+        Gu::getContext()->chkErrRt();
 
-        std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&iAttribArrayNormalized);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&iAttribArrayNormalized);
+        Gu::getContext()->chkErrRt();
         //glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, (GLint*)&iAttribArrayDivisor);
         //CheckGpuErrorsDbg();
 
@@ -800,18 +800,18 @@ void RenderUtils::debugGetVertexArrayState(t_string& strState)
             switch (iAttribArrayType)
             {
             case GL_INT:
-                std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribIiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLint*)&iCurAttrib);
-                std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+                std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribIiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLint*)&iCurAttrib);
+                Gu::getContext()->chkErrRt();
                 appendLine(strState, Stz "  Cur Value: " + iCurAttrib[0] + "," + iCurAttrib[1] + "," + iCurAttrib[2] + "," + iCurAttrib[3]);
                 break;
             case GL_UNSIGNED_INT:
-                std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribIuiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLuint*)&uiCurAttrib);
-                std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+                std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribIuiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLuint*)&uiCurAttrib);
+                Gu::getContext()->chkErrRt();
                 appendLine(strState, Stz "  Cur Value: " + uiCurAttrib[0] + "," + uiCurAttrib[1] + "," + uiCurAttrib[2] + "," + uiCurAttrib[3]);
                 break;
             case GL_FLOAT:
-                std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetVertexAttribfv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLfloat*)&iCurAttrib);
-                std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+                std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glGetVertexAttribfv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLfloat*)&iCurAttrib);
+                Gu::getContext()->chkErrRt();
                 appendLine(strState, Stz "  Cur Value: " + fCurAttrib[0] + "," + fCurAttrib[1] + "," + fCurAttrib[2] + "," + fCurAttrib[3]);
                 break;
             default:
@@ -827,7 +827,7 @@ void RenderUtils::debugGetVertexArrayState(t_string& strState)
 #pragma endregion
 
 
-void RenderUtils::saveTexture(t_string&& strLoc, GLuint iGLTexId, GLenum eTexTarget, int iCubeMapSide) {
+void RenderUtils::saveTexture(string_t&& strLoc, GLuint iGLTexId, GLenum eTexTarget, int iCubeMapSide) {
     std::shared_ptr<Img32> bi = std::make_shared<Img32>();
     if (RenderUtils::getTextureDataFromGpu(bi, iGLTexId, eTexTarget, iCubeMapSide) == true) {
         //the GL tex image must be flipped to show upriht/
@@ -836,7 +836,7 @@ void RenderUtils::saveTexture(t_string&& strLoc, GLuint iGLTexId, GLenum eTexTar
         Gu::checkErrorsRt();
     }
 }
-void RenderUtils::saveFramebufferAsPng(t_string&& strLoc, GLuint iFBOId) {
+void RenderUtils::saveFramebufferAsPng(string_t&& strLoc, GLuint iFBOId) {
     GLint iFbBindingLast;
     GLint iFbWidth;
     GLint iFbHeight;
@@ -848,7 +848,7 @@ void RenderUtils::saveFramebufferAsPng(t_string&& strLoc, GLuint iFBOId) {
         iFBOId = iFbBindingLast;
     }
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindFramebuffer(GL_FRAMEBUFFER, iFBOId);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindFramebuffer(GL_FRAMEBUFFER, iFBOId);
     {
         //glGetIntegerv(GL_FRAMEBUFFER_DEFAULT_WIDTH, &iFbWidth);
         //glGetIntegerv(GL_FRAMEBUFFER_DEFAULT_HEIGHT, &iFbHeight);
@@ -866,11 +866,11 @@ void RenderUtils::saveFramebufferAsPng(t_string&& strLoc, GLuint iFBOId) {
         bi->flipV(); //the GL tex image must be flipped to show uprih
         Gu::saveImage(strLoc, bi);
     }
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glBindFramebuffer(GL_FRAMEBUFFER, iFbBindingLast);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glBindFramebuffer(GL_FRAMEBUFFER, iFbBindingLast);
 }
 //void RenderUtils::createDepthTexture(GLuint& __out_ texId, int w, int h, GLenum depthSize){
 //    //This will query the device to make sure the depth format is supported.
-//    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+//    Gu::getContext()->chkErrRt();
 //
 //    glGenTextures(1, &texId);
 //    glBindTexture(GL_TEXTURE_2D, texId);
@@ -881,14 +881,14 @@ void RenderUtils::saveFramebufferAsPng(t_string&& strLoc, GLuint iFBOId) {
 //    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+//    Gu::getContext()->chkErrRt();
 //
 //    //**This might fail on phones - change to depth component 24
 //    glTexImage2D(GL_TEXTURE_2D, 0, depthSize, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 //}
 void RenderUtils::createDepthTexture(GLuint* __out_ texId, int32_t w, int32_t h, bool bMsaaEnabled, int32_t nMsaaSamples, GLenum eRequestedDepth) {
     //This will query the device to make sure the depth format is supported.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     GLenum texTarget;
 
     if (bMsaaEnabled) {
@@ -899,30 +899,30 @@ void RenderUtils::createDepthTexture(GLuint* __out_ texId, int32_t w, int32_t h,
     }
 
     glGenTextures(1, texId);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
     glBindTexture(texTarget, *texId);
     //THe following parameters are for depth textures only
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     if (bMsaaEnabled == false) {
         //For some reason you can't use this with multisample.
         glTexParameteri(texTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);//GL_NONE
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
         glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
         glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
         glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
         glTexParameteri(texTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
         glTexParameteri(texTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+        Gu::getContext()->chkErrRt();
     }
 
     getCompatibleDepthComponent(eRequestedDepth, [&](GLenum eDepth) {
         if (bMsaaEnabled) {
-            std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nMsaaSamples, eDepth, w, h, GL_TRUE);
+            std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nMsaaSamples, eDepth, w, h, GL_TRUE);
             Gu::checkErrorsRt();
         }
         else {
@@ -969,7 +969,7 @@ void RenderUtils::getCompatibleDepthComponent(GLenum eRequestedDepth, std::funct
         eDepthSize = eRequestedDepth;
     }
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
+    Gu::getContext()->chkErrRt();
 
     //**This might fail on phones - change to depth component 24
     func(eDepthSize);
@@ -1051,7 +1051,7 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image, GLu
     glGetIntegerv(eTexBinding, &iSavedTextureBinding);
     Gu::checkErrorsRt();
 
-    std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glActiveTexture(GL_TEXTURE0);
+    std::dynamic_pointer_cast<GLContext>(Gu::getContext())->glActiveTexture(GL_TEXTURE0);
     glBindTexture(eTexTargetBase, iGLTexId);
     Gu::checkErrorsRt();
     {

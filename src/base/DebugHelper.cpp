@@ -15,11 +15,11 @@ namespace Game {
 HANDLE hCrtLog;
 bool _bDoDebug = false;
 
-void staticDebugBreak(t_string str) {
+void staticDebugBreak(string_t str) {
     BroLogError(str);
     Gu::debugBreak();
 }
-void runtimeAssertion(t_string str) {
+void runtimeAssertion(string_t str) {
     BroThrowException(str);
 }
 
@@ -153,8 +153,8 @@ void DebugHelper::checkMemory() {
 #endif
 }
 
-t_string DebugHelper::modList() {
-    t_string ret = "";
+string_t DebugHelper::modList() {
+    string_t ret = "";
 #ifdef BRO_OS_WINDOWS
 
     MODULEENTRY32 me32;
@@ -179,7 +179,7 @@ t_string DebugHelper::modList() {
         return ret;
     }
 
-    t_string app = "";
+    string_t app = "";
     // - Loop through all modules.
     do
     {
@@ -233,10 +233,10 @@ std::vector<std::string> DebugHelper::getCallStack(bool bIncludeFrameId) {
 #endif
     return callStack;
 }
-t_string DebugHelper::getStackTrace() {
+string_t DebugHelper::getStackTrace() {
     //How to keep debug info in release builds:
     //*https://msdn.microsoft.com/en-us/library/fsk896zz.aspx
-    t_string ret = "";
+    string_t ret = "";
     std::vector<std::string> cs = getCallStack(true);
     for (std::string s : cs) {
         ret.append(s);
@@ -244,7 +244,7 @@ t_string DebugHelper::getStackTrace() {
     }
     return ret;
 }
-t_string DebugHelper::getCallingMethod(){
+string_t DebugHelper::getCallingMethod(){
     //Returns the method that called the current one.
     std::vector<std::string> str = getCallStack(false);
     if(str.size() < 4){
