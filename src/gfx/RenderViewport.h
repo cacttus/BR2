@@ -21,7 +21,8 @@ class RenderViewport : public VirtualMemory /*This is contained by RenderWindow,
   //int32_t _x,_y;                // X / Y location of viewport (relative to window)
 //    t_aspect_ratio _aspectRatio;
 
-  int32_t _windowWidth, _windowHeight;        // - We need the h/w of the host window to change the location of the viewport inside of it.
+  int32_t _windowWidth=0;
+  int32_t _windowHeight=0;        // - We need the h/w of the host window to change the location of the viewport inside of it.
 
   Box3i _lastViewportRect;
   Box3i _currentViewportRect;
@@ -33,6 +34,11 @@ class RenderViewport : public VirtualMemory /*This is contained by RenderWindow,
   float _aspectRatio_1;
 
   //std::mutex _mtClassMtx;
+  
+  //New RenderSettings
+  float _pixelAspectX = 1;
+  float _pixelAspectY = 1;
+
 
   void centerViewport();
   void updateReciprocalValues();

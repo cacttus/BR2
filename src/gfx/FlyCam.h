@@ -8,16 +8,17 @@
 #define __FLYCAM_14924442872935518543_H__
 
 #include "../gfx/GfxHeader.h"
+#include "../world/WorldHeader.h"
 
 namespace BR2 {
 /**
-*    @class FlyCam
-*    @brief A camera that lets you fly around.
-*
+*  @class FlyCam
+*  @brief A camera that lets you fly around.  This is actually a control class for the camera.
+*   FlyCam : public InputControls
 */
 class FlyCam : public VirtualMemory {
 public:
-  FlyCam(std::shared_ptr<RenderViewport> pv);
+  FlyCam(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene);
   virtual ~FlyCam() override;
 
   void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);

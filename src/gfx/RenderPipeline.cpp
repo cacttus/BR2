@@ -332,7 +332,7 @@ void RenderPipeline::enableDisablePipeBits() {
   //}
 }
 
-void RenderPipeline::blitDeferredRender(std::shared_ptr<CameraNode> cam) {
+void RenderPipeline::blitDeferredRender(std::shared_ptr<Scene> pScene, std::shared_ptr<CameraNode> cam) {
   //NOTE:
   //Bind the forward framebuffer (_pBlittedForward is equal to _pMsaaForward if MSAA is disabled, if it isn't we call copyMSAASamples later)
   getContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
@@ -365,7 +365,7 @@ void RenderPipeline::blitDeferredRender(std::shared_ptr<CameraNode> cam) {
     }
 
     //Set the light uniform blocks for the deferred shader.
-    _pDeferredShader->setLightUf();
+    _pDeferredShader->setLightUf(pScene->getLightManager());
     setShadowUf();
     _pDeferredShader->draw(_pQuadMesh);
     getContext()->chkErrDbg();
@@ -746,7 +746,7 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
       endRenderDeferred();
 
       //Blit to forward FB
-      blitDeferredRender(cam);
+      blitDeferredRender(pScene,cam);
 
       if (pipeBits.test(PipeBit::e::Transparent)) {
         pScene->drawTransparent(rp);

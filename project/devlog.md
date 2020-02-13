@@ -3,6 +3,11 @@
 * TODO - Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
 * TODO - detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 
+## Roadmap
+* Remove Spec System, use "data" system.
+* Remove WorldObject inheritence, and use Component model.
+* CMake integration. Test on iOS, Linux, Android.
+
 ## Currently Working On..
 1. Unlink the Window viewport with the Camera Viewport.  
 	* This requires us to upate RenderPipeline, and also Frustum class.
@@ -23,6 +28,20 @@
 	Frustums also used for shadow boxes.
 
 	class Frustum()
+
+glViewport needs to be tied to the RenderPipe, not renderviewpoert
+Add pixelaspectX, pixelaspectY for non-square pixels.
+* Must Fix the pixel aspect (squashing)
+Resolution options - Automatic, then a set of adjustable resolutions.  
+	Fullscreen- width + height are the height of the main display
+	Windowed 
+	- * Height Adjustment - the height resolution is set to the height of the window.Viewport is placed in the window Center if width does not equal window
+	1920 x 1080
+Auto Resolution
+It appears that teh camera viewport must be tied to the render area.
+
+** Inherit camera with FlyCam, or use a script?
+	Unity uses a script to control camera.  I'm not sure what to do here.  A script would be neat though.
 
 *2/12/2020*
 * New file structure looks like this.

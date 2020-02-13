@@ -11,17 +11,20 @@
 #define __WORLDOBJECT_15812292363701244110_H__
 
 #include "../world/WorldHeader.h"
+#include "../model/BaseNode.h"
 
 namespace BR2 {
 /**
-*    @class WorldObject
-*    @brief Essentially this is a "PhysicsNode".  We should combine these classes.  Then we will add the necessary modifiers as composites.
-*
+*  @class WorldObject
+*  @brief Essentially this is a "PhysicsNode".  We should combine these classes.  Then we will add the necessary modifiers as composites.
 */
-class WorldObject : public GameMemory {
+class WorldObject : public BaseNode {
 public:
     WorldObject();
     virtual ~WorldObject() override;
+
+private:
+  std::vector<std::shared_ptr<Component>> _components;
 };
 
 }//ns Game

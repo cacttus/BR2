@@ -5,12 +5,12 @@
 #include "../base/Gu.h"
 
 namespace BR2 {
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport) {
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
+std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps) {
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport, ps);
   cn->init();
   return cn;
 }
-CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(nullptr) {
+CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps) : PhysicsNode(nullptr, ps) {
   _pViewport = ppViewport;
   _vWorldUp.construct(0, 1, 0);
 

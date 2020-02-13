@@ -10,12 +10,11 @@
 #include "../gfx/FlyCam.h"
 
 namespace BR2 {
-FlyCam::FlyCam(std::shared_ptr<RenderViewport> pv) : _pViewport(pv) {
-  BroLogInfo("Creating Camera.");
-  _pCamera = CameraNode::create(pv);
+FlyCam::FlyCam(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene) : _pViewport(pv) {
+  BroLogInfo("Creating Fly Camera.");
+  _pCamera = CameraNode::create(pv, pscene);
   _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
   updateCameraPosition();
-  // Gu::setCamera(_pCamera);
   _vMoveVel.construct(0, 0, 0);
   _pCamera->setPos(vec3(30, 30, 30));
   _pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
@@ -44,7 +43,6 @@ void FlyCam::moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta) {
   if (pInput->shiftHeld()) {
     strafeAmt = 2.1f;
   }
-
 
   strafeAmt *= delta;
   vec3 vel(0, 0, 0);

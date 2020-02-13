@@ -15,79 +15,70 @@
 
 namespace BR2 {
 /**
-*    @class ShaderBase
-*    @brief
-*
+*  @class ShaderBase
+*  @brief Base class for creating OpenGL shaders.
 */
-class ShaderBase : public HasGraphicsContext<ShaderBase> {
-private:
-    ShaderStatus::e _eProgramStatus = ShaderStatus::e::Uninitialized;
-    GLuint _glId;
-    time_t _compileTime;
-
-    string_t _strProgramName;
-    Hash32 _iNameHashed;
-    std::map<Hash32, std::shared_ptr<ShaderUniform>> _vecUniforms;
-    std::map<Hash32, std::shared_ptr<ShaderUniformBlock>> _vecUniformBlocks; //These are shared with ShaderMaker
-    std::set<ShaderAttribute*> _setAttributes;
-    std::vector<string_t> _vecLinkErrors;  
-    std::vector<std::shared_ptr<ShaderSubProgram>> _vecSubPrograms;
-    void bindAllUniforms();
-    
-    void setShadowUf();
-
+class ShaderBase : public VirtualMemoryShared<ShaderBase> {
 public:
-    ShaderBase(std::shared_ptr<GraphicsContext> ct, string_t strName);
-    virtual ~ShaderBase() override ;
+  ShaderBase(std::shared_ptr<GLContext> ct, string_t strName);
+  virtual ~ShaderBase() override;
 
-    void init();
-    bool confirmInit();
-    void setCompileTime(time_t tt) { _compileTime = tt; }
+  void init();
+  bool confirmInit();
+  void setCompileTime(time_t tt) { _compileTime = tt; }
+  void setProgramStatus(ShaderStatus::e sp) { _eProgramStatus = sp; }
+  ShaderStatus::e getProgramStatus() { return _eProgramStatus; }
+  Hash32 getNameHashed() { return _iNameHashed; }
+  string_t getProgramName() { return _strProgramName; }
+  time_t getCompileTime() { return _compileTime; }
+  std::vector<std::shared_ptr<ShaderSubProgram>>& getSubPrograms() { return _vecSubPrograms; }
+  std::vector<string_t>& getLinkErrors() { return _vecLinkErrors; }
+  std::map<Hash32, std::shared_ptr<ShaderUniformBlock>>& getUniformBlocks() { return _vecUniformBlocks; }
+  void getProgramErrorLog(std::vector<string_t>& __out_ errs);
+  void setProgramName(string_t n);
+  void bind();
+  void unbind();
+  void unbindAllUniforms();
+  GLuint getGlId() const { return _glId; }
+  void recreateProgram();    //WARNING: calling this will delete the program in the GL and start from scratch.
+  void deleteUniforms();
+  void deleteAttributes();
+  void bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shaderBufferName, uint32_t shaderSsboIndex);
+  std::map<Hash32, std::shared_ptr<ShaderUniform>>& getUniforms() { return _vecUniforms; }
+  std::set<ShaderAttribute*>& getAttributes() { return _setAttributes; }
+  std::shared_ptr<ShaderUniform> getUniformByName(string_t name);
+  void setUf(string_t name, void* value, GLint count = -1, bool bIgnore = false);//SetUniformByName
+  void setCameraUf(std::shared_ptr<CameraNode> cam, mat4* model = nullptr);
+  void setAtlasUf(std::shared_ptr<Atlas> pa);
+  void verifyBound();
+  void setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound = false);
+  void setLightUf(std::shared_ptr<LightManager> pLightManager);//Deferred BLIT only (called once)
+  void draw(std::shared_ptr<MeshNode> mesh, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
+  void draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
+  void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
+  string_t debugGetUniformValues();
+  void beginRaster(int iOrthoWidth, int iOrthoHeight);
+  void endRaster();
+  void dispatchCompute();//Compute Shader Only
+  void dispatchCompute(int32_t elementCount);//Compute Shader Only
+  void dispatchCompute(int32_t x, int32_t y, int32_t z);//Compute Shader Only
+  void dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync* sync);//Compute Shader Only
 
-    void setProgramStatus(ShaderStatus::e sp) { _eProgramStatus = sp; }
-    ShaderStatus::e getProgramStatus() { return _eProgramStatus; }
-    Hash32 getNameHashed() { return _iNameHashed; }
-    string_t getProgramName() { return _strProgramName; }
-    time_t getCompileTime() { return _compileTime; }
-    std::vector<std::shared_ptr<ShaderSubProgram>>& getSubPrograms() { return _vecSubPrograms; }
-    std::vector<string_t>& getLinkErrors() { return _vecLinkErrors; }
-    std::map<Hash32, std::shared_ptr<ShaderUniformBlock>>& getUniformBlocks() { return _vecUniformBlocks; }
-    void getProgramErrorLog(std::vector<string_t>& __out_ errs);
-    void setProgramName(string_t n);
-    void bind();
-    void unbind();
-    void unbindAllUniforms();
-    GLuint getGlId() const { return _glId; }
-    void recreateProgram();    //WARNING: calling this will delete the program in the GL and start from scratch.
-    void deleteUniforms();
-    void deleteAttributes();
-    void bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shaderBufferName, uint32_t shaderSsboIndex);
+private:
+  ShaderStatus::e _eProgramStatus = ShaderStatus::e::Uninitialized;
+  GLuint _glId;
+  time_t _compileTime;
+  string_t _strProgramName;
+  Hash32 _iNameHashed;
+  std::map<Hash32, std::shared_ptr<ShaderUniform>> _vecUniforms;
+  std::map<Hash32, std::shared_ptr<ShaderUniformBlock>> _vecUniformBlocks; //These are shared with ShaderMaker
+  std::set<ShaderAttribute*> _setAttributes;
+  std::vector<string_t> _vecLinkErrors;
+  std::vector<std::shared_ptr<ShaderSubProgram>> _vecSubPrograms;
+  std::shared_ptr<GLContext> _pContext = nullptr;
 
-    std::map<Hash32, std::shared_ptr<ShaderUniform>>& getUniforms() { return _vecUniforms; }
-    std::set<ShaderAttribute*>& getAttributes() { return _setAttributes; }
-
-    std::shared_ptr<ShaderUniform> getUniformByName(string_t name);
-    void setUf(string_t name, void* value, GLint count = -1, bool bIgnore = false);//SetUniformByName
-    void setCameraUf(std::shared_ptr<CameraNode> cam, mat4* model = nullptr);
-    void setAtlasUf(std::shared_ptr<Atlas> pa);
-    void verifyBound();
-    void setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound=false);
-    void setLightUf();//Deferred BLIT only (called once)
-   // void setFreebieDirLightUf(bool bEnable=true); //for any deferred draw
-
-    void draw(std::shared_ptr<MeshNode> mesh, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
-    void draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
-    void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
-    string_t debugGetUniformValues();
-
-    void beginRaster(int iOrthoWidth, int iOrthoHeight);
-    void endRaster();
-
-    void dispatchCompute();//Compute Shader Only
-    void dispatchCompute(int32_t elementCount);//Compute Shader Only
-    void dispatchCompute(int32_t x, int32_t y, int32_t z);//Compute Shader Only
-    void dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync* sync);//Compute Shader Only
-
+  void bindAllUniforms();
+  void setShadowUf();
 };
 
 }//ns Game

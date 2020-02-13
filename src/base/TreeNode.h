@@ -13,19 +13,42 @@
 namespace BR2 {
 /**
 *  @class TreeNode
-*  @brief REpresents generic node of a "tree".
-*        Constraints:  No duplicates in tree.
-*                      No cycles.
-*                      Directed graph
-*                      *Not sorted
+*  @brief Represents generic node of a DAG tree. *Not sorted
 */
 class TreeNode : public Drawable {
-  template < class Tx >
-  friend class VirtualReference;
 public:
   //DOn't change this to MAP because the vecotr must be ordered by index
   typedef std::vector<std::shared_ptr<TreeNode>> NodeList;
   typedef std::function<bool(std::shared_ptr<TreeNode>)> NodeLambda;
+
+public:
+  TreeNode();
+  virtual ~TreeNode()  override;
+
+  template < class Tx >
+  bool iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
+  template < class Tx >
+  bool iterateDepthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
+  template < class TBase, class TCopy >
+  std::shared_ptr<TCopy> duplicateBreadthFirst(std::function<std::shared_ptr<TCopy>(std::shared_ptr<TBase>)> fn);
+  void flattenBreadthFirst(NodeList& outVec);
+  std::shared_ptr<TreeNode> find(std::shared_ptr<TreeNode> bt);
+  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
+  bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
+  bool detachFromParent();  //calls remove()
+  size_t getNodeCountHierarchy();
+  size_t getNodeCountParentOnly();
+  bool getHasParent() { return _pParent != nullptr; }
+  std::shared_ptr<TreeNode> getParent() { return _pParent; }
+  std::unique_ptr<NodeList>& getChildren() { return _mapChildren; }
+  virtual bool getIsLeaf() const;
+  virtual bool canDelete() { return true; }    //override to check whether the node can be deleted.
+
+protected:
+  void addNullChildren(int32_t count);
+  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override thsi - Called after a node is appended.
+  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
+  void attachToParent(std::shared_ptr<TreeNode> pParent);  // calls insert()
 
 private:
   int32_t _iRecursionStamp = 0;
@@ -42,42 +65,6 @@ private:
   //protected in favor of attach()  etach()
   std::shared_ptr<TreeNode> insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent = NULL);
   bool remove(std::shared_ptr<TreeNode> node = NULL, bool blnSplice = false, bool bImmediateNodeOnly = true);// Return true if the node was removed
-
-protected:
-  void addNullChildren(int32_t count);
-  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override thsi - Called after a node is appended.
-  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
-  void attachToParent(std::shared_ptr<TreeNode> pParent);  // calls insert()
-
-public:
-  TreeNode();
-  virtual ~TreeNode()  override;
-
-  //void delinkTree();
-
-  template < class Tx >
-  bool iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
-  template < class Tx >
-  bool iterateDepthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
-  template < class TBase, class TCopy >
-  std::shared_ptr<TCopy> duplicateBreadthFirst(std::function<std::shared_ptr<TCopy>(std::shared_ptr<TBase>)> fn);
-
-  //void unlinkAllChildren(bool bRecursive = true);
-  void flattenBreadthFirst(NodeList& outVec);
-  std::shared_ptr<TreeNode> find(std::shared_ptr<TreeNode> bt);
-  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
-  bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
-  bool detachFromParent();  //calls remove()
-
-  size_t getNodeCountHierarchy();
-  size_t getNodeCountParentOnly();
-  bool getHasParent() { return _pParent != nullptr; }
-  std::shared_ptr<TreeNode> getParent() { return _pParent; }
-  std::unique_ptr<NodeList>& getChildren() { return _mapChildren; }
-  virtual bool getIsLeaf() const;
-
-  virtual bool canDelete() { return true; }    //override to check whether the node can be deleted.
-
 };
 
 

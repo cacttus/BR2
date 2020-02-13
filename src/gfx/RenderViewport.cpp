@@ -2,16 +2,11 @@
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
+RenderViewport::RenderViewport(int32_t w, int32_t h, ViewportLocation location, ViewportConstraint constraint) {
+  _viewportLocation = location;
+  _aspectRatio = 0;
+  _constraint = constraint;
 
-RenderViewport::RenderViewport(
-  int32_t w,
-  int32_t h,
-  ViewportLocation location,
-  ViewportConstraint constraint
-)
-  : _viewportLocation(location),
-  _aspectRatio(0),//aspect_ratio_16_9),
-  _constraint(constraint) {
   _windowWidth = w;
   _windowHeight = h;
   glEnable(GL_SCISSOR_TEST);

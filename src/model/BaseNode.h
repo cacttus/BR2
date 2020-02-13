@@ -22,7 +22,8 @@
 #include "../base/TreeNode.h"
 
 namespace BR2 {
-class UtilMeshInline;
+
+//TODO: remove specs, and make the node instances dependent on "data" objects.
 class BaseSpec : public VirtualMemoryShared<BaseSpec> {
 public:
   BaseSpec() {} //Serialized version
@@ -68,20 +69,13 @@ protected:
 };
 
 /**
-*    @class BaseNode
-*    @brief The base class for nodes in the scenegraph. @sa Scene
+*  @class BaseNode
+*  @brief The base class for nodes in the scenegraph. @sa Scene
 */
 class BaseNode : public TreeNode {
 public:
-  BaseNode(std::shared_ptr<BaseSpec>);
+  BaseNode(std::shared_ptr<BaseSpec>, std::shared_ptr<Scene> ps);
   virtual ~BaseNode() override;
-
-  void setHidden(bool bHidden) {
-    _bHidden = bHidden;
-  }
-  bool getHidden() {
-    return _bHidden;
-  }
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void compileWorldMatrix();
@@ -96,6 +90,9 @@ public:
   virtual void drawDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override;
   virtual void drawTransparent(RenderParams& rp) override;
+
+  void setHidden(bool bHidden) { _bHidden = bHidden; }
+  bool getHidden() { return _bHidden; }
 
   template < typename Tx > std::shared_ptr<Tx> getData() {
     return std::dynamic_pointer_cast<Tx>(_pSpec);
@@ -119,7 +116,6 @@ public:
     _bTransformChanged = true;
   }
   vec3 getScale() { return _vScale; }
-
   bool getTransformChanged() { return _bTransformChanged; }
   //  void resetTransformChanged() { _bTransformChanged = false; }
 
@@ -187,21 +183,21 @@ protected:
   std::shared_ptr<BoneNode> _pBoneParent = nullptr;
   //  std::set<std::shared_ptr<ShadowBox>> _setShadowInfluences;
   bool _bHidden = false;
-protected:
+  std::shared_ptr<Scene> _pScene = nullptr;
+
   void setLocalBind();
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void applyLocalAnimation(std::shared_ptr<Animator>);
   void applyParent();
   virtual void init();
+  std::shared_ptr<Scene> getScene() { return _pScene; }
+
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
   vec3 _vPos;
   vec3 _vLastPos;
   bool _bTransformChanged = true;
   bool _bInitialized = false;
-
-
-
 };
 
 

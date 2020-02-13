@@ -30,6 +30,7 @@
     <ClInclude Include="src\base\BaseHeader.h" />
     <ClInclude Include="src\base\BinaryFile.h" />
     <ClInclude Include="src\base\BuildConfig.h" />
+    <ClInclude Include="src\base\Component.h" />
     <ClInclude Include="src\base\ConsoleColors.h" />
     <ClInclude Include="src\base\CoreHeader.h" />
     <ClInclude Include="src\base\Crc32.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BaseHeader.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
+    <ClCompile Include="src\base\Component.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
@@ -454,6 +456,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project\designnotes.md" />
+    <None Include="README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>

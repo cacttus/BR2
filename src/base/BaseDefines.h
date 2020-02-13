@@ -149,6 +149,7 @@ class Net;
 class SyncTimer;
 class FpsMeter;
 class FrameSync;
+class Component;
 
 template < class Tx >
 class DynamicBuffer;
@@ -157,8 +158,6 @@ class GrowBuffer;
 template < class Tx >
 class Allocator;
 
-template <class Tx, class THashSize>
-class _HashMap;
 template <class TItem>
 class HashMapItem;
 template < class Tx >

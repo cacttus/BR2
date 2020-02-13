@@ -753,6 +753,9 @@
     <ClInclude Include="src\base\BaseDefines.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\Component.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BinaryFile.cpp">
@@ -1313,11 +1316,15 @@
     <ClCompile Include="src\base\StringWrapper.cpp">
       <Filter>base</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\Component.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="project\devlog.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project\designnotes.md" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>
