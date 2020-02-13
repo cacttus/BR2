@@ -21,10 +21,10 @@ public:
   virtual ~FrameSync() override;
   void disable();
   void enable();
-  FORCE_INLINE bool isEnabled() { return !_bVsyncDisabled; }
-
+  bool isEnabled() { return !_bVsyncDisabled; }
   void syncBegin();    // Call before you do your frame update
   int syncEnd();        // Call after you do your frame update.
+
 private:
   std::shared_ptr<GLContext> _pContext;
   t_timeval _syncStart;

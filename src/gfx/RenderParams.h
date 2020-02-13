@@ -12,9 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class RenderParams
-*    @brief
-*
+*  @class RenderParams
+*  @brief
 */
 class RenderParams : public VirtualMemory {
   std::shared_ptr<ShaderBase> _pShader = nullptr;
@@ -27,8 +26,6 @@ class RenderParams : public VirtualMemory {
   std::shared_ptr<VaoDataGeneric> _pVaoDataGeneric = nullptr;
   std::shared_ptr<VaoShader> _pVaoShader = nullptr;
   // std::shared_ptr<Material> _pMaterial = nullptr;
-
-  
   //std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
 
 public:

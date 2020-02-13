@@ -3,7 +3,6 @@
 
 
 namespace BR2 {
-///////////////////////////////////////////////////////////////////
 Exception::Exception(string_t c, int line, const char* file, bool bLogError ) {
     _line = line;
     _msg = c;
@@ -18,12 +17,6 @@ Exception::Exception(string_t c, int line, const char* file, bool bLogError ) {
 string_t Exception::what() {
     return _msg + " file:" + _file + " line:" + _line;
 }
-
-
-
-
-
-
 
 
 }//ns Game

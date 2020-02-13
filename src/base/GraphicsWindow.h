@@ -28,7 +28,7 @@ protected:
 */
 class GraphicsWindow : public RenderTarget {
 public:
-  GraphicsWindow(std::shared_ptr<GLContext> context, bool ismain, string_t title, RenderSystem::e sys);
+  GraphicsWindow(bool ismain, string_t title, RenderSystem::e sys);
   virtual ~GraphicsWindow() override;
 
   void init();
@@ -44,6 +44,7 @@ public:
   void setScene(std::shared_ptr<Scene> s) { _pScene=s; }
   std::shared_ptr<Scene> getScene() { return _pScene; }
   std::shared_ptr<Picker> getPicker() { return _pPicker; }
+  std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
 
 protected:
   void makeSDLWindow(string_t title, int rendersystem);
@@ -57,6 +58,8 @@ private:
   std::shared_ptr<Scene> _pScene = nullptr; //The scene we render.
   std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<Picker> _pPicker = nullptr;
+
+  std::shared_ptr<FrameSync> _pFrameSync = nullptr;
 
   //Renderpipe should be on the window, or at least, on a renderable "target"
   std::shared_ptr<RenderPipeline> _pRenderPipe = nullptr;

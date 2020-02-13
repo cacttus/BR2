@@ -149,8 +149,6 @@ void GraphicsContext::createManagers() {
   BroLogInfo("Delta");
   _pDelta = std::make_shared<Delta>();
 
-  BroLogInfo("GLContext - Creating FrameSync");
-  _pFrameSync = std::make_shared<FrameSync>();
 
   BroLogInfo("GLContext - Creating Particles");
   _pParticleMaker = std::make_shared<ParticleMaker>();

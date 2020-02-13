@@ -7,7 +7,7 @@
 #ifndef __EXCEPTION_1479867204359778176_H__
 #define __EXCEPTION_1479867204359778176_H__
 
-#include "../base/MachineTypes.h"
+#include "../base/BaseHeader.h"
 
 namespace BR2 {
 class Exception {

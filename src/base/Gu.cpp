@@ -79,7 +79,6 @@ std::shared_ptr<Net> Gu::_pNet = nullptr;
 std::shared_ptr<WindowManager> Gu::_pWindowManager = nullptr;
 std::shared_ptr<GLContext> Gu::_pActiveContext = nullptr;
 
-void Gu::setContext(std::shared_ptr<GLContext> ct) { _pActiveContext = ct; }
 std::shared_ptr<ApplicationPackage> Gu::getAppPackage() { return _pAppPackage; }
 std::shared_ptr<Sequencer> Gu::getSequencer() { return _pSequencer; }
 std::shared_ptr<WindowManager> Gu::getWindowManager() { return _pWindowManager; }
@@ -87,6 +86,8 @@ std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
 std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
+void Gu::setContext(std::shared_ptr<GLContext> ct) { _pActiveContext = ct; }
+void Gu::setPackage(std::shared_ptr<ApplicationPackage> x) { _pAppPackage = x; }
 
 bool Gu::is64Bit() {
   if (sizeof(size_t) == 8) {

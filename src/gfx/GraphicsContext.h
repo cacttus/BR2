@@ -49,7 +49,6 @@ public:
   float& getClearA() { return _fClearA; }
 
   std::shared_ptr<FpsMeter> getFpsMeter() { return _pFpsMeter; }
-  std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
   std::shared_ptr<Delta> getDelta() { return _pDelta; }
 
   std::shared_ptr<RenderPipeline> getRenderPipe() { return _pRenderPipe; }
@@ -76,7 +75,6 @@ private:
   //One per context, this essentially calculates glSwapBuffers performance
   std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
   std::shared_ptr<Delta> _pDelta = nullptr;
-  std::shared_ptr<FrameSync> _pFrameSync = nullptr;
 
   EngineLoopState::e _eLoopState = EngineLoopState::Update;
   float _fClearR = 1.0f;

@@ -26,6 +26,7 @@
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\Base.h" />
     <ClInclude Include="src\base\BaseAll.h" />
+    <ClInclude Include="src\base\BaseDefines.h" />
     <ClInclude Include="src\base\BaseHeader.h" />
     <ClInclude Include="src\base\BinaryFile.h" />
     <ClInclude Include="src\base\BuildConfig.h" />
@@ -55,7 +56,6 @@
     <ClInclude Include="src\base\Img32.h" />
     <ClInclude Include="src\base\IOBase.h" />
     <ClInclude Include="src\base\Logger.h" />
-    <ClInclude Include="src\base\MachineTypes.h" />
     <ClInclude Include="src\base\MemFile.h" />
     <ClInclude Include="src\base\Net.h" />
     <ClInclude Include="src\base\ObjectFile.h" />
@@ -77,6 +77,7 @@
     <ClInclude Include="src\base\StreamBuffer.h" />
     <ClInclude Include="src\base\StringExtensions.h" />
     <ClInclude Include="src\base\StringUtil.h" />
+    <ClInclude Include="src\base\StringWrapper.h" />
     <ClInclude Include="src\base\SyncTimer.h" />
     <ClInclude Include="src\base\TextConfigFile.h" />
     <ClInclude Include="src\base\TextDataFile.h" />
@@ -312,6 +313,7 @@
     <ClCompile Include="src\base\StreamBuffer.cpp" />
     <ClCompile Include="src\base\StringExtensions.cpp" />
     <ClCompile Include="src\base\StringUtil.cpp" />
+    <ClCompile Include="src\base\StringWrapper.cpp" />
     <ClCompile Include="src\base\SyncTimer.cpp" />
     <ClCompile Include="src\base\TextConfigFile.cpp" />
     <ClCompile Include="src\base\TextDataFile.cpp" />

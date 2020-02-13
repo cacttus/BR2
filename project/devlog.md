@@ -4,63 +4,68 @@
 * TODO - detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 
 ## Currently Working On..
-1. Essentially our MeshNode/MeshSpec, should really be one class.  to create new meshes, we'd do a shallow copy of the class.
-2. The same goes for all the Spec/Data model classes.
-3. Additionally, we need to remove class inheritance, and favor composition like Unity does.
-4. WorldObject will be composited by other items and not inherited.
-5. Adding "SCENE" to the world.  
-6. Simplifying the UI to work with the UI design for this game.
-7. Camera needs to have a separate viewport from the window.
-8. Replacing AppMain() with Scene()
-9. Graphics Context - So, we can have a ContextManager, which has a STATIC graphics context in it.  When we call SwitchContext(ctx) the static is set.
-	Then we can call global references to TexCache, and the like without having to get the context explicitly from the window (or something).
-	*having context on Gu is simple, but things like RenderPipe need to have a specific context since they have their own data that isn't shared between contexts.
-10. makeAssetPath - needs to be defined in the "project" or package level.
+1. Unlink the Window viewport with the Camera Viewport.  
+	* This requires us to upate RenderPipeline, and also Frustum class.
+2. MeshNode/MeshSpec, should really be one class.  To create new meshes, we'd do a shallow copy of the class.
+3. The same goes for all the Spec/Data model classes.  We follow a Blender style Object/Data/User pattern.
+4. Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
+	* WorldObject will be composited by other items and not inherited.
+5. Simplifying the UI to work with the UI design for this game.
+6. Graphics Context - So, we can have a ContextManager, which has a STATIC graphics context in it.  When we call SwitchContext(ctx) the static is set.
+	* Then we can call global references to TexCache, and the like without having to get the context explicitly from the window (or something).
+    * having context on Gu is simple, but things like RenderPipe need to have a specific context since they have their own data that isn't shared between contexts.
+
 
 *2/12/2020*
-Removed the app package's cache, and config.  these should really be hard coded.
-New file structure looks like this.
-/My Documents
-  /BR2
-    config.xml
-    /projects
-      /default
-        /cache
-        package.xml
+* Removed the app package's cache, and config.  these should really be hard coded.
+* New file structure looks like this.
+* /My Documents
+    * /BR2
+        * config.xml
+            * /projects
+            * /default
+                * /cache
+                * package.xml
+
+* Fully Replaced AppMain with Scene().
+* Got a majority of the replaced code to compile.
+* Unfortunately, OpenGL contexts require a Window in SDL.  This is similar functionality with Windows OpenGL which requires a DC.  A good reason, if any, to switch to Vulkan.
+* Fully reimplemented project paths in the ApplicationPackage.
+* Started a StringWrapper class, but abandoned.  *NOTE* StringWrapper was needed for hash algorithms. Without it, we're flying blind by possible hash collisions in _HashMap_. 
 
 *2/11/2020*
-Removed "app"
-Moved contextual managers back into GLContext.
-Removed generic "GraphicsContext" in favor of using GLContext (sorry, vulkan, maybe later).
-Moved the app's filesystem directories into Package.
-Moved more stuff around.
-Renamed Package to ApplicationPackage.  It's an application, but it's also 'packed' so settled on AppPackage.
+* Removed "app"
+* Moved contextual managers back into GLContext.
+* Removed generic "GraphicsContext" in favor of using GLContext (sorry, vulkan, maybe later).
+* Moved the app's filesystem directories into Package.
+* Moved more stuff around.
+* Renamed Package to ApplicationPackage.  It's an application, but it's also 'packed' so settled on AppPackage.
 
 *2/7/2020*
-Scene
+* Scene
 
 GLContext
 	Shaders, texture, models, renderpipe, particle manager, PhysicsWorld (as its gpu accellerated), picker (uses buffers)
 
 *2/6/2020*
-Use Screen to represent a UI window.
-Move Gui2d to Gu
-Undo changes.  Gui2d is actually Screen.
-Rename Gui2d to screen
-add Screen(s) to a new Gui2d class.
+* Use Screen to represent a UI window.
+* Move Gui2d to Gu
+* Undo changes.  Gui2d is actually Screen.
+* Rename Gui2d to screen
+* add Screen(s) to a new Gui2d class.
 
-TabButton - the basic of the UI
-TODO Make the ui text not shrink vertically based on window size.  
-TODO make the window not squash horizontally (keep the horizontal ratio)
+* TabButton - the basic of the UI
+* TODO Make the ui text not shrink vertically based on window size.  
+* TODO make the window not squash horizontally (keep the horizontal ratio)
 
-We need to make the render system "windows" more modular.  Like, we need to create multiple windows if needed.
+* We need to make the render system "windows" more modular.  Like, we need to create multiple windows if needed.
 
-*WindowManager
-* Get rid of "OpenGL Api" we don't need that.. right.
+* WindowManager
+    * Get rid of "OpenGL Api" we don't need that.. right.
 
-Moved Window control to applciation (not in the main core)
-Removed Mob to Bin converter (apprunner.cpp)
-Removed Cycle Logging in Logger.cpp
+* Moved Window control to applciation (not in the main core)
+* Removed Mob to Bin converter (apprunner.cpp)
+* Removed Cycle Logging in Logger.cpp
 
 
 *12/29/19*

@@ -1,7 +1,7 @@
 #include "../base/Gu.h"
 #include "../base/WindowManager.h"
-#include "../gfx/GraphicsApi.h"
 #include "../base/GraphicsWindow.h"
+#include "../gfx/GraphicsApi.h"
 
 namespace BR2 {
 WindowManager::WindowManager() {
@@ -9,6 +9,7 @@ WindowManager::WindowManager() {
 WindowManager::~WindowManager() {
 }
 std::shared_ptr<GraphicsWindow> WindowManager::createWindow(std::string title, RenderSystem::e re) {
+  //All GL contexts require an SDL window, unfortunately.  To create an offline context, we need to create a new window.
   std::shared_ptr<GraphicsWindow> w = std::make_shared<GraphicsWindow>(true, title, re);
   w->init();
   _windows.push_back(w);

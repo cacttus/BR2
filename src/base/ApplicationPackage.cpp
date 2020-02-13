@@ -32,11 +32,11 @@ void ApplicationPackage::load(string_t file_path) {
 void ApplicationPackage::setSz(string_t name, string_t& value, HashMap<XmlConfigEntry> entries) {
   bool set = false;
   //Set the given value to the first attribute in the given tag identified by 'name'
-  HashMap<XmlConfigEntry>::HashMapItem<XmlConfigEntry> ent = entries.find("TextureDirectory");
+  HashMapItem<XmlConfigEntry> ent = entries.find(name);
   if (ent.hasValue()) {
-    if (ent.value()._attrs.size() > 0) {
-      XmlConfigAttribute attr = ent.value()._attrs.begin()->second;
-      value = attr._attrib_value;
+    if (ent.value()._attrs.size() == 1) {
+      std::shared_ptr<XmlConfigAttribute> attr = ent.value()._attrs.begin()->second;
+      value = attr->_attrib_value;
       set = true;
     }
   }

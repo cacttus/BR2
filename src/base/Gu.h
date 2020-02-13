@@ -22,8 +22,8 @@ namespace BR2 {
 class Gu : public GameMemory {
 public:
   static string_t getEngineName() { return "BR2"; }
-  static std::shared_ptr<ApplicationPackage> getAppPackage() { return _pAppPackage; }
-  static void setPackage(std::shared_ptr<ApplicationPackage> x) { _pAppPackage = x; }
+  static std::shared_ptr<ApplicationPackage> getAppPackage();
+  static void setPackage(std::shared_ptr<ApplicationPackage> x);
 
   static std::shared_ptr<WindowManager> getWindowManager();
 

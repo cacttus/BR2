@@ -1,6 +1,7 @@
 #include "../base/XmlFile.h"
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
+#include "../base/HashMap.h"
 
 namespace BR2 {
 XmlFile::XmlFile() {
@@ -23,7 +24,8 @@ HashMap<XmlConfigEntry> XmlFile::getXMLConfiguration(string_t filepath) {
   for (auto it_child = doc.children().begin(); it_child != doc.children().end(); it_child++) {
     XmlConfigEntry ent(it_child->name());
     for (auto it_attr = it_child->attributes().begin(); it_attr != it_child->attributes().end(); it_attr++) {
-      ent._attrs.add(it_attr->name(), XmlConfigAttribute(it_attr->name(), it_attr->value()));
+      std::string st(it_attr->name());
+      ent._attrs.add(st, std::make_shared<XmlConfigAttribute>(st, it_attr->value()));
     }
     items.add(ent._tagname, ent);
   }

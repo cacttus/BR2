@@ -31,6 +31,7 @@ public:
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
 
+  void update(float delta);
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp)override;
   virtual void drawShadow(RenderParams& rp) override;

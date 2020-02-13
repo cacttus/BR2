@@ -223,7 +223,6 @@ typedef enum {
  class FontTextBuffer;
  class FontSpec;
  class IScreenText;
-// class TextBoss;
  class GpuQuad3;
  class QuadBufferMesh;
  class FontSpec;
@@ -266,21 +265,13 @@ typedef enum {
  class GpuComputeSync;
  class BufferRenderTarget;
  class Picker;
- //class PickFramebuffer;
  class ShadowFrustum;
- class ShadowBox;//1/22/18
+ class ShadowBox;
  class ShadowBoxSide;
-
  class LightManager;
  class LightNodePoint;
  class LightNodeDir;
-
- //class GraphicsApi;
- //class OpenGLApi;
- //class VulkanApi;
-
  class RenderSettings;
-
  class UiTex;
  class Ui3Tex;
  class Ui9Tex;
@@ -305,19 +296,18 @@ typedef enum {
  class UiWindow;
  class UiCursor;
  class UiScreen;
-
+ class RenderParams;
  class MegaTex;
  class MtNode;
  class MtTex;
  class MtFont;
-
  class ShaderCache;
-
  class GraphicsWindow;
-
  class GraphicsContext;
  class VulkanContext;
  class GLContext;
+ class VaoDataGeneric;
+ class MeshNode;
 
  namespace UiEventId {
  typedef enum {
@@ -405,6 +395,18 @@ typedef enum {
      float _fFocalRange;
      float _pad2;
      float _pad3;
+ };
+
+ //Goes here becauwse TreeNode inherits it.
+ class Drawable : public VirtualMemoryShared<Drawable> {
+ public:
+   virtual void drawDeferred(RenderParams& rp) = 0;
+   virtual void drawForward(RenderParams& rp) = 0;
+   virtual void drawShadow(RenderParams& rp) = 0;
+   virtual void drawDebug(RenderParams& rp) = 0;
+   virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
+   virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
+   virtual void drawUI(RenderParams& rp) = 0;
  };
 
 

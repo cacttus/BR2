@@ -7,6 +7,9 @@
 #include "../base/FrameSync.h"
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
+#include "../base/GraphicsWindow.h"
+#include "../base/OpenGLWindow.h"
+#include "../base/FrameSync.h"
 
 #include "../gfx/RenderViewport.h"
 #include "../gfx/ShaderMaker.h"
@@ -24,16 +27,13 @@
 
 #include "../model/ModelCache.h"
 
-#include "../base/GraphicsWindow.h"
-#include "../base/OpenGLWindow.h"
-
 #include "../world/Scene.h"
 
 namespace BR2 {
 
 //Called exclusively by the graphics API
-GraphicsWindow::GraphicsWindow(std::shared_ptr<GLContext> context, bool ismain, string_t title, RenderSystem::e sys) {
-  this->_bIsMainWindow = ismain;
+GraphicsWindow::GraphicsWindow(bool ismain, string_t title, RenderSystem::e sys) {
+  _bIsMainWindow = ismain;
   _title = title;
 }
 GraphicsWindow::~GraphicsWindow() {
@@ -62,11 +62,13 @@ void GraphicsWindow::createManagers() {
   //  BroThrowException("Invalid render engine.");
   //}
 
+  BroLogInfo("Creating SDL Window");
+  createSDL_OpenGLWindow(_title);
+
   BroLogInfo("Creating Renderer.");
   initRenderSystem();
 
-  BroLogInfo("Creating SDL Window");
-  createSDL_OpenGLWindow(_title);
+
 
   BroLogInfo("GLContext - Picker");
   _pPicker = std::make_shared<Picker>(getGraphicsContext());
@@ -113,6 +115,8 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
   //    }
   //  }
   }
+
+  _pFrameSync = std::make_shared<FrameSync>(_pContext);
 }
 
 void GraphicsWindow::makeCurrent() {
@@ -125,7 +129,6 @@ void GraphicsWindow::getDrawableSize(int* w, int* h) {
 void GraphicsWindow::swapBuffers() {
   SDL_GL_SwapWindow(getSDLWindow());
 }
-
 void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
   string_t title;
   bool bFullscreen = false;
@@ -203,10 +206,7 @@ void GraphicsWindow::initRenderSystem() {
   }
 
   createRenderPipe();
-
-
 }
-
 void GraphicsWindow::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
   if (_iLastWidth != w || bForce) {
@@ -329,20 +329,16 @@ void GraphicsWindow::step() {
     getFrameSync()->syncBegin();
     {
       getGraphicsContext()->setLoopState(EngineLoopState::Update);
-
-      //...?
-
-      //App Update steps.
-     // Gu::getApp()->step((float)_fDelta);
+      _pScene->update((float)_pContext->getDelta()->get());
 
       getGraphicsContext()->setLoopState(EngineLoopState::Render);
 
-      PipeBits pipebits;
-      pipebits.set();
-      //Gu::getRenderSettings()->getDOF()
-
       //Main Render
-      _pRenderPipe->renderScene(this->shared_from_this(), Gu::getApp(), pipebits);
+      if (_pScene) {
+        PipeBits pipebits;
+        pipebits.set();
+        _pRenderPipe->renderScene(_pScene, pipebits);
+      }
     }
     getGraphicsContext()->setLoopState(EngineLoopState::SyncEnd);
     getFrameSync()->syncEnd();

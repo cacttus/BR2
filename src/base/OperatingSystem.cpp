@@ -130,11 +130,11 @@ string_t OperatingSystem::getUserFolderPath() {
   HRESULT result = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, lpstrPath);
 
   ret = string_t(lpstrPath);
+  OperatingSystem::suppressError(OSErrorCode::ErrorNoToken, false);
 
 #elif BRO_OS_LINUX
   ret = t_string("/usr/");
 #endif
-  OperatingSystem::suppressError(ErrorNoToken, false);
   return ret;
 }
 string_t OperatingSystem::getGamesFolderPath() {

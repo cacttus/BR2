@@ -105,9 +105,6 @@
     <ClInclude Include="src\base\Logger.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\MachineTypes.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\MemFile.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -750,6 +747,12 @@
     <ClInclude Include="src\base\AppMain.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\StringWrapper.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\BaseDefines.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\BinaryFile.cpp">
@@ -1305,6 +1308,9 @@
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\GraphicsWindow.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\StringWrapper.cpp">
       <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>

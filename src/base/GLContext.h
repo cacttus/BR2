@@ -31,8 +31,9 @@ public:
 };
 
 /**
-*    @class GLContext
-*    @brief OpenGL render context
+*  @class GLContext
+*  @brief OpenGL render context
+*  All GL contexts require an SDL window.  To create another context, create a new window.  You can hide the window, and also disable the RenderPipeline if needed.
 */
 class GLContext : public GraphicsContext {
 public:

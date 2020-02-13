@@ -48,6 +48,10 @@ Scene::Scene() {
 Scene::~Scene() {
   _pLightManager = nullptr;
 }
+void Scene::update(float delta) {
+
+}
+
 void Scene::debugChangeRenderState() {
   if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F1)) {
     if (Gu::getInputManager()->shiftHeld()) {
