@@ -22,38 +22,10 @@
 #include "../model/BaseNode.h"
 namespace BR2 {
 /**
-*    @class Frustum
-*    @details Frustum class.
-*    The normals of the frustum planes point inward
-*s
-*    TODO: update znear and zfar from the camera!!! and aspect_ratio from the viewport!!! and tan_fov_2!!
+*  @class Frustum
+*  @details A detailed view frustum geometry class. The normals of the frustum planes point inside the 'box'.
 */
 class FrustumBase : public VirtualMemory {
-public:
-  static const int NumPlanes = 6;
-  static const int NumPoints = 8;
-protected:
-  QuadPlane Planes[NumPlanes];
-  Vector3 Points[NumPoints];    //nbl fbl fbr nbr ntl ftl ftr ntr
-  float tan_fov_2;
-  float z_near = 1.0f;
-  float z_far = 1000.0f;
-  ProjectionMode::e _eProjectionMode;
-  std::shared_ptr<WindowViewport> _pViewportRef;    // - Reference to camera viewport.
-  //Line3f* _satLine;
-  Box3f* _minimax;
-  //
-      //void makeSatLine(Vec3f& nearCenter, Vec3f& farCenter);
-  void constructPointsAndPlanes(Vec3f& farCenter, Vec3f& nearCenter, Vec3f& upVec, Vec3f& rightVec,
-    float w_near_2, float w_far_2,
-    float h_near_2, float h_far_2
-  );
-  void projectScreenPointToWorldPoint(const vec2& screenPt, vec3& __out_ worldPt,
-    FrustumPoint tl, FrustumPoint bl, FrustumPoint tr, float fPushMultiplier, bool bTest = false);
-  void setupOrthographic(FrustumProjectionParameters* params);
-  void setupPerspective(FrustumProjectionParameters* params, bool bProjectBox = false);
-  void setupBox(FrustumProjectionParameters* params);
-  //void updateBoundBox();//We don't do this in the generic system for frustums.
 public:
   FrustumBase(std::shared_ptr<WindowViewport> pv, float fov);
   virtual ~FrustumBase() override;
@@ -77,7 +49,6 @@ public:
   void setZFar(float f) { z_far = f; }
   void setZNear(float f) { z_near = f; }
 
-
   // - Intersection algorithms
  // bool intersectLine2D( Vec2f lp1, Vec2f lp2 );
   bool hasPointXZ(Vec2f& dp);
@@ -94,6 +65,33 @@ public:
   void screenPointToWorldPointNear(const vec2& screenPt, vec3& __out_ worldPt, float fPushMultiplier = 0.0f, bool bTest = false);
   void screenPointToWorldPointFar(const vec2& screenPt, vec3& __out_ worldPt, float fPushMultiplier = 0.0f, bool bTest = false);
   void screenQuadToWorldQuad(const Box2f* __in_ pScreenQuad, Quad3f* __out_ pWorldQuad, float fPushMultiplier = 0.001f, bool bTest = false);
+
+  static const int NumPlanes = 6;
+  static const int NumPoints = 8;
+
+protected:
+  QuadPlane Planes[NumPlanes];
+  Vector3 Points[NumPoints];    //nbl fbl fbr nbr ntl ftl ftr ntr
+  float tan_fov_2;
+  float z_near = 1.0f;
+  float z_far = 1000.0f;
+  ProjectionMode::e _eProjectionMode;
+  std::shared_ptr<WindowViewport> _pViewportRef;    // - Reference to camera viewport.
+
+  Box3f* _minimax;
+
+  //void makeSatLine(Vec3f& nearCenter, Vec3f& farCenter);
+  void constructPointsAndPlanes(Vec3f& farCenter, Vec3f& nearCenter, Vec3f& upVec, Vec3f& rightVec,
+    float w_near_2, float w_far_2,
+    float h_near_2, float h_far_2
+  );
+  void projectScreenPointToWorldPoint(const vec2& screenPt, vec3& __out_ worldPt,
+    FrustumPoint tl, FrustumPoint bl, FrustumPoint tr, float fPushMultiplier, bool bTest = false);
+  void setupOrthographic(FrustumProjectionParameters* params);
+  void setupPerspective(FrustumProjectionParameters* params, bool bProjectBox = false);
+  void setupBox(FrustumProjectionParameters* params);
+  //void updateBoundBox();//We don't do this in the generic system for frustums.
+
 };
 
 }

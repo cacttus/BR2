@@ -5,6 +5,11 @@
 #include "../base/Gu.h"
 
 namespace BR2 {
+std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport) {
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
+  cn->init();
+  return cn;
+}
 CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(nullptr) {
   _pViewport = ppViewport;
   _vWorldUp.construct(0, 1, 0);
@@ -12,14 +17,9 @@ CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode
   _pMainFrustum = std::make_shared<FrustumBase>(ppViewport, _f_hfov);
   _vUp = vec3(0, 1, 0);
   _vLookAt = vec3(0, 0, 0);
+
   setPos(vec3(-100, -100, -100));
 }
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport) {
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
-  cn->init();
-  return cn;
-}
-
 CameraNode::~CameraNode() {
   //DEL_MEM(_boundEllipsoid);
   //DEL_MEM(_pMainFrustum);
@@ -50,8 +50,6 @@ ProjectedRay CameraNode::projectPoint(vec2& mouse) {
 
   return pr;
 }
-//////////////////////////////////////////////////////////////////////////
-
 void CameraNode::setFOV(t_radians fov) {
   _f_hfov = fov;
   _pViewport->updateChanged(true);
@@ -142,8 +140,6 @@ void CameraNode::zoom(float amt) {
     Alg::cerp_1D(minPt.y, maxPt.y, tVal),
     Alg::cerp_1D(minPt.z, maxPt.z, tVal)
   );
-
-
 
   newP = _vLookAt + finalPt;
   // newP = getPos()+ _vViewNormal * amt;

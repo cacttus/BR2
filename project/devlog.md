@@ -6,18 +6,25 @@
 ## Currently Working On..
 1. Unlink the Window viewport with the Camera Viewport.  
 	* This requires us to upate RenderPipeline, and also Frustum class.
-2. MeshNode/MeshSpec, should really be one class.  To create new meshes, we'd do a shallow copy of the class.
-3. The same goes for all the Spec/Data model classes.  We follow a Blender style Object/Data/User pattern.
+2. MeshNode/MeshSpec, should be one class.  To create new meshes, we'd do a shallow copy of the class.
+	* The same goes for all the Spec/Data model classes.  We follow a Blender style Object/Data/User pattern.
 4. Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	* WorldObject will be composited by other items and not inherited.
-5. Simplifying the UI to work with the UI design for this game.
-6. Graphics Context - So, we can have a ContextManager, which has a STATIC graphics context in it.  When we call SwitchContext(ctx) the static is set.
-	* Then we can call global references to TexCache, and the like without having to get the context explicitly from the window (or something).
-    * having context on Gu is simple, but things like RenderPipe need to have a specific context since they have their own data that isn't shared between contexts.
+5. Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 
+*2/13/2020*
+* Separating camera and window viewport.
+	The only reason camera uses the window viewport, is to update it.
+	The only reason frustum uses viewport is to calculate the frustum geometry, which can be calculated simply by passing the camera FOV, Near/far.
+	We must also consider that the game's camera aspect ratio is way off.  This is partially due to the window/camera viewport dependency.
+
+	Frustum can be a class off of viewport.
+	Or an independent class (probably better this way)
+	Frustums also used for shadow boxes.
+
+	class Frustum()
 
 *2/12/2020*
-* Removed the app package's cache, and config.  these should really be hard coded.
 * New file structure looks like this.
 * /My Documents
     * /BR2
@@ -27,11 +34,13 @@
                 * /cache
                 * package.xml
 
+* Removed the app package's cache, and config.  these should really be hard coded.
 * Fully Replaced AppMain with Scene().
 * Got a majority of the replaced code to compile.
 * Unfortunately, OpenGL contexts require a Window in SDL.  This is similar functionality with Windows OpenGL which requires a DC.  A good reason, if any, to switch to Vulkan.
 * Fully reimplemented project paths in the ApplicationPackage.
 * Started a StringWrapper class, but abandoned.  *NOTE* StringWrapper was needed for hash algorithms. Without it, we're flying blind by possible hash collisions in _HashMap_. 
+* Renamed engine, and namespace to "BR2" 
 
 *2/11/2020*
 * Removed "app"
@@ -69,42 +78,39 @@ GLContext
 
 
 *12/29/19*
-Began simple port to Make and CMake with gcc.  Fix this in the future.  The one caveat here is still debugging with VS. 
-VS allows a CMake project, but it doesn't appear as lightweight as a simple makefile.
+* Began simple port to Make and CMake with gcc.  Fix this in the future.  The one caveat here is still debugging with VS. 
+* VS allows a CMake project, but it doesn't appear as lightweight as a simple makefile.
 
-**Previously we removed the custom app class instantiation in preparation for 
+* Previously we removed the custom app class instantiation in preparation for 
 	1 - a scripting engine 
 	2 - Multiple graphics windows 
 	3 - Split window view (blender)
 
-We converted Shake thus to its own EXE.  It's no longer a library.
+* We converted Shake thus to its own EXE.  It's no longer a library.
 
 *8/23/19*
-Remove most of AppBase and move to ProjectFile.
-Move remaining AppBase contents into ProjectFile
-Remove "AppBase" or make it ProjectBase. Sth.
-Generic Windowing for UI popups.
-move RenderPipe to Window
-Rendering multiple windows
-need multiple contexts
-shaders & Everything need to be changed...
+* Remove most of AppBase and move to ProjectFile.
+* Move remaining AppBase contents into ProjectFile
+* Remove "AppBase" or make it ProjectBase. Sth.
+* Generic Windowing for UI popups.
+* move RenderPipe to Window
+* Rendering multiple windows
+* need multiple contexts
+* shaders & Everything need to be changed...
 
-# 8/14/19
+*8/14/19*
 In FlyCam make the FlyCam a Script Run on top of CameraNode
 	Remove FlyCam Class.
 
 *8/11/19*
-Adding a Window layer,
-replacing Viewport with WindowViewport to differentiate between window and render viewport 
-this is in preparation for multiple viewports for the UI system.
-
-having a problem with teh file SDL.h because it conflicts.
-added <SDL> from a more absolute path.
-
-Todo: merge engine and apprunner
-
-Need:
-	For split view need
-	Image Dropdown like blender
-	remove "udim"
+* Rebooted "BR2" Graphics Engine Project
+* Adding a Window layer,
+* replacing Viewport with WindowViewport to differentiate between window and render viewport 
+* this is in preparation for multiple viewports for the UI system.
+* having a problem with teh file SDL.h because it conflicts.
+* added <SDL> from a more absolute path.
+* Todo: merge engine and apprunner
+* For split view need
+* Image Dropdown like blender
+* remove "udim"
 
