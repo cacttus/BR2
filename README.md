@@ -3,7 +3,7 @@ Shake is a videogame and graphics engine for desktop development.
 It consumes lightweight dependencies, the STL, and OpenGL with SDL as the windowing layer.
 The engine is in the beginning stages of becoming Linux portable, and has run on the iPhone in the past.
 
-# Engine Systems
+# Systems
 * A Blender (.blend) model workflow
 * Paths
 * Forward Kinematic Animation
