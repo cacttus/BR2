@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="C:\Users\scriplez\Desktop\helix_logo.png"
+   inkscape:export-xdpi="217.66693"
+   inkscape:export-ydpi="217.66693">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="684.2779"
+     inkscape:cy="748.20343"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-global="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="3747"
+     inkscape:window-height="1057"
+     inkscape:window-x="85"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       position="61.610118,211.95016"
+       orientation="0,1"
+       id="guide1146"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="79.847469,180.86161"
+       orientation="0,1"
+       id="guide1148"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g1124"
+       transform="matrix(3.6759008,0,0,3.4597985,-57.934075,-250.75724)"
+       inkscape:export-filename="C:\users\scriplez\desktop\out.png"
+       inkscape:export-xdpi="462.07632"
+       inkscape:export-ydpi="462.07632">
+      <path
+         id="rect10"
+         d="m 31.671969,80.616784 18.965767,16.874939 h 6.693648 l -9.39891,-8.362799 h -3.400308 v -3.025653 l -6.166549,-5.486487 z"
+         style="fill:#8965d1;fill-opacity:1;stroke:none;stroke-width:0.1530612;stroke-opacity:1"
+         inkscape:connector-curvature="0" />
+      <path
+         id="rect12"
+         d="M 44.532166,86.04901 31.671969,97.491723 h 6.693648 l 9.398908,-8.362799 h -3.232359 z"
+         style="fill:#00e8b0;fill-opacity:1;stroke-width:0.1530612"
+         inkscape:connector-curvature="0" />
+      <path
+         id="rect822"
+         d="m 31.671969,97.437979 9.20874,8.193301 h 3.788916 v 3.37137 l 5.968111,5.30975 h 6.693648 L 38.365617,97.437979 Z"
+         style="fill:#8965d1;fill-opacity:1;stroke:none;stroke-width:0.1530612;stroke-opacity:1"
+         inkscape:connector-curvature="0" />
+      <path
+         id="rect824"
+         d="m 50.637736,97.437979 -9.208741,8.193301 h 3.24063 v 3.07216 L 57.331384,97.437979 Z"
+         style="fill:#01e3a9;fill-opacity:1;stroke-width:0.1530612"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+</svg>
