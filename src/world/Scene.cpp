@@ -19,6 +19,8 @@
 #include "../base/GraphicsWindow.h"
 #include "../base/WindowManager.h"
 #include "../base/ApplicationPackage.h"
+#include "../base/FileSystem.h"
+#include "../base/ScriptManager.h"
 
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
@@ -27,26 +29,37 @@
 #include "../gfx/MegaTex.h"
 
 #include "../world/Scene.h"
-#include "../gfx/FlyCam.h"
+#include "../gfx/FlyingCameraControls.h"
 
 
 namespace BR2 {
 Scene::Scene() {
-  //In the future we will replace this witht he active object.
-  BroLogInfo("Creating Flying Camera");
-  _pFlyCam = std::make_shared<FlyCam>(Gu::getViewport());
+  //_pFlyCam = std::make_shared<FlyingCameraControls>(Gu::getViewport());
 
-  _pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
-  _pFlyCam->getCam()->setPos(vec3(0, 0, -10));
+  //_pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
+  //_pFlyCam->getCam()->setPos(vec3(0, 0, -10));
 
   BroLogInfo("Creating Window UI");
   _pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
 
   BroLogInfo("GLContext -  Lights");
   _pLightManager = std::make_shared<LightManager>();
+
+  BroLogInfo("GLContext -  ScriptManager");
+  _pScriptManager = std::make_shared<ScriptManager>();
+
+  //In the future we will replace this witht he active object.
+  BroLogInfo("Creating Flying Camera");
+
+  //Sort of also a scripting test.
+  std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
+  std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
+  cam->addComponent(script);
 }
 Scene::~Scene() {
+  _pScreen = nullptr;
   _pLightManager = nullptr;
+  _pScriptManager = nullptr;
 }
 void Scene::update(float delta) {
 

@@ -9,7 +9,7 @@
 #include "../base/SoundCache.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../gfx/FlyCam.h"
+#include "../gfx/FlyingCameraControls.h"
 #include "../gfx/Gui2d.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/ParticleMaker.h"   

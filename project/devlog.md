@@ -17,6 +17,8 @@
 	* WorldObject will be composited by other items and not inherited.
 5. Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 
+6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
+
 *2/13/2020*
 * Separating camera and window viewport.
 	The only reason camera uses the window viewport, is to update it.
@@ -42,6 +44,8 @@ It appears that teh camera viewport must be tied to the render area.
 
 ** Inherit camera with FlyCam, or use a script?
 	Unity uses a script to control camera.  I'm not sure what to do here.  A script would be neat though.
+
+* Created basic C# scripting, and moved the FlyCam controls into a script.
 
 *2/12/2020*
 * New file structure looks like this.

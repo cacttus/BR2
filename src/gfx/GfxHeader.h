@@ -261,7 +261,7 @@ typedef enum {
  class GpuPointLight;
  class RenderParams;
  class ForwardFramebuffer;
- class FlyCam;
+ class FlyingCameraControls;
  class GpuComputeSync;
  class BufferRenderTarget;
  class Picker;

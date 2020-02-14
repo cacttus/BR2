@@ -8,7 +8,6 @@ InputManager::InputManager() {
     _kbKeys[i] = BR2::ButtonState::Up;
   }
   _eRmb = _eLmb = BR2::ButtonState::Up;
-
 }
 InputManager::~InputManager() {
 }

@@ -46,10 +46,13 @@ public:
   void warpMouse(int x, int y);
 
 private:
-  ButtonState::e _eRmb, _eLmb, _eMmb;
+  ButtonState::e _eRmb = ButtonState::e::None;
+  ButtonState::e _eLmb = ButtonState::e::None;
+  ButtonState::e _eMmb = ButtonState::e::None;
   ButtonState::e _kbKeys[SDL_NUM_SCANCODES];
   vec2 _vLastMousePos;
   vec2 _vMousePos;
+
   bool mbState(MouseButton::e mb, ButtonState::e bs);
   bool keyState(SDL_Scancode key, ButtonState::e bs);
 };

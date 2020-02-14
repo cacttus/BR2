@@ -24,7 +24,7 @@ ShaderMaker::~ShaderMaker() {
 void ShaderMaker::initialize() {
   _pShaderCache = std::make_shared<ShaderCache>(Gu::getAppPackage()->getCacheDir());
   //We might want to verify, that the graphics context here can in fact share shader objects without mucking-up context state.
-  _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getContext(), Gu::getAppPackage()->getShadersDir());
+  _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getContext(), Gu::getAppPackage()->getShadersFolder());
 
   //Single VT shaders
   _pImageShader = makeShader(std::vector<string_t> { "f_v3x2_diffuse.vs", "f_v3x2_diffuse.ps" });
@@ -171,7 +171,7 @@ void ShaderMaker::deleteShader(std::shared_ptr<ShaderBase> ps) {
 }
 void ShaderMaker::fullyQualifyFiles(std::vector<string_t>& vecFiles) {
   for (size_t iFile = 0; iFile < vecFiles.size(); iFile++) { // strFile : vecFiles) {
-    string_t qual = FileSystem::combinePath(Gu::getAppPackage()->getShadersDir(), vecFiles[iFile]);
+    string_t qual = FileSystem::combinePath(Gu::getAppPackage()->getShadersFolder(), vecFiles[iFile]);
     vecFiles[iFile] = qual;
   }
 }

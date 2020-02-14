@@ -1,5 +1,5 @@
 /**
-*  @file FlyCam.h
+*  @file FlyingCameraControls.h
 *  @date April 17, 2017
 *  @author MetalMario971
 */
@@ -9,17 +9,17 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
+#include "../base/CSharpScript.h"
 
 namespace BR2 {
 /**
-*  @class FlyCam
-*  @brief A camera that lets you fly around.  This is actually a control class for the camera.
-*   FlyCam : public InputControls
+*  @class FlyingCameraControls
+*  @brief A camera that lets you fly around.  This is actually a control class for the camera and not the camera itself.
 */
-class FlyCam : public VirtualMemory {
+class FlyingCameraControls : public CSharpScript {
 public:
-  FlyCam(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene);
-  virtual ~FlyCam() override;
+  FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene);
+  virtual ~FlyingCameraControls() override;
 
   void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
   void userZoom(float amt);

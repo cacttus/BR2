@@ -426,9 +426,6 @@
     <ClInclude Include="src\gfx\DeferredFramebuffer.h">
       <Filter>graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\FlyCam.h">
-      <Filter>graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\FontTextBuffer.h">
       <Filter>graphics</Filter>
     </ClInclude>
@@ -729,9 +726,6 @@
     <ClInclude Include="src\base\ProjectFile.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\Script.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\VulkanWindow.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -751,6 +745,18 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\BaseDefines.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FlyingCameraControls.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\CSharpCompiler.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\ScriptManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\CSharpScript.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\Component.h">
@@ -1100,9 +1106,6 @@
     <ClCompile Include="src\gfx\DeferredFramebuffer.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\FlyCam.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\FontTextBuffer.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -1295,9 +1298,6 @@
     <ClCompile Include="src\base\ProjectFile.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\Script.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\VulkanWindow.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -1314,6 +1314,18 @@
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\StringWrapper.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FlyingCameraControls.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\CSharpCompiler.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\ScriptManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\CSharpScript.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\Component.cpp">

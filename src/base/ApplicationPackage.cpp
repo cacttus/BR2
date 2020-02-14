@@ -23,16 +23,17 @@ ApplicationPackage::~ApplicationPackage() {
 }
 void ApplicationPackage::load(string_t file_path) {
   //Load a given package.
-  HashMap<XmlConfigEntry> ents = XmlFile::getXMLConfiguration(file_path);
-  setSz("TextureDirectory", _strTextureDir, ents);
-  setSz("ShaderDirectory", _strShadersDir, ents);
-  setSz("ModelsTextDirectory", _strModelsTextDir, ents);
-  setSz("ModelsBinDirectory", _strModelsBinDir, ents);
+  std::shared_ptr<PackageConfiguration> ents = XmlFile::getXMLConfiguration(file_path);
+  setSz("TextureFolder", _strTextureDir, ents);
+  setSz("ShaderFolder", _strShadersDir, ents);
+  setSz("ModelsTextFolder", _strModelsTextDir, ents);
+  setSz("ModelsBinFolder", _strModelsBinDir, ents);
+  setSz("ScriptsFolder", _strScriptsFolder, ents);
 }
-void ApplicationPackage::setSz(string_t name, string_t& value, HashMap<XmlConfigEntry> entries) {
+void ApplicationPackage::setSz(string_t name, string_t& value, std::shared_ptr<PackageConfiguration> config) {
   bool set = false;
   //Set the given value to the first attribute in the given tag identified by 'name'
-  HashMapItem<XmlConfigEntry> ent = entries.find(name);
+  HashMapItem<XmlConfigEntry> ent = config->_entries.find(name);
   if (ent.hasValue()) {
     if (ent.value()._attrs.size() == 1) {
       std::shared_ptr<XmlConfigAttribute> attr = ent.value()._attrs.begin()->second;
@@ -41,7 +42,8 @@ void ApplicationPackage::setSz(string_t name, string_t& value, HashMap<XmlConfig
     }
   }
   if (set == false) {
-    BroLogWarn("Failed to set Package item for attribute '" + name + "'");
+    BroLogError("Failed to find required Package attribute <" + name + " />");
+    Gu::debugBreak();
   }
 }
 void ApplicationPackage::makeDefaultPaths() {
@@ -57,11 +59,11 @@ void ApplicationPackage::makeDefaultPaths() {
   _strEnvTexturePath = FileSystem::combinePath(_strTextureDir, "env1_huge.png");
 }
 string_t ApplicationPackage::makeAssetPath(string_t file) {
-  string_t ret = FileSystem::combinePath(getAssetsDir(), file);
+  string_t ret = FileSystem::combinePath(getAssetsFolder(), file);
   return ret;
 }
 string_t ApplicationPackage::makeAssetPath(string_t folder, string_t file) {
-  string_t fold = FileSystem::combinePath(getAssetsDir(), folder);
+  string_t fold = FileSystem::combinePath(getAssetsFolder(), folder);
   string_t ret = FileSystem::combinePath(fold, file);
   return ret;
 }

@@ -42,16 +42,18 @@ public:
   string_t makeAssetPath(string_t file);
   string_t makeAssetPath(string_t folder, string_t file);
 
-  string_t getAssetsDir() { return _strAssetsDir; }
+  string_t getAssetsFolder() { return _strAssetsDir; }
+  string_t getScriptsFolder() { return _strScriptsFolder; }
   string_t getIconPath() { return _strIconPath; }
-  string_t getShadersDir() { return _strShadersDir; }
-  string_t getModelsTextDir() { return _strModelsTextDir; }
-  string_t getModelsBinDir() { return _strModelsBinDir; }
-  string_t getEnvTexturePath() { return _strEnvTexturePath; }
-  string_t getTextureDir() { return _strTextureDir; }
+  string_t getShadersFolder() { return _strShadersDir; }
+  string_t getModelsTextFolder() { return _strModelsTextDir; }
+  string_t getModelsBinFolder() { return _strModelsBinDir; }
+  string_t getEnvTextureFolder() { return _strEnvTexturePath; }
+  string_t getTextureFolder() { return _strTextureDir; }
   static string_t getCacheFolder();
   static string_t getEngineConfigFilePath();
   static string_t getDataPath();
+  string_t getAppName() { return _appName; }
 
   void userZoom(float amt);
 private:
@@ -60,6 +62,7 @@ private:
   std::string _strExeLoc;
   int32_t _iTableLenBytes = 0;
   bool _bIsPacked = false;
+  string_t _appName = "MyApp";
 
   static string_t _strCacheFolderName;
   static string_t _strEngineConfigFileName;
@@ -72,14 +75,14 @@ private:
   string_t _strModelsBinDir = "";
   string_t _strEnvTexturePath = "";
   string_t _strTextureDir = "";
-
+  string_t _strScriptsFolder = "";
   void makeDefaultPaths();
   bool loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull);
   int32_t parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off);
   std::string parseStr(std::shared_ptr<BinaryFile> fb, int32_t& off);
   ProjectPackageFileEntry* getEntry(std::string fileLoc);
   bool loadExe(std::shared_ptr<BinaryFile> fb);
-  void setSz(string_t name, string_t& value, HashMap<XmlConfigEntry> entries);
+  void setSz(string_t name, string_t& value, std::shared_ptr<PackageConfiguration> entries);
 
 };
 

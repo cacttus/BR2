@@ -77,6 +77,7 @@ public:
   BaseNode(std::shared_ptr<BaseSpec>, std::shared_ptr<Scene> ps);
   virtual ~BaseNode() override;
 
+
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void compileWorldMatrix();
   virtual void calcBoundBox();
@@ -168,6 +169,9 @@ public:
     }
     return false;
   }
+
+  std::vector<std::shared_ptr<CSharpScript>>& getScripts() { return _scripts; }
+
 protected:
   std::shared_ptr<BaseSpec> _pSpec = nullptr;
   Box3f* _pBox = nullptr;
@@ -184,6 +188,7 @@ protected:
   //  std::set<std::shared_ptr<ShadowBox>> _setShadowInfluences;
   bool _bHidden = false;
   std::shared_ptr<Scene> _pScene = nullptr;
+  std::vector<std::shared_ptr<CSharpScript>> _scripts;
 
   void setLocalBind();
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);

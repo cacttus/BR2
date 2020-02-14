@@ -286,7 +286,7 @@ void GraphicsWindow::printHelpfulDebug() {
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
-  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getAppPackage()->getEnvTexturePath());
+  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getAppPackage()->getEnvTextureFolder());
   // Gu::setRenderPipe(_pRenderPipe);
 
   //_pRenderPipe->getPipeBits().set();

@@ -83,8 +83,8 @@ void TextParser::seekToChars(std::vector<char> cv) {
   }
 }
 /**
-*    inc()
-*    increment pointer
+*  @fn inc()
+*  increment pointer
 */
 bool TextParser::inc() {
   if (_bEof) {
@@ -101,8 +101,8 @@ bool TextParser::inc() {
   return eof();
 }
 /**
-*    dec()
-*    decrement pointer
+*  @fn dec()
+*  decrement pointer
 */
 void TextParser::dec() {
   if (_ptrState == ptr_begin) {
@@ -121,8 +121,8 @@ void TextParser::dec() {
   _ptrState = ptr_seek;
 }
 /**
-*    eof()
-*    return true if the poitner is at eof
+*  @fn eof()
+*  return true if the poitner is at eof
 */
 bool TextParser::eof() {
   //return (*_ptr) == 0;
@@ -136,8 +136,8 @@ bool TextParser::eof() {
 }
 
 /**
-*    eatws()
-*    eats white space
+*  @fn eatws()
+*  eats white space
 */
 void TextParser::eatws() { while (charIsWs()) inc(); }
 /**
@@ -162,8 +162,8 @@ void TextParser::eatBlockComment() {
 
 }
 /**
-*    @fn eatLine()
-*    @breif Eats a line until \n
+*  @fn eatLine()
+*  @breif Eats a line until \n
 */
 void TextParser::eatLine() {
   while (1) {
@@ -178,8 +178,8 @@ void TextParser::eatLine() {
 }
 
 /**
-*    @fn eatBody
-*    @brief Eat the body of a statement/function
+*  @fn eatBody
+*  @brief Eat the body of a statement/function
 */
 void TextParser::eatBody() {
   if (charAt() == '{') {

@@ -38,7 +38,7 @@
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/FlyCam.h"
+#include "../gfx/FlyingCameraControls.h"
 #include "../gfx/Gui2d.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/ParticleMaker.h"   

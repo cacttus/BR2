@@ -12,16 +12,19 @@
 
 #include "../world/WorldHeader.h"
 #include "../model/BaseNode.h"
+#include "../world/PhysicsNode.h"
 
 namespace BR2 {
 /**
 *  @class WorldObject
 *  @brief Essentially this is a "PhysicsNode".  We should combine these classes.  Then we will add the necessary modifiers as composites.
 */
-class WorldObject : public BaseNode {
+class WorldObject : public PhysicsNode {
 public:
     WorldObject();
     virtual ~WorldObject() override;
+    
+    void addComponent(std::shared_ptr<Component> comp);
 
 private:
   std::vector<std::shared_ptr<Component>> _components;

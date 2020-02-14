@@ -16,7 +16,7 @@ namespace BR2 {
 */
 class TextParser : public VirtualMemory {
 public:
-  TextParser(char* data);
+  TextParser(const char* data);
   virtual ~TextParser() override;
 
   bool charIsWs();
@@ -49,9 +49,6 @@ private:
   int _linenum = 1;
   t_ptr_state _ptrState = t_ptr_state::ptr_begin;
   char* _ptr = nullptr;
-
-
-
 };
 
 

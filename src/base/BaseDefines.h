@@ -151,6 +151,10 @@ class FpsMeter;
 class FrameSync;
 class Component;
 
+class CSharpScript;
+class CSharpCompiler;
+class ScriptManager;
+
 template < class Tx >
 class DynamicBuffer;
 template < class Tx >

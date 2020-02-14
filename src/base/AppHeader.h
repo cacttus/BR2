@@ -11,7 +11,7 @@
 
 namespace BR2 {
 class ProjectFile;
-class Script;
+class CSharpScript;
 class GraphicsWindow;
 class OpenGLWindow;
 class VulkanWindow;

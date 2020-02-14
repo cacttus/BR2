@@ -1,6 +1,10 @@
-
-<TextureDirectory value="./tex/"/>
-<CacheDirectory value="./cache/"/>
-<ShaderDirectory value="./shaders/"/>
-<ModelsTextDirectory value="./mob/"/>
-<ModelsBinDirectory value="./mbi/"/>
+<!--
+This is the package specification for the graphics project.
+-->
+<ApplicationPackage name="MyAppName">
+  <TextureFolder value="./tex/"/>
+  <ShaderFolder value="./shaders/"/>
+  <ModelsTextFolder value="./mob/"/>
+  <ModelsBinFolder value="./mbi/"/>
+  <ScriptsFolder value="./scripts/"/>
+</ApplicationPackage>

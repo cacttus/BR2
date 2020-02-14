@@ -88,6 +88,9 @@ void AppRunner::initSDL() {
 
   BroLogInfo("Creating Managers.");
   Gu::createManagers();
+
+  BroLogInfo("Creating Main Window.");
+  Gu::getWindowManager()->createWindow(Gu::getAppPackage()->getAppName(), Gu::getEngineConfig()->getRenderSystem());
 }
 
 void AppRunner::doShowError(string_t err, Exception* e) {
@@ -334,6 +337,7 @@ void AppRunner::runApplication() {
 
       Gu::updateGlobals();
 
+      //For now run synchronously, since we share a lot of data.
       Gu::getWindowManager()->step();
 
       //Update all button states.

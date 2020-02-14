@@ -11,7 +11,7 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
-#include "../world/PhysicsNode.h"
+#include "../world/WorldObject.h"
 
 namespace BR2 {
 /**
@@ -19,7 +19,7 @@ namespace BR2 {
 *  @brief Base class for cameras in the GL.
 *  Superclass of @cBaseCamera2D, @cBaseCamera3D
 */
-class CameraNode : public PhysicsNode {
+class CameraNode : public WorldObject {
 public:
   CameraNode(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps);
   static std::shared_ptr<CameraNode> create(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps);
