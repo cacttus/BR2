@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class SDLUtils
-*    @brief Static SDLUtils interface functions.
+*  @class SDLUtils
+*  @brief Static SDLUtils interface functions.
 *
 */
 class SDLUtils : public VirtualMemory {

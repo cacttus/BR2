@@ -1,12 +1,7 @@
 /**
-*
-*    @file VboData.h
-*    @date January 5, 2011
-*    @author MetalMario971
-*
-*    © 2011 
-*
-*
+*  @file VboData.h
+*  @date January 5, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VBODATA_3010761031374305419486_H__
@@ -18,9 +13,9 @@ namespace BR2 {
 
 
 /**
-*    @class VboData
+*  @class VboData
 *    36 bytes
-*    @brief Represents a vertex buffer object in Opengl.
+*  @brief Represents a vertex buffer object in Opengl.
 */
 class VboData : public GpuBufferData {
   //  friend class GpuBufferManager;    

@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class StreamBuffer
-*    @brief Stream Buffer.  Grows/shrinks.
+*  @class StreamBuffer
+*  @brief Stream Buffer.  Grows/shrinks.
 *    ADDS - To the end.
 *    REMOVES - From the beginning.
 */

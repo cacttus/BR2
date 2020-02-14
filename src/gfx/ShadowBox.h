@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class PointLightShadowBox
-*    @brief Shadow map box for a point light.
+*  @class PointLightShadowBox
+*  @brief Shadow map box for a point light.
 *
 */
 class ShadowBox : public VirtualMemoryShared<ShadowBox> {

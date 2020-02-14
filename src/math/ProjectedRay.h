@@ -1,12 +1,7 @@
 /**
-*
-*    @file ProjectedRay.h
-*    @date February 7, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file ProjectedRay.h
+*  @date February 7, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PROJECTEDRAY_225281493524253882519177_H__

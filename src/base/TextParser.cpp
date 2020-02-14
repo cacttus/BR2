@@ -51,16 +51,16 @@ bool TextParser::seekPastChar(char c) {
   return false;
 }
 /**
-*    @fn seekToChars()
-*    @brief Seeks to any of hte input chars and increments the pointer past it
+*  @fn seekToChars()
+*  @brief Seeks to any of hte input chars and increments the pointer past it
 */
 void TextParser::seekPastChars(std::vector<char> cv) {
   seekToChars(cv);
   inc();
 }
 /**
-*    @fn seekToChars()
-*    @brief Seek pointer until one of the specified characters is reached.
+*  @fn seekToChars()
+*  @brief Seek pointer until one of the specified characters is reached.
 */
 void TextParser::seekToChars(std::vector<char> cv) {
   bool exit = false;

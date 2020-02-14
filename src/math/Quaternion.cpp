@@ -6,8 +6,8 @@ namespace BR2 {
 
 
 /**
-*    @fn toMat4
-*    @brief Fairly quick operation to turn from Quat to Matrix
+*  @fn toMat4
+*  @brief Fairly quick operation to turn from Quat to Matrix
 */
 Matrix4x4 Quaternion::toMat4()
 {
@@ -22,8 +22,8 @@ Matrix4x4 Quaternion::toMat4()
 
 }
 /**
-*    @fn 
-*    @brief Quickly go from mat3 to mat4
+*  @fn 
+*  @brief Quickly go from mat3 to mat4
 */
 Matrix3x3 Quaternion::toMat3(){
 

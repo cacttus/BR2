@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class SyncTimer
-*    @brief  A timer that runs synchronous with the game clock.  Updates to the lambda get called on the engine's update() routine.
+*  @class SyncTimer
+*  @brief  A timer that runs synchronous with the game clock.  Updates to the lambda get called on the engine's update() routine.
 */
 class SyncTimer : public VirtualMemory {
     t_timeval _last_tick= 0;

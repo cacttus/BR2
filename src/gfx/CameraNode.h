@@ -1,8 +1,8 @@
 /**
-*    @file CameraNode.h
-*    @author MetalMario971
-*    @date january 2010
-*    @date aug 2010 - moved src to cpp file
+*  @file CameraNode.h
+*  @author MetalMario971
+*  @date january 2010
+*  @date aug 2010 - moved src to cpp file
 */
 #pragma once
 #ifndef __BASE_CAMERA_H__
@@ -21,8 +21,7 @@ namespace BR2 {
 */
 class CameraNode : public WorldObject {
 public:
-  CameraNode(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps);
-  static std::shared_ptr<CameraNode> create(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps);
+  CameraNode();
   virtual ~CameraNode() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;

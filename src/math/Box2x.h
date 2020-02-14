@@ -1,9 +1,7 @@
 /**
-*    @file RectList.h
-*    @author MetalMario971
-*
-*    © 2011
-*    @date 7 / 10 / 2008 - mgRect
+*  @file RectList.h
+*  @author MetalMario971
+*  @date 7 / 10 / 2008 - mgRect
 *    1/23/2010 - changed name from mgRectMap to RectList
 *    20150207 begin adding methods
 *    2/5/18changed name from Quad2f to Box2x
@@ -17,8 +15,8 @@
 namespace BR2 {
 ;
 /**
-*    @class Box2x
-*    @brief Basic rect class.
+*  @class Box2x
+*  @brief Basic rect class.
 */
 template < class Tx >
 class Box2x : public VirtualMemory {

@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class ShaderSubProgram
-*    @brief
+*  @class ShaderSubProgram
+*  @brief
 *
 */
 class ShaderSubProgram : public VirtualMemory {

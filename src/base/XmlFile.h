@@ -37,8 +37,8 @@ public:
   HashMap<XmlConfigEntry> _entries;
 };
 /**
-*    @class XmlFile
-*    @brief Brief interface that handles loading the XML file into a pugixml document.
+*  @class XmlFile
+*  @brief Brief interface that handles loading the XML file into a pugixml document.
 */
 class XmlFile : public TextConfigFile {
 public:

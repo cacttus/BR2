@@ -25,9 +25,9 @@
 //
 //namespace Game {
 ///**
-//*    @class GLScreenText
-//*    @brief A text drawing class.
-//*    @details A versatile text drawing class from windows system fonts. Source at nehe.gamedev.net .
+//*  @class GLScreenText
+//*  @brief A text drawing class.
+//*  @details A versatile text drawing class from windows system fonts. Source at nehe.gamedev.net .
 //*/
 //class TextBoss : VirtualMemory {
 //public:

@@ -1,12 +1,7 @@
 /**
-*
-*    @file BoneSpec.h
-*    @date December 11, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file BoneSpec.h
+*  @date December 11, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __BONE_14815063041061475745_H__

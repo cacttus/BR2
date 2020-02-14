@@ -1,12 +1,7 @@
 /**
-*
-*    @file OperatingSystemHeader.h
-*    @date October 9, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file OperatingSystemHeader.h
+*  @date October 9, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __OPERATINGSYSTEMHEADER_1315321194287381982523307_H__

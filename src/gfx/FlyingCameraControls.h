@@ -21,6 +21,9 @@ public:
   FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene);
   virtual ~FlyingCameraControls() override;
 
+  virtual void start() override;
+  virtual void update() override;
+
   void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
   void userZoom(float amt);
   void update(std::shared_ptr<InputManager> pInput, float dt);

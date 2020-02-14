@@ -1,12 +1,7 @@
 /**
-*
-*    @file Minimax.h
-*    @date November 22, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file Minimax.h
+*  @date November 22, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MINIMAX_31366194432631567467958_H__
@@ -29,8 +24,8 @@ class MinimaxParam;
 //typedef MinimaxParam<int32_t> MpInt;
 
 /**
-*    @class 
-*    @brief Allows us to encapsulate minimax parameters.
+*  @class 
+*  @brief Allows us to encapsulate minimax parameters.
 */
 template < class Tx >
 class MinimaxParam : public VirtualMemory{

@@ -3,7 +3,7 @@
 
 
 namespace BR2 {
-Component::Component() {
+Component::Component(std::shared_ptr<WorldObject> ob) : _pWorldObject(ob) {
 
 }
 Component::~Component() {

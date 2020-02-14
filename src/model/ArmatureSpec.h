@@ -1,8 +1,8 @@
 ///**
 //*
-//*    @file Articulation.h
-//*    @date October 20, 2011
-//*    @author MetalMario971
+//*  @file Articulation.h
+//*  @date October 20, 2011
+//*  @author MetalMario971
 //*
 //*    � 2011 
 //*
@@ -19,16 +19,16 @@
 //namespace Game {
 //
 ///**
-//*    @class Articulation
-//*    @brief The articulation for a model.  A list of Joint trees and that's all
+//*  @class Articulation
+//*  @brief The articulation for a model.  A list of Joint trees and that's all
 //*        the meat of animation comes from manipulating the joint trees themselves.  
-//*    @details The joint trees for a model.  This is a bind-shape tree for the model.
+//*  @details The joint trees for a model.  This is a bind-shape tree for the model.
 //*
 //*   For animations see:
 //*        @c JointMotionData @c MotionSpec
 //*
 //*    Contained in:
-//*    @c ModelAnimationSpec, @c ModelSpec
+//*  @c ModelAnimationSpec, @c ModelSpec
 //*
 //*    This is a spec class, it is instanced into:
 //*        @c TimeNode

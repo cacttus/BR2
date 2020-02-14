@@ -1,12 +1,7 @@
 /**
-*
-*    @file OBB.h
-*    @date January 16, 2018
-*    @author MetalMario971
-*
-*    © 2018
-*
-*
+*  @file OBB.h
+*  @date January 16, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __OBB_1516130353270368388_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class OBB
-*    @brief Oriented bounding box.
+*  @class OBB
+*  @brief Oriented bounding box.
 */
 class OBB : public VirtualMemory {
 public:

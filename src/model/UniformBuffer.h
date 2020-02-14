@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file UniformBuffer.h
-//*    @date May 15, 2017
-//*    @author MetalMario971
-//*
-//*    © 2017 
-//*
-//*
+//*  @file UniformBuffer.h
+//*  @date May 15, 2017
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __UNIFORMBUFFER_14948670772631763479_H__
@@ -16,8 +12,8 @@
 //
 //namespace Game {
 ///**
-//*    @class UniformBuffer
-//*    @brief
+//*  @class UniformBuffer
+//*  @brief
 //*
 //*/
 ////class UniformBuffer : public GameMemory {

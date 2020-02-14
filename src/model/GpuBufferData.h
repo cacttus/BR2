@@ -1,12 +1,7 @@
 /**
-*
-*    @file GpuBufferData.h
-*    @date September 18, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file GpuBufferData.h
+*  @date September 18, 2014
+*  @author MetalMario971
 */
 #pragma once
 #pragma once

@@ -1,7 +1,7 @@
 /**
-*    @file Texture2D.h
-*    @date August 4, 2011
-*    @author MetalMario971
+*  @file Texture2D.h
+*  @date August 4, 2011
+*  @author MetalMario971
 *    20151126 - removed texture map and changed to texure2d - all textures inherit form ti
 *        also made texture2d generic instance.
 */

@@ -1,12 +1,7 @@
 /**
-*
-*    @file MbiFile.h
-*    @date January 13, 2018
-*    @author MetalMario971
-*
-*    © 2018
-*
-*
+*  @file MbiFile.h
+*  @date January 13, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MBIFILE_15158731212931798061_H__

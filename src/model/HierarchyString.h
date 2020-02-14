@@ -1,12 +1,7 @@
 /**
-*
-*    @file HierarchyString.h
-*    @date March 26, 2012
-*    @author MetalMario971
-*
-*    © 2012 
-*
-*
+*  @file HierarchyString.h
+*  @date March 26, 2012
+*  @author MetalMario971
 */
 #pragma once
 #pragma once
@@ -17,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class HierarchyString
-*    @brief A string "flat file" hierarchy.  Sort of like an L system string it parses
+*  @class HierarchyString
+*  @brief A string "flat file" hierarchy.  Sort of like an L system string it parses
 *    data between nodes demarcated by (..) with values separated by commas
 *    and push and pop operations are demarcated by [...]
 *   Generally, all hierarchy strings look like:
@@ -71,8 +66,8 @@ bool HierarchyString<Tx>::tryGetParam(int32_t parmId, std::string& __out_ parm)
     return true;
 }
 /**
-*    @fn parse()
-*    @brief Call this to parse the hierarchy.
+*  @fn parse()
+*  @brief Call this to parse the hierarchy.
 *
 */
 template < class Tx >

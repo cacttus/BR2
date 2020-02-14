@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class BinaryFile
-*    @brief Binary parsed file which is loaded into a static buffer in memory via the memory manager.
+*  @class BinaryFile
+*  @brief Binary parsed file which is loaded into a static buffer in memory via the memory manager.
 */
 class BinaryFile : public VirtualMemory { 
 public:

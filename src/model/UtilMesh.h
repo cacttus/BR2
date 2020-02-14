@@ -1,12 +1,7 @@
 /**
-*
-*    @file UtilMesh.h
-*    @date November 21, 2015
-*    @author MetalMario971
-*
-*    © 2015
-*
-*
+*  @file UtilMesh.h
+*  @date November 21, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UTILMESH_12100900221286185268356_H__
@@ -18,8 +13,8 @@
 
 namespace BR2 {
 /**
-*    @class UtilMesh
-*    @brief
+*  @class UtilMesh
+*  @brief
 *
 */
 class UtilMesh : public VirtualMemory {

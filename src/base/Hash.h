@@ -13,8 +13,8 @@
 namespace BR2 {
 
 /**
-*    @class Hash
-*    @brief
+*  @class Hash
+*  @brief
 *
 */
 class Hash : public VirtualMemory {

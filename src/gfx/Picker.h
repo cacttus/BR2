@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class Picker
-*    @brief
+*  @class Picker
+*  @brief
 *
 */
 class Picker : public VirtualMemory {

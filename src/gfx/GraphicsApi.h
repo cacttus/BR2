@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class GraphicsApi
-*    @brief 
+*  @class GraphicsApi
+*  @brief 
 */
 class GraphicsApi : public VirtualMemory {
 protected:

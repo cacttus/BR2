@@ -12,8 +12,8 @@ ShaderAttribute::ShaderAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_
     parseAttribute(pShaderBase, attribIndex);
 }
 /**
-*    @fn assignLocation
-*    @brief Returns a nonempty string if there was an error.
+*  @fn assignLocation
+*  @brief Returns a nonempty string if there was an error.
 */
 void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_t attribIndex)
 {

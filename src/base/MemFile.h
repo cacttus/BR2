@@ -1,8 +1,8 @@
 ///**
 //*
-//*    @file MemFile.h
-//*    @date August 16, 2011
-//*    @author MetalMario971
+//*  @file MemFile.h
+//*  @date August 16, 2011
+//*  @author MetalMario971
 //*
 //*    � 2011 
 //*
@@ -16,8 +16,8 @@
 //
 //namespace Game {
 ///**
-//*    @class MemFile
-//*    @brief A file loaded into Memory that we can write to dynamically. (that is
+//*  @class MemFile
+//*  @brief A file loaded into Memory that we can write to dynamically. (that is
 //*    it isn't a static block but it grows); this file can also be written
 //*    to the disk.
 //*

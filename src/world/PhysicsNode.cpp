@@ -8,7 +8,7 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps, std::shared_ptr<Scene> w) : BaseNode(ps, w) {
+PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps) : BaseNode(ps) {
   _fMass = ps->getMass();
   _bHollow = ps->getHollow();
   _pSpeedbox = new Box3f();

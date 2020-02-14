@@ -32,8 +32,8 @@ public:
 
 };
 /**
-*    @class Atlas
-*    @brief
+*  @class Atlas
+*  @brief
 *
 */
 class Atlas : public Texture2DSpec {

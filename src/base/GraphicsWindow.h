@@ -17,6 +17,7 @@ class RenderTarget : public VirtualMemoryShared<RenderTarget> {
 public:
   std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
   std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
+  virtual void step();
 protected:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
   std::shared_ptr<GLContext> _pContext = nullptr;
@@ -32,7 +33,7 @@ public:
   virtual ~GraphicsWindow() override;
 
   void init();
-  void step();
+  virtual void step() override;
   void idle(int64_t us);
 
   SDL_Window* getSDLWindow() { return _pSDLWindow; }

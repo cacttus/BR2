@@ -1,12 +1,7 @@
 /**
-*
-*    @file BitHacks.h
-*    @date March 23, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file BitHacks.h
+*  @date March 23, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __BITHACKS_90737118105551832723055_H__

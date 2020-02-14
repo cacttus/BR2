@@ -1,8 +1,8 @@
 ///**
 //*
-//*    @file UILabel.h
-//*    @date February 3, 2020
-//*    @author MetalMario971
+//*  @file UILabel.h
+//*  @date February 3, 2020
+//*  @author MetalMario971
 //*
 //*    © 2020 
 //*
@@ -17,8 +17,8 @@
 //
 //namespace Game {
 ///**
-//*    @class UILabel
-//*    @brief
+//*  @class UILabel
+//*  @brief
 //*
 //*/
 //class UiGlyph : public UiImage {

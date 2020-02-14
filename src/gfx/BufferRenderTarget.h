@@ -10,8 +10,8 @@
 #include "../gfx/GfxHeader.h"
 namespace BR2 {
 /**
-*    @class RenderTarget
-*    @brief
+*  @class RenderTarget
+*  @brief
 *
 */
 //Storage class for OpenGL render target data.

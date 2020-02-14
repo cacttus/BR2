@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class PoundFile
-*    @brief A file that uses # as comments.
+*  @class PoundFile
+*  @brief A file that uses # as comments.
 *       Moving this to XML. (8/4/19)
 */
 class PoundFile : public TextConfigFile {

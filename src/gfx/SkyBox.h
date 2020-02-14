@@ -11,8 +11,8 @@
 #include "../model/ModelHeader.h"
 namespace BR2 {
 /**
-*    @class HappySky
-*    @brief
+*  @class HappySky
+*  @brief
 *
 */
 class SkyBox : public VirtualMemory {

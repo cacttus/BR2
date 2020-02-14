@@ -1,7 +1,7 @@
 /**
-*    @file DisplayHeader.h
-*    @date 7/18/2010
-*    @author MetalMario971
+*  @file DisplayHeader.h
+*  @date 7/18/2010
+*  @author MetalMario971
 *    This file holds the platform rendering system.
 */
 

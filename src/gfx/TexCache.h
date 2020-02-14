@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class TexCache
-*    @brief
+*  @class TexCache
+*  @brief
 *
 */
 class TexCache : public VirtualMemory {

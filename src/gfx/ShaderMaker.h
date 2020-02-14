@@ -12,8 +12,8 @@
 namespace BR2 {
 
 /**
-*    @class ShaderMaker
-*    @brief
+*  @class ShaderMaker
+*  @brief
 *
 */
 class ShaderMaker : public VirtualMemory {

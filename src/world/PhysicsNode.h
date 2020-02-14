@@ -1,13 +1,8 @@
 /**
-*
-*    @file PhysicsNode.h
-*    @date March 31, 2017- Phy25
-*    @date Jan 4, 2018
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file PhysicsNode.h
+*  @date March 31, 2017- Phy25
+*  @date Jan 4, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PHYSICS_NODE_14910105823111128827_H__
@@ -36,7 +31,7 @@ public:
 //collide with the World Node plane so we need a separate box that isn't an object.
 class PhysicsNode : public BaseNode {
 public:
-  PhysicsNode(std::shared_ptr<PhysicsSpec>, std::shared_ptr<Scene> w);
+  PhysicsNode(std::shared_ptr<PhysicsSpec>);
   virtual ~PhysicsNode();
 
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;

@@ -16,8 +16,8 @@
 
 namespace BR2 {
 /**
-*    @stuct Matrix4x4
-*    @brief Row Major 4x4 matrix.
+*  @stuct Matrix4x4
+*  @brief Row Major 4x4 matrix.
 */
 class Matrix4x4 : public PureMemory {
 public:
@@ -180,8 +180,8 @@ FORCE_INLINE Matrix4x4 Matrix4x4::operator+(const Matrix4x4& m) const {
   return ret;
 }
 /**
-*    @fn getQuaternion
-*    @brief Intel's version of matrix to a quaternion.
+*  @fn getQuaternion
+*  @brief Intel's version of matrix to a quaternion.
 *    (http://cache-www.intel.com/cd/00/00/29/37/293748_293748.pdf)
 */
 FORCE_INLINE Quaternion Matrix4x4::getQuaternion() {
@@ -249,10 +249,10 @@ FORCE_INLINE Matrix4x4 Matrix4x4::getIdentity() {
   return m;
 }
 /**
-*    @fn translate()
-*    @details Returns a translation matrix, but does not alter this matrix.
-*    @param x,y,z the translation value.
-*    @return A matrix witht the specified translation.
+*  @fn translate()
+*  @details Returns a translation matrix, but does not alter this matrix.
+*  @param x,y,z the translation value.
+*  @return A matrix witht the specified translation.
 *
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::getTranslation(vec3& vTrans) {
@@ -268,11 +268,11 @@ FORCE_INLINE Matrix4x4 Matrix4x4::getTranslation(float x, float y, float z) {
   return m;
 }
 /**
-*    @fn rotate()
-*    @details Returns a rotation matrix, but does not alter this matrix.
-*    @param a, x,y,z the axis-angle rotation.
-*    @return A matrix witht the specified rotation.
-*    @param a - ANGLE IN DEGREES!
+*  @fn rotate()
+*  @details Returns a rotation matrix, but does not alter this matrix.
+*  @param a, x,y,z the axis-angle rotation.
+*  @return A matrix witht the specified rotation.
+*  @param a - ANGLE IN DEGREES!
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::getRotationDeg(t_degrees a, vec3& vAxis) {
   return getRotationDeg(a, vAxis.x, vAxis.y, vAxis.z);
@@ -283,11 +283,11 @@ FORCE_INLINE Matrix4x4 Matrix4x4::getRotationDeg(t_degrees a, float x, float y, 
   return getRotationRad(a, x, y, z);
 }
 /**
-*    @fn rotate()
-*    @details Returns a rotation matrix, but does not alter this matrix.
-*    @param a, x,y,z the axis-angle rotation.
-*    @return A matrix witht the specified rotation.
-*    @param a - Radians.
+*  @fn rotate()
+*  @details Returns a rotation matrix, but does not alter this matrix.
+*  @param a, x,y,z the axis-angle rotation.
+*  @return A matrix witht the specified rotation.
+*  @param a - Radians.
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::getRotationRad(t_radians a, vec3& vAxis) {
   return getRotationRad(a, vAxis.x, vAxis.y, vAxis.z);
@@ -325,9 +325,9 @@ FORCE_INLINE Matrix4x4 Matrix4x4::getRotationRad(t_radians a, float x, float y, 
   return Temp;
 }
 /**
-*    @fn getRotationToVector()
-*    @brief WORKS.  Returns a matrix that would, when multiplied by a vector, rotate that vector to align with this input vector v. (and it would be a different length)
-*    @remarks I don't know if the "scuz" part works completely but for now it seems to work in every case.
+*  @fn getRotationToVector()
+*  @brief WORKS.  Returns a matrix that would, when multiplied by a vector, rotate that vector to align with this input vector v. (and it would be a different length)
+*  @remarks I don't know if the "scuz" part works completely but for now it seems to work in every case.
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::getRotationToVector(Vector3 v, Vector3 up) {
   if (v.x + v.y + v.z != 1.0)
@@ -356,10 +356,10 @@ FORCE_INLINE Matrix4x4 Matrix4x4::getRotationToVector(Vector3 v, Vector3 up) {
   return Matrix4x4::getRotationRad(ang, perp.x, perp.y, perp.z);
 }
 /**
-*    @fn scale()
-*    @details Returns a scale matrix, but does not alter this matrix.
-*    @param x,y,z the scaling value.
-*    @return A matrix witht the specified scaling.
+*  @fn scale()
+*  @details Returns a scale matrix, but does not alter this matrix.
+*  @param x,y,z the scaling value.
+*  @return A matrix witht the specified scaling.
 *
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::getScale(vec3& vScale) {
@@ -497,9 +497,9 @@ FORCE_INLINE void Matrix4x4::lookAt(const vec3& eye, const vec3& center, const v
   (*this) = ret;
 }
 /**
-*    @fn transCat()
-*    @details Translates the values of this matrix.
-*    @param x,y,z the translation value.
+*  @fn transCat()
+*  @details Translates the values of this matrix.
+*  @param x,y,z the translation value.
 *
 */
 FORCE_INLINE Matrix4x4& Matrix4x4::translate(float x, float y, float z) {
@@ -510,18 +510,18 @@ FORCE_INLINE Matrix4x4& Matrix4x4::translate(const vec3& v) {
 }
 
 /**
-*    @fn scaleCat()
-*    @details Scales the values of this matrix.
-*    @param x,y,z the scale value.
+*  @fn scaleCat()
+*  @details Scales the values of this matrix.
+*  @param x,y,z the scale value.
 *
 */
 FORCE_INLINE void Matrix4x4::scale(float x, float y, float z) {
   *this *= getScale(x, y, z);
 }
 /**
-*    @fn rotateCat()
-*    @details Rotates the values of this matrix.
-*    @param a, x,y,z the rotation value in axis-angle form.
+*  @fn rotateCat()
+*  @details Rotates the values of this matrix.
+*  @param a, x,y,z the rotation value in axis-angle form.
 *    a is in degrees
 */
 FORCE_INLINE void Matrix4x4::rotateDeg(t_degrees a, float x, float y, float z) {
@@ -529,17 +529,17 @@ FORCE_INLINE void Matrix4x4::rotateDeg(t_degrees a, float x, float y, float z) {
 
 }
 /**
-*    @fn rotateCat()
-*    @details Rotates the values of this matrix.
-*    @param a, x,y,z the rotation value in axis-angle form.
+*  @fn rotateCat()
+*  @details Rotates the values of this matrix.
+*  @param a, x,y,z the rotation value in axis-angle form.
 *    a is in degrees
 */
 FORCE_INLINE void Matrix4x4::rotateRad(t_radians a, float x, float y, float z) {
   *this *= getRotationRad(a, x, y, z);
 }
 /**
-*    @fn transpose()
-*    @details Transpose the matrix.
+*  @fn transpose()
+*  @details Transpose the matrix.
 */
 FORCE_INLINE Matrix4x4& Matrix4x4::transpose() {
   float f[] = {
@@ -559,8 +559,8 @@ FORCE_INLINE Matrix4x4 Matrix4x4::transposed() {
   return ret;
 }
 /**
-*    @fn getVector3()
-*    @return: Returns the origin translation of a vector by multiplying a zero vector by this matrix.
+*  @fn getVector3()
+*  @return: Returns the origin translation of a vector by multiplying a zero vector by this matrix.
 */
 FORCE_INLINE Vector3 Matrix4x4::getVec3() const {
   Vector4 v(0, 0, 0, 0);
@@ -569,15 +569,15 @@ FORCE_INLINE Vector3 Matrix4x4::getVec3() const {
   return Vector3(v.x, v.y, v.z);
 }
 /**
-*    @fn getVector4()
-*    @return: returns a zero vector multiplied by this matrix
+*  @fn getVector4()
+*  @return: returns a zero vector multiplied by this matrix
 */
 FORCE_INLINE Vector4 Matrix4x4::getVec4() const {
   return Vector4(0, 0, 0, 0) * (*this);
 }
 /**
-*    @fn clear
-*    @details Clear the matrix.
+*  @fn clear
+*  @details Clear the matrix.
 */
 FORCE_INLINE void Matrix4x4::clear() {
   for (uint32_t n = 0; n < 16; ++n)
@@ -596,31 +596,31 @@ FORCE_INLINE void Matrix4x4::setIdentity() {
     _m43 = _m14 = _m24 = _m34 = 0.0;
 }
 /**
-*    @fn at()
-*    @brief Returns the value at the given coordinate in the matrix.
-*    @remarks Only use 0-3 for indexes.
+*  @fn at()
+*  @brief Returns the value at the given coordinate in the matrix.
+*  @remarks Only use 0-3 for indexes.
 */
 FORCE_INLINE float Matrix4x4::at(int row, int col) const {
   return Mat(row * col + row);
 }
 /**
-*    @fn colNum
-*    @brief Returns the zero-based index of the column in which the supplied index lies.
+*  @fn colNum
+*  @brief Returns the zero-based index of the column in which the supplied index lies.
 */
 FORCE_INLINE int32_t Matrix4x4::colNum(int ind) {
   return (int32_t)floor((double)((double)ind / 4.0));
 }
 /**
-*    @fn rowNum
-*    @brief Returns the zero-based index of the row in which the supplied index lies.
+*  @fn rowNum
+*  @brief Returns the zero-based index of the row in which the supplied index lies.
 */
 FORCE_INLINE int32_t Matrix4x4::rowNum(int ind) {
   return ind % 4;
 }
 /**
-*    @fn det() (determinant)
-*    @brief Compute the determinant (|M|).
-*    @remarks If the determinant of a matrix is 0, then the matrix is singular, and it has no inverse,
+*  @fn det() (determinant)
+*  @brief Compute the determinant (|M|).
+*  @remarks If the determinant of a matrix is 0, then the matrix is singular, and it has no inverse,
 *    thus, the inverse() function will return an identity matrix.
 *    The determinant can also be computed by multiplying all of the minors by all of the cofactors, or by
 *    pivoting a single element.
@@ -679,8 +679,8 @@ FORCE_INLINE float Matrix4x4::det() {
 
 
 /**
-*    @fn adj()
-*    @brief returns the Adjoint of this matrix.
+*  @fn adj()
+*  @brief returns the Adjoint of this matrix.
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::adj() {
   //TODO:Optimize (transpose)
@@ -693,9 +693,9 @@ FORCE_INLINE Matrix4x4 Matrix4x4::adj() {
   return Matrix4x4(f);//.transpose();
 }
 /**
-*    @fn getInverse()
-*    @brief Returns the inverse of this matrix.
-*    @remarks The inverse is the classical adjoint divided by the determinant of the adjoint
+*  @fn getInverse()
+*  @brief Returns the inverse of this matrix.
+*  @remarks The inverse is the classical adjoint divided by the determinant of the adjoint
 */
 FORCE_INLINE Matrix4x4 Matrix4x4::invert() {
   //**Note:
@@ -724,24 +724,24 @@ FORCE_INLINE Matrix4x4 Matrix4x4::inverseOf() {
   return ret;
 }
 /**
-*    @fn row()
-*    @brief Returns a row in the matrix.
-*    @remarks Only use 0-3 for indexes
+*  @fn row()
+*  @brief Returns a row in the matrix.
+*  @remarks Only use 0-3 for indexes
 TODO:ERROR - this may be a column and row interchange problem.
 */
 FORCE_INLINE Vector4 Matrix4x4::row(int row) {
   return Vector4(Mat(row), Mat(row + 4), Mat(row + 8), Mat(row + 12));
 }
 /**
-*    @fn col()
-*    @brief Returns a col in the matrix.
-*    @remarks Only use 0-3 for indexes
+*  @fn col()
+*  @brief Returns a col in the matrix.
+*  @remarks Only use 0-3 for indexes
 */
 FORCE_INLINE Vector4 Matrix4x4::col(int col) {
   return Vector4(Mat(col * 4 + 0), Mat(col * 4 + 1), Mat(col * 4 + 2), Mat(col * 4 + 3));
 }
 /**
-*    @fn operator[]
+*  @fn operator[]
 *
 *
 */
@@ -752,9 +752,9 @@ FORCE_INLINE float  Matrix4x4::operator[](const size_t& i) const {
   return Mat(i);
 }
 /**
-*    @fn Multiplication Operator.
-*    @details Pre-multiplies this matrix by another matrix.
-*    @param m: the matrix to multiply by.
+*  @fn Multiplication Operator.
+*  @details Pre-multiplies this matrix by another matrix.
+*  @param m: the matrix to multiply by.
 */
 FORCE_INLINE Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& m) {
   if (this == &m) return *this;

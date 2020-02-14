@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file ModFile.h
-//*    @date May 29, 2014
-//*    @author MetalMario971
-//*
-//*    © 2014 
-//*
-//*
+//*  @file ModFile.h
+//*  @date May 29, 2014
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __MODFILE_29721394829489844822522_H__
@@ -18,8 +14,8 @@
 //class ModelLoadInfo;
 //class ModelLoadInfoPart;
 ///**
-//*    @class ModFile
-//*    @brief Model file.  Stores file locations of model asset data.
+//*  @class ModFile
+//*  @brief Model file.  Stores file locations of model asset data.
 //*
 //*    New command: mpt - defines model part.  All model parts start with mpt
 //

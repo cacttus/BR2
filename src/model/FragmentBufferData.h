@@ -1,12 +1,7 @@
 /**
-*
-*    @file FragmentBufferData.h
-*    @date September 26, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file FragmentBufferData.h
+*  @date September 26, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FRAGMENTBUFFERDATA_3255418442216532730025046_H__

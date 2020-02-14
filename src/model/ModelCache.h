@@ -1,12 +1,7 @@
 /**
-*
-*    @file ModelCache.h
-*    @date December 6, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file ModelCache.h
+*  @date December 6, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MODELCACHE_1512579301228390014_H__

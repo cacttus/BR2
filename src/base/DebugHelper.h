@@ -15,8 +15,8 @@ namespace BR2 {
 //    size_t addr;
 //};
 ///**
-//*    @class StackInfo
-//*    @brief Lists the calls in a procedure.
+//*  @class StackInfo
+//*  @brief Lists the calls in a procedure.
 //*
 //*/
 //class StackInfo /* do not inherit.  Used on exception */ {
@@ -34,8 +34,8 @@ public:
     size_t addr;
 };
 /**
-*    @class DebugHelper
-*    @brief    MSVC CRT implementation of heap check debugging
+*  @class DebugHelper
+*  @brief    MSVC CRT implementation of heap check debugging
 *        checks consistency across memory blocks and
 *        shows memory leaks.  Memory leaks are configured to
 *        output to a file in the bin directory called crt.log.

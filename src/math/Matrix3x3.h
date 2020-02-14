@@ -1,9 +1,9 @@
 /**
-*    @file Matrix3x3.cpp
-*    @author MetalMario971
+*  @file Matrix3x3.cpp
+*  @author MetalMario971
 *
 *    � 2011 
-*    @date 9 / 7 / 2009
+*  @date 9 / 7 / 2009
 *
 */
 #pragma once
@@ -16,9 +16,9 @@
 #include "../base/TypeConv.h"
 namespace BR2 {
 /**
-*    @class Matrix3x3
-*    @brief A 3x3 Matrix.
-*    @details This matrix is column major.
+*  @class Matrix3x3
+*  @brief A 3x3 Matrix.
+*  @details This matrix is column major.
 */
 class Matrix3x3 : public PureMemory {
 public:
@@ -171,8 +171,8 @@ FORCE_INLINE Quaternion Matrix3x3::getQuaternion()
     return ret;            
 }
 /**
-*    @fn setIdentity()
-*    @brief Sets the identity of this matrix.
+*  @fn setIdentity()
+*  @brief Sets the identity of this matrix.
 */
 FORCE_INLINE void Matrix3x3::setIdentity() 
 {
@@ -192,9 +192,9 @@ FORCE_INLINE void Matrix3x3::setIdentity()
 
 
 /**
-*    @fn scaleCat()
-*    @details Scales the values of this matrix.
-*    @param x,y,z the scale value.
+*  @fn scaleCat()
+*  @details Scales the values of this matrix.
+*  @param x,y,z the scale value.
 *
 */
 FORCE_INLINE void Matrix3x3::scale( float x,float y,float z )
@@ -203,9 +203,9 @@ FORCE_INLINE void Matrix3x3::scale( float x,float y,float z )
 }
 
 /**
-*    @fn rotateCat()
-*    @details Rotates the values of this matrix.
-*    @param a, x,y,z the rotation value in axis-angle form.
+*  @fn rotateCat()
+*  @details Rotates the values of this matrix.
+*  @param a, x,y,z the rotation value in axis-angle form.
 *    a is in degrees
 */
 FORCE_INLINE void Matrix3x3::rotate( t_degrees a, float x, float y , float z )
@@ -214,9 +214,9 @@ FORCE_INLINE void Matrix3x3::rotate( t_degrees a, float x, float y , float z )
 
 }
 /**
-*    @fn rotateCat()
-*    @details Rotates the values of this matrix.
-*    @param a, x,y,z the rotation value in axis-angle form.
+*  @fn rotateCat()
+*  @details Rotates the values of this matrix.
+*  @param a, x,y,z the rotation value in axis-angle form.
 *    a is in degrees
 */
 FORCE_INLINE void Matrix3x3::rotateRad( t_radians a, float x, float y , float z )
@@ -225,11 +225,11 @@ FORCE_INLINE void Matrix3x3::rotateRad( t_radians a, float x, float y , float z 
 }
 
 /**
-*    @fn rotate()
-*    @details Returns a rotation matrix, but does not alter this matrix.
-*    @param a, x,y,z the axis-angle rotation.
-*    @return A matrix witht the specified rotation.d
-*    @param a - ANGLE IN DEGREES!
+*  @fn rotate()
+*  @details Returns a rotation matrix, but does not alter this matrix.
+*  @param a, x,y,z the axis-angle rotation.
+*  @return A matrix witht the specified rotation.d
+*  @param a - ANGLE IN DEGREES!
 */
 FORCE_INLINE Matrix3x3 Matrix3x3::getRotation( t_degrees a, float x, float y, float z )
 {
@@ -238,10 +238,10 @@ FORCE_INLINE Matrix3x3 Matrix3x3::getRotation( t_degrees a, float x, float y, fl
     return getRotationRad(a,x,y,z);
 }
     /**
-*    @fn scale()
-*    @details Returns a scale matrix, but does not alter this matrix.
-*    @param x,y,z the scaling value.
-*    @return A matrix witht the specified scaling.
+*  @fn scale()
+*  @details Returns a scale matrix, but does not alter this matrix.
+*  @param x,y,z the scaling value.
+*  @return A matrix witht the specified scaling.
 *
 */
 FORCE_INLINE Matrix3x3 Matrix3x3::getScale( float x, float y, float z )
@@ -257,7 +257,7 @@ FORCE_INLINE Matrix3x3 Matrix3x3::getScale( float x, float y, float z )
     return m;
 }
 /**
-*    @fn operator[]
+*  @fn operator[]
 *
 *
 */

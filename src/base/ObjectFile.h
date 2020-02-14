@@ -13,8 +13,8 @@
 #include "../math/MathAll.h"
 namespace BR2 {
 /**
-*    @class ObjectFile
-*    @brief Imports OBJ files STRICTLY FOR BRO.
+*  @class ObjectFile
+*  @brief Imports OBJ files STRICTLY FOR BRO.
 *       Simpler version of ObjFile
 *           Imports only Vertex, Normal, TCoord
 *           Exported from blender with export script

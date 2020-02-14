@@ -13,8 +13,8 @@
 
 namespace BR2 {
 /**
-*    @class RenderUtils
-*    @brief    This class supplies some basic utility functions to render default
+*  @class RenderUtils
+*  @brief    This class supplies some basic utility functions to render default
 *    stuff to the screen.
 *
 */

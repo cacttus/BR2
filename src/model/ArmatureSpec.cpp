@@ -10,8 +10,8 @@
 ////
 ////}
 ///**
-//*    @fn getJointOrdinal
-//*    @brief returns an invalid joint ordinal if it wasn't found.
+//*  @fn getJointOrdinal
+//*  @brief returns an invalid joint ordinal if it wasn't found.
 //*    otherwise returns the ordinal the zero-based contiguous offset of a joint, which is not the joint ID)
 //*/
 //JointOrdinal ArmatureSpec::getJointOrdinal(t_jointId jId)
@@ -23,8 +23,8 @@
 //    return JOINT_ORDINAL_INVALID;
 //}
 ///**
-//*    @fn getJointByOrdinal
-//*    @brief Given an ordinal (the zero-based contiguous offset of a joint) return that joint
+//*  @fn getJointByOrdinal
+//*  @brief Given an ordinal (the zero-based contiguous offset of a joint) return that joint
 //*/
 //JointSpec* ArmatureSpec::getJointByOrdinal(JointOrdinal jOrd)
 //{
@@ -34,8 +34,8 @@
 //    return NULL;
 //}
 ///**
-//*    @fn 
-//*    @brief Find and do
+//*  @fn 
+//*  @brief Find and do
 //*/
 //JointSpec* ArmatureSpec::getJointById(t_jointId jointId)
 //{
@@ -48,8 +48,8 @@
 //    return j;
 //}
 ///**
-//*    @fn 
-//*    @brief This not only adds trees but also indexes joint ordinals.
+//*  @fn 
+//*  @brief This not only adds trees but also indexes joint ordinals.
 //*/
 //void ArmatureSpec::addJointTree(JointSpecHierarchy* pt)
 //{

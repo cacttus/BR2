@@ -1,8 +1,8 @@
 /**
 *
-*    @file BoxUtils.h
-*    @date April 25, 2016
-*    @author MetalMario971
+*  @file BoxUtils.h
+*  @date April 25, 2016
+*  @author MetalMario971
 *
 *    � 2016
 *

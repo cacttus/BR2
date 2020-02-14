@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file AppMain.h
-//*    @date August 9, 2019
-//*    @author MetalMario971
-//*
-//*    © 2019
-//*
-//*
+//*  @file AppMain.h
+//*  @date August 9, 2019
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __APPMAIN_1565368851810156743_H__
@@ -26,8 +22,8 @@
 //  void endDebugText();
 //};
 ///**
-//*    @class AppMain
-//*    @brief Application entry point.
+//*  @class AppMain
+//*  @brief Application entry point.
 //*/
 //class AppMain : public AppBase {
 //  bool _bDebugDisableCull = false;

@@ -96,8 +96,8 @@ public:
     float getLineGap() { return _fLineGap; }
 };
 /**
-*    @class MegaTex
-*    @brief Composes mega textures (non-uniform grid atlas)
+*  @class MegaTex
+*  @brief Composes mega textures (non-uniform grid atlas)
 */
 class MegaTex : public Texture2DSpec {
     //All images correspond to one or more textures due to "9-patch" and "3-patch" texs.

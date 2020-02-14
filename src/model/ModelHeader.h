@@ -1,12 +1,7 @@
 /**
-*
-*    @file ModelHeader.h
-*    @date November 25, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file ModelHeader.h
+*  @date November 25, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MODELHEADER_1480137176306951373_H__

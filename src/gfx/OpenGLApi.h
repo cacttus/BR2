@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file OpenGLApi.h
-//*    @date August 5, 2019
-//*    @author MetalMario971
-//*
-//*    © 2019 
-//*
-//*
+//*  @file OpenGLApi.h
+//*  @date August 5, 2019
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __OPENGLGraphicsApi_15650573213471462786_H__
@@ -17,8 +13,8 @@
 //
 //namespace Game {
 ///**
-//*    @class OpenGLApi
-//*    @brief
+//*  @class OpenGLApi
+//*  @brief
 //*
 //*/
 //class OpenGLApi : public GraphicsApi {

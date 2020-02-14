@@ -1,12 +1,7 @@
 /**
-*
-*    @file Vec3Basis.h
-*    @date December 4, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file Vec3Basis.h
+*  @date December 4, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VEC3BASIS_16067298231458192238031_H__

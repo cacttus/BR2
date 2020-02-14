@@ -14,8 +14,8 @@
 namespace BR2 {
 
 /**
-*    @fn parseGenParams
-*    @brief Parse a string defining generation params for a mesh into a class structure.
+*  @fn parseGenParams
+*  @brief Parse a string defining generation params for a mesh into a class structure.
 
     for now class is just "gen"
     then specify algirhtm
@@ -130,8 +130,8 @@ bool parseGenParams(string_t genString, MeshGenParams& __out_ params) {
 
 
 /**
-*    @fn generateFromParameters
-*    @brief
+*  @fn generateFromParameters
+*  @brief
 */
 std::shared_ptr<MeshData> MeshUtils::generateFromParameters(MeshGenParams* pgp) {
   std::shared_ptr<MeshData> ret_spec = NULL;
@@ -177,7 +177,7 @@ std::shared_ptr<MeshData> MeshUtils::generateFromParameters(MeshGenParams* pgp) 
   return ret_spec;
 }
 /**
-*    @fn generate_arc_segment
+*  @fn generate_arc_segment
 *    Generate an arc segment -  a square mapped onto a paraboloid
 */
 std::shared_ptr<MeshData> MeshUtils::makeArcSegment(float radius, float radius2, float refHeight, vec3 refPos, int32_t slices) {
@@ -478,8 +478,8 @@ std::shared_ptr<MeshData> MeshUtils::makeBox(vec3(&extents)[8], Color4f* color, 
   return ms;
 }
 /**
-*    @fn generate_sphere
-*    @brief Generate a sphere
+*  @fn generate_sphere
+*  @brief Generate a sphere
 *    VERTEX type is V_V3C4N3X2
 *    CCW Winding
     vOffset = translates all points to the given offset
@@ -787,11 +787,11 @@ std::shared_ptr<MeshData> MeshUtils::makeCircle(float radius, int32_t slices) {
   return ma;
 }
 /**
-*    @fn generate_billboard
-*    @brief Creates 2 sided billboard along the XY axis in 3D without a z component
+*  @fn generate_billboard
+*  @brief Creates 2 sided billboard along the XY axis in 3D without a z component
 *        4 vertexes 12 indexes.
 *
-*    @param translateYToBottomOfBillboard) - translates the Y value to the bottom of the billboard for grass objects.
+*  @param translateYToBottomOfBillboard) - translates the Y value to the bottom of the billboard for grass objects.
 */
 std::shared_ptr<MeshData> MeshUtils::makeBillboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard) {
   MeshMakerVert p[4];
@@ -871,8 +871,8 @@ std::shared_ptr<MeshData> MeshUtils::makeBillboardXY(float xscale, float yscale,
   return ma;
 }
 /**
-*    @fn
-*    @brief Generates a X cross billboard.
+*  @fn
+*  @brief Generates a X cross billboard.
 */
 std::shared_ptr<MeshData> MeshUtils::makeCrossboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard) {
   std::shared_ptr<MeshData> a = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);

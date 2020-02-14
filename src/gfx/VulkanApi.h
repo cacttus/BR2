@@ -12,8 +12,8 @@
 namespace BR2 {
 #define VkExtFn(_vkFn) PFN_##_vkFn _vkFn = nullptr;
 /**
-*    @class VulkanApi
-*    @brief
+*  @class VulkanApi
+*  @brief
 *
 */
 class VulkanApi : public GraphicsApi {

@@ -16,8 +16,8 @@
 
 namespace BR2 {
 /**
-*    @class ShadowFrustumSide
-*    @brief Side of a shadow cube frustum.
+*  @class ShadowFrustumSide
+*  @brief Side of a shadow cube frustum.
 *        This is basically a camera with a view frustum.
 *        Analogous to BaseCamera3D - without the extra node system overhead.
 */

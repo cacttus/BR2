@@ -1,12 +1,7 @@
 /**
-*
-*    @file ModelThumb.h
-*    @date February 21, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file ModelThumb.h
+*  @date February 21, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MODELTHUMB_15192738821472686508_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class ModelThumb
-*    @brief
+*  @class ModelThumb
+*  @brief
 *
 */
 class ModelThumb : public VirtualMemory {

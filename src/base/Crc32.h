@@ -1,9 +1,7 @@
 /**
-*    @file Crc32.h
-*    @date May 16, 2016
-*    @author MetalMario971
-*
-*    © 2016
+*  @file Crc32.h
+*  @date May 16, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __CRC32_1463460399427663938_H__

@@ -1,9 +1,7 @@
 /**
-*    @file mgPlane2.h
-*    @author MetalMario971
-*
-*    © 2011 
-*    @date July 20, 2008
+*  @file mgPlane2.h
+*  @author MetalMario971
+*  @date July 20, 2008
 *    Changed filename 10 /19 08
 */
 #pragma once
@@ -17,8 +15,8 @@ namespace BR2 {
 
 
 /**
-*    @class PlaneEx3
-*    @brief Extension of the plane class to include tangent and binormal space.
+*  @class PlaneEx3
+*  @brief Extension of the plane class to include tangent and binormal space.
 DO NOT ADD VIRTUAL METHODS
 */
 class PlaneEx3 : public Plane3f {
@@ -50,10 +48,10 @@ public:
 };
 
 /**
-*    @fn construct()    
-*    @brief Construct the components of the plane out of a triangle.
+*  @fn construct()    
+*  @brief Construct the components of the plane out of a triangle.
 *    Also calculates the TBN
-*    @remarks
+*  @remarks
 *    The origin will be p1.
 *    the tangent vector will be p2 and the binormal will be p3
 *    The normal will point outward in the clockwise rotation of the tangent vector to the binormal vector.
@@ -86,8 +84,8 @@ FORCE_INLINE void PlaneEx3::construct( Vector3& normal, Vector3& point )
 }
 
 /*
-*    @fn getTBN()
-*    @brief Return the TBN of the matrix.
+*  @fn getTBN()
+*  @brief Return the TBN of the matrix.
 */
 FORCE_INLINE Matrix3x3 PlaneEx3::getTBNMatrix()
 {
@@ -105,8 +103,8 @@ FORCE_INLINE Matrix3x3 PlaneEx3::getTBNMatrix()
 }
 
 /*
-*    @fn calcTBN()
-*    @brief Without calling this the matrix will have no TB!!!!
+*  @fn calcTBN()
+*  @brief Without calling this the matrix will have no TB!!!!
 */
 FORCE_INLINE void PlaneEx3::calcTBN()
 {

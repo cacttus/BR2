@@ -16,8 +16,8 @@ namespace BR2 {
 
 
 /**
-*    @class ShaderCache
-*    @brief Caches shader binaries.
+*  @class ShaderCache
+*  @brief Caches shader binaries.
 
 */
 class ShaderCache : public VirtualMemory {

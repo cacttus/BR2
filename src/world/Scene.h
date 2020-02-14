@@ -1,8 +1,8 @@
 /**
 *
-*    @file Scene.h
-*    @date February 9, 2020
-*    @author MetalMario971
+*  @file Scene.h
+*  @date February 9, 2020
+*  @author MetalMario971
 *
 */
 #pragma once
@@ -14,10 +14,10 @@
 
 namespace BR2 {
 /**
-*    @class Scene
-*    @brief The scenegraph holding all relevant objects.
+*  @class Scene
+*  @brief The scenegraph holding all relevant objects.
 */
-class Scene : public Drawable {
+class Scene : public WorldObject {
 public:
   Scene();
   virtual ~Scene() override;
@@ -35,6 +35,7 @@ public:
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow=x; }
 
   void update(float delta);
+
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp)override;
   virtual void drawShadow(RenderParams& rp) override;
@@ -71,6 +72,7 @@ private:
   void drawDebugText();
   void debugChangeRenderState();
   void drawBackgroundImage();
+  void createFlyingCamera();
 
 };
 

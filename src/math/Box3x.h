@@ -1,8 +1,8 @@
 /**
 *
-*    @file Cube3.h
-*    @date January 1, 208
-*    @author MetalMario971
+*  @file Cube3.h
+*  @date January 1, 208
+*  @author MetalMario971
 *
 *    � 208 
 *
@@ -26,8 +26,8 @@
 namespace BR2 { 
 
 /**
-*    @class Box3x
-*    @brief 3D Cube.  Your basic AABB .
+*  @class Box3x
+*  @brief 3D Cube.  Your basic AABB .
 *    Axis Aligned Bounding Box
 */
 template < class Tx >
@@ -200,8 +200,8 @@ FORCE_INLINE bool Box3x<Tx>::containsBottomLeftInclusive(const Vec3x<Tx>& v) con
         );
 }
 /**
-*    @fn cubeIntersect_EasyOut
-*    @brief Intersects two AABB cubes - easy out version.
+*  @fn cubeIntersect_EasyOut
+*  @brief Intersects two AABB cubes - easy out version.
 */
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::cubeIntersect_EasyOut_Inclusive(Box3f* cc)
@@ -245,8 +245,8 @@ FORCE_INLINE bool Box3x<Tx>::cubeIntersect_EasyOut_Inclusive(Box3f* cc)
     //return TRUE;
 }     
 /**
-*    @fn cubeIntersect_EasyOut
-*    @brief Intersects two AABB cubes - easy out version.
+*  @fn cubeIntersect_EasyOut
+*  @brief Intersects two AABB cubes - easy out version.
 */
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::cubeIntersect_EasyOut_Exclusive(Box3f* cc)
@@ -289,12 +289,12 @@ FORCE_INLINE bool Box3x<Tx>::cubeIntersect_EasyOut_Exclusive(Box3f* cc)
     //return true;
 }     
 /**
-*    @fn RayIntersect
-*    @brief Returns true if the given ray intersects this Axis aligned
+*  @fn RayIntersect
+*  @brief Returns true if the given ray intersects this Axis aligned
 *    cube volume.
-*    @param bh - Reference to a BoxHit structure.
-*    @prarm ray - The ray to test against the box.
-*    @return true if ray intersects, false otherwise.
+*  @param bh - Reference to a BoxHit structure.
+*  @prarm ray - The ray to test against the box.
+*  @return true if ray intersects, false otherwise.
 */
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::RayIntersect(const ProjectedRay* ray, RaycastHit* bh ) const
@@ -481,11 +481,11 @@ FORCE_INLINE float Box3x<Tx>::getVolumeArbitrary()
 }
 
 /**
-*    @fn getSatExtents()
+*  @fn getSatExtents()
 *    i.e. supports
-*    @brief Returns the SAT extents (supports) for the given cube.  Look at the SAT algorithm for more information.
-*    @note Basically we just crush all the cube points along a ray (normal) and return the min and max distances along that ray from the point such that P+dist*Ray = Point
-*    @param normal: the normal to crush points along
+*  @brief Returns the SAT extents (supports) for the given cube.  Look at the SAT algorithm for more information.
+*  @note Basically we just crush all the cube points along a ray (normal) and return the min and max distances along that ray from the point such that P+dist*Ray = Point
+*  @param normal: the normal to crush points along
 
 */
 template < class Tx >
@@ -508,10 +508,10 @@ FORCE_INLINE void Box3x<Tx>::getSatExtents(Vec3x<Tx>& normal, float& minf, float
     maxf = maxT;
 }
 /**
-*    @fn getCubeIntersectionVolume
-*    @brief Returns the intersection area of two cubes. This is the cube that would exist as " A n B " between the two if they intersected.
+*  @fn getCubeIntersectionVolume
+*  @brief Returns the intersection area of two cubes. This is the cube that would exist as " A n B " between the two if they intersected.
 *
-*    @note if the two cubes do not in fact collide this returns undefined results.
+*  @note if the two cubes do not in fact collide this returns undefined results.
 */
 template < class Tx >
 FORCE_INLINE void Box3x<Tx>::getCubeIntersectionVolume(Box3f* a, Box3f* b, Box3f* __out_ out)
@@ -613,11 +613,11 @@ FORCE_INLINE bool Box3x<Tx>::RayIntersect_EasyOut(Ray_t* ray) const {
     return ray->isHit();
 }
 /**
-*    @fn RayIntersectOrPointContainedInclusive
-*    @brief This is a more verbose test for either a line or a ray inside a
+*  @fn RayIntersectOrPointContainedInclusive
+*  @brief This is a more verbose test for either a line or a ray inside a
 *    cube volume.
 *
-*    @return True if the ray penetrates the cube, or the line points are contained in the cube.
+*  @return True if the ray penetrates the cube, or the line points are contained in the cube.
 */
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::LineOrRayIntersectInclusive_EasyOut(const ProjectedRay* ray, RaycastHit* __opt_ __out_ bh ) const
@@ -653,8 +653,8 @@ FORCE_INLINE bool Box3x<Tx>::LineOrRayIntersectInclusive_EasyOut(const Projected
 
 
 /**
-*    @fn 
-*    @brief Same as above function but this one does not return early and includes all data.
+*  @fn 
+*  @brief Same as above function but this one does not return early and includes all data.
 */
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::LineOrRayIntersectInclusive_FullData( ProjectedRay* ray, RaycastHit* bh ) const
@@ -757,8 +757,8 @@ FORCE_INLINE Vec3x<Tx> Box3x<Tx>::diagonal()
     return (_max - _min);
 }
 /**
-*    @fn closestPoint
-*    @brief Finds the closest point on the surface of the cube to another point in space.
+*  @fn closestPoint
+*  @brief Finds the closest point on the surface of the cube to another point in space.
 *          if the closest point is a face or edge (i.e. face or edge verts are equal distances)
 *             we return the interpolated closest point from the projection of the point on the plane .
 */
@@ -858,8 +858,8 @@ FORCE_INLINE void Box3x<Tx>::closestPoint(const Vec3x<Tx>& point, Vec3f& __out_ 
     }
 }
 /**
-*    @fn
-*    @brief Returns ACCURATE squared distance to a point.
+*  @fn
+*  @brief Returns ACCURATE squared distance to a point.
 */
 template < class Tx >
 FORCE_INLINE float Box3x<Tx>::distance2(const Vec3x<Tx>& point) const

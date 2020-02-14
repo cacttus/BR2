@@ -369,8 +369,8 @@ void ShaderBase::dispatchCompute() {
     _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
 }
 /**
-*    @fn
-*    @brief Basically we partition the number of elements to process.
+*  @fn
+*  @brief Basically we partition the number of elements to process.
 */
 void ShaderBase::dispatchCompute(int32_t elementCount) {
   float f;

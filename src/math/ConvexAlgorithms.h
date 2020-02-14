@@ -1,8 +1,8 @@
 /**
 *
-*    @file ConvexAlgorithms.h
-*    @date December 5, 2014
-*    @author MetalMario971
+*  @file ConvexAlgorithms.h
+*  @date December 5, 2014
+*  @author MetalMario971
 *
 *    � 2014 
 *

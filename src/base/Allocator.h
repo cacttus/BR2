@@ -13,10 +13,10 @@
 namespace BR2 {
 
 /**
-*    @class Allocator
+*  @class Allocator
 *    24 (48) bytes
 *
-*    @brief Base class that manages the allocation of user-defined memory blocks.
+*  @brief Base class that manages the allocation of user-defined memory blocks.
 */
 template < class Tx >
 class Allocator : public VirtualMemory {
@@ -131,8 +131,8 @@ void Allocator<Tx>::zeroMemory()
     }
 }
 /**
-*    @fn append()
-*    @brief Append another allocator to this allocator.
+*  @fn append()
+*  @brief Append another allocator to this allocator.
 */
 template < class Tx >
 void Allocator<Tx>::appendToEnd(const Allocator<Tx>* in)
@@ -158,8 +158,8 @@ void Allocator<Tx>::appendToBeg(const Allocator<Tx>* in)
     copyFrom(in->constptr(), oldInCount, 0);
 }
 /**
-*    @fn
-*    @brief gets the pointer with the given offset.
+*  @fn
+*  @brief gets the pointer with the given offset.
 */
 template < class Tx >
 Tx* Allocator<Tx>::ptrOff(size_t offset)
@@ -170,7 +170,7 @@ Tx* Allocator<Tx>::ptrOff(size_t offset)
 /**
 *   @fn copyFrom()
 *   @brief Copy from somewhere.
-*    @note This assumes that the buffer is already allocated.
+*  @note This assumes that the buffer is already allocated.
 *   @param in - the buffer to copy from
 */
 template < class Tx >
@@ -188,7 +188,7 @@ void Allocator<Tx>::copyFrom(const Allocator<Tx>* in)
 /**
 *   @fn copyFrom()
 *   @brief Copy from somewhere.
-*    @note This assumes that the buffer is already allocated.
+*  @note This assumes that the buffer is already allocated.
 *   @param in - the buffer to copy from
 *   @param item_count - number of bytes to copy
 *   @param my_off - offset in this buffer (in items)
@@ -220,8 +220,8 @@ void Allocator<Tx>::copyTo(const Tx* other_in, size_t in_item_count, size_t my_o
     memmove((void*)(other_in + other_off), (void*)(_pT + my_off), other_size);
 }
 /**
-*    @fn fill()
-*    @brief Fill the buffer with a value.
+*  @fn fill()
+*  @brief Fill the buffer with a value.
 */
 template < class Tx >
 void
@@ -239,7 +239,7 @@ Allocator<Tx>::fillb(Tx base) {
 }
 
 /**
-*    @fn operator[]
+*  @fn operator[]
 */
 template < class Tx >
 Tx&
@@ -284,7 +284,7 @@ void Allocator<Tx>::operator=(const Allocator<Tx>& rhs)
     copyFrom(&rhs);
 }
 /**
-*    @fn at()
+*  @fn at()
 */
 template < class Tx >
 Tx& Allocator<Tx>::at(size_t index)
@@ -295,8 +295,8 @@ Tx& Allocator<Tx>::at(size_t index)
     return (Tx&)(*(_pT + index));
 }
 /**
-*    @fn alloc()
-*    @brief Allocate a list of blocks.
+*  @fn alloc()
+*  @brief Allocate a list of blocks.
 */
 template < class Tx >
 void Allocator<Tx>::alloca(size_t count)
@@ -314,8 +314,8 @@ void Allocator<Tx>::alloca(size_t count)
     _pT = (Tx*)malloc(_allocSize);// GameMemoryManager::allocBlock(_allocSize);
 }
 /**
-*    @fn realloc()
-*    @remarks call realloc when the buffer is too small.
+*  @fn realloc()
+*  @remarks call realloc when the buffer is too small.
 */
 template < class Tx >
 void Allocator<Tx>::realloca(size_t newCount)
@@ -335,8 +335,8 @@ void Allocator<Tx>::realloca(size_t newCount)
     _pT = (Tx*)realloc(_pT, _allocSize);// static_cast<Tx*>(GameMemoryManager::reallocBlock(_pT, _allocSize));
 }
 /**
-*    @fn dealloc()
-*    @brief Deallocate the memory.
+*  @fn dealloc()
+*  @brief Deallocate the memory.
 */
 template < class Tx >
 void Allocator<Tx>::dealloc()
@@ -352,8 +352,8 @@ void Allocator<Tx>::dealloc()
     _allocSize = 0;
 }
 /**
-*    @fn reallocBytes()
-*    @remarks call realloc when the buffer is too small.
+*  @fn reallocBytes()
+*  @remarks call realloc when the buffer is too small.
 */
 template < class Tx >
 void Allocator<Tx>::reallocBytes(size_t newSize)
@@ -369,9 +369,9 @@ void Allocator<Tx>::reallocBytes(size_t newSize)
     _pT = (Tx*)realloc(_pT, _allocSize);// static_cast<Tx*>(MemoryManager::getSingleton()->mm_realloc(_pT, _allocSize));
 }
 /**
-*    @fn grow()
-*    @brief Grow the size of the buffer by some elements.
-*    @details This is analogous to calling realloc() on a block of data.
+*  @fn grow()
+*  @brief Grow the size of the buffer by some elements.
+*  @details This is analogous to calling realloc() on a block of data.
 *        @param itemOffset (in Tx Items) defaults to the end of the buffer.
 *        @param add_count defaults to 1
 */
@@ -405,9 +405,9 @@ void Allocator<Tx>::grow(size_t add_count, size_t itemOffset)
     newData.dealloc();
 }
 /**
-*    @fn    shrink()
-*    @brief Shrink the buffer by some size.
-*    @details Analogous to calling realloc() on a buffer with fewer elements.
+*  @fn    shrink()
+*  @brief Shrink the buffer by some size.
+*  @details Analogous to calling realloc() on a buffer with fewer elements.
 *        @param itemOffset (in Tx Items) defaults to the beginning of the buffer.
 *        @param numItemsToRemove defaults to 1
 */
@@ -446,12 +446,12 @@ void Allocator<Tx>::shrink(size_t itemOffset, size_t numItemsToRemove)
     newData.dealloc();
 }
 /**
-*    @fn inflate
-*    @brief This method increases the size of the preallocated buffer.
-*    @details It is an optimization for grow() since we don't
+*  @fn inflate
+*  @brief This method increases the size of the preallocated buffer.
+*  @details It is an optimization for grow() since we don't
 *    have to reallocate the buffer to do this.  The buffer must be allocated already to hold
 *    the new number of elements or an exception will be thrown.
-*    @note This does not alter the count() property.
+*  @note This does not alter the count() property.
 */
 template < class Tx >
 void Allocator<Tx>::inflate(size_t expandCount,
@@ -479,15 +479,15 @@ void Allocator<Tx>::inflate(size_t expandCount,
     memmove((char*)pDst, (char*)pSrc, moveSizeBytes);
 }
 /**
-*    @fn    deflate()
-*    @brief Copies memory from one part of the buffer to another.
-*    @details This is an optimization for shrink() and does not call realloc.
+*  @fn    deflate()
+*  @brief Copies memory from one part of the buffer to another.
+*  @details This is an optimization for shrink() and does not call realloc.
 *       Also it does not modify the size of the buffer.
 *   ESSENTIALLY this SHIFTS the items from ITEM OFFSET to the ALLOOCATION COUNT down to the DEFLATE COUNT
 *       move items at [start+count, allocation_count] to (start)
 *    It is assumed the buffer can hold the given number of elements.
 *   @param staticAllocationCount if <0 we use the size of the buffer (20160521)
-*    @note the count() property is not changed during deflate()
+*  @note the count() property is not changed during deflate()
 */
 template < class Tx >
 void Allocator<Tx>::deflate(size_t deflateCount,
@@ -518,8 +518,8 @@ void Allocator<Tx>::deflate(size_t deflateCount,
     memmove((char*)pDst, (char*)pSrc, moveSizeBytes);
 }
 /**
-*    @fn erase()
-*    @brief Shifts elements from start+count down to start erasing any data in between.
+*  @fn erase()
+*  @brief Shifts elements from start+count down to start erasing any data in between.
 *   @param count - number to erase after start
 */
 template < class Tx >
@@ -528,9 +528,9 @@ void Allocator<Tx>::erase(size_t start, size_t count)
     deflate(start, start + count, -1);
 }
 
-//*    @fn Splice()
-//*    @brief Remove elements from the buffer.
-//*    @brief needs debugging
+//*  @fn Splice()
+//*  @brief Remove elements from the buffer.
+//*  @brief needs debugging
 template < class Tx >
 void Allocator<Tx>::splice(size_t iAt, size_t iCount)
 {
@@ -590,8 +590,8 @@ void Allocator<Tx>::splice(size_t iAt, size_t iCount)
 //    nCount = newCount;
 }
 /**
-*    @fn
-*    @brief Insert an item into the buffer
+*  @fn
+*  @brief Insert an item into the buffer
 */
 template < class Tx >
 void Allocator<Tx>::insert(size_t iAt, const Tx& pData)
@@ -652,8 +652,8 @@ void Allocator<Tx>::insert(size_t iAt, const Tx& pData)
 //    nCount = newCount;
 }
 /**
-*    @fn swapChunk
-*    @brief Inserts Allocator data into this mm_lalocator's data
+*  @fn swapChunk
+*  @brief Inserts Allocator data into this mm_lalocator's data
 */
 template < class Tx >
 void Allocator<Tx>::swapChunk(size_t iOff, size_t iCountToRemove, const Tx* pDataToSwap, size_t iCountToSwap)

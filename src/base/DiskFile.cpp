@@ -69,8 +69,8 @@ RetCode DiskFile::create(string_t szloc, size_t offset) {
     return GR_OK;
 }
 /**
-*    @fn openForRead()
-*    @brief Open file for read storing the pointer to the file.
+*  @fn openForRead()
+*  @brief Open file for read storing the pointer to the file.
 */
 RetCode DiskFile::openForRead(DiskLoc& szloc) {
     string_t l;
@@ -118,8 +118,8 @@ RetCode DiskFile::openForRead(DiskLoc& szloc) {
     return GR_OK;
 }
 /**
-*    @fn openForWrite()
-*    @brief Open file for write storing state in pointer.
+*  @fn openForWrite()
+*  @brief Open file for write storing state in pointer.
 */
 RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
     string_t l;
@@ -208,8 +208,8 @@ RetCode DiskFile::writeStrWithLen(const string_t& str)
     return f;
 }
 /**
-*    @fn
-*    @brief Writes string directly as plain byte text.
+*  @fn
+*  @brief Writes string directly as plain byte text.
 */
 RetCode DiskFile::writeStrText(const string_t& str)
 {
@@ -242,8 +242,8 @@ RetCode DiskFile::readStr(char* buf, size_t bufLen)
     return f;
 }
 /**
-*    @fn read()
-*    @brief Read the file in.
+*  @fn read()
+*  @brief Read the file in.
 */
 RetCode DiskFile::read(char* buf, size_t len, size_t buflen, size_t offset)
 {
@@ -261,8 +261,8 @@ RetCode DiskFile::read(char* buf, size_t len, size_t buflen, size_t offset)
     return GR_OK;
 }
 /**
-*    @fn read()
-*    @brief Read in some data.
+*  @fn read()
+*  @brief Read in some data.
 */
 //RetCode DiskFile::read(char* buf, size_t len, size_t offset, size_t buflen) 
 //{
@@ -330,9 +330,9 @@ void DiskFile::close() {
     state = file_closed;
 }
 /**
-*    @fn getWriteStream
-*    @brief Return the read/write streams
-*    @param newStream The stream to return.
+*  @fn getWriteStream
+*  @brief Return the read/write streams
+*  @param newStream The stream to return.
 */
 //RetCode DiskFile::getWriteStream(std::fstream& newStream) {
 //
@@ -359,9 +359,9 @@ void DiskFile::close() {
 //    return GR_OK;
 //}
 /**
-*    @fn getReadStream
-*    @brief Return the read/write streams
-*    @param newStream The stream to return.
+*  @fn getReadStream
+*  @brief Return the read/write streams
+*  @param newStream The stream to return.
 */
 RetCode DiskFile::getReadStream(std::fstream& newStream) {
 

@@ -13,8 +13,8 @@
 
 namespace BR2 {
 /**
-*    @class DeferredFramebuffer
-*    @brief Deferred render target
+*  @class DeferredFramebuffer
+*  @brief Deferred render target
 *       This can be either a direct framebuffer & textures OR
 *        a multisample framebuffer
 */

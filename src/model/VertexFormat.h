@@ -1,12 +1,7 @@
 /**
-*
-*    @file VertexFormat.h
-*    @date May 8, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file VertexFormat.h
+*  @date May 8, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VERTEXTYPES_14942223503900412386_H__

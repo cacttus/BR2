@@ -1,12 +1,7 @@
 /**
-*
-*    @file TextBufferMesh.h
-*    @date April 14, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file TextBufferMesh.h
+*  @date April 14, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __TEXTBUFFERMESH_1492206006611577427_H__

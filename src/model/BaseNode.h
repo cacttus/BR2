@@ -1,12 +1,7 @@
 /**
-*
-*    @file Node3base.h
-*    @date November 25, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file Node3base.h
+*  @date November 25, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __NODE3BASE_14801270783276389065_H__
@@ -74,7 +69,7 @@ protected:
 */
 class BaseNode : public TreeNode {
 public:
-  BaseNode(std::shared_ptr<BaseSpec>, std::shared_ptr<Scene> ps);
+  BaseNode(std::shared_ptr<BaseSpec>);
   virtual ~BaseNode() override;
 
 
@@ -187,7 +182,6 @@ protected:
   std::shared_ptr<BoneNode> _pBoneParent = nullptr;
   //  std::set<std::shared_ptr<ShadowBox>> _setShadowInfluences;
   bool _bHidden = false;
-  std::shared_ptr<Scene> _pScene = nullptr;
   std::vector<std::shared_ptr<CSharpScript>> _scripts;
 
   void setLocalBind();
@@ -195,7 +189,6 @@ protected:
   void applyLocalAnimation(std::shared_ptr<Animator>);
   void applyParent();
   virtual void init();
-  std::shared_ptr<Scene> getScene() { return _pScene; }
 
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)

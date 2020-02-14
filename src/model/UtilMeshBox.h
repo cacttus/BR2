@@ -1,12 +1,7 @@
 /**
-*
-*    @file UtilMeshBox.h
-*    @date December 13, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file UtilMeshBox.h
+*  @date December 13, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UTILMESHBOX_2662422974268991781110246_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class UtilMeshBox
-*    @brief
+*  @class UtilMeshBox
+*  @brief
 *
 */
 class UtilMeshBox : public UtilMesh {

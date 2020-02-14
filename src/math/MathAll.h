@@ -77,12 +77,12 @@ Vec4x<Tx> Vec4x<Tx>::operator*( const Matrix4x4 &m )
  
 
 /**
-*    @fn minor()
-*    @brief Returns the minor at the specified row and column.
-*    @details A minor is a matrix of this matrix, minus the row and column you specify in the arguments.
+*  @fn minor()
+*  @brief Returns the minor at the specified row and column.
+*  @details A minor is a matrix of this matrix, minus the row and column you specify in the arguments.
 *    Minors are used to compute cofactors (determinants of minors) and the classical adjunct (the transpose of the matrix of cofactors)
-*    @param r - Must be 0 to 3, the row value of the matrix
-*    @param c - Must be 0 to 3, the column value of the matrix.
+*  @param r - Must be 0 to 3, the row value of the matrix
+*  @param c - Must be 0 to 3, the column value of the matrix.
 */
 FORCE_INLINE Matrix3x3 Matrix4x4::minor(int r, int c)
 {
@@ -100,12 +100,12 @@ FORCE_INLINE Matrix3x3 Matrix4x4::minor(int r, int c)
 }
 
 /**
-*    @fn cofactor()
-*    @brief Returns the cofactor of this matrix at the specified row and column.
-*    @remarks A cofactor is the determinant of the minor of this matrix at the specified row and column.
-*    @param r - The row to compute the cofactor.
-*    @param c - The column to compute the cofactor.
-*    @return The cofactor of this matrix at the row and column location.
+*  @fn cofactor()
+*  @brief Returns the cofactor of this matrix at the specified row and column.
+*  @remarks A cofactor is the determinant of the minor of this matrix at the specified row and column.
+*  @param r - The row to compute the cofactor.
+*  @param c - The column to compute the cofactor.
+*  @return The cofactor of this matrix at the row and column location.
 */
 FORCE_INLINE float Matrix4x4::cofactor(int r, int c)
 {
@@ -146,11 +146,11 @@ FORCE_INLINE void Quaternion::getAxisAngle(vec4& v)
 
 }
 /**
-*    @fn rotate()
-*    @details Returns a rotation matrix, but does not alter this matrix.
-*    @param a, x,y,z the axis-angle rotation.
-*    @return A matrix witht the specified rotation.
-*    @param a - Radians.
+*  @fn rotate()
+*  @details Returns a rotation matrix, but does not alter this matrix.
+*  @param a, x,y,z the axis-angle rotation.
+*  @return A matrix witht the specified rotation.
+*  @param a - Radians.
 */
 FORCE_INLINE Matrix3x3 Matrix3x3::getRotationRad(float a, const vec3& v)
 {

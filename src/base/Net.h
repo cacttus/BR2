@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class Net
-*    @brief
+*  @class Net
+*  @brief
 *
 * https://www.libsdl.org/projects/SDL_net/
 */

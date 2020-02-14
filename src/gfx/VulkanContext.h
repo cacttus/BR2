@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class VulkanContext
-*    @brief
+*  @class VulkanContext
+*  @brief
 *
 */
 class VulkanContext : public GraphicsContext {

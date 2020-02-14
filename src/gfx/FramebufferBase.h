@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class FramebufferBase
-*    @brief
+*  @class FramebufferBase
+*  @brief
 *
 */
 class FramebufferBase : public VirtualMemory {

@@ -1,12 +1,9 @@
 ///**
 //*
-//*    @file VulkanWindow.h
-//*    @date August 23, 2019
-//*    @author MetalMario971
-//*
-//*    © 2019 
-//*
-//*
+//*  @file VulkanWindow.h
+//*  @date August 23, 2019
+//*  @author MetalMario971
+
 //*/
 //#pragma once
 //#ifndef __VULKANWINDOW_15665854373552580904_H__
@@ -16,8 +13,8 @@
 //
 //namespace Game {
 ///**
-//*    @class VulkanWindow
-//*    @brief
+//*  @class VulkanWindow
+//*  @brief
 //*
 //*/
 //class VulkanWindow : public GraphicsWindow {

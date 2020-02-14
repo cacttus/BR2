@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file MeshSpecHierarchy.h
-//*    @date October 19, 2011
-//*    @author MetalMario971
-//*
-//*    © 2011 
-//*
-//*
+//*  @file MeshSpecHierarchy.h
+//*  @date October 19, 2011
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __MESHSPECHIERARCHY_10692127717953093025331_H__
@@ -17,9 +13,9 @@
 //#include "../model/MeshSpec.h"
 //namespace Game {
 ///**
-//*    @class MeshSpecHierarchy
-//*    @brief Contains a list of roots which point to hierarchies of meshes.
-//*    @details: It would be intuitive and correct to get rid of MeshSpecHierarchy and make the
+//*  @class MeshSpecHierarchy
+//*  @brief Contains a list of roots which point to hierarchies of meshes.
+//*  @details: It would be intuitive and correct to get rid of MeshSpecHierarchy and make the
 //*    first spec simply a MeshSpec.  However, because you can have a mesh tree with multiple roots
 //*    we need something to contain all the roots together in order to cohesively iterate the tree.
 //*    MeshSpec needs to be the base class in order for the TreeNode::iterateBreadthFirst to work.

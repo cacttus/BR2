@@ -1,8 +1,8 @@
 /**
 *
-*    @file BuildConfig.h
-*    @date April 3, 2016
-*    @author MetalMario971
+*  @file BuildConfig.h
+*  @date April 3, 2016
+*  @author MetalMario971
 *
 *    Contains all Build based defines. 
 */

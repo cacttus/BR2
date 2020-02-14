@@ -1,6 +1,6 @@
 /**
-*    @file Material.h
-*    @date 3 25 2010
+*  @file Material.h
+*  @date 3 25 2010
 *    Updates:
 *        12/29/2010
 *        20151126 - updated to be generic instance

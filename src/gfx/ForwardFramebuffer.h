@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class ForwardFramebuffer
-*    @brief
+*  @class ForwardFramebuffer
+*  @brief
 *
 */
 class ForwardFramebuffer : public FramebufferBase {

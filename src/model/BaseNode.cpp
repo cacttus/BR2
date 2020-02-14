@@ -57,9 +57,8 @@ void BaseSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
 }
 
 ///////////////////////////////////////////////////////////////////
-BaseNode::BaseNode(std::shared_ptr<BaseSpec> pspec, std::shared_ptr<Scene> pscene) {
+BaseNode::BaseNode(std::shared_ptr<BaseSpec> pspec) {
   _pSpec = pspec;
-  _pScene = pscene;
   _pBox = new Box3f();
   _pOBB = new OBB();
   _vPos = vec3(0, 0, 0);
@@ -121,7 +120,6 @@ void BaseNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& 
       //Force bind in case we don't have animations.
   setLocalBind();
 
-
   animate(mapAnimators);
 
   compileWorldMatrix();
@@ -158,8 +156,6 @@ void BaseNode::compileWorldMatrix() {
   mRot = mat4::getRotationRad(_fRotation, _vRotationNormal);
   mScl = mat4::getScale(_vScale);
   _mWorld = mScl * mRot * mPos;
-
-
 }
 bool BaseNode::isCameraNode() {
   return getThis<CameraNode>() != nullptr;

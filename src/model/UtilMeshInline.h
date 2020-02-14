@@ -1,12 +1,7 @@
 /**
-*
-*    @file UtilMeshInline.h
-*    @date April 29, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file UtilMeshInline.h
+*  @date April 29, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UTILMESHINLINE_14619781622646582835_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class UtilMeshInline
-*    @brief A substitute for inline OpenGL draw calls.
+*  @class UtilMeshInline
+*  @brief A substitute for inline OpenGL draw calls.
 */
 class UtilMeshInline : public UtilMesh {
 public:

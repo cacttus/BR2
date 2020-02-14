@@ -25,8 +25,8 @@ namespace BR2 {
 //    Allocator<char>* getBuffer() { return &buf; }
 //};
 /**
-*    @class GrowBuffer
-*    @brief AUtomatically grows when items are added.
+*  @class GrowBuffer
+*  @brief AUtomatically grows when items are added.
 *     @details Grows both on access and on add.  So if you index here it will grow to your index.
 *    8===D...  8=======D
 * GrowBuffer - Private inherit from base in order to hide Byte-level operations

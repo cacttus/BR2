@@ -1,12 +1,7 @@
 /**
-*
-*    @file PhysicsGrid.h
-*    @date January 4, 2018
-*    @author MetalMario971
-*
-*    © 2018
-*
-*
+*  @file PhysicsGrid.h
+*  @date January 4, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __CELLNODE_15150857494221655763_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class PhysicsGrid
-*    @brief This is a cell in a cell grid managed by the physics system.
+*  @class PhysicsGrid
+*  @brief This is a cell in a cell grid managed by the physics system.
 *       A box in 3D space which is a "cell" that physics uses to optimize collisions
 */
 class PhysicsGrid : public VirtualMemoryShared<PhysicsGrid> {

@@ -1,12 +1,7 @@
 /**
-*
-*    @file RaycastHit.h
-*    @date May 26, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file RaycastHit.h
+*  @date May 26, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __RAYCASTHIT_14642406831305391755_H__
@@ -17,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @struct RaycastHit
-*    @brief Returns hit test data from a projected ray.
+*  @struct RaycastHit
+*  @brief Returns hit test data from a projected ray.
 */
 class RaycastHit : public VirtualMemory {
 public:

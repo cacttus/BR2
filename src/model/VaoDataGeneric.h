@@ -1,12 +1,7 @@
 /**
-*
-*    @file VaoDataGeneric.h
-*    @date March 24, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file VaoDataGeneric.h
+*  @date March 24, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VAODATAGENERIC_14904114892307368716_H__
@@ -42,8 +37,8 @@ private:
 };
 
 /**
-*    @class VaoDataGeneric
-*    @brief Stores Mesh Buffers and maps them to Vertex Arrays for each Shader that renders
+*  @class VaoDataGeneric
+*  @brief Stores Mesh Buffers and maps them to Vertex Arrays for each Shader that renders
 *    the mesh.
 */
 class VaoDataGeneric : public VirtualMemory {

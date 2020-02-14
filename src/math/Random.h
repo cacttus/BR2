@@ -1,12 +1,7 @@
 /**
-*
-*    @file Random.h
-*    @date July 15, 2011
-*    @author MetalMario971
-*
-*    © 2011 
-*
-*
+*  @file Random.h
+*  @date July 15, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __RANDOM_311671063623511130142920_H__
@@ -23,8 +18,8 @@ namespace BR2 {
 //#define _USE_C_RAND
 
 /**
-*    @class Random.h
-*    @brief This supplies a host of random number functions - especially ones used in noise generation.
+*  @class Random.h
+*  @brief This supplies a host of random number functions - especially ones used in noise generation.
 *'    
     @note -ALSO SEE ALGORITHM.h For better mersenne functions
 */
@@ -98,8 +93,8 @@ FORCE_INLINE Random::~Random()
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 /**
-*    @fn
-*    @brief chop a number up into random parts where each part is within the range [min,max]
+*  @fn
+*  @brief chop a number up into random parts where each part is within the range [min,max]
 *    and also subtract from that number.
 */
 FORCE_INLINE int32_t Random::sequester_i32(int32_t& __inout_ total, int32_t min, int32_t max)
@@ -135,8 +130,8 @@ FORCE_INLINE int32_t Random::rnd_lh(int32_t val)
 }
 
 /**
-*    @fn static_mersenne
-*    @brief This mersenne function is based on a mersenne function
+*  @fn static_mersenne
+*  @brief This mersenne function is based on a mersenne function
 *    with an index of 1.  The code source is from Wikipedia.
 */
 FORCE_INLINE int32_t Random::static_mersenne(int32_t seed)

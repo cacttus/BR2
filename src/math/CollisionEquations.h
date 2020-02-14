@@ -1,12 +1,7 @@
 /**
-*
-*    @file CollisionEquations.h
-*    @date November 16, 2011
-*    @author MetalMario971
-*
-*    © 2011 
-*
-*
+*  @file CollisionEquations.h
+*  @date November 16, 2011
+*  @author MetalMario971
 */
 #pragma once
 #pragma once
@@ -34,8 +29,8 @@ public:
 };
 
 /**
-*    @fn 
-*    @brief Static methods for collision handling
+*  @fn 
+*  @brief Static methods for collision handling
 *    TODO: move all methods into theis class.
 */
 class CollisionEquations {

@@ -30,6 +30,10 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
+void RenderTarget::step() {
+  _pViewport->updateChanged(true);
+}
+//////////////////////////////////////////////////////////////////////////
 
 //Called exclusively by the graphics API
 GraphicsWindow::GraphicsWindow(bool ismain, string_t title, RenderSystem::e sys) {
@@ -314,6 +318,8 @@ void GraphicsWindow::step() {
   //Managers
   Gu::setContext(_pContext);
   _pContext->update();
+
+  RenderTarget::step();
 
   if (_pPicker != nullptr) {
     _pPicker->update(Gu::getInputManager());

@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../world/WorldHeader.h"
-#include "../world/Component.h"
+#include "../base/Component.h"
 
 namespace BR2 {
 /**
@@ -21,10 +21,8 @@ public:
   CSharpScript(std::shared_ptr<WorldObject> myObj);
   virtual ~CSharpScript() override;
 
-protected:
-  std::shared_ptr<WorldObject> getWorldObject() { return _worldObject; }
-private:
-  std::shared_ptr<WorldObject> _worldObject = nullptr;
+  virtual void start() = 0;
+  virtual void update(float delta) = 0;
 
 };
 

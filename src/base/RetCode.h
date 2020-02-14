@@ -9,8 +9,8 @@
 
 namespace BR2 {
 /**
-*    @typedef RetCode
-*    @brief Generalized error codes (across entire application)
+*  @typedef RetCode
+*  @brief Generalized error codes (across entire application)
 *
 */
 typedef enum {

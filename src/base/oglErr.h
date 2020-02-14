@@ -1,12 +1,7 @@
 /**
-*
-*    @file oglErr.h
-*    @date November 22, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file oglErr.h
+*  @date November 22, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __OGLERR_1479868789525442042_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class oglErr
-*    @brief
+*  @class oglErr
+*  @brief
 *
 */
 class OglErr  {

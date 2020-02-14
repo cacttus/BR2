@@ -1,12 +1,9 @@
 ///**
 //*
-//*    @file StackInfo.h
-//*    @date May 18, 2014
-//*    @author MetalMario971
-//*
-//*    © 2014 
-//*
-//*
+//*  @file StackInfo.h
+//*  @date May 18, 2014
+//*  @author MetalMario971
+
 //*/
 //#pragma once
 //#ifndef __STACKINFO_2953321674132583162427233_H__
@@ -18,8 +15,8 @@
 //namespace Game {
 //
 ///**
-//*    @class StackInfo
-//*    @brief Lists the calls in a procedure.
+//*  @class StackInfo
+//*  @brief Lists the calls in a procedure.
 //*
 //*/
 //class StackInfo /* do not inherit.  Used on exception */{

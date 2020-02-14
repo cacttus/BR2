@@ -1,12 +1,7 @@
 /**
-*
-*    @file MathHeader.h
-*    @date November 29, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file MathHeader.h
+*  @date November 29, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MATHHEADER_24654626514582104228509_H__

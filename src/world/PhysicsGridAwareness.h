@@ -1,12 +1,7 @@
 /**
-*
-*    @file PhysicsGridAwareness.h
-*    @date January 11, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file PhysicsGridAwareness.h
+*  @date January 11, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PHYSICSGRIDAWARENESS_15156936891785483737_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class PhysicsGridAwareness
-*    @brief
+*  @class PhysicsGridAwareness
+*  @brief
 *
 */
 class PhysicsGridAwareness : public VirtualMemory {

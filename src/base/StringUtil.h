@@ -13,8 +13,8 @@
 namespace BR2 {
 
 /**
-*    @class String
-*    @brief String util.
+*  @class String
+*  @brief String util.
 */
 class StringUtil : public VirtualMemory {
 public:

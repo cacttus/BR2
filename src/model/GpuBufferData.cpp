@@ -41,8 +41,8 @@ void GpuBufferData::copyDataServerClient(std::shared_ptr<ByteBuffer> gb) {
   return copyDataServerClient(gb->size(), gb->data(), 1);
 }
 /**
-*    @fn
-*    @brief
+*  @fn
+*  @brief
 */
 void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t elementSize) {
   if (buf == nullptr) {
@@ -80,8 +80,8 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
 
 }
 /**
-*    @fn copyDataClientServer
-*    @brief Copy data to a preallocated buffer.
+*  @fn copyDataClientServer
+*  @brief Copy data to a preallocated buffer.
 */
 void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags, int32_t iElementSize) {
   if (num_elements == 0) {
@@ -127,7 +127,7 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
   unbindBuffer();
 }
 /**
-*    @fn mapVbo()
+*  @fn mapVbo()
 *    Get a pointer to the vertex buffer data for a material.
 */
 void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
@@ -167,8 +167,8 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
   pData = frags;
 }
 /*
-*    @fn unmap
-*    @brief Unmap all vbo's
+*  @fn unmap
+*  @brief Unmap all vbo's
 */
 void GpuBufferData::unmapBuffer() {
   verifyValidBuffer();
@@ -182,8 +182,8 @@ void GpuBufferData::unmapBuffer() {
 }
 
 /**
-*    @fn bindVBO()
-*    @brief Bind the VBO.
+*  @fn bindVBO()
+*  @brief Bind the VBO.
 */
 void GpuBufferData::bindBuffer() {
   verifyValidBuffer();
@@ -198,8 +198,8 @@ void GpuBufferData::bindBuffer(GLenum e) {
   _isBound = true;
 }
 /**
-*    @fn unbind()
-*    @brief Unbind the VBO.
+*  @fn unbind()
+*  @brief Unbind the VBO.
 */
 void GpuBufferData::unbindBuffer() {
   _pContext->glBindBuffer(_glBufferType, 0);

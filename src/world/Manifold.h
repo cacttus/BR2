@@ -1,12 +1,7 @@
 /**
-*
-*    @file Manifold.h
-*    @date January 4, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file Manifold.h
+*  @date January 4, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MANIFOLD_15150861112662815887_H__

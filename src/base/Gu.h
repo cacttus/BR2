@@ -16,8 +16,8 @@
 
 namespace BR2 {
 /**
-*    @class Gu
-*    @brief Global Utils For everything.
+*  @class Gu
+*  @brief Global Utils For everything.
 */
 class Gu : public GameMemory {
 public:

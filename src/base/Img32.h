@@ -1,10 +1,10 @@
 /**
-*    @file BaseImage.h
+*  @file BaseImage.h
 *    //@file imgImage.h
 *
-*    @author MetalMario971
+*  @author MetalMario971
 *
-*    @date 7 / 9 / 2008
+*  @date 7 / 9 / 2008
 *    modified: 2/21/2010
 *
 */
@@ -17,8 +17,8 @@
 namespace BR2 {
 ;
 /**
-*    @class BaseImage
-*    @brief The base class for images.  The BaseImage class also includes
+*  @class BaseImage
+*  @brief The base class for images.  The BaseImage class also includes
 *       functions for convolution filtering.
 *   Conga Engine: All images are 32 bit
 *   All images are loaded from "PNG" And are RGBA format.

@@ -1,12 +1,7 @@
 /**
-*
-*    @file WorldHeader.h
-*    @date January 4, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file WorldHeader.h
+*  @date January 4, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __WORLDHEADER_15150858034241992580_H__

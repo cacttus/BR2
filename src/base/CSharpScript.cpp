@@ -3,8 +3,7 @@
 
 namespace BR2 {
 
-CSharpScript::CSharpScript(std::shared_ptr<WorldObject> ob) {
-  _worldObject = ob;
+CSharpScript::CSharpScript(std::shared_ptr<WorldObject> ob) : Component(ob) {
 
 }
 CSharpScript::~CSharpScript() {

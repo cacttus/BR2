@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file StringWrapper.h
-//*    @date February 15, 2015
-//*    @author Derek Page
-//*
-//*    © 2015
-//*
-//*
+//*  @file StringWrapper.h
+//*  @date February 15, 2015
+//*  @author Derek Page
 //*/
 //#pragma once
 //#ifndef __STRINGWRAPPER_195312707012031195556901_H__

@@ -1,12 +1,7 @@
 /**
-*
-*    @file UtilMeshGrid.h
-*    @date November 21, 2015
-*    @author MetalMario971
-*
-*    © 2015
-*
-*
+*  @file UtilMeshGrid.h
+*  @date November 21, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UTILMESHGRID_14540990129246418912863_H__

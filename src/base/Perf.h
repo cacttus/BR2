@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class Perf
-*    @brief
+*  @class Perf
+*  @brief
 *
 */
 class Perf {

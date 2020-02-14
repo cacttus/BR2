@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class GpuComputeSync
-*    @brief Stores information pertaining to the dispatching of computes to the compute shader system 
+*  @class GpuComputeSync
+*  @brief Stores information pertaining to the dispatching of computes to the compute shader system 
 Usage
     For Gpu
         call createFence()

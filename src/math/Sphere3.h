@@ -1,8 +1,8 @@
 /**
 *
-*    @file Sphere3.h
-*    @date August 10, 2014
-*    @author MetalMario971
+*  @file Sphere3.h
+*  @date August 10, 2014
+*  @author MetalMario971
 *
 *    � 2014 
 *
@@ -20,8 +20,8 @@
 namespace BR2 {
 
 /**
-*    @class Sphere3f
-*    @brief
+*  @class Sphere3f
+*  @brief
 *
 */
 class Sphere3f : public VirtualMemory {
@@ -38,8 +38,8 @@ public:
 };
 
 /**
-*    @fn 
-*    @brief Project point onto sphere.
+*  @fn 
+*  @brief Project point onto sphere.
 *        NOTE: square root.
 
     possibly a faster way to do this would be to get the squared length of both vectors

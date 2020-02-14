@@ -191,8 +191,8 @@ std::shared_ptr<Img32> Img32::applyFilter(Matrix3x3& kernel, size_t nPasses, boo
     return 0;
 }
 /**
-*    @fn getGridAt()
-*    @brief Returns a grid of pixel pointers from the given location.
+*  @fn getGridAt()
+*  @brief Returns a grid of pixel pointers from the given location.
 *
 *
 *    TODO: this wraps no matter WHAT!!!!!!!!!
@@ -257,11 +257,11 @@ void Img32::clearTo(Pixel4ub p) {
     }
 }
 /**
-*    @fn normalize()
-*    @brief Normalizes an input image as in it creates a bump map texture for it.
-*    @remarks The returned image data must be handled by the application.  It is
+*  @fn normalize()
+*  @brief Normalizes an input image as in it creates a bump map texture for it.
+*  @remarks The returned image data must be handled by the application.  It is
 *    not automatically freed.
-*    @return GR_OK if successful. GR_FAIL if the factory image is empty.
+*  @return GR_OK if successful. GR_FAIL if the factory image is empty.
 **/
 RetCode Img32::normalize(std::shared_ptr<Img32>& pRet, float depth) {
     if (!_pData) {

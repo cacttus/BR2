@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class FpsMeter
-*    @brief
+*  @class FpsMeter
+*  @brief
 *
 */
 class FpsMeter {

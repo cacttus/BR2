@@ -5,10 +5,10 @@
 namespace BR2 {
 
 /**
-*    @fn convex_axis_t
-*    @brief Smashes points of a convex hull along the line of a plane normal
+*  @fn convex_axis_t
+*  @brief Smashes points of a convex hull along the line of a plane normal
 *    This is a SAT function. (seaparate axis teheorom)
-*    @return returns the minimum and maximum "t" along the normal wehre (Normal * t)=extent
+*  @return returns the minimum and maximum "t" along the normal wehre (Normal * t)=extent
 */
     void ConvexUtils::convex_proj_t_3f(
                    Vec3f* norm,
@@ -53,8 +53,8 @@ namespace BR2 {
 }
 
 /**
-*    @fn convex_n_proj_box
-*    @brief Project a box solid onto a line.  This is a SAT function.
+*  @fn convex_n_proj_box
+*  @brief Project a box solid onto a line.  This is a SAT function.
 *
     THID SIS MESSED UP
     THID SIS MESSED UP
@@ -172,8 +172,8 @@ int32_t ConvexUtils::boxBoxConvex(
     return 1;
 }
 /**
-*    @fn 
-*    @brief Convex hull collision
+*  @fn 
+*  @brief Convex hull collision
 *    Return true/false if collision and the time until the convex hulls collide, 
     and the point index of the hull collisions
 */

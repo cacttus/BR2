@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class Stopwatch
-*    @brief A utility class to measure microseconds of execution.
+*  @class Stopwatch
+*  @brief A utility class to measure microseconds of execution.
 */
 class Stopwatch : public VirtualMemory {
 public:

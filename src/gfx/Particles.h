@@ -13,8 +13,8 @@
 
 namespace BR2 {
 /**
-*    @class Particles
-*    @brief
+*  @class Particles
+*  @brief
 *
 */
 class Particles : public VirtualMemory {

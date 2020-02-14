@@ -1,12 +1,7 @@
 /**
-*
-*    @file PhysicsShapes.h
-*    @date January 12, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file PhysicsShapes.h
+*  @date January 12, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __PHYSICSSHAPES_1515775014582190114_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class PhysicsShapes
-*    @brief
+*  @class PhysicsShapes
+*  @brief
 *
 */
 class PhysicsShape : public VirtualMemory {

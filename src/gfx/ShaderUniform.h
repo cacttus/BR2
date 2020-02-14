@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class ShaderUniform
-*    @brief
+*  @class ShaderUniform
+*  @brief
 *
 */ 
 class ShaderUniform : public VirtualMemory {

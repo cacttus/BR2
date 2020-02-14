@@ -9,8 +9,8 @@ GpuComputeSync::GpuComputeSync(std::shared_ptr<GLContext> pc) : _pContext(pc) {
 GpuComputeSync::~GpuComputeSync() {
 }
 /**
-*    @fn createCpuFence
-*    @brief
+*  @fn createCpuFence
+*  @brief
 */
 void GpuComputeSync::createCpuFence() {
     if (_bGpuDispatched) {
@@ -21,15 +21,15 @@ void GpuComputeSync::createCpuFence() {
     _bCpuSignaled = false;
 }
 /**
-*    @fn signalCpu
-*    @brief
+*  @fn signalCpu
+*  @brief
 */
 void GpuComputeSync::signalCpu() {
     _bCpuSignaled = true;
 }
 /**
-*    @fn createFence
-*    @brief
+*  @fn createFence
+*  @brief
 */
 void GpuComputeSync::createFence() {
     if (_bCpuDispatched) {
@@ -40,8 +40,8 @@ void GpuComputeSync::createFence() {
     _glSyncObject = _pContext->glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 /**
-*    @fn isComputeComplete
-*    @brief Returns true if the given operation is complete.
+*  @fn isComputeComplete
+*  @brief Returns true if the given operation is complete.
 */
 bool GpuComputeSync::isComputeComplete() {
     GLint result = GL_UNSIGNALED;

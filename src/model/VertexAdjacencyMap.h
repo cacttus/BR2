@@ -1,12 +1,7 @@
 /**
-*
-*    @file VertexAdjacencyMap.h
-*    @date June 14, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file VertexAdjacencyMap.h
+*  @date June 14, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VERTEXADJACENCYMAP_108092740165061970217353_H__
@@ -19,8 +14,8 @@
 
 namespace BR2 {
 /**
-*    @class VertexAdjacencyMap
-*    @brief Mapping of vertexes to adjacent faces.  Adjacent faces are offsets into the index buffer.
+*  @class VertexAdjacencyMap
+*  @brief Mapping of vertexes to adjacent faces.  Adjacent faces are offsets into the index buffer.
 *
 */
 class VertexAdjacencyMap : public VirtualMemory {

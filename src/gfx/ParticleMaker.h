@@ -28,8 +28,8 @@ public:
   //float _a;
 };
 /**
-*    @class Party
-*    @brief
+*  @class Party
+*  @brief
 *
 */
 class ParticleMaker : public VirtualMemory {

@@ -187,8 +187,8 @@ string_t StringUtil::getLeftPaddedNumber(int32_t number, int32_t numberOfChars, 
     return getPaddedNumber(number, numberOfChars, padChar);
 }
 /**
-*    @fn
-*    @brief
+*  @fn
+*  @brief
 *    number - the number to print
 *    numberOfChars - the max width of the buffer with given padding
 *    padChar -pad char
@@ -404,8 +404,8 @@ string_t StringUtil::getEscapedCharLiteral(char c)
     //if(c=='\x') return "\a";
 }
 /**
-*    @fn
-*    @brief Split the string with a delim.
+*  @fn
+*  @brief Split the string with a delim.
 */
 std::vector<string_t> StringUtil::split(string_t in, char del)
 {

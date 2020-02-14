@@ -71,8 +71,8 @@
 ////    });
 ////}
 ///**
-//*    @fn mergeWith
-//*    @brief Merges with the model on the right.  The merge is flat, so it is added to the root.
+//*  @fn mergeWith
+//*  @brief Merges with the model on the right.  The merge is flat, so it is added to the root.
 //*/
 //void MeshSpecHierarchy::mergeWith(MeshSpecHierarchy* eat)
 //{
@@ -115,8 +115,8 @@
 //    return pRet;
 //}
 ///**
-//*    @fn calculateMasterBoundBox
-//*    @brief calculate the master bouning box
+//*  @fn calculateMasterBoundBox
+//*  @brief calculate the master bouning box
 //*/
 //void MeshSpecHierarchy::calculateMasterBoundBox()
 //{

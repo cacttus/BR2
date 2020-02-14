@@ -8,9 +8,11 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FlyingCameraControls.h"
+#include "../world/WorldObject.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
-FlyingCameraControls::FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene) : _pViewport(pv) {
+FlyingCameraControls::FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene) : CSharpScript(nullptr), _pViewport(pv) {
   BroLogInfo("Creating Fly Camera.");
   _pCamera = CameraNode::create(pv, pscene);
   _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
@@ -24,6 +26,13 @@ FlyingCameraControls::FlyingCameraControls(std::shared_ptr<RenderViewport> pv, s
 FlyingCameraControls::~FlyingCameraControls() {
 
 }
+
+void FlyingCameraControls::start(){
+
+}
+void FlyingCameraControls::update() {
+}
+
 void FlyingCameraControls::updateCameraPosition() {
   if (_vCamNormal.squaredLength() == 0.0f) {
     //We have an error wit the camera normal because we're using the same normal from the
@@ -128,7 +137,7 @@ void FlyingCameraControls::updateRotate(std::shared_ptr<InputManager> pInput) {
 }
 void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
   // mat4 rot = mat4::getRotationRad(dRot, vec3(0, 1, 0));
-  vec3 camPos = getScene()->getActiveCamera()->getPos();
+  vec3 camPos = getWorldObject()->getScene()->getActiveCamera()->getPos();
 
   // _vCamNormal = _pCamera->getViewNormal();
 
@@ -174,7 +183,7 @@ void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
   updateCameraPosition();
 }
 void FlyingCameraControls::setActive() {
-  Gu::setCamera(_pCamera);
+  getWorldObject()->getScene()->setCamera(_pCamera);
 }
 void FlyingCameraControls::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
   _vCamPos = pos;

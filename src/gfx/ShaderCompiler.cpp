@@ -12,8 +12,8 @@ ShaderCompiler::ShaderCompiler(std::shared_ptr<GLContext> ct, string_t fileDir) 
 }
 
 /**
-*    @fn fileToArray()
-*    @brief I believe this turns a file into an array of lines.
+*  @fn fileToArray()
+*  @brief I believe this turns a file into an array of lines.
 */
 void ShaderCompiler::loadSource(std::shared_ptr<ShaderSubProgram> pSubProg)
 {
@@ -103,8 +103,8 @@ void ShaderCompiler::addSourceLineAt(size_t pos, std::vector<string_t>& vec, str
     vec.insert(vec.begin()+pos, linemod);
 }
 /**
-*    @fn
-*    @brief Includes files.
+*  @fn
+*  @brief Includes files.
 */
 void ShaderCompiler::searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, std::vector<string_t>& lines, time_t& greatestModifyTime)
 {
@@ -143,8 +143,8 @@ void ShaderCompiler::searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, s
 
 }
 /**
-*    @fn
-*    @brief Compiles all includes in the source lines into a map of include to its line number
+*  @fn
+*  @brief Compiles all includes in the source lines into a map of include to its line number
 */
 ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<string_t>& lines)
 {
@@ -279,9 +279,9 @@ void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std:
     }
 }
 /**
-*    @fn compile
-*    @brief Compile a shader.
-*    @remarks Compiles a shader.
+*  @fn compile
+*  @brief Compile a shader.
+*  @remarks Compiles a shader.
 */
 void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg)
 {
@@ -340,8 +340,8 @@ void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg)
     }
 }
 /**
-*    @fn getErrorList()
-*    @brief Returns a list of strings that are the errors of the compiled shader source.
+*  @fn getErrorList()
+*  @brief Returns a list of strings that are the errors of the compiled shader source.
 */
 std::vector<string_t> ShaderCompiler::getErrorList(const std::shared_ptr<ShaderSubProgram> shader) const
 {

@@ -274,8 +274,8 @@ std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, b
     return std::dynamic_pointer_cast<MeshData>(shared_from_this());
 }
 /**
-*    @fn
-*    @brief Adds an offset to the given indexes for a specified range.
+*  @fn
+*  @brief Adds an offset to the given indexes for a specified range.
 */
 //void MeshSpec::addOffsetToIndexRange(uint32_t offset, uint32_t startIndex, uint32_t endIndex)
 //{
@@ -319,7 +319,7 @@ std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, b
 //    BroLogDebug(str);
 //}
 /**
-*    @fn computeMinimax();
+*  @fn computeMinimax();
 *
 */
 void MeshData::computeBox()

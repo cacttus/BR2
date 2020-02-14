@@ -1,12 +1,7 @@
 /**
-*
-*    @file Algorithm.h
-*    @date April 2, 2011
-*    @author MetalMario971
-*
-*    © 2011 
-*
-*
+*  @file Algorithm.h
+*  @date April 2, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __ALGORITHM_8732141251172380469536_H__
@@ -140,8 +135,8 @@ static Vec3f pointOnLine_SLOW( const vec3& a, const vec3& b, const vec3& p ) {
     return (a+ n*pdist);
 }
 /**
-*    @fn ClosestPointOnAACubeFromPoint
-*    @brief This returns the closest C8 point RELATIVE TO THE INPUT POINT for the given cube.
+*  @fn ClosestPointOnAACubeFromPoint
+*  @brief This returns the closest C8 point RELATIVE TO THE INPUT POINT for the given cube.
 *    I.e. To get the **actual** euclidian point you will have to add 'p' to the return value.
 *    this is for optimization.
 *
@@ -177,8 +172,8 @@ FORCE_INLINE static Vec3f ClosestPointOnAACubeFromPoint( Vec3f& p, Box3f& cc )
         
 }
 /**
-*    @fn mint
-*    @brief Mersenne integer function 1 dimension
+*  @fn mint
+*  @brief Mersenne integer function 1 dimension
 
     Tests have showed that all functions have a floating point standard deviation of about 0.6 but remain
     on average around 6.0e-005
@@ -199,16 +194,16 @@ static FORCE_INLINE int32_t mint(int32_t seed, int32_t off=0x9d2c5680)
      return x;
 }
 /**
-*    @fn mint2
-*    @brief Mersenne integer function 2 dimensions
+*  @fn mint2
+*  @brief Mersenne integer function 2 dimensions
 */
 static FORCE_INLINE int32_t mint2(int32_t x, int32_t y, int32_t off=0x9d2c5680)
 {
     return mint(x,off) ^ mint(y,off);
 }
 /**
-*    @fn mint3
-*    @brief Mersenne integer function 3 dimensions
+*  @fn mint3
+*  @brief Mersenne integer function 3 dimensions
 */
 static FORCE_INLINE int32_t mint3(int32_t x, int32_t y, int32_t z, int32_t off=0x9d2c5680)
 {
@@ -233,8 +228,8 @@ static FORCE_INLINE float flotc01(int32_t ix)
     return( *((float*)&a) -1.0f );
 }
 /**
-*    @fn 
-*    @brief Mersenne float function 1 dimension
+*  @fn 
+*  @brief Mersenne float function 1 dimension
 *    Return value between [-1,1]
 */
 static FORCE_INLINE float meft11(int32_t x, int32_t off=0x9d2c5680)
@@ -246,8 +241,8 @@ static FORCE_INLINE float meft01(int32_t x, int32_t off = 0x9d2c5680)
     return flotc01(mint(x, off));
 }
 /**
-*    @fn 
-*    @brief Mersenne float function 2 dimension
+*  @fn 
+*  @brief Mersenne float function 2 dimension
 *    Return value between [-1,1]
 */
 // - Mersenne float 2 param
@@ -256,8 +251,8 @@ static FORCE_INLINE float meft2(int32_t x, int32_t y, int32_t off=0x9d2c5680)
     return flotc11(mint2(x,y,off));
 }
 /**
-*    @fn 
-*    @brief Mersenne float function 3 dimension
+*  @fn 
+*  @brief Mersenne float function 3 dimension
 *    Return value between [-1,1]
 */
 static FORCE_INLINE float meft3(int32_t x, int32_t y, int32_t z, int32_t off=0x9d2c5680)
@@ -302,8 +297,8 @@ static FORCE_INLINE double ssdevf(std::vector<double>& vin)
 }
 
 /**
-*    @fn getNormalBasisZ
-*    @brief Given a normal vector in 3 dimensions this returns the tangent and binormal basis vectors
+*  @fn getNormalBasisZ
+*  @brief Given a normal vector in 3 dimensions this returns the tangent and binormal basis vectors
 *    The vectors point in the relative positive direction in the given LHS or RHS coordinate system.
 */
 static FORCE_INLINE void getNormalBasisZ(const Vec3f& __in_ normal, Vec3f& __out_ left, Vec3f& __out_ up)
@@ -341,17 +336,17 @@ static FORCE_INLINE Vec3Basis getNormalBasisZ(const Vec3f& __in_ normal_z)
     return ret;
 }
 /**
-*    @fn getSolidVolumeProjectionBounds
-*    @brief Project a solid volume onto a plane returning the minimum and maximum local plane bounding "quad".  In layman's terms
+*  @fn getSolidVolumeProjectionBounds
+*  @brief Project a solid volume onto a plane returning the minimum and maximum local plane bounding "quad".  In layman's terms
 *    this will return a viewport for a camera that fits tightly around the given volume.
-*    @remarks This is useful for creating projection volumes from just a point and a plane.
+*  @remarks This is useful for creating projection volumes from just a point and a plane.
 *
-*    @param viewNormal - The view normal of the plane to project to
-*    @param viewPos - A point on the plane (to complete the plane equation)
-*    @param points - A set of geometric points to project.
-*    @param nPoints - Number of points in above array.
-*    @param out localMinimum - The returned local minimum value.
-*    @param out localMaximum - The returned local maximum value.
+*  @param viewNormal - The view normal of the plane to project to
+*  @param viewPos - A point on the plane (to complete the plane equation)
+*  @param points - A set of geometric points to project.
+*  @param nPoints - Number of points in above array.
+*  @param out localMinimum - The returned local minimum value.
+*  @param out localMaximum - The returned local maximum value.
 */
 static FORCE_INLINE void getSolidVolumeProjectionBounds(
     const Vec3f& __in_ viewNormal,
@@ -475,10 +470,10 @@ static FORCE_INLINE void getSolidVolumeProjectionBounds(
         *v3basis_in = v3basis;
 }
 /**
-*    @fn bezier2v
-*    @brief Returns a point along a bezier spline in 2d
-*    @param t [0,1] inclusive
-*    @param controlPoints - list of 2d control points.
+*  @fn bezier2v
+*  @brief Returns a point along a bezier spline in 2d
+*  @param t [0,1] inclusive
+*  @param controlPoints - list of 2d control points.
 */
 FORCE_INLINE static Vec2f bezier2v( std::vector<Vec2f>& controlPoints, float t )
 {
@@ -519,10 +514,10 @@ FORCE_INLINE static Vec2f bezier2v( std::vector<Vec2f>& controlPoints, float t )
     return v;
 }
 /**
-*    @fn bezier3v
-*    @brief Returns a point along a bezier spline in 3d
-*    @param t [0,1] inclusive
-*    @param controlPoints - list of 2d control points.
+*  @fn bezier3v
+*  @brief Returns a point along a bezier spline in 3d
+*  @param t [0,1] inclusive
+*  @param controlPoints - list of 2d control points.
 */
 FORCE_INLINE static Vec3f bezier3v( std::vector<Vec3f>& controlPoints, float t )
 {

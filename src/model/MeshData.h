@@ -1,7 +1,7 @@
 /**
-*    @file MeshSpec.h
-*    @date October 16, 2011
-*    @author MetalMario971
+*  @file MeshSpec.h
+*  @date October 16, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MESHSPEC_157287882194863255526453_H__
@@ -14,9 +14,9 @@
 
 namespace BR2 {
 /**
-*    @class MeshSpec
-*    @brief Describes a geometry mesh.
-*    @details 1/26/18 all data is now on GPU
+*  @class MeshSpec
+*  @brief Describes a geometry mesh.
+*  @details 1/26/18 all data is now on GPU
 */
 class MeshData : public BaseSpec {
 public:

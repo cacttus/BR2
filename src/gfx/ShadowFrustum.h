@@ -13,8 +13,8 @@
 
 namespace BR2 {
 /**
-*    @class ShadowFrustum
-*    @brief
+*  @class ShadowFrustum
+*  @brief
 *
 */
 class ShadowFrustum : public VirtualMemoryShared<ShadowFrustum> {

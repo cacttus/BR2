@@ -1,8 +1,8 @@
 /**
-*    @file Vec4x.h
-*    @date November 30, 2008
-*    @date November 27, 2015 - Vector4 is now Vec4x - templated
-*    @author MetalMario971
+*  @file Vec4x.h
+*  @date November 30, 2008
+*  @date November 27, 2015 - Vector4 is now Vec4x - templated
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VEC4X_282629732193852125132500_H__
@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @struct Vec4x
-*    @brief 4D vector class.
+*  @struct Vec4x
+*  @brief 4D vector class.
 */
 template < class Tx >
 class Vec4x : public PureMemory {

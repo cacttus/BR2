@@ -12,7 +12,7 @@ namespace BR2 {
 
 
 /**
-*    @class Quaternion
+*  @class Quaternion
 *    not that quaternions only support rotations and matrix translations would be lost in the conversion.
 *    Q = [ (x,y,z), w ]
 *    Q = [ v, w ]

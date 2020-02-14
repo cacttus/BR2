@@ -1,12 +1,7 @@
 /**
-*
-*    @file TileBuffer.h
-*    @date March 24, 2017
-*    @author MetalMario971
-*
-*    © 2017
-*
-*
+*  @file TileBuffer.h
+*  @date March 24, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __TILEBUFFER_14904095883666013969_H__

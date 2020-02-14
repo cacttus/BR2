@@ -462,10 +462,10 @@ bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp) {
   return retVal;
 }
 /**
-*    @fn validateProgram()
-*    @brief Validates a shader program compiled ok.
-*    @return True if the program is valid.
-*    @return False if one or more shaders are invalid, or something else.
+*  @fn validateProgram()
+*  @brief Validates a shader program compiled ok.
+*  @return True if the program is valid.
+*  @return False if one or more shaders are invalid, or something else.
 */
 bool ShaderMaker::validateSubProgram(std::shared_ptr<ShaderSubProgram> prog, std::shared_ptr<ShaderBase> psp) {
   if (prog == nullptr) {

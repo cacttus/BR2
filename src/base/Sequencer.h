@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class Sequencer
-*    @brief manages sequenceas of actions (lambdas)
+*  @class Sequencer
+*  @brief manages sequenceas of actions (lambdas)
 *
 */
 class Sequencer : public VirtualMemory {
@@ -28,8 +28,8 @@ private:
 };
 
 /**
-*    @class Sequence
-*    @brief dsrequences of actions / events /etc. based on time. very generic.  execute functions in sequence.
+*  @class Sequence
+*  @brief dsrequences of actions / events /etc. based on time. very generic.  execute functions in sequence.
 */
 class Sequence : public VirtualMemory {
 public:

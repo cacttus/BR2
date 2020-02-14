@@ -1,12 +1,7 @@
 /**
-*
-*    @file UtilMeshSphere.h
-*    @date December 12, 2015
-*    @author MetalMario971
-*
-*    © 2015 
-*
-*
+*  @file UtilMeshSphere.h
+*  @date December 12, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UTILMESHSPHERE_1453030652222211530917323_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class UtilMeshSphere
-*    @brief
+*  @class UtilMeshSphere
+*  @brief
 *
 */
 class UtilMeshSphere : public UtilMesh {

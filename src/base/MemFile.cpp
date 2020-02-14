@@ -51,8 +51,8 @@
 //    return GR_OK;
 //}
 ///**
-//*    @fn readStr
-//*    @details Read a string
+//*  @fn readStr
+//*  @details Read a string
 //*
 //*/
 //RetCode MemFile::readStr(char* buf, size_t bufLen)

@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file VaoData2.h
-//*    @date November 25, 2016
-//*    @author MetalMario971
-//*
-//*    © 2016 
-//*
-//*
+//*  @file VaoData2.h
+//*  @date November 25, 2016
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __VAODATA2_1480133025531171099_H__
@@ -15,8 +11,8 @@
 //
 //namespace Game {
 ///**
-//*    @class VaoData2
-//*    @brief
+//*  @class VaoData2
+//*  @brief
 //*
 //*/
 //class VaoData2 : public VirtualMemory {

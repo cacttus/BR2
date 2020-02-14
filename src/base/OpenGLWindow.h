@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file OpenGLWindow.h
-//*    @date August 23, 2019
-//*    @author MetalMario971
-//*
-//*    © 2019 
-//*
-//*
+//*  @file OpenGLWindow.h
+//*  @date August 23, 2019
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __OPENGLWINDOW_15665854371549001192_H__
@@ -16,8 +12,8 @@
 //
 //namespace Game {
 ///**
-//*    @class OpenGLWindow
-//*    @brief
+//*  @class OpenGLWindow
+//*  @brief
 //*
 //*/
 //class OpenGLWindow : public GraphicsWindow {

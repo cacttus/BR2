@@ -109,9 +109,9 @@
 //
 //}
 ///**
-//*    @fn 
-//*    @brief 
-//*    @return true if we ate the tokens.
+//*  @fn 
+//*  @brief 
+//*  @return true if we ate the tokens.
 //*/
 //bool ModFile::tkModelPart(t_string tok0, t_string tok1)
 //{

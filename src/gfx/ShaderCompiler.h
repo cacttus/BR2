@@ -17,8 +17,8 @@ struct ShaderIncludeRef {
 
 
 /**
-*    @class GLShaderCompiler
-*    @brief Helpful class for shader compile errors.
+*  @class GLShaderCompiler
+*  @brief Helpful class for shader compile errors.
 */
 class ShaderCompiler : public VirtualMemory {
     //typedef MapEx<t_string*, t_vecsize > IncludeMap;    //maps strings to offsets in the source list.

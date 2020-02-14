@@ -1,12 +1,7 @@
 /**
-*
-*    @file Quad3x.h
-*    @date March 31, 2016
-*    @author MetalMario971
-*
-*    © 2016 
-*
-*
+*  @file Quad3x.h
+*  @date March 31, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __QUAD3X_123052400970933043510229_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class Quad3x
-*    @brief 3D plane quad.  In 3 space with a normal.
+*  @class Quad3x
+*  @brief 3D plane quad.  In 3 space with a normal.
     vert
     3*     *2
         

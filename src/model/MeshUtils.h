@@ -1,7 +1,7 @@
 /**
-*    @file MeshUtils.h
-*    @date October 26, 2011
-*    @author MetalMario971
+*  @file MeshUtils.h
+*  @date October 26, 2011
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MESHCREATOR_81522344517012612529631_H__

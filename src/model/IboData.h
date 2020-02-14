@@ -1,12 +1,7 @@
 /**
-*
-*    @file IboData.h
-*    @date March 30, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file IboData.h
+*  @date March 30, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __IBODATA_186441646911777432011087_H__
@@ -20,8 +15,8 @@ namespace BR2 {
 //class GLRenderSystem;
 
 /**
-*    @class IboData
-*    @brief Represents a vertex buffer object in Opengl.
+*  @class IboData
+*  @brief Represents a vertex buffer object in Opengl.
 */
 class IboData : public GpuBufferData {
     //friend class GpuBufferManager;    

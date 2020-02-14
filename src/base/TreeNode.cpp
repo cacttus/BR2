@@ -115,11 +115,11 @@ std::shared_ptr<TreeNode> TreeNode::insert(std::shared_ptr<TreeNode> txChild, st
   return txChild;
 }
 /**
-*    @fn remove
-*    @brief Remove a node from the tree
-*    @return true if the node was found, false if it wasn't
+*  @fn remove
+*  @brief Remove a node from the tree
+*  @return true if the node was found, false if it wasn't
 *  if blnLinkChildren is true we will link the children of the
-*    @param node - if null removes this node from its parent
+*  @param node - if null removes this node from its parent
 *  removed node to the removed node's existing parent (or Root if it has none)
 *  * bRecursive - when true we will attempt to search for the node hten remove it.
 */
@@ -154,6 +154,7 @@ bool TreeNode::remove(std::shared_ptr<TreeNode> node, bool blnSplice, bool bImme
 
   return true;
 }
+//finds a descendent child from the given node.
 std::shared_ptr<TreeNode> TreeNode::find(std::shared_ptr<TreeNode> bt) {
   std::shared_ptr<TreeNode> found = NULL;
 

@@ -1,12 +1,7 @@
 /**
-*
-*    @file UtilMeshAxis.h
-*    @date November 21, 2015
-*    @author MetalMario971
-*
-*    © 2015
-*
-*
+*  @file UtilMeshAxis.h
+*  @date November 21, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __UTILMESHAXIS_1863520755176052563980_H__

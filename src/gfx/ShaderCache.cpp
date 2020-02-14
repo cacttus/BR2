@@ -87,8 +87,8 @@ ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<Shad
 
 
 /**
-*    @fn getBinaryFromDisk
-*    @brief Pass in the program name, not the name of the binary.
+*  @fn getBinaryFromDisk
+*  @brief Pass in the program name, not the name of the binary.
 
 
 Shader Binary Cache File Format
@@ -188,8 +188,8 @@ void ShaderCache::saveBinaryToDisk(string_t& programName, GLProgramBinary* bin) 
 
 }
 /**
-*    @fn deleteBinaryFromDisk
-*    @brief
+*  @fn deleteBinaryFromDisk
+*  @brief
 */
 void ShaderCache::deleteBinaryFromDisk(string_t& programName) {
     string_t binaryName = getBinaryNameFromProgramName(programName);
@@ -201,26 +201,26 @@ void ShaderCache::deleteBinaryFromDisk(string_t& programName) {
     FileSystem::deleteFile(binaryName);
 }
 /**
-*    @fn freeLoadedBinary
-*    @brief
+*  @fn freeLoadedBinary
+*  @brief
 */
 void ShaderCache::freeLoadedBinary(GLProgramBinary* bin) {
     _vecBinaries.erase(std::remove(_vecBinaries.begin(), _vecBinaries.end(), bin), _vecBinaries.end());
     delete bin;
 }
 /**
-*    @fn saveCompiledBinaryToDisk
-*    @brief 
+*  @fn saveCompiledBinaryToDisk
+*  @brief 
 */
 void ShaderCache::saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram) {
     GLProgramBinary* bin = getBinaryFromGpu(pProgram);
     saveBinaryToDisk(pProgram->getProgramName(), bin);
 }
 /**
-*    @fn tryLoadCachedBinary
-*    @brief Try to load a cached GLSL binary to the GPU.
-*    @return false if the load failed or file was not found.
-*    @return true if the program loaded successfully
+*  @fn tryLoadCachedBinary
+*  @brief Try to load a cached GLSL binary to the GPU.
+*  @return false if the load failed or file was not found.
+*  @return true if the program loaded successfully
 */
 std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string programName, std::vector<string_t> shaderFiles) {
     bool bSuccess = false;
@@ -269,11 +269,11 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
 }
 
 /**
-*    @fn
-*    @brief Attaches the binary to the already created program object and loads it to the GPU.
+*  @fn
+*  @brief Attaches the binary to the already created program object and loads it to the GPU.
 *        Prog must already have been created.
 *
-*    @return false if the program returned errors.
+*  @return false if the program returned errors.
 */
 std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName, GLProgramBinary* bin) {
     Gu::getGraphicsContext()->chkErrRt();

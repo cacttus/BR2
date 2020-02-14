@@ -1,12 +1,7 @@
 /**
-*
-*    @file PhysicsWorld.h
-*    @date January 10, 2018
-*    @author MetalMario971
-*
-*    © 2018 
-*
-*
+*  @file PhysicsWorld.h
+*  @date January 10, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __GRIDMANAGER_15156110951778027750_H__
@@ -17,9 +12,9 @@
 namespace BR2 {
 
 /**
-*    @class PhysicsWorld
-*    @brief Operates on the world grid and manages the entire physical world and objects and collisions.
-*    @details Stores all objects in the world.  Also stores all Grids, and performs collision checking
+*  @class PhysicsWorld
+*  @brief Operates on the world grid and manages the entire physical world and objects and collisions.
+*  @details Stores all objects in the world.  Also stores all Grids, and performs collision checking
 *    against all objectts and grids..
 *    Centerpoint of your game. Inherit from this class to process your game world.  call update() each frame
 */

@@ -1,12 +1,7 @@
 /**
-*
-*    @file VertexTypes.h
-*    @date May 9, 2017
-*    @author MetalMario971
-*
-*    © 2017 
-*
-*
+*  @file VertexTypes.h
+*  @date May 9, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VERTEXTYPES_14943771063900412386_H__

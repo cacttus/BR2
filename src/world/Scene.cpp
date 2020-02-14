@@ -48,18 +48,39 @@ Scene::Scene() {
   BroLogInfo("GLContext -  ScriptManager");
   _pScriptManager = std::make_shared<ScriptManager>();
 
-  //In the future we will replace this witht he active object.
-  BroLogInfo("Creating Flying Camera");
+  createFlyingCamera();
 
-  //Sort of also a scripting test.
-  std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
-  std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
-  cam->addComponent(script);
 }
 Scene::~Scene() {
   _pScreen = nullptr;
   _pLightManager = nullptr;
   _pScriptManager = nullptr;
+}
+void Scene::createFlyingCamera() {
+  //In the future we will replace this witht he active object.
+  BroLogInfo("Creating Flying Camera");
+
+#define NOSCRIPT
+
+#ifdef NOSCRIPT
+  BroLogInfo("Creating Fly Camera.");
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport, ps);
+  cn->init();
+
+  _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+  updateCameraPosition();
+  _vMoveVel.construct(0, 0, 0);
+  _pCamera->setPos(vec3(30, 30, 30));
+  _pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
+  _vCamNormal = _pCamera->getViewNormal();
+  _vCamPos = _pCamera->getPos();
+#else
+  //Sort of also a scripting test.
+  std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
+  std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
+  cam->addComponent(script);
+#endif
+
 }
 void Scene::update(float delta) {
 

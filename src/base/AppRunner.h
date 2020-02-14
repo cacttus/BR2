@@ -1,10 +1,7 @@
-//
-//  AppRunner.h
-//  brom
-//
-//  Created by mac1224 on 11/5/16.
-//  Copyright © 2016 Swill. All rights reserved.
-//
+/**
+* @file AppRunner.h
+* @author MetalMario971
+*/
 #ifndef __57823905782390589020_AppRunner_h_2298357238957238957129348__
 #define __57823905782390589020_AppRunner_h_2298357238957238957129348__
 

@@ -11,8 +11,8 @@
 #include "../math/MathAll.h"
 namespace BR2 {
 /**
-*    @class FontTextBuffer
-*    @brief
+*  @class FontTextBuffer
+*  @brief
 */
 class FontTextBuffer : public VirtualMemory {
 private:

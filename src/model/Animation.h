@@ -1,12 +1,7 @@
 /**
-*
-*    @file Animation.h
-*    @date December 27, 2016
-*    @author MetalMario971
-*
-*    © 2016
-*
-*
+*  @file Animation.h
+*  @date December 27, 2016
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __ANIMATION_14828771764087888723_H__

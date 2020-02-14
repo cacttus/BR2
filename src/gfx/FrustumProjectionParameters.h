@@ -1,12 +1,7 @@
 /**
-*
-*    @file FrustumProjectionParameters.h
-*    @date December 5, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file FrustumProjectionParameters.h
+*  @date December 5, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FRUSTUMPROJECTIONPARAMETERS_171293099427757171585801_H__
@@ -18,8 +13,8 @@
 
 namespace BR2 {
 /**
-*    @class FrustumProjectionParameters
-*    @brief Fill this class out for the frustum to create its volume
+*  @class FrustumProjectionParameters
+*  @brief Fill this class out for the frustum to create its volume
 *
 */
 class FrustumProjectionParameters : public VirtualMemory {

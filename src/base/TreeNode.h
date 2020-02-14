@@ -20,7 +20,6 @@ public:
   //DOn't change this to MAP because the vecotr must be ordered by index
   typedef std::vector<std::shared_ptr<TreeNode>> NodeList;
   typedef std::function<bool(std::shared_ptr<TreeNode>)> NodeLambda;
-
 public:
   TreeNode();
   virtual ~TreeNode()  override;
@@ -33,8 +32,12 @@ public:
   std::shared_ptr<TCopy> duplicateBreadthFirst(std::function<std::shared_ptr<TCopy>(std::shared_ptr<TBase>)> fn);
   void flattenBreadthFirst(NodeList& outVec);
   std::shared_ptr<TreeNode> find(std::shared_ptr<TreeNode> bt);
+  template < class Tx >
+  std::shared_ptr<Tx> findParent();
+
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
   bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
+
   bool detachFromParent();  //calls remove()
   size_t getNodeCountHierarchy();
   size_t getNodeCountParentOnly();
@@ -66,8 +69,30 @@ private:
   std::shared_ptr<TreeNode> insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent = NULL);
   bool remove(std::shared_ptr<TreeNode> node = NULL, bool blnSplice = false, bool bImmediateNodeOnly = true);// Return true if the node was removed
 };
+template < class Tx >
+std::shared_ptr<Tx> TreeNode::findParent() {
+  //Finds the first parent, from the given node of type Tx
+  //Need to test this
+  std::shared_ptr<Tx> found = nullptr;
+  std::function<bool(std::shared_ptr<Tx>)> fp;
 
+  fp = [&found](std::shared_ptr<TreeNode> cur) {
+    if (found != nullptr) {
+      return;
+    }
+    std::shared_ptr<Tx> casted = std::dynamic_pointer_cast<Tx>(cur);
+    if (casted != nullptr) {
+      found = casted;
+    }
+    else if (getParent() != nullptr) {
+      fp(getParent());
+    }
+  };
 
+  fp(getThis<TreeNode>());
+
+  return found;
+}
 template < class Tx >
 bool TreeNode::iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn) {
   //**Return FALSE to stop iterating**
@@ -122,9 +147,9 @@ bool TreeNode::iterateDepthFirst(std::function<bool(std::shared_ptr<Tx>)> fn) {
   return true;
 }
 /**
-*    @fn duplicateBreadthFirst()
-*    @brief Duplicate a tree structure.
-*    @details This is a bit confusing:
+*  @fn duplicateBreadthFirst()
+*  @brief Duplicate a tree structure.
+*  @details This is a bit confusing:
 *    TBase is the type of node we're copying.
 *    TCopy is the type of node being copied to.
 *    This basically only copies the Parent/Child structure.  Your lambda

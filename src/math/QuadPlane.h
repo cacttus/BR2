@@ -1,10 +1,7 @@
 /**
-*    @file QuadPlane.h
-*    @author MetalMario971
-*
-*    © 2011 
-*    @adate 2 / 1 / 2010
-*
+*  @file QuadPlane.h
+*  @author MetalMario971
+*  @date 2 / 1 / 2010
 */
 #pragma once
 #ifndef __QUAD_PLANE_H__
@@ -17,8 +14,8 @@ namespace BR2{
 
 
 /**
-*    @class QuadPlane
-*    @brief Derived plane for extra info and stuff.
+*  @class QuadPlane
+*  @brief Derived plane for extra info and stuff.
 * DO NOT ADD VIRTUAL METHODS
 */
 class QuadPlane : public PlaneEx3 { 
@@ -75,8 +72,8 @@ QuadPlane::containsPoint( Vector3& point )
 }
 
 /**
-*    @fn construct()    
-*    @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
+*  @fn construct()    
+*  @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
 */
 FORCE_INLINE void 
 QuadPlane::construct( Vector3& dp1, Vector3& dp2, Vector3& dp3, Vector3& dp4 )
@@ -88,8 +85,8 @@ QuadPlane::construct( Vector3& dp1, Vector3& dp2, Vector3& dp3, Vector3& dp4 )
     construct();
 }
 /**
-*    @fn construct()    
-*    @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
+*  @fn construct()    
+*  @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
 */
 FORCE_INLINE void 
 QuadPlane::construct( )

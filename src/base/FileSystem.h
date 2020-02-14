@@ -1,8 +1,8 @@
 /**
-*    @file FileSystem.h
-*    @date August 24, 2013
-*    @date January 19, 2017
-*    @author MetalMario971
+*  @file FileSystem.h
+*  @date August 24, 2013
+*  @date January 19, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __FILESYSTEM_14848814891654953164_H__
@@ -32,8 +32,8 @@ public:
   virtual ~FileInfo() {}
 };
 /**
-*    @class FileSystem
-*    @brief Filesystem functions.
+*  @class FileSystem
+*  @brief Filesystem functions.
 *       In the future a lot of this can be refactored with C++17's std::filesystem
 */
 class FileSystem : public VirtualMemory {

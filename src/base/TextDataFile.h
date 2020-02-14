@@ -14,8 +14,8 @@
 
 namespace BR2 {
 /**
-*    @class TextDataFile
-*    @brief Base class for in-memory text files.
+*  @class TextDataFile
+*  @brief Base class for in-memory text files.
 */
 class TextDataFile : public VirtualMemory {
 public:

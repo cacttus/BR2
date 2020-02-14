@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file MeshCache.h
-//*    @date November 30, 2016
-//*    @author MetalMario971
-//*
-//*    © 2016 
-//*
-//*
+//*  @file MeshCache.h
+//*  @date November 30, 2016
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __MESHCACHE_14804868003449107072_H__
@@ -16,8 +12,8 @@
 //
 //namespace Game {
 ///**
-//*    @class MeshCache
-//*    @brief
+//*  @class MeshCache
+//*  @brief
 //*
 //*/
 //class MeshCache : public VirtualMemory {

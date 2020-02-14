@@ -1,7 +1,7 @@
 /**
-*    @file Vec2x.h
-*    @date February 26, 2015
-*    @author MetalMario971
+*  @file Vec2x.h
+*  @date February 26, 2015
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __VEC2X_2283131541297662696812355_H__

@@ -1,12 +1,7 @@
 /**
-*
-*    @file IndexBufferData.h
-*    @date September 26, 2014
-*    @author MetalMario971
-*
-*    © 2014 
-*
-*
+*  @file IndexBufferData.h
+*  @date September 26, 2014
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __INDEXBUFFERDATA_3255418442216532730025046_H__
@@ -16,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class IndexBufferData
-*    @brief stores indexes in a generic buffer with either a 16 or 32 bit index format.
+*  @class IndexBufferData
+*  @brief stores indexes in a generic buffer with either a 16 or 32 bit index format.
 *
     Note: We only use 32 bit indexes across the board, this is more for compatibility.
 */

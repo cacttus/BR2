@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class ShaderAttribute
-*    @brief
+*  @class ShaderAttribute
+*  @brief
 *
 */
 class ShaderAttribute : public VirtualMemory {

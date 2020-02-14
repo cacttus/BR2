@@ -29,6 +29,15 @@ Some design and implementation notes since the devlog was getting too big.
 		    * GLContext (1, ref)
             * Scene (1)
                 * <GameObject> (1*)
+					*  WorldObject 
+						* <Component>
+							* CollisionShape
+							* CSharpScript
+						* :PhysicsNode (inherited)
+							* :BaseNode (inherited)
+								* :TreeNode (inherited)
+									* :Drawable (inherited)
+										* :VMS (inherited)
                 * UiScreen (1)
                 * PhysicsWorld (1)
          * `step(delta) \\Steps the graphics context, engine, and simulation`

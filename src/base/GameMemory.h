@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file GameMemory.h
-//*    @date November 5, 2016
-//*    @author MetalMario971
-//*
-//*    © 2016 
-//*
-//*
+//*  @file GameMemory.h
+//*  @date November 5, 2016
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __GAMEMEMORY_1478364470184957894_H__
@@ -20,8 +16,8 @@
 //
 //
 ///**
-//*    @class GameMemory
-//*    @brief
+//*  @class GameMemory
+//*  @brief
 //*
 //*/
 //class GameMemory {

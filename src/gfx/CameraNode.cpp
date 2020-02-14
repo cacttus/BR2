@@ -5,12 +5,7 @@
 #include "../base/Gu.h"
 
 namespace BR2 {
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps) {
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport, ps);
-  cn->init();
-  return cn;
-}
-CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport, std::shared_ptr<Scene> ps) : PhysicsNode(nullptr, ps) {
+CameraNode::CameraNode() : PhysicsNode(nullptr) {
   _pViewport = ppViewport;
   _vWorldUp.construct(0, 1, 0);
 
@@ -77,7 +72,7 @@ void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& m
   //We force true here every frame because of shadow boxes changing viewport.
   //TODO: have an "isUpdated" or some other so we can spread shadowbox viewport update over time and not update this.
   //**NOTE: 1/23/18 we changed this to refresh viewport after shadow box step in render pipe
-  _pViewport->updateChanged(true);
+  //_pViewport->updateChanged(true);
 
   //**Note: This is important: sets up the projection matrix for the camera
   // either 2D 3D ortho 2point ...

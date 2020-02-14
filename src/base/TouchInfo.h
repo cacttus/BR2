@@ -12,8 +12,8 @@
 
 namespace BR2 {
 /**
-*    @class TouchInfo
-*    @brief
+*  @class TouchInfo
+*  @brief
 *   extedn this class to hold player touch info for the world
 */
 class TouchInfo : public VirtualMemory {

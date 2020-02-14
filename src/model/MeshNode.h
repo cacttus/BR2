@@ -1,7 +1,7 @@
 /**
-*    @file MeshNode.h
-*    @date March 26, 2017
-*    @author MetalMario971
+*  @file MeshNode.h
+*  @date March 26, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MeshNode_1490572482630426783_H__

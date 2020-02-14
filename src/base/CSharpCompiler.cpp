@@ -471,7 +471,8 @@ private:
   /*
   Note; if you add more delimiters make sure to update isEscapeCharacter()
   */
-  char c;
+/**
+char c;
   //char* ptr = buf;
   string_t token;
   int32_t _nStringProfile = 0;
@@ -555,7 +556,7 @@ private:
     }
 
   }
-
+*/
 }
 
 

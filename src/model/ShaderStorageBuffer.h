@@ -1,12 +1,7 @@
 /**
-*
-*    @file GpuBufferGeneric.h
-*    @date October 7, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file GpuBufferGeneric.h
+*  @date October 7, 2014
+*  @author MetalMario971
 */
 #pragma once
 #pragma once

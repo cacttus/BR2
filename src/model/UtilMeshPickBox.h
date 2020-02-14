@@ -1,12 +1,8 @@
 ///**
 //*
-//*    @file UtilMeshPickBox.h
-//*    @date March 22, 2016
-//*    @author MetalMario971
-//*
-//*    © 2016 
-//*
-//*
+//*  @file UtilMeshPickBox.h
+//*  @date March 22, 2016
+//*  @author MetalMario971
 //*/
 //#pragma once
 //#ifndef __UTILMESHPICKBOX_315421104614287930312130_H__
@@ -16,8 +12,8 @@
 //
 //namespace Game {
 ///**
-//*    @class UtilMeshPickBox
-//*    @brief
+//*  @class UtilMeshPickBox
+//*  @brief
 //*
 //*/
 //class UtilMeshPickBox : public UtilMesh {

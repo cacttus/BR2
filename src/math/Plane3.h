@@ -8,8 +8,8 @@
 namespace BR2 {
 class Ray_t;
 /**
-*    @class Plane3f
-*    @brief Simplest form of a plane with a normal and d value
+*  @class Plane3f
+*  @brief Simplest form of a plane with a normal and d value
 
 **NOTE: 20151216 Do not make plane structure with ANY virtual methods.
 
@@ -51,8 +51,8 @@ FORCE_INLINE Plane3f::Plane3f() {
 }
 
 /**
-*    @fn
-*    @brief Utility function to get normal to triagnle
+*  @fn
+*  @brief Utility function to get normal to triagnle
 
         CCW
                p2<-------------p1
@@ -68,9 +68,9 @@ FORCE_INLINE void Plane3f::getNormalCcw(const vec3& __in_ p1, const  vec3& __in_
 }
 //moved intersectRay after ray_t definition
 /**
-*    @fn intersectLine()
-*    @brief Returns the position along the line (t) t which the input line intercepts the plane.
-*    @note if the line segment (p1,p2) does not hit the plane then t will be <0 or >1
+*  @fn intersectLine()
+*  @brief Returns the position along the line (t) t which the input line intercepts the plane.
+*  @note if the line segment (p1,p2) does not hit the plane then t will be <0 or >1
 */
 FORCE_INLINE LineHit Plane3f::intersectLine(const vec3& p1, const vec3& p2) const {
   LineHit ret;
@@ -120,34 +120,34 @@ FORCE_INLINE vec3 Plane3f::intersectLinePoint(const vec3& p1, const vec3& p2, bo
   return vRet;
 }
 /**
-*    @fn isBehind()
-*    @brief Returns true if it is behind.
+*  @fn isBehind()
+*  @brief Returns true if it is behind.
 */
 FORCE_INLINE bool Plane3f::isBehind(const vec3& v) {
   return ((n.dot(v)) < 0.0);
 }
 /**
-*    @fn isInFront()
-*    @brief Returns true if it is in front.
+*  @fn isInFront()
+*  @brief Returns true if it is in front.
 */
 FORCE_INLINE bool Plane3f::isInFront(const vec3& v) {
   return ((n.dot(v)) > 0.0);
 }
 /**
-*    @fn dist()
-*    @details The distance from a point to the plane.  It is assumed the plane has been constructed.
-*    @param p The point to find the distance.
-*    @return The distance from the input point to the plane.
+*  @fn dist()
+*  @details The distance from a point to the plane.  It is assumed the plane has been constructed.
+*  @param p The point to find the distance.
+*  @return The distance from the input point to the plane.
 */
 FORCE_INLINE float Plane3f::dist(const vec3& p) const {
   /* Ax + By + Cz +D = 0 */
   return (float)(n.dot(p) + d);
 }
 /**
-*    @fn point()
-*    @details Projects a point onto the plane and returns the projected point.
-*    @param p The point to project onto the plane (line).
-*    @return The projected point.
+*  @fn point()
+*  @details Projects a point onto the plane and returns the projected point.
+*  @param p The point to project onto the plane (line).
+*  @return The projected point.
 */
 FORCE_INLINE vec3 Plane3f::point(const vec3& p) const {
   return (p - (n * dist(p)));
@@ -157,8 +157,8 @@ FORCE_INLINE vec3 Plane3f::projectPoint(const vec3& p) const {
   return (p - (n * dist(p)));
 }
 /*
-*    @fn construct
-*    @brief Construct the values for the plane assuming that the normal is already normalized.
+*  @fn construct
+*  @brief Construct the values for the plane assuming that the normal is already normalized.
 */
 FORCE_INLINE void Plane3f::construct(const vec3& normal, const vec3& point) {
   n = normal;

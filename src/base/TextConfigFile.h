@@ -11,8 +11,8 @@
 
 namespace BR2 {
 /**
-*    @class TextConfigFile
-*    @brief Any file that can be processed as a list of string name-value tokens.
+*  @class TextConfigFile
+*  @brief Any file that can be processed as a list of string name-value tokens.
 */
 class TextConfigFile : public TextDataFile {
 private:
