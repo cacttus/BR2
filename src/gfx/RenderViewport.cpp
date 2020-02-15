@@ -1,215 +1,99 @@
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GfxHeader.h"
+#include "../base/GraphicsWindow.h"
 
 namespace BR2 {
-RenderViewport::RenderViewport(int32_t w, int32_t h, ViewportLocation location, ViewportConstraint constraint) {
-  _viewportLocation = location;
-  _aspectRatio = 0;
+RenderViewport::RenderViewport(int32_t w, int32_t h, ViewportConstraint constraint) {
   _constraint = constraint;
 
-  _windowWidth = w;
-  _windowHeight = h;
-  glEnable(GL_SCISSOR_TEST);
-
-  //TODO: load this.
-  //_resolution = res_1024x768;//res_1600x900; //Unused
-  _currentViewportRect._max.x = w;
-  _currentViewportRect._max.y = h;
-  _currentViewportRect._min.x = 0;
-  _currentViewportRect._min.y = 0;
+  _rect._max.x = w;
+  _rect._max.y = h;
+  _rect._min.x = 0;
+  _rect._min.y = 0;
 
   setWidth(w); // - Constrains the window to the aspect ratio.
   setHeight(h);
 
-  _lastViewportRect = 0;
+  _lastRect = 0;
+}
+RenderViewport::~RenderViewport() {
+}
+void RenderViewport::bind(std::shared_ptr<RenderTarget> target) {
+  updateBox(target);
 
-  //**Force an initial viewport update
-  updateChanged(true);
-}
-float RenderViewport::pctW(float f) {
-  return (float)((float)getWidth() * (f * 0.01));
-}
-float RenderViewport::pctH(float f) {
-  return (float)((float)getHeight() * (f * 0.01));
-}
-Box2f RenderViewport::getClientQuad() {
-  return Box2f(Vec2f(0, 0), Vec2f((float)getWidth(), (float)getHeight()));
-}
-void RenderViewport::centerViewport() {
+  int32_t ix = getX();
+  int32_t iy = getY();
+  int32_t iw = getWidth();
+  int32_t ih = getHeight();
 
-  //if( _viewportLocation==VIEWPORT_TOPLEFTCORNER )
-  //{
-  //    _currentViewportRect._min.x = 0;
-  //    _currentViewportRect._min.y = _windowHeight-getHeight();
-  //}
-  //else if( _viewportLocation==VIEWPORT_CENTER_H )
-  //{
-  //    if( _windowWidth > getWidth() )
-  //        _currentViewportRect._min.x = ( _windowWidth - getWidth() ) / 2;
-  //    else 
-  //        _currentViewportRect._min.x = 0;
-  //}
-  //else if( _viewportLocation==VIEWPORT_CENTER_V )
-  //{
-  //    if( _windowHeight > getHeight() )
-  //        _currentViewportRect._min.y = ( _windowHeight - getHeight() ) / 2;
-  //    else 
-  //        _currentViewportRect._min.y = 0;
-  //}
-  //else if( _viewportLocation==VIEWPORT_CENTER_HV )
-  //{
-  //    if( _windowWidth > getWidth() )
-  //        _currentViewportRect._min.x = ( _windowWidth - getWidth() ) / 2;
-  //    else 
-  //        _currentViewportRect._min.x = 0;
-  //
-  //    if( _windowHeight > getHeight() )
-  //        _currentViewportRect._min.y = ( _windowHeight - getHeight() ) / 2;
-  //    else 
-  //        _currentViewportRect._min.y = 0;
-  //}
- // else 
- //     if( _viewportLocation==VIEWPORT_CENTER_NONE )
- // {}
+  glViewport(ix, iy, iw, ih);
+
+  //Scissor testing
+  glScissor(ix, iy, iw, ih);
 
 }
-// - Set the width / height of the viewport given the window's width/height parameters. (not the viewport's)
+void RenderViewport::updateBox(std::shared_ptr<RenderTarget> target) {
+  if (_constraint == ViewportConstraint::Fixed) {
+  }
+  else if (_constraint == ViewportConstraint::AdjustHeight) {
+  }
+  else if (_constraint == ViewportConstraint::Fullscreen) {
+    _rect._min.x = 0;
+    _rect._min.y = 0;
+    _rect._max.x = target->getWidth();
+    _rect._max.y = target->getHeight();
+
+  }
+  _lastRect = _rect;
+}
 void RenderViewport::setHeight(int32_t h) {
-  _windowHeight = h;
-  //  if( _constraint==VP_MAINTAIN_ASPECT_RATIO ){
-  //      // - sets the width relative to the height given the aspect ratio value.
-  //      float oldH = (float)_currentViewportRect._max.y;
-  //      _currentViewportRect._max.y=h;
-  //
-  //      _currentViewportRect._max.x = static_cast<int32_t>((float)getHeight() * getAspectRatio());
-  //  }
-  //  else if( _constraint==VP_FILL_WINDOW ){
-  //      // - Setting height here only will fill the window
-  //      _currentViewportRect._max.y =h;
-  //  }
-  //  else if( _constraint==VP_DONOTCHANGE ){
-  //  }
-  _currentViewportRect._max.y = _windowHeight;
-
-  //if(_height<=1) _height = 1;
-
-  //-*WE CANNOT HAVE THE WIDTH < THE HEIGHT
-  if (getWidth() < getHeight()) {
-    setHeight(getWidth() - 1);//_width=_height;
-  }
-  else {
-    centerViewport();
-  }
-
-
-  updateAspectRatio();
-  //  updateChanged();
+  _rect._max.y = h;
 }
 void RenderViewport::setWidth(int32_t w) {
-  _windowWidth = w;
-  //   if( _constraint==VP_MAINTAIN_ASPECT_RATIO ){
-  //       float oldW = (float)getWidth();
-  //       _currentViewportRect._max.x = w;
-  //
-  //       _currentViewportRect._max.y = static_cast<int32_t>((float)getWidth() / getAspectRatio());
-  //   }
-  //   else if( _constraint==VP_FILL_WINDOW ){
-  //       _currentViewportRect._max.x=w;
-  //   }
-  //   else if( _constraint==VP_DONOTCHANGE ){
-  //   }
-  _currentViewportRect._max.x = _windowWidth;
-  //if(_width<=2) _width = 2;
-
-  //-*WE CANNOT HAVE THE WIDTH < THE HEIGHT
-  if (getWidth() < getHeight()) {
-    setHeight(getWidth() - 1);
-    //_width=_height;
-  }
-  else {
-    centerViewport();
-  }
-
-  updateAspectRatio();
-  // updateChanged();
+  _rect._max.x = w;
 }
-
 int32_t RenderViewport::getWidth() {
-  // std::lock_guard<std::mutex> guard(_mtClassMtx);
-  return _currentViewportRect._max.x;
+  return _rect._max.x;
 }
 int32_t RenderViewport::getHeight() {
-  //std::lock_guard<std::mutex> guard(_mtClassMtx);
-  return _currentViewportRect._max.y;
+  return _rect._max.y;
 }
 int32_t RenderViewport::getX() {
-  return _currentViewportRect._min.x;
+  return _rect._min.x;
 }
 int32_t RenderViewport::getY() {
-  return _currentViewportRect._min.y;
+  return _rect._min.y;
 }
 void RenderViewport::setX(int32_t x) {
-  _currentViewportRect._min.x = x;
-  updateAspectRatio();
+  _rect._min.x = x;
 }
 void RenderViewport::setY(int32_t y) {
-  _currentViewportRect._min.y = y;
-  updateAspectRatio();
+  _rect._min.y = y;
 }
 float RenderViewport::getAspectRatio() {
-  return _aspectRatio;
-}//getAspectRatiof(getRatioForResolution(_resolution)); }
-float RenderViewport::getAspectRatio_1() {
-  return _aspectRatio_1;
-}//getAspectRatiof(getRatioForResolution(_resolution)); }
-
-void RenderViewport::updateAspectRatio() {
+  float ar = 0;
   if (getHeight() == 0) {
-    _aspectRatio = 1.0f;
+    ar = 1.0f;
   }
   else {
-    _aspectRatio = (float)getWidth() / (float)getHeight();
+    ar = (float)getWidth() / (float)getHeight();
   }
-
-  if (_aspectRatio != 0) {
-    _aspectRatio_1 = 1.0f / _aspectRatio;
-  }
-
-  updateReciprocalValues();
-}
-void RenderViewport::updateReciprocalValues() {
-  _width_1 = 1.0f / (float)getWidth();
-  _height_1 = 1.0f / (float)getHeight();
+  return ar;
 }
 bool RenderViewport::containsPointRelativeToWindow(vec2& mp) {
   if (mp.x < 0.0f) {
     return false;
   }
-  if (mp.x > _windowWidth - 1) {
+  if (mp.x > getWidth() - 1) {
     return false;
   }
   if (mp.y < 0.0f) {
     return false;
   }
-  if (mp.y > _windowHeight - 1) {
+  if (mp.y > getHeight() - 1) {
     return false;
   }
   return true;
-}
-void RenderViewport::updateChanged(bool blnForce) {
-  if (_lastViewportRect != _currentViewportRect || blnForce) {
-    int32_t ix = getX();
-    int32_t iy = getY();
-    int32_t iw = getWidth();
-    int32_t ih = getHeight();
-
-    glViewport(ix, iy, iw, ih);
-
-    //Scissor testing
-    glScissor(ix, iy, iw, ih);
-
-    _lastViewportRect = _currentViewportRect;
-  }
 }
 
 

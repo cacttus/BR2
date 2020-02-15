@@ -15,11 +15,10 @@ namespace BR2 {
 //Pass Scene + RenderTarget to the RenderPipe
 class RenderTarget : public VirtualMemoryShared<RenderTarget> {
 public:
-  std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
+  virtual int64_t getWidth() = 0;
+  virtual int64_t getHeight() = 0;
   std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
-  virtual void step();
 protected:
-  std::shared_ptr<RenderViewport> _pViewport = nullptr;
   std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
@@ -33,8 +32,11 @@ public:
   virtual ~GraphicsWindow() override;
 
   void init();
-  virtual void step() override;
+  void step() ;
   void idle(int64_t us);
+
+  virtual int64_t getWidth() override;
+  virtual int64_t getHeight() override;
 
   SDL_Window* getSDLWindow() { return _pSDLWindow; }
   void printHelpfulDebug();

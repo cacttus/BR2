@@ -9,51 +9,27 @@
 
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
-#include "../gfx/ScreenProps.h"
+#include "../gfx/GfxHeader.h"
 namespace BR2 {
+enum class ViewportConstraint {
+  Fixed,  //Does not scale with window.
+  AdjustHeight,   //Fixes to window height, with width maintained aspect ratio.
+  Fullscreen,   //Fixes to window width, and height.
+};
 /**
 *  @class WindowViewport
 *  @brief Viewport for rendering to a window.
 */
-class RenderViewport : public VirtualMemory /*This is contained by RenderWindow, do not accept window param events */ {
-  //int32_t _width, _height;    // Width / Height of viewport (not window)
-  float _width_1, _height_1;    // Reciprocal width/ height for faster computations.
-  //int32_t _x,_y;                // X / Y location of viewport (relative to window)
-//    t_aspect_ratio _aspectRatio;
-
-  int32_t _windowWidth=0;
-  int32_t _windowHeight=0;        // - We need the h/w of the host window to change the location of the viewport inside of it.
-
-  Box3i _lastViewportRect;
-  Box3i _currentViewportRect;
-
-  ViewportLocation _viewportLocation;
-  ViewportConstraint _constraint;
-  t_screen_resolution    _resolution;
-  float _aspectRatio;
-  float _aspectRatio_1;
-
-  //std::mutex _mtClassMtx;
-  
-  //New RenderSettings
-  float _pixelAspectX = 1;
-  float _pixelAspectY = 1;
-
-
-  void centerViewport();
-  void updateReciprocalValues();
+class RenderViewport : public VirtualMemoryShared<RenderViewport> {
 public:
+  RenderViewport(
+    int32_t w
+    , int32_t h
+    , ViewportConstraint constraint = ViewportConstraint::AdjustHeight
+  );
+  virtual ~RenderViewport() override;
 
-  FORCE_INLINE float getWidth_1() { return _width_1; }
-  FORCE_INLINE float getHeight_1() { return _height_1; }
-
-  Box2f getClientQuad();
-
-  //These return a percentage of the width/height of the viewport.  f is [0,100]
-  float pctW(float f);
-  float pctH(float f);
-
-  // - Set the width / height of the viewport given the window's width/height parameters. (not the viewport's)
+  void bind(std::shared_ptr<RenderTarget> target);
   void setHeight(int32_t h);
   void setWidth(int32_t w);
   void setX(int32_t x);
@@ -63,18 +39,13 @@ public:
   int32_t getX();
   int32_t getY();
   float getAspectRatio();
-  float getAspectRatio_1();
-
-  void updateAspectRatio();
-  void updateChanged(bool blnForce = false);
   bool containsPointRelativeToWindow(vec2& mp);
+  void updateBox(std::shared_ptr<RenderTarget> target);
 
-  RenderViewport(
-    int32_t w
-    , int32_t h
-    , ViewportLocation location = ViewportLocation::VIEWPORT_TOPLEFTCORNER
-    , ViewportConstraint constraint = ViewportConstraint::VP_FILL_WINDOW
-  );
+private:
+  Box3i _rect;
+  Box3i _lastRect;
+  ViewportConstraint _constraint;
 };
 
 }//ns game

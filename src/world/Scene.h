@@ -35,6 +35,8 @@ public:
   std::shared_ptr<GraphicsWindow> getWindow() { return _pGraphicsWindow; }
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow=x; }
 
+  std::vector<std::shared_ptr<CameraNode>> getAllCameras();
+
   void update(float delta);
 
   virtual void drawDeferred(RenderParams& rp) override;

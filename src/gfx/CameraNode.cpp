@@ -7,7 +7,6 @@
 namespace BR2 {
 CameraNode::CameraNode() {
   _vWorldUp.construct(0, 1, 0);
-
   _pMainFrustum = std::make_shared<FrustumBase>(_pViewport, _f_hfov);
   _vUp = vec3(0, 1, 0);
   _vLookAt = vec3(0, 0, 0);

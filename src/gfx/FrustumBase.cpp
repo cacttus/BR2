@@ -440,8 +440,8 @@ void FrustumBase::projectScreenPointToWorldPoint(
 ) {
   AssertOrThrow2(_pViewportRef != NULL);
 
-  float wratio = screenPoint.x * _pViewportRef->getWidth_1(); // x / width = % of x
-  float hratio = screenPoint.y * _pViewportRef->getHeight_1(); // y / height
+  float wratio = screenPoint.x * (1/_pViewportRef->getWidth()); // x / width = % of x
+  float hratio = screenPoint.y * (1/_pViewportRef->getHeight()); // y / height
   vec3 pTl, pTr, pBl;
   if (!bTest) {
     pTl = PointAt(tl);

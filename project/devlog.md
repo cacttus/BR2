@@ -21,19 +21,26 @@
 
 *2/14/2020*
 
-Remove viewport from window.  Now, we will only use the camera viewport to update the clip region.
-Viewports are only on cameras now.  We now use 1 viewport per camera, since we may, want to render certain regions with different width/height settings.
-So the only issue here, is when we want fullscreen mode, or we need to place the viewport in the window, so the viewport needs the window's width, height, or both.
-The viewport may need window height
-Viewport can be: 
+* Remove viewport from window.  Now, we will only use the camera viewport to update the clip region.
+* Viewports are only on cameras now.  We now use 1 viewport per camera, since we may, want to render certain regions with different width/height settings.
+* So the only issue here, is when we want fullscreen mode, or we need to place the viewport in the window, so the viewport needs the window's width, height, or both.
+* The viewport may need window height
+* Viewport can be: 
 	Width & Height of window - this is the same as "fullscreen" regardless of whether the window is actually covering the screen.
 
-Change viewport's update to bind().  We bind() the viewport before rendering, in RenderPipe.
+* Change viewport's update to bind().  We bind() the viewport before rendering, in RenderPipe.
 
+Camera also needs access to screen buffers so, when window resizes we may also resize screen buffers, but since window is depenent on camera w/h so the
+RenderPipeline will also be dependent on camera w/h
+**Remove Window reference from RenderPipeline
+**Fix the GraphisWindow:updateWidthheight
 ```
 Camera->bind();
+...viewport->bind();
 scene->render();
 ```
+
+***So here is the issue, we can only have 1 renderpipe per resolution.  We can't create a new renderpipe for each camera.***
 
 
 *2/13/2020*

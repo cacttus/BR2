@@ -3,6 +3,14 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
+#include "../base/GraphicsWindow.h"
+#include "../base/WindowManager.h"
+#include "../base/ApplicationPackage.h"
+#include "../base/FileSystem.h"
+#include "../base/ScriptManager.h"
+#include "../base/FpsMeter.h"
+#include "../base/FrameSync.h"
+#include "../base/InputManager.h"
 
 #include "../model/MeshUtils.h"
 
@@ -15,21 +23,10 @@
 #include "../gfx/RenderUtils.h"
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
-
-#include "../base/GraphicsWindow.h"
-#include "../base/WindowManager.h"
-#include "../base/ApplicationPackage.h"
-#include "../base/FileSystem.h"
-#include "../base/ScriptManager.h"
-
-#include "../base/FpsMeter.h"
-#include "../base/FrameSync.h"
-#include "../base/InputManager.h"
-
+#include "../gfx/FlyingCameraControls.h"
 #include "../gfx/MegaTex.h"
 
 #include "../world/Scene.h"
-#include "../gfx/FlyingCameraControls.h"
 
 
 namespace BR2 {
@@ -56,6 +53,14 @@ Scene::~Scene() {
   _pLightManager = nullptr;
   _pScriptManager = nullptr;
 }
+std::vector<std::shared_ptr<CameraNode>> Scene::getAllCameras() {
+  std::vector<std::shared_ptr<CameraNode>> ret;
+  iterateBreadthFirst<CameraNode>([&ret](std::shared_ptr<CameraNode> cam) {
+    ret.push_back(cam);
+    return true;
+  });
+  return ret;
+}
 void Scene::createFlyingCamera() {
   //In the future we will replace this witht he active object.
   BroLogInfo("Creating Flying Camera");
@@ -64,16 +69,19 @@ void Scene::createFlyingCamera() {
 
 #ifdef NOSCRIPT
   BroLogInfo("Creating Fly Camera.");
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport, ps);
-  cn->init();
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>();
+  std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
+  cn->addComponent(css);
+  attachChild(cn);
+  // cn->init();
 
-  _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
-  updateCameraPosition();
-  _vMoveVel.construct(0, 0, 0);
-  _pCamera->setPos(vec3(30, 30, 30));
-  _pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-  _vCamNormal = _pCamera->getViewNormal();
-  _vCamPos = _pCamera->getPos();
+  //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+  //updateCameraPosition();
+  //_vMoveVel.construct(0, 0, 0);
+  //_pCamera->setPos(vec3(30, 30, 30));
+  //_pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
+  //_vCamNormal = _pCamera->getViewNormal();
+  //_vCamPos = _pCamera->getPos();
 #else
   //Sort of also a scripting test.
   std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
@@ -224,29 +232,29 @@ void Scene::drawDebugText() {
   int dy = 16;//Also the font size
   int cy = 0;
 
-//  _pAppUi->clearDebugText();
-//  if (_bShowDebugText) {
-//    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-//
-//    //////////////////////////////////////////////////////////////////////////
-//#define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
-////////////////////////////////////////////////////////////////////////////
-//    //DBGL("%.2f", Gu::getFpsMeter()->getFps());
-//
-//    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-//    DBGL("Global");
-//    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-//    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-//    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-//    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-//    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-//    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-//    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-//
-//    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
-//
-//  }
-//  _pAppUi->endDebugText();
+  //  _pAppUi->clearDebugText();
+  //  if (_bShowDebugText) {
+  //    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+  //
+  //    //////////////////////////////////////////////////////////////////////////
+  //#define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
+  ////////////////////////////////////////////////////////////////////////////
+  //    //DBGL("%.2f", Gu::getFpsMeter()->getFps());
+  //
+  //    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
+  //    DBGL("Global");
+  //    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
+  //    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
+  //    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
+  //    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
+  //    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
+  //    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+  //    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
+  //
+  //    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+  //
+  //  }
+  //  _pAppUi->endDebugText();
 }
 
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {

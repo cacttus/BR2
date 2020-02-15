@@ -24,16 +24,14 @@
 #include "../gfx/OpenGLApi.h"
 #include "../gfx/VulkanApi.h"
 #include "../gfx/UiControls.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/RenderViewport.h"
 
 #include "../model/ModelCache.h"
 
 #include "../world/Scene.h"
 
 namespace BR2 {
-void RenderTarget::step() {
-  _pViewport->updateChanged(true);
-}
-//////////////////////////////////////////////////////////////////////////
 
 //Called exclusively by the graphics API
 GraphicsWindow::GraphicsWindow(bool ismain, string_t title, RenderSystem::e sys) {
@@ -53,6 +51,12 @@ void GraphicsWindow::idle(int64_t us) {
   if (_pScene) {
     _pScene->idle(us);
   }
+}
+int64_t GraphicsWindow::getWidth() {
+  return _iLastWidth;
+}
+int64_t GraphicsWindow::getHeight() {
+  return _iLastHeight;
 }
 void GraphicsWindow::createManagers() {
   //BroLogInfo("Creating Graphics API.");
@@ -111,13 +115,13 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
       _pContext = nullptr;
     }
 
-  //  //Unfortunately because SDL needs a window, we need to wait to create the context.
-  //  if (getGraphicsContext() == nullptr) {
-  //    if (std::dynamic_pointer_cast<OpenGLApi>(getGraphicsApi())->makeContext(getThis<GraphicsWindow>(), profs[iProf]) != nullptr) {
-  //      //Couldn't make context, try again.
-  //      break;
-  //    }
-  //  }
+    //  //Unfortunately because SDL needs a window, we need to wait to create the context.
+    //  if (getGraphicsContext() == nullptr) {
+    //    if (std::dynamic_pointer_cast<OpenGLApi>(getGraphicsApi())->makeContext(getThis<GraphicsWindow>(), profs[iProf]) != nullptr) {
+    //      //Couldn't make context, try again.
+    //      break;
+    //    }
+    //  }
   }
 
   _pFrameSync = std::make_shared<FrameSync>(_pContext);
@@ -170,7 +174,6 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
   //*Set room width / height
   _iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
   _iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pViewport = std::make_shared<RenderViewport>(_iLastWidth, _iLastHeight);
 
 #ifdef BRO_OS_WINDOWS
   BroLogError("We are not making the window icon because there's an error somewhere in SDL here.");
@@ -213,25 +216,26 @@ void GraphicsWindow::initRenderSystem() {
 }
 void GraphicsWindow::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
-  if (_iLastWidth != w || bForce) {
-    _pViewport->setWidth(w);
-    if (_iLastHeight != h || bForce) {
-      _pViewport->setHeight(h);
-    }
-    if (_iLastHeight != h || _iLastWidth != w || bForce) {
-      if (_pRenderPipe != nullptr) {
-        _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
-      }
-      //   _pApp->screenChanged(w, h, _bFullscreen);
+  if ((_iLastWidth != w) || (_iLastHeight != h) || bForce) {
 
-      if (_pScene) {
-        _pScene->updateWidthHeight(w, h, bForce);
-      }
-
+    for (auto cam : getScene()->getAllCameras()) {
+      cam->getViewport()->updateBox(getThis<GraphicsWindow>());
     }
+
+    if (_pRenderPipe != nullptr) {
+      _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
+    }
+
+    //   _pApp->screenChanged(w, h, _bFullscreen);
+
+    if (_pScene) {
+      _pScene->updateWidthHeight(w, h, bForce);
+    }
+
     _iLastWidth = w;
     _iLastHeight = h;
   }
+
 }
 void GraphicsWindow::toggleFullscreen() {
   if (_bFullscreen == false) {
@@ -291,9 +295,7 @@ void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
   _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getAppPackage()->getEnvTextureFolder());
-  // Gu::setRenderPipe(_pRenderPipe);
 
-  //_pRenderPipe->getPipeBits().set();
 }
 void GraphicsWindow::beginRender() {
 
@@ -314,12 +316,9 @@ void GraphicsWindow::endRender() {
   Perf::popPerf();
 }
 void GraphicsWindow::step() {
-  
   //Managers
   Gu::setContext(_pContext);
   _pContext->update();
-
-  RenderTarget::step();
 
   if (_pPicker != nullptr) {
     _pPicker->update(Gu::getInputManager());

@@ -309,6 +309,7 @@ typedef enum {
  class VaoDataGeneric;
  class MeshNode;
  class UtilMeshInline;
+ class RenderTarget;
 
  namespace UiEventId {
  typedef enum {

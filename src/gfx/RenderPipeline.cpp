@@ -34,6 +34,140 @@ RenderPipeline::RenderPipeline(std::shared_ptr<GraphicsWindow> w) {
 RenderPipeline::~RenderPipeline() {
   releaseFbosAndMesh();
 }
+void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBits) {
+  std::shared_ptr<CameraNode> cam = pScene->getActiveCamera();
+  cam->getViewport()->bind();
+
+  if (cam == nullptr) {
+    BroLogErrorOnce("Camera was not set for renderScene");
+    return;
+  }
+  if (cam->getViewport() == nullptr) {
+    BroLogErrorOnce("Camera Viewport was not set for renderScene");
+    return;
+  }
+  std::shared_ptr<RenderViewport> pv = cam->getViewport();
+  if (pv->getWidth() != _iLastWidth || pv->getHeight() != _iLastHeight) {
+    init(pv->getWidth(), pv->getHeight(), "");
+  }
+
+
+  //Only render one thing at a tiem to prevent corrupting the pipe
+  if (_bRenderInProgress == true) {
+    BroLogError("Tried to render something while another render was currently in progress.");
+    return;
+  }
+
+  _bRenderInProgress = true;
+  {
+    RenderParams rp;
+    //rp->setWindow(gw);
+
+    //This doesn't conform ot the new ability to render individual objects.
+    //This draws all scene shadows
+    //If we want shadows in the thumbnails, we'll need to fix this to be able to render
+    //individual object shadows
+    beginRenderShadows();
+    {
+      //**This shouldn't be an option ** 
+      //Curetly we update lights at the same time as shadows.  this is erroneous
+      if (pipeBits.test(PipeBit::e::Shadow)) {
+        renderShadows(cam);
+      }
+    }
+    endRenderShadows();
+
+    _pMsaaForward->clearFb();
+
+    //1. 3D rendering
+    if (pipeBits.test(PipeBit::e::Deferred)) {
+      beginRenderDeferred();
+      {
+        pScene->drawDeferred(rp);
+      }
+      endRenderDeferred();
+
+      //Blit to forward FB
+      blitDeferredRender(pScene, cam);
+
+      if (pipeBits.test(PipeBit::e::Transparent)) {
+        pScene->drawTransparent(rp);
+      }
+
+      //Do post processing
+
+    }
+    /*
+
+    //Do post processing
+    postProcessDeferredRender();
+    }
+
+    if (pipeBits.test(PipeBit::e::Forward)) {
+    beginRenderForward();
+    {
+    toDraw->drawForward(rp);
+
+    if (pipeBits.test(PipeBit::e::Debug)) {
+    toDraw->drawDebug(rp);
+    }
+    if (pipeBits.test(PipeBit::e::NonDepth)) {
+    //UI
+    toDraw->drawNonDepth(rp);
+    }
+    }
+    endRenderForward();
+    }
+    */
+    //2. Forward Rendering
+    if (pipeBits.test(PipeBit::e::Forward)) {
+      beginRenderForward();
+
+      pScene->drawForward(rp);
+
+      //2.1 - Debug
+      if (pipeBits.test(PipeBit::e::Debug)) {
+        pScene->drawDebug(rp);
+      }
+
+      //**TODO: DOF should be a pipe bit.
+      //2.2 - DOF
+      if (pipeBits.test(PipeBit::e::DepthOfField)) {
+        postProcessDOF(cam);
+      }
+
+      //Rebind Forward FBO
+      beginRenderForward();
+      //  Gu::getGui()->debugForceLayoutChanged();
+
+      //3. Orthographic, Behind the UI 
+      if (pipeBits.test(PipeBit::e::NonDepth)) {
+        pScene->drawNonDepth(rp);
+      }
+
+      //4. The UI
+      if (pipeBits.test(PipeBit::e::UI_Overlay)) {
+        pScene->drawUI(rp);
+
+      }
+
+      endRenderForward();
+    }
+    //
+    //      beginRenderTransparent();
+    //      {
+    //          //TP uses the forward texture.
+    //        //   toDraw->drawTransparent(rp);
+    //      }
+    //      endRenderTransparent();
+
+    //5. Blit
+    if (pipeBits.test(PipeBit::e::BlitFinal)) {
+      endRenderAndBlit(cam);
+    }
+  }
+  _bRenderInProgress = false;
+}
 std::shared_ptr<GLContext> RenderPipeline::getContext() {
   return _pWindow->getGraphicsContext();
 }
@@ -51,7 +185,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
     BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
   }
 
-  //Enable some stuff.
+  //Enable required OpenGL options.
 #ifdef _DEBUG
   glEnable(GL_DEBUG_OUTPUT);
 #endif
@@ -60,6 +194,8 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
+  glEnable(GL_SCISSOR_TEST);
+
 
   releaseFbosAndMesh();
 
@@ -154,7 +290,6 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
     _pEnvTex = getContext()->getTexCache()->getOrLoad(strEnvTexturePath, false, true, true);
   }
 }
-
 void RenderPipeline::saveScreenshot() {
   if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F9)) {
     if (Gu::getInputManager()->shiftHeld()) {
@@ -228,7 +363,6 @@ void RenderPipeline::saveScreenshot() {
   }
 
 }
-
 void RenderPipeline::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted) {
   //Downsize the MSAA sample buffer.
   if (_bMsaaEnabled) {
@@ -297,7 +431,7 @@ void RenderPipeline::renderShadows(std::shared_ptr<CameraNode> cam) {
   }
 
   //Force refresh teh viewport.
-  cam->getViewport()->updateChanged(true);
+  cam->getViewport()->bind();
 }
 
 void RenderPipeline::beginRenderDeferred() {
@@ -612,7 +746,6 @@ void RenderPipeline::endRenderAndBlit(std::shared_ptr<CameraNode> pCam) {
 
 }
 void RenderPipeline::createQuadMesh(int w, int h) {
-
   //    DEL_MEM(_pQuadMesh);
   _pQuadMesh = nullptr;
   _pQuadMesh = MeshUtils::createScreenQuadMesh(w, h);
@@ -629,7 +762,7 @@ void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
   glGetIntegerv(GL_MAX_DRAW_BUFFERS, (GLint*)&iMaxDrawBuffers);
 
   if (iMaxDrawBuffers < 1) {
-    BroThrowException(Stz "[RenderPipe] Your GPU only supports " + iMaxDrawBuffers +
+    BroThrowException("[RenderPipe] Your GPU only supports " + iMaxDrawBuffers +
       " MRTs, the system requires at least " + 1 +
       " MRTs. Consider upgrading graphics card.");
   }
@@ -638,7 +771,7 @@ void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
   glGetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT, (GLint*)&iMaxFbHeight);
 
   if (iMaxFbHeight < iHeight || iMaxFbWidth < iWidth) {
-    BroThrowException(Stz "[RenderPipe] Your GPU only supports MRTs at " +
+    BroThrowException("[RenderPipe] Your GPU only supports MRTs at " +
       iMaxFbWidth + "x" + iMaxFbHeight +
       " pixels. The system requested " + iWidth + "x" + iHeight + ".");
   }
@@ -648,27 +781,26 @@ void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
 void RenderPipeline::checkMultisampleParams() {
   GLint iMaxSamples;
   glGetIntegerv(GL_MAX_SAMPLES, &iMaxSamples);
-  BroLogInfo(Stz "Max OpenGL MSAA Samples " + iMaxSamples);
+  BroLogInfo("Max OpenGL MSAA Samples " + iMaxSamples);
 
   if (_bMsaaEnabled) {
     if ((int)_nMsaaSamples > iMaxSamples) {
-      BroLogWarn(Stz "[RenderPipe] MSAA sample count of '" + _nMsaaSamples +
+      BroLogWarn("[RenderPipe] MSAA sample count of '" + _nMsaaSamples +
         "' was larger than the card's maximum: '" + iMaxSamples + "'. Truncating.");
       _nMsaaSamples = iMaxSamples;
       Gu::debugBreak();
     }
     if (BitHacks::bitcount(_nMsaaSamples) != 1) {
-      BroLogWarn(Stz "[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
+      BroLogWarn("[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
       _nMsaaSamples = iMaxSamples > 2 ? 2 : iMaxSamples;
       Gu::debugBreak();
     }
   }
 }
 void RenderPipeline::debugForceSetPolygonMode() {
-
 #ifdef __WINDOWS__
 #ifdef _DEBUG
-  //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
+  //These must be #ifdef out because glPolygonMode is not present in gl330 core 
   glPolygonMode(GL_FRONT, GL_FILL);
   glPolygonMode(GL_BACK, GL_FILL);
 #endif
@@ -684,147 +816,8 @@ void RenderPipeline::releaseFbosAndMesh() {
     _pMsaaDeferred = nullptr;
     _pMsaaDepth = nullptr;
   }
-
   _pShadowBoxFboMaster = nullptr;
   _pShadowFrustumMaster = nullptr;
-}
-
-void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBits) {
-  //Again, technically we should be rendering a "target" not just assuming we're drawing to a window.  This would mean, we need to check to ensure the FBO is correct.  We may want to render to another area.
-  //TODO: We want to be able to "swap" stages of the render pipeline, making it modular.  This would allow us to render item previews simply, without adding fogging, and DOF.
-  
-  //Re-Init
-  std::shared_ptr<CameraNode> cam = pScene->getActiveCamera();
-
-  if (cam == nullptr) {
-    BroLogErrorOnce("Camera was not set for renderScene");
-    return;
-  }
-  if (cam->getViewport() == nullptr) {
-    BroLogErrorOnce("Camera Viewport was not set for renderScene");
-    return;
-  }
-  std::shared_ptr<RenderViewport> pv = cam->getViewport();
-  if (pv->getWidth() != _iLastWidth || pv->getHeight() != _iLastHeight) {
-    init(pv->getWidth(), pv->getHeight(), "");
-  }
-
-
-  //Only render one thing at a tiem to prevent corrupting the pipe
-  if (_bRenderInProgress == true) {
-    BroLogError("Tried to render something while another render was currently in progress.");
-    return;
-  }
-
-  _bRenderInProgress = true;
-  {
-    RenderParams rp;
-    //rp->setWindow(gw);
-
-    //This doesn't conform ot the new ability to render individual objects.
-    //This draws all scene shadows
-    //If we want shadows in the thumbnails, we'll need to fix this to be able to render
-    //individual object shadows
-    beginRenderShadows();
-    {
-      //**This shouldn't be an option ** 
-      //Curetly we update lights at the same time as shadows.  this is erroneous
-      if (pipeBits.test(PipeBit::e::Shadow)) {
-        renderShadows(cam);
-      }
-    }
-    endRenderShadows();
-
-    _pMsaaForward->clearFb();
-
-    //1. 3D rendering
-    if (pipeBits.test(PipeBit::e::Deferred)) {
-      beginRenderDeferred();
-      {
-        pScene->drawDeferred(rp);
-      }
-      endRenderDeferred();
-
-      //Blit to forward FB
-      blitDeferredRender(pScene,cam);
-
-      if (pipeBits.test(PipeBit::e::Transparent)) {
-        pScene->drawTransparent(rp);
-      }
-
-      //Do post processing
-
-    }
-    /*
-
-    //Do post processing
-    postProcessDeferredRender();
-    }
-
-    if (pipeBits.test(PipeBit::e::Forward)) {
-    beginRenderForward();
-    {
-    toDraw->drawForward(rp);
-
-    if (pipeBits.test(PipeBit::e::Debug)) {
-    toDraw->drawDebug(rp);
-    }
-    if (pipeBits.test(PipeBit::e::NonDepth)) {
-    //UI
-    toDraw->drawNonDepth(rp);
-    }
-    }
-    endRenderForward();
-    }
-    */
-    //2. Forward Rendering
-    if (pipeBits.test(PipeBit::e::Forward)) {
-      beginRenderForward();
-
-      pScene->drawForward(rp);
-
-      //2.1 - Debug
-      if (pipeBits.test(PipeBit::e::Debug)) {
-        pScene->drawDebug(rp);
-      }
-
-      //**TODO: DOF should be a pipe bit.
-      //2.2 - DOF
-      if (pipeBits.test(PipeBit::e::DepthOfField)) {
-        postProcessDOF(cam);
-      }
-
-      //Rebind Forward FBO
-      beginRenderForward();
-      //  Gu::getGui()->debugForceLayoutChanged();
-
-      //3. Orthographic, Behind the UI 
-      if (pipeBits.test(PipeBit::e::NonDepth)) {
-        pScene->drawNonDepth(rp);
-      }
-
-      //4. The UI
-      if (pipeBits.test(PipeBit::e::UI_Overlay)) {
-        pScene->drawUI(rp);
-
-      }
-
-      endRenderForward();
-    }
-    //
-    //      beginRenderTransparent();
-    //      {
-    //          //TP uses the forward texture.
-    //        //   toDraw->drawTransparent(rp);
-    //      }
-    //      endRenderTransparent();
-
-    //5. Blit
-    if (pipeBits.test(PipeBit::e::BlitFinal)) {
-      endRenderAndBlit(cam);
-    }
-  }
-  _bRenderInProgress = false;
 }
 std::shared_ptr<Img32> RenderPipeline::getResultAsImage() {
   std::shared_ptr<Img32> bi = std::make_shared<Img32>();
@@ -840,10 +833,10 @@ std::shared_ptr<Img32> RenderPipeline::getResultAsImage() {
   }
 
   //Only transparent method that's working
-// pTarget = _pBlittedDeferred->getTargetByName("Color");
-// if (RenderUtils::getTextureDataFromGpu(bi, pTarget->getGlTexId(), GL_TEXTURE_2D) == true) {
-//     //the GL tex image must be flipped to show upriht/
-// }
+  // pTarget = _pBlittedDeferred->getTargetByName("Color");
+  // if (RenderUtils::getTextureDataFromGpu(bi, pTarget->getGlTexId(), GL_TEXTURE_2D) == true) {
+  //     //the GL tex image must be flipped to show upriht/
+  // }
 
 
   return bi;
