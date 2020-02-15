@@ -30,8 +30,8 @@
 
 * Change viewport's update to bind().  We bind() the viewport before rendering, in RenderPipe.
 
-Camera also needs access to screen buffers so, when window resizes we may also resize screen buffers, but since window is depenent on camera w/h so the
-RenderPipeline will also be dependent on camera w/h
+* Camera also needs access to screen buffers so, when window resizes we may also resize screen buffers, but since window is depenent on camera w/h so the
+* RenderPipeline will also be dependent on camera w/h
 **Remove Window reference from RenderPipeline
 **Fix the GraphisWindow:updateWidthheight
 ```
@@ -40,8 +40,12 @@ Camera->bind();
 scene->render();
 ```
 
-***So here is the issue, we can only have 1 renderpipe per resolution.  We can't create a new renderpipe for each camera.***
-
+* So here is the issue, we can only have 1 renderpipe per resolution.  We can't create a new renderpipe for each camera.
+Either way, it appears you have to share the screen dimensions with the camera.  In the least, you need to share the RenderPipe.
+If you didn't you'd end up creating more than 1 renderpipe.  Graphics isn't quite there yet, where we can establish
+30 render surafaces *per camera*.
+If you notice, Blender fixes all cameras to use the same dims, scales, and resolution, since there can only be one rendering pipeline.  It's not that it is logical, it's that
+the logical solution is resource intensive.
 
 *2/13/2020*
 

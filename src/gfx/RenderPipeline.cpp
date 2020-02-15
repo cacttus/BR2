@@ -36,7 +36,7 @@ RenderPipeline::~RenderPipeline() {
 }
 void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBits) {
   std::shared_ptr<CameraNode> cam = pScene->getActiveCamera();
-  cam->getViewport()->bind();
+  cam->getViewport()->bind(_pWindow);
 
   if (cam == nullptr) {
     BroLogErrorOnce("Camera was not set for renderScene");
