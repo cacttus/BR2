@@ -7,12 +7,13 @@ BR2 is a videogame and graphics engine for desktop development.  It consumes lig
 * Forward Kinematic Animation
 * Scenegraph
 * Physics (beta)
+* An Gameobject and Component system.
 * Particles
 * Deferred Lighting
 * Custom world topology.
 * World editing.
 * An Asset Library System (alpha)
-
+* A *minimal* C# scripting engine.
 
 # Development
 Most systems are in the beginning, or beta stages of development.  The engine is purely experimental at this point, and would likely not facilitate creating any 
