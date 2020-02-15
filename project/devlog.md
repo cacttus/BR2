@@ -4,6 +4,7 @@
 * TODO - detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 
 ## Roadmap
+* CSharp inline *minimal* scripts.
 * Remove Spec System, use "data" system.
 * Remove WorldObject inheritence, and use Component model.
 * CMake integration. Test on iOS, Linux, Android.
