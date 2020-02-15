@@ -19,8 +19,7 @@ BR2 is a videogame and graphics engine for desktop development.  It consumes lig
 Most systems are in the beginning, or beta stages of development.  The engine is purely experimental at this point, and would likely not facilitate creating any 
 games further than integrating the source code itself.
 
-The application does not yet suport detailed game editing with object placement and a detailed asset system such as Unity and Godot, 
-however we are going to leverage Qt's user interface power to make this a possibility in the future.
+The application does not yet suport detailed game editing with object placement and a detailed asset system such as Unity and Godot.
 The development of this engine is dependent on the game outlined in the game design document.  Features that are currently being worked on will facilitate the world editor, and user interface
 that will make phase 1 of this game possible.
 
