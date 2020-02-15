@@ -20,6 +20,7 @@
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
 
 *2/14/2020*
+
 Remove viewport from window.  Now, we will only use the camera viewport to update the clip region.
 Viewports are only on cameras now.  We now use 1 viewport per camera, since we may, want to render certain regions with different width/height settings.
 So the only issue here, is when we want fullscreen mode, or we need to place the viewport in the window, so the viewport needs the window's width, height, or both.
@@ -28,8 +29,8 @@ Viewport can be:
 	Width & Height of window - this is the same as "fullscreen" regardless of whether the window is actually covering the screen.
 
 Change viewport's update to bind().  We bind() the viewport before rendering, in RenderPipe.
-`Camera->bind();
-scene->render();`
+`Camera->bind();`
+`scene->render();`
 
 
 *2/13/2020*
