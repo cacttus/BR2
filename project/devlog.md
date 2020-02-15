@@ -43,7 +43,8 @@ scene->render();
 * So here is the issue, we can only have 1 renderpipe per resolution.  We can't create a new renderpipe for each camera.
 Either way, it appears you have to share the screen dimensions with the camera.  In the least, you need to share the RenderPipe.
 If you didn't you'd end up creating more than 1 renderpipe.  Graphics isn't quite there yet, where we can establish
-30 render surafaces *per camera*.
+30 render surafaces *per camera*.  On the other hand, you'd have to resize the buffers each time you swap cameras.  Neither solution is optimal, so we must use
+the same dimensions per camera.
 If you notice, Blender fixes all cameras to use the same dims, scales, and resolution, since there can only be one rendering pipeline.  It's not that it is logical, it's that
 the logical solution is resource intensive.
 
