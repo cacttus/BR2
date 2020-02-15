@@ -19,32 +19,37 @@
 
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
 
+*2/14/2020*
+Remove viewport from window.  Now, we will only use the camera viewport to update the clip region.
+Viewports are only on cameras now.  We now use 1 viewport per camera, since we may, want to render certain regions with different width/height settings.
+So the only issue here, is when we want fullscreen mode, or we need to place the viewport in the window, so the viewport needs the window's width, height, or both.
+The viewport may need window height
+Viewport can be: 
+	Width & Height of window - this is the same as "fullscreen" regardless of whether the window is actually covering the screen.
+
+Change viewport's update to bind().  We bind() the viewport before rendering, in RenderPipe.
+`Camera->bind();
+scene->render();`
+
+
 *2/13/2020*
 * Separating camera and window viewport.
-	The only reason camera uses the window viewport, is to update it.
-	The only reason frustum uses viewport is to calculate the frustum geometry, which can be calculated simply by passing the camera FOV, Near/far.
-	We must also consider that the game's camera aspect ratio is way off.  This is partially due to the window/camera viewport dependency.
-
-	Frustum can be a class off of viewport.
-	Or an independent class (probably better this way)
-	Frustums also used for shadow boxes.
-
-	class Frustum()
-
-glViewport needs to be tied to the RenderPipe, not renderviewpoert
-Add pixelaspectX, pixelaspectY for non-square pixels.
+	* The only reason camera uses the window viewport, is to update it.
+	* The only reason frustum uses viewport is to calculate the frustum geometry, which can be calculated simply by passing the camera FOV, Near/far.
+	* We must also consider that the game's camera aspect ratio is way off.  This is partially due to the window/camera viewport dependency.
+	* Frustum can be a class off of viewport.
+	* Or an independent class (probably better this way)
+	* Frustums also used for shadow boxes.
+* glViewport needs to be tied to the RenderPipe, not renderviewpoert
+* Add pixelaspectX, pixelaspectY for non-square pixels.
 * Must Fix the pixel aspect (squashing)
-Resolution options - Automatic, then a set of adjustable resolutions.  
-	Fullscreen- width + height are the height of the main display
-	Windowed 
-	- * Height Adjustment - the height resolution is set to the height of the window.Viewport is placed in the window Center if width does not equal window
-	1920 x 1080
-Auto Resolution
-It appears that teh camera viewport must be tied to the render area.
-
+* Resolution options - Automatic, then a set of adjustable resolutions.  
+	* Fullscreen- width + height are the height of the main display
+	* Windowed 
+	* - * Height Adjustment - the height resolution is set to the height of the window.Viewport is placed in the window Center if width does not equal window
+	* 1920 x 1080
 ** Inherit camera with FlyCam, or use a script?
 	Unity uses a script to control camera.  I'm not sure what to do here.  A script would be neat though.
-
 * Created basic C# scripting, and moved the FlyCam controls into a script.
 
 *2/12/2020*

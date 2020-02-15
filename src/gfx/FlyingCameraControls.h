@@ -22,7 +22,7 @@ public:
   virtual ~FlyingCameraControls() override;
 
   virtual void start() override;
-  virtual void update() override;
+  virtual void update(float delta) override;
 
   void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
   void userZoom(float amt);

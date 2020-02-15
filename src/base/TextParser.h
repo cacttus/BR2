@@ -16,7 +16,7 @@ namespace BR2 {
 */
 class TextParser : public VirtualMemory {
 public:
-  TextParser(const char* data);
+  TextParser(char* data);
   virtual ~TextParser() override;
 
   bool charIsWs();

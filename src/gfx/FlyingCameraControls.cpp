@@ -30,7 +30,7 @@ FlyingCameraControls::~FlyingCameraControls() {
 void FlyingCameraControls::start(){
 
 }
-void FlyingCameraControls::update() {
+void FlyingCameraControls::update(float delta) {
 }
 
 void FlyingCameraControls::updateCameraPosition() {

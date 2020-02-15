@@ -5,11 +5,10 @@
 #include "../base/Gu.h"
 
 namespace BR2 {
-CameraNode::CameraNode() : PhysicsNode(nullptr) {
-  _pViewport = ppViewport;
+CameraNode::CameraNode() {
   _vWorldUp.construct(0, 1, 0);
 
-  _pMainFrustum = std::make_shared<FrustumBase>(ppViewport, _f_hfov);
+  _pMainFrustum = std::make_shared<FrustumBase>(_pViewport, _f_hfov);
   _vUp = vec3(0, 1, 0);
   _vLookAt = vec3(0, 0, 0);
 
@@ -47,7 +46,7 @@ ProjectedRay CameraNode::projectPoint(vec2& mouse) {
 }
 void CameraNode::setFOV(t_radians fov) {
   _f_hfov = fov;
-  _pViewport->updateChanged(true);
+  //_pViewport->updateChanged(true);
   _pMainFrustum->setFov(_f_hfov);
 }
 void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {

@@ -10,6 +10,8 @@ CSharpCompiler::CSharpCompiler() {
 CSharpCompiler::~CSharpCompiler() {
 }
 std::shared_ptr<CSharpCompileResult> CSharpCompiler::compile(char* code) {
+  std::shared_ptr<CSharpCompileResult> res = nullptr;
+  return res;
 /*
 general - parse
 

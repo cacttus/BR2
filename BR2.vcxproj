@@ -517,7 +517,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\lib\</OutDir>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>./external/SDL2/include/;$(IncludePath)</IncludePath>
     <TargetName>core_x86_d</TargetName>
     <IntDir>.\tmp\core\debug32</IntDir>
   </PropertyGroup>

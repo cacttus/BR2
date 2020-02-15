@@ -11,6 +11,7 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
+#include "../world/WorldObject.h"
 
 namespace BR2 {
 /**
