@@ -37,6 +37,7 @@ scene->render();
 
 
 *2/13/2020*
+
 * Separating camera and window viewport.
 	* The only reason camera uses the window viewport, is to update it.
 	* The only reason frustum uses viewport is to calculate the frustum geometry, which can be calculated simply by passing the camera FOV, Near/far.
@@ -57,6 +58,7 @@ scene->render();
 * Created basic C# scripting, and moved the FlyCam controls into a script.
 
 *2/12/2020*
+
 * New file structure looks like this.
 * /My Documents
     * /BR2
@@ -75,6 +77,7 @@ scene->render();
 * Renamed engine, and namespace to "BR2" 
 
 *2/11/2020*
+
 * Removed "app"
 * Moved contextual managers back into GLContext.
 * Removed generic "GraphicsContext" in favor of using GLContext (sorry, vulkan, maybe later).
@@ -83,8 +86,8 @@ scene->render();
 * Renamed Package to ApplicationPackage.  It's an application, but it's also 'packed' so settled on AppPackage.
 
 *2/7/2020*
-* Scene
 
+* Scene
 GLContext
 	Shaders, texture, models, renderpipe, particle manager, PhysicsWorld (as its gpu accellerated), picker (uses buffers)
 
@@ -110,6 +113,7 @@ GLContext
 
 
 *12/29/19*
+
 * Began simple port to Make and CMake with gcc.  Fix this in the future.  The one caveat here is still debugging with VS. 
 * VS allows a CMake project, but it doesn't appear as lightweight as a simple makefile.
 
@@ -121,6 +125,7 @@ GLContext
 * We converted Shake thus to its own EXE.  It's no longer a library.
 
 *8/23/19*
+
 * Remove most of AppBase and move to ProjectFile.
 * Move remaining AppBase contents into ProjectFile
 * Remove "AppBase" or make it ProjectBase. Sth.
@@ -131,10 +136,12 @@ GLContext
 * shaders & Everything need to be changed...
 
 *8/14/19*
+
 In FlyCam make the FlyCam a Script Run on top of CameraNode
 	Remove FlyCam Class.
 
 *8/11/19*
+
 * Rebooted "BR2" Graphics Engine Project
 * Adding a Window layer,
 * replacing Viewport with WindowViewport to differentiate between window and render viewport 
