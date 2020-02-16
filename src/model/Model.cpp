@@ -9,7 +9,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderSettings.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../model/ShaderStorageBuffer.h"
 #include "../model/Model.h"
 #include "../model/Material.h"
@@ -47,7 +47,8 @@ KeyFrame::KeyFrame(int32_t iSeq) {
   //vCurveRightHandle = r_h;//TODO: this will implement bezier later
   //strCurverRightHandleType = r_t;
 }
-KeyFrame::~KeyFrame() {}
+KeyFrame::~KeyFrame() {
+}
 void KeyFrame::scaleKey(int32_t iBaseFps, float& fMaxEndTime) {
   //scale this key from the integer (blender timeline key) to [0,1] for the animation.
   _fTime = (float)_iSequenceKeyFrame / (float)iBaseFps;
@@ -88,10 +89,10 @@ void KeyFrame::animate(float ct, std::shared_ptr<KeyFrame> pNext, mat4& mOut) {
 
   }
   else if (pNext->_eInterpolation == KeyframeInterpolation::e::Bezier) {
-    BroThrowNotImplementedException();
+    Br2ThrowNotImplementedException();
   }
   else {
-    BroThrowNotImplementedException();
+    Br2ThrowNotImplementedException();
   }
 }
 void KeyFrame::deserialize(std::shared_ptr<BinaryFile> fb) {
@@ -157,7 +158,7 @@ std::shared_ptr<KeyFrame> ActionKeys::getBFrame(std::shared_ptr<Animator> tl) {
 }
 void ActionKeys::scaleKeys(int32_t iBasFps, float& fMaxEndTime) {
   if (_vecKeys.size() == 0) {
-    BroLogError("ActionKeys is invalid, no keys present");
+    Br2LogError("ActionKeys is invalid, no keys present");
     Gu::debugBreak();
   }
   for (std::shared_ptr<KeyFrame> kf : _vecKeys) {
@@ -203,7 +204,7 @@ ActionGroup::ActionGroup(string_t strName, int32_t iBaseFps) {
 void ActionGroup::addActionKeys(std::shared_ptr<ActionKeys> a) {
   Hash32 ah = a->getObjectNameHash();
   if (_mapActions.find(ah) != _mapActions.end()) {
-    BroLogWarn("Tried to add action keys for '" + a->getObjectName() + "' multiple times to action group '" + getName() + "'");
+    Br2LogWarn("Tried to add action keys for '" + a->getObjectName() + "' multiple times to action group '" + getName() + "'");
     Gu::debugBreak();
   }
   else {
@@ -220,7 +221,7 @@ std::shared_ptr<ActionKeys> ActionGroup::getActionKeys(Hash32 iObjectNameHashed)
 void ActionGroup::scaleKeys() {
   _fEndTime = -FLT_MAX;
   if (_mapActions.size() == 0) {
-    BroLogError("Action group is invalid, no actions present");
+    Br2LogError("Action group is invalid, no actions present");
     Gu::debugBreak();
   }
   for (std::pair<Hash32, std::shared_ptr<ActionKeys>> p : _mapActions) {
@@ -255,25 +256,26 @@ void ActionGroup::serialize(std::shared_ptr<BinaryFile> fb) {
 
 }
 //////////////////////////////////////////////////////////////////////////
-BoneSpec::BoneSpec(string_t name, int32_t id) : BaseSpec(name) {
+BoneData::BoneData(string_t name, int32_t id) {
   _iBoneId = id;
+  _name = name;
 }
-BoneSpec::~BoneSpec() {
+BoneData::~BoneData() {
 }
 
-void BoneSpec::setParent(std::shared_ptr<BoneSpec> bs) {
+void BoneData::setParent(std::shared_ptr<BoneData> bs) {
   if (_pParent != nullptr) {
-    BroLogError("Bone '" + getName() + "' Parent was already set!");
+    Br2LogError("Bone '" + getName() + "' Parent was already set!");
   }
   else {
     _pParent = bs;
   }
 }
-void BoneSpec::addChild(std::shared_ptr<BoneSpec> bs) {
+void BoneData::addChild(std::shared_ptr<BoneData> bs) {
   bool berr = false;
-  for (std::shared_ptr<BoneSpec> bs1 : _vecChildren) {
+  for (std::shared_ptr<BoneData> bs1 : _vecChildren) {
     if (bs1 == bs) {
-      BroLogError("Bone Spec '" + bs->getName() + "' was already added to bone '" + getName() + "'");
+      Br2LogError("Bone Spec '" + bs->getName() + "' was already added to bone '" + getName() + "'");
       berr = true;
     }
   }
@@ -281,8 +283,8 @@ void BoneSpec::addChild(std::shared_ptr<BoneSpec> bs) {
     _vecChildren.push_back(bs);
   }
 }
-void BoneSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
-  BaseSpec::deserialize(fb);
+void BoneData::deserialize(std::shared_ptr<BinaryFile> fb) {
+  NodeData::deserialize(fb);
   //fb->readString(_strName);
   //_iNameHashed = STRHASH(_strName);
   //
@@ -295,8 +297,8 @@ void BoneSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
 
   _mInvBind = _mBind.inverseOf();
 }
-void BoneSpec::serialize(std::shared_ptr<BinaryFile> fb) {
-  BaseSpec::serialize(fb);
+void BoneData::serialize(std::shared_ptr<BinaryFile> fb) {
+  NodeData::serialize(fb);
   //fb->writeString(std::move(_strName));
   //fb->writeString(std::move(_strParentName));
   fb->writeInt32(std::move(_iBoneId));
@@ -305,42 +307,32 @@ void BoneSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   fb->writeVec3(std::move(_vTail));
 }
 //////////////////////////////////////////////////////////////////////////
-BoneNode::BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) : BaseNode(b) {
+BoneNode::BoneNode(std::shared_ptr<BoneData> b, std::shared_ptr<ArmatureNode> pa) : SceneNode(b) {
   _pBone = b;
   _pArmatureNode = pa;
   _mLocal.setIdentity();
 }
-std::shared_ptr<BoneNode> BoneNode::create(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) {
-  std::shared_ptr<BoneNode> bn = std::make_shared<BoneNode>(b, pa);
-  bn->init();
-  return bn;
-}
-
 BoneNode::~BoneNode() {
-}
-void BoneNode::init() {
-  BaseNode::init();
 }
 void BoneNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   pBox.genResetLimits();
   //Only apply OBBs to bone and mesh nodes.
-  if (getSpec()) {
+  if (getNodeData()) {
     //transform by our armture
     std::shared_ptr<BoneNode> bn = getThis<BoneNode>();
     mat4 mBox = bn->getLocal() * bn->getArmatureNode()->getLocal();
-    _pOBB->calc(mBox, getSpec()->getBoundBoxObject());
+    _pOBB->calc(mBox, getNodeData()->getBoundBoxObject());
     for (int i = 0; i < 8; ++i) {
       pBox.genExpandByPoint(getOBB()->getVerts()[i]);
     }
   }
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
 Animator::Animator() {
 }
 Animator::~Animator() {
 }
-void Animator::initStaticData() {}
 void Animator::update(float delta) {
   if (_eState == PlayState::e::Playing && _pAction != nullptr) {
     _fAnimTime += _fAnimSpeed * delta;
@@ -356,11 +348,18 @@ void Animator::update(float delta) {
     }
   }
 }
-
-//////////////////////////////////////////////////////////////////////////
-Armature::Armature(string_t strName, int32_t iId) : BaseSpec(strName), _iArmatureId(iId) {
+bool Animator::isEnded() {
+  if (_bBackward == false) {
+    return _fAnimTime >= _pAction->getEndTime();
+  }
+  else {
+    return _fAnimTime <= 0;
+  }
 }
-Armature::~Armature() {
+//////////////////////////////////////////////////////////////////////////
+ArmatureData::ArmatureData(string_t strName, int32_t iId) : NodeData(strName), _iArmatureId(iId) {
+}
+ArmatureData::~ArmatureData() {
   //for (BoneCache::iterator it = _mapBoneCacheOrdered.begin();
   //    it != _mapBoneCacheOrdered.end(); it++) {
   //    std::shared_ptr<BoneSpec> ps = it->second;
@@ -368,33 +367,32 @@ Armature::~Armature() {
   //}
   _mapBoneCacheOrdered.clear();
 }
-void Armature::deserialize(std::shared_ptr<BinaryFile> fb) {
-  BaseSpec::deserialize(fb);
+void ArmatureData::deserialize(std::shared_ptr<BinaryFile> fb) {
+  NodeData::deserialize(fb);
 
   fb->readInt32(_iArmatureId);
   int32_t nBones;
   fb->readInt32(nBones);
   for (int32_t iBone = 0; iBone < nBones; ++iBone) {
-    std::shared_ptr<BoneSpec> bs = std::make_shared<BoneSpec>();
+    std::shared_ptr<BoneData> bs = std::make_shared<BoneData>();
     bs->deserialize(fb);
     _mapBoneCacheOrdered.insert(std::make_pair(bs->getBoneId(), bs));
   }
 
-  BroLogInfo("  Compiling armature hierarchy.");
+  Br2LogInfo("  Compiling armature hierarchy.");
   compileHierarchy();
 
 }
-void Armature::serialize(std::shared_ptr<BinaryFile> fb) {
-  BaseSpec::serialize(fb);
+void ArmatureData::serialize(std::shared_ptr<BinaryFile> fb) {
+  NodeData::serialize(fb);
 
   fb->writeInt32(std::move(_iArmatureId));
   fb->writeInt32((int32_t)_mapBoneCacheOrdered.size());
-  for (std::pair<int32_t, std::shared_ptr<BoneSpec>> p : _mapBoneCacheOrdered) {
+  for (std::pair<int32_t, std::shared_ptr<BoneData>> p : _mapBoneCacheOrdered) {
     p.second->serialize(fb);
   }
-
 }
-bool Armature::tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
+bool ArmatureData::tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
   int iind = 1;
 
   if (pMobFile->lcmp(tokens[0], "bones_beg", 1)) {
@@ -411,7 +409,7 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
       int32_t id = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
       string_t parent = pMobFile->getCleanToken(tokens, iind);
       ParentType::e ep = pMobFile->parseParentType(pMobFile->getCleanToken(tokens, iind));
-      _pCurBone = std::make_shared<BoneSpec>(name, id);
+      _pCurBone = std::make_shared<BoneData>(name, id);
 
       _pCurBone->setParentName(parent, ep);
     }
@@ -422,7 +420,7 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
     }
     else {
       if (_mapBoneCacheOrdered.find(_pCurBone->getBoneId()) != _mapBoneCacheOrdered.end()) {
-        BroLogError("Bone '" + _pCurBone->getName() + "' ID:" + _pCurBone->getBoneId() + " already found in bone cache.  Animation will look weird.");
+        Br2LogError("Bone '" + _pCurBone->getName() + "' ID:" + _pCurBone->getBoneId() + " already found in bone cache.  Animation will look weird.");
         Gu::debugBreak();
       }
       else {
@@ -500,7 +498,7 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
 
   return true;
 }
-std::shared_ptr<BoneSpec> Armature::getBoneSpec(string_t boneName) {
+std::shared_ptr<BoneData> ArmatureData::getBoneSpec(string_t boneName) {
   Hash32 hash = Hash::computeStringHash32bit(boneName);
   BoneCache::iterator it = _mapBoneCacheOrdered.find(hash);
 
@@ -509,33 +507,33 @@ std::shared_ptr<BoneSpec> Armature::getBoneSpec(string_t boneName) {
   }
   return nullptr;
 }
-std::shared_ptr<BoneSpec> Armature::getCachedBoneByName(string_t name) {
+std::shared_ptr<BoneData> ArmatureData::getCachedBoneByName(string_t name) {
   Hash32 par = STRHASH(name);
-  for (std::pair<int32_t, std::shared_ptr<BoneSpec>> p : _mapBoneCacheOrdered) {
+  for (std::pair<int32_t, std::shared_ptr<BoneData>> p : _mapBoneCacheOrdered) {
     if (p.second->getNameHashed() == par) {
       return p.second;
     }
   }
   return nullptr;
 }
-void Armature::compileHierarchy() {
+void ArmatureData::compileHierarchy() {
   //Build the bone hierarchy after loading it from the file.
 
-  for (std::pair<int32_t, std::shared_ptr<BoneSpec>> p : _mapBoneCacheOrdered) {//; itBone != _mapBoneCacheOrdered.end(); itBone++) {
-    std::shared_ptr<BoneSpec> pBone = p.second;
+  for (std::pair<int32_t, std::shared_ptr<BoneData>> p : _mapBoneCacheOrdered) {//; itBone != _mapBoneCacheOrdered.end(); itBone++) {
+    std::shared_ptr<BoneData> pBone = p.second;
 
     if (StringUtil::isEmpty(pBone->getParentName())) {
       if (_pArmRoot != nullptr) {
-        BroLogError("Arm root was not null when trying to add root!");
+        Br2LogError("Arm root was not null when trying to add root!");
       }
       else {
         _pArmRoot = pBone;
       }
     }
     else {
-      std::shared_ptr<BoneSpec> pParent = getCachedBoneByName(pBone->getParentName());
+      std::shared_ptr<BoneData> pParent = getCachedBoneByName(pBone->getParentName());
       if (pParent == nullptr) {
-        BroLogError("Hierarchy could not find parent bone '" + pBone->getParentName());
+        Br2LogError("Hierarchy could not find parent bone '" + pBone->getParentName());
       }
       else {
         pBone->setParent(pParent);
@@ -548,13 +546,29 @@ void Armature::compileHierarchy() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ArmatureNode::ArmatureNode(std::shared_ptr<Armature> ps) : BaseNode(ps) {
+ArmatureNode::ArmatureNode(std::shared_ptr<ArmatureData> ps) {
+  _pArmatureData = ps;
+
+  std::vector<std::shared_ptr<BoneNode>> vecBonesUnordered;
+  build(getData<ArmatureData>()->getRootBone(), nullptr, vecBonesUnordered);
+
+  //Build a list of bones ordered by the bone cache on the parent armature.
+  //*This must correspond to the same ordering in MeshSpec::getGpuJointOrdinal
+  for (std::pair<Hash32, std::shared_ptr<BoneData>> pbone : *getArmatureData()->getBoneCacheOrdered()) {
+    for (std::shared_ptr<BoneNode> bn : vecBonesUnordered) {
+      if (bn->getBoneData() == pbone.second) {
+        _vecBonesOrdered.push_back(bn);
+      }
+    }
+  }
+
+  AssertOrThrow2(_vecBonesOrdered.size() > 0);
 }
-std::shared_ptr<ArmatureNode> ArmatureNode::create(std::shared_ptr<Armature> ps) {
-  std::shared_ptr<ArmatureNode> a = std::make_shared<ArmatureNode>(ps);
-  a->init();
-  return a;
-}
+//std::shared_ptr<ArmatureNode> ArmatureNode::create(std::shared_ptr<ArmatureData> ps) {
+//  std::shared_ptr<ArmatureNode> a = std::make_shared<ArmatureNode>(ps);
+//  a->init();
+//  return a;
+//}
 
 ArmatureNode::~ArmatureNode() {
   //**Tree node does not delete bones.
@@ -564,25 +578,11 @@ ArmatureNode::~ArmatureNode() {
   _vecBonesOrdered.resize(0);
   //  _vecMeshes.resize(0);
 }
-void ArmatureNode::init() {
-  BaseNode::init();
-
-  std::vector<std::shared_ptr<BoneNode>> vecBonesUnordered;
-  build(getData<Armature>()->getRootBone(), nullptr, vecBonesUnordered);
-
-  //Build a list of bones ordered by the bone cache on the parent armature.
-  //*This must correspond to the same ordering in MeshSpec::getGpuJointOrdinal
-  for (std::pair<Hash32, std::shared_ptr<BoneSpec>> pbone : *getData<Armature>()->getBoneCacheOrdered()) {
-    for (std::shared_ptr<BoneNode> bn : vecBonesUnordered) {
-      if (bn->getBoneSpec() == pbone.second) {
-        _vecBonesOrdered.push_back(bn);
-      }
-    }
-  }
-
-  AssertOrThrow2(_vecBonesOrdered.size() > 0);
-}
-void ArmatureNode::build(std::shared_ptr<BoneSpec> b, std::shared_ptr<BoneNode> bParent, std::vector<std::shared_ptr<BoneNode>>& vecBonesUnordered) {
+//void ArmatureNode::init() {
+//  BaseNode::init();
+//
+//}
+void ArmatureNode::build(std::shared_ptr<BoneData> b, std::shared_ptr<BoneNode> bParent, std::vector<std::shared_ptr<BoneNode>>& vecBonesUnordered) {
   AssertOrThrow2(b != nullptr);
   std::shared_ptr<BoneNode> new_bn = BoneNode::create(b, getThis<ArmatureNode>());//getThis<BoneNode>(); 
   vecBonesUnordered.push_back(new_bn);
@@ -595,7 +595,7 @@ void ArmatureNode::build(std::shared_ptr<BoneSpec> b, std::shared_ptr<BoneNode> 
     //Noep we added back..
     bParent->attachChild(new_bn);
   }
-  for (std::shared_ptr<BoneSpec> bs : b->getChildren()) {
+  for (std::shared_ptr<BoneData> bs : b->getChildren()) {
     build(bs, new_bn, vecBonesUnordered);
   }
 }
@@ -605,13 +605,13 @@ void ArmatureNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator
     //This is intentional.  We would end up with 2 transforms on mesh.
     _pBoneRoot->update(delta, mapAnimators);
   }
-  BaseNode::update(delta, mapAnimators);
+  SceneNode::update(delta, mapAnimators);
 }
 void ArmatureNode::drawBones(std::shared_ptr<UtilMeshInline> mi, std::shared_ptr<BoneNode> bn, Color4f& c4) {
   ///mat4 mBind = bn->getSpec()->getBind();
   mat4 mBoneLocal = bn->getLocal();
-  vec4 vHead(bn->getBoneSpec()->getHead(), 1);
-  vec4 vTail(bn->getBoneSpec()->getTail(), 1);
+  vec4 vHead(bn->getBoneData()->getHead(), 1);
+  vec4 vTail(bn->getBoneData()->getTail(), 1);
 
   //mLocal removed the armature transform - so add it back to translate the
   //bone relative to the model.
@@ -642,7 +642,7 @@ void ArmatureNode::drawForward(std::shared_ptr<UtilMeshInline> mi) {
 }
 void ArmatureNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   pBox.genResetLimits();
-  if (getSpec()) {
+  if (getNodeData()) {
     std::shared_ptr<ArmatureNode> pa = getThis<ArmatureNode>();
     pa->getRoot()->iterateDepthFirst<BoneNode>([&](std::shared_ptr<BoneNode> bn) {
       bn->calcBoundBox();
@@ -650,13 +650,13 @@ void ArmatureNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
       return true;
       });
   }
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
-ModelSpec::ModelSpec(string_t name, int32_t frameRate) : PhysicsSpec(name), _iFrameRate(frameRate) {
+ModelData::ModelData(string_t name, int32_t frameRate) : PhysicsData(name), _iFrameRate(frameRate) {
   //_iNameHash = STRHASH(name);
 }
-ModelSpec::~ModelSpec() {
+ModelData::~ModelData() {
   /*for (std::shared_ptr<ActionGroup> ag : _vecActionGroups) {
       DEL_MEM(ag);
   }*/
@@ -673,9 +673,9 @@ ModelSpec::~ModelSpec() {
   //_vecMeshes.clear();
   //_vecArmatures.clear();
 }
-void ModelSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
-  BroLogInfo("Reading Model..");
-  PhysicsSpec::deserialize(fb);
+void ModelData::deserialize(std::shared_ptr<BinaryFile> fb) {
+  Br2LogInfo("Reading Model..");
+  PhysicsData::deserialize(fb);
   //fb->readString(std::move(_strName));
   //_iNameHashed = STRHASH(_strName);
 
@@ -686,8 +686,8 @@ void ModelSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   int32_t nArms;
   fb->readInt32(nArms);
   for (int32_t iArm = 0; iArm < nArms; ++iArm) {
-    BroLogInfo("  Arm " + iArm + " ..");
-    std::shared_ptr<Armature> pArm = std::make_shared<Armature>();
+    Br2LogInfo("  Arm " + iArm + " ..");
+    std::shared_ptr<ArmatureData> pArm = std::make_shared<ArmatureData>();
     pArm->deserialize(fb);
     getArmatures().push_back(pArm);
     getArmatureMapOrdered().insert(std::make_pair(pArm->getArmatureId(), pArm));
@@ -696,7 +696,7 @@ void ModelSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   int32_t nActionGroups;
   fb->readInt32(nActionGroups);
   for (int32_t iAction = 0; iAction < nActionGroups; ++iAction) {
-    BroLogInfo("  Action " + iAction + "..");
+    Br2LogInfo("  Action " + iAction + "..");
     std::shared_ptr<ActionGroup> pg = std::make_shared<ActionGroup>();
     pg->setFps(_iFrameRate);
     pg->deserialize(fb);
@@ -706,7 +706,7 @@ void ModelSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   int32_t nMeshes;
   fb->readInt32(nMeshes);
   for (int32_t iMesh = 0; iMesh < nMeshes; ++iMesh) {
-    BroLogInfo("  Mesh " + iMesh + "..");
+    Br2LogInfo("  Mesh " + iMesh + "..");
     std::shared_ptr<MeshData> pMesh = std::make_shared<MeshData>();
     pMesh->deserialize(fb);
     getMeshes().push_back(pMesh);
@@ -723,10 +723,10 @@ void ModelSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
     }
   }
 
-  BroLogInfo("..Done");
+  Br2LogInfo("..Done");
 }
-void ModelSpec::serialize(std::shared_ptr<BinaryFile> fb) {
-  PhysicsSpec::serialize(fb);
+void ModelData::serialize(std::shared_ptr<BinaryFile> fb) {
+  PhysicsData::serialize(fb);
 
   fb->writeString(std::move(getFriendlyName()));
 
@@ -734,7 +734,7 @@ void ModelSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   fb->writeInt32(std::move(_iFrameRate));
 
   fb->writeInt32((int32_t)getArmatures().size());
-  for (std::shared_ptr<Armature> arm : getArmatures()) {
+  for (std::shared_ptr<ArmatureData> arm : getArmatures()) {
     arm->serialize(fb);
   }
 
@@ -762,9 +762,8 @@ void ModelSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   else {
     fb->writeBool(false);
   }
-
 }
-std::shared_ptr<ActionGroup> ModelSpec::getAction(Hash32 actionNameHash) {
+std::shared_ptr<ActionGroup> ModelData::getAction(Hash32 actionNameHash) {
   for (std::shared_ptr<ActionGroup> ag : _vecActionGroups) {
     if (ag->getNameHash() == actionNameHash) {
       return ag;
@@ -772,16 +771,15 @@ std::shared_ptr<ActionGroup> ModelSpec::getAction(Hash32 actionNameHash) {
   }
   return nullptr;
 }
-std::shared_ptr<Armature> ModelSpec::getArmatureById(int32_t armId) {
-  for (std::shared_ptr<Armature> aa : _vecArmatures) {
+std::shared_ptr<ArmatureData> ModelData::getArmatureById(int32_t armId) {
+  for (std::shared_ptr<ArmatureData> aa : _vecArmatures) {
     if (aa->getArmatureId() == armId) {
       return aa;
     }
   }
   return nullptr;
 }
-
-void ModelSpec::postMobConversion() {
+void ModelData::postMobConversion() {
   //I mean technically the model spec doesn't care about it's spec box.  That's just for meshes.
   getBoundBoxObject()->genResetLimits();
   //for(std::shared_ptr<Armature> pa : _vecArmatures){
@@ -793,10 +791,10 @@ void ModelSpec::postMobConversion() {
     getBoundBoxObject()->genExpandByBox(pa->getBoundBoxObject());
   }
 }
-std::shared_ptr<BoneSpec> ModelSpec::getBoneByArmJointOffset(int32_t ijo) {
+std::shared_ptr<BoneData> ModelData::getBoneByArmJointOffset(int32_t ijo) {
   int32_t ij = 0;
-  for (std::pair<Hash32, std::shared_ptr<Armature>> parm : getArmatureMapOrdered()) {
-    for (std::pair<Hash32, std::shared_ptr<BoneSpec>> pbone : *parm.second->getBoneCacheOrdered()) {
+  for (std::pair<Hash32, std::shared_ptr<ArmatureData>> parm : getArmatureMapOrdered()) {
+    for (std::pair<Hash32, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
       if (ij == ijo) {
         return pbone.second;
       }
@@ -806,16 +804,29 @@ std::shared_ptr<BoneSpec> ModelSpec::getBoneByArmJointOffset(int32_t ijo) {
   return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-std::shared_ptr<ModelNode> ModelNode::create(std::shared_ptr<ModelSpec> ps) {
-  std::shared_ptr<ModelNode> m = std::make_shared<ModelNode>(ps);
-  m->init();
-  m->stopAllActions();
-  m->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-  return m;
-}
+ModelNode::ModelNode(std::shared_ptr<ModelData> data) : PhysicsNode(data) {
+  stopAllActions();
+  update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
 
-ModelNode::ModelNode(std::shared_ptr<ModelSpec> pModelSpec) : PhysicsNode(pModelSpec) {
+  //Create armatures
+  for (std::shared_ptr<ArmatureData> pArmSpec : data->getArmatures()) {
+    std::shared_ptr<ArmatureNode> pArmNode = std::make_shared<ArmatureNode>(pArmSpec);
+    _vecArmatures.push_back(pArmNode);
+    addNodeToCache(pArmNode);
+    //Also add all bones in the case of bone parents..
+    //for (std::shared_ptr<BoneNode> bn : pArmNode->getBonesOrdered()) {
+    //    addNodeToCache(bn);
+    //}
+  }
+  //Create meshes
+  for (std::shared_ptr<MeshData> pMeshSpec : data->getMeshes()) {
+    std::shared_ptr<MeshNode> pMeshnode = std::make_shared<MeshNode>(pMeshSpec, getThis<ModelNode>());
+    _vecMeshes.push_back(pMeshnode);
+    addNodeToCache(pMeshnode);
+  }
 
+  buildNodeParents();
+  Gu::checkErrorsRt();
 }
 ModelNode::~ModelNode() {
   //for (std::pair<Hash32,  std::shared_ptr<Animator>> p : _mapAnimators) {
@@ -831,43 +842,22 @@ ModelNode::~ModelNode() {
   //}
   _vecArmatures.resize(0);
 }
-void ModelNode::init() {
-  PhysicsNode::init();
-  //Create armatures
-  for (std::shared_ptr<Armature> pArmSpec : getData<ModelSpec>()->getArmatures()) {
-    std::shared_ptr<ArmatureNode> pArmNode = ArmatureNode::create(pArmSpec);
-    _vecArmatures.push_back(pArmNode);
-    addNodeToCache(pArmNode);
-    //Also add all bones in the case of bone parents..
-    //for (std::shared_ptr<BoneNode> bn : pArmNode->getBonesOrdered()) {
-    //    addNodeToCache(bn);
-    //}
-  }
-  //Create meshes
-  for (std::shared_ptr<MeshData> pMeshSpec : getData<ModelSpec>()->getMeshes()) {
-    std::shared_ptr<MeshNode> pMeshnode = MeshNode::create(pMeshSpec, getThis<ModelNode>());
-    _vecMeshes.push_back(pMeshnode);
-    addNodeToCache(pMeshnode);
-  }
 
-  buildNodeParents();
-  Gu::checkErrorsRt();
-}
 void ModelNode::buildNodeParents() {
   //Parent Armatures And Meshes And Bones (if they have parents, if no, they are parented by the modelnode
-  for (std::pair <Hash32, std::shared_ptr<BaseNode>> p : _mapNodes) {
-    std::shared_ptr<BaseNode> pNode = p.second;
-    string_t strChild = pNode->getSpec()->getName();
-    string_t strParent = pNode->getSpec()->getParentName();
-    if (pNode->getSpec()->getParentType() == ParentType::e::Bone) {
+  for (std::pair <Hash32, std::shared_ptr<SceneNode>> p : _mapNodes) {
+    std::shared_ptr<SceneNode> pNode = p.second;
+    string_t strChild = pNode->getNodeData()->getName();
+    string_t strParent = pNode->getNodeData()->getParentName();
+    if (pNode->getNodeData()->getParentType() == ParentType::e::Bone) {
       //Bone parents - we may end up not even using bone aprents.
       bool bFound = false;
       for (std::shared_ptr<ArmatureNode> pan : _vecArmatures) {
         for (std::shared_ptr<BoneNode> bn : pan->getBonesOrdered()) {
 
-          if (StringUtil::equals(strParent, bn->getSpecName())) {
+          if (StringUtil::equals(strParent, bn->getName())) {
             if (pNode->getParent() != nullptr) {
-              BroLogError("Bone parent node already set for node " + pNode->getSpecName());
+              Br2LogError("Bone parent node already set for node " + pNode->getName());
               Gu::debugBreak();
             }
             else {
@@ -880,7 +870,7 @@ void ModelNode::buildNodeParents() {
         }
       }
       if (bFound == false) {
-        BroLogError("Bone parent node not found for node " + pNode->getSpecName());
+        Br2LogError("Bone parent node not found for node " + pNode->getName());
         Gu::debugBreak();
       }
     }
@@ -890,21 +880,21 @@ void ModelNode::buildNodeParents() {
     }
     else {
       if (pNode->getParent() != nullptr) {
-        std::shared_ptr<BaseNode> pParentAttached = std::dynamic_pointer_cast<BaseNode>(pNode->getParent());
+        std::shared_ptr<SceneNode> pParentAttached = std::dynamic_pointer_cast<SceneNode>(pNode->getParent());
         if (pParentAttached == nullptr) {
-          BroLogError("Parent already attached, but Tried to cast a base node - failed.");
+          Br2LogError("Parent already attached, but Tried to cast a base node - failed.");
           Gu::debugBreak();
         }
         else {
-          BroLogError("Parent '" + pParentAttached->getSpec()->getName() +
+          Br2LogError("Parent '" + pParentAttached->getNodeData()->getName() +
             "' already set for node '" + strChild + "' who wants to be parented by '" + strParent + "' ");
           Gu::debugBreak();
         }
       }
       else {
-        std::shared_ptr<BaseNode> pParentNode = getNodeByName(strParent);
+        std::shared_ptr<SceneNode> pParentNode = getNodeByName(strParent);
         if (pParentNode == nullptr) {
-          BroLogError("Could not find parent '" + strParent + "' for node '" + strChild + "'");
+          Br2LogError("Could not find parent '" + strParent + "' for node '" + strChild + "'");
           Gu::debugBreak();
         }
         else {
@@ -920,27 +910,27 @@ void ModelNode::buildNodeParents() {
     }
   }
 }
-void ModelNode::addNodeToCache(std::shared_ptr<BaseNode> bn) {
+void ModelNode::addNodeToCache(std::shared_ptr<SceneNode> bn) {
   AssertOrThrow2(bn != nullptr);
-  Hash32 bnName = STRHASH(bn->getSpec()->getName());
+  Hash32 bnName = STRHASH(bn->getNodeData()->getName());
   if (_mapNodes.find(bnName) != _mapNodes.end()) {
-    BroLogError("ModelNode: Failed to add base node '" + bn->getSpec()->getName() + "' as it already exists in node cache.");
+    Br2LogError("ModelNode: Failed to add base node '" + bn->getNodeData()->getName() + "' as it already exists in node cache.");
   }
   else {
     _mapNodes.insert(std::make_pair(bnName, bn));
   }
 }
-std::shared_ptr<BaseNode> ModelNode::getNodeByName(string_t name) {
+std::shared_ptr<SceneNode> ModelNode::getNodeByName(string_t name) {
   Hash32 h = STRHASH(name);
-  std::map<Hash32, std::shared_ptr<BaseNode>>::iterator it = _mapNodes.find(h);
+  std::map<Hash32, std::shared_ptr<SceneNode>>::iterator it = _mapNodes.find(h);
   if (it == _mapNodes.end()) {
     return nullptr;
   }
   return it->second;
 }
 
-std::shared_ptr<ModelSpec> ModelNode::getModelSpec() {
-  return std::dynamic_pointer_cast<ModelSpec>(BaseNode::getSpec());
+std::shared_ptr<ModelData> ModelNode::getModelSpec() {
+  return std::dynamic_pointer_cast<ModelData>(SceneNode::getNodeData());
 }
 void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   Perf::pushPerf();
@@ -952,7 +942,7 @@ void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
   }
 
   //Update all nodes ONCE
-  BaseNode::update(delta, _mapAnimators);
+  SceneNode::update(delta, _mapAnimators);
 
   //*Dispatch final skin for all meshes
   for (std::shared_ptr<MeshNode> mn : _vecMeshes) {
@@ -962,7 +952,7 @@ void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
 }
 
 void ModelNode::drawForward(RenderParams& rp) {
-  BaseNode::drawForward(rp);
+  SceneNode::drawForward(rp);
 
   //Debug Boxes and Soforth
   if (Gu::getRenderSettings()->getDebug()->getShowArmatures()) {
@@ -1037,7 +1027,7 @@ void ModelNode::playAction(string_t actName) {
   else {
     std::shared_ptr<ActionGroup> ag = getModelSpec()->getAction(anh);
     if (ag == nullptr) {
-      BroLogError("Model '" + getSpec()->getName() + "', could not find action '" + actName + "'");
+      Br2LogError("Model '" + getNodeData()->getName() + "', could not find action '" + actName + "'");
       Gu::debugBreak();
     }
     else if (ag->isValid()) {
@@ -1049,7 +1039,7 @@ void ModelNode::playAction(string_t actName) {
       pa->setLoop(true);
     }
     else {
-      BroLogError("Action wasn't valid for playing.");
+      Br2LogError("Action wasn't valid for playing.");
       Gu::debugBreak();
     }
   }
@@ -1092,12 +1082,12 @@ void ModelNode::stopAction(string_t actName) {
 }
 
 
-void ModelSpec::cacheMeshBones() {
+void ModelData::cacheMeshBones() {
   //BoneBoxes BoneBox
   //Stores all bones that affect a mesh in a cache for the mesh.
   //loop all weights and store boness.
-  for (std::shared_ptr<Armature> a : getArmatures()) {
-    for (std::pair<int32_t, std::shared_ptr<BoneSpec>> p : *a->getBoneCacheOrdered()) {
+  for (std::shared_ptr<ArmatureData> a : getArmatures()) {
+    for (std::pair<int32_t, std::shared_ptr<BoneData>> p : *a->getBoneCacheOrdered()) {
       //calc bone boxes
       p.second->getBoundBoxObject()->genResetLimits();
     }
@@ -1125,7 +1115,7 @@ void ModelSpec::cacheMeshBones() {
 
             //Only apply verts who have weight.
             if (wpt->_weight > 0) {
-              std::shared_ptr<BoneSpec> bs = getBoneByArmJointOffset(wpt->_iArmJointOffset);
+              std::shared_ptr<BoneData> bs = getBoneByArmJointOffset(wpt->_iArmJointOffset);
               if (bs != nullptr) {
                 //cache the bone on the mesh spec.
                 ms->getBoneCache().insert(bs);
@@ -1159,7 +1149,7 @@ void ModelSpec::cacheMeshBones() {
 void ModelNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   pBox.genResetLimits();
 
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 
 

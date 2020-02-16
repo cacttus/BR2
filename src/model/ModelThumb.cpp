@@ -15,14 +15,12 @@
 #include "../model/MeshData.h"
 #include "../model/Material.h"
 #include "../model/ModelThumb.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 
 
 namespace BR2 {
-///////////////////////////////////////////////////////////////////
 //We need to generate 8 thumbs.
-
-std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int32_t iThumbSize) {
+std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelData> mod, int32_t iThumbSize) {
     ////Create Lights + Camera
     //std::shared_ptr<WindowViewport> pv = std::make_shared<WindowViewport>(iThumbSize, iThumbSize);
     //std::shared_ptr<CameraNode> pThumbCam = CameraNode::create(pv);

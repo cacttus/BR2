@@ -13,7 +13,7 @@
 #define __WORLD25D_14884745582594951236_H__
 
 
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 #include "../bottle/BottleHeader.h"
 namespace Game {
 /**

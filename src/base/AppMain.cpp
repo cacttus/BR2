@@ -150,7 +150,7 @@
 //
 //
 //
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    //#ifdef _DEBUG
 //    //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
 //  if (_bDebugShowWireframe == true) {

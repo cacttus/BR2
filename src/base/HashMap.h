@@ -75,7 +75,7 @@ void _HashMap<Tx, THashSize>::add(string_t str, Tx& x) {
   for (i = 0; i < getNumAlgorithms(); ++i) {
     nHashVal = computeHash(str, i);
     if (_map.find(nHashVal) != _map.end()) {
-      BroLogWarn("Hash Map collision using algorithm " + i);
+      Br2LogWarn("Hash Map collision using algorithm " + i);
       //TODO: ITF this may be needed
       //str.setHashAlgorithmIndex(i + 1);
     }
@@ -87,7 +87,7 @@ void _HashMap<Tx, THashSize>::add(string_t str, Tx& x) {
 #ifdef _DEBUG
   //We had a collision and ran out of algorithms.
   if (i == getNumAlgorithms() - 1) {
-    BroLogWarn("No suitable hash algorithm for string.");
+    Br2LogWarn("No suitable hash algorithm for string.");
     DebugHelper::debugBreak();
   }
 #endif
@@ -101,7 +101,7 @@ bool _HashMap<Tx, THashSize>::remove(string_t key) {
   bool b = _map.remove(n, true);
 
   if (b == false) {
-    BroLogWarn(" [Hm] Failed to remove hashed string");
+    Br2LogWarn(" [Hm] Failed to remove hashed string");
   }
 
   return b;

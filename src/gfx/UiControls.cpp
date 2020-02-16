@@ -598,7 +598,7 @@ void UiElement::computePositionalElement(std::shared_ptr<UiElement> ele) {
 }
 void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiElement::UiLine>& vecLines, float fAutoWidth, float fAutoHeight) {
   if (vecLines.size() == 0) {
-    BroThrowException("GUI error - tried to run calc algorithm without any UILines created");
+    Br2ThrowException("GUI error - tried to run calc algorithm without any UILines created");
   }
   float myWidth = right().px() - left().px();
   UiLine* line = &vecLines[vecLines.size() - 1];
@@ -3256,10 +3256,10 @@ void UiScreen::updateMesh() {
   _pCursor->regenMeshExposed(verts, inds, b);
   //CURSOR
 
-  _pMesh->getMeshSpec()->getVaoData()->getVbo()->allocate(verts.size());
-  _pMesh->getMeshSpec()->getVaoData()->getVbo()->copyDataClientServer(verts.size(), verts.data());
-  _pMesh->getMeshSpec()->getVaoData()->getIbo()->allocate(inds.size());
-  _pMesh->getMeshSpec()->getVaoData()->getIbo()->copyDataClientServer(inds.size(), inds.data());
+  _pMesh->getMeshData()->getVaoData()->getVbo()->allocate(verts.size());
+  _pMesh->getMeshData()->getVaoData()->getVbo()->copyDataClientServer(verts.size(), verts.data());
+  _pMesh->getMeshData()->getVaoData()->getIbo()->allocate(inds.size());
+  _pMesh->getMeshData()->getVaoData()->getIbo()->copyDataClientServer(inds.size(), inds.data());
 
 }
 void UiScreen::screenChanged(uint32_t uiWidth, uint32_t uiHeight) {
@@ -3307,7 +3307,7 @@ void UiScreen::performForcedLayout() {
   performLayout(true);
 }
 void UiScreen::error(std::string errMsg) {
-  BroLogError(errMsg);
+  Br2LogError(errMsg);
   Gu::debugBreak();
 }
 float UiScreen::getDesignMultiplierW() {

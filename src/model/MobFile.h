@@ -111,7 +111,7 @@ public:
   int32_t _iFrameRate = 24;
   float _fVersion = 0.0f;
   std::set<std::shared_ptr<MeshData>> _setMeshSpecs;
-  std::set<std::shared_ptr<Armature>> _setArmDatas;
+  std::set<std::shared_ptr<ArmatureData>> _setArmDatas;
   std::set<std::shared_ptr<ActionGroup>> _setActions;
   //std::set<std::shared_ptr<ActionGroup>> _setActions;
 
@@ -120,7 +120,7 @@ public:
   bool tkMeshes(MobFile* mb, std::vector<string_t>& tokens);
 
   std::shared_ptr<MeshSpecData> _pCurMeshData = nullptr;
-  std::shared_ptr<Armature> _pCurArmData = nullptr;
+  std::shared_ptr<ArmatureData> _pCurArmData = nullptr;
   std::shared_ptr<ActionKeys>  _pCurActionKeys = nullptr;
 
   ModDataLoad();
@@ -136,7 +136,7 @@ public:
   virtual ~MobFile() override;
   ParentType::e parseParentType(string_t pt);
   string_t getMobDir();
-  std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModelSpecs; }
+  std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModelSpecs; }
 
 private:
   float _fVersion = 0.02f;
@@ -144,7 +144,7 @@ private:
   //*Technically we shouldn't have multiple MOD datas per file, but just adding
   //this as a swet lets us do that.  
   std::set<std::shared_ptr<ModDataLoad>> _setModData;
-  std::vector<std::shared_ptr<ModelSpec>> _vecModelSpecs;
+  std::vector<std::shared_ptr<ModelData>> _vecModelSpecs;
 
   std::shared_ptr<ModDataLoad> _pCurModDataLoad = nullptr;
 

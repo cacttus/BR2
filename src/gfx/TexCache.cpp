@@ -61,7 +61,7 @@ bool TexCache::add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bError
   TexMap::iterator it = _cache.find(ih);
   if (it != _cache.end()) {
     if (bErrorIfFound) {
-      BroLogError("Texture cache had duplicate texure: " + name);
+      Br2LogError("Texture cache had duplicate texure: " + name);
       Gu::debugBreak();
     }
     return false;

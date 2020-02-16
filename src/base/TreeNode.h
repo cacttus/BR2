@@ -36,7 +36,7 @@ public:
   std::shared_ptr<Tx> findParent();
 
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
-  bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
+  virtual bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
 
   bool detachFromParent();  //calls remove()
   size_t getNodeCountHierarchy();
@@ -49,8 +49,8 @@ public:
 
 protected:
   void addNullChildren(int32_t count);
-  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override thsi - Called after a node is appended.
-  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
+  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
+  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is removed.
   void attachToParent(std::shared_ptr<TreeNode> pParent);  // calls insert()
 
 private:

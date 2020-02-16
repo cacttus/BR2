@@ -14,7 +14,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../model/MeshNode.h"
 #include "../world/RenderBucket.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 
 namespace BR2 {
 ShadowFrustum::ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled)
@@ -274,7 +274,7 @@ void ShadowFrustum::createFbo()
 
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
-        BroThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
+        Br2ThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
         Gu::checkErrorsRt();
     }
 

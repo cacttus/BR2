@@ -50,11 +50,11 @@ void FramebufferBase::checkFramebufferComplete() {
     {
         if (Status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
         {
-            BroLogError("Framebuffer is not complete.  Multisampling error.  Make sure that you enable " +
+            Br2LogError("Framebuffer is not complete.  Multisampling error.  Make sure that you enable " +
                 "multisampling on ALL textures, additionally make sure all textures have the same setting for FIXED_SAMPLE_LOCATIONS");
         }
         _pContext->chkErrRt();
-        BroThrowException("Failed to create framebuffer.");
+        Br2ThrowException("Failed to create framebuffer.");
     }
 }
 void FramebufferBase::attachAllTargets() {
@@ -134,7 +134,7 @@ std::shared_ptr<BufferRenderTarget> FramebufferBase::createTarget(string_t strNa
     GLint maxAttach = 0;
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxAttach);
     if(iIndex > maxAttach) {
-        BroThrowException("GPU Does not support enough color attachments, wanted: " + iIndex + " max supported: " + maxAttach);
+        Br2ThrowException("GPU Does not support enough color attachments, wanted: " + iIndex + " max supported: " + maxAttach);
     }
 
     makeRenderTexture(&inf->_iGlTexId,

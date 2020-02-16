@@ -56,7 +56,7 @@
 //template < class Tx >
 //class AllocatorWrapper {
 //public:
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //  typedef typename Tx value_type;
 //#else
 //  typedef Tx value_type;

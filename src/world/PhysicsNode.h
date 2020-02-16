@@ -8,17 +8,18 @@
 #ifndef __PHYSICS_NODE_14910105823111128827_H__
 #define __PHYSICS_NODE_14910105823111128827_H__
 
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../world/WorldHeader.h"
+#include "../model/NodeData.h"
 
 namespace BR2 {
 //It doesn't make sense to have the "shape" on the model, even though the model has velocity.  Same goes for mesh.
 //TODO: remove spec
-class PhysicsSpec : public BaseSpec {
+class PhysicsData : public NodeData {
 public:
-  PhysicsSpec() {} //deserialize ctor
-  PhysicsSpec(string_t strName) : BaseSpec(strName) {}
-  virtual ~PhysicsSpec() override {}
+  PhysicsData() {} //deserialize ctor
+  PhysicsData(string_t strName) : NodeData(strName) {}
+  virtual ~PhysicsData() override {}
 
   bool getIsPersistent() { return false; }
   float getMass() { return 0.0f; } //PHY_STATIC_MASS
@@ -26,12 +27,13 @@ public:
   virtual void serialize(std::shared_ptr<BinaryFile> fb) override;
   virtual void deserialize(std::shared_ptr<BinaryFile> fb) override;
 };
-//TODO: PhysicsNode should become a base class for shape component on the WorldObject.
-//The physics data is independent of the PixObj only because we need to
-//collide with the World Node plane so we need a separate box that isn't an object.
-class PhysicsNode : public BaseNode {
+/**
+*  @class PhysicsNode
+*  @brief Movement and physics properties for node objects.
+*/
+class PhysicsNode : public SceneNode {
 public:
-  PhysicsNode(std::shared_ptr<PhysicsSpec>);
+  PhysicsNode(std::shared_ptr<PhysicsData> ps);
   virtual ~PhysicsNode();
 
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;
@@ -58,9 +60,6 @@ public:
   void validateSanePhysics();
 
   uint64_t _iStamp;
-
-protected:
-  virtual void init() override;
 
 private:
   vec3 _vVelocity = vec3(0, 0, 0);

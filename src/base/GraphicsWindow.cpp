@@ -70,16 +70,12 @@ void GraphicsWindow::createManagers() {
   //  BroThrowException("Invalid render engine.");
   //}
 
-  BroLogInfo("Creating SDL Window");
+  Br2LogInfo("Creating SDL Window");
   createSDL_OpenGLWindow(_title);
 
-  BroLogInfo("Creating Renderer.");
+  Br2LogInfo("Creating Renderer.");
   initRenderSystem();
 
-
-
-  BroLogInfo("GLContext - Picker");
-  _pPicker = std::make_shared<Picker>(getGraphicsContext());
 }
 void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
 
@@ -94,7 +90,7 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
   minGLVersion = 3;
   minGLSubversion = 0;
   iProfile = SDL_GL_CONTEXT_PROFILE_ES;
-#elif BRO_OS_WINDOWS
+#elif BR2_OS_WINDOWS
   minGLVersion = 3;
   minGLSubversion = 3;
   iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
@@ -126,7 +122,6 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
 
   _pFrameSync = std::make_shared<FrameSync>(_pContext);
 }
-
 void GraphicsWindow::makeCurrent() {
   SDL_GL_MakeCurrent(getSDLWindow(), getGraphicsContext()->getSDLGLContext());
   Gu::setContext(getGraphicsContext());
@@ -145,7 +140,7 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
 #ifdef BRO_OS_IPHONE
   x = 0, y = 0, w = 320, h = 480, flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
   title = "";
-#elif BRO_OS_WINDOWS
+#elif BR2_OS_WINDOWS
 
   //SDL_WINDOW_OPENGL | SDL_WINDOW_VULKAN;
 
@@ -175,15 +170,15 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
   _iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
   _iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
 
-#ifdef BRO_OS_WINDOWS
-  BroLogError("We are not making the window icon because there's an error somewhere in SDL here.");
+#ifdef BR2_OS_WINDOWS
+  Br2LogError("We are not making the window icon because there's an error somewhere in SDL here.");
   //**There is an error here
 //  Gu::SDLTrySetWindowIcon(_pWindow, "./data-dc/tex/tx64-icon.png");//_pApp->getIconFullPath());
 #endif
 }
 void GraphicsWindow::initRenderSystem() {
   if (_pSDLWindow == nullptr) {
-    BroThrowException("You need to make the SDL window before initializing render system.");
+    Br2ThrowException("You need to make the SDL window before initializing render system.");
   }
 
   SDLUtils::trySetWindowIcon(_pSDLWindow, Gu::getAppPackage()->getIconPath());
@@ -191,24 +186,24 @@ void GraphicsWindow::initRenderSystem() {
   if (Gu::getConfig()->getForceAspectRatio()) {
     SDL_DisplayMode dm;
     if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
-      BroLogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
+      Br2LogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
     }
     else {
       float ar = (float)dm.h / (float)dm.w;
       int newHeight = (int)((float)_iLastWidth * ar);
       if (newHeight != _iLastHeight) {
-        BroLogInfo("Adjusting window dims from " + _iLastWidth + " x " + _iLastHeight + " to " + _iLastWidth + " x " + newHeight);
+        Br2LogInfo("Adjusting window dims from " + _iLastWidth + " x " + _iLastHeight + " to " + _iLastWidth + " x " + newHeight);
         _iLastHeight = newHeight;
       }
     }
   }
 
-  BroLogInfo("Setting window size to, " + _iLastWidth + " x " + _iLastHeight);
+  Br2LogInfo("Setting window size to, " + _iLastWidth + " x " + _iLastHeight);
   SDL_SetWindowSize(_pSDLWindow, _iLastWidth, _iLastHeight);
   updateWidthHeight(_iLastWidth, _iLastHeight, true);
 
   if (Gu::getConfig()->getStartFullscreen() == true) {
-    BroLogInfo("Setting window fullscreen.");
+    Br2LogInfo("Setting window fullscreen.");
     toggleFullscreen();
   }
 
@@ -254,7 +249,7 @@ void GraphicsWindow::toggleFullscreen() {
     SDL_SetWindowSize(_pSDLWindow, iFsW, iFsH);
 
     if (SDL_SetWindowFullscreen(_pSDLWindow, SDL_WINDOW_FULLSCREEN) != 0) {
-      BroLogError("Failed to go fullscreen.");
+      Br2LogError("Failed to go fullscreen.");
     }
     else {
       _bFullscreen = true;
@@ -267,7 +262,7 @@ void GraphicsWindow::toggleFullscreen() {
       SDL_SetWindowSize(_pSDLWindow, _iFullscreenToggleWidth, _iFullscreenToggleHeight);
     }
     if (SDL_SetWindowFullscreen(_pSDLWindow, 0) != 0) {
-      BroLogError("Failed to exit fullscreen.");
+      Br2LogError("Failed to exit fullscreen.");
     }
     else {
       _bFullscreen = false;
@@ -282,12 +277,12 @@ void GraphicsWindow::printHelpfulDebug() {
   SDL_Window* win = _pSDLWindow;
 
   SDL_GetCurrentDisplayMode(0, &mode);
-  BroLogInfo("Screen BPP    : " + SDL_BITSPERPIXEL(mode.format));
-  BroLogInfo("Swap Interval : " + SDL_GL_GetSwapInterval());
+  Br2LogInfo("Screen BPP    : " + SDL_BITSPERPIXEL(mode.format));
+  Br2LogInfo("Swap Interval : " + SDL_GL_GetSwapInterval());
   SDL_GetWindowSize(win, &dw, &dh);
-  BroLogInfo("Initial Window Size   : " + dw + "x" + dh);
+  Br2LogInfo("Initial Window Size   : " + dw + "x" + dh);
   SDL_GL_GetDrawableSize(win, &dw, &dh);
-  BroLogInfo("Draw Size     : " + dw + "x" + dh);
+  Br2LogInfo("Draw Size     : " + dw + "x" + dh);
 
   SDLUtils::checkSDLErr();
 }
@@ -319,10 +314,6 @@ void GraphicsWindow::step() {
   //Managers
   Gu::setContext(_pContext);
   _pContext->update();
-
-  if (_pPicker != nullptr) {
-    _pPicker->update(Gu::getInputManager());
-  }
 
   beginRender();
   {

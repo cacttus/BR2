@@ -2,12 +2,15 @@
 * TODO - Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
 * TODO - Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
 * TODO - detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
+* TODO - All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
 ## Roadmap
-* CSharp inline *minimal* scripts.
-* Remove Spec System, use "data" system.
-* Remove WorldObject inheritence, and use Component model.
-* CMake integration. Test on iOS, Linux, Android.
+* I. CSharp inline *minimal* scripts.
+* II. Remove Spec System, use "data" system.
+* III. Remove WorldObject inheritence, and use Component model.
+* IV. CMake integration. Test on iOS, Linux, Android.
+* V. Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
+* VI. Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 
 ## Currently Working On..
 1. Unlink the Window viewport with the Camera Viewport.  
@@ -17,8 +20,35 @@
 4. Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	* WorldObject will be composited by other items and not inherited.
 5. Simplifying the UI to work with the UI design for this game.  Updating UI performance.
-
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
+7. Much of PhysicsManager must be moved to Scene, Object Creation.
+
+*2/16/2020*
+* Renamed BaseNode to SceneNode (could also be SceneGraphNode, but Scenenode is more compact).
+
+* II. part 2 Removal of Spec
+* Removing init() from the node classes to make node construction a simple new-ing of the class, also removing static create() method, likewise.
+* The goal here is to have a data segment for each node, instead of one data segment.  This gives us the ability to clone variuos data segments instead of 
+requiring the entire data segment to be cloned.
+
+*So here is a design dilemma of II.  We want to do things such as, reference ONLY a mesh's vertex data.  Or we want to reference ONLY this armature data.  But to do that
+we need to separate the data classes into individual components.  Yet, the problem is a lot of the data components are shared with NodeData.  So it makes sense to inherit
+the data.  We currently have a single NodeData that comprises all of the data for any node.  The only option I can think of is to simply duplicate this node data across each
+respective node class in the hierarchy.  This makes no sense either, since you're duplciating the inherited information (name, invbind..).
+
+*PhysicsData should be separate from ModelData.  Physics will only involve colliders now.
+
+* We can have it like this:
+	all *Node data's inherit from NodeData'
+	MeshData is it's own respective class. no inheritance
+	MaterialData is its own respective class, no inheritance.
+
+*2/15/2020*
+* Moved Model Rendering from PhysicsManager to Scene
+* Moved Physics node creation to Scene.
+* Removed BaseSpec, PhysicsSpec (part of (2))
+    * We must remove all BaseSpec inheritence, and replace it with a new class member.
+* By removing MeshData as a requirement for Meshnode, we create "empties" like most rendering engines, we can create an empty object without any mesh data.
 
 *2/14/2020*
 
@@ -43,7 +73,7 @@ scene->render();
 Either way, it appears you have to share the screen dimensions with the camera.  In the least, you need to share the RenderPipe.
 If you didn't you'd end up creating more than 1 renderpipe.  Graphics isn't quite there yet, where we can establish
 30 render surafaces *per camera*.  On the other hand, you'd have to resize the buffers each time you swap cameras.  Neither solution is optimal, so we must use
-the same dimensions per camera.
+the same dimensions per camera.  I guess, one solution might be to use sub-areas of buffers.  This is sort of outside the scope of the GDD in the first place.
 If you notice, Blender fixes all cameras to use the same dims, scales, and resolution, since there can only be one rendering pipeline.  It's not that it is logical, it's that
 the logical solution is resource intensive.
 

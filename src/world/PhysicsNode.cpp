@@ -4,11 +4,11 @@
 #include "../base/Exception.h"
 #include "../world/PhysicsNode.h"
 #include "../world/Manifold.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
-PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps) : BaseNode(ps) {
+PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsData> ps) : SceneNode(ps) {
   _fMass = ps->getMass();
   _bHollow = ps->getHollow();
   _pSpeedbox = new Box3f();
@@ -25,9 +25,9 @@ PhysicsNode::~PhysicsNode() {
  // DEL_MEM(_pManifold);
   DEL_MEM(_pSpeedbox);
 }
-void PhysicsNode::init() {
-  BaseNode::init();
-}
+//void PhysicsNode::init() {
+//  BaseNode::init();
+//}
 void PhysicsNode::setVelocity(vec3& v) {
   _vVelocity = v;
   //Don't update anything here. we set this often.
@@ -46,12 +46,11 @@ std::shared_ptr<TreeNode> PhysicsNode::attachChild(std::shared_ptr<TreeNode> pCh
   return TreeNode::attachChild(pChild);
 }
 
-void PhysicsSpec::serialize(std::shared_ptr<BinaryFile> fb) {
-  BaseSpec::serialize(fb);
+void PhysicsData::serialize(std::shared_ptr<BinaryFile> fb) {
+  NodeData::serialize(fb);
 }
-void PhysicsSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
-  BaseSpec::deserialize(fb);
-
+void PhysicsData::deserialize(std::shared_ptr<BinaryFile> fb) {
+  NodeData::deserialize(fb);
 }
 void PhysicsNode::validateSanePhysics() {
   vec3 pos = getPos();
@@ -144,7 +143,7 @@ void PhysicsNode::setTemps(vec3& vVel, uint64_t frameId) {
 
 //   _vTempAcc = vAccel;
 
-  PhysicsWorld::limitVelocity(_vTempVel);
+  PhysicsManager::limitVelocity(_vTempVel);
 
   validateSanePhysics();
 }

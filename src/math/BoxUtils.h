@@ -18,9 +18,9 @@ namespace BR2 {
 //moved defs to mathheader
 class BoxUtils : public VirtualMemory {
 public:
-    STATIC vec3 normalForSide(BoxSide::e side);
-    STATIC vec3 normalUpForSide(BoxSide::e side);
-    STATIC int32_t cubeSideToGlCubeMapEnum(BoxSide::e side);
+  STATIC vec3 normalForSide(BoxSide::e side);
+  STATIC vec3 normalUpForSide(BoxSide::e side);
+  STATIC int32_t cubeSideToGlCubeMapEnum(BoxSide::e side);
 };
 
 }//ns Game

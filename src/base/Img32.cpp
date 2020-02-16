@@ -13,7 +13,7 @@ Img32::Img32(string_t path, bool bLoad){
     _strNameOrFilePath = path;
     if(bLoad){
         //TODO: this
-        BroThrowNotImplementedException();
+        Br2ThrowNotImplementedException();
     }
 }
 Img32::Img32(int w, int h, uint8_t* data) {
@@ -311,7 +311,7 @@ RetCode Img32::normalize(float depth) {
 std::shared_ptr<Img32> Img32::normalized(float depth)
 {
     if (!_pData) {
-        BroThrowException(" Image data was null for normalization ");
+        Br2ThrowException(" Image data was null for normalization ");
     }
 
     std::shared_ptr<Img32> pRet = std::make_shared<Img32>();
@@ -673,27 +673,27 @@ std::shared_ptr<Img32> Img32::copySubImageTo(Vec2i& off, Vec2i& size){
 //Image formats must be identical
 void Img32::copySubImageFrom(Vec2i& myOff, Vec2i& otherOff, Vec2i& size, std::shared_ptr<Img32> pOtherImage){
     if (getData() == NULL){
-        BroThrowException("Copy SubImage 2 - From image was not allocated");
+        Br2ThrowException("Copy SubImage 2 - From image was not allocated");
     }
     if (pOtherImage == NULL) {
-        BroThrowException("Copy SubImage 1 - Input Image was null.");
+        Br2ThrowException("Copy SubImage 1 - Input Image was null.");
     }
     if (pOtherImage->getData() == NULL){
-        BroThrowException("Copy SubImage 3 - Input Image TO was not allocated");
+        Br2ThrowException("Copy SubImage 3 - Input Image TO was not allocated");
     }
     //size constraint validation
     if (myOff.x < -1 || myOff.y < -1){
-        BroThrowException("Copy SubImage 4");
+        Br2ThrowException("Copy SubImage 4");
     }
     if (myOff.x >= (int)_iWidth || myOff.y >= (int)_iHeight){
-        BroThrowException("Copy SubImage 5.  This hits if you put too many textures in the db_atlas.dat file.  \
+        Br2ThrowException("Copy SubImage 5.  This hits if you put too many textures in the db_atlas.dat file.  \
         There can only be XxX textres (usually 16x16)");
     }
     if (otherOff.x < 0 || otherOff.y < 0){
-        BroThrowException("Copy SubImage 6");
+        Br2ThrowException("Copy SubImage 6");
     }
     if (otherOff.x >= pOtherImage->getWidth() || otherOff.y >= pOtherImage->getHeight()){
-        BroThrowException("Copy SubImage 7");
+        Br2ThrowException("Copy SubImage 7");
     }
 
     Vec2i scanPos = myOff;
@@ -847,7 +847,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
     for (size_t ix = 1; ix < vecXMarkers.size(); ix++) {
         if (vecXMarkers[ix] < vecXMarkers[ix - 1]) {
             //Error
-            BroLogError("Image Patch makers were out of order ");
+            Br2LogError("Image Patch makers were out of order ");
             bRet = false;
             //Gui2d::error(TStr("Image Patch makers were out of order for ", file));
             vecXMarkers.erase(vecXMarkers.begin() + ix);
@@ -857,7 +857,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
     for (size_t iy = 1; iy < vecYMarkers.size(); iy++) {
         if (vecYMarkers[iy] < vecYMarkers[iy - 1]) {
             //Error
-            BroLogError("Image Patch makers were out of order ");
+            Br2LogError("Image Patch makers were out of order ");
             bRet = false;
             // Gui2d::error(TStr("Image Patch makers were out of order for ", file));
             vecYMarkers.erase(vecYMarkers.begin() + iy);
@@ -910,10 +910,10 @@ void Img32::deserialize(std::shared_ptr<BinaryFile> bf) {
     
     //So data->size should be nBytse.
     if(getData()->byteSize() != nBytes) { 
-        BroLogError("Deserializing image '" + _strNameOrFilePath + "'.. image too big.");
+        Br2LogError("Deserializing image '" + _strNameOrFilePath + "'.. image too big.");
     }
     else if (getData()->ptr() == nullptr) {
-        BroLogError("Deserializing image, data not allocated.");
+        Br2LogError("Deserializing image, data not allocated.");
     }
     else {
         bf->read((const char*)getData()->ptr(), nBytes);

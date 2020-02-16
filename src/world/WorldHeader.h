@@ -24,7 +24,7 @@ class StuckPair;
 class GridManifold;
 class NodeManifold;
 class PhysicsGrid;
-class PhysicsWorld;
+class PhysicsManager;
 class PhysicsGridAwareness;
 class PhysicsShape;
 class SphereShape;

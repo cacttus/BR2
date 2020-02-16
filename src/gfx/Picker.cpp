@@ -11,89 +11,85 @@
 #include "../gfx/RenderPipeline.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/CameraNode.h"
+#include "../gfx/RenderPipeline.h"
 
 
 namespace BR2 {
-///////////////////////////////////////////////////////////////////
-Picker::Picker(std::shared_ptr<GLContext> pc) : _pContext(pc), _uiLastSelectedPixelId(0) {
+Picker::Picker(std::shared_ptr<RenderPipeline> pc) {
+  _pRenderPipe = pc;
+  _uiLastSelectedPixelId = 0;
 }
 Picker::~Picker() {
 }
-///////////////////////////////////////////////////////////////////
 uint32_t Picker::genPickId() {
 
-           //DEBUG pick ID that shows the color of the picked object.
-    _iid++;
-    if (_iid == Picker::c_iInvalidPickId) {
-        _iid = 0;
-    }
+  //DEBUG pick ID that shows the color of the picked object.
+  _iid++;
+  if (_iid == INVALID_PICK_ID) {
+    _iid = 0;
+  }
 
-    return _iid;
+  return _iid;
 }
 void Picker::update(std::shared_ptr<InputManager> pInput) {
-    updatePickedPixel((int32_t)pInput->getMousePos().x, (int32_t)pInput->getMousePos().y);
+  updatePickedPixel((int32_t)pInput->getMousePos().x, (int32_t)pInput->getMousePos().y);
 }
 void Picker::updatePickedPixel(int32_t x, int32_t y) {
-    if(Gu::getRenderPipe()==nullptr){
-        return;
+  //vec2 mp = Gu::GetMousePosInWindow();
+  //if (!Gu::GetRenderManager()->getViewport()->containsPointRelativeToWindow(mp)){
+  //    return;
+  //}
+
+  RenderUtils::debugGetRenderState();
+
+  _pRenderPipe->getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, _pRenderPipe->getBlittedDeferred()->getFramebufferId());
+  Gu::checkErrorsDbg();
+
+  glReadBuffer(GL_COLOR_ATTACHMENT4);
+
+  Gu::checkErrorsDbg();
+
+  RenderUtils::debugGetRenderState();
+
+  samplePixelId(x, y, _uiLastSelectedPixelId);
+
+  Gu::checkErrorsDbg();
+
+#ifdef _DEBUG
+  if (_uiLastSelectedPixelId > 0) {
+    if (_pRenderPipe->getContext()->getFpsMeter()->frameMod(20)) {
+      Br2LogDebug("(" + x + "," + y + "), picked " + _uiLastSelectedPixelId);
     }
-    //vec2 mp = Gu::GetMousePosInWindow();
-    //if (!Gu::GetRenderManager()->getViewport()->containsPointRelativeToWindow(mp)){
-    //    return;
-    //}
-    
-    RenderUtils::debugGetRenderState();
+  }
 
-    _pContext->glBindFramebuffer(GL_READ_FRAMEBUFFER, Gu::getRenderPipe()->getBlittedDeferred()->getFramebufferId() );
-    Gu::checkErrorsDbg();
+  Gu::checkErrorsDbg();
+#endif
 
-    glReadBuffer(GL_COLOR_ATTACHMENT4);
-
-    Gu::checkErrorsDbg();
-
-    RenderUtils::debugGetRenderState();
-
-    samplePixelId(x, y, _uiLastSelectedPixelId);
-
-    Gu::checkErrorsDbg();
-
-    #ifdef _DEBUG
-    if (_uiLastSelectedPixelId > 0)
-    {
-        if (Gu::getFpsMeter()->frameMod(20)) {
-            BroLogDebug("(" + x + "," + y + "), picked " + _uiLastSelectedPixelId);
-        }
-    }
-
-    Gu::checkErrorsDbg();
-    #endif
-
-    glReadBuffer(GL_NONE);
-    Gu::checkErrorsDbg();
+  glReadBuffer(GL_NONE);
+  Gu::checkErrorsDbg();
 
 }
-void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId)
-{
-    GLuint pixel = 0;
+void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId) {
+  GLuint pixel = 0;
 
-    //https://www.khronos.org/opengles/sdk/docs/man/xhtml/glReadPixels.xml
-    //If the currently bound framebuffer is not the default framebuffer object, color components 
-    // are read from the color image attached to the GL_COLOR_ATTACHMENT0 attachment point.
-    RenderUtils::debugGetRenderState();
+  //https://www.khronos.org/opengles/sdk/docs/man/xhtml/glReadPixels.xml
+  //If the currently bound framebuffer is not the default framebuffer object, color components 
+  // are read from the color image attached to the GL_COLOR_ATTACHMENT0 attachment point.
+  RenderUtils::debugGetRenderState();
 
-    int32_t iHeight = Gu::getCamera()->getViewport()->getHeight();
+  int32_t iHeight = _pRenderPipe->getBufferHeight();
 
-    glReadPixels(x - 1,
-        iHeight - y + 1,
-        1, 1,
-        GL_RED_INTEGER,
-        GL_UNSIGNED_INT,
-        (GLvoid*)&pixel
-    );
+  glReadPixels(x - 1,
+    iHeight - y + 1,
+    1, 1,
+    GL_RED_INTEGER,
+    GL_UNSIGNED_INT,
+    (GLvoid*)&pixel
+  );
 
-    Gu::checkErrorsDbg();
+  Gu::checkErrorsDbg();
 
-    selectedId = pixel;
+  selectedId = pixel;
 }
 
 }//ns Game

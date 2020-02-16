@@ -48,7 +48,7 @@ bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bD
     GLenum err = glGetError();
     if (err != GL_NO_ERROR) {
         if (doNotLog==false) {
-            BroLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
+            Br2LogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
         }
 
         if (Gu::getEngineConfig()->getBreakOnOpenGLError() == true) {
@@ -66,12 +66,12 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
     //Enable this in engine.cpp
  //   glEnable(GL_DEBUG_OUTPUT);
     if(ctx == nullptr){
-        BroLogWarn("Context not initialized (context isseu");
+        Br2LogWarn("Context not initialized (context isseu");
         return;
     }
     if (!ctx->glGetDebugMessageLog)
     {
-        BroLogWarn("Opengl log not initialized (context isseu");
+        Br2LogWarn("Opengl log not initialized (context isseu");
         return;
     }
 
@@ -85,7 +85,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
     }
 
     if(maxMsgLen <= 0) {
-        BroLogError("GL_MAX_DEBUG_MESSAGE_LENGTH returned 0.");
+        Br2LogError("GL_MAX_DEBUG_MESSAGE_LENGTH returned 0.");
         maxMsgLen = -2;
         return ;
     }
@@ -154,17 +154,17 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
                 if (type == GL_DEBUG_TYPE_ERROR)
                 {
                     string_t _strStackInfo = DebugHelper::getStackTrace();
-                    BroLogError(strMsg+ "\r\n" + _strStackInfo);
+                    Br2LogError(strMsg+ "\r\n" + _strStackInfo);
                 }
                 else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
                 {
                     string_t _strStackInfo = DebugHelper::getStackTrace();
-                    BroLogInfo(strMsg + "\r\n" + _strStackInfo);
+                    Br2LogInfo(strMsg + "\r\n" + _strStackInfo);
                 }
                 else
                 {
                     string_t _strStackInfo = DebugHelper::getStackTrace();
-                    BroLogWarn(strMsg + "\r\n" + _strStackInfo);
+                    Br2LogWarn(strMsg + "\r\n" + _strStackInfo);
                 }
             }
 

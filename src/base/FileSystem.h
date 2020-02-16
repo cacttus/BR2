@@ -11,7 +11,7 @@
 #include "../base/BaseHeader.h"
 
 namespace BR2 {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 typedef unsigned short mode_t;
 #endif
 /**

@@ -69,13 +69,13 @@ private:
 
 
 //Macros
-#define BroLogDebug(x) BR2::Gu::getLogger()->logDebug(Stz x,__LINE__,__FILE__ )
-#define BroLogInfo(x) BR2::Gu::getLogger()->logInfo(Stz x,__LINE__,__FILE__ )
-#define BroLogWarn(x) BR2::Gu::getLogger()->logWarn(Stz x,__LINE__,__FILE__, NULL )
-#define BroLogError(x) BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL )
-#define BroLogErrorNoStack(x) BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL, true)
+#define Br2LogDebug(x) BR2::Gu::getLogger()->logDebug(Stz x,__LINE__,__FILE__ )
+#define Br2LogInfo(x) BR2::Gu::getLogger()->logInfo(Stz x,__LINE__,__FILE__ )
+#define Br2LogWarn(x) BR2::Gu::getLogger()->logWarn(Stz x,__LINE__,__FILE__, NULL )
+#define Br2LogError(x) BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL )
+#define Br2LogErrorNoStack(x) BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL, true)
 
-#define BroLogErrorOnce(x) \
+#define Br2LogErrorOnce(x) \
 { \
 static bool _logged = false; \
 if(_logged == false) { \
@@ -84,10 +84,9 @@ BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL ); \
 } \
 } 
 
-#define BroLogErrorEx(x, aex) \
-BR2::Gu::getLogger()->logError(x,__LINE__,__FILE__, aex )
-#define BroLogWarnCycle(x) BR2::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, NULL, 60)
-#define BroLogErrorCycle(x) BR2::Gu::getLogger()->logErrorCycle(Stz x, __LINE__, __FILE__, NULL, 60)
+#define Br2LogErrorEx(x, aex) BR2::Gu::getLogger()->logError(x,__LINE__,__FILE__, aex )
+#define Br2LogWarnCycle(x) BR2::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, NULL, 60)
+#define Br2LogErrorCycle(x) BR2::Gu::getLogger()->logErrorCycle(Stz x, __LINE__, __FILE__, NULL, 60)
 
 #define SetLoggerColor_Error() ConsoleColorRed()
 #define SetLoggerColor_Info() ConsoleColorGray()

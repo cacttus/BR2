@@ -187,7 +187,7 @@ bool PoundFile::getYesOrNo(string_t& x) //Returns true if yes.
   bool yes = StringUtil::equalsi(x, "yes");
   bool no = StringUtil::equalsi(x, "no");
   if (!yes && !no) {
-    BroThrowException("Failed to parse yes/no value.");
+    Br2ThrowException("Failed to parse yes/no value.");
   }
   return yes;
 }

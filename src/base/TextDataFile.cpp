@@ -6,6 +6,13 @@
 #include "../base/Logger.h"
 
 namespace BR2 {
+TextDataFile::TextDataFile() : _fileData(NULL) {
+}
+TextDataFile::TextDataFile(string_t& loc) :
+  _fileLoc(loc) {
+}
+TextDataFile::~TextDataFile() {
+}
 void TextDataFile::msg(string_t msg, bool error) {
   _vecMessages.push_back(Stz(error ? "ERROR:" : "") + _fileName + ": " + msg);
 }
@@ -42,23 +49,13 @@ void TextDataFile::loadAndParse(string_t& loc) {
   //Dump messages.
   if (_vecMessages.size() > 0) {
     string_t str = StringUtil::join("\r\n", _vecMessages);
-    BroLogInfo("Errors:" + StringUtil::tabify(str, 2));
+    Br2LogInfo("Errors:" + StringUtil::tabify(str, 2));
   }
 
   postLoad(success);
 }
 void TextDataFile::save(string_t& loc) {
-  BroThrowNotImplementedException();
-}
-
-//+-- CTOR/DTOR --+
-TextDataFile::TextDataFile() : _fileData(NULL) {
-}
-TextDataFile::TextDataFile(string_t& loc) :
-  _fileLoc(loc) {
-}
-TextDataFile::~TextDataFile() {
-
+  Br2ThrowNotImplementedException();
 }
 
 }//ns game

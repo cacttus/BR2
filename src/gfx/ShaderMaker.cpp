@@ -93,7 +93,7 @@ void ShaderMaker::getComputeLimits() {
   glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &maxBindings);
 
   if (maxBindings <= 0) {
-    BroThrowException("The max number of shader storage buffers is zero. This likely means you are running an older graphics card where Compute Shading isn't supported.");
+    Br2ThrowException("The max number of shader storage buffers is zero. This likely means you are running an older graphics card where Compute Shading isn't supported.");
   }
   _maxBufferBindings = maxBindings;
 }
@@ -112,7 +112,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<string_t>& vecFi
     removeDuplicateSourceFiles(vecFiles);
     string_t strShaderName = getShaderNameFromFileNames(vecFiles);
     fullyQualifyFiles(vecFiles);
-    BroLogInfo("Making '" + strShaderName + "', Processing " + vecFiles.size() + " files.");
+    Br2LogInfo("Making '" + strShaderName + "', Processing " + vecFiles.size() + " files.");
 
     pShader = _pShaderCache->tryLoadCachedBinary(strShaderName, vecFiles);
 
@@ -152,10 +152,10 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<string_t>& vecFi
     }
 
 
-    BroLogInfo("Load Success\r\n------------------------------\r\n");
+    Br2LogInfo("Load Success\r\n------------------------------\r\n");
   }
   catch (Exception * ex) {
-    BroLogError(ex->what());
+    Br2LogError(ex->what());
   }
 
   return pShader;
@@ -247,7 +247,7 @@ bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>&
 
       // If there were no errors there still may be warnings and we want to print those to
       // the console
-      BroLogError(errStr);
+      Br2LogError(errStr);
       Gu::debugBreak();
       return true;
     }
@@ -308,7 +308,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
     _setSubPrograms.insert(pSubProg);
   }
   else {
-    BroLogDebug("Shader subprog " + loc + " already loaded.");
+    Br2LogDebug("Shader subprog " + loc + " already loaded.");
   }
 
   // - Load source, if it fails dump to console and return.
@@ -345,7 +345,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
   for (std::shared_ptr<ShaderSubProgram> subProg : vecpsp) {
 
     if (subProg == nullptr) {
-      BroThrowException(" [OpenGL] Tried to bind a null shader program.  Check for shader compile errors. ");
+      Br2ThrowException(" [OpenGL] Tried to bind a null shader program.  Check for shader compile errors. ");
     }
 
     //Compile Program
@@ -395,7 +395,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
   pProgram->setProgramStatus(ShaderStatus::Linked);
 
   // - Add all remaining errors from the GL
-  BroLogDebug("Program linked.. getting info log.");
+  Br2LogDebug("Program linked.. getting info log.");
   std::vector<string_t> errorLog;
   getProgramErrorLog(pProgram, errorLog);
   for (string_t strErr : errorLog) {
@@ -416,8 +416,8 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
     for (std::shared_ptr<ShaderSubProgram> subProg : pProgram->getSubPrograms()) {
       subProg->debugPrintShaderSource();
     }
-    BroLogError(str);
-    BroLogDebug("Note: any of the previous errors can be from any of the given shader source files.");
+    Br2LogError(str);
+    Br2LogDebug("Note: any of the previous errors can be from any of the given shader source files.");
 
     //delete pProgram;
     pProgram = nullptr;
@@ -432,7 +432,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
     _mapPrograms.insert(std::make_pair(pProgram->getNameHashed(), pProgram));
 
-    BroLogInfo("Created shader " + pProgram->getProgramName());
+    Br2LogInfo("Created shader " + pProgram->getProgramName());
 
     _pShaderCache->saveCompiledBinaryToDisk(pProgram);
 
@@ -524,7 +524,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
   sb->deleteUniforms();
 
   //Uniforms
-  BroLogInfo(" Parsing " + nUniforms + " shader Uniforms..");
+  Br2LogInfo(" Parsing " + nUniforms + " shader Uniforms..");
   Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
   for (int32_t i = 0; i < nUniforms; ++i) {
     GLint name_len = -1;
@@ -544,28 +544,28 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
     if (glLocation >= 0) {
       //If location >=0 - then we are not a buffer.
       if (StringUtil::contains(uniformName, "_ufShadowBoxSamples")) {
-        BroLogWarn("Altering Uniform '" + name + "' to '_ufShadowBoxSamples'.  This is inconsistent among vendors.");
+        Br2LogWarn("Altering Uniform '" + name + "' to '_ufShadowBoxSamples'.  This is inconsistent among vendors.");
 
         uniformName = "_ufShadowBoxSamples";
       }
       else if (StringUtil::contains(uniformName, "_ufGaussianWeight")) {
-        BroLogWarn("Altering Uniform '" + name + "' to '_ufGaussianWeight'.  This is inconsistent among vendors.");
+        Br2LogWarn("Altering Uniform '" + name + "' to '_ufGaussianWeight'.  This is inconsistent among vendors.");
 
         uniformName = "_ufGaussianWeight";
       }
       else if (StringUtil::contains(uniformName, "_ufShadowFrustumSamples")) {
-        BroLogWarn("Altering Uniform '" + name + "' to '_ufShadowFrustumSamples'.  This is inconsistent among vendors.");
+        Br2LogWarn("Altering Uniform '" + name + "' to '_ufShadowFrustumSamples'.  This is inconsistent among vendors.");
 
         uniformName = "_ufShadowFrustumSamples";
       }
       else if (StringUtil::findFirstOf(name, std::vector<char> { '.', '[', ']' }) != string_t::npos) {
-        BroLogWarn("Uniform name '" + name + "' was not valid but was parsed as a basic uniform. Could be a buffer. (parse error).");
+        Br2LogWarn("Uniform name '" + name + "' was not valid but was parsed as a basic uniform. Could be a buffer. (parse error).");
         Gu::debugBreak();
       }
 
 
       if (StringUtil::equals(uniformName, "gl_NumWorkGroups")) {
-        BroLogError(" [The GPU implementation thought the system variable " + uniformName + " was a uniform variable.  This is incorrect.  Ignoring...");
+        Br2LogError(" [The GPU implementation thought the system variable " + uniformName + " was a uniform variable.  This is incorrect.  Ignoring...");
         continue;
       }
 
@@ -590,7 +590,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
   glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &iMaxUniformBufferBindings);
 
   //Uniform Blocks
-  BroLogInfo(" Parsing " + nUniformBlocks + " shader Uniform Blocks..");
+  Br2LogInfo(" Parsing " + nUniformBlocks + " shader Uniform Blocks..");
   Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
   for (int32_t iBlock = 0; iBlock < nUniformBlocks; ++iBlock) {
     string_t blockName;
@@ -616,7 +616,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
       GLint bindingIndex = s_iBindingIndex++;
 
       if (bindingIndex > iMaxUniformBufferBindings) {
-        BroLogWarn("The binding index " + bindingIndex + " was greater than the maximum number of UBO bindings: " + iMaxUniformBufferBindings + ".");
+        Br2LogWarn("The binding index " + bindingIndex + " was greater than the maximum number of UBO bindings: " + iMaxUniformBufferBindings + ".");
         Gu::debugBreak();
       }
 
@@ -631,7 +631,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
       sb->getUniformBlocks().insert(std::make_pair(STRHASH(blockName), pBlock));
     }
     else {
-      BroLogInfo("Shader block '" + blockName + "' already created.");
+      Br2LogInfo("Shader block '" + blockName + "' already created.");
     }
   }
 }
@@ -756,7 +756,7 @@ void ShaderMaker::setUfBlock(string_t name, void* value, size_t copySizeBytes, b
   std::shared_ptr<ShaderUniformBlock> uf = getUniformBlockByName(name);
   if (uf == nullptr) {
     if (bIgnore == false) {
-      BroLogWarnCycle("Uniform Block '" + name + "' could not be found.");
+      Br2LogWarnCycle("Uniform Block '" + name + "' could not be found.");
     }
   }
   else {

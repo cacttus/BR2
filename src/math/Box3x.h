@@ -522,7 +522,7 @@ FORCE_INLINE void Box3x<Tx>::getCubeIntersectionVolume(Box3f* a, Box3f* b, Box3f
 
 #ifdef _DEBUG
     if( ! a->cubeIntersect_EasyOut_Exclusive(b) )
-        BroThrowException("Debug, cube a did not intersect b");
+        Br2ThrowException("Debug, cube a did not intersect b");
 #endif
 
     out->_max = Vec3x<Tx>::minv(a->_max,b->_max);

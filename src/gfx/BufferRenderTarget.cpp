@@ -17,7 +17,7 @@ bool BufferRenderTarget::getMsaaEnabled() {
     return false;
   }
   else {
-    BroThrowNotImplementedException();
+    Br2ThrowNotImplementedException();
   }
 }
 

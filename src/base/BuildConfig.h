@@ -1,10 +1,8 @@
 /**
-*
 *  @file BuildConfig.h
 *  @date April 3, 2016
 *  @author MetalMario971
-*
-*    Contains all Build based defines. 
+*    Contains all Build based defines.
 */
 #pragma once
 #ifndef __BUILDCONFIG_14597134672299218799_H__
@@ -33,12 +31,12 @@ namespace BR2 {
 //////////////////////////////////////////////////////////////////////////
 // OPERATING SYSEMT
 //#ifndef __unix
-//#define BRO_OS_WINDOWS
+//#define BR2_OS_WINDOWS
 ////#define BRO_USE_DIRECTX
 //#define BRO_USE_WINSOCK
 //#else
 ////**Bro OS Android MUST BE DEFINED in the android makefile.
-//#ifndef BRO_OS_ANDROID
+//#ifndef BR2_OS_ANDROID
 //#error "Operating System Error"
 //#endif
 //#endif

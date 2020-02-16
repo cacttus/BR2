@@ -13,27 +13,19 @@
 namespace BR2 {
 /**
 *  @class BinaryFile
-*  @brief Binary parsed file which is loaded into a static buffer in memory via the memory manager.
+*  @brief Efficient memory-mapped binary file with convenient read/write ops.
 */
 class BinaryFile : public VirtualMemory { 
 public:
     enum { file_eof = -1 };
     typedef int32_t t_filepos;
-private:
-    Allocator<char> _data;
-    size_t iFilePos;
-
-    void validateRead(size_t outSize, size_t readCount);
-    RetCode read(const char* buf, size_t count, size_t bufcount, size_t offset);
-    RetCode write(const char* buf, size_t count, size_t bufcount, size_t offset);
 public:
-    Allocator<char>& getData() { return _data; }
-
     BinaryFile();
     BinaryFile(size_t buffer_size);
     virtual ~BinaryFile() override;
 
     void reallocBuffer(size_t i) { _data.alloca(i); }
+    Allocator<char>& getData() { return _data; }
 
     size_t pos(){return iFilePos;}
     int8_t at();
@@ -49,7 +41,6 @@ public:
     bool eatTo(int8_t c);
     bool eof();
 
-    // - Read
     void readBool(bool& val, size_t offset = memsize_max);
     void readVec2(vec2& val, size_t offset = memsize_max);
     void readVec3(vec3& val, size_t offset = memsize_max);
@@ -78,16 +69,21 @@ public:
     void writeFloat(const float&& val, size_t offset = memsize_max);
     void writeString(std::string&& val, size_t offset = memsize_max);
     void writeMat4(mat4&& val, size_t offset = memsize_max);
-
     void write(const char* buf, size_t bufsiz, size_t offset = memsize_max);
 
-    //- File Operations
     bool loadFromDisk( string_t fileLoc, bool bAddNull = false );        // - Read the whole file into the buffer.
     bool loadFromDisk(string_t fileLoc, size_t offset, int64_t length, bool bAddNull = false);        // - Read a part of the file.
     bool writeToDisk(string_t fileLoc);        // - Read a part of the file.
    
     std::string toString();
 
+private:
+  Allocator<char> _data;
+  size_t iFilePos;
+
+  void validateRead(size_t outSize, size_t readCount);
+  RetCode read(const char* buf, size_t count, size_t bufcount, size_t offset);
+  RetCode write(const char* buf, size_t count, size_t bufcount, size_t offset);
 };
 
 }//ns game

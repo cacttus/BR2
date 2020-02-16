@@ -26,7 +26,7 @@ void Perf::beginPerf() {
 }
 void Perf::endPerf() {
   if (g_bPerfFrame == 1) {
-    BroLogInfo(_strCachedProf);
+    Br2LogInfo(_strCachedProf);
     _strCachedProf = "";
   }
 }

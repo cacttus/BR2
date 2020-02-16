@@ -3,7 +3,7 @@
 #include "../base/BaseAll.h"
 #include "../base/OperatingSystem.h"
 
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 //For opening folder
 #include <Shlobj.h>
 #include <Shlobj_core.h>
@@ -13,18 +13,18 @@
 namespace BR2 {
 
 int32_t OperatingSystem::getNumberOfProcessors() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   SYSTEM_INFO si;
   GetSystemInfo(&si);
   return (int32_t)si.dwNumberOfProcessors;
-#elif BRO_OS_ANDROID
+#elif BR2_OS_ANDROID
   return android_getCpuCount();
 #else
   OS_METHOD_NOT_IMPLEMENTED
 #endif
 }
 void OperatingSystem::showMouseCursor() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(CURSORINFO);
   int nFailover = 10000;
@@ -38,7 +38,7 @@ void OperatingSystem::showMouseCursor() {
 #endif
 }
 void OperatingSystem::hideMouseCursor() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(CURSORINFO);
   int nFailover = 10000;
@@ -53,7 +53,7 @@ void OperatingSystem::hideMouseCursor() {
 }
 bool OperatingSystem::getMouseCursorIsVisible() {
   bool ret = false;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(ci);
   GetCursorInfo(&ci);
@@ -65,7 +65,7 @@ bool OperatingSystem::getMouseCursorIsVisible() {
 }
 string_t  OperatingSystem::getOperatingSystemName() {
   string_t res;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   OSVERSIONINFOEX vex;
   vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionExW((OSVERSIONINFO*)&vex);
@@ -123,7 +123,7 @@ string_t OperatingSystem::getUserFolderPath() {
   //returns "My Documents" on windows.
   //Linux .. ?
   string_t ret;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   char lpstrPath[BRO_MAX_PATH];
   //TODO: Vista and beyond
   //SHGetKnownFolderPath
@@ -142,7 +142,7 @@ string_t OperatingSystem::getGamesFolderPath() {
   string_t ret = "";
   /*
  // CheckOsErrorsDbg();
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     PWSTR lpwstrPath = NULL;
     HRESULT result;
 
@@ -163,7 +163,7 @@ string_t OperatingSystem::getGamesFolderPath() {
 }
 void OperatingSystem::suppressError(OSErrorCode ec, bool bWriteMessage) {
   string_t strMsg = "";
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   switch (ec) {
   case OSErrorCode::FileNotFound:
     strMsg = "File Not Found";
@@ -188,7 +188,7 @@ void OperatingSystem::suppressError(OSErrorCode ec, bool bWriteMessage) {
     }
 }
 void OperatingSystem::showErrorDialog(string_t& str, string_t title) {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   string_t dialogPath =
     FileSystem::combinePath(
       FileSystem::getExecutableDirectory(), string_t("WindowsErrorDialog.exe")
@@ -226,14 +226,14 @@ void OperatingSystem::showErrorDialog(string_t& str, string_t title) {
 #endif
 }
 void OperatingSystem::clearAllErrors() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   SetLastError(0);
 #else
   throw new NotImplementedException();
 #endif
 }
 int32_t OperatingSystem::getError() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   return GetLastError();
 #else
   throw new NotImplementedException();
@@ -242,7 +242,7 @@ int32_t OperatingSystem::getError() {
 
 //size_t OperatingSystem::getAvailableMemory()
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    MEMORYSTATUSEX mmex;
 //    mmex.dwLength = sizeof(mmex);
 //
@@ -256,7 +256,7 @@ int32_t OperatingSystem::getError() {
 //size_t OperatingSystem::getProcessMemoryUsage()
 //{
 //    
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    PROCESS_MEMORY_COUNTERS pmex;
 //    GetProcessMemoryInfo( GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmex, sizeof(PROCESS_MEMORY_COUNTERS) );
 //
@@ -280,7 +280,7 @@ string_t OperatingSystem::getRuntimeEnvironmentStr() {
 #endif
 }
 int OperatingSystem::strCaseCmp(const string_t& str1, const string_t& str2) {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //win32 only
   return _stricmp(str1.c_str(), str2.c_str());
 #else
@@ -289,21 +289,21 @@ int OperatingSystem::strCaseCmp(const string_t& str1, const string_t& str2) {
 #endif
 }
 void OperatingSystem::showConsole() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   ShowWindow(GetConsoleWindow(), SW_SHOW);
 #else
   OS_METHOD_NOT_IMPLEMENTED
 #endif
 }
 void OperatingSystem::hideConsole() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   ShowWindow(GetConsoleWindow(), SW_HIDE);
 #else
   OS_METHOD_NOT_IMPLEMENTED
 #endif
 }
 string_t OperatingSystem::showOpenFolderDialog(string_t saved_path) {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   WCHAR path[MAX_PATH];
 
   const char* path_param = saved_path.c_str();
@@ -344,7 +344,7 @@ string_t OperatingSystem::showOpenFolderDialog(string_t saved_path) {
 }
 string_t OperatingSystem::showOpenFileDialog(string_t title, string_t filter, string_t defaultext, string_t basePath) {
   string_t file = "";
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   OPENFILENAMEW ofn = { 0 };
   WCHAR openFileNameReturnString[MAX_PATH];	// the filename will go here from the openfile dialog
   ZeroMemory(openFileNameReturnString, MAX_PATH);

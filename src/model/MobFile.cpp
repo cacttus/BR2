@@ -28,7 +28,7 @@ void MobFile::pkp(std::vector<string_t>& tokens) {
       _pCurModDataLoad->_strModName = getCleanToken(tokens, iind);
       _pCurModDataLoad->_fVersion = TypeConv::strToFloat(getCleanToken(tokens, iind));
       if (_fVersion != _pCurModDataLoad->_fVersion) {
-        BroLogError("Mob file verion mismatch got " + _pCurModDataLoad->_fVersion + ", but wanted " + _fVersion + ".");
+        Br2LogError("Mob file verion mismatch got " + _pCurModDataLoad->_fVersion + ", but wanted " + _fVersion + ".");
         Gu::debugBreak();
       }
     }
@@ -79,13 +79,13 @@ void MobFile::cacheObjectsAndComputeBoxes() {
   _vecModelSpecs.clear();
   for (std::shared_ptr<ModDataLoad> mdd : _setModData) {
     //Create Model Spec
-    std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>(mdd->_strModName, mdd->_iFrameRate);
+    std::shared_ptr<ModelData> ms = std::make_shared<ModelData>(mdd->_strModName, mdd->_iFrameRate);
     _vecModelSpecs.push_back(ms);
     Gu::getModelCache()->addSpec(ms);
 
-    BroLogInfo("  Caching data..");
+    Br2LogInfo("  Caching data..");
     //Add specs to the Caches
-    for (std::shared_ptr<Armature> pms : mdd->_setArmDatas) {
+    for (std::shared_ptr<ArmatureData> pms : mdd->_setArmDatas) {
       ms->getArmatures().push_back(pms);
       ms->getArmatureMapOrdered().insert(std::make_pair(pms->getArmatureId(), pms));
     }
@@ -98,7 +98,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
       ms->getActionGroups().push_back(pa);
     }
 
-    BroLogInfo("  Making Thumb ..");
+    Br2LogInfo("  Making Thumb ..");
     //Gen THumb
     std::shared_ptr<Img32> thumb = ModelThumb::genThumb(ms, Gu::getEngineConfig()->getModelThumbSize());
     ms->setThumb(thumb);
@@ -233,7 +233,7 @@ bool ModDataLoad::tkArms(MobFile* mb, std::vector<string_t>& tokens) {
       string_t strParentType = mb->getCleanToken(tokens, iind);
       int32_t iId = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
       //t_string strParent = mb->getCleanToken(tokens, iind);
-      _pCurArmData = std::make_shared<Armature>(strName, iId);
+      _pCurArmData = std::make_shared<ArmatureData>(strName, iId);
       _pCurArmData->setParentName(strParentName, mb->parseParentType(strParentType));
     }
   }
@@ -718,7 +718,7 @@ int32_t MeshSpecData::addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni) {
   return newIndex;
 }
 std::shared_ptr<MeshData> MeshSpecData::makeSpec(MobFile* mb) {
-  BroLogInfo("Adding mesh part '" + _strName + "'");
+  Br2LogInfo("Adding mesh part '" + _strName + "'");
 
   std::shared_ptr<PhysicsShape> pShape = makePhysicsShapeForSpec();
   std::shared_ptr<VertexFormat> fmt = getVertexFormatForSpec(mb);
@@ -788,7 +788,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pS
         mat->addTextureBinding(pTex, TextureChannel::e::Channel0, TextureType::e::Color, _pMatData->_fDiffuseTexInfluence);
       }
       else {
-        BroLogError("Texture image file " + _pMatData->_strDiffuseTex + " not found!");
+        Br2LogError("Texture image file " + _pMatData->_strDiffuseTex + " not found!");
         Gu::debugBreak();
       }
     }
@@ -799,7 +799,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pS
         mat->addTextureBinding(pTex, TextureChannel::e::Channel1, TextureType::e::Normal, _pMatData->_fNormalTexInfluence);
       }
       else {
-        BroLogError("Texture image file " + _pMatData->_strNormalTex + " not found!");
+        Br2LogError("Texture image file " + _pMatData->_strNormalTex + " not found!");
         Gu::debugBreak();
       }
     }
@@ -844,18 +844,18 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
 
   if (_bFlipTris) {
     t0 = Gu::getMicroSeconds();
-    BroLogInfo("..Flipping mesh triangles..");
+    Br2LogInfo("..Flipping mesh triangles..");
     for (size_t iInd = 0; iInd < _vecMeshIndexes.size(); iInd += 3) {
       v_index32 t = _vecMeshIndexes[iInd + 1];
       _vecMeshIndexes[iInd + 1] = _vecMeshIndexes[iInd + 2];
       _vecMeshIndexes[iInd + 2] = t;
     }
-    BroLogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
+    Br2LogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
 
   }
   if (_bCalcNormals) {
     t0 = Gu::getMicroSeconds();
-    BroLogInfo("..Calc mesh Normals..");
+    Br2LogInfo("..Calc mesh Normals..");
     std::vector<float> fCountPerVert;
     for (size_t iVert = 0; iVert < _vecMeshVerts.size(); ++iVert) {
       _vecMeshVerts[iVert].n = 0;
@@ -891,20 +891,20 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
     }
 
 
-    BroLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
+    Br2LogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
   if (_bSwapUvs) {
     t0 = Gu::getMicroSeconds();
-    BroLogInfo("..Swapping mesh UVs.");
+    Br2LogInfo("..Swapping mesh UVs.");
     for (size_t iInd = 0; iInd < _vecMeshVerts.size(); iInd++) {
       float t = _vecMeshVerts[iInd].x.u();
       _vecMeshVerts[iInd].x.u() = _vecMeshVerts[iInd].x.v();
       _vecMeshVerts[iInd].x.v() = t;
     }
-    BroLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
+    Br2LogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
 
-  BroLogInfo("Copying Vertex Format...");
+  Br2LogInfo("Copying Vertex Format...");
   std::vector<v_v3n3> verts_v3n3;
   std::vector<v_v3x2> verts_v3x2;
   std::vector<v_v3> verts_v3;
@@ -940,9 +940,9 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
   }
   else {
     //Eventually we should make loading this generic and just use the FragmentBufferData or sometjhing
-    BroThrowNotImplementedException();
+    Br2ThrowNotImplementedException();
   }
-  BroLogInfo("Allocating...");
+  Br2LogInfo("Allocating...");
   //Allocate
   pSpec->allocMesh(
     vData, vDataSize,
@@ -953,10 +953,10 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
   verts_v3x2.resize(0);
   verts_v3.resize(0);
 
-  BroLogInfo("Computing Bound Box...");
+  Br2LogInfo("Computing Bound Box...");
   pSpec->computeBox();
 
-  BroLogInfo("..done");
+  Br2LogInfo("..done");
 }
 int32_t MeshSpecData::findCachedVertex(int32_t vi, int32_t xi, int32_t ni) {
   ivec3 v;

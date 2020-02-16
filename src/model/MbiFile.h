@@ -18,7 +18,7 @@ namespace BR2 {
 class MbiFile : public VirtualMemory {
 public:
   const float c_fVersion = 0.3f;
-  std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModels; }
+  std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModels; }
 
   bool loadAndParse(string_t file);
   void save(string_t file);
@@ -26,7 +26,7 @@ public:
   virtual ~MbiFile() override;
 
 private:
-  std::vector<std::shared_ptr<ModelSpec>> _vecModels;
+  std::vector<std::shared_ptr<ModelData>> _vecModels;
   void parseErr(string_t str, bool bDebugBreak, bool bFatal);
   std::shared_ptr<BinaryFile> _pFile = nullptr;
   string_t _fileLoc;

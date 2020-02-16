@@ -155,7 +155,7 @@ void QuadBufferMesh::copyToGpu(int32_t iQuadCount, bool bIndexes)
     }
 
 
-    _pMesh->getMeshSpec()->allocMesh(_verts.data(), quadCount *4, vi, iVi);
+    _pMesh->getMeshData()->allocMesh(_verts.data(), quadCount *4, vi, iVi);
 }
 void QuadBufferMesh::getGpuQuad(GpuQuad3& q)
 { 

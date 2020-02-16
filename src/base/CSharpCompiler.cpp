@@ -16,7 +16,7 @@ std::shared_ptr<CSharpCompileResult> CSharpCompiler::compile(char* code) {
 general - parse
 
 #ifndef FORCE_INLINE
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 #define FORCE_INLINE __forceinline
 #else
 #define FORCE_INLINE inline

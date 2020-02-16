@@ -8,7 +8,7 @@
 #define __WORLDOBJECT_15812292363701244110_H__
 
 #include "../world/WorldHeader.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../world/PhysicsNode.h"
 
 namespace BR2 {
@@ -22,8 +22,8 @@ class WorldObject : public PhysicsNode {
 public:
   WorldObject();
   virtual ~WorldObject() override;
+
   void addComponent(std::shared_ptr<Component> comp);
-  std::shared_ptr<Scene> getScene();
 private:
   std::vector<std::shared_ptr<Component>> _components;
 };

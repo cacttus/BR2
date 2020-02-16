@@ -16,11 +16,11 @@ HANDLE hCrtLog;
 bool _bDoDebug = false;
 
 void staticDebugBreak(string_t str) {
-    BroLogError(str);
+    Br2LogError(str);
     Gu::debugBreak();
 }
 void runtimeAssertion(string_t str) {
-    BroThrowException(str);
+    Br2ThrowException(str);
 }
 
 DebugHelper::DebugHelper() {
@@ -79,7 +79,7 @@ void DebugHelper::debugHeapBegin(bool bDoDebug)
         return;
 
 #ifdef _DEBUG
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 
     //This chekcs every block for problems
 #define VERBOSITY 
@@ -128,7 +128,7 @@ void DebugHelper::debugHeapEnd() {
         return;
     }
 #ifdef _DEBUG
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     _CrtCheckMemory();
     //LEAK_CHECK_DF flag will call this 
     _CrtDumpMemoryLeaks();
@@ -145,7 +145,7 @@ void DebugHelper::debugHeapEnd() {
 }
 void DebugHelper::checkMemory() {
 #ifdef _DEBUG
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     _CrtCheckMemory();
 #else
 #error "Operating System Error"
@@ -155,7 +155,7 @@ void DebugHelper::checkMemory() {
 
 string_t DebugHelper::modList() {
     string_t ret = "";
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 
     MODULEENTRY32 me32;
     HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
@@ -201,7 +201,7 @@ string_t DebugHelper::modList() {
 }
 std::vector<std::string> DebugHelper::getCallStack(bool bIncludeFrameId) {
     std::vector<std::string> callStack;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     //Code copied from Msdn.
     uint32_t i;
     void* stack[512];

@@ -17,61 +17,15 @@
 #include "../base/TreeNode.h"
 
 namespace BR2 {
-
-//TODO: remove specs, and make the node instances dependent on "data" objects.
-class BaseSpec : public VirtualMemoryShared<BaseSpec> {
-public:
-  BaseSpec() {} //Serialized version
-  BaseSpec(string_t strName);
-  virtual ~BaseSpec() override;
-  ParentType::e getParentType() { return _eParentType; }
-  Box3f* getBoundBoxObject() { return _pBox; }
-
-  string_t getName() { return _strName; }
-  Hash32 getNameHashed() { return _iNameHashed; }
-  //void setBasis(mat4& basis){
-  //    _mBasis = basis;
-  //}
- // mat4& getBasis() { return _mBasis; }
-  mat4& getBind() { return _mBind; }
-  mat4& getInvBind() { return _mInvBind; }
-  mat4& getParentInverse() { return _mParentInverse; }
-  void setParentInverse(mat4& m) { _mParentInverse = m; }
-  void setBind(mat4& bind) {
-    _mBind = bind;
-    _mInvBind = _mBind.inverseOf();
-  }
-  void setInvBind(mat4& bind) {
-    //_mBind = bind;
-    _mInvBind = bind;
-  }
-  void setParentName(string_t str, ParentType::e ee) { _strParentName = str; setParentType(ee); }
-  string_t getParentName() { return _strParentName; }
-  virtual void serialize(std::shared_ptr<BinaryFile> fb);
-  virtual void deserialize(std::shared_ptr<BinaryFile> fb);
-
-protected:
-  Box3f* _pBox = nullptr;//Base Box.
-  string_t _strName;
-  Hash32 _iNameHashed;
-  mat4 _mInvBind;
-  mat4 _mBind;
-  mat4 _mParentInverse;   //This is just for mesh objects that have mesh parents.
-  //mat4 _mBasis;//Where the object is - base rotation &c.
-  string_t _strParentName;
-  ParentType::e _eParentType = ParentType::e::None;
-  void setParentType(ParentType::e pt) { _eParentType = pt; }
-};
-
 /**
 *  @class BaseNode
 *  @brief The base class for nodes in the scenegraph. @sa Scene
 */
-class BaseNode : public TreeNode {
+class SceneNode : public TreeNode {
 public:
-  BaseNode(std::shared_ptr<BaseSpec>);
-  virtual ~BaseNode() override;
-
+  SceneNode();
+  SceneNode(std::shared_ptr<NodeData> data);
+  virtual ~SceneNode() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void compileWorldMatrix();
@@ -83,7 +37,7 @@ public:
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp) override;
   virtual void drawShadow(RenderParams& rp) override;
-  virtual void drawDebug(RenderParams& rp) override;
+  virtual void drawForwardDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override;
   virtual void drawTransparent(RenderParams& rp) override;
 
@@ -91,7 +45,7 @@ public:
   bool getHidden() { return _bHidden; }
 
   template < typename Tx > std::shared_ptr<Tx> getData() {
-    return std::dynamic_pointer_cast<Tx>(_pSpec);
+    return std::dynamic_pointer_cast<Tx>(_pNodeData);
   }
   NodeId getId() { return _iNodeId; }
   OBB* getOBB() { return _pOBB; }
@@ -119,7 +73,7 @@ public:
     _vRotationNormal = axis_angle_radians.xyz();
     _fRotation = axis_angle_radians.w;
   }
-  std::shared_ptr<BaseSpec> getSpec() { return _pSpec; }
+  std::shared_ptr<NodeData> getNodeData() { return _pNodeData; }
   mat4& getLocal() { return _mLocal; }
   mat4& getWorld() { return _mWorld; }
   mat4& getAnimated() { return _mAnimated; }
@@ -131,7 +85,8 @@ public:
   bool isLightNode();
   bool isModelNode();
   bool isCameraNode();
-  string_t getSpecName();
+  std::shared_ptr<Scene> getScene();
+  string_t getName();
   Hash32 getSpecNameHashed();
   void drawBoxes(std::shared_ptr<UtilMeshInline> mi);
   void drawBox(std::shared_ptr<UtilMeshInline> mi);
@@ -154,7 +109,7 @@ public:
 
     if (getChildren()) {
       for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-        std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+        std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
         if (pc != nullptr) {
           if (pc->findNode<Tx>(node) == true) {
             return true;
@@ -168,7 +123,7 @@ public:
   std::vector<std::shared_ptr<CSharpScript>>& getScripts() { return _scripts; }
 
 protected:
-  std::shared_ptr<BaseSpec> _pSpec = nullptr;
+  std::shared_ptr<NodeData> _pNodeData = nullptr;
   Box3f* _pBox = nullptr;
   OBB* _pOBB = nullptr;
   vec3 _vViewNormal;
@@ -188,14 +143,12 @@ protected:
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void applyLocalAnimation(std::shared_ptr<Animator>);
   void applyParent();
-  virtual void init();
 
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
   vec3 _vPos;
   vec3 _vLastPos;
   bool _bTransformChanged = true;
-  bool _bInitialized = false;
 };
 
 

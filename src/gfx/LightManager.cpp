@@ -8,7 +8,7 @@
 #include "../gfx/LightNode.h"
 
 #include "../model/ShaderStorageBuffer.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 #include "../world/RenderBucket.h"
 #include "../world/Scene.h"
 
@@ -29,7 +29,7 @@ LightManager::LightManager(std::shared_ptr<Scene> scene) {
   }
 
 
-  BroLogDebug("Light Manager Initializing");
+  Br2LogDebug("Light Manager Initializing");
   initializeDeferredFogData();
 
 }
@@ -117,11 +117,10 @@ void LightManager::update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowF
 // - Main function to be called on the scene to set up all the lights.
 void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf) {
   //Physics world may not be instantiated.
-  if (_pScene->getPhysicsWorld() != nullptr && _pScene->getPhysicsWorld()->getRenderBucket() != nullptr) {
-
+  if (_pScene->getPhysicsManager() != nullptr && _pScene->getPhysicsManager()->getRenderBucket() != nullptr) {
     Perf::pushPerf();
-    int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();//shadowmapmaxinfluences
-    int32_t nMaxDirLights = Gu::getConfig()->getMaxDirLights();//shadowmapmaxinfluences
+    int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();
+    int32_t nMaxDirLights = Gu::getConfig()->getMaxDirLights();
 
     _pGpuDeferredParams->_iPointLightCount = 0;
     _pGpuDeferredParams->_iDirLightCount = 0;
@@ -132,7 +131,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
 
     //Note: we collect all lights in the physics world collection step.
     //Update all lights that collide with the main frustum
-    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getPointLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsManager()->getRenderBucket()->getPointLights()) {
       std::shared_ptr<LightNodePoint> pPointLight = p.second;
       if (_pGpuDeferredParams->_iPointLightCount < nMaxPointLights) {
         pPointLight->renderShadows(pf);
@@ -143,7 +142,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
         _vecGpuPointLights.push_back(*(pPointLight->getGpuLight().get()));
       }
     }
-    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getDirLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsManager()->getRenderBucket()->getDirLights()) {
       std::shared_ptr<LightNodeDir> pDirLight = p.second;
       if (_pGpuDeferredParams->_iDirLightCount < nMaxDirLights) {
         pDirLight->renderShadows(mf);
@@ -162,7 +161,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
 }
 std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
   std::vector<std::shared_ptr<ShadowBox>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getPointLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsManager()->getRenderBucket()->getPointLights()) {
     if (p.second->getShadowBox()) {
       sbs.push_back(p.second->getShadowBox());
     }
@@ -172,7 +171,7 @@ std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
 }
 std::vector<std::shared_ptr<ShadowFrustum>> LightManager::getAllShadowFrustums() {
   std::vector<std::shared_ptr<ShadowFrustum>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsWorld()->getRenderBucket()->getDirLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsManager()->getRenderBucket()->getDirLights()) {
     if (p.second->getShadowFrustum()) {
       sbs.push_back(p.second->getShadowFrustum());
     }

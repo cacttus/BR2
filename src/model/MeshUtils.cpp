@@ -25,7 +25,7 @@ namespace BR2 {
 
 */
 bool MeshGenParams::logAndExit(string_t str) {
-  BroLogError(str);
+  Br2LogError(str);
   return false;
 }
 bool MeshGenParams::parse(string_t genString) {
@@ -113,7 +113,7 @@ MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(string_t str) {
   else if (str == "plane2x")
     return MeshGenType::e::MGA_CROSS_2_SIDE;
 
-  BroThrowException(" [MESH GEN] Failed to get generation algorithm from string ");
+  Br2ThrowException(" [MESH GEN] Failed to get generation algorithm from string ");
 }
 
 //////////////////////////////////////////////////////////////////////////

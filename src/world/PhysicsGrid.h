@@ -27,7 +27,7 @@ private:
     Box3f* _pBoundBox = nullptr;
     std::unique_ptr<NodeManifold> _pManifold = nullptr;
     float _fNodeWidth, _fNodeHeight;
-    std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
+    std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;
     std::shared_ptr<PhysicsGrid> _pNeighbor[c_nNeighbors];
     bool _bEmpty = false;
 
@@ -40,7 +40,7 @@ protected:
     void unlinkGrids();
 
 public:
-    PhysicsGrid(std::shared_ptr<PhysicsWorld> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty);
+    PhysicsGrid(std::shared_ptr<PhysicsManager> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty);
     virtual ~PhysicsGrid() override;
 
     std::shared_ptr<PhysicsGrid> getNeighbor(int iSide);

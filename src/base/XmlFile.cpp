@@ -25,7 +25,7 @@ std::shared_ptr<PackageConfiguration> XmlFile::getXMLConfiguration(string_t file
   //https://stackoverflow.com/questions/14329738/pugixml-number-of-child-nodes
   size_t n = std::distance(doc.children().begin(), doc.children().end());
   if (n > 2) {
-    BroLogWarn("Too many root level children in configuration file.  File must have a schema tag and 1 root child");
+    Br2LogWarn("Too many root level children in configuration file.  File must have a schema tag and 1 root child");
   }
 
   //ApplicationPackage tag
@@ -36,7 +36,7 @@ std::shared_ptr<PackageConfiguration> XmlFile::getXMLConfiguration(string_t file
     return false;
     });
   if (root.empty()) {
-    BroLogWarn("Could not find <ApplicationPackage> root node.  The node should be at the document root.");
+    Br2LogWarn("Could not find <ApplicationPackage> root node.  The node should be at the document root.");
     Gu::debugBreak();
   }
   else {
@@ -47,7 +47,7 @@ std::shared_ptr<PackageConfiguration> XmlFile::getXMLConfiguration(string_t file
       return false;
       });
     if (att.empty()) {
-      BroLogWarn("<ApplicationPackage> did not contain a 'name' attribute.");
+      Br2LogWarn("<ApplicationPackage> did not contain a 'name' attribute.");
       Gu::debugBreak();
     }
     else {
@@ -82,7 +82,7 @@ void XmlFile::parse(char* buf, int64_t size) {
   //https://stackoverflow.com/questions/14329738/pugixml-number-of-child-nodes
   size_t n = std::distance(_doc.children().begin(), _doc.children().end());
   if (n > 2) {
-    BroLogWarn("Too many children in configuration file.  File must have a schema tag and 1 root child");
+    Br2LogWarn("Too many children in configuration file.  File must have a schema tag and 1 root child");
   }
 
   _vecTokens.clear();

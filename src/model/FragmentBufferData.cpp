@@ -19,7 +19,7 @@ size_t FragmentBufferData::count() {
 void* FragmentBufferData::getPointerToComponentAtIndex(size_t index, std::shared_ptr<VertexComponent> pc) {
 #ifdef _DEBUG
   if (pc == nullptr) {
-    BroThrowException(
+    Br2ThrowException(
       "Vertex array access violation - tried to access a nonexistent vertex component" +
       " - check the vertex (fragment) type being referenced");
   }

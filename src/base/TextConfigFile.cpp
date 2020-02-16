@@ -34,10 +34,10 @@ void TextConfigFile::parseErr(const string_t& str, bool bDebugBreak, bool bFatal
     string_t str2 = strhead + str;
     //Throw this if you wnt to have an error in your file.
     if (bFatal) {
-        BroThrowException(str2);
+        Br2ThrowException(str2);
     }
     else {
-        BroLogError(str2);
+        Br2LogError(str2);
         if (bDebugBreak) {
             Gu::debugBreak();
         }
@@ -55,7 +55,7 @@ void TextConfigFile::displayError(const string_t& errMsg, bool bThrow)
 {
     string_t strErr = Stz "Data File Parse Error:\r\n  " + errMsg + "\r\n   File: " + _fileLoc + "\r\n   Line:" + _iCurrentParseLine + "\r\n";
     if (bThrow) {
-        BroThrowException(strErr);
+        Br2ThrowException(strErr);
     }
 }
 bool TextConfigFile::lcmp(string_t& tok0, const char* ch, int32_t validateArgCount)

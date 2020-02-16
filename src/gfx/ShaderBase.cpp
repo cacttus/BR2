@@ -21,7 +21,7 @@
 #include "../model/MeshData.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 #include "../world/RenderBucket.h"
 
 namespace BR2 {
@@ -191,7 +191,7 @@ void ShaderBase::setUf(string_t name, void* value, GLint count, bool bIgnore) {
   std::shared_ptr<ShaderUniform> uf = getUniformByName(name);
   if (uf == nullptr) {
     if (bIgnore == false) {
-      BroLogWarnCycle("Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
+      Br2LogWarnCycle("Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
     }
   }
   else {
@@ -211,14 +211,14 @@ void ShaderBase::verifyBound() {
       na = _pContext->getShaderMaker()->getShaderNameForId(prog);
       nb = _pContext->getShaderMaker()->getShaderNameForId(getGlId());
 
-      BroLogError("Invalid shader was bound. '" + na + "' was bound, but we expected '" + nb + "'.");
+      Br2LogError("Invalid shader was bound. '" + na + "' was bound, but we expected '" + nb + "'.");
     }
   }
 
   for (std::pair<Hash32, std::shared_ptr<ShaderUniform>> uf : _vecUniforms) {
     if (uf.second->hasBeenSet() == false) {
       if (StringUtil::equals(uf.second->getName(), "_ufPickId")) {
-        uint32_t iNullPickId = Picker::c_iInvalidPickId;
+        uint32_t iNullPickId = INVALID_PICK_ID;
         setUf("_ufPickId", (void*)&iNullPickId);
       }
       //else if (StringUtil::equals(uf.second->getName(), "_ufTexture0")) {
@@ -227,13 +227,13 @@ void ShaderBase::verifyBound() {
       //    setUf("_ufTexture0", (void*)&iNullPickId);
       //}
       else {
-        BroLogWarnCycle("Uniform " + uf.second->getName() + " was not set for shader " + getProgramName());
+        Br2LogWarnCycle("Uniform " + uf.second->getName() + " was not set for shader " + getProgramName());
       }
     }
   }
   for (std::pair<Hash32, std::shared_ptr<ShaderUniformBlock>> uf : _vecUniformBlocks) {
     if (uf.second->hasBeenSet() == false) {
-      BroLogWarnCycle("Uniform Block " + uf.second->getName() + " was not set for shader " + getProgramName());
+      Br2LogWarnCycle("Uniform Block " + uf.second->getName() + " was not set for shader " + getProgramName());
     }
   }
 }
@@ -254,7 +254,7 @@ void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
 void ShaderBase::draw(std::shared_ptr<MeshNode> mesh, int32_t iCount, GLenum eDrawMode) {
   Perf::pushPerf();
 
-  draw(mesh->getMeshSpec()->getVaoData(), iCount, eDrawMode);
+  draw(mesh->getMeshData()->getVaoData(), iCount, eDrawMode);
   Perf::popPerf();
 }
 void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenum eDrawMode) {
@@ -267,7 +267,7 @@ void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenu
 void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDrawMode) {
   //Removing the loopstate
   if (_pContext->getLoopState() != EngineLoopState::e::Render) {
-    BroLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
+    Br2LogWarn("Called a draw() function when the engine wan't in a valid render loop.");
   }
   AssertOrThrow2(vao != nullptr);
   _pContext->chkErrDbg();
@@ -389,7 +389,7 @@ void ShaderBase::dispatchCompute(int32_t elementCount) {
         break;
       }
       else {
-        BroThrowException("Compute shader distribution was out of range.");
+        Br2ThrowException("Compute shader distribution was out of range.");
       }
     }
     nf = (int)f;
@@ -416,17 +416,17 @@ void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync
 void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z) {
 
   if (x > _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]) {
-    BroThrowException("[Compute] X group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]);
+    Br2ThrowException("[Compute] X group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]);
   }
   if (y > _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]) {
-    BroThrowException("[Compute] Y group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]);
+    Br2ThrowException("[Compute] Y group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]);
   }
   if (z > _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]) {
-    BroThrowException("[Compute] Z group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
+    Br2ThrowException("[Compute] Z group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
   }
 
   if ((x == 0) || (y == 0) || (z == 0)) {
-    BroThrowException("[Compute] Can't dispatch a compute with a zero dimension brosaurus. if need be use glDisbatchCompute(x,1,1)");
+    Br2ThrowException("[Compute] Can't dispatch a compute with a zero dimension brosaurus. if need be use glDisbatchCompute(x,1,1)");
   }
 
   _pContext->glDispatchCompute(x, y, z);
@@ -444,7 +444,7 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
   blockIndex = _pContext->glGetProgramResourceIndex(getGlId(), GL_SHADER_STORAGE_BLOCK, shaderBufferName);
 
   if (blockIndex < 0) {
-    BroLogError(
+    Br2LogError(
       "BIND FAILED: uniform buffer name: " + shaderBufferName
       + " .Binding Block Shader Id " + getGlId()
       + " shader name (may be invalid) " + getProgramName()

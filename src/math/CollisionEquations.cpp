@@ -89,7 +89,7 @@ bool CollisionEquations::sat_box_axis_t(float c1, float c2, float r1, float r2, 
     AssertOrThrow2(r2 > 0.0f);
 #else 
     if(r1 < 0.0f || r2 < 0.0f) {
-        BroLogWarn("Error 922508- box radius was zero for object.");
+        Br2LogWarn("Error 922508- box radius was zero for object.");
     }
 #endif
     countXYZ = true;

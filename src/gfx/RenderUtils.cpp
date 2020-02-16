@@ -949,7 +949,7 @@ GLenum RenderUtils::getSupportedDepthSize() {
         //eDepthSize = GL_DEPTH_COMPONENT32F;
     }
     else {
-        BroThrowException("[222039] Unsupported depth component size " + depth);
+        Br2ThrowException("[222039] Unsupported depth component size " + depth);
     }
 }
 void RenderUtils::getCompatibleDepthComponent(GLenum eRequestedDepth, std::function<void(GLenum)> func) {
@@ -977,19 +977,19 @@ void RenderUtils::getCompatibleDepthComponent(GLenum eRequestedDepth, std::funct
         if (glGetError() != GL_NO_ERROR) {
 
             if (eDepthSize == GL_DEPTH_COMPONENT32F) {
-                BroLogWarn("32 bit floating point depth buffer not supported. Attempting another format.");
+                Br2LogWarn("32 bit floating point depth buffer not supported. Attempting another format.");
                 eDepthSize = GL_DEPTH_COMPONENT32;
             }
             else if (eDepthSize == GL_DEPTH_COMPONENT32) {
-                BroLogWarn("32 bit depth buffer not supported. Attempting another format.");
+                Br2LogWarn("32 bit depth buffer not supported. Attempting another format.");
                 eDepthSize = GL_DEPTH_COMPONENT24;
             }
             else if (eDepthSize == GL_DEPTH_COMPONENT24) {
-                BroLogWarn("24 bit floating point depth buffer not supported. Attempting another format.");
+                Br2LogWarn("24 bit floating point depth buffer not supported. Attempting another format.");
                 eDepthSize = GL_DEPTH_COMPONENT16;
             }
             else {
-                BroThrowException("Creating Depth Texture, No valid depth buffer format could be obtained.");
+                Br2ThrowException("Creating Depth Texture, No valid depth buffer format could be obtained.");
             }
             //Attempt to use a 24 bit depth buffer
             func(eDepthSize);
@@ -1033,7 +1033,7 @@ GLenum RenderUtils::getTexBindingForTexTarget(GLenum eTarget) {
     else if (eTarget == GL_TEXTURE_2D) return GL_TEXTURE_BINDING_2D;
     else if (eTarget == GL_TEXTURE_3D) return GL_TEXTURE_BINDING_1D;
     else if (eTarget == GL_TEXTURE_CUBE_MAP) return GL_TEXTURE_BINDING_CUBE_MAP;
-    BroThrowException("Fialed to get tex binding for target " + eTarget);
+    Br2ThrowException("Fialed to get tex binding for target " + eTarget);
     return 0;
 }
 
@@ -1114,7 +1114,7 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image, GLu
             bufsiz_bytes = w * h * 4;
         }
         else {
-            BroLogError("Invalid or Unsupported texture internal format when reading from GPU" +
+            Br2LogError("Invalid or Unsupported texture internal format when reading from GPU" +
                 (int)internalFormat);
             Gu::debugBreak();
         }

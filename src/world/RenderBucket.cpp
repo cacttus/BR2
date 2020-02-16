@@ -31,7 +31,7 @@ float RenderBucket::distToCam(Box3f* bn) {
   float dist = _vCachedCamPos.distance2(bn->center());
   return dist;
 }
-void RenderBucket::addObj(std::shared_ptr<BaseNode> bn) {
+void RenderBucket::addObj(std::shared_ptr<SceneNode> bn) {
 
   //float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - pGrid->getNodeCenterR3()).length2();
   float dist = distToCam(bn->getBoundBoxObject());
@@ -44,7 +44,7 @@ void RenderBucket::addGrid(std::shared_ptr<PhysicsGrid> bn) {
   float dist = distToCam(bn->getBoundBox());
   _mapGrids.insert(std::make_pair(dist, bn));
 }
-void RenderBucket::collect(std::shared_ptr<BaseNode> bn) {
+void RenderBucket::collect(std::shared_ptr<SceneNode> bn) {
   //collects renderable items into specific buffers
   if (bn->getHidden() == false) {
     float fDist = distToCam(bn->getBoundBoxObject());
@@ -56,7 +56,7 @@ void RenderBucket::collect(std::shared_ptr<BaseNode> bn) {
     }
     else if (std::dynamic_pointer_cast<MeshNode>(bn) != nullptr) {
       std::shared_ptr<MeshNode> mn = std::dynamic_pointer_cast<MeshNode>(bn);
-      if (mn->getMeshSpec()->getMaterial() != nullptr && mn->getMeshSpec()->getMaterial()->getEnableTransparency() && Gu::getRenderSettings()->enableTransparency()) {
+      if (mn->getMeshData()->getMaterial() != nullptr && mn->getMeshData()->getMaterial()->getEnableTransparency() && Gu::getRenderSettings()->enableTransparency()) {
         _mapMeshesTransparent.insert(std::make_pair(fDist, std::dynamic_pointer_cast<MeshNode>(bn)));
       }
       else {
@@ -73,8 +73,8 @@ void RenderBucket::sortAndDrawMeshes(
   _renderMap.clear();
 
   for (std::pair<float, std::shared_ptr<MeshNode>> p : getMeshes()) {
-    if (p.second->getMeshSpec() != nullptr) {
-      std::shared_ptr<VertexFormat> fmt = p.second->getMeshSpec()->getVertexFormat();
+    if (p.second->getMeshData() != nullptr) {
+      std::shared_ptr<VertexFormat> fmt = p.second->getMeshData()->getVertexFormat();
 
       std::shared_ptr<ShaderBase> sb = shaderSearch(fmt);
       if (sb != nullptr) {

@@ -51,7 +51,7 @@
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 
 extern "C" {
   //nothings commented on Apr 12, 2016
@@ -96,19 +96,19 @@ bool Gu::is64Bit() {
   if (sizeof(size_t) == 4)
     return false;
   //WTF
-  BroThrowNotImplementedException();
+  Br2ThrowNotImplementedException();
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
     Gu::getEngineConfig()->setShowConsole(BR2::TypeConv::strToBool(value));
-    BroLogInfo("Overriding show console window: " + value);
+    Br2LogInfo("Overriding show console window: " + value);
   }
   else if (key == "--game-host") {
     Gu::getEngineConfig()->setGameHostAttached(BR2::TypeConv::strToBool(value));
-    BroLogInfo("Overriding game host: " + value);
+    Br2LogInfo("Overriding game host: " + value);
   }
   else {
-    BroLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
+    Br2LogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
   }
 }
 //**TODO Move this crap to AppRunner
@@ -148,8 +148,8 @@ void Gu::initGlobals(const std::vector<std::string>& args) {
   getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
 
   //Print some environment Diagnostics
-  BroLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
-  BroLogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
+  Br2LogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
+  Br2LogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
 
   if (Gu::getEngineConfig()->getShowConsole() == false) {
     OperatingSystem::hideConsole();
@@ -161,16 +161,16 @@ void Gu::initGlobals(const std::vector<std::string>& args) {
 void Gu::createCache() {
   //Try to create the cache (temp) folder. Make sure to check this on IOS
   string_t strCache = FileSystem::formatPath(ApplicationPackage::getCacheFolder());
-  BroLogInfo("Creating cache: '" + strCache + "'");
+  Br2LogInfo("Creating cache: '" + strCache + "'");
   if (FileSystem::createDirectoryRecursive(strCache) == false) {
-    BroThrowException("Failed to create cache folder in '" + strCache + "'.");
+    Br2ThrowException("Failed to create cache folder in '" + strCache + "'.");
   }
 }
 void Gu::loadConfig(const std::vector<std::string>& args) {
   string_t configPath = ApplicationPackage::getEngineConfigFilePath();
-  BroLogInfo("Loading config from '" + configPath + "'");
+  Br2LogInfo("Loading config from '" + configPath + "'");
   if (!FileSystem::fileExists(configPath)) {
-    BroThrowException("Engine configuration file '" + configPath + "' does not exist.");
+    Br2ThrowException("Engine configuration file '" + configPath + "' does not exist.");
   }
   else {
     EngineConfigFile ef;
@@ -223,7 +223,7 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
     if (err != 0) {
       //FB should free itself.
     //  Gu::SDLFileFree(imgData);
-      BroThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
+      Br2ThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
     }
     else {
       Img32::flipImage20161206(image, width, height);
@@ -260,12 +260,12 @@ bool Gu::saveImage(std::string path, std::shared_ptr<Img32> spec) {
 
     RetCode rc = DiskFile::writeAllBytes(path, allocr);
     if (rc != GR_OK) {
-      BroLogError("Error'" + (int)rc + "' occurred while saving image.");
+      Br2LogError("Error'" + (int)rc + "' occurred while saving image.");
     }
     allocr.dealloc();
   }
   else {
-    BroLogError("LodePng - Error encoding image '" + path + "'.");
+    Br2LogError("LodePng - Error encoding image '" + path + "'.");
     bRet = false;
   }
   free(buffer);//lodepng_free
@@ -395,7 +395,7 @@ void Gu::checkMemory() {
 
 string_t Gu::getOperatingSystemName() {
   string_t res;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   OSVERSIONINFOEX vex;
   vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionEx((OSVERSIONINFO*)&vex);
@@ -449,7 +449,7 @@ string_t Gu::getOperatingSystemName() {
 
 uint32_t Gu::getCurrentThreadId() {
   uint32_t threadId = 0;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //TODO: std::this_thread::get_id()
   threadId = (uint32_t)GetCurrentThreadId();
 #else
@@ -539,21 +539,21 @@ std::string Gu::getCPPVersion() {
 void Gu::createManagers() {
   _pRenderSettings = RenderSettings::create();
 
-  BroLogInfo("Creating Sequencer");
+  Br2LogInfo("Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
 
-  BroLogInfo("Creating Fingers");
+  Br2LogInfo("Creating Fingers");
   _pInput = std::make_shared<InputManager>();
   _pInput->init();
 
-  BroLogInfo("Creating SoundCache");
+  Br2LogInfo("Creating SoundCache");
   _pSoundCache = std::make_shared<SoundCache>();
 
-  BroLogInfo("Creating Network");
+  Br2LogInfo("Creating Network");
   _pNet = std::make_shared<Net>();
 
   //Packages are supposed to be projects.  This creates a 'default' package.
-  BroLogInfo("Creating Package");
+  Br2LogInfo("Creating Package");
   _pAppPackage = std::make_shared<ApplicationPackage>();
   string_t defaultPackageLocation = FileSystem::combinePath(ApplicationPackage::getDataPath(), "package.xml");
   _pAppPackage->load(defaultPackageLocation);

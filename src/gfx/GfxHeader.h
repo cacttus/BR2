@@ -17,6 +17,9 @@
 #include "../math/Matrix4x4.h"
 
 namespace BR2 {
+//Default picker ID.  Note if blending is enabled the blend operation will prevent accurate picking.
+#define INVALID_PICK_ID (0)
+
 // - Channel 1 is depth texture, 0 is base textures
 #define GFX_TEXTURE_CHANNEL_BASE TEXTURE_CHANNEL_0
 #define GFX_TEXTURE_CHANNEL_NORMAL TEXTURE_CHANNEL_1
@@ -405,7 +408,7 @@ typedef enum {
    virtual void drawDeferred(RenderParams& rp) = 0;
    virtual void drawForward(RenderParams& rp) = 0;
    virtual void drawShadow(RenderParams& rp) = 0;
-   virtual void drawDebug(RenderParams& rp) = 0;
+   virtual void drawForwardDebug(RenderParams& rp) = 0;
    virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
    virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
    virtual void drawUI(RenderParams& rp) = 0;

@@ -39,7 +39,7 @@ void ObjectFile::load(string_t& strFilePath, bool flipWinding)
     bool ret = bufferedFile.loadFromDisk(strFilePath);
 
     if(ret!=true)
-        BroThrowException("Failed to open Object File.");
+        Br2ThrowException("Failed to open Object File.");
     
     loadObjFileContents(bufferedFile);
     
@@ -101,7 +101,7 @@ void ObjectFile::loadObjFileContents(BinaryFile& pBufferedFile)
         }
         else if(!tok.compare("mat"))
         {
-            BroLogWarn("Mesh Spec Local Matrix is deprectaed. Freeze all matrices before exporting meshes.");
+            Br2LogWarn("Mesh Spec Local Matrix is deprectaed. Freeze all matrices before exporting meshes.");
            _matLocalMatrix = parseMat4(pBufferedFile);
         }
         _iCurrentLine++;
@@ -169,7 +169,7 @@ int32_t ObjectFile::parseFaceComponent(string_t& tok, int32_t& strlind, int32_t 
 
         //20160509 we don't allow varied formats.
         //You're missing Tex Coords, Or Normals
-        BroThrowException(Stz "Invalid object file format.  Missing face index." + iComponent + " at line " + _iCurrentLine);
+        Br2ThrowException(Stz "Invalid object file format.  Missing face index." + iComponent + " at line " + _iCurrentLine);
     }
     else
     {
@@ -188,17 +188,17 @@ void ObjectFile::addFaceVertex(int32_t iVertex, int32_t iTCoord, int32_t iNormal
     int32_t xi = iTCoord - 1;
 
     if(vi<0)
-        BroThrowException("Vertex buffer underflow at line " + _iCurrentLine);
+        Br2ThrowException("Vertex buffer underflow at line " + _iCurrentLine);
     if(ni<0)
-        BroThrowException("Normal buffer underflow at line " + _iCurrentLine);
+        Br2ThrowException("Normal buffer underflow at line " + _iCurrentLine);
     if(xi<0)
-        BroThrowException("TCoord buffer underflow at line " + _iCurrentLine);
+        Br2ThrowException("TCoord buffer underflow at line " + _iCurrentLine);
     if(vi>= (int32_t)_vecVerts.size())
-        BroThrowException("Vertex buffer overflow at line " + _iCurrentLine);
+        Br2ThrowException("Vertex buffer overflow at line " + _iCurrentLine);
     if(ni>= (int32_t)_vecNormals.size())
-        BroThrowException("Normal buffer overflow at line " + _iCurrentLine);
+        Br2ThrowException("Normal buffer overflow at line " + _iCurrentLine);
     if(xi>= (int32_t)_vecTCoords.size())
-        BroThrowException("TCoord buffer overflow at line " + _iCurrentLine);
+        Br2ThrowException("TCoord buffer overflow at line " + _iCurrentLine);
 
     int32_t newIndex = 0;
 

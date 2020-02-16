@@ -93,7 +93,7 @@ void VertexFormat::addComponent(VertexUserType::e eUserType) {
 //    size = sizeof(vec4);
 //    break;
   default:
-    BroThrowException("Vertex user type not impelmented.");
+    Br2ThrowException("Vertex user type not impelmented.");
   }
 
   addComponent(eType, compCount, size, eUserType);
@@ -104,7 +104,7 @@ void VertexFormat::addComponent(GLenum type, int componentCount, int size, Verte
   for (std::pair<int, std::shared_ptr<VertexComponent>> p : _vecComponents) {
     std::shared_ptr<VertexComponent> comp = p.second;
     if (comp->getUserType() == eUserType) {
-      BroLogError("Duplicate Vertex component '" + getUserTypeName(eUserType) + "' for Vertex Type '" + getName() + "'.");
+      Br2LogError("Duplicate Vertex component '" + getUserTypeName(eUserType) + "' for Vertex Type '" + getName() + "'.");
       Gu::debugBreak();
     }
   }
@@ -199,7 +199,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_FLOAT_VEC4;
     }
     else {
-      BroThrowNotImplementedException();
+      Br2ThrowNotImplementedException();
     }
   }
   else if (type == GL_INT) {
@@ -216,7 +216,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_INT_VEC4;
     }
     else {
-      BroThrowNotImplementedException();
+      Br2ThrowNotImplementedException();
     }
   }
   else if (type == GL_UNSIGNED_INT) {
@@ -233,11 +233,11 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_UNSIGNED_INT_VEC4;
     }
     else {
-      BroThrowNotImplementedException();
+      Br2ThrowNotImplementedException();
     }
   }
   else {
-    BroThrowNotImplementedException();
+    Br2ThrowNotImplementedException();
   }
 }
 string_t VertexFormat::getUserTypeName(VertexUserType::e eUserType) {

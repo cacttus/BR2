@@ -102,7 +102,7 @@ std::shared_ptr<BufferRenderTarget> DeferredFramebuffer::getTarget(RenderTargetT
 void DeferredFramebuffer::beginRender()
 {
     if (_eState != FramebufferState::Initialized) {
-        BroThrowException("Framebuffer was not initialized.");
+        Br2ThrowException("Framebuffer was not initialized.");
     }
 
     //GLenum attachments[32];

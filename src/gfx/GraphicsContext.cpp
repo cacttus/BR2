@@ -21,7 +21,7 @@
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 
 
 namespace BR2 {
@@ -49,10 +49,10 @@ GraphicsContext::~GraphicsContext() {
 bool GraphicsContext::init() {
   _bValid = true;
 
-  BroLogInfo("GraphicsContext - Making Vtx Formats.");
+  Br2LogInfo("GraphicsContext - Making Vtx Formats.");
   makeVertexFormats();
 
-  BroLogInfo("GraphicsContext - Creating Managers.");
+  Br2LogInfo("GraphicsContext - Creating Managers.");
   if (!GraphicsContext::_bCreatedManagers) {
     createManagers();
     GraphicsContext::_bCreatedManagers = true;
@@ -143,25 +143,25 @@ void GraphicsContext::makeVertexFormats() {
   v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::u2_01);
 }
 void GraphicsContext::createManagers() {
-  BroLogInfo("GLContext - Creating FpsMeter");
+  Br2LogInfo("GLContext - Creating FpsMeter");
   _pFpsMeter = std::make_shared<FpsMeter>();
 
-  BroLogInfo("Delta");
+  Br2LogInfo("Delta");
   _pDelta = std::make_shared<Delta>();
 
 
-  BroLogInfo("GLContext - Creating Particles");
+  Br2LogInfo("GLContext - Creating Particles");
   _pParticleMaker = std::make_shared<ParticleMaker>();
 
   //This was commented out.  Why? 11/6
-  BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
+  Br2LogInfo("GLContext - Creating ShaderMaker & base shaders");
   _pShaderMaker = std::make_shared<ShaderMaker>();
   _pShaderMaker->initialize();
 
-  BroLogInfo("GLContext - Creating Texture Cache");
+  Br2LogInfo("GLContext - Creating Texture Cache");
   _pTexCache = std::make_shared<TexCache>();
 
-  BroLogInfo("GLContext - Model Cache");
+  Br2LogInfo("GLContext - Model Cache");
   _pModelCache = std::make_shared<ModelCache>();
 }
 

@@ -16,14 +16,14 @@ void Net::init() {
     // create a listening TCP socket on port 44178 (server)
     IPaddress ip;
     if (SDLNet_ResolveHost(&ip, NULL, 44178) == -1) {
-        BroLogInfo("SDLNet_ResolveHost:" + SDLNet_GetError());
+        Br2LogInfo("SDLNet_ResolveHost:" + SDLNet_GetError());
         _bError = true;
         return;
     }
 
     _server_control = SDLNet_TCP_Open(&ip);
     if (!_server_control) {
-        BroLogInfo("SDLNet_TCP_Open:" +  SDLNet_GetError());
+        Br2LogInfo("SDLNet_TCP_Open:" +  SDLNet_GetError());
         _bError = true;
         return;
     }

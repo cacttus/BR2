@@ -24,29 +24,37 @@ public:
   virtual ~Scene() override;
 
   void idle(int64_t us);
+  void update(float delta);
   void updateWidthHeight(int32_t w, int32_t h, bool bForce);
 
   std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
-  std::shared_ptr<PhysicsWorld> getPhysicsWorld() { return _pPhysicsWorld; }
-  void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }
+  std::shared_ptr<PhysicsManager> getPhysicsManager() { return _pPhysicsWorld; }
+
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
   std::shared_ptr<ScriptManager> getScriptManager() { return _pScriptManager; }
   std::shared_ptr<GraphicsWindow> getWindow() { return _pGraphicsWindow; }
-  void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow=x; }
-
+  std::shared_ptr<GraphicsContext> getContext();
+  std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
   std::vector<std::shared_ptr<CameraNode>> getAllCameras();
-
-  void update(float delta);
+  void setPhysicsWorld(std::shared_ptr<PhysicsManager> p) { _pPhysicsWorld = p; }
+  void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow = x; }
 
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp)override;
   virtual void drawShadow(RenderParams& rp) override;
-  virtual void drawDebug(RenderParams& rp) override;
+  virtual void drawForwardDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override; // draw the non-depth test items (last)
   virtual void drawTransparent(RenderParams& rp) override; //These come after the way after, the very end
   virtual void drawUI(RenderParams& rp) override;
 
+  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;
+  virtual bool detachChild(std::shared_ptr<TreeNode> pChild) override;
+
+  std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
+  std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
+  std::shared_ptr<LightNodePoint> createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);
+  std::shared_ptr<LightNodeDir> createDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled);
 
 private:
   bool _bDebugDisableCull = false;
@@ -62,13 +70,14 @@ private:
   std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
   std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
-  std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
+  std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;
   std::shared_ptr<UiScreen> _pUiScreen = nullptr;
   std::shared_ptr<CameraNode> _pActiveCamera = nullptr;
   //The default fly camera must always be available.
   //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
   std::shared_ptr<ScriptManager> _pScriptManager = nullptr;
   std::shared_ptr<GraphicsWindow> _pGraphicsWindow = nullptr;
+  std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
 
   void setDebugMode();
   void draw2d();

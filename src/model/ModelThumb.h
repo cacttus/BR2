@@ -12,13 +12,11 @@
 namespace BR2 {
 /**
 *  @class ModelThumb
-*  @brief
-*
+*  @brief Generates thumbnail pictures for models
 */
 class ModelThumb : public VirtualMemory {
-
 public:
-    static std::shared_ptr<Img32> genThumb(std::shared_ptr<ModelSpec> mod, int32_t iThumbSize);
+    static std::shared_ptr<Img32> genThumb(std::shared_ptr<ModelData> mod, int32_t iThumbSize);
     
 };
 

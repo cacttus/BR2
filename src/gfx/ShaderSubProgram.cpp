@@ -69,7 +69,7 @@ void ShaderSubProgram::debugPrintShaderSource() const
         }
         str += string_t("\n");
     }
-    BroLogDebug(str);
+    Br2LogDebug(str);
 }
 ShaderType::e ShaderSubProgram::getShaderTypeByFileLocation(DiskLoc& loc)
 {

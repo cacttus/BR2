@@ -36,7 +36,7 @@ ShaderCache::ShaderCache(string_t cacheDir)
 
     if (n <= 0)
     {
-        BroLogWarn("[ShaderCache] Gpu does not support any program binary formats.");
+        Br2LogWarn("[ShaderCache] Gpu does not support any program binary formats.");
         _bCacheIsSupported = false;
     }
 
@@ -62,7 +62,7 @@ ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<Shad
     Gu::getGraphicsContext()->chkErrRt();
 
     if (binBufSz == 0 || binBufSz > MemSize::e::MEMSZ_GIG2) {
-        BroThrowException("Shader program binary was 0 or exceeded " + MemSize::e::MEMSZ_GIG2 + " bytes; actual: " + binBufSz);
+        Br2ThrowException("Shader program binary was 0 or exceeded " + MemSize::e::MEMSZ_GIG2 + " bytes; actual: " + binBufSz);
     }
 
     GLProgramBinary* b = new GLProgramBinary(this, binBufSz);
@@ -73,7 +73,7 @@ ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<Shad
     if (binBufSz != outLen)
     {
         delete b;
-        BroThrowException("GPU reported incorrect program size and returned a program with a different size.");
+        Br2ThrowException("GPU reported incorrect program size and returned a program with a different size.");
     }
 
     //Critical: set compile time.
@@ -116,12 +116,12 @@ ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromDisk(string_t& programNa
 
     if (!FileSystem::fileExists(binaryName))
     {
-        BroLogDebug(string_t("Program binary not found: ") + binaryName);
+        Br2LogDebug(string_t("Program binary not found: ") + binaryName);
 
         return nullptr;
     }
 
-    BroLogDebug(string_t("Loading program binary ") + binaryName);
+    Br2LogDebug(string_t("Loading program binary ") + binaryName);
     try
     {
         df.openForRead(DiskLoc(binaryName));
@@ -131,7 +131,7 @@ ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromDisk(string_t& programNa
 
         // if we're too big - freak out
         if ((binSz < 0) || (binSz > MemSize::e::MEMSZ_GIG2)){
-            BroLogError("Invalid shader binary file size '" + binSz + "', recompiling binary.");
+            Br2LogError("Invalid shader binary file size '" + binSz + "', recompiling binary.");
             pbin = nullptr;
         }
         else {
@@ -153,7 +153,7 @@ ShaderCache::GLProgramBinary* ShaderCache::getBinaryFromDisk(string_t& programNa
     {
         //fail silently
 
-        BroLogError("Failed to load program binary " + binaryName + ex->what());
+        Br2LogError("Failed to load program binary " + binaryName + ex->what());
         if (pbin){
             delete pbin;
         }
@@ -168,11 +168,11 @@ void ShaderCache::saveBinaryToDisk(string_t& programName, GLProgramBinary* bin) 
     string_t binaryName = getBinaryNameFromProgramName(programName);
     string_t binPath = FileSystem::getPathFromPath(binaryName);
 
-    BroLogInfo(" Shader program Bin path = " + binPath);
+    Br2LogInfo(" Shader program Bin path = " + binPath);
 
     try
     {
-        BroLogDebug(string_t("[ShaderCache] Caching program binary ") + binaryName);
+        Br2LogDebug(string_t("[ShaderCache] Caching program binary ") + binaryName);
         FileSystem::createDirectoryRecursive(binPath);
         df.openForWrite(DiskLoc(binaryName), FileWriteMode::Truncate);
         df.write((char*)&(bin->_compileTime), sizeof(bin->_compileTime));
@@ -183,7 +183,7 @@ void ShaderCache::saveBinaryToDisk(string_t& programName, GLProgramBinary* bin) 
     }
     catch (Exception* ex)
     {
-        BroLogError("Failed to save program binary " + binaryName + ex->what());
+        Br2LogError("Failed to save program binary " + binaryName + ex->what());
     }
 
 }
@@ -195,7 +195,7 @@ void ShaderCache::deleteBinaryFromDisk(string_t& programName) {
     string_t binaryName = getBinaryNameFromProgramName(programName);
 
     if (!FileSystem::fileExists(binaryName)) {
-        BroLogError(string_t("Failed to delete file ") + binaryName);
+        Br2LogError(string_t("Failed to delete file ") + binaryName);
     }
 
     FileSystem::deleteFile(binaryName);
@@ -234,7 +234,7 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
         for(string_t file : shaderFiles){
             FileInfo inf = FileSystem::getFileInfo(file);
             if (!inf._exists) {
-                BroLogError("Shader source file '" + file + "' does not exist.");
+                Br2LogError("Shader source file '" + file + "' does not exist.");
             }
             else{
                 maxTime = MathUtils::broMax(inf._modified, maxTime);
@@ -249,14 +249,14 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
                 ret = loadBinaryToGpu(programName, binary);
                 if (ret==nullptr)
                 {
-                    BroLogInfo("Program binary for '" + programName + "' out of date.  Deleting from disk");
+                    Br2LogInfo("Program binary for '" + programName + "' out of date.  Deleting from disk");
                     deleteBinaryFromDisk(programName);
                 }
             }
             catch (Exception* e)
             {
-                BroLogWarn("[ShaderCache] Loading program binary returned warnings/errors:\r\n");
-                BroLogWarn(e->what());
+                Br2LogWarn("[ShaderCache] Loading program binary returned warnings/errors:\r\n");
+                Br2LogWarn(e->what());
                 deleteBinaryFromDisk(programName);
             }
 
@@ -284,16 +284,16 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
 
     GLboolean b1 = Gu::getContext()->glIsProgram(pProgram->getGlId());
     if (b1 == false) {
-        BroLogWarn("[ShaderCache] Program was not valid before loading to GPU");
+        Br2LogWarn("[ShaderCache] Program was not valid before loading to GPU");
         return nullptr;
     }
     Gu::checkErrorsRt();
 
-    BroLogDebug("[ShaderCache] Loading Cached Program Binary to GPU");
+    Br2LogDebug("[ShaderCache] Loading Cached Program Binary to GPU");
     Gu::getContext()->glProgramBinary(pProgram->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
     if (Gu::getGraphicsContext()->chkErrRt(true, true)) {
         //If we have en error here, we failed to load the binary.
-        BroLogWarn("[ShaderCache] Failed to load binary to GPU - we might be on a different platform.");
+        Br2LogWarn("[ShaderCache] Failed to load binary to GPU - we might be on a different platform.");
         return nullptr;
     }
 
@@ -301,7 +301,7 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
     std::vector<string_t> inf;
     pProgram->getProgramErrorLog(inf);
     for (size_t i = 0; i < inf.size(); ++i) {
-        BroLogWarn("   " + inf[i]);
+        Br2LogWarn("   " + inf[i]);
     }
 
     //validate program.
@@ -312,7 +312,7 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
     Gu::checkErrorsRt();
     if (iValid == GL_FALSE) {
         // Program load faiiled
-        BroLogWarn("[ShaderCache] glValidateProgram says program binary load failed.  Check the above logs for errors.");
+        Br2LogWarn("[ShaderCache] glValidateProgram says program binary load failed.  Check the above logs for errors.");
         return nullptr;
     }
 
@@ -320,14 +320,14 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
     Gu::checkErrorsRt();
 
     if (b2 == false) {
-        BroThrowException("[ShaderCache] glIsProgram says program was not valid after loading to GPU");
+        Br2ThrowException("[ShaderCache] glIsProgram says program was not valid after loading to GPU");
     }
 
     pProgram->bind();
     // - If the program failed to load it will raise an error after failing to bind.
     GLenum e = glGetError();
     if (e != GL_NO_ERROR) {
-        BroLogWarn("[ShaderCache], GL error " + StringUtil::toHex(e, true) + " , program was not valid after loading to GPU.");
+        Br2LogWarn("[ShaderCache], GL error " + StringUtil::toHex(e, true) + " , program was not valid after loading to GPU.");
         return nullptr;
     }
 

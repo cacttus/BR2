@@ -147,7 +147,7 @@ bool BinaryFile::loadFromDisk(string_t fileLoc, size_t offset, int64_t length, b
   //df.close();
   rewind();
 
-  BroLogInfo("Reading File " + fileLoc);
+  Br2LogInfo("Reading File " + fileLoc);
 
   char* bufRet;
   int64_t size;
@@ -155,7 +155,7 @@ bool BinaryFile::loadFromDisk(string_t fileLoc, size_t offset, int64_t length, b
   ret = FileSystem::SDLFileRead(fileLoc, bufRet, size, bAddNull);
   if (ret != 0) {
     //Failure
-    BroLogError("Failure, could not read file" + fileLoc + " returned " + ret);
+    Br2LogError("Failure, could not read file" + fileLoc + " returned " + ret);
     Gu::debugBreak();
     return false;
     // BroThrowException("Failure, could not read file", fileLoc, " returned ", ret);
@@ -293,7 +293,7 @@ RetCode BinaryFile::read(const char* buf, size_t count, size_t bufcount, size_t 
   AssertOrThrow2((offset >= 0) || (offset == memsize_max));
 
   if (count > bufcount) {
-    BroThrowException("DataBuffer - out of bounds.");
+    Br2ThrowException("DataBuffer - out of bounds.");
   }
   if (offset == memsize_max) {
     offset = 0;
@@ -393,7 +393,7 @@ RetCode BinaryFile::write(const char* buf, size_t count, size_t bufcount, size_t
   AssertOrThrow2((offset >= 0) || (offset == memsize_max));
 
   if (count > bufcount) {
-    BroThrowException("DataBuffer - out of bounds.");
+    Br2ThrowException("DataBuffer - out of bounds.");
   }
   if (offset == memsize_max) {
     offset = 0;

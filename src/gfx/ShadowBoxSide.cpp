@@ -14,7 +14,7 @@
 #include "../model/MeshData.h"
 #include "../model/MeshNode.h"
 #include "../world/RenderBucket.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 #include "../world/PhysicsGrid.h"
 
 namespace BR2 {
@@ -197,7 +197,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
             sb->setUf("_ufView", (void*)getViewMatrix(), 1, false);
             sb->setUf("_ufShadowLightPos", (void*)getLight()->getFinalPosPtr(), 1, false);
         },
-            [&](std::shared_ptr<ShaderBase> sb, std::shared_ptr<BaseNode> n) {
+            [&](std::shared_ptr<ShaderBase> sb, std::shared_ptr<SceneNode> n) {
             RenderParams rp;
             rp.setShader(sb);
             n->drawShadow(rp);
@@ -209,8 +209,8 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
         for (auto p : _pVisibleSet->getGrids()) {
             std::shared_ptr<MeshNode> mn = p.second->getMesh();
             if (mn != nullptr) {
-                if (mn->getMeshSpec() != nullptr) {
-                    std::shared_ptr<VertexFormat> fmt = mn->getMeshSpec()->getVertexFormat();
+                if (mn->getMeshData() != nullptr) {
+                    std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
                     sb = getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
                     if(sb!=nullptr){
                         break;
@@ -229,8 +229,8 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
             for (auto p : _pVisibleSet->getGrids()) {
                 std::shared_ptr<MeshNode> mn = p.second->getMesh();
                 if (mn != nullptr) {
-                    if (mn->getMeshSpec() != nullptr) {
-                        std::shared_ptr<VertexFormat> fmt = mn->getMeshSpec()->getVertexFormat();
+                    if (mn->getMeshData() != nullptr) {
+                        std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
                         std::shared_ptr<ShaderBase> sb = getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
                         if (sb != nullptr) {
                             RenderParams rp;

@@ -56,7 +56,7 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
                              2) you may have forgotten to set it in addAttr()\r\n \
                              3) the attribute may not be in the shader, so you need to remove the addAttr(). \r\n";
 
-            BroLogWarn(err);
+            Br2LogWarn(err);
             Gu::debugBreak();
             // Don't throw but just exit gracefully so we can accumulate errors.
         }
@@ -108,7 +108,7 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
     }
 
     if(StringUtil::isNotEmpty(err)) { 
-        BroLogError("Attribute '" + _strName + "'parse error: \r\n" + err);
+        Br2LogError("Attribute '" + _strName + "'parse error: \r\n" + err);
         Gu::debugBreak();
     }
     else {
@@ -148,7 +148,7 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
         }
         else {
             //Wer're going to hit this in the beginning because we can have a lot of different attrib types.
-            BroLogInfo("  Unrecognized vertex attribute '" + name + "'.");
+            Br2LogInfo("  Unrecognized vertex attribute '" + name + "'.");
             Gu::debugBreak();
         }
 

@@ -21,6 +21,7 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/UiControls.h"
+#include "../gfx/Picker.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshUtils.h"
 #include "../model/VertexFormat.h"
@@ -38,12 +39,16 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
   std::shared_ptr<CameraNode> cam = pScene->getActiveCamera();
   cam->getViewport()->bind(_pWindow);
 
+  if (_pPicker != nullptr) {
+    _pPicker->update(Gu::getInputManager());
+  }
+
   if (cam == nullptr) {
-    BroLogErrorOnce("Camera was not set for renderScene");
+    Br2LogErrorOnce("Camera was not set for renderScene");
     return;
   }
   if (cam->getViewport() == nullptr) {
-    BroLogErrorOnce("Camera Viewport was not set for renderScene");
+    Br2LogErrorOnce("Camera Viewport was not set for renderScene");
     return;
   }
   std::shared_ptr<RenderViewport> pv = cam->getViewport();
@@ -51,10 +56,9 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
     init(pv->getWidth(), pv->getHeight(), "");
   }
 
-
   //Only render one thing at a tiem to prevent corrupting the pipe
   if (_bRenderInProgress == true) {
-    BroLogError("Tried to render something while another render was currently in progress.");
+    Br2LogError("Tried to render something while another render was currently in progress.");
     return;
   }
 
@@ -67,19 +71,18 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
     //This draws all scene shadows
     //If we want shadows in the thumbnails, we'll need to fix this to be able to render
     //individual object shadows
-    beginRenderShadows();
-    {
-      //**This shouldn't be an option ** 
-      //Curetly we update lights at the same time as shadows.  this is erroneous
-      if (pipeBits.test(PipeBit::e::Shadow)) {
-        renderShadows(cam);
+    if (pipeBits.test(PipeBit::e::Shadow)) {
+      beginRenderShadows();
+      {
+        //**This shouldn't be an option ** 
+        //Curetly we update lights at the same time as shadows.  this is erroneous
+          renderShadows(cam);
       }
+      endRenderShadows();
+      _pMsaaForward->clearFb();
     }
-    endRenderShadows();
 
-    _pMsaaForward->clearFb();
-
-    //1. 3D rendering
+    //1. 3D, Deferred lighting
     if (pipeBits.test(PipeBit::e::Deferred)) {
       beginRenderDeferred();
       {
@@ -93,32 +96,8 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
       if (pipeBits.test(PipeBit::e::Transparent)) {
         pScene->drawTransparent(rp);
       }
-
-      //Do post processing
-
-    }
-    /*
-
-    //Do post processing
-    postProcessDeferredRender();
     }
 
-    if (pipeBits.test(PipeBit::e::Forward)) {
-    beginRenderForward();
-    {
-    toDraw->drawForward(rp);
-
-    if (pipeBits.test(PipeBit::e::Debug)) {
-    toDraw->drawDebug(rp);
-    }
-    if (pipeBits.test(PipeBit::e::NonDepth)) {
-    //UI
-    toDraw->drawNonDepth(rp);
-    }
-    }
-    endRenderForward();
-    }
-    */
     //2. Forward Rendering
     if (pipeBits.test(PipeBit::e::Forward)) {
       beginRenderForward();
@@ -127,10 +106,9 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
 
       //2.1 - Debug
       if (pipeBits.test(PipeBit::e::Debug)) {
-        pScene->drawDebug(rp);
+        pScene->drawForwardDebug(rp);
       }
 
-      //**TODO: DOF should be a pipe bit.
       //2.2 - DOF
       if (pipeBits.test(PipeBit::e::DepthOfField)) {
         postProcessDOF(cam);
@@ -148,18 +126,10 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
       //4. The UI
       if (pipeBits.test(PipeBit::e::UI_Overlay)) {
         pScene->drawUI(rp);
-
       }
 
       endRenderForward();
     }
-    //
-    //      beginRenderTransparent();
-    //      {
-    //          //TP uses the forward texture.
-    //        //   toDraw->drawTransparent(rp);
-    //      }
-    //      endRenderTransparent();
 
     //5. Blit
     if (pipeBits.test(PipeBit::e::BlitFinal)) {
@@ -168,6 +138,7 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
   }
   _bRenderInProgress = false;
 }
+
 std::shared_ptr<GLContext> RenderPipeline::getContext() {
   return _pWindow->getGraphicsContext();
 }
@@ -180,9 +151,9 @@ void RenderPipeline::setClear(vec4& v) {
   _pBlittedDeferred->setClear(_vClear);
 }
 void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath) {
-  BroLogInfo("[RenderPipe] Initializing.");
+  Br2LogInfo("[RenderPipe] Initializing.");
   if (iWidth <= 0 || iHeight <= 0) {
-    BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
+    Br2LogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
   }
 
   //Enable required OpenGL options.
@@ -196,7 +167,6 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   glDisable(GL_BLEND);
   glEnable(GL_SCISSOR_TEST);
 
-
   releaseFbosAndMesh();
 
   // - Setup Framebuffers.
@@ -205,7 +175,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   _iLastWidth = iWidth;
   _iLastHeight = iHeight;
 
-  BroLogInfo("[RenderPipe] Checking Caps");
+  Br2LogInfo("[RenderPipe] Checking Caps");
   checkDeviceCaps(iWidth, iHeight);
 
   if (_bMsaaEnabled) {
@@ -213,8 +183,11 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
     getContext()->chkErrRt();
   }
 
+  Br2LogInfo("GLContext - Picker");
+  _pPicker = std::make_shared<Picker>(getContext());
+
   //Mesh
-  BroLogInfo("[RenderPipe] Creating Quad Mesh");
+  Br2LogInfo("[RenderPipe] Creating Quad Mesh");
   createQuadMesh(iWidth, iHeight);
 
   //Shaders
@@ -264,7 +237,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
 
   //Multisample
   if (_bMsaaEnabled == true) {
-    BroLogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
+    Br2LogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
     _pMsaaDepth = FramebufferBase::createDepthTarget("depth msaa", iWidth, iHeight, 0, _bMsaaEnabled, _nMsaaSamples);
     _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(getContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
     _pMsaaDeferred->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
@@ -272,7 +245,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
     _pMsaaForward->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
   }
   else {
-    BroLogInfo("[RenderPipe] Multisample not enabled.");
+    Br2LogInfo("[RenderPipe] Multisample not enabled.");
     _pMsaaDeferred = _pBlittedDeferred;
     _pMsaaForward = _pBlittedForward;
     _pMsaaDepth = _pBlittedDepth;
@@ -293,7 +266,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
 void RenderPipeline::saveScreenshot() {
   if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F9)) {
     if (Gu::getInputManager()->shiftHeld()) {
-      BroLogInfo("[RenderPipe] Saving all MRTs.");
+      Br2LogInfo("[RenderPipe] Saving all MRTs.");
       //Save all deferred textures
       int iTarget;
 
@@ -312,7 +285,7 @@ void RenderPipeline::saveScreenshot() {
           string_t fname = FileSystem::getScreenshotFilename();
           fname = fname + "_shadow_frustum_" + iTarget + "_.png";
           RenderUtils::saveTexture(std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
-          BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+          Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
           iTarget++;
         }
         iTarget = 0;
@@ -330,7 +303,7 @@ void RenderPipeline::saveScreenshot() {
 
             fname = fname + "_shadowbox_" + iTarget + "_side_" + side + "_.png";
             RenderUtils::saveTexture(std::move(fname), sb->getGlTexId(), GL_TEXTURE_CUBE_MAP, i);
-            BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+            Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
           }
           iTarget++;
         }
@@ -340,25 +313,25 @@ void RenderPipeline::saveScreenshot() {
           string_t fname = FileSystem::getScreenshotFilename();
           fname = fname + "_deferred_" + pTarget->getName() + "_" + iTarget++ + "_.png";
           RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
-          BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+          Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         }
         iTarget = 0;
         for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedForward->getTargets()) {
           string_t fname = FileSystem::getScreenshotFilename();
           fname = fname + "_forward_" + pTarget->getName() + "_" + iTarget++ + "_.png";
           RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
-          BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+          Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         }
       }
       else {
-        BroLogWarn("No scene was present for screenshot save.");
+        Br2LogWarn("No scene was present for screenshot save.");
       }
     }
     else {
       //Basic Forward Screenshot
       string_t fname = FileSystem::getScreenshotFilename();
       RenderUtils::saveTexture(std::move(fname), _pBlittedForward->getGlId(), GL_TEXTURE_2D);
-      BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+      Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
     }
   }
 
@@ -430,10 +403,9 @@ void RenderPipeline::renderShadows(std::shared_ptr<CameraNode> cam) {
     _pWindow->getScene()->getLightManager()->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
   }
 
-  //Force refresh teh viewport.
-  cam->getViewport()->bind();
+  //Force refresh the window viewport, as Shadow Boxes will have changed it.
+  cam->getViewport()->bind(_pWindow);
 }
-
 void RenderPipeline::beginRenderDeferred() {
   enableDisablePipeBits();
 
@@ -522,7 +494,7 @@ void RenderPipeline::setShadowUf() {
 
   //We loop this way because we MUST fill all texture units in the GPU
   if (_pWindow->getScene()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowBoxes) {
-    BroLogWarnCycle("More than " + iNumGpuShadowBoxes + " boxes - some shadows will not show.");
+    Br2LogWarnCycle("More than " + iNumGpuShadowBoxes + " boxes - some shadows will not show.");
   }
   for (int iShadowBox = 0; iShadowBox < iNumGpuShadowBoxes; ++iShadowBox) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
@@ -542,7 +514,7 @@ void RenderPipeline::setShadowUf() {
       iIndex++;
     }
     else {
-      BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
+      Br2LogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
     }
   }
   _pDeferredShader->setUf("_ufShadowBoxSamples", boxSamples.data(), (GLint)boxSamples.size());
@@ -550,7 +522,7 @@ void RenderPipeline::setShadowUf() {
 
   //We loop this way because we MUST fill all texture units in the GPU
   if (_pWindow->getScene()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowFrustums) {
-    BroLogWarnCycle("More than " + iNumGpuShadowFrustums + " frustum - some shadows will not show.");
+    Br2LogWarnCycle("More than " + iNumGpuShadowFrustums + " frustum - some shadows will not show.");
   }
   for (int iShadowFrustum = 0; iShadowFrustum < iNumGpuShadowFrustums; ++iShadowFrustum) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
@@ -570,7 +542,7 @@ void RenderPipeline::setShadowUf() {
       iIndex++;
     }
     else {
-      BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
+      Br2LogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
     }
   }
   _pDeferredShader->setUf("_ufShadowFrustumSamples", frustSamples.data(), (GLint)frustSamples.size());
@@ -586,11 +558,11 @@ void RenderPipeline::setShadowUf() {
       iIndex++;
     }
     else {
-      BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
+      Br2LogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
     }
   }
   else {
-    BroLogWarn("You didn't set the enviro texture.");
+    Br2LogWarn("You didn't set the enviro texture.");
     Gu::debugBreak();
   }
 }
@@ -629,12 +601,10 @@ DOFFbo::~DOFFbo() {
 void RenderPipeline::postProcessDOF(std::shared_ptr<CameraNode> pCam) {
   //If MSAA is enabled downsize the MSAA buffer to the _pBlittedForward buffer so we can execute post processing.
   //copyMsaaSamples(_pMsaaForward, _pBlittedForward);
-
-
   std::shared_ptr<ShaderBase> pDofShader = getContext()->getShaderMaker()->getDepthOfFieldShader();
 
   if (pDofShader == nullptr || pCam == nullptr) {
-    BroLogErrorCycle("Error: nullptrs 348957");
+    Br2LogErrorCycle("Error: nullptrs 348957");
     return;
   }
   vec3 pos = pCam->getFinalPos();
@@ -762,7 +732,7 @@ void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
   glGetIntegerv(GL_MAX_DRAW_BUFFERS, (GLint*)&iMaxDrawBuffers);
 
   if (iMaxDrawBuffers < 1) {
-    BroThrowException("[RenderPipe] Your GPU only supports " + iMaxDrawBuffers +
+    Br2ThrowException("[RenderPipe] Your GPU only supports " + iMaxDrawBuffers +
       " MRTs, the system requires at least " + 1 +
       " MRTs. Consider upgrading graphics card.");
   }
@@ -771,7 +741,7 @@ void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
   glGetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT, (GLint*)&iMaxFbHeight);
 
   if (iMaxFbHeight < iHeight || iMaxFbWidth < iWidth) {
-    BroThrowException("[RenderPipe] Your GPU only supports MRTs at " +
+    Br2ThrowException("[RenderPipe] Your GPU only supports MRTs at " +
       iMaxFbWidth + "x" + iMaxFbHeight +
       " pixels. The system requested " + iWidth + "x" + iHeight + ".");
   }
@@ -781,17 +751,17 @@ void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
 void RenderPipeline::checkMultisampleParams() {
   GLint iMaxSamples;
   glGetIntegerv(GL_MAX_SAMPLES, &iMaxSamples);
-  BroLogInfo("Max OpenGL MSAA Samples " + iMaxSamples);
+  Br2LogInfo("Max OpenGL MSAA Samples " + iMaxSamples);
 
   if (_bMsaaEnabled) {
     if ((int)_nMsaaSamples > iMaxSamples) {
-      BroLogWarn("[RenderPipe] MSAA sample count of '" + _nMsaaSamples +
+      Br2LogWarn("[RenderPipe] MSAA sample count of '" + _nMsaaSamples +
         "' was larger than the card's maximum: '" + iMaxSamples + "'. Truncating.");
       _nMsaaSamples = iMaxSamples;
       Gu::debugBreak();
     }
     if (BitHacks::bitcount(_nMsaaSamples) != 1) {
-      BroLogWarn("[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
+      Br2LogWarn("[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
       _nMsaaSamples = iMaxSamples > 2 ? 2 : iMaxSamples;
       Gu::debugBreak();
     }

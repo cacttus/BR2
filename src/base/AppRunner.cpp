@@ -54,13 +54,13 @@ void AppRunner::loadAppPackage() {
   string_t file = OperatingSystem::showOpenFileDialog("Open project package.", "(*.xml)\0*.xml\0\0", "*.xml", FileSystem::getExecutableDirectory());
 
   if (StringUtil::isNotEmpty(file)) {
-    BroLogInfo("Building Package");
+    Br2LogInfo("Building Package");
     std::shared_ptr<ApplicationPackage> pack = std::make_shared<ApplicationPackage>();
     pack->build(FileSystem::getExecutableFullPath());
     Gu::setPackage(pack);
   }
   else {
-    BroLogInfo("Package could not be loaded.  Folder not selected, or invalid path.");
+    Br2LogInfo("Package could not be loaded.  Folder not selected, or invalid path.");
   }
 }
 void AppRunner::initSDL() {
@@ -86,10 +86,10 @@ void AppRunner::initSDL() {
     attachToGameHost();
   }
 
-  BroLogInfo("Creating Managers.");
+  Br2LogInfo("Creating Managers.");
   Gu::createManagers();
 
-  BroLogInfo("Creating Main Window.");
+  Br2LogInfo("Creating Main Window.");
   Gu::getWindowManager()->createWindow(Gu::getAppPackage()->getAppName(), Gu::getEngineConfig()->getRenderSystem());
 }
 
@@ -152,30 +152,30 @@ void AppRunner::printVideoDiagnostics() {
   //Drivers (useless in sdl2)
   const char* driver = SDL_GetCurrentVideoDriver();
   if (driver) {
-    BroLogInfo("Default Video Driver: " + driver);
+    Br2LogInfo("Default Video Driver: " + driver);
   }
-  BroLogInfo("Installed Video Drivers: ");
+  Br2LogInfo("Installed Video Drivers: ");
   int idrivers = SDL_GetNumVideoDrivers();
   for (int idriver = 0; idriver < idrivers; ++idriver) {
     driver = SDL_GetVideoDriver(idriver);
-    BroLogInfo(" " + driver);
+    Br2LogInfo(" " + driver);
   }
 
   // Get current display mode of all displays.
   int nDisplays = SDL_GetNumVideoDisplays();
-  BroLogInfo(nDisplays + " Displays:");
+  Br2LogInfo(nDisplays + " Displays:");
   for (int idisplay = 0; idisplay < nDisplays; ++idisplay) {
     SDL_DisplayMode current;
     int should_be_zero = SDL_GetCurrentDisplayMode(idisplay, &current);
 
     if (should_be_zero != 0) {
       // In case of error...
-      BroLogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
+      Br2LogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
       SDLUtils::checkSDLErr();
     }
     else {
       // On success, print the current display mode.
-      BroLogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
+      Br2LogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
       SDLUtils::checkSDLErr();
     }
   }
@@ -201,14 +201,14 @@ SDL_bool AppRunner::initAudio() {
   return SDL_TRUE;
 }
 void AppRunner::initNet() {
-  BroLogInfo("Initializing SDL Net");
+  Br2LogInfo("Initializing SDL Net");
   if (SDLNet_Init() == -1) {
     exitApp(Stz "SDL Net could not be initialized: " + SDL_GetError(), -1);
   }
 }
 
 void SignalHandler(int signal) {
-  BroThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
+  Br2ThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
 }
 void AppRunner::runApplicationTryCatch() {
   typedef void(*SignalHandlerPointer)(int);
@@ -218,7 +218,7 @@ void AppRunner::runApplicationTryCatch() {
   SignalHandlerPointer previousHandler;
   previousHandler = signal(SIGSEGV, SignalHandler);
 
-  BroLogInfo("Entering Game Loop");
+  Br2LogInfo("Entering Game Loop");
   try {
     runApplication();
   }
@@ -320,7 +320,7 @@ void AppRunner::runApplication() {
 #endif
 
   //Print the setup time.
-  BroLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
+  Br2LogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
 
   //test the globals before starting the game loop
   Gu::updateGlobals();

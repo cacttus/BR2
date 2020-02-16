@@ -38,7 +38,7 @@ bool LightNodeBase::shadowsEnabled() {
 std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow) {
   std::shared_ptr<LightNodeDir> lp = std::make_shared<LightNodeDir>(bShadow);
   lp->init();
-  lp->_pSpec = std::make_shared<BaseSpec>("*LightNodeDir");
+  lp->_pNodeData = std::make_shared<BaseSpec>("*LightNodeDir");
 
   return lp;
 }
@@ -116,13 +116,13 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
   pBox = *_pShadowFrustum->getFrustum()->getBoundBox();
   getOBB()->setInvalid();
 
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
 std::shared_ptr<LightNodePoint> LightNodePoint::create(bool bhasShadowBox) {
   std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(bhasShadowBox);
   lp->init();
-  lp->_pSpec = std::make_shared<BaseSpec>("*LightNodePoint");
+  lp->_pNodeData = std::make_shared<BaseSpec>("*LightNodePoint");
   return lp;
 }
 LightNodePoint::LightNodePoint(bool bShadowBox) : LightNodeBase(bShadowBox) {
@@ -206,7 +206,7 @@ void LightNodePoint::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float e
   pBox._max += getLightRadius();
   getOBB()->setInvalid();
 
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 
 

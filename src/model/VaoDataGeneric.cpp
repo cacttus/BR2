@@ -113,7 +113,7 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
         );
       }
       else {
-        BroThrowNotImplementedException();
+        Br2ThrowNotImplementedException();
       }
       _pContext->chkErrDbg();
     }
@@ -128,7 +128,7 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
     errStr = Stz errStr + "\r\n  Check the callstack below for more info.\r\n";
     errStr = Stz errStr + "\r\n===========================================================\r\n";
 
-    BroLogError(errStr);
+    Br2LogError(errStr);
     Gu::debugBreak();
   }
 

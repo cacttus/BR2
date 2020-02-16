@@ -2,9 +2,9 @@
 #include "../base/OglErr.h"
 #include "../base/AppBase.h"
 #include "../base/Perf.h"
+#include "../base/Logger.h"
+#include "../base/GraphicsWindow.h"
 #include "../math/Random.h"
-#include "../model/OBB.h"
-
 #include "../gfx/GpuComputeSync.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
@@ -16,10 +16,13 @@
 #include "../gfx/Picker.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/RenderSettings.h"
+#include "../gfx/RenderSettings.h"
+#include "../gfx/Picker.h"
+#include "../model/OBB.h"
 #include "../model/Material.h"
 #include "../model/ModelCache.h"
-
 #include "../model/ShaderStorageBuffer.h"
+#include "../model/NodeData.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"
 #include "../model/MeshData.h"
@@ -29,223 +32,186 @@
 #include "../model/IboData.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/MeshNode.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 #include "../world/RenderBucket.h"
-#include "../gfx/Picker.h"
+#include "../world/RenderBucket.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
+MeshNode::MeshNode() {
+  setHidden(getMeshData()->getHideRender());
 
-///////////////////////////////////////////////////////////////////
+  if (getMeshData()->getMaterial() != nullptr) {
+    _pMaterial = getMeshData()->getMaterial()->makeCopy();
+  }
 
-MeshNode::MeshNode(std::shared_ptr<MeshData> ms) : MeshNode(ms, nullptr) {
-   // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
+  if (getMeshData()->hasSkin()) {
+    createSkin();
+  }
+
 }
-MeshNode::MeshNode(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn) : BaseNode(ps) {
-    _pModelNode = mn;
+MeshNode::MeshNode(std::shared_ptr<MeshData> ms) : MeshNode() {
+  _pMeshData = ms;
 }
-
-//MeshNode::MeshNode(
-//    const void* cVerts, size_t vCount,
-//    const void* cIndexes, size_t iCount,
-//    std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm, std::shared_ptr<MeshSpec> ps) : MeshNode(pContext, fmt, ps) {
-//    //We could easily create the box by getting a pointer to the raw data and casting to vec3.
-//    //getBox()->genResetLimits();
-//
-//    createDataBlock(cVerts, vCount, cIndexes, iCount);
-//
-//    if (pm != nullptr) {
-//        _pMaterial = pm->makeCopy();
-//    }
-//}
-MeshNode::~MeshNode()
-{
+MeshNode::MeshNode(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn) : MeshNode() {
+  _pModelNode = mn;
+  _pMeshData = ps;
+}
+MeshNode::~MeshNode() {
   //  DEL_MEM(_pVaoData);
   //  DEL_MEM(_pMaterial);
   //  DEL_MEM(_pArmJoints);
-    _vecBoneNodesOrdered.resize(0);
-    _vecArmaturesOrdered.resize(0);
+  _vecBoneNodesOrdered.resize(0);
+  _vecArmaturesOrdered.resize(0);
 }
-
-///////////////////////////////////////////////////////////////////
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn){
-    std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(ps, mn);
-    m->init();
-    return m;
+void MeshNode::afterChildInserted(std::shared_ptr<TreeNode>) {
+  _iPickId = getScene()->getWindow()->getPicker()->genPickId();
 }
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshData> pd){
-    std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(pd);
-    m->init();
-    return m;
-}
-void MeshNode::init() {
-    BaseNode::init();
+void MeshNode::printDataToStdout() {
+  GpuAnimatedMeshWeightData* wdat = new GpuAnimatedMeshWeightData[getMeshData()->getWeightOffsetsGpu()->getNumElements()];
+  getMeshData()->getWeightOffsetsGpu()->copyDataServerClient(getMeshData()->getWeightOffsetsGpu()->getNumElements(), wdat);
+  std::cout << "WDAT" << std::endl;
+  for (size_t i = 0; i < getMeshData()->getWeightOffsetsGpu()->getNumElements(); ++i) {
+    std::cout << " (" << wdat[i]._offset << ", " << wdat[i]._count << ") ";
+  }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  delete[] wdat;
 
-    //    _pVaoData = std::make_shared<VaoDataGeneric>(pContext, ps->getVertexFormat());
-    setHidden(getMeshSpec()->getHideRender());
+  GpuAnimatedMeshWeight* weights = new GpuAnimatedMeshWeight[getMeshData()->getWeightsGpu()->getNumElements()];
+  getMeshData()->getWeightsGpu()->copyDataServerClient(getMeshData()->getWeightsGpu()->getNumElements(), weights);
+  std::cout << "Weihts" << std::endl;
+  for (size_t i = 0; i < getMeshData()->getWeightsGpu()->getNumElements(); ++i) {
+    std::cout << " (" << weights[i]._iArmJointOffset << ", " << weights[i]._weight << ") ";
+  }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  delete[] weights;
 
-//#ifdef _DEBUG
-//    setVisible(true);
-//#endif
-
-    if (getMeshSpec()->getMaterial() != nullptr) {
-        _pMaterial = getMeshSpec()->getMaterial()->makeCopy();
-    }
-
-    if (getMeshSpec()->hasSkin()) {
-        createSkin();
-    }
-
-    _iPickId = Gu::getPicker()->genPickId();
-}
-
-std::shared_ptr<MeshData> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshData>(BaseNode::getSpec()); }
-
-void MeshNode::printDataToStdout(){
-    GpuAnimatedMeshWeightData* wdat = new GpuAnimatedMeshWeightData[getMeshSpec()->getWeightOffsetsGpu()->getNumElements()];
-    getMeshSpec()->getWeightOffsetsGpu()->copyDataServerClient(getMeshSpec()->getWeightOffsetsGpu()->getNumElements(), wdat);
-    std::cout << "WDAT" << std::endl;
-    for (size_t i = 0; i < getMeshSpec()->getWeightOffsetsGpu()->getNumElements(); ++i) {
-        std::cout << " (" << wdat[i]._offset << ", " << wdat[i]._count << ") ";
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
-    delete[] wdat;
-
-    GpuAnimatedMeshWeight* weights = new GpuAnimatedMeshWeight[getMeshSpec()->getWeightsGpu()->getNumElements()];
-    getMeshSpec()->getWeightsGpu()->copyDataServerClient(getMeshSpec()->getWeightsGpu()->getNumElements(), weights);
-    std::cout << "Weihts" << std::endl;
-    for (size_t i = 0; i < getMeshSpec()->getWeightsGpu()->getNumElements(); ++i) {
-        std::cout << " (" << weights[i]._iArmJointOffset << ", " << weights[i]._weight << ") ";
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
-    delete[] weights;
-
-    GpuAnimatedMeshSkinMatrix* arms = new GpuAnimatedMeshSkinMatrix[_pArmJoints->getNumElements()];
-    _pArmJoints->copyDataServerClient(_pArmJoints->getNumElements(), arms);
-    std::cout << "ARM MATS" << std::endl;
-    for (size_t i = 0; i < _pArmJoints->getNumElements(); ++i) {
-        std::cout << " (" << arms[i]._matrix.toString() << ") ";
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
-    delete[] arms;
+  GpuAnimatedMeshSkinMatrix* arms = new GpuAnimatedMeshSkinMatrix[_pArmJoints->getNumElements()];
+  _pArmJoints->copyDataServerClient(_pArmJoints->getNumElements(), arms);
+  std::cout << "ARM MATS" << std::endl;
+  for (size_t i = 0; i < _pArmJoints->getNumElements(); ++i) {
+    std::cout << " (" << arms[i]._matrix.toString() << ") ";
+  }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  delete[] arms;
 }
 void MeshNode::createSkin() {
 
-    AssertOrThrow2(_pModelNode != nullptr);
-    AssertOrThrow2(getMeshSpec() != nullptr);
-    // AssertOrThrow2(getMeshSpec()->getArmatureMapOrdered().size() > 0);
+  AssertOrThrow2(_pModelNode != nullptr);
+  AssertOrThrow2(getMeshData() != nullptr);
+  // AssertOrThrow2(getMeshSpec()->getArmatureMapOrdered().size() > 0);
 
-     //Fill identity buffer of skin mats
-    int32_t iOrdCount = 0;
-    std::vector <mat4> idents;
-    for (std::pair<Hash32, std::shared_ptr<Armature>> parm : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
-        for (std::pair<Hash32, std::shared_ptr<BoneSpec>> pbone : *parm.second->getBoneCacheOrdered()) {
-            iOrdCount++;
-            idents.push_back(mat4::identity());
-        }
+   //Fill identity buffer of skin mats
+  int32_t iOrdCount = 0;
+  std::vector <mat4> idents;
+  for (std::pair<Hash32, std::shared_ptr<ArmatureData>> parm : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
+    for (std::pair<Hash32, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
+      iOrdCount++;
+      idents.push_back(mat4::identity());
     }
+  }
 
-  //  _pSkinCompute = new GpuComputeSync(Gu::getGraphicsContext());
+  //  _pSkinCompute = new GpuComputeSync(Gu::getContext());
 
-    _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshSkinMatrix));
-    _pArmJoints->allocate(iOrdCount);
-    _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
+  _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshSkinMatrix));
+  _pArmJoints->allocate(iOrdCount);
+  _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
 
-    orderBoneNodesForGpu();
+  orderBoneNodesForGpu();
 }
 void MeshNode::orderBoneNodesForGpu() {
-    //Retrieve a list of all matrixes as appearing on the GPU - this si crucially ordered.
-    //[arm, bone,bone, arm2, bone, bone...]
-    //Armature order comes frist
-   // int32_t iMaxArmId = -1;
-    _vecBoneNodesOrdered.resize(0);
-    _vecArmaturesOrdered.resize(0);
+  //Retrieve a list of all matrixes as appearing on the GPU - this si crucially ordered.
+  //[arm, bone,bone, arm2, bone, bone...]
+  //Armature order comes frist
+ // int32_t iMaxArmId = -1;
+  _vecBoneNodesOrdered.resize(0);
+  _vecArmaturesOrdered.resize(0);
 
-    //Build list of armatures, ordered by ID
-    for (std::pair<Hash32, std::shared_ptr<Armature>> arm_pair : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
-        for (std::shared_ptr<ArmatureNode> parm_node : _pModelNode->getArmatureNodes()) {
-            if (arm_pair.second == parm_node->getSpec()) {
-                _vecArmaturesOrdered.push_back(parm_node);
-            }
-        }
+  //Build list of armatures, ordered by ID
+  for (std::pair<Hash32, std::shared_ptr<ArmatureData>> arm_pair : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
+    for (std::shared_ptr<ArmatureNode> parm_node : _pModelNode->getArmatureNodes()) {
+      if (arm_pair.second == parm_node->getNodeData()) {
+        _vecArmaturesOrdered.push_back(parm_node);
+      }
     }
+  }
 
-    //Build list of bone nodes, ordered by armature, then bone id
-    int32_t iMaxBoneId = -1;
-    for (std::shared_ptr<ArmatureNode> parm_node : _vecArmaturesOrdered) {
-        iMaxBoneId = -1;//Reset for each armature
+  //Build list of bone nodes, ordered by armature, then bone id
+  int32_t iMaxBoneId = -1;
+  for (std::shared_ptr<ArmatureNode> parm_node : _vecArmaturesOrdered) {
+    iMaxBoneId = -1;//Reset for each armature
 
-        for (std::shared_ptr<BoneNode> bn : parm_node->getBonesOrdered()) {
-            _vecBoneNodesOrdered.push_back(bn);
+    for (std::shared_ptr<BoneNode> bn : parm_node->getBonesOrdered()) {
+      _vecBoneNodesOrdered.push_back(bn);
 
-            //Check bone order is sequential.
-            if (bn->getBoneSpec()->getBoneId() > iMaxBoneId) {
-                iMaxBoneId = bn->getBoneSpec()->getBoneId();
-            }
-            else {
-                BroLogError("'" + getMeshSpec()->getName() + "' : Node, Bone Cache is not ordered properly.");
-                Gu::debugBreak();
-            }
-        }
+      //Check bone order is sequential.
+      if (bn->getBoneData()->getBoneId() > iMaxBoneId) {
+        iMaxBoneId = bn->getBoneData()->getBoneId();
+      }
+      else {
+        Br2LogError("'" + getMeshData()->getName() + "' : Node, Bone Cache is not ordered properly.");
+        Gu::debugBreak();
+      }
     }
-    //*If we have skin we have to have bone nodes, or lese there was an error somewhere.
-    AssertOrThrow2(_vecBoneNodesOrdered.size() > 0);
+  }
+  //*If we have skin we have to have bone nodes, or lese there was an error somewhere.
+  AssertOrThrow2(_vecBoneNodesOrdered.size() > 0);
 }
 void MeshNode::computeAndDispatchSkin() {
-    if (getMeshSpec()->hasSkin()) {
-      //  if (!_pSkinCompute->isDispatched() || _pSkinCompute->isComputeComplete()) {
+  if (getMeshData()->hasSkin()) {
+    //  if (!_pSkinCompute->isDispatched() || _pSkinCompute->isComputeComplete()) {
 
-            if (false) {
-                printDataToStdout();
-            }
-
-            computeSkinFrame();
-       // }
+    if (false) {
+      printDataToStdout();
     }
+
+    computeSkinFrame();
+    // }
+  }
 
 }
 void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) {
-    BaseNode::update(delta, pAnimator);
+  SceneNode::update(delta, pAnimator);
 }
 
 void MeshNode::computeSkinFrame() {
-    Perf::pushPerf();
-    Gu::getGraphicsContext()->chkErrDbg();
-    copyJointsToGpu();
-    Perf::popPerf();
-    // dispatchSkinCompute();
+  Perf::pushPerf();
+  Gu::getContext()->chkErrDbg();
+  copyJointsToGpu();
+  Perf::popPerf();
+  // dispatchSkinCompute();
 }
 void MeshNode::copyJointsToGpu() {
-    Perf::pushPerf();
-    AssertOrThrow2(_pArmJoints != nullptr);
-    std::vector<mat4> mats;
-    std::vector<string_t> names; //TEST
-    mat4 mtmp;
-   // static bool copyLocal = false;
-    for (std::shared_ptr<BoneNode> bn : _vecBoneNodesOrdered)
-    {
-        //It's all fucked up because of blender's ordering --skin meshes
-        //should not be part of the scene graph.  Really, the bones should be part
-        //of the scenegraph.
-        // Here we're doing
-        //  MESH_LOCAL * BONE * (ARMATURE * MODEL)
-        mtmp = getSpec()->getBind() * bn->getLocal();
-        if(getParent()){
-            mtmp = mtmp * (std::dynamic_pointer_cast<BaseNode>(getParent()))->getLocal();
-        }
-
-        mats.push_back(mtmp);
-        names.push_back(bn->getBoneSpec()->getName());//TEST
+  Perf::pushPerf();
+  AssertOrThrow2(_pArmJoints != nullptr);
+  std::vector<mat4> mats;
+  std::vector<string_t> names; //TEST
+  mat4 mtmp;
+  // static bool copyLocal = false;
+  for (std::shared_ptr<BoneNode> bn : _vecBoneNodesOrdered) {
+    //It's all fucked up because of blender's ordering --skin meshes
+    //should not be part of the scene graph.  Really, the bones should be part
+    //of the scenegraph.
+    // Here we're doing
+    //  MESH_LOCAL * BONE * (ARMATURE * MODEL)
+    mtmp = getNodeData()->getBind() * bn->getLocal();
+    if (getParent()) {
+      mtmp = mtmp * (std::dynamic_pointer_cast<SceneNode>(getParent()))->getLocal();
     }
-    _pArmJoints->copyDataClientServer(mats.size(), mats.data());
-    Perf::popPerf();
+
+    mats.push_back(mtmp);
+    names.push_back(bn->getBoneData()->getName());//TEST
+  }
+  _pArmJoints->copyDataClientServer(mats.size(), mats.data());
+  Perf::popPerf();
 }
 //void MeshNode::dispatchSkinCompute() {
-//    Gu::getGraphicsContext()->chkErrDbg();
+//    Gu::getContext()->chkErrDbg();
 //
-//    std::shared_ptr<ShaderBase> pSkinShader = getGraphicsContext()->getShaderMaker()->getSkinComputeShader();
+//    std::shared_ptr<ShaderBase> pSkinShader = getContext()->getShaderMaker()->getSkinComputeShader();
 //    AssertOrThrow2(pSkinShader != nullptr);
 //    pSkinShader->bind();
 //
@@ -283,209 +249,209 @@ void MeshNode::copyJointsToGpu() {
 //        printFragmentsToStdout();
 //    }
 //}
-void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh){
-    //debug
-    std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
-    if (false) {
-        //Spec
-        //mg->getMeshSpec()->printDataToStdout();
-    }
-    if (false) {
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        //actual model.
-      //  mg->printDataToStdout();
-    }
-    //debug
+void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
+  //debug
+  std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
+  if (false) {
+    //Spec
+    //mg->getMeshSpec()->printDataToStdout();
+  }
+  if (false) {
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    //actual model.
+  //  mg->printDataToStdout();
+  }
+  //debug
 
 
-    //1/17/18 Node; removed model_world in order to prevent bullshit like having a unique model matrix
+  //1/17/18 Node; removed model_world in order to prevent bullshit like having a unique model matrix
 
-    //Add the mesh-local matrix
-   // mat_mesh = mg->getLocal();
-    if (mg->getMeshSpec()->hasSkin()) {
-        int nnn = 0;
-        nnn++;
-          mat_mesh = mat4::identity();
-    }
-    if (mg->getSpec()->getParentType() == ParentType::e::Bone) {
-        static int n = 0;
-        if (n == 0)
-            mat_mesh = mg->getLocal();;// * mat_model_world;
-        if (n == 1)
-            mat_mesh = mat4::identity();;// * mat_model_world;
-    }
-    else {
-        mat_mesh = mg->getLocal();
-    }
-    //This is a hack due to our using compute shader for skin! really this should all happen all at once by 
-    //multiply the bone skin matrices **(see copyJointsToGpu())**.  Either way we'd have to handle skin and
-    //static meshes different.  The optimal method would use a skin shader and we could do all this on the draw.
-    // mat_mesh = mat4::identity();
-    //HACK DEBUG
-    //  mat_mesh.setTranslation(0,0,0);
-    //  }
-    //  else
+  //Add the mesh-local matrix
+ // mat_mesh = mg->getLocal();
+  if (mg->getMeshData()->hasSkin()) {
+    int nnn = 0;
+    nnn++;
+    mat_mesh = mat4::identity();
+  }
+  if (mg->getNodeData()->getParentType() == ParentType::e::Bone) {
+    static int n = 0;
+    if (n == 0)
+      mat_mesh = mg->getLocal();;// * mat_model_world;
+    if (n == 1)
+      mat_mesh = mat4::identity();;// * mat_model_world;
+  }
+  else {
+    mat_mesh = mg->getLocal();
+  }
+  //This is a hack due to our using compute shader for skin! really this should all happen all at once by 
+  //multiply the bone skin matrices **(see copyJointsToGpu())**.  Either way we'd have to handle skin and
+  //static meshes different.  The optimal method would use a skin shader and we could do all this on the draw.
+  // mat_mesh = mat4::identity();
+  //HACK DEBUG
+  //  mat_mesh.setTranslation(0,0,0);
+  //  }
+  //  else
 
-    //  else {
-    //      //For parent type of BONE we treat the mesh as a bone vertex
-    //      mat_mesh = mg->getLocal();// * mat_model_world;
-    //      //  mat_mesh = mat_model_world;
-    //  }
+  //  else {
+  //      //For parent type of BONE we treat the mesh as a bone vertex
+  //      mat_mesh = mg->getLocal();// * mat_model_world;
+  //      //  mat_mesh = mat_model_world;
+  //  }
 }
 
 void MeshNode::drawDeferred(RenderParams& rp) {
-    //Children.
-    BaseNode::drawDeferred(rp);
-    draw(rp,false);
+  //Children.
+  SceneNode::drawDeferred(rp);
+  draw(rp, false);
 }
-void MeshNode::drawTransparent(RenderParams& rp){
-    BaseNode::drawTransparent(rp);
-    draw(rp, true);
+void MeshNode::drawTransparent(RenderParams& rp) {
+  SceneNode::drawTransparent(rp);
+  draw(rp, true);
 }
 void MeshNode::draw(RenderParams& rp, bool bTransparent) {
-    //This is surprisingly a huge thing
-    mat4 mat_mesh;
-    getMeshLocalMatrix(mat_mesh);
+  //This is surprisingly a huge thing
+  mat4 mat_mesh;
+  getMeshLocalMatrix(mat_mesh);
 
-    //New "multiple vertex types" system. 1/12/18
-    std::shared_ptr<VertexFormat> meshFmt = getMeshSpec()->getVertexFormat();
+  //New "multiple vertex types" system. 1/12/18
+  std::shared_ptr<VertexFormat> meshFmt = getMeshData()->getVertexFormat();
 
-    if (_pMaterial == nullptr) {
-        _pMaterial = Gu::getModelCache()->getDefaultMaterial();
-        //showNoMaterialError();
-        //meshFmt = v_v3::getVertexFormat();
+  if (_pMaterial == nullptr) {
+    _pMaterial = Gu::getModelCache()->getDefaultMaterial();
+    //showNoMaterialError();
+    //meshFmt = v_v3::getVertexFormat();
+  }
+
+  //Bind a new shader based on format.
+  std::shared_ptr<ShaderBase> pShader;
+  if (_pMaterial && _pMaterial->getEnableTransparency() && bTransparent) {
+    pShader = getContext()->getShaderMaker()->getGlassShader(meshFmt);
+  }
+  else {
+    pShader = getContext()->getShaderMaker()->getDiffuseShader(meshFmt);
+  }
+  if (pShader == nullptr) {
+    Br2LogWarnCycle("Could not find shader for mesh '" + (getNodeData() ? getNodeData()->getName() : "") + "'");
+  }
+  else {
+    pShader->bind();
+    rp.setShader(pShader);
+
+    //Camera
+    std::shared_ptr<CameraNode> bc = Gu::getCamera();
+    rp.getShader()->setCameraUf(bc, &mat_mesh);
+
+    //Pick ID
+    uint32_t pickid = getPickId();
+    rp.getShader()->setUf("_ufPickId", (void*)&pickid);
+
+    //Skin
+    bindSkin(rp.getShader());
+
+    //Material
+    if (_pMaterial != nullptr) {
+      _pMaterial->bind(rp.getShader(), true, true);
     }
 
-    //Bind a new shader based on format.
-    std::shared_ptr<ShaderBase> pShader;
-    if (_pMaterial && _pMaterial->getEnableTransparency() && bTransparent) {
-        pShader = getGraphicsContext()->getShaderMaker()->getGlassShader(meshFmt);
-    }
-    else {
-        pShader = getGraphicsContext()->getShaderMaker()->getDiffuseShader(meshFmt);
-    }
-    if(pShader==nullptr) {
-        BroLogWarnCycle("Could not find shader for mesh '" + (getSpec() ? getSpec()->getName() : "") + "'");
-    }
-    else {
-        pShader->bind();
-        rp.setShader(pShader);
+    //Mesh
+    rp.setMesh(getThis<MeshNode>());
 
-        //Camera
-        std::shared_ptr<CameraNode> bc = Gu::getCamera();
-        rp.getShader()->setCameraUf(bc, &mat_mesh);
-
-        //Pick ID
-        uint32_t pickid = getPickId();
-        rp.getShader()->setUf("_ufPickId", (void*)&pickid);
-
-        //Skin
-        bindSkin(rp.getShader());
-
-        //Material
-        if (_pMaterial != nullptr) {
-            _pMaterial->bind(rp.getShader(), true, true);
-        }
-
-        //Mesh
-        rp.setMesh(getThis<MeshNode>());
-
-        rp.draw();
-    }
+    rp.draw();
+  }
 }
-void MeshNode::bindSkin(std::shared_ptr<ShaderBase> shader){
-    int wc = 0;
-    if (getMeshSpec()->hasSkin()) {
-        if (false) {
-            printDataToStdout();
-        }
-        shader->bindSsbo(getMeshSpec()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
-        //    Gu::checkErrorsDbg();
-        shader->bindSsbo(getMeshSpec()->getWeightsGpu(), "ssInJointWeights", 1);
-        //   Gu::checkErrorsDbg();
-        shader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
-        wc = 1;
+void MeshNode::bindSkin(std::shared_ptr<ShaderBase> shader) {
+  int wc = 0;
+  if (getMeshData()->hasSkin()) {
+    if (false) {
+      printDataToStdout();
     }
-    shader->setUf("_ufWeightCount", (void*)&wc);
+    shader->bindSsbo(getMeshData()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
+    //    Gu::checkErrorsDbg();
+    shader->bindSsbo(getMeshData()->getWeightsGpu(), "ssInJointWeights", 1);
+    //   Gu::checkErrorsDbg();
+    shader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
+    wc = 1;
+  }
+  shader->setUf("_ufWeightCount", (void*)&wc);
 }
 void MeshNode::drawForward(RenderParams& rp) {
-    BaseNode::drawForward(rp);
-    if (Gu::getRenderSettings()->getDebug()->getShowNormals()) {
+  SceneNode::drawForward(rp);
+  if (Gu::getRenderSettings()->getDebug()->getShowNormals()) {
 
-        //Draw Normals
-        std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
-        mat4 mat_mesh;
-        getMeshLocalMatrix(mat_mesh);
-        std::shared_ptr<ShaderBase> pShader = getGraphicsContext()->getShaderMaker()->getNormalsShader_v3n3();
-        pShader->bind();
-        rp.setShader(pShader);
-        std::shared_ptr<CameraNode> bc = Gu::getCamera();
-        rp.getShader()->setCameraUf(bc, &mat_mesh);
-        vec4 vColor(1, 0, 1, 1);
-        float fLen = 0.3f;
-        vec3 vCamPos = bc->getPos();
-        rp.getShader()->setUf("_ufNormalColor", (void*)&vColor, -1, true);
-        rp.getShader()->setUf("_ufNormalLength", (void*)&fLen, -1, true);
-        rp.getShader()->setUf("_ufCamPos", (void*)&vCamPos, -1, true);
+    //Draw Normals
+    std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
+    mat4 mat_mesh;
+    getMeshLocalMatrix(mat_mesh);
+    std::shared_ptr<ShaderBase> pShader = getContext()->getShaderMaker()->getNormalsShader_v3n3();
+    pShader->bind();
+    rp.setShader(pShader);
+    std::shared_ptr<CameraNode> bc = Gu::getCamera();
+    rp.getShader()->setCameraUf(bc, &mat_mesh);
+    vec4 vColor(1, 0, 1, 1);
+    float fLen = 0.3f;
+    vec3 vCamPos = bc->getPos();
+    rp.getShader()->setUf("_ufNormalColor", (void*)&vColor, -1, true);
+    rp.getShader()->setUf("_ufNormalLength", (void*)&fLen, -1, true);
+    rp.getShader()->setUf("_ufCamPos", (void*)&vCamPos, -1, true);
 
-        bindSkin(rp.getShader());
-
-        rp.setMesh(mg);
-        rp.draw();
-    }
-}
-void MeshNode::drawShadow(RenderParams& rp){
-    mat4 mModel;
-    getMeshLocalMatrix(mModel);
-    rp.getShader()->setUf("_ufModel", (void*)&mModel);
     bindSkin(rp.getShader());
-    
-    if(_pMaterial==nullptr) {
-        _pMaterial = Gu::getModelCache()->getDefaultMaterial();
-       // showNoMaterialError();
-    }
 
-    _pMaterial->bind(rp.getShader(), true, false);
-    rp.getShader()->draw(getThis<MeshNode>());
+    rp.setMesh(mg);
+    rp.draw();
+  }
+}
+void MeshNode::drawShadow(RenderParams& rp) {
+  mat4 mModel;
+  getMeshLocalMatrix(mModel);
+  rp.getShader()->setUf("_ufModel", (void*)&mModel);
+  bindSkin(rp.getShader());
+
+  if (_pMaterial == nullptr) {
+    _pMaterial = Gu::getModelCache()->getDefaultMaterial();
+    // showNoMaterialError();
+  }
+
+  _pMaterial->bind(rp.getShader(), true, false);
+  rp.getShader()->draw(getThis<MeshNode>());
 }
 
-void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad)  {
-    pBox.genResetLimits();
-    if (getSpec()) {
-        std::shared_ptr<MeshNode> mn = getThis<MeshNode>();
-        if (mn->getMeshSpec()->hasSkin()) {
-            //Mesh + skin - compute box by the bone boxes.
-            for (std::shared_ptr<BoneNode> bn : mn->getBoneNodesOrdered()) {
-                pBox.genExpandByBox(bn->getBoundBoxObject());
-            }
-            //Make the OBB be the same as the box
-            //bone node boxes are already transformed to armature space
-            getOBB()->calc(mat4::identity(), &pBox);
-        }
-        else {
-            //Simple mesh.  No skin.
-            getOBB()->calc(getLocal(), getSpec()->getBoundBoxObject());
-            for (int i = 0; i < 8; ++i) {
-                pBox.genExpandByPoint(getOBB()->getVerts()[i]);
-            }
-        }
+void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
+  pBox.genResetLimits();
+  if (getNodeData()) {
+    std::shared_ptr<MeshNode> mn = getThis<MeshNode>();
+    if (mn->getMeshData()->hasSkin()) {
+      //Mesh + skin - compute box by the bone boxes.
+      for (std::shared_ptr<BoneNode> bn : mn->getBoneNodesOrdered()) {
+        pBox.genExpandByBox(bn->getBoundBoxObject());
+      }
+      //Make the OBB be the same as the box
+      //bone node boxes are already transformed to armature space
+      getOBB()->calc(mat4::identity(), &pBox);
     }
-    BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+    else {
+      //Simple mesh.  No skin.
+      getOBB()->calc(getLocal(), getNodeData()->getBoundBoxObject());
+      for (int i = 0; i < 8; ++i) {
+        pBox.genExpandByPoint(getOBB()->getVerts()[i]);
+      }
+    }
+  }
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 
 }
-void MeshNode::showNoMaterialError(){
-    //Check that textured meshes actually have texture.  If they don't swap the vertex format for something we can draw
-    //if (_pMaterial == nullptr){
-    //  //  if(getMeshSpec()->getVertexFormat()->getComponentForUserType(VertexUserType::x2_01) != nullptr) {
-    //    BroLogError("Mesh '", getSpec()->getName(), "' did not have a material. All meshes must have a material in the",
-    //        "new system. Note: if the object is",
-    //        "to be rendered colored, make sure to delete all UV Maps in blender in Data -> UV Maps");
-    //  //  }
-    //}
+void MeshNode::showNoMaterialError() {
+  //Check that textured meshes actually have texture.  If they don't swap the vertex format for something we can draw
+  //if (_pMaterial == nullptr){
+  //  //  if(getMeshSpec()->getVertexFormat()->getComponentForUserType(VertexUserType::x2_01) != nullptr) {
+  //    BroLogError("Mesh '", getSpec()->getName(), "' did not have a material. All meshes must have a material in the",
+  //        "new system. Note: if the object is",
+  //        "to be rendered colored, make sure to delete all UV Maps in blender in Data -> UV Maps");
+  //  //  }
+  //}
 }
 
 

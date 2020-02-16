@@ -42,7 +42,7 @@ void ApplicationPackage::setSz(string_t name, string_t& value, std::shared_ptr<P
     }
   }
   if (set == false) {
-    BroLogError("Failed to find required Package attribute <" + name + " />");
+    Br2LogError("Failed to find required Package attribute <" + name + " />");
     Gu::debugBreak();
   }
 }
@@ -81,16 +81,16 @@ void ApplicationPackage::build(std::string exeLoc) {
 
   _bIsPacked = (sig0 == 'a' && sig1 == 's' && sig2 == 'd' && sig3 == 'f');
   if (_bIsPacked) {
-    BroLogInfo("Exe is packed.");
+    Br2LogInfo("Exe is packed.");
   }
   else {
-    BroLogInfo("Exe is not packed.");
+    Br2LogInfo("Exe is not packed.");
     return;
   }
 
   tmp = (int32_t)fb->getData().count() - 8;
   _iExeLenBytes = parseInt32(fb, tmp);
-  BroLogInfo("ExeLen: " + _iExeLenBytes);
+  Br2LogInfo("ExeLen: " + _iExeLenBytes);
 
   //Start parsing at the end fo the exe
   int32_t iByteIdx = _iExeLenBytes;
@@ -98,7 +98,7 @@ void ApplicationPackage::build(std::string exeLoc) {
   // 8 bytes, table length (total) and num entries
   _iTableLenBytes = parseInt32(fb, iByteIdx);
   int32_t iNumEntries = parseInt32(fb, iByteIdx);
-  BroLogInfo("Num Entries: " + iNumEntries);
+  Br2LogInfo("Num Entries: " + iNumEntries);
 
   for (int32_t iEntry = 0; iEntry < iNumEntries; ++iEntry) {
     ProjectPackageFileEntry* fe = new ProjectPackageFileEntry();
@@ -111,7 +111,7 @@ void ApplicationPackage::build(std::string exeLoc) {
 }
 bool ApplicationPackage::getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
   if (fb == nullptr) {
-    BroLogError("Buffered file was nullptr, no file was read.  Make sur to initialize fb.");
+    Br2LogError("Buffered file was nullptr, no file was read.  Make sur to initialize fb.");
     Gu::debugBreak();
     return false;
   }
@@ -128,7 +128,7 @@ bool ApplicationPackage::loadPackedFile(std::string fileLoc, std::shared_ptr<Bin
   ProjectPackageFileEntry* fe = getEntry(fileLoc);
   if (fe == nullptr) {
 
-    BroThrowException("Failed to get file entry for " + fileLoc);
+    Br2ThrowException("Failed to get file entry for " + fileLoc);
   }
   std::fstream fs;
   fs.open(_strExeLoc.c_str(), std::ios::in | std::ios::binary);
@@ -142,7 +142,7 @@ bool ApplicationPackage::loadPackedFile(std::string fileLoc, std::shared_ptr<Bin
   size_t iExePackSize = (size_t)fs.tellg();
 
   if (iFileOff + fe->_iSize > iExePackSize) {
-    BroThrowException("ERROR File overrun: size of file is greater than the packed exe size.");
+    Br2ThrowException("ERROR File overrun: size of file is greater than the packed exe size.");
   }
 
   fs.seekg(iFileOff, std::ios::beg);
@@ -208,7 +208,7 @@ bool ApplicationPackage::fileExists(string_t file) {
     return FileSystem::fileExists(file);
   }
   else {
-    BroThrowNotImplementedException();
+    Br2ThrowNotImplementedException();
   }
 }
 time_t ApplicationPackage::getLastModifyTime(string_t str) {

@@ -13,11 +13,10 @@
 #include "../model/MeshData.h"
 #include "../model/Material.h"
 #include "../model/MbiFile.h"
-#include "../world/PhysicsWorld.h"
+#include "../world/PhysicsManager.h"
 
 
 namespace BR2 {
-///////////////////////////////////////////////////////////////////
 MbiFile::MbiFile() {
   _pFile = std::make_shared<BinaryFile>();
 }
@@ -25,16 +24,15 @@ MbiFile::~MbiFile() {
   _pFile = nullptr;
   //DEL_MEM(_pFile);
 }
-///////////////////////////////////////////////////////////////////
 void MbiFile::parseErr(string_t str, bool bDebugBreak, bool bFatal) {
   string_t strhead = Stz "Error: '" + _fileLoc + "': line " + _pFile->pos() + "\r\n  ";
   str = strhead + str;
   //Throw this if you wnt to have an error in your file.
   if (bFatal) {
-    BroThrowException(str);
+    Br2ThrowException(str);
   }
   else {
-    BroLogError(str);
+    Br2LogError(str);
     if (bDebugBreak) {
       Gu::debugBreak();
     }
@@ -44,8 +42,8 @@ void MbiFile::postLoad() {
 
   //Compute Bone Boxes
   //Debug: we'll do this every time becasue FUCK!s
-  BroLogInfo("  Making Bone Boxes..");
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  Br2LogInfo("  Making Bone Boxes..");
+  for (std::shared_ptr<ModelData> ms : _vecModels) {
     ms->cacheMeshBones();
   }
 
@@ -67,7 +65,7 @@ bool MbiFile::loadAndParse(string_t file) {
   fb->readByte(h3);
 
   if (h0 != 'M' || h1 != 'B' || h2 != 'I' || h3 != 'H') {
-    BroLogError("Invalid file header for MBI1 file.");
+    Br2LogError("Invalid file header for MBI1 file.");
     Gu::debugBreak();
     return false;
   }
@@ -84,7 +82,7 @@ bool MbiFile::loadAndParse(string_t file) {
   int32_t nModels;
   fb->readInt32(nModels);
   for (int32_t iModel = 0; iModel < nModels; ++iModel) {
-    std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>();
+    std::shared_ptr<ModelData> ms = std::make_shared<ModelData>();
     ms->deserialize(fb);
     _vecModels.push_back(ms);
 
@@ -93,7 +91,7 @@ bool MbiFile::loadAndParse(string_t file) {
 
 
   //Read textures
-  BroLogInfo("  Loading textures..");
+  Br2LogInfo("  Loading textures..");
   std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs;
   int32_t nTexs;
   fb->readInt32(nTexs);
@@ -113,8 +111,8 @@ bool MbiFile::loadAndParse(string_t file) {
     texs.insert(std::make_pair(hTex, pTex));
   }
   //Resolve textures.
-  BroLogInfo("  Resolving textures..");
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  Br2LogInfo("  Resolving textures..");
+  for (std::shared_ptr<ModelData> ms : _vecModels) {
     for (std::shared_ptr<MeshData> mesh : ms->getMeshes()) {
       if (mesh->getMaterial() != nullptr) {
         for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : mesh->getMaterial()->getTextureSlots()) {
@@ -123,7 +121,7 @@ bool MbiFile::loadAndParse(string_t file) {
             p.second->_pTex = it->second;
           }
           else {
-            BroLogError("Failed to find packed texture map for MBI mesh material.");
+            Br2LogError("Failed to find packed texture map for MBI mesh material.");
           }
 
 
@@ -172,13 +170,13 @@ void MbiFile::save(string_t file) {
 
   //models
   fb->writeInt32((int32_t)_vecModels.size());
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  for (std::shared_ptr<ModelData> ms : _vecModels) {
     ms->serialize(fb);
   }
 
   //Collect textures
   std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs;
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  for (std::shared_ptr<ModelData> ms : _vecModels) {
     for (std::shared_ptr<MeshData> mesh : ms->getMeshes()) {
       if (mesh->getMaterial() != nullptr) {
         for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : mesh->getMaterial()->getTextureSlots()) {

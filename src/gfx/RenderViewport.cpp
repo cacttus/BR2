@@ -30,10 +30,10 @@ void RenderViewport::bind(std::shared_ptr<RenderTarget> target) {
 
   //Scissor testing
   glScissor(ix, iy, iw, ih);
-
 }
 void RenderViewport::updateBox(std::shared_ptr<RenderTarget> target) {
   if (_constraint == ViewportConstraint::Fixed) {
+    //Note: we should place viewport in the center of the screen.
   }
   else if (_constraint == ViewportConstraint::AdjustHeight) {
   }
@@ -42,7 +42,6 @@ void RenderViewport::updateBox(std::shared_ptr<RenderTarget> target) {
     _rect._min.y = 0;
     _rect._max.x = target->getWidth();
     _rect._max.y = target->getHeight();
-
   }
   _lastRect = _rect;
 }

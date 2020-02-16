@@ -42,7 +42,7 @@ void InputManager::setKeyDown(SDL_Scancode keyCode) {
 
   if (keyCode >= SDL_NUM_SCANCODES) {
     //Error
-    BroLogError("scancode outside range:" + keyCode);
+    Br2LogError("scancode outside range:" + keyCode);
   }
   else {
     _kbKeys[keyCode] = BR2::ButtonState::e::Press;
@@ -56,7 +56,7 @@ void InputManager::setKeyDown(SDL_Scancode keyCode) {
 void InputManager::setKeyUp(SDL_Scancode keyCode) {
   if (keyCode >= SDL_NUM_SCANCODES) {
     //Error
-    BroLogError("scancode outside range: " + keyCode);
+    Br2LogError("scancode outside range: " + keyCode);
   }
   else {
     _kbKeys[keyCode] = BR2::ButtonState::Release;

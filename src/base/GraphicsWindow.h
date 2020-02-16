@@ -24,7 +24,7 @@ protected:
 
 /**
 *  @class GraphicsWindow
-*  @brief Window to draw to.
+*  @brief Operating system window that is the final render output.  All rendering-surface related data is contained in the window.
 */
 class GraphicsWindow : public RenderTarget {
 public:
@@ -46,7 +46,6 @@ public:
   
   void setScene(std::shared_ptr<Scene> s) { _pScene=s; }
   std::shared_ptr<Scene> getScene() { return _pScene; }
-  std::shared_ptr<Picker> getPicker() { return _pPicker; }
   std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
 
 protected:
@@ -60,11 +59,7 @@ private:
   string_t _title = "";
   std::shared_ptr<Scene> _pScene = nullptr; //The scene we render.
   std::shared_ptr<GLContext> _pContext = nullptr;
-  std::shared_ptr<Picker> _pPicker = nullptr;
-
   std::shared_ptr<FrameSync> _pFrameSync = nullptr;
-
-  //Renderpipe should be on the window, or at least, on a renderable "target"
   std::shared_ptr<RenderPipeline> _pRenderPipe = nullptr;
 
   SDL_Window* _pSDLWindow = nullptr;

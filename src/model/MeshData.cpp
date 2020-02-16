@@ -24,38 +24,33 @@
 #include "../world/PhysicsShapes.h"
 
 namespace BR2 {
-;
-//////////////////////////////////////////////////////////////////////////
-MeshData::MeshData(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName)
-{
-    _pVertexFormat = vf;
-    _pObjectFile = objFile;
-    _pPhysicsShape = ps;
+MeshData::MeshData(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : NodeData(strName) {
+  _pVertexFormat = vf;
+  _pObjectFile = objFile;
+  _pPhysicsShape = ps;
 
-    _matLocalMatrix = mat4::identity();
+  _matLocalMatrix = mat4::identity();
 }
 MeshData::MeshData(const void* pVerts, size_t vCount,
-    const void* pIndexes, size_t iCount,
-    std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm) : MeshData("", fmt, nullptr, nullptr) {
-    _pMaterial = pm;
-    allocMesh(pVerts, vCount, pIndexes, iCount, nullptr);
-
+  const void* pIndexes, size_t iCount,
+  std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm) : MeshData("", fmt, nullptr, nullptr) {
+  _pMaterial = pm;
+  allocMesh(pVerts, vCount, pIndexes, iCount, nullptr);
 }
 MeshData::~MeshData() {
-    // DEL_MEM(_pFrags);
-    // DEL_MEM(_pIndexes);
-    // DEL_MEM(_pFaceNormals);
-   //  DEL_MEM(_pMaterial);
-     //DEL_MEM(_pVertexAdjacencyMap);
-     //DEL_MEM(_pVertsGpu);
-    // DEL_MEM(_pVaoData);
-
+  // DEL_MEM(_pFrags);
+  // DEL_MEM(_pIndexes);
+  // DEL_MEM(_pFaceNormals);
+ //  DEL_MEM(_pMaterial);
+   //DEL_MEM(_pVertexAdjacencyMap);
+   //DEL_MEM(_pVertsGpu);
+  // DEL_MEM(_pVaoData);
 }
 //////////////////////////////////////////////////////////////////////////
 //PROPS
 void MeshData::setMaterial(std::shared_ptr<Material> m) {
-    //DEL_MEM(_pMaterial);
-    _pMaterial = m;
+  //DEL_MEM(_pMaterial);
+  _pMaterial = m;
 }
 
 size_t MeshData::indexCount() { return _pVaoData->getIbo()->getNumElements(); }//_pIndexes ? _pIndexes->count() : 0; }
@@ -79,19 +74,19 @@ size_t MeshData::faceCount() { return _pVaoData->getIbo()->getNumElements() / 3;
 //    DEL_MEM(_pConversionMapping);
 //}
 void MeshData::allocMesh(size_t nFrags, size_t nIndexes) {
-    AssertOrThrow2((nIndexes % 3) == 0);
-    AssertOrThrow2(_pVaoData != nullptr);
-    _pVaoData->allocate(nFrags, nIndexes);
+  AssertOrThrow2((nIndexes % 3) == 0);
+  AssertOrThrow2(_pVaoData != nullptr);
+  _pVaoData->allocate(nFrags, nIndexes);
 
-    // allocateFragments(nFrags);
-    // allocateIndexes(nIndexes);
-    //
-    // if (use_face_normals) {
-    //     allocateFaceNormals(nIndexes / 3);
-    // }
-    //
+  // allocateFragments(nFrags);
+  // allocateIndexes(nIndexes);
+  //
+  // if (use_face_normals) {
+  //     allocateFaceNormals(nIndexes / 3);
+  // }
+  //
 
-    //_face_normals.alloc(nIndexes/3);
+  //_face_normals.alloc(nIndexes/3);
 }
 //void MeshSpec::allocMesh(const void* pFrags, size_t nFrags, const v_index32* pIndexes, size_t nIndexes,
 //    std::vector<GpuAnimatedMeshWeightData>& weightDatas, std::vector<GpuAnimatedMeshWeight>& weights) {
@@ -99,179 +94,177 @@ void MeshData::allocMesh(size_t nFrags, size_t nIndexes) {
 //
 //}
 void MeshData::allocMesh(const void* pFrags, size_t nFrags, const void* pIndexes, size_t nIndexes, std::vector<VertexWeightMob>* vecWeights) {
-    t_timeval t0 = Gu::getMicroSeconds();
+  t_timeval t0 = Gu::getMicroSeconds();
 
-    if(_pVaoData == nullptr) {
-        //Prevent multiple reallocations
-        _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getGraphicsContext(), _pVertexFormat);
+  if (_pVaoData == nullptr) {
+    //Prevent multiple reallocations
+    _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getContext(), _pVertexFormat);
+  }
+
+  _pVaoData->fillData(pFrags, nFrags, pIndexes, nIndexes);
+
+  if (vecWeights != nullptr) {
+    // This sloppy check is a consequence of even vw's matching v's
+    // in the mob file. Even without skin we have vw's
+    // We'll often get vecWeights in but there won't be any weight.
+    bool bHasWeights = false;
+    for (VertexWeightMob w : *vecWeights) {
+      if (w._mapWeights.size() > 0) {
+        for (std::pair<int32_t, std::map<int32_t, float>> p1 : w._mapWeights) {
+          if (p1.second.size() > 0) {
+            bHasWeights = true;
+            break;
+          }
+        }
+      }
     }
+    if (bHasWeights) {
+      _vecWeightsMob = *vecWeights;
 
-    _pVaoData->fillData(pFrags, nFrags, pIndexes, nIndexes);
-
-    if (vecWeights != nullptr) {
-        // This sloppy check is a consequence of even vw's matching v's
-        // in the mob file. Even without skin we have vw's
-        // We'll often get vecWeights in but there won't be any weight.
-        bool bHasWeights = false;
-        for (VertexWeightMob w : *vecWeights) {
-            if (w._mapWeights.size() > 0) {
-                for (std::pair<int32_t, std::map<int32_t, float>> p1 : w._mapWeights) {
-                    if (p1.second.size() > 0) {
-                        bHasWeights = true;
-                        break;
-                    }
-                }
-            }
-        }
-        if (bHasWeights) {
-            _vecWeightsMob = *vecWeights;
-
-            _eSkinStatus = MeshSkinStatus::e::Uninitialized; // Skin
-        }
-        else {
-            _eSkinStatus = MeshSkinStatus::e::NoSkin;
-        }
+      _eSkinStatus = MeshSkinStatus::e::Uninitialized; // Skin
     }
     else {
-        _eSkinStatus = MeshSkinStatus::e::NoSkin; // No Skin
+      _eSkinStatus = MeshSkinStatus::e::NoSkin;
     }
+  }
+  else {
+    _eSkinStatus = MeshSkinStatus::e::NoSkin; // No Skin
+  }
 
 
 
 }
 void MeshData::printWeightsToStdout() {
-    int n = 0;
-    for (VertexWeightMob w : _vecWeightsMob) {
-        for (std::pair<int32_t, std::map<int32_t, float>> p1 : w._mapWeights) {
-            // std::shared_ptr<Armature> pa = Gu::getModelCache()->getArmature(p1.first);
-            // if (pa != nullptr) {
-            std::cout << n << ": " << p1.first << std::endl;
-            for (std::pair<int32_t, float> p2 : p1.second) {
-                std::cout << "  (" << p2.first << "," << p2.second << ")";
-            }
-            std::cout << std::endl;
-            // }
-            // else {
-            //     BroLogError("Armature not found - you probaby are calling this in the parse step before allocSkin()");
-            // }
-        }
-        std::cout << std::endl;
-        n++;
+  int n = 0;
+  for (VertexWeightMob w : _vecWeightsMob) {
+    for (std::pair<int32_t, std::map<int32_t, float>> p1 : w._mapWeights) {
+      // std::shared_ptr<Armature> pa = Gu::getModelCache()->getArmature(p1.first);
+      // if (pa != nullptr) {
+      std::cout << n << ": " << p1.first << std::endl;
+      for (std::pair<int32_t, float> p2 : p1.second) {
+        std::cout << "  (" << p2.first << "," << p2.second << ")";
+      }
+      std::cout << std::endl;
+      // }
+      // else {
+      //     BroLogError("Armature not found - you probaby are calling this in the parse step before allocSkin()");
+      // }
     }
+    std::cout << std::endl;
+    n++;
+  }
 }
 void MeshData::printWeightBuffersToStdout() {
-    //if (_pWeightOffsetsGpu != nullptr && _pWeightsGpu != nullptr) {
-    //    if (_pWeightOffsetsGpu->getNumElements() == _pFrags->count()) {
-    //        GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[_pWeightOffsetsGpu->getNumElements()];
-    //        GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[_pWeightsGpu->getNumElements()];
-    //        _pWeightOffsetsGpu->copyDataServerClient(_pWeightOffsetsGpu->getNumElements(), weightOffsetsGpu);
-    //        _pWeightsGpu->copyDataServerClient(_pWeightsGpu->getNumElements(), weightsGpu);
+  //if (_pWeightOffsetsGpu != nullptr && _pWeightsGpu != nullptr) {
+  //    if (_pWeightOffsetsGpu->getNumElements() == _pFrags->count()) {
+  //        GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[_pWeightOffsetsGpu->getNumElements()];
+  //        GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[_pWeightsGpu->getNumElements()];
+  //        _pWeightOffsetsGpu->copyDataServerClient(_pWeightOffsetsGpu->getNumElements(), weightOffsetsGpu);
+  //        _pWeightsGpu->copyDataServerClient(_pWeightsGpu->getNumElements(), weightsGpu);
 
-    //        std::cout << "****************" << std::endl;
-    //        std::cout << "weight offs  vert = (off into weights, count) <vert> => <model transform * vert>" << std::endl;
-    //        for (size_t ele = 0; ele < _pWeightOffsetsGpu->getNumElements(); ++ele) {
-    //            vec3 vBase = v3f(ele);
-    //            vec3 vTransform = (getBind() * vec4(vBase, 1));
+  //        std::cout << "****************" << std::endl;
+  //        std::cout << "weight offs  vert = (off into weights, count) <vert> => <model transform * vert>" << std::endl;
+  //        for (size_t ele = 0; ele < _pWeightOffsetsGpu->getNumElements(); ++ele) {
+  //            vec3 vBase = v3f(ele);
+  //            vec3 vTransform = (getBind() * vec4(vBase, 1));
 
-    //            std::cout << "v " << ele << " = (" << weightOffsetsGpu[ele]._offset << "," << weightOffsetsGpu[ele]._count << ") <" << vBase.toString(2) << "> => <" << vTransform.toString(2) << "> " << std::endl;
-    //            for (GpuInt iw = 0; iw < weightOffsetsGpu[ele]._count; ++iw) {
-    //                std::cout << "  " << weightsGpu[weightOffsetsGpu[ele]._offset + iw]._iArmJointOffset << "," << weightsGpu[weightOffsetsGpu[ele]._offset + iw]._weight << std::endl;
-    //            }
-    //        }
-    //        std::cout << std::endl;
+  //            std::cout << "v " << ele << " = (" << weightOffsetsGpu[ele]._offset << "," << weightOffsetsGpu[ele]._count << ") <" << vBase.toString(2) << "> => <" << vTransform.toString(2) << "> " << std::endl;
+  //            for (GpuInt iw = 0; iw < weightOffsetsGpu[ele]._count; ++iw) {
+  //                std::cout << "  " << weightsGpu[weightOffsetsGpu[ele]._offset + iw]._iArmJointOffset << "," << weightsGpu[weightOffsetsGpu[ele]._offset + iw]._weight << std::endl;
+  //            }
+  //        }
+  //        std::cout << std::endl;
 
 
-    //        std::cout << "****************" << std::endl;
-    //        std::cout << "weights" << std::endl;
-    //        for (size_t ele = 0; ele < _pWeightsGpu->getNumElements(); ++ele) {
-    //            std::cout << "(" << weightsGpu[ele]._iArmJointOffset << "," << weightsGpu[ele]._weight << ")";
-    //        }
-    //        std::cout << std::endl;
-    //        delete[] weightsGpu;
-    //        delete[] weightOffsetsGpu;
-    //    }
-    //}
+  //        std::cout << "****************" << std::endl;
+  //        std::cout << "weights" << std::endl;
+  //        for (size_t ele = 0; ele < _pWeightsGpu->getNumElements(); ++ele) {
+  //            std::cout << "(" << weightsGpu[ele]._iArmJointOffset << "," << weightsGpu[ele]._weight << ")";
+  //        }
+  //        std::cout << std::endl;
+  //        delete[] weightsGpu;
+  //        delete[] weightOffsetsGpu;
+  //    }
+  //}
 
 }
-void MeshData::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
-    if (false) {
-        printWeightsToStdout();
+void MeshData::allocSkinMobFile(std::shared_ptr<ModelData> ms) {
+  if (false) {
+    printWeightsToStdout();
+  }
+  //Create skin on GPU
+  t_timeval t0 = Gu::getMicroSeconds();
+  Br2LogInfo("Creating GPU skin '" + getName() + "'..");
+  {
+    if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
+      //2018/1/15 so we made all armatures be global in ModelSpec
+      //sendVertsToGpu();
+      //TODO - replace with new vao 1/26/18
+
+      // Many cards have a max uniform buffer of 128 matrixes.  This should be enough for 1 model.
+      //MAX_VERTEX_UNIFORM_COMPONENTS_ARB
+      //[ARM0 mat1, mat2... ARM1 mat1 mat2...]
+      fillWeightBuffersMob(ms);
+      if (false) {
+        printWeightBuffersToStdout();
+      }
+      _eSkinStatus = MeshSkinStatus::e::Allocated;
     }
-    //Create skin on GPU
-    t_timeval t0 = Gu::getMicroSeconds();
-    BroLogInfo("Creating GPU skin '" + getName() + "'..");
-    {
-        if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
-            //2018/1/15 so we made all armatures be global in ModelSpec
-            //sendVertsToGpu();
-            //TODO - replace with new vao 1/26/18
-
-            // Many cards have a max uniform buffer of 128 matrixes.  This should be enough for 1 model.
-            //MAX_VERTEX_UNIFORM_COMPONENTS_ARB
-            //[ARM0 mat1, mat2... ARM1 mat1 mat2...]
-            fillWeightBuffersMob(ms);
-            if (false) {
-                printWeightBuffersToStdout();
-            }
-            _eSkinStatus = MeshSkinStatus::e::Allocated;
-        }
-    }
-    BroLogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) +"ms");
+  }
+  Br2LogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
 }
-std::shared_ptr<MeshData> MeshData::createCopy()
-{
-    std::shared_ptr<MeshData> ms = nullptr;
+std::shared_ptr<MeshData> MeshData::createCopy() {
+  std::shared_ptr<MeshData> ms = nullptr;
 
-    ms = std::make_shared<MeshData>(getName(), ms->getVertexFormat(), nullptr);
-    BroThrowNotImplementedException();
+  ms = std::make_shared<MeshData>(getName(), ms->getVertexFormat(), nullptr);
+  Br2ThrowNotImplementedException();
 
-    //if (ms->_pFaceNormals != nullptr) {
-    //    ms->_pFaceNormals->copyFrom(_pFaceNormals);
-    //}
-    //if (ms->_pIndexes != nullptr) {
-    //    ms->_pIndexes->copyFrom(_pIndexes);
-    //}
-    //if (ms->_pTangents != nullptr) {
-    //    ms->_pTangents->copyFrom(_pTangents);
-    //}
-    //if (ms->_pFrags != nullptr) {
-    //    ms->_pFrags->copyFrom(_pFrags);
-    //}
-    //ms->_vecWeightsMob = _vecWeightsMob;
+  //if (ms->_pFaceNormals != nullptr) {
+  //    ms->_pFaceNormals->copyFrom(_pFaceNormals);
+  //}
+  //if (ms->_pIndexes != nullptr) {
+  //    ms->_pIndexes->copyFrom(_pIndexes);
+  //}
+  //if (ms->_pTangents != nullptr) {
+  //    ms->_pTangents->copyFrom(_pTangents);
+  //}
+  //if (ms->_pFrags != nullptr) {
+  //    ms->_pFrags->copyFrom(_pFrags);
+  //}
+  //ms->_vecWeightsMob = _vecWeightsMob;
 
-    return ms;
+  return ms;
 }
-std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, bool automaticallyRecalculateIndexOffsets)
-{
-    BroThrowNotImplementedException();
-    //AssertOrThrow2(_pVaoData!=nullptr);
-    //char* c = _pVaoData->getVbo()->copyDataServerClient()
+std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, bool automaticallyRecalculateIndexOffsets) {
+  Br2ThrowNotImplementedException();
+  //AssertOrThrow2(_pVaoData!=nullptr);
+  //char* c = _pVaoData->getVbo()->copyDataServerClient()
 
-    //if (_pFaceNormals != nullptr) {
-    //    _pFaceNormals->appendToEnd(other->_pFaceNormals);
-    //}
-    //if (_pTangents != nullptr) {
-    //    _pTangents->appendToEnd(other->_pTangents);
-    //}
-    //if (_pFrags != nullptr) {
-    //    _pFrags->appendToEnd(other->_pFrags);
-    //}
+  //if (_pFaceNormals != nullptr) {
+  //    _pFaceNormals->appendToEnd(other->_pFaceNormals);
+  //}
+  //if (_pTangents != nullptr) {
+  //    _pTangents->appendToEnd(other->_pTangents);
+  //}
+  //if (_pFrags != nullptr) {
+  //    _pFrags->appendToEnd(other->_pFrags);
+  //}
 
-    // - Index manipulation
-    //uint32_t otherMeshICount = (uint32_t)other->indexCount();
-    //uint32_t oldICount = (uint32_t)indexCount();
-    //if (_pIndexes != nullptr) {
-    //    _pIndexes->appendToEnd(other->_pIndexes);
-    //}
+  // - Index manipulation
+  //uint32_t otherMeshICount = (uint32_t)other->indexCount();
+  //uint32_t oldICount = (uint32_t)indexCount();
+  //if (_pIndexes != nullptr) {
+  //    _pIndexes->appendToEnd(other->_pIndexes);
+  //}
 
-    //if (otherMeshICount && automaticallyRecalculateIndexOffsets) {
-    //    addOffsetToIndexRange(otherMeshICount, oldICount, (uint32_t)indexCount());
-    //}
+  //if (otherMeshICount && automaticallyRecalculateIndexOffsets) {
+  //    addOffsetToIndexRange(otherMeshICount, oldICount, (uint32_t)indexCount());
+  //}
 
-    ////**You need to do the weights too.
-    //BroThrowNotImplementedException();
+  ////**You need to do the weights too.
+  //BroThrowNotImplementedException();
 
-    return std::dynamic_pointer_cast<MeshData>(shared_from_this());
+  return std::dynamic_pointer_cast<MeshData>(shared_from_this());
 }
 /**
 *  @fn
@@ -322,28 +315,24 @@ std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, b
 *  @fn computeMinimax();
 *
 */
-void MeshData::computeBox()
-{
-    beginEdit();
-    getBoundBoxObject()->_max = VEC3_MIN;
-    getBoundBoxObject()->_min = VEC3_MAX;
+void MeshData::computeBox() {
+  beginEdit();
+  getBoundBoxObject()->_max = VEC3_MIN;
+  getBoundBoxObject()->_min = VEC3_MAX;
 
-    // - Lastly, minimax
-    if (fragCount() > 0)
-    {
-        for (size_t i = 0; i < fragCount(); ++i)
-        {
-            getBoundBoxObject()->_min = vec3::minv(getBoundBoxObject()->_min, v3f(i));
-            getBoundBoxObject()->_max = vec3::maxv(getBoundBoxObject()->_max, v3f(i));
-        }
+  // - Lastly, minimax
+  if (fragCount() > 0) {
+    for (size_t i = 0; i < fragCount(); ++i) {
+      getBoundBoxObject()->_min = vec3::minv(getBoundBoxObject()->_min, v3f(i));
+      getBoundBoxObject()->_max = vec3::maxv(getBoundBoxObject()->_max, v3f(i));
     }
-    else
-    {
-        getBoundBoxObject()->_max = getBoundBoxObject()->_min = 0.0f;
-    }
-    //_bIsBoundBoxCalculated = true;
+  }
+  else {
+    getBoundBoxObject()->_max = getBoundBoxObject()->_min = 0.0f;
+  }
+  //_bIsBoundBoxCalculated = true;
 
-    endEdit();
+  endEdit();
 }
 //void MeshSpec::allocateFragments(size_t count)
 //{
@@ -402,164 +391,161 @@ void MeshData::computeBox()
 //
 //}
 void MeshData::beginEdit() {
-    //Copies the mesh data from the GPU to a temporary buffer for editing.
-    if (_pFrags != nullptr) {
-        BroLogError("Tried to begin a mesh edit when an edit was already in progress.");
-    }
-    else {
-        _pFrags = copyFragsFromGpu();
-    }
-    if (_pIndexes != nullptr) {
-        BroLogError("Tried to begin a mesh edit when an edit was already in progress.");
-    }
-    else {
-        _pIndexes = copyIndexesFromGpu();
-    }
+  //Copies the mesh data from the GPU to a temporary buffer for editing.
+  if (_pFrags != nullptr) {
+    Br2LogError("Tried to begin a mesh edit when an edit was already in progress.");
+  }
+  else {
+    _pFrags = copyFragsFromGpu();
+  }
+  if (_pIndexes != nullptr) {
+    Br2LogError("Tried to begin a mesh edit when an edit was already in progress.");
+  }
+  else {
+    _pIndexes = copyIndexesFromGpu();
+  }
 }
 void MeshData::endEdit() {
-    //ends editing copying data back to the GPU
-    if (_pFrags == nullptr) {
-        BroLogError("Tried to end a mesh edit when no edit in progress.");
-    }
-    else {
-        copyFragsToGpu(_pFrags);
-        _pFrags = nullptr;
-    }
-    if (_pIndexes == nullptr) {
-        BroLogError("Tried to end a mesh edit when no edit in progress");
-    }
-    else {
-        copyIndexesToGpu(_pIndexes);
-        _pIndexes = nullptr;
-    }
+  //ends editing copying data back to the GPU
+  if (_pFrags == nullptr) {
+    Br2LogError("Tried to end a mesh edit when no edit in progress.");
+  }
+  else {
+    copyFragsToGpu(_pFrags);
+    _pFrags = nullptr;
+  }
+  if (_pIndexes == nullptr) {
+    Br2LogError("Tried to end a mesh edit when no edit in progress");
+  }
+  else {
+    copyIndexesToGpu(_pIndexes);
+    _pIndexes = nullptr;
+  }
 }
 v_index32& MeshData::i32(size_t index) {
-    if (_pIndexes == nullptr) {
-        BroThrowException("Tried to edit mesh without beginEdit()");
-    }
-    return _pIndexes->i32(index);
+  if (_pIndexes == nullptr) {
+    Br2ThrowException("Tried to edit mesh without beginEdit()");
+  }
+  return _pIndexes->i32(index);
 }
 vec3& MeshData::v3f(size_t index) {
-    if (_pFrags == nullptr) {
-        BroThrowException("Tried to edit mesh without beginEdit()");
-    }
-    return _pFrags->v3f(index);
+  if (_pFrags == nullptr) {
+    Br2ThrowException("Tried to edit mesh without beginEdit()");
+  }
+  return _pFrags->v3f(index);
 }
 vec2& MeshData::x2f(size_t index) {
-    if (_pFrags == nullptr) {
-        BroThrowException("Tried to edit mesh without beginEdit()");
-    }
-    return _pFrags->x2f(index);
+  if (_pFrags == nullptr) {
+    Br2ThrowException("Tried to edit mesh without beginEdit()");
+  }
+  return _pFrags->x2f(index);
 }
 vec4& MeshData::c4f(size_t index) {
-    if (_pFrags == nullptr) {
-        BroThrowException("Tried to edit mesh without beginEdit()");
-    }
-    return _pFrags->c4f(index);
+  if (_pFrags == nullptr) {
+    Br2ThrowException("Tried to edit mesh without beginEdit()");
+  }
+  return _pFrags->c4f(index);
 }
 vec3& MeshData::n3f(size_t index) {
-    if (_pFrags == nullptr) {
-        BroThrowException("Tried to edit mesh without beginEdit()");
-    }
-    return _pFrags->n3f(index);
+  if (_pFrags == nullptr) {
+    Br2ThrowException("Tried to edit mesh without beginEdit()");
+  }
+  return _pFrags->n3f(index);
 }
 std::shared_ptr<FragmentBufferData> MeshData::getFrags() {
-    if (_pFrags == nullptr) {
-        BroLogError("Verts: Tried to end a mesh edit when no edit in progress.");
-        Gu::debugBreak();
-    }
-    return _pFrags;
+  if (_pFrags == nullptr) {
+    Br2LogError("Verts: Tried to end a mesh edit when no edit in progress.");
+    Gu::debugBreak();
+  }
+  return _pFrags;
 }
 std::shared_ptr<IndexBufferData> MeshData::getIndexes() {
-    if (_pIndexes == nullptr) {
-        BroLogError("Indexes: Tried to end a mesh edit when no edit in progress.");
-        Gu::debugBreak();
-    }
-    return _pIndexes;
+  if (_pIndexes == nullptr) {
+    Br2LogError("Indexes: Tried to end a mesh edit when no edit in progress.");
+    Gu::debugBreak();
+  }
+  return _pIndexes;
 }
 std::shared_ptr<FragmentBufferData> MeshData::copyFragsFromGpu() {
-    AssertOrThrow2(_pVaoData != nullptr);
-    std::shared_ptr<FragmentBufferData> fb = std::make_shared<FragmentBufferData>(_pVertexFormat);
-    fb->allocate(_pVaoData->getVbo()->getNumElements());
-    _pVaoData->getVbo()->copyDataServerClient(_pVaoData->getVbo()->getNumElements(), fb->ptr());
+  AssertOrThrow2(_pVaoData != nullptr);
+  std::shared_ptr<FragmentBufferData> fb = std::make_shared<FragmentBufferData>(_pVertexFormat);
+  fb->allocate(_pVaoData->getVbo()->getNumElements());
+  _pVaoData->getVbo()->copyDataServerClient(_pVaoData->getVbo()->getNumElements(), fb->ptr());
 
-    return fb;
+  return fb;
 }
 std::shared_ptr<IndexBufferData> MeshData::copyIndexesFromGpu() {
-    AssertOrThrow2(_pVaoData != nullptr);
-    std::shared_ptr<IndexBufferData> ib = std::make_shared<IndexBufferData>();
-    ib->allocate(_pVaoData->getIbo()->getNumElements());
-    _pVaoData->getIbo()->copyDataServerClient(_pVaoData->getIbo()->getNumElements(), ib->ptr());
+  AssertOrThrow2(_pVaoData != nullptr);
+  std::shared_ptr<IndexBufferData> ib = std::make_shared<IndexBufferData>();
+  ib->allocate(_pVaoData->getIbo()->getNumElements());
+  _pVaoData->getIbo()->copyDataServerClient(_pVaoData->getIbo()->getNumElements(), ib->ptr());
 
-    return ib;
+  return ib;
 }
 void MeshData::copyFragsToGpu(std::shared_ptr<FragmentBufferData> fb) {
-    AssertOrThrow2(_pVaoData != nullptr);
-    _pVaoData->getVbo()->copyDataClientServer(fb->count(), fb->ptr());
+  AssertOrThrow2(_pVaoData != nullptr);
+  _pVaoData->getVbo()->copyDataClientServer(fb->count(), fb->ptr());
 }
 void MeshData::copyIndexesToGpu(std::shared_ptr<IndexBufferData> ib) {
-    AssertOrThrow2(_pVaoData != nullptr);
-    _pVaoData->getIbo()->copyDataClientServer(ib->count(), ib->ptr());
+  AssertOrThrow2(_pVaoData != nullptr);
+  _pVaoData->getIbo()->copyDataClientServer(ib->count(), ib->ptr());
 }
-void MeshData::calculateVertexNormals()
-{
-    std::vector<vec3> faces;
-    std::vector<std::vector<int32_t>> adjacency;
-    beginEdit();
-    //Note: this doesn't copy anything to the GPU
-    // If this calculation is done before we create mesh nodes
-    // then this is OK as mesh nodes will make copies of this data.
+void MeshData::calculateVertexNormals() {
+  std::vector<vec3> faces;
+  std::vector<std::vector<int32_t>> adjacency;
+  beginEdit();
+  //Note: this doesn't copy anything to the GPU
+  // If this calculation is done before we create mesh nodes
+  // then this is OK as mesh nodes will make copies of this data.
 
-    std::shared_ptr<FragmentBufferData> pFrags = getFrags();
-    std::shared_ptr<IndexBufferData> pInds = getIndexes();
+  std::shared_ptr<FragmentBufferData> pFrags = getFrags();
+  std::shared_ptr<IndexBufferData> pInds = getIndexes();
 
-    for (size_t i = 0; i < fragCount(); i++)
-    {
-        adjacency.push_back(std::vector<int32_t>());
+  for (size_t i = 0; i < fragCount(); i++) {
+    adjacency.push_back(std::vector<int32_t>());
+  }
+
+  //Faces
+  for (size_t ii = 0; ii < indexCount(); ii += 3) {
+    int32_t iFace = (int32_t)ii / 3;
+
+    int32_t i0 = pInds->i32(ii + 0);
+    int32_t i1 = pInds->i32(ii + 1);
+    int32_t i2 = pInds->i32(ii + 2);
+    vec3 v0 = pFrags->v3f(i0);
+    vec3 v1 = pFrags->v3f(i1);
+    vec3 v2 = pFrags->v3f(i2);
+
+    vec3 d0 = v2 - v0;
+    vec3 d1 = v1 - v0;
+
+    vec3 dNorm = d0.cross(d1).normalize();
+
+    faces.push_back(dNorm);
+    Gu::addIfDoesNotContain(adjacency[i0], iFace);
+    Gu::addIfDoesNotContain(adjacency[i1], iFace);
+    Gu::addIfDoesNotContain(adjacency[i2], iFace);
+  }
+  for (size_t vi = 0; vi < adjacency.size(); vi++) {
+    vec3 n = vec3(0, 0, 0);
+    for (size_t ai = 0; ai < adjacency[vi].size(); ai++) {
+      int32_t faceIndex = adjacency[vi][ai];
+      n += faces[faceIndex];
     }
+    n /= (float)adjacency[vi].size();
+    n.normalize();
+    pFrags->n3f(vi) = n;
+  }
 
-    //Faces
-    for (size_t ii = 0; ii < indexCount(); ii += 3) {
-        int32_t iFace = (int32_t)ii / 3;
+  //Clear data
+  for (size_t i = 0; i < fragCount(); i++) {
+    adjacency[i].clear();
+  }
 
-        int32_t i0 = pInds->i32(ii + 0);
-        int32_t i1 = pInds->i32(ii + 1);
-        int32_t i2 = pInds->i32(ii + 2);
-        vec3 v0 = pFrags->v3f(i0);
-        vec3 v1 = pFrags->v3f(i1);
-        vec3 v2 = pFrags->v3f(i2);
+  adjacency.clear();
+  faces.clear();
 
-        vec3 d0 = v2 - v0;
-        vec3 d1 = v1 - v0;
-
-        vec3 dNorm = d0.cross(d1).normalize();
-
-        faces.push_back(dNorm);
-        Gu::addIfDoesNotContain(adjacency[i0], iFace);
-        Gu::addIfDoesNotContain(adjacency[i1], iFace);
-        Gu::addIfDoesNotContain(adjacency[i2], iFace);
-    }
-    for (size_t vi = 0; vi < adjacency.size(); vi++) {
-        vec3 n = vec3(0, 0, 0);
-        for (size_t ai = 0; ai < adjacency[vi].size(); ai++)
-        {
-            int32_t faceIndex = adjacency[vi][ai];
-            n += faces[faceIndex];
-        }
-        n /= (float)adjacency[vi].size();
-        n.normalize();
-        pFrags->n3f(vi) = n;
-    }
-
-    //Clear data
-    for (size_t i = 0; i < fragCount(); i++) {
-        adjacency[i].clear();
-    }
-
-    adjacency.clear();
-    faces.clear();
-
-    endEdit();
+  endEdit();
 }
 //void MeshSpec::createMaterial(t_string strName, std::shared_ptr<Texture2DSpec> tmd, std::shared_ptr<Texture2DSpec> tmn) {
 //    DEL_MEM(_pMaterial);
@@ -572,412 +558,411 @@ void MeshData::calculateVertexNormals()
 //        _pMaterial->addTextureBinding(tmn, TextureChannel::e::Channel1);
 //    }
 //}
-void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
+void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelData> ms) {
+  // Debug values
+  int32_t minOrd = 100000;
+  int32_t maxOrd = 0;
+  int32_t minCount = INT_MAX;
+  int32_t maxCount = -INT_MAX;
+  int32_t minOff = INT_MAX;
+  int32_t maxOff = -INT_MAX;
 
-    // Debug values
-    int32_t minOrd = 100000;
-    int32_t maxOrd = 0;
-    int32_t minCount = INT_MAX;
-    int32_t maxCount = -INT_MAX;
-    int32_t minOff = INT_MAX;
-    int32_t maxOff = -INT_MAX;
+  //Main weight values
+  uint32_t ind = 0;
+  uint32_t off = 0;
+  uint32_t num_added_weights = 0;
 
-    //Main weight values
-    uint32_t ind = 0;
-    uint32_t off = 0;
-    uint32_t num_added_weights = 0;
+  int64_t nFragInvalid = 0;
+  int64_t nJointInvalid = 0;
+  int64_t iValidJointId = -1;
 
-    int64_t nFragInvalid = 0;
-    int64_t nJointInvalid = 0;
-    int64_t iValidJointId = -1;
-
-    uint32_t nFragCount = (uint32_t)fragCount();
-    size_t nTotalWeights = 0;
-    for (VertexWeightMob w : _vecWeightsMob) {
-        for (std::pair<int32_t, std::map<int32_t, float>> parm : w._mapWeights) {
-            for (std::pair<int32_t, float> pweight : parm.second) {
-                nTotalWeights++;
-            }
-        }
+  uint32_t nFragCount = (uint32_t)fragCount();
+  size_t nTotalWeights = 0;
+  for (VertexWeightMob w : _vecWeightsMob) {
+    for (std::pair<int32_t, std::map<int32_t, float>> parm : w._mapWeights) {
+      for (std::pair<int32_t, float> pweight : parm.second) {
+        nTotalWeights++;
+      }
     }
-    AssertOrThrow2(nFragCount > 0);
-    AssertOrThrow2(nTotalWeights > 0);
+  }
+  AssertOrThrow2(nFragCount > 0);
+  AssertOrThrow2(nTotalWeights > 0);
 
-    GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nFragCount];
-    GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nTotalWeights];
+  GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nFragCount];
+  GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nTotalWeights];
 
-    _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeightData));
-    _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeight));
+  _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeightData));
+  _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeight));
 
-    std::set<int32_t> setUniqueJointOrdinals;
+  std::set<int32_t> setUniqueJointOrdinals;
 
-    //bool bAnus = false;
-    //if(false){
-    //    bAnus = true;
-    //}
+  //bool bAnus = false;
+  //if(false){
+  //    bAnus = true;
+  //}
 
-    for (uint32_t iFrag = 0; iFrag < nFragCount; ++iFrag) {
-        VertexWeightMob& curWeight = _vecWeightsMob.at(iFrag);
+  for (uint32_t iFrag = 0; iFrag < nFragCount; ++iFrag) {
+    VertexWeightMob& curWeight = _vecWeightsMob.at(iFrag);
 
-        //Copy each weight.
-        int32_t nLocalInvalid = 0;
-        int32_t nTotalWeightsForVert = 0;
-        //Loop <armature name hashed, <weights>>
-        for (std::pair<int32_t, std::map<int32_t, float>> parms : curWeight._mapWeights) {
-            //Loop <bone id for armature, weight>
-            for (std::pair<int32_t, float> pweights : parms.second) {
-                int32_t iJointOrdinal = getGpuJointOrdinal(ms, parms.first, pweights.first);
-                float fWeight = pweights.second;
+    //Copy each weight.
+    int32_t nLocalInvalid = 0;
+    int32_t nTotalWeightsForVert = 0;
+    //Loop <armature name hashed, <weights>>
+    for (std::pair<int32_t, std::map<int32_t, float>> parms : curWeight._mapWeights) {
+      //Loop <bone id for armature, weight>
+      for (std::pair<int32_t, float> pweights : parms.second) {
+        int32_t iJointOrdinal = getGpuJointOrdinal(ms, parms.first, pweights.first);
+        float fWeight = pweights.second;
 
-                setUniqueJointOrdinals.insert(iJointOrdinal);
+        setUniqueJointOrdinals.insert(iJointOrdinal);
 
-                if (iJointOrdinal < 0) { //JOINT_ORDINAL_INVALID = -1
-                    nLocalInvalid++;
-                }
-                else if (iValidJointId == -1) {
-                    iValidJointId = iJointOrdinal;
-                }
-                //if(bAnus) { iJointOrdinal = 1-iJointOrdinal; }
-
-                weightsGpu[num_added_weights]._iArmJointOffset = iJointOrdinal;
-                weightsGpu[num_added_weights]._weight = fWeight;
-                num_added_weights++;
-                nTotalWeightsForVert++;
-
-                //Testing / Debug
-                if (iJointOrdinal >= 0 && iJointOrdinal > maxOrd) {
-                    maxOrd = iJointOrdinal;
-                }
-                if (iJointOrdinal >= 0 && iJointOrdinal < minOrd) {
-                    minOrd = iJointOrdinal;
-                }
-
-            }
+        if (iJointOrdinal < 0) { //JOINT_ORDINAL_INVALID = -1
+          nLocalInvalid++;
         }
-        if (nLocalInvalid > 0) {
-            nFragInvalid++;
+        else if (iValidJointId == -1) {
+          iValidJointId = iJointOrdinal;
         }
-        nJointInvalid += nLocalInvalid;
+        //if(bAnus) { iJointOrdinal = 1-iJointOrdinal; }
 
-        //Calculate weight offsets last because we need to count the total number of weights in the buffer.
-        weightOffsetsGpu[iFrag]._offset = off;
-        weightOffsetsGpu[iFrag]._count = nTotalWeightsForVert;
-        off += weightOffsetsGpu[iFrag]._count;
+        weightsGpu[num_added_weights]._iArmJointOffset = iJointOrdinal;
+        weightsGpu[num_added_weights]._weight = fWeight;
+        num_added_weights++;
+        nTotalWeightsForVert++;
 
-        ////Testing / Debug
-        if (weightOffsetsGpu[iFrag]._count > maxCount) {
-            maxCount = weightOffsetsGpu[iFrag]._count;
+        //Testing / Debug
+        if (iJointOrdinal >= 0 && iJointOrdinal > maxOrd) {
+          maxOrd = iJointOrdinal;
         }
-        if (weightOffsetsGpu[iFrag]._count < minCount) {
-            minCount = weightOffsetsGpu[iFrag]._count;
-        }
-        if (weightOffsetsGpu[iFrag]._offset < minOff) {
-            minOff = weightOffsetsGpu[iFrag]._offset;
-        }
-        if (weightOffsetsGpu[iFrag]._offset > maxOff) {
-            maxOff = weightOffsetsGpu[iFrag]._offset;
+        if (iJointOrdinal >= 0 && iJointOrdinal < minOrd) {
+          minOrd = iJointOrdinal;
         }
 
+      }
+    }
+    if (nLocalInvalid > 0) {
+      nFragInvalid++;
+    }
+    nJointInvalid += nLocalInvalid;
+
+    //Calculate weight offsets last because we need to count the total number of weights in the buffer.
+    weightOffsetsGpu[iFrag]._offset = off;
+    weightOffsetsGpu[iFrag]._count = nTotalWeightsForVert;
+    off += weightOffsetsGpu[iFrag]._count;
+
+    ////Testing / Debug
+    if (weightOffsetsGpu[iFrag]._count > maxCount) {
+      maxCount = weightOffsetsGpu[iFrag]._count;
+    }
+    if (weightOffsetsGpu[iFrag]._count < minCount) {
+      minCount = weightOffsetsGpu[iFrag]._count;
+    }
+    if (weightOffsetsGpu[iFrag]._offset < minOff) {
+      minOff = weightOffsetsGpu[iFrag]._offset;
+    }
+    if (weightOffsetsGpu[iFrag]._offset > maxOff) {
+      maxOff = weightOffsetsGpu[iFrag]._offset;
     }
 
-    //Fix invalid weights 
-    if (nFragInvalid > 0) {
-        for (uint32_t iW = 0; iW < num_added_weights; ++iW) {
-            if (weightsGpu[iW]._iArmJointOffset < 0) {
-                weightsGpu[iW]._iArmJointOffset = (GpuInt)iValidJointId;
-                weightsGpu[iW]._weight = 0.0f; //disablinmg weght
-            }
-        }
+  }
+
+  //Fix invalid weights 
+  if (nFragInvalid > 0) {
+    for (uint32_t iW = 0; iW < num_added_weights; ++iW) {
+      if (weightsGpu[iW]._iArmJointOffset < 0) {
+        weightsGpu[iW]._iArmJointOffset = (GpuInt)iValidJointId;
+        weightsGpu[iW]._weight = 0.0f; //disablinmg weght
+      }
     }
+  }
 
-    ////copy data to gpu.
-    _pWeightOffsetsGpu->allocate(nFragCount);
-    _pWeightOffsetsGpu->copyDataClientServer(nFragCount, (void*)weightOffsetsGpu);
-    _pWeightsGpu->allocate(nTotalWeights);
-    _pWeightsGpu->copyDataClientServer(nTotalWeights, (void*)weightsGpu);
+  ////copy data to gpu.
+  _pWeightOffsetsGpu->allocate(nFragCount);
+  _pWeightOffsetsGpu->copyDataClientServer(nFragCount, (void*)weightOffsetsGpu);
+  _pWeightsGpu->allocate(nTotalWeights);
+  _pWeightsGpu->copyDataClientServer(nTotalWeights, (void*)weightsGpu);
 
-    testAccess(ms, weightOffsetsGpu, nFragCount, weightsGpu, nTotalWeights, &_vecWeightsMob);
+  testAccess(ms, weightOffsetsGpu, nFragCount, weightsGpu, nTotalWeights, &_vecWeightsMob);
 
-    delete[] weightOffsetsGpu;
-    delete[] weightsGpu;
+  delete[] weightOffsetsGpu;
+  delete[] weightsGpu;
 
-    ////Skin Data Logging
-    if (nFragInvalid > 0) {
-        BroLogError(nJointInvalid + " invalid Joint IDs Encountered making "
-            + nFragInvalid + " skin vertexes invalid, default Joint ID "
-            + " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
-    }
+  ////Skin Data Logging
+  if (nFragInvalid > 0) {
+    Br2LogError(nJointInvalid + " invalid Joint IDs Encountered making "
+      + nFragInvalid + " skin vertexes invalid, default Joint ID "
+      + " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
+  }
 
-    if (maxOrd > 200000) {
-        BroLogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
-    }
-    if (minOrd < 0) {
-        BroLogWarn("Min joint index was invalid: " + minOrd);
-    }
+  if (maxOrd > 200000) {
+    Br2LogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
+  }
+  if (minOrd < 0) {
+    Br2LogWarn("Min joint index was invalid: " + minOrd);
+  }
 
-    BroLogDebug("Skin Stats:");
-    BroLogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
-    BroLogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
-    BroLogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
-    BroLogDebug(">  nTotalWeights: " + nTotalWeights);
-    BroLogDebug(">  nFragCount: " + nFragCount);
-    BroLogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
+  Br2LogDebug("Skin Stats:");
+  Br2LogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
+  Br2LogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
+  Br2LogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
+  Br2LogDebug(">  nTotalWeights: " + nTotalWeights);
+  Br2LogDebug(">  nFragCount: " + nFragCount);
+  Br2LogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
 
-    if (maxOrd >= (int32_t)setUniqueJointOrdinals.size()) {
-        BroLogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
-    }
-    if (maxOff >= (int32_t)nTotalWeights) {
-        BroLogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
-    }
+  if (maxOrd >= (int32_t)setUniqueJointOrdinals.size()) {
+    Br2LogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
+  }
+  if (maxOff >= (int32_t)nTotalWeights) {
+    Br2LogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
+  }
 
-    Gu::getGraphicsContext()->chkErrRt();
-    setUniqueJointOrdinals.clear();
+  Gu::getContext()->chkErrRt();
+  setUniqueJointOrdinals.clear();
 
-    //**We still need the vec weights to compute bone boxes later (optimally putting them here.
-    //**We no longer need _vecWeights;
-   // _vecWeightsMob.resize(0);
+  //**We still need the vec weights to compute bone boxes later (optimally putting them here.
+  //**We no longer need _vecWeights;
+ // _vecWeightsMob.resize(0);
 }
-int32_t MeshData::getGpuJointOrdinal(std::shared_ptr<ModelSpec> ms, int32_t arm, int32_t joint) {
-    //**This must corespond to ArmatureNode : _vecNodesOrdered
-    //Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
+int32_t MeshData::getGpuJointOrdinal(std::shared_ptr<ModelData> ms, int32_t arm, int32_t joint) {
+  //**This must corespond to ArmatureNode : _vecNodesOrdered
+  //Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
 
-    int32_t iJointOrd = 0;
-    for (std::pair<int32_t, std::shared_ptr<Armature>> parm : ms->getArmatureMapOrdered()) {
-        int32_t parm_joint = 0;
-        for (std::pair<int32_t, std::shared_ptr<BoneSpec>> pbone : *parm.second->getBoneCacheOrdered()) {
+  int32_t iJointOrd = 0;
+  for (std::pair<int32_t, std::shared_ptr<ArmatureData>> parm : ms->getArmatureMapOrdered()) {
+    int32_t parm_joint = 0;
+    for (std::pair<int32_t, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
 
-            if (parm.first == arm && parm_joint == joint) {
-                return iJointOrd;
-            }
+      if (parm.first == arm && parm_joint == joint) {
+        return iJointOrd;
+      }
 
-            parm_joint++;
-            iJointOrd++;
-        }
+      parm_joint++;
+      iJointOrd++;
     }
-    return -1;//Not Found
+  }
+  return -1;//Not Found
 }
 
-void MeshData::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
-    GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights) {
-    if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
-        return;
+void MeshData::testAccess(std::shared_ptr<ModelData> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
+  GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights) {
+  if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
+    return;
+  }
+
+  Br2LogDebug("Testing Skin Access..");
+
+  //Armature Existence
+  for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
+    VertexWeightMob& vw = vecWeights->at(iweight);
+    for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
+      if (ms->getArmatureById(parms.first) == nullptr) {
+        Br2LogError("Skin test failed.  Armature does not exist for one or more weights.");
+        _eSkinStatus = MeshSkinStatus::e::Error;
+        Gu::debugBreak();
+        //break;
+      }
     }
-
-    BroLogDebug("Testing Skin Access..");
-
-    //Armature Existence
-    for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
-        VertexWeightMob& vw = vecWeights->at(iweight);
-        for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
-            if (ms->getArmatureById(parms.first) == nullptr) {
-                BroLogError("Skin test failed.  Armature does not exist for one or more weights.");
-                _eSkinStatus = MeshSkinStatus::e::Error;
-                Gu::debugBreak();
-                //break;
-            }
-        }
+  }
+  //Buffer Access
+  for (size_t iWeightOff = 0; iWeightOff < weightOffsetsGpuSize; ++iWeightOff) {
+    int32_t off = weightOffsetsGpu[iWeightOff]._offset;
+    int32_t count = weightOffsetsGpu[iWeightOff]._count;
+    if (off + count > (int32_t)weightsGpuSize) {
+      Br2LogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
+      _eSkinStatus = MeshSkinStatus::e::Error;
+      Gu::debugBreak();
     }
-    //Buffer Access
-    for (size_t iWeightOff = 0; iWeightOff < weightOffsetsGpuSize; ++iWeightOff) {
-        int32_t off = weightOffsetsGpu[iWeightOff]._offset;
-        int32_t count = weightOffsetsGpu[iWeightOff]._count;
-        if (off + count > (int32_t)weightsGpuSize) {
-            BroLogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
-            _eSkinStatus = MeshSkinStatus::e::Error;
-            Gu::debugBreak();
+    else {
+      for (int iWeight = 0; iWeight < count; ++iWeight) {
+        GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
+        if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
+          Br2LogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
+          _eSkinStatus = MeshSkinStatus::e::Error;
+          Gu::debugBreak();
         }
-        else {
-            for (int iWeight = 0; iWeight < count; ++iWeight) {
-                GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
-                if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
-                    BroLogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
-                    _eSkinStatus = MeshSkinStatus::e::Error;
-                    Gu::debugBreak();
-                }
-                if (gpuWeight._weight < 0.0f) {
-                    BroLogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
-                    _eSkinStatus = MeshSkinStatus::e::Error;
-                    Gu::debugBreak();
-                }
-            }
+        if (gpuWeight._weight < 0.0f) {
+          Br2LogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
+          _eSkinStatus = MeshSkinStatus::e::Error;
+          Gu::debugBreak();
+        }
+      }
 
 
-        }
     }
-    //}
+  }
+  //}
 
-    BroLogDebug("..Skin test complete.");
+  Br2LogDebug("..Skin test complete.");
 }
 void MeshData::deserialize(std::shared_ptr<BinaryFile> fb) {
-    BaseSpec::deserialize(fb);
+  NodeData::deserialize(fb);
 
-    fb->readBool(_bHideRender);
-    bool bHasShape;
-    fb->readBool(bHasShape);
-    if (bHasShape) {
-        int32_t shape;
-        fb->readInt32(shape);
-        PhysicsShapeType::e eShapeType = (PhysicsShapeType::e)shape;
-        if (eShapeType == PhysicsShapeType::e::Hull) {
-            _pPhysicsShape = std::make_shared<HullShape>();
-        }
-        if (eShapeType == PhysicsShapeType::e::Sphere) {
-            _pPhysicsShape = std::make_shared<SphereShape>();
-        }
-        _pPhysicsShape->deserialize(fb);
+  fb->readBool(_bHideRender);
+  bool bHasShape;
+  fb->readBool(bHasShape);
+  if (bHasShape) {
+    int32_t shape;
+    fb->readInt32(shape);
+    PhysicsShapeType::e eShapeType = (PhysicsShapeType::e)shape;
+    if (eShapeType == PhysicsShapeType::e::Hull) {
+      _pPhysicsShape = std::make_shared<HullShape>();
     }
-    int32_t iFormat;
-    fb->readInt32(iFormat);
-    int32ToVertexFormat(iFormat);
+    if (eShapeType == PhysicsShapeType::e::Sphere) {
+      _pPhysicsShape = std::make_shared<SphereShape>();
+    }
+    _pPhysicsShape->deserialize(fb);
+  }
+  int32_t iFormat;
+  fb->readInt32(iFormat);
+  int32ToVertexFormat(iFormat);
 
-    int32_t nFrags;
-    fb->readInt32(nFrags);
-    std::shared_ptr<FragmentBufferData> pFrags = std::make_shared<FragmentBufferData>(_pVertexFormat);
-    pFrags->allocate(nFrags);
-    fb->read((const char*)pFrags->getBuf()->ptr(), pFrags->getBuf()->byteSize());
+  int32_t nFrags;
+  fb->readInt32(nFrags);
+  std::shared_ptr<FragmentBufferData> pFrags = std::make_shared<FragmentBufferData>(_pVertexFormat);
+  pFrags->allocate(nFrags);
+  fb->read((const char*)pFrags->getBuf()->ptr(), pFrags->getBuf()->byteSize());
 
-    int32_t nIndexes;
-    fb->readInt32(nIndexes);
-    std::shared_ptr<IndexBufferData> pIndexes = std::make_shared<IndexBufferData>();
-    pIndexes->allocate(nIndexes);
-    fb->read((const char*)pIndexes->getBuf()->ptr(), pIndexes->getBuf()->byteSize());
+  int32_t nIndexes;
+  fb->readInt32(nIndexes);
+  std::shared_ptr<IndexBufferData> pIndexes = std::make_shared<IndexBufferData>();
+  pIndexes->allocate(nIndexes);
+  fb->read((const char*)pIndexes->getBuf()->ptr(), pIndexes->getBuf()->byteSize());
 
-    allocMesh(pFrags->ptr(), nFrags, pIndexes->ptr(), nIndexes);
+  allocMesh(pFrags->ptr(), nFrags, pIndexes->ptr(), nIndexes);
 
-    //1/19 - verts are now always in GPU
-    //sendVertsToGpu();
+  //1/19 - verts are now always in GPU
+  //sendVertsToGpu();
 
-    bool bHasSkin;
-    fb->readBool(bHasSkin);
-    if (bHasSkin) {
+  bool bHasSkin;
+  fb->readBool(bHasSkin);
+  if (bHasSkin) {
 
-        int32_t nWeightOffsets;
-        fb->readInt32(nWeightOffsets);
-        if (nWeightOffsets > 0) {
-            GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nWeightOffsets];
-            fb->read((const char*)weightOffsetsGpu, sizeof(GpuAnimatedMeshWeightData)*nWeightOffsets);
-            _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeightData));
-            _pWeightOffsetsGpu->allocFill(nWeightOffsets, (void*)weightOffsetsGpu);
-            delete[] weightOffsetsGpu;
-        }
-
-        int32_t nWeights;
-        fb->readInt32(nWeights);
-        if (nWeights > 0) {
-            GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nWeights];
-            fb->read((const char*)weightsGpu, sizeof(GpuAnimatedMeshWeight)*nWeights);
-            _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeight));
-            _pWeightsGpu->allocFill(nWeights, (void*)weightsGpu);
-            delete[] weightsGpu;
-        }
-
-        if (nWeights > 0 && nWeightOffsets > 0) {
-            _eSkinStatus = MeshSkinStatus::e::Allocated;
-        }
-        else if ((nWeights > 0 && nWeightOffsets == 0) || (nWeights == 0 && nWeightOffsets > 0)) {
-            BroLogError(" Weights were invalid for mesh.");
-            Gu::debugBreak();
-        }
+    int32_t nWeightOffsets;
+    fb->readInt32(nWeightOffsets);
+    if (nWeightOffsets > 0) {
+      GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nWeightOffsets];
+      fb->read((const char*)weightOffsetsGpu, sizeof(GpuAnimatedMeshWeightData) * nWeightOffsets);
+      _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeightData));
+      _pWeightOffsetsGpu->allocFill(nWeightOffsets, (void*)weightOffsetsGpu);
+      delete[] weightOffsetsGpu;
     }
 
-    //if (false) {
-    //    this->debugPrintDataToStdOut();
-    //}
+    int32_t nWeights;
+    fb->readInt32(nWeights);
+    if (nWeights > 0) {
+      GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nWeights];
+      fb->read((const char*)weightsGpu, sizeof(GpuAnimatedMeshWeight) * nWeights);
+      _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshWeight));
+      _pWeightsGpu->allocFill(nWeights, (void*)weightsGpu);
+      delete[] weightsGpu;
+    }
 
-    bool bHasMaterial;
-    fb->readBool(bHasMaterial);
-    if (bHasMaterial) {
-        std::shared_ptr<Material> mat = std::make_shared<Material>();
-        mat->deserialize(fb);
-        setMaterial(mat);
+    if (nWeights > 0 && nWeightOffsets > 0) {
+      _eSkinStatus = MeshSkinStatus::e::Allocated;
     }
-    else{
-        BroLogWarn("Mesh didn't have a material..");
+    else if ((nWeights > 0 && nWeightOffsets == 0) || (nWeights == 0 && nWeightOffsets > 0)) {
+      Br2LogError(" Weights were invalid for mesh.");
+      Gu::debugBreak();
     }
+  }
+
+  //if (false) {
+  //    this->debugPrintDataToStdOut();
+  //}
+
+  bool bHasMaterial;
+  fb->readBool(bHasMaterial);
+  if (bHasMaterial) {
+    std::shared_ptr<Material> mat = std::make_shared<Material>();
+    mat->deserialize(fb);
+    setMaterial(mat);
+  }
+  else {
+    Br2LogWarn("Mesh didn't have a material..");
+  }
 }
 
 int32_t MeshData::vertexFormatToInt32() {
-    if (_pVertexFormat == v_v3n3x2::getVertexFormat()) { return 1; }
-    else if (_pVertexFormat == v_v3x2::getVertexFormat()) { return 2; }
-    else if (_pVertexFormat == v_v3n3::getVertexFormat()) { return 3; }
-    else if (_pVertexFormat == v_v3::getVertexFormat()) { return 4; }
-    else BroThrowException("Unsupported vertex format while serializing");
+  if (_pVertexFormat == v_v3n3x2::getVertexFormat()) { return 1; }
+  else if (_pVertexFormat == v_v3x2::getVertexFormat()) { return 2; }
+  else if (_pVertexFormat == v_v3n3::getVertexFormat()) { return 3; }
+  else if (_pVertexFormat == v_v3::getVertexFormat()) { return 4; }
+  else { Br2ThrowException("Unsupported vertex format while serializing"); }
 }
 void MeshData::int32ToVertexFormat(int32_t i) {
-    if (i == 1) { _pVertexFormat = v_v3n3x2::getVertexFormat(); }
-    else if (i == 2) { _pVertexFormat = v_v3x2::getVertexFormat(); }
-    else if (i == 3) { _pVertexFormat = v_v3n3::getVertexFormat(); }
-    else if (i == 4) { _pVertexFormat = v_v3::getVertexFormat(); }
-    else BroThrowException("Unsupported vertex format while deserializing");
+  if (i == 1) { _pVertexFormat = v_v3n3x2::getVertexFormat(); }
+  else if (i == 2) { _pVertexFormat = v_v3x2::getVertexFormat(); }
+  else if (i == 3) { _pVertexFormat = v_v3n3::getVertexFormat(); }
+  else if (i == 4) { _pVertexFormat = v_v3::getVertexFormat(); }
+  else { Br2ThrowException("Unsupported vertex format while deserializing"); }
 }
 void MeshData::serialize(std::shared_ptr<BinaryFile> fb) {
-    BaseSpec::serialize(fb);
+  NodeData::serialize(fb);
 
-    fb->writeBool(std::move(_bHideRender));
-    fb->writeBool(_pPhysicsShape != nullptr);
-    if (_pPhysicsShape) {
-        //int32_t shape;
-        if (std::dynamic_pointer_cast<HullShape>(_pPhysicsShape) != nullptr) {
-            fb->writeInt32(PhysicsShapeType::e::Hull);
-        }
-        else if (std::dynamic_pointer_cast<SphereShape>(_pPhysicsShape) != nullptr) {
-            fb->writeInt32(PhysicsShapeType::e::Sphere);
-        }
-        else {
-            BroThrowException("failed to write physcis shape, invalid shape type");
-        }
-        _pPhysicsShape->serialize(fb);
+  fb->writeBool(std::move(_bHideRender));
+  fb->writeBool(_pPhysicsShape != nullptr);
+  if (_pPhysicsShape) {
+    //int32_t shape;
+    if (std::dynamic_pointer_cast<HullShape>(_pPhysicsShape) != nullptr) {
+      fb->writeInt32(PhysicsShapeType::e::Hull);
     }
-    fb->writeInt32(vertexFormatToInt32());
-
-    beginEdit();
-    {
-        std::shared_ptr<FragmentBufferData> pFrags = getFrags();
-        std::shared_ptr<IndexBufferData> pIndexes = getIndexes();
-
-        fb->writeInt32((int32_t)pFrags->count());
-        fb->write((const char*)pFrags->getBuf()->ptr(), pFrags->getBuf()->byteSize());
-        fb->writeInt32((int32_t)pIndexes->count());
-        fb->write((const char*)pIndexes->getBuf()->ptr(), pIndexes->getBuf()->byteSize());
-    }
-    endEdit();
-
-    if (_eSkinStatus == MeshSkinStatus::e::Allocated) {
-        fb->writeBool(true);
-
-        //write weights
-        if (_pWeightOffsetsGpu != nullptr) {
-            GpuAnimatedMeshWeightData* buf = new GpuAnimatedMeshWeightData[_pWeightOffsetsGpu->getNumElements()];
-            size_t bufSizeBytes = sizeof(GpuAnimatedMeshWeightData)*_pWeightOffsetsGpu->getNumElements();
-            _pWeightOffsetsGpu->syncRead((void*)buf, bufSizeBytes);
-            fb->writeInt32((int32_t)_pWeightOffsetsGpu->getNumElements());
-            fb->write((const char*)buf, bufSizeBytes);
-            delete[] buf;
-        }
-        else {
-            fb->writeInt32(0);
-        }
-        if (_pWeightsGpu != nullptr) {
-            GpuAnimatedMeshWeight* buf = new GpuAnimatedMeshWeight[_pWeightsGpu->getNumElements()];
-            size_t bufSizeBytes = sizeof(GpuAnimatedMeshWeight)*_pWeightsGpu->getNumElements();
-            _pWeightsGpu->syncRead((void*)buf, bufSizeBytes);
-            fb->writeInt32((int32_t)_pWeightsGpu->getNumElements());
-            fb->write((const char*)buf, bufSizeBytes);
-            delete[] buf;
-        }
-        else {
-            fb->writeInt32(0);
-        }
+    else if (std::dynamic_pointer_cast<SphereShape>(_pPhysicsShape) != nullptr) {
+      fb->writeInt32(PhysicsShapeType::e::Sphere);
     }
     else {
-        fb->writeBool(false);
-
+      Br2ThrowException("failed to write physcis shape, invalid shape type");
     }
+    _pPhysicsShape->serialize(fb);
+  }
+  fb->writeInt32(vertexFormatToInt32());
 
-    fb->writeBool(_pMaterial != nullptr);
-    if (_pMaterial) {
-        _pMaterial->serialize(fb);
+  beginEdit();
+  {
+    std::shared_ptr<FragmentBufferData> pFrags = getFrags();
+    std::shared_ptr<IndexBufferData> pIndexes = getIndexes();
+
+    fb->writeInt32((int32_t)pFrags->count());
+    fb->write((const char*)pFrags->getBuf()->ptr(), pFrags->getBuf()->byteSize());
+    fb->writeInt32((int32_t)pIndexes->count());
+    fb->write((const char*)pIndexes->getBuf()->ptr(), pIndexes->getBuf()->byteSize());
+  }
+  endEdit();
+
+  if (_eSkinStatus == MeshSkinStatus::e::Allocated) {
+    fb->writeBool(true);
+
+    //write weights
+    if (_pWeightOffsetsGpu != nullptr) {
+      GpuAnimatedMeshWeightData* buf = new GpuAnimatedMeshWeightData[_pWeightOffsetsGpu->getNumElements()];
+      size_t bufSizeBytes = sizeof(GpuAnimatedMeshWeightData) * _pWeightOffsetsGpu->getNumElements();
+      _pWeightOffsetsGpu->syncRead((void*)buf, bufSizeBytes);
+      fb->writeInt32((int32_t)_pWeightOffsetsGpu->getNumElements());
+      fb->write((const char*)buf, bufSizeBytes);
+      delete[] buf;
     }
+    else {
+      fb->writeInt32(0);
+    }
+    if (_pWeightsGpu != nullptr) {
+      GpuAnimatedMeshWeight* buf = new GpuAnimatedMeshWeight[_pWeightsGpu->getNumElements()];
+      size_t bufSizeBytes = sizeof(GpuAnimatedMeshWeight) * _pWeightsGpu->getNumElements();
+      _pWeightsGpu->syncRead((void*)buf, bufSizeBytes);
+      fb->writeInt32((int32_t)_pWeightsGpu->getNumElements());
+      fb->write((const char*)buf, bufSizeBytes);
+      delete[] buf;
+    }
+    else {
+      fb->writeInt32(0);
+    }
+  }
+  else {
+    fb->writeBool(false);
+
+  }
+
+  fb->writeBool(_pMaterial != nullptr);
+  if (_pMaterial) {
+    _pMaterial->serialize(fb);
+  }
 
 }
 //void MeshSpec::sendVertsToGpu(){

@@ -13,7 +13,7 @@
 
 namespace BR2 {
 FlyingCameraControls::FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene) : CSharpScript(nullptr), _pViewport(pv) {
-  BroLogInfo("Creating Fly Camera.");
+  Br2LogInfo("Creating Fly Camera.");
   _pCamera = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
   _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
   updateCameraPosition();

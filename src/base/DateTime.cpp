@@ -129,7 +129,7 @@ t_time DateTime::strToTime(string_t& time, char separator)
 
     if (vals.size() < 4)
     {
-        BroLogWarn("Time had not 4 components: "+ time);
+        Br2LogWarn("Time had not 4 components: "+ time);
     }
     hb = TypeConv::strToInt(vals[0]);
     mm = TypeConv::strToInt(vals[1]);
@@ -168,7 +168,7 @@ t_datetime DateTime::strToDateTime(const string_t& szDateTime)
 
     if (str.size() == 0 || str.size() == 1)
     {
-        BroLogWarn("Date time could not be converted, value: "+ szDateTime);
+        Br2LogWarn("Date time could not be converted, value: "+ szDateTime);
         return getDateTime();
     }
 

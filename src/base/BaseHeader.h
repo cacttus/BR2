@@ -57,8 +57,8 @@ void runtimeAssertion(string_t str);
 //GCC NOTE: GCC says allowing the use of an undeclared name is deprecated which would make us have to move TStr up 
 //above BaseHeader.
 //if you use '-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated
-#define BroThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
-#define BroThrowNotImplementedException() throw new NotImplementedException()
+#define Br2ThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
+#define Br2ThrowNotImplementedException() throw new NotImplementedException()
 #define BroThrowDeprecatedException() throw new DeprecatedException()
 #define VerifyOrThrow(expr,x) do { if(!(expr)) BroThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()

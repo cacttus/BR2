@@ -839,7 +839,7 @@ void Vec3x<Tx>::checkNormalOrZeroAndLimitVector(float fMaxLength, bool bShowWarn
     if(squaredLength() >= (fMaxLength*fMaxLength))
     {
         if(bShowWarningMessage==true)
-            BroLogWarn("Object has launched into orbit: v=("
+            Br2LogWarn("Object has launched into orbit: v=("
                 , x, " "
                 , y, " "
                 , z, ")");

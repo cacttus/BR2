@@ -9,7 +9,7 @@
 
 enum class OSErrorCode {
   //Note:Remember to add these codes to suppressError()
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   NoError = 0,
   FileNotFound = 2,
   PathNotFound = 3,
@@ -17,7 +17,7 @@ enum class OSErrorCode {
   ProcNotFound = 127,
   NoGuidTranslation = 560,
   ErrorNoToken = 1008,
-#elif BRO_OS_ANDROID
+#elif BR2_OS_ANDROID
     //TODO: fix this
   FileNotFound = 2,
   PathNotFound = 3,
@@ -40,7 +40,7 @@ enum class OSErrorCode {
 //
 ////For operating system configuration see BuildCOnfig.h
 //
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //#define _CRT_SECURE_NO_DEPRECATE
 ////**These must come in order
 //#ifdef _WIN32
@@ -70,7 +70,7 @@ enum class OSErrorCode {
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //
 ////Note: this must be defined to add winsock before including windows.h
 //#define _WINSOCKAPI_
@@ -135,7 +135,7 @@ enum class OSErrorCode {
 ////#endif
 ////#elif __WINDOWS__
 ////#define IS_DESKTOP 1
-////#define BRO_OS_WINDOWS 1
+////#define BR2_OS_WINDOWS 1
 ////#endif
 ////
 //////Winsock
@@ -144,8 +144,8 @@ enum class OSErrorCode {
 ////#endif
 //////BRO_USE_WINSOCK
 ////
-//////BRO_OS_WINDOWS
-////#elif BRO_OS_ANDROID
+//////BR2_OS_WINDOWS
+////#elif BR2_OS_ANDROID
 //////#include <android/cpu-features.h>
 ////#endif
 ////typedef enum {
@@ -153,10 +153,10 @@ enum class OSErrorCode {
 ////    OS_MSG_NONE// no message specified, or invalid message
 ////}OsWindowMessage;
 //
-////BRO_OS_ANDROID
-////BRO_OS_WINDOWS
+////BR2_OS_ANDROID
+////BR2_OS_WINDOWS
 //
-////#ifndef BRO_OS_WINDOWS
+////#ifndef BR2_OS_WINDOWS
 //////We need to define stdcall
 ////#define __stdcall
 ////#endif
@@ -178,7 +178,7 @@ enum class OSErrorCode {
 ////#define MAIN_THREAD_ID (0)
 ////#define MLT_SYS_THREAD_ID (-1)
 ////
-////#ifdef BRO_OS_WINDOWS
+////#ifdef BR2_OS_WINDOWS
 ////typedef DWORD (WINAPI *ThreadCallbackMethod)(void*);
 ////#define ThreadHandle HANDLE
 ////#else
@@ -194,7 +194,7 @@ enum class OSErrorCode {
 ////#define PRIVATE_METHOD
 ////#define PUBLIC_METHOD
 ////
-////#ifdef BRO_OS_WINDOWS
+////#ifdef BR2_OS_WINDOWS
 ////#define FORCE_INLINE __forceinline
 ////#else
 ////#define FORCE_INLINE inline
@@ -370,7 +370,7 @@ enum class OSErrorCode {
 ////#endif
 ////
 ////
-////#ifndef BRO_OS_WINDOWS
+////#ifndef BR2_OS_WINDOWS
 //////This is for string wrapper.
 ////#ifndef __CLR_OR_THIS_CALL
 ////#define __CLR_OR_THIS_CALL

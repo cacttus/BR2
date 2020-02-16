@@ -69,7 +69,7 @@ bool FileSystem::createFile(const string_t& filename, bool trunc, bool bLog) {
     exists = false;
     string_t err = Stz " [FileSystem] Output file " + filename + " could not be created with trunc=" + (int32_t)trunc;
     if (bLog == true) {//For logger initializtion
-      BroLogError(err);
+      Br2LogError(err);
     }
     else {
       Gu::print(err);
@@ -141,7 +141,7 @@ bool FileSystem::createDirectorySingle(string_t& dirName) {
     }
   }
   return true;
-  //#ifdef BRO_OS_WINDOWS
+  //#ifdef BR2_OS_WINDOWS
 //    //SECURITY_ATTRIBUTES sc;
 //    //sc.nLength = sizeof(sc);
 //    //sc.bInheritHandle = false;
@@ -232,7 +232,7 @@ bool FileSystem::fileExists(string_t filename) {
   struct stat buffer;
   exists = (stat(filename.c_str(), &buffer) == 0);
 
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //Fuck this shit
   // we get error 2 and 6 all the time because
   // windows sets it when we call stat()
@@ -258,7 +258,7 @@ time_t FileSystem::getLastModifyTime(string_t& location) {
   struct stat fileInfo;
 
   if (FileSystem::fileExists(location) == false) {
-    BroThrowException("File '" + location + "' does not exist");
+    Br2ThrowException("File '" + location + "' does not exist");
   }
 
   stat(location.c_str(), &fileInfo);
@@ -327,7 +327,7 @@ bool FileSystem::getAllFilesOrDirs(string_t dir, std::vector<string_t>& __out_ d
     closedir(dp);
   }
   else {
-    BroLogError("Couldn't open the directory '" + dir + "'");
+    Br2LogError("Couldn't open the directory '" + dir + "'");
     return false;
   }
   return true;
@@ -358,7 +358,7 @@ bool FileSystem::deleteDirectoryRecursive(string_t dir, std::vector<string_t>& v
 
   int ret = rmdir(dir.c_str());
   if (ret != 0) {
-    BroLogError("Failed to delete directory.");
+    Br2LogError("Failed to delete directory.");
     return false;
   }
   return true;
@@ -367,7 +367,7 @@ bool FileSystem::deleteDirectory(string_t dir, std::vector<string_t>& vecFileExt
 
   int ret = rmdir(dir.c_str());
   if (ret != 0) {
-    BroLogError("Failed to delete directory.");
+    Br2LogError("Failed to delete directory.");
     return false;
   }
   return true;
@@ -377,7 +377,7 @@ bool FileSystem::deleteAllFiles(string_t dir, std::vector<string_t>& vecFileExts
 
   std::vector<string_t> files;
   if (getAllFiles(dir, files) == false) {
-    BroLogError("Failed to get files from '" + dir + "'");
+    Br2LogError("Failed to get files from '" + dir + "'");
     return false;
   }
 
@@ -392,7 +392,7 @@ bool FileSystem::deleteAllFiles(string_t dir, std::vector<string_t>& vecFileExts
       }
       if (bMatch) {
         if (FileSystem::deleteFile(file) == false) {
-          BroLogError("Failed to delte file '" + file + "'");
+          Br2LogError("Failed to delte file '" + file + "'");
           return false;
         }
       }
@@ -406,7 +406,7 @@ bool FileSystem::deleteFile(string_t filename) {
   //Equivalent POSIX function
   //unlink(filename.c_str())
   if (ret != 0) {
-    BroLogError("Failed to delete file '" + filename + "'");
+    Br2LogError("Failed to delete file '" + filename + "'");
     return false;
   }
   return true;
@@ -416,7 +416,7 @@ string_t FileSystem::getFilePartOfFileName(const string_t& fileName) {
   size_t off = fileName.rfind(".");
 
   if (off >= fileName.size() || off == string_t::npos) {
-    BroThrowException("Incorrect file name, no extension given or incorrect extension.");
+    Br2ThrowException("Incorrect file name, no extension given or incorrect extension.");
   }
 
   return fileName.substr(0, off);

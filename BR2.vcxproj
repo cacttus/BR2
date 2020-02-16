@@ -74,6 +74,7 @@
     <ClInclude Include="src\base\ScriptManager.h" />
     <ClInclude Include="src\base\SDLUtils.h" />
     <ClInclude Include="src\base\Sequencer.h" />
+    <ClInclude Include="src\base\Serializable.h" />
     <ClInclude Include="src\base\SoundCache.h" />
     <ClInclude Include="src\base\StackInfo.h" />
     <ClInclude Include="src\base\Stopwatch.h" />
@@ -212,7 +213,7 @@
     <ClInclude Include="src\math\Vec4x.h" />
     <ClInclude Include="src\model\Animation.h" />
     <ClInclude Include="src\model\ArmatureSpec.h" />
-    <ClInclude Include="src\model\BaseNode.h" />
+    <ClInclude Include="src\model\SceneNode.h" />
     <ClInclude Include="src\model\FragmentBufferData.h" />
     <ClInclude Include="src\model\GpuBufferData.h" />
     <ClInclude Include="src\model\HierarchyString.h" />
@@ -231,6 +232,7 @@
     <ClInclude Include="src\model\ModelHeader.h" />
     <ClInclude Include="src\model\ModelThumb.h" />
     <ClInclude Include="src\model\ModFile.h" />
+    <ClInclude Include="src\model\NodeData.h" />
     <ClInclude Include="src\model\OBB.h" />
     <ClInclude Include="src\model\ShaderStorageBuffer.h" />
     <ClInclude Include="src\model\TextBufferMesh.h" />
@@ -258,7 +260,7 @@
     <ClInclude Include="src\world\PhysicsGridAwareness.h" />
     <ClInclude Include="src\world\PhysicsNode.h" />
     <ClInclude Include="src\world\PhysicsShapes.h" />
-    <ClInclude Include="src\world\PhysicsWorld.h" />
+    <ClInclude Include="src\world\PhysicsManager.h" />
     <ClInclude Include="src\world\RenderBucket.h" />
     <ClInclude Include="src\world\Scene.h" />
     <ClInclude Include="src\world\WorldHeader.h" />
@@ -313,6 +315,7 @@
     <ClCompile Include="src\base\ScriptManager.cpp" />
     <ClCompile Include="src\base\SDLUtils.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
+    <ClCompile Include="src\base\Serializable.cpp" />
     <ClCompile Include="src\base\SoundCache.cpp" />
     <ClCompile Include="src\base\StackInfo.cpp" />
     <ClCompile Include="src\base\Stopwatch.cpp" />
@@ -406,7 +409,7 @@
     <ClCompile Include="src\math\Vec4x.cpp" />
     <ClCompile Include="src\model\Animation.cpp" />
     <ClCompile Include="src\model\ArmatureSpec.cpp" />
-    <ClCompile Include="src\model\BaseNode.cpp" />
+    <ClCompile Include="src\model\SceneNode.cpp" />
     <ClCompile Include="src\model\FragmentBufferData.cpp" />
     <ClCompile Include="src\model\GpuBufferData.cpp" />
     <ClCompile Include="src\model\IboData.cpp" />
@@ -423,6 +426,7 @@
     <ClCompile Include="src\model\ModelCache.cpp" />
     <ClCompile Include="src\model\ModelThumb.cpp" />
     <ClCompile Include="src\model\ModFile.cpp" />
+    <ClCompile Include="src\model\NodeData.cpp" />
     <ClCompile Include="src\model\OBB.cpp" />
     <ClCompile Include="src\model\ShaderStorageBuffer.cpp" />
     <ClCompile Include="src\model\TextBufferMesh.cpp" />
@@ -450,7 +454,7 @@
     <ClCompile Include="src\world\PhysicsGridAwareness.cpp" />
     <ClCompile Include="src\world\PhysicsNode.cpp" />
     <ClCompile Include="src\world\PhysicsShapes.cpp" />
-    <ClCompile Include="src\world\PhysicsWorld.cpp" />
+    <ClCompile Include="src\world\PhysicsManager.cpp" />
     <ClCompile Include="src\world\RenderBucket.cpp" />
     <ClCompile Include="src\world\Scene.cpp" />
     <ClCompile Include="src\world\WorldObject.cpp" />

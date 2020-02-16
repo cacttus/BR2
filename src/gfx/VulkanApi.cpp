@@ -69,7 +69,7 @@ void VulkanApi::createVulkanInstance(string_t title) {
     exts += del + st + "\r\n";
     del = "  ";
   }
-  BroLogInfo("Available Vulkan Extensions: \r\n" + exts);
+  Br2LogInfo("Available Vulkan Extensions: \r\n" + exts);
 
   VkApplicationInfo appInfo{};
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -98,12 +98,12 @@ void VulkanApi::createVulkanInstance(string_t title) {
 
   VkResult res = vkCreateInstance(&createinfo, nullptr, &instance);
   if (res != VK_SUCCESS) {
-    BroThrowException("Failed to create vulkan instance: " + (int)res);
+    Br2ThrowException("Failed to create vulkan instance: " + (int)res);
   }
 
   if (!SDL_Vulkan_CreateSurface(Gu::getMainWindow()->getSDLWindow(), instance, &surface)) {
     SDLUtils::checkSDLErr();
-    BroThrowException("SDL failed to create vulkan window.");
+    Br2ThrowException("SDL failed to create vulkan window.");
   }
   //You can log every vulkan call to stdout.
 }
@@ -148,14 +148,14 @@ void VulkanApi::setupDebug() {
   createInfo.pUserData = nullptr; // Optional
 
   if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-    BroLogError("vkCreateDebugUtilsMessengerEXT failed.");
+    Br2LogError("vkCreateDebugUtilsMessengerEXT failed.");
   }
 }
 void VulkanApi::pickPhysicalDevice() {
   uint32_t deviceCount = 0;
   vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
   if (deviceCount == 0) {
-    BroThrowException("No Vulkan enabled GPUs available.");
+    Br2ThrowException("No Vulkan enabled GPUs available.");
   }
 
   std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -185,10 +185,10 @@ void VulkanApi::pickPhysicalDevice() {
 
     i++;
   }
-  BroLogInfo(devInfo);
+  Br2LogInfo(devInfo);
 
   if (physicalDevice == VK_NULL_HANDLE) {
-    BroThrowException("Failed to find a suitable GPU.");
+    Br2ThrowException("Failed to find a suitable GPU.");
   }
 
 }
@@ -240,7 +240,7 @@ void VulkanApi::createLogicalDevice() {
   createInfo.enabledLayerCount = 0;
 
   if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
-    BroThrowException("Failed to create logical device.");
+    Br2ThrowException("Failed to create logical device.");
   }
 
   //Create queues
@@ -272,7 +272,7 @@ void VulkanApi::findQueueFamilies() {
   }
 
   if (graphicsFamily.has_value() == false || presentFamily.has_value() == false) {
-    BroThrowException("GPU doesn't contain any suitable queue families.");
+    Br2ThrowException("GPU doesn't contain any suitable queue families.");
   }
 }
 void VulkanApi::makeSwapChain() {
@@ -344,7 +344,7 @@ void VulkanApi::makeSwapChain() {
   createInfo.oldSwapchain = VK_NULL_HANDLE; // ** For window resizing.
 
   if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
-    BroThrowException("Failed to create swap chain.");
+    Br2ThrowException("Failed to create swap chain.");
   }
 
   //Retrieve images and set format.
@@ -371,7 +371,7 @@ void VulkanApi::makeImageViews() {
     createInfo.subresourceRange.layerCount = 1;
 
     if (vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
-      BroThrowException("Failed to create swapchain image views.");
+      Br2ThrowException("Failed to create swapchain image views.");
     }
   }
 }
@@ -397,16 +397,16 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
   switch (messageSeverity) {
 
   case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-    BroLogInfo(msgtype + ":" + msg);
+    Br2LogInfo(msgtype + ":" + msg);
     break;
   case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
-    BroLogInfo(msgtype + ":" + msg);
+    Br2LogInfo(msgtype + ":" + msg);
     break;
   case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
-    BroLogWarn(msgtype + ":" + msg);
+    Br2LogWarn(msgtype + ":" + msg);
     break;
   case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
-    BroLogError(msgtype + ":" + msg);
+    Br2LogError(msgtype + ":" + msg);
     break;
   }
 

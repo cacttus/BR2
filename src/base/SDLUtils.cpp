@@ -32,7 +32,7 @@ void SDLUtils::createSurfaceFromImage(const string_t strImage,
     pSurface = createSurfaceFromImage(pImage);
   }
   else {
-    BroLogError("Could not icon image '" + strImage + "'");
+    Br2LogError("Could not icon image '" + strImage + "'");
   }
 }
 SDL_Surface* SDLUtils::createSurfaceFromImage(const std::shared_ptr<Img32> pImage) {
@@ -50,7 +50,7 @@ void SDLUtils::checkSDLErr(bool doNotLog) {
   const char* c;
   while ((c = SDL_GetError()) != nullptr && *c != 0) {
     if (doNotLog == false) {
-      BroLogError("SDL: " + c);
+      Br2LogError("SDL: " + c);
     }
 
     if (Gu::getEngineConfig()->getBreakOnSDLError() == true) {

@@ -21,6 +21,11 @@ public:
 private:
   std::shared_ptr<GLContext> _pContext = nullptr;
 };
+class RenderPass : public VirtualMemoryShared<RenderPass> {
+public:
+  //Something to consider in the future.
+private:
+};
 /**
 *  @class RenderPipe
 *  @brief Manages the render pipeline.
@@ -30,6 +35,7 @@ class RenderPipeline : public VirtualMemoryShared<RenderPipeline> {
 public:
   RenderPipeline(std::shared_ptr<GraphicsWindow> w);
   virtual ~RenderPipeline() override;
+
   void init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath);
   std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
   void renderSceneTexture(PipeBits _pipeBits);
@@ -38,8 +44,12 @@ public:
   std::shared_ptr<Img32> getResultAsImage();
   const vec4& getClear();
   void setClear(vec4& v);
-
-protected:
+  std::shared_ptr<Picker> getPicker() { return _pPicker; }
+  std::shared_ptr<GLContext> getContext();
+  std::shared_ptr<GraphicsWindow> getWindow() { return _pWindow; }
+  int32_t getBufferWidth() { return _iLastWidth; }
+  int32_t getBufferHeight() { return _iLastHeight; }
+private:
   bool _bMsaaEnabled = false;
   uint32_t _nMsaaSamples = 0;
   std::shared_ptr<MeshNode> _pQuadMesh = nullptr;
@@ -59,12 +69,11 @@ protected:
   std::shared_ptr<ShadowFrustum> _pShadowFrustumMaster = nullptr;
   std::shared_ptr<DOFFbo> _pDOFFbo = nullptr;
   std::shared_ptr<Texture2DSpec> _pEnvTex = nullptr;//Enviro map - for mirrors (coins)
-
-  vec4 _vClear;
+  std::shared_ptr<Picker> _pPicker = nullptr;
   std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+  vec4 _vClear;
   bool _bRenderInProgress = false;
 
-  std::shared_ptr<GLContext> getContext();
   void blitDeferredRender(std::shared_ptr<Scene> pScene, std::shared_ptr<CameraNode> cam);
   void createQuadMesh(int w, int h);
   void checkMultisampleParams();
@@ -87,7 +96,6 @@ protected:
   void endRenderAndBlit(std::shared_ptr<CameraNode> pCam);
 
   void postProcessDOF(std::shared_ptr<CameraNode> cam);
-  void postProcessDeferredRender();
   void enableDisablePipeBits();
 };
 
