@@ -51,7 +51,7 @@ namespace CodeShark
             string headstr = "";
             headstr += "****************************************\r\n";
             headstr += "* Code Shark v" + _fVersion + "\r\n";
-            headstr += "*   Derek Page 12/06/2017\r\n";
+            headstr += "*   MetalMario971 12/06/2017\r\n";
             headstr += "*   Replaces old BRO code with standard C++\r\n";
             headstr += "****************************************\r\n";
             headstr += "\r\n";

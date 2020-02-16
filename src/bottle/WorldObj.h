@@ -2,7 +2,7 @@
 *
 *    @file WorldNode.h
 *    @date January 4, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

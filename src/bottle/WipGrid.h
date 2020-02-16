@@ -2,7 +2,7 @@
 *
 *    @file W25NoiseField.h
 *    @date April 3, 2017
-*    @author Derek Paengee
+*    @author MetalMario971
 *
 *    © 2017 
 *

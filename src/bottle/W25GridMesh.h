@@ -2,7 +2,7 @@
 *
 *    @file W25GridMesh.h
 *    @date May 3, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

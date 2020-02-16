@@ -2,7 +2,7 @@
 *
 *    @file RenderHeader.h
 *    @date September 1, 2019
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2019 
 *

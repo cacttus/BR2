@@ -2,7 +2,7 @@
 *
 *    @file GameUi.h
 *    @date February 22, 2018
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2018 
 *

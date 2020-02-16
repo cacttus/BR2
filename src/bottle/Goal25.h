@@ -2,7 +2,7 @@
 *
 *    @file Goal25.h
 *    @date March 16, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

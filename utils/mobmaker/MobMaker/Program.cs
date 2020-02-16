@@ -121,7 +121,7 @@ namespace MobMaker
             {
                 Console.WriteLine("#################################");
                 Console.WriteLine("# Blender Batch Converter " + c_ufVersion);
-                Console.WriteLine("# Derek page 12/29/17, 1/26/18");
+                Console.WriteLine("# github/MetalMario971 12/29/17, 1/26/18");
                 Console.WriteLine("# Usage: set MOB_BPATH MOB_PYCON MOB_BMDIR in game.dat");
                 Console.WriteLine("#            specify blender .blend files with MOB [x] ");
                 Console.WriteLine("# Args: [-gdat \"game.dat\"] [-poll \"millis\" -runonce -waitforenterkey] -notitle -force");

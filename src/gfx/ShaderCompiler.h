@@ -10,7 +10,8 @@
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
-struct ShaderIncludeRef {
+struct ShaderInclu
+  f {
   string_t* str;
   size_t lineNo;
 };

@@ -2,7 +2,7 @@
 //*
 //*  @file StringWrapper.h
 //*  @date February 15, 2015
-//*  @author Derek Page
+//*  @author MetalMario971   
 //*/
 //#pragma once
 //#ifndef __STRINGWRAPPER_195312707012031195556901_H__

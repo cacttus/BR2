@@ -2,7 +2,7 @@
 *
 *    @file World2dCell.h
 *    @date March 2, 2017
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2017 
 *

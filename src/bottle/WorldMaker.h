@@ -2,7 +2,7 @@
 *
 *    @file LairManager.h
 *    @date April 30, 2015
-*    @author Derek Page
+*    @author MetalMario971
 *
 *    © 2015 
 *
