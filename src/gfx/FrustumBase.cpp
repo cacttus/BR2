@@ -3,23 +3,14 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FrustumProjectionParameters.h"
 #include "../gfx/RenderViewport.h"
-//#include "../gfx/DisplayIncludes.h"
-//#include "../math/MathIncludes.h"
-//#include "../physics/CollisionEquations.h"
-//#include "../math/Quad2x.h"
-//#include "../math/Quad3x.h"
 
 namespace BR2 {
-// - CONSTRUCTOR/ DESTRUCTOR
 FrustumBase::FrustumBase(std::shared_ptr<RenderViewport> pv, float fov) : _pViewportRef(pv) {
-  //_satLine = new Line3f();
   _minimax = new Box3f();
 
   setFov((fov));//fov is absolutely required for all frustum operattions.
 }
 FrustumBase::~FrustumBase() {
-  //DEL_MEM(_satLine);
-  //DEL_MEM(_minimax);
 }
 void FrustumBase::update(const Vector3& NormalizedView, const Vector3& CamPos, const Vector3& upVec, ProjectionMode::e fpt) {
   FrustumProjectionParameters params;

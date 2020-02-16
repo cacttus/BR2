@@ -1,20 +1,16 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
 #include "../base/Logger.h"
-
 #include "../gfx/GpuQuad3.h"
 #include "../gfx/GfxHeader.h"
 #include "../gfx/ShaderBase.h"
-
+#include "../gfx/ShaderAttribute.h"
+#include "../gfx/RenderUtils.h"
 #include "../model/MeshNode.h"
-
 #include "../model/VboData.h"
 #include "../model/IboData.h"
-#include "../gfx/ShaderAttribute.h"
-
 #include "../model/VaoDataGeneric.h"
 #include "../model/VertexFormat.h"
-#include "../gfx/RenderUtils.h"
 
 
 namespace BR2 {

@@ -1,4 +1,3 @@
-
 #include "../base/GlobalIncludes.h"
 #include "../base/GLContext.h"
 #include "../base/Img32.h"

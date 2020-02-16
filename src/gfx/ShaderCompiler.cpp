@@ -10,6 +10,59 @@ namespace BR2 {
 ShaderCompiler::ShaderCompiler(std::shared_ptr<GLContext> ct, string_t fileDir) : _fileDir(fileDir), _pContext(ct) {
 }
 /**
+*  @fn compile()
+*  @brief Compile a shader.
+*  @remarks Compiles a shader.
+*/
+void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg) {
+  Br2LogInfo("Compiling shader " + pSubProg->getSourceLocation());
+
+  //DOWNCAST:
+ // GLstd::shared_ptr<ShaderSubProgram> shader = dynamic_cast<GLstd::shared_ptr<ShaderSubProgram>>(pSubProg);
+  GLint b;
+
+  if (pSubProg->getStatus() != ShaderStatus::e::Loaded) {
+    Br2ThrowException("Shader was in an invalid state when trying to compile.");
+  }
+
+  GLchar** arg = new char* [pSubProg->getSourceLines().size()];
+  for (size_t i = 0; i < pSubProg->getSourceLines().size(); ++i) {
+    if (pSubProg->getSourceLines()[i].size()) {
+      arg[i] = new char[pSubProg->getSourceLines()[i].size()];
+      memcpy_s(arg[i], pSubProg->getSourceLines()[i].size(), pSubProg->getSourceLines()[i].c_str(), pSubProg->getSourceLines()[i].size());
+    }
+  }
+
+  _pContext->glShaderSource(pSubProg->getGlId(), (GLsizei)pSubProg->getSourceLines().size(), (const GLchar**)arg, NULL);
+  _pContext->glCompileShader(pSubProg->getGlId());
+  _pContext->glGetShaderiv(pSubProg->getGlId(), GL_COMPILE_STATUS, &b);
+
+  // - Gets the Gpu's error list.  This may also include warnings and stuff.
+  pSubProg->getCompileErrors() = getErrorList(pSubProg);
+
+  //  if (EngineSetup::getSystemConfig()->getPrintShaderSourceOnError() == TRUE)
+  {
+    if (pSubProg->getCompileErrors().size() > 0) {
+      string_t str = pSubProg->getHumanReadableErrorString();
+      if (StringUtil::lowercase(str).find("error") != string_t::npos) {
+        pSubProg->debugPrintShaderSource();
+        Br2LogErrorNoStack(str);
+        Gu::debugBreak();
+      }
+      else {
+        Br2LogWarn(str);
+      }
+    }
+  }
+
+  if (!b) {
+    pSubProg->setStatus(ShaderStatus::CompileError);
+  }
+  else {
+    pSubProg->setStatus(ShaderStatus::Compiled);
+  }
+}
+/**
 *  @fn fileToArray()
 *  @brief I believe this turns a file into an array of lines.
 */
@@ -206,7 +259,6 @@ void ShaderCompiler::loadSourceData(string_t& location, std::shared_ptr<BinaryFi
   Gu::getAppPackage()->getFile(location, sourceData, true);
   //  sourceData.fread(location, true);
     //DiskFile::readAllBytes(location, sourceData);
-
 }
 void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std::vector<string_t>& out_lines) {
 
@@ -259,59 +311,6 @@ void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std:
     }
     temp_filesize += len;
 
-  }
-}
-/**
-*  @fn compile
-*  @brief Compile a shader.
-*  @remarks Compiles a shader.
-*/
-void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg) {
-  Br2LogInfo("Compiling shader " + pSubProg->getSourceLocation());
-
-  //DOWNCAST:
- // GLstd::shared_ptr<ShaderSubProgram> shader = dynamic_cast<GLstd::shared_ptr<ShaderSubProgram>>(pSubProg);
-  GLint b;
-
-  if (pSubProg->getStatus() != ShaderStatus::e::Loaded) {
-    Br2ThrowException("Shader was in an invalid state when trying to compile.");
-  }
-
-  GLchar** arg = new char* [pSubProg->getSourceLines().size()];
-  for (size_t i = 0; i < pSubProg->getSourceLines().size(); ++i) {
-    if (pSubProg->getSourceLines()[i].size()) {
-      arg[i] = new char[pSubProg->getSourceLines()[i].size()];
-      memcpy_s(arg[i], pSubProg->getSourceLines()[i].size(), pSubProg->getSourceLines()[i].c_str(), pSubProg->getSourceLines()[i].size());
-    }
-  }
-
-  _pContext->glShaderSource(pSubProg->getGlId(), (GLsizei)pSubProg->getSourceLines().size(), (const GLchar**)arg, NULL);
-  _pContext->glCompileShader(pSubProg->getGlId());
-  _pContext->glGetShaderiv(pSubProg->getGlId(), GL_COMPILE_STATUS, &b);
-
-  // - Gets the Gpu's error list.  This may also include warnings and stuff.
-  pSubProg->getCompileErrors() = getErrorList(pSubProg);
-
-  //  if (EngineSetup::getSystemConfig()->getPrintShaderSourceOnError() == TRUE)
-  {
-    if (pSubProg->getCompileErrors().size() > 0) {
-      string_t str = pSubProg->getHumanReadableErrorString();
-      if (StringUtil::lowercase(str).find("error") != string_t::npos) {
-        pSubProg->debugPrintShaderSource();
-        Br2LogErrorNoStack(str);
-        Gu::debugBreak();
-      }
-      else {
-        Br2LogWarn(str);
-      }
-    }
-  }
-
-  if (!b) {
-    pSubProg->setStatus(ShaderStatus::CompileError);
-  }
-  else {
-    pSubProg->setStatus(ShaderStatus::Compiled);
   }
 }
 /**

@@ -44,6 +44,7 @@ public:
 
   // not implemented by default.
   virtual bool getIsDupe(Tx j1) { Br2ThrowNotImplementedException(); return FALSE; }
+
 protected:
   std::string _h_str;
   std::vector<Tx> _vecTx;

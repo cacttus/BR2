@@ -35,7 +35,6 @@ private:
   string_t _error;//for temp errors
   string_t _fileDir;
   
-  
   virtual IncludeVec getIncludes(std::vector<string_t>& lines);
   void debugPrintShaderSource(string_t& loc, std::vector<string_t>& sourceLines);//PRINTS ENTIRE INCLUDED SOURCE
 
