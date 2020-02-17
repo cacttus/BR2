@@ -1,7 +1,7 @@
 
 # Design Notes
 
-## System Overview
+## Overview
 
 |  Folder | Contents|
 |---------|----------------------------------------------------------------------------------------------------------
@@ -21,7 +21,7 @@
 |     GLContext     | OpenGL context.  There may be more than one OpenGL context in the engine.  "Sharable" items are shared across contexts, including textures, meshes and shaders.                                                 |
 |   Managers | All managers control their respective system.  PhysicsManager, InputManager, WorldManager, ModelManger, TexCache (TextureManager), ShaderMaker (ShaderManager) .. etc.
 
-## Class Design
+## Classes
 
 * Gu
     * Package (1)
@@ -56,4 +56,4 @@
 * Multiple Rendering in a single area is going to be important.
 * PBOs allow for async texture rendering.  PBO stands for Pixel Buffer Object. It allows you to upload a texture to GL in a asynchronous fashion which means that calls to glTexImage2D are instantaneous. 
 "https://www.khronos.org/opengl/wiki/OpenGL_and_multithreading"
-* VAOs and Framebuffers cannot be shared.
+* GL contexts can share most data.  VAOs and Framebuffers cannot be shared.  For this reason, RenderPipeline, and Picker (which uses a pipe buffer), exist only on GraphicsWindow.
