@@ -4,8 +4,8 @@
 ## System Overview
 
 |  Folder | Contents|
-|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|  base   | trees, graphs, generic systems, memory, engine controllers, buffers, networking (later to be placed in /net), events and operating system interface.
+|---------|----------------------------------------------------------------------------------------------------------
+|  base   | graphs, generic systems, memory, buffers, networking, events and OS interface.
 |  ext    | *Lightweight* external libraries.  (Large API's reside in ./external).
 |  gfx    | GPU, graphics classes, image manipulation,  materials, lighting, framebuffers, shaders.
 |  math   | vectors, matrices, boxes, geometry, hulls, algorithms.
