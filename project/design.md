@@ -3,10 +3,14 @@
 
 ## Overview
 
-The game runs through an application Package.  The Package is a packed application of which all necessary data is appended to the end of the executable.  Packages are equivalent to project files.   Each package
+BR2 started off as a small game design that was dependent on Minecraft-like world-building, incorporating a fusion of many kinds of games.  The graphics engine grew out of this development.  Of course, the game itself
+has somewhat been put on hiatus, for the purpose of getting this engine to a working, and stable state.  Yet, all systems that are added are added with the purpose of completing the game.  Meaning, that most generic
+game systems (such as the ability to create multiple game projects) are going to be left for later development.  
+
+Globally, the game is contained in an application Package.  The Package is a packed application of which all necessary data is appended to the end of the executable.  Packages are equivalent to project files.   Each package
 represents a different game, so there is one package per game. Package configuration data are stored in Package.xml in the *game root folder*.  
 
-The game's systems are controlled by a set
+BR2's systems are controlled by a set
 of managers.  Each manager controls a set of objects.  The engine is separated into a set of windows.  Each window contains its own OpenGL context, and a Rendering Pipeline.  
 
 The game world is separated into Scenes.   Each scene is a scenegraph is a directed acyclic graph data structure.  Rendering is performed by running a pruning, and collection routine after the physics
