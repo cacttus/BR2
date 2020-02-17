@@ -3,6 +3,22 @@
 
 ## Overview
 
+The game runs through an application Package.  The Package is a packed application of which all necessary data is appended to the end of the executable.  Packages are equivalent to project files.   Each package
+represents a different game, so there is one package per game. Package configuration data are stored in Package.xml in the *game root folder*.  
+
+The game's systems are controlled by a set
+of managers.  Each manager controls a set of objects.  The engine is separated into a set of windows.  Each window contains its own OpenGL context, and a Rendering Pipeline.  
+
+The game world is separated into Scenes.   Each scene is a scenegraph is a directed acyclic graph data structure.  Rendering is performed by running a pruning, and collection routine after the physics
+system has settled all the physical objects in the scene. Scenes can be moved in between Windows, which gives us the ability to render the same scene across multiple windows.  This is currently the
+goal for Phase 1 of the engine.  Each scene contains a user interface defined by a UiScreen.  Each window user interfaces is separate from each other window's.  The UI is currently under development, and the goal is to get multiple windows 
+to render alternate user interfaces seamlessly, in separate contexts'
+
+The game also contains a physics system.  The physics system runs an iterative solver which computes a 'best fit' for the game objects, within some parameters.  The physics engine is definitely worthy
+of being promoted to the GPU, and perhaps in an asynchronous rendering context.  There are many enhancements that can be made to the current state of the physics engine.
+
+## Details
+
 |  Folder | Contents|
 |---------|----------------------------------------------------------------------------------------------------------
 |  base   | graphs, generic systems, memory, buffers, networking, events and OS interface.
