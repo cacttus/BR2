@@ -21,11 +21,9 @@ games further than integrating the source code itself.
 
 The application does not yet suport detailed game editing with object placement and a detailed asset system such as Unity and Godot.
 The development of this engine is dependent on the game outlined in the game design document.  Features that are currently being worked on will facilitate the world editor, and user interface
-that will make phase 1 of this game possible.
+that will make phase 1 of this game possible.  
 
-[Design](https://github.com/metalmario971/BR2/blob/master/project/design.md)
-
-[Devlog](https://github.com/metalmario971/BR2/blob/master/project/devlog.md)
+See the [Design](https://github.com/metalmario971/BR2/blob/master/project/design.md) and the [Devlog](https://github.com/metalmario971/BR2/blob/master/project/devlog.md) for more information.
 
 
 
