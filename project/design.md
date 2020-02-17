@@ -1,18 +1,16 @@
 
 # Design Notes
 
-Some design and implementation notes since the devlog was getting too big.
-
 ## System Overview
 
 |  Folder | Description|
 |---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|  base   | All base classes, trees, graphs, generic systems, memory, engine operations, and operating system interfaces.
-|  ext    | All *lightweight* external libraries.  1-2 files or headers, go into this directory.  Large API's should be placed in ./external
-|  gfx    | GPU, and graphics classes.  Materials, lighting, framebuffers, shaders.
-|  math   | Math. Vectors, Matrices, Algorithms.
-|  model  | Meshes, Animation, Models, Characters, Skeletons, Bones.
-|  world  | Physics and Scenegraph. 
+|  base   | trees, graphs, generic systems, memory, engine controllers, buffers, events and operating system interface.
+|  ext    | *Lightweight* external libraries.  (Large API's reside in ./external).
+|  gfx    | GPU, graphics classes, image manipulation,  materials, lighting, framebuffers, shaders.
+|  math   | vectors, matrices, boxes, geometry, hulls, algorithms.
+|  model  | meshes, animation, models, characters, skeletons, bones.
+|  world  | physics, scenegraph. 
 
 
 
