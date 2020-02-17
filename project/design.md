@@ -3,16 +3,18 @@
 
 ## Overview
 
-BR2 ('Mine-Maker') started off as a small game design that was dependent on Minecraft-like world-building, incorporating a fusion of many kinds of games.  The graphics engine grew out of this development.  Of course, the game itself
-has somewhat been put on hiatus, for the purpose of getting this engine to a working, and stable state.  Yet, all systems that are added are added with the purpose of completing the game.  Meaning, that most generic
-game systems (such as the ability to create multiple game projects) are going to be left for later development.  
+BR2 ('Mine-Maker') started off as a small game that used Minecraft-like world-building.  It incorporates a fusion of many kinds of games.  The graphics engine grew out of this development.  Of course, since the game itself
+has somewhat been put on hiatus, for the purpose of getting this engine to a working, and stable state, all systems that are added are added with the purpose of completing the game.  Meaning, that any unnecessary
+game systems are going to be left for later development.  
 
-Globally, the game is contained in an application Package.  The Package is a packed application of which all necessary data is appended to the end of the executable.  Packages are equivalent to project files.   Each package
-represents a different game, so there is one package per game. Package configuration data are stored in Package.xml in the *game root folder*.  
+Globally, the game is contained in an application Package.  The Package is an application of which all game data is appended to the end of the executable.  Packages are equivalent to project files.   Each package
+represents a different game, so there is one package per game. Package configuration data are stored in Package.xml in the *game root folder*. The *game root folder* is the folder in which the application is currently
+executing.  During development, we keep all of the  game's data in this folder, '/data/'. These directories can be changed by changing the Package.xml.  Additionally, any engine-specific configurations can be changed
+by updating engine.xml in the root folder.
 
-BR2's systems are controlled by a set
-of managers.  Each manager controls a set of objects.  The engine is separated into a set of windows.  Each window contains its own OpenGL context, and a Rendering Pipeline.  
+BR2's systems are controlled by a set of managers.  Each manager controls a set of objects.  The engine is separated into a set of windows.  Each window contains its own OpenGL context, and a Rendering Pipeline.  
 
+#### Scenes
 The game world is separated into Scenes.   Each scene is a 'scenegraph', and is a directed acyclic graph.  Rendering is performed by running a PVS, Frustum pruning, and collection routine after the physics
 system has settled all the physical objects in the scene.  For the purpose of the game design, we are using an infinite-world type of system.  Sort of like Minecraft.  The world is separated into a massive
 grid of cube-blocks.  Unlike Minecraft (AFAIK) our grid is infinite across all 3 axes.  This means, there is no limit to how deep you can mine in the game.  
