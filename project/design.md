@@ -3,7 +3,7 @@
 
 ## Overview
 
-BR2 started off as a small game design that was dependent on Minecraft-like world-building, incorporating a fusion of many kinds of games.  The graphics engine grew out of this development.  Of course, the game itself
+BR2 ('Mine-Maker') started off as a small game design that was dependent on Minecraft-like world-building, incorporating a fusion of many kinds of games.  The graphics engine grew out of this development.  Of course, the game itself
 has somewhat been put on hiatus, for the purpose of getting this engine to a working, and stable state.  Yet, all systems that are added are added with the purpose of completing the game.  Meaning, that most generic
 game systems (such as the ability to create multiple game projects) are going to be left for later development.  
 
