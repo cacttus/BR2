@@ -1,8 +1,5 @@
 # BR2 Graphics Engine
-BR2 is a videogame and graphics engine for desktop development.  It consumes lightweight dependencies, the STL, and OpenGL with SDL as the windowing layer. The engine is in the beginning stages of becoming Linux portable, and has run on the iPhone in the past.
-
-[Design](https://github.com/metalmario971/BR2/blob/master/project/design.md)
-[Devlog](https://github.com/metalmario971/BR2/blob/master/project/devlog.md)
+BR2 is a graphics engine for desktop game, and graphical development.  It consumes lightweight dependencies, the STL, and OpenGL with SDL as the windowing layer. The engine is in the beginning stages of becoming Linux portable.
 
 # Systems
 * A Blender (.blend) model workflow
@@ -26,6 +23,9 @@ The application does not yet suport detailed game editing with object placement 
 The development of this engine is dependent on the game outlined in the game design document.  Features that are currently being worked on will facilitate the world editor, and user interface
 that will make phase 1 of this game possible.
 
+[Design](https://github.com/metalmario971/BR2/blob/master/project/design.md)
+
+[Devlog](https://github.com/metalmario971/BR2/blob/master/project/devlog.md)
 
 
 
