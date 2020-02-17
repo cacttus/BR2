@@ -959,7 +959,7 @@ FORCE_INLINE bool Box3x<Tx>::limitSizeForEachAxis(const vec3& vBasePos, const fl
 
 
 
-}//ns game
+}//ns BR2
 
 
 

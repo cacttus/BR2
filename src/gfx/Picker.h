@@ -30,7 +30,7 @@ private:
   void samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

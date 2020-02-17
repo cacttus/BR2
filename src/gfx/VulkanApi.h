@@ -67,7 +67,7 @@ public:
     virtual ~VulkanApi() override;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

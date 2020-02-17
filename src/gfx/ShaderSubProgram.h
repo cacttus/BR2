@@ -54,7 +54,7 @@ public:
     std::vector<string_t>& getSourceLines() { return _sourceLines; }
 };
 
-}//ns Game
+}//ns BR2
 
 
 

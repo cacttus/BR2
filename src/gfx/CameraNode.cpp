@@ -141,4 +141,4 @@ void CameraNode::zoom(float amt) {
 }
 
 
-}//ns game
+}//ns BR2

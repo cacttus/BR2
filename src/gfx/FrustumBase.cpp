@@ -431,8 +431,8 @@ void FrustumBase::projectScreenPointToWorldPoint(
 ) {
   AssertOrThrow2(_pViewportRef != NULL);
 
-  float wratio = screenPoint.x * (1/_pViewportRef->getWidth()); // x / width = % of x
-  float hratio = screenPoint.y * (1/_pViewportRef->getHeight()); // y / height
+  float wratio = screenPoint.x * (1 / _pViewportRef->getWidth()); // x / width = % of x
+  float hratio = screenPoint.y * (1 / _pViewportRef->getHeight()); // y / height
   vec3 pTl, pTr, pBl;
   if (!bTest) {
     pTl = PointAt(tl);
@@ -486,14 +486,12 @@ bool FrustumBase::hasFrustum(std::shared_ptr<FrustumBase> pf) {
 
 }
 mat4 FrustumBase::getProjectionMatrix() {
-
   if (_eProjectionMode == ProjectionMode::e::Perspective) {
     //calc proj matrix
     float vpWidth_2 = tan_fov_2 * z_near;
-    float arat_1 = _pViewportRef->getAspectRatio_1();
+    float arat_1 = 1.0f/_pViewportRef->getAspectRatio();
     float vw = vpWidth_2;
     float vh = vpWidth_2 * arat_1;
-
 
     return mat4::getProjection(
       z_near, z_far,

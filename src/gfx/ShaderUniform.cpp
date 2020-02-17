@@ -308,4 +308,4 @@ void ShaderUniformBlock::bindUniformFast() {
 }
 
 
-}//ns Game
+}//ns BR2

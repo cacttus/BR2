@@ -124,7 +124,6 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
 }
 void GraphicsWindow::makeCurrent() {
   SDL_GL_MakeCurrent(getSDLWindow(), getGraphicsContext()->getSDLGLContext());
-  Gu::setContext(getGraphicsContext());
 }
 void GraphicsWindow::getDrawableSize(int* w, int* h) {
   SDL_GL_GetDrawableSize(getSDLWindow(), w, h);
@@ -289,7 +288,7 @@ void GraphicsWindow::printHelpfulDebug() {
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
-  _pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getAppPackage()->getEnvTextureFolder());
+  _pRenderPipe->init(getWidth(), getHeight(), Gu::getAppPackage()->getEnvTextureFolder());
 
 }
 void GraphicsWindow::beginRender() {
@@ -312,7 +311,6 @@ void GraphicsWindow::endRender() {
 }
 void GraphicsWindow::step() {
   //Managers
-  Gu::setContext(_pContext);
   _pContext->update();
 
   beginRender();
@@ -346,12 +344,6 @@ void GraphicsWindow::step() {
   getGraphicsContext()->chkErrRt();
 
 }
-void GraphicsWindow::checkErrorsDbg() {
-  getGraphicsContext()->chkErrDbg();
-}
-void GraphicsWindow::checkErrorsRt() {
-  getGraphicsContext()->chkErrRt();
-}
 
 
-}//ns Game
+}//ns BR2

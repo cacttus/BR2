@@ -67,7 +67,7 @@ private:
 
 
 
-}//ns game
+}//ns BR2
 
 
 

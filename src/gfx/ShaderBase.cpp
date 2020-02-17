@@ -472,4 +472,4 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
 
 
 
-}//ns Game
+}//ns BR2

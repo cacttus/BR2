@@ -38,7 +38,7 @@ private:
   string_t _strCache;
 };
 
-}//ns game
+}//ns BR2
 
 
 

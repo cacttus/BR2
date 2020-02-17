@@ -17,7 +17,7 @@ class OpenGLWindow;
 class VulkanWindow;
 class WindowManager;
 
-}//ns Game
+}//ns BR2
 
 
 

@@ -20,9 +20,6 @@ LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNo
 }
 LightNodeBase::~LightNodeBase() {
 }
-void LightNodeBase::init() {
-  PhysicsNode::init();
-}
 void LightNodeBase::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   PhysicsNode::update(delta, mapAnimators);
 }
@@ -35,26 +32,9 @@ bool LightNodeBase::shadowsEnabled() {
     Gu::getEngineConfig()->getEnableTerrainShadows());
 }
 //////////////////////////////////////////////////////////////////////////
-std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow) {
-  std::shared_ptr<LightNodeDir> lp = std::make_shared<LightNodeDir>(bShadow);
-  lp->init();
-  lp->_pNodeData = std::make_shared<BaseSpec>("*LightNodeDir");
 
-  return lp;
-}
 LightNodeDir::LightNodeDir(bool bShadow) : LightNodeBase(bShadow) {
-}
-LightNodeDir::~LightNodeDir() {
-  //DEL_MEM(_pGpuLight);
-  //DEL_MEM(_pShadowFrustum);
-}
-void LightNodeDir::setLookAt(const vec3& v) {
-  _vLookAt = v;
-  _pShadowFrustum->setChanged();
-}
-void LightNodeDir::init() {
-  LightNodeBase::init();
-
+  _pNodeData = std::make_shared<NodeData>("*LightNodeDir");
   _vLookAt = vec3(0, 0, 0);
   _vDir = vec3(0, 0, 1);
   _vUp = vec3(0, 1, 0);
@@ -70,7 +50,14 @@ void LightNodeDir::init() {
   setMaxDistance(100.0f);
   _pShadowFrustum->setChanged();
 }
-
+LightNodeDir::~LightNodeDir() {
+  //DEL_MEM(_pGpuLight);
+  //DEL_MEM(_pShadowFrustum);
+}
+void LightNodeDir::setLookAt(const vec3& v) {
+  _vLookAt = v;
+  _pShadowFrustum->setChanged();
+}
 void LightNodeDir::setMaxDistance(float f) {
   _pShadowFrustum->getFrustum()->setZFar(f);
   _pShadowFrustum->setChanged();
@@ -119,25 +106,17 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
-std::shared_ptr<LightNodePoint> LightNodePoint::create(bool bhasShadowBox) {
-  std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(bhasShadowBox);
-  lp->init();
-  lp->_pNodeData = std::make_shared<BaseSpec>("*LightNodePoint");
-  return lp;
-}
 LightNodePoint::LightNodePoint(bool bShadowBox) : LightNodeBase(bShadowBox) {
-}
-LightNodePoint::~LightNodePoint() {
-  _pShadowBox = nullptr;
-  _pGpuLight = nullptr;
-}
-void LightNodePoint::init() {
-  LightNodeBase::init();
+  _pNodeData = std::make_shared<NodeData>("*LightNodePoint");
   _pGpuLight = std::make_shared<GpuPointLight>();
 
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
   _pShadowBox = std::make_shared<ShadowBox>(std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
   _pShadowBox->init();
+}
+LightNodePoint::~LightNodePoint() {
+  _pShadowBox = nullptr;
+  _pGpuLight = nullptr;
 }
 void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (getHidden() == true) {
@@ -165,25 +144,25 @@ bool LightNodePoint::renderShadows(std::shared_ptr<ShadowBox> pf) {
   return true;
 }
 void LightNodePoint::updateFlicker() {
-  if (_bFlickerEnabled) {
+  //if (_bFlickerEnabled) {
 
-    _fFlickerValue += (1 / 10.0f) * 1.0f / Gu::getFpsMeter()->getFps();
+  //  _fFlickerValue += (1 / 10.0f) * 1.0f / getFpsMeter()->getFps();
 
-    if (_fFlickerValue >= 1.0f) {
-      _fLastRandomValue = _fNextRandomValue;
-      _fNextRandomValue = Random::nextFloat(0.0f, 1.0f);
+  //  if (_fFlickerValue >= 1.0f) {
+  //    _fLastRandomValue = _fNextRandomValue;
+  //    _fNextRandomValue = Random::nextFloat(0.0f, 1.0f);
 
-      _fFlickerValue = 0.0f;
-    }
+  //    _fFlickerValue = 0.0f;
+  //  }
 
-    _fFlickerAddRadius = _fFlickerMaxRadius * (Alg::cosine_interpolate(_fLastRandomValue, _fNextRandomValue, _fFlickerValue));//pnoise in range -1,1 so make it 1,1
-  }
+  //  _fFlickerAddRadius = _fFlickerMaxRadius * (Alg::cosine_interpolate(_fLastRandomValue, _fNextRandomValue, _fFlickerValue));//pnoise in range -1,1 so make it 1,1
+  //}
 
-  // optimized radius for shader.
-  float f = getLightRadius();
-  if (f != 0.0f) {
-    _f_1_Radius_2 = (1.0f) / (f * f);
-  }
+  //// optimized radius for shader.
+  //float f = getLightRadius();
+  //if (f != 0.0f) {
+  //  _f_1_Radius_2 = (1.0f) / (f * f);
+  //}
 }
 float LightNodePoint::getLightRadius() {
   //Negative light radiuses are infinite
@@ -210,4 +189,4 @@ void LightNodePoint::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float e
 }
 
 
-}//ns game
+}//ns BR2

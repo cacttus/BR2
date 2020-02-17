@@ -27,7 +27,7 @@ public:
     static uint8_t trailingzeros(int32_t x);// - Returns the position of the first bit in the little endian tbyte. Returns the LOG2 of the first bit.
 };
 
-}//ns game
+}//ns BR2
 
 
 

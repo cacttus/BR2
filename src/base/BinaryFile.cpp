@@ -422,4 +422,4 @@ bool BinaryFile::writeToDisk(string_t fileLoc) {
 }
 
 
-}//ns game
+}//ns BR2

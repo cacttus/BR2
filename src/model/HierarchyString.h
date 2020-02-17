@@ -152,7 +152,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
   return _pRoot;
 }
 
-}//ns game
+}//ns BR2
 
 
 

@@ -29,7 +29,7 @@ public:
      static bool chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak = false, bool doNotLog =true);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

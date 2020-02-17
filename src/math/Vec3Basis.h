@@ -23,7 +23,7 @@ public:
     Vec3f _x, _y, _z;
 };
 
-}//ns game
+}//ns BR2
 
 
 

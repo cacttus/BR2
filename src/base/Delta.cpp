@@ -12,5 +12,5 @@ void Delta::update() {
   _iDeltaLast = _iDeltaNow;
   _fDelta = delta;
 }
-}//ns Game
+}//ns BR2
 

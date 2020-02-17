@@ -52,7 +52,7 @@ public:
     virtual ~PoundFile() override;
 };
 
-}//ns game
+}//ns BR2
 
 
 

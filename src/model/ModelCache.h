@@ -38,7 +38,7 @@ public:
     std::shared_ptr<Material> getDefaultMaterial() { return _pDefaultMaterial; }
 };
 
-}//ns Game
+}//ns BR2
 
 
 

@@ -62,7 +62,7 @@ protected:
 
 
 };
-}//ns Game
+}//ns BR2
 
 
 

@@ -146,7 +146,7 @@ public:
     float f1;
 };
 
-}//ns Game
+}//ns BR2
 
 
 #include "../model/VertexTypes.h"

@@ -29,7 +29,7 @@
 //    std::shared_ptr<MeshSpec> getMeshByName(Hash32 hash);
 //};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //

@@ -214,4 +214,4 @@ string_t OglErr::glDebugGetMessageSeverity(int eCode) {
 
 
 
-}//ns Game
+}//ns BR2

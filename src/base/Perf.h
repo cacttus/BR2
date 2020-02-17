@@ -28,7 +28,7 @@ public:
 
 };
 
-}//ns Game
+}//ns BR2
 
 
 

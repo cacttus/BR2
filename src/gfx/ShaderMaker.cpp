@@ -773,4 +773,4 @@ void ShaderMaker::addGeneralError(string_t str) {
 
 
 
-}//ns Game
+}//ns BR2

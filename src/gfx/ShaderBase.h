@@ -81,7 +81,7 @@ private:
   void setShadowUf();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

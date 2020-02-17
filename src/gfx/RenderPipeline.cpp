@@ -814,4 +814,4 @@ std::shared_ptr<Img32> RenderPipeline::getResultAsImage() {
 
 
 
-}//ns game
+}//ns BR2

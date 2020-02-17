@@ -258,4 +258,4 @@ string_t DebugHelper::getCallingMethod(){
 
 
 
-}//ns game
+}//ns BR2

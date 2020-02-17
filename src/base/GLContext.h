@@ -202,7 +202,7 @@ public:
   PFNGLDELETETEXTURESEXTPROC glDeleteTextures = nullptr;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

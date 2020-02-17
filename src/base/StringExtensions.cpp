@@ -172,4 +172,4 @@ void StringExtensions::Test() {
 
 
 
-}//ns Game
+}//ns BR2

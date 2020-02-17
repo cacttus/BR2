@@ -54,7 +54,7 @@ private:
   GLuint _i1x1DummyBump2DTexture = 0;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

@@ -24,7 +24,7 @@
 //    virtual ~VulkanWindow() override;
 //};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //

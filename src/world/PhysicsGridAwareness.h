@@ -35,7 +35,7 @@ public:
     void update(float dt);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

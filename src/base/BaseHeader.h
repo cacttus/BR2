@@ -60,7 +60,7 @@ void runtimeAssertion(string_t str);
 #define Br2ThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
 #define Br2ThrowNotImplementedException() throw new NotImplementedException()
 #define BroThrowDeprecatedException() throw new DeprecatedException()
-#define VerifyOrThrow(expr,x) do { if(!(expr)) BroThrowException(x); } while(0)
+#define VerifyOrThrow(expr,x) do { if(!(expr)) Br2ThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()
 
 #define ShowMessageBoxOnce(msg) { \
@@ -73,7 +73,7 @@ Gu::showMessageBox(msg, "Error"); \
 __show=true; \
 }
 
-}//ns Game
+}//ns BR2
 
 
 

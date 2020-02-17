@@ -76,7 +76,7 @@ public:
     OVERRIDES ~ObjectFile() OVERRIDE;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

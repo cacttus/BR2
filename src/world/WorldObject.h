@@ -28,7 +28,7 @@ private:
   std::vector<std::shared_ptr<Component>> _components;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

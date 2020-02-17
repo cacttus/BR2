@@ -33,7 +33,7 @@ inline Tx bro_safe_cast(Ty pb)
 #define UnsafeCast(pObj, pType) reinterpret_cast<pType>(pObj)
 
 
-}//ns Game
+}//ns BR2
 
 
 

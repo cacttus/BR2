@@ -435,4 +435,4 @@ void ShadowBox::smoothShadows(){
 
 
 
-}//ns Game
+}//ns BR2

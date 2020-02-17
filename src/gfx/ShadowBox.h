@@ -62,7 +62,7 @@ public:
     void updateScreenQuad();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

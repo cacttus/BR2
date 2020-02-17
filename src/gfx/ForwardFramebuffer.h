@@ -12,31 +12,23 @@
 namespace BR2 {
 /**
 *  @class ForwardFramebuffer
-*  @brief
-*
+*  @brief Framebuffer to store forward rendering.
 */
 class ForwardFramebuffer : public FramebufferBase {
 public:
-    ForwardFramebuffer(std::shared_ptr<GLContext> pc, int32_t w, int32_t h, bool bMsaa, int nMsaa, vec4& vClear);
-    virtual ~ForwardFramebuffer() override;
-    virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) override;
-    virtual void beginRender() override;
-    virtual void endRender() override;
+  ForwardFramebuffer(std::shared_ptr<GLContext> pc, int32_t w, int32_t h, bool bMsaa, int nMsaa, vec4& vClear);
+  virtual ~ForwardFramebuffer() override;
 
-    virtual void attachColorTargets(int32_t iWidth, int32_t iHeight);  //Adds the targets - overridable for the pick buffer.
-    GLuint getGlColorBufferTexId();
-    void clearFb();
+  virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) override;
+  virtual void beginRender() override;
+  virtual void endRender() override;
+  virtual void attachColorTargets(int32_t iWidth, int32_t iHeight);  //Adds the targets - overridable for the pick buffer.
+  GLuint getGlColorBufferTexId();
+  void clearFb();
 };
-//
-//class PickFramebuffer : public ForwardFramebuffer {
-//public:
-//    PickFramebuffer(std::shared_ptr<GLContext> pc, int32_t w, int32_t h);
-//    virtual ~PickFramebuffer() override;
-//    virtual void attachColorTargets(int32_t iWidth, int32_t iHeight) override;
-//
-//};
 
-}//ns Game
+
+}//ns BR2
 
 
 

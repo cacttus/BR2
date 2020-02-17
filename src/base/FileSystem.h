@@ -93,7 +93,7 @@ public:
   static void findFile(string_t searchRoot, string_t name, FileInfo& __out info);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

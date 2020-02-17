@@ -35,7 +35,7 @@
 //    virtual void serverPacketReceived(std::shared_ptr<Packet> temp) = 0;
 //};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //

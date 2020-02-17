@@ -122,4 +122,4 @@ void StreamBuffer::copyFrom(StreamBuffer* rhs)
 
 
 
-}//ns Game
+}//ns BR2

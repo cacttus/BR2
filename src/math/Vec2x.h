@@ -540,7 +540,7 @@ STATIC FORCE_INLINE float dot(Vec2f& v1, Vec2f& v2) { return v1.dot(v2); }
 STATIC FORCE_INLINE string_t tstr(const vec2& x) { return x.toString(); }
 STATIC FORCE_INLINE string_t tstr(const ivec2& x) { return x.toString(); }
 STATIC FORCE_INLINE string_t tstr(const uvec2& x) { return x.toString(); }
-}//ns game
+}//ns BR2
 
 
 

@@ -89,7 +89,7 @@ FORCE_INLINE void initMp(MpUint x) { x.setMin(0), x.setMax(INT_MAX); }
 FORCE_INLINE void initMp(MpInt x) { x.setMin(-INT_MAX), x.setMax(INT_MAX); }
 
 
-}//ns game
+}//ns BR2
 
 
 

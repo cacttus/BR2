@@ -153,4 +153,4 @@ std::shared_ptr<UiTex> UiTex::create(std::shared_ptr<MtTex> ptex) {
 #pragma endregion 
 
 
-}//ns Game
+}//ns BR2

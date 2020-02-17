@@ -183,7 +183,7 @@ void OperatingSystem::suppressError(OSErrorCode ec, bool bWriteMessage) {
     if (getError() == (int)ec) {
       clearAllErrors();
       if (bWriteMessage) {
-        BroLogInfo(strMsg);
+        Br2LogInfo(strMsg);
       }
     }
 }
@@ -368,4 +368,4 @@ string_t OperatingSystem::showOpenFileDialog(string_t title, string_t filter, st
     return file;
 }
 
-}//ns game
+}//ns BR2

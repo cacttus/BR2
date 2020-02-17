@@ -33,7 +33,7 @@ public:
     virtual ~VulkanContext() override;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

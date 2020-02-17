@@ -37,7 +37,7 @@
 ////    screen_res_enum_limit
 ////}t_screen_resolution;
 //
-//}//ns game
+//}//ns BR2
 //
 //
 //

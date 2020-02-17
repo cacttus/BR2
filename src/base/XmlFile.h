@@ -58,7 +58,7 @@ private:
   pugi::xml_parse_result _parseResult;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

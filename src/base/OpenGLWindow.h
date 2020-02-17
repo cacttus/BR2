@@ -30,7 +30,7 @@
 //    virtual ~OpenGLWindow() override;
 //};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //

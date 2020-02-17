@@ -33,7 +33,7 @@ private:
   void postLoad();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

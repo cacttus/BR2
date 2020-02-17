@@ -32,7 +32,7 @@ public:
     void* ptr();
 };
 
-}//ns game
+}//ns BR2
 
 
 

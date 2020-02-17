@@ -23,7 +23,6 @@
 #include "../model/ModelCache.h"
 #include "../world/PhysicsManager.h"
 
-
 namespace BR2 {
 std::shared_ptr<ModelCache> GraphicsContext::_pModelCache = nullptr;
 std::shared_ptr<TexCache> GraphicsContext::_pTexCache = nullptr;
@@ -170,4 +169,4 @@ void GraphicsContext::createManagers() {
 
 
 
-}//ns Game
+}//ns BR2

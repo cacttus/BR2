@@ -114,4 +114,4 @@ void XmlFile::parse(char* buf, int64_t size) {
 
 
 
-}//ns Game
+}//ns BR2

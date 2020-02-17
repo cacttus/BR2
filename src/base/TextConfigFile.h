@@ -38,7 +38,7 @@ public:
     virtual ~TextConfigFile() override;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

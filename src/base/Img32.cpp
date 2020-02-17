@@ -917,4 +917,4 @@ void Img32::deserialize(std::shared_ptr<BinaryFile> bf) {
 
 
 
-}//ns game
+}//ns BR2

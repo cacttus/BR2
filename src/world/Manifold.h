@@ -53,7 +53,7 @@ public:
 //    void remove(std::shared_ptr<BaseNode> ob);
 //};
 
-}//ns Game
+}//ns BR2
 
 
 

@@ -25,7 +25,7 @@ private:
   std::shared_ptr<WorldObject> _pWorldObject = nullptr;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

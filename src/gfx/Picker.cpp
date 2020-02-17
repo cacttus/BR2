@@ -92,4 +92,4 @@ void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId) {
   selectedId = pixel;
 }
 
-}//ns Game
+}//ns BR2

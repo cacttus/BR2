@@ -1033,4 +1033,4 @@ void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId
 
 }
 
-}//ns Game
+}//ns BR2

@@ -955,4 +955,4 @@ vec3* MeshUtils::getVertexElementOffset(vec3* verts, size_t iElementIndex, size_
 
 
 
-}//ns game
+}//ns BR2

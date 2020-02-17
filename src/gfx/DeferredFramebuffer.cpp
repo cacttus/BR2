@@ -128,4 +128,4 @@ void DeferredFramebuffer::endRender()
 
 
 
-}//ns Game
+}//ns BR2

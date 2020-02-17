@@ -86,7 +86,7 @@ std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
 std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
-void Gu::setContext(std::shared_ptr<GLContext> ct) { _pActiveContext = ct; }
+//void Gu::setContext(std::shared_ptr<GLContext> ct) { _pActiveContext = ct; }
 void Gu::setPackage(std::shared_ptr<ApplicationPackage> x) { _pAppPackage = x; }
 
 bool Gu::is64Bit() {
@@ -572,4 +572,4 @@ void Gu::updateGlobals() {
   }
 }
 
-}//ns Game
+}//ns BR2

@@ -16,14 +16,6 @@
 namespace BR2 {
 //TODO: Make the light node a composite on WorldObject, and remove PhysicsNode, making it a composite of WorldObject as well.
 class LightNodeBase : public PhysicsNode {
-  bool _bEnableShadows = false;
-protected:
-  Color4f _color;
-  //float _fSpecExp = 2.0f;
-  //vec3 _vSpecColor;
-  vec3 _vGpuBufferedPosition; // Temporary storage for the GPU - DO NOT CHANGE
-protected:
-  virtual void init() override;
 public:
   LightNodeBase(bool bShadow);
   virtual ~LightNodeBase() override;
@@ -36,17 +28,21 @@ public:
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   vec3* getFinalPosPtr();
   bool shadowsEnabled();
-};
 
-class LightNodeDir : public LightNodeBase {
-  vec3 _vLookAt;
-  vec3 _vDir;
-  vec3 _vUp;
-  vec3 _vRight;
-  std::shared_ptr<GpuDirLight> _pGpuLight = nullptr;
-  std::shared_ptr<ShadowFrustum> _pShadowFrustum = nullptr;
+private:
+  bool _bEnableShadows = false;
+
 protected:
-  virtual void init() override;
+  Color4f _color;
+  //float _fSpecExp = 2.0f;
+  //vec3 _vSpecColor;
+  vec3 _vGpuBufferedPosition; // Temporary storage for the GPU - DO NOT CHANGE
+};
+/**
+*  @class LightNodeDir
+*  @brief A directional light source.
+*/
+class LightNodeDir : public LightNodeBase {
 public:
   LightNodeDir(bool bShadow);
   static std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow);
@@ -61,28 +57,20 @@ public:
   std::shared_ptr<ShadowFrustum> getShadowFrustum() { return _pShadowFrustum; }
   std::shared_ptr<GpuDirLight> getGpuLight() { return _pGpuLight; }
   void setMaxDistance(float f);
+
+private:
+  vec3 _vLookAt;
+  vec3 _vDir;
+  vec3 _vUp;
+  vec3 _vRight;
+  std::shared_ptr<GpuDirLight> _pGpuLight = nullptr;
+  std::shared_ptr<ShadowFrustum> _pShadowFrustum = nullptr;
 };
+/**
+*  @ckass LightNodePoint
+*  @brief A point light source.
+*/
 class LightNodePoint : public LightNodeBase {
-
-  float _cInfiniteLightRadius = FLT_MAX;
-  float _fRadius = 20.0f; // maximum radius of the light
-  float _f_1_Radius_2 = 0.0f;    // 1/(r*r)
-  float _attenuation = 0.5f;
-
-  bool _bFlickerEnabled = false;
-  float _fFlickerValue = 0;
-  float _fFlickerAddRadius = 0;
-  float _fFlickerMaxRadius = 1.0f;
-  float _fLastRandomValue = 0.0f;
-  float _fNextRandomValue = 0.0f;
-
-  std::shared_ptr<ShadowBox> _pShadowBox = nullptr;
-
-  std::shared_ptr<GpuPointLight> _pGpuLight = nullptr;
-
-  void updateFlicker();
-protected:
-  virtual void init() override;
 public:
   LightNodePoint(bool bhasShadowBox);
   static std::shared_ptr<LightNodePoint> create(bool bhasShadowBox);
@@ -101,9 +89,27 @@ public:
   float getLightRadius();
   void setLightRadius(float r);
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+
+private:
+  float _cInfiniteLightRadius = FLT_MAX;
+  float _fRadius = 20.0f; // maximum radius of the light
+  float _f_1_Radius_2 = 0.0f;    // 1/(r*r)
+  float _attenuation = 0.5f;
+
+  bool _bFlickerEnabled = false;
+  float _fFlickerValue = 0;
+  float _fFlickerAddRadius = 0;
+  float _fFlickerMaxRadius = 1.0f;
+  float _fLastRandomValue = 0.0f;
+  float _fNextRandomValue = 0.0f;
+
+  std::shared_ptr<ShadowBox> _pShadowBox = nullptr;
+  std::shared_ptr<GpuPointLight> _pGpuLight = nullptr;
+
+  void updateFlicker();
 };
 
-}//ns game
+}//ns BR2
 
 
 

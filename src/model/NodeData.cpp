@@ -50,4 +50,4 @@ void NodeData::setInvBind(mat4& bind) {
   _mInvBind = bind;
 }
 
-}//ns Game
+}//ns BR2

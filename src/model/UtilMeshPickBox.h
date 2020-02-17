@@ -35,7 +35,7 @@
 //    OVERRIDES void preDraw();
 //    OVERRIDES void postDraw();
 //};
-//}//ns game
+//}//ns BR2
 //
 //
 //

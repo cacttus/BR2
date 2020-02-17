@@ -129,5 +129,5 @@ void InputManager::warpMouse(int x, int y) {
 
 
 
-}//ns Game
+}//ns BR2
 

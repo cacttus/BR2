@@ -571,7 +571,7 @@ FORCE_INLINE STATIC float calcCubeDiagonal(float cubeSide)
 
 };
 
-}//ns game
+}//ns BR2
 
 
 

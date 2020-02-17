@@ -183,7 +183,7 @@ std::shared_ptr<TCopy> TreeNode::duplicateBreadthFirst(std::function<std::shared
 }
 
 
-}//ns game
+}//ns BR2
 
 
 

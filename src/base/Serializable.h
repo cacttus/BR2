@@ -25,7 +25,7 @@ public:
   virtual void serialize(std::shared_ptr<BinaryFile> fb) = 0;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

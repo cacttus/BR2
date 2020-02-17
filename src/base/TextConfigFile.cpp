@@ -87,4 +87,4 @@ bool TextConfigFile::cmp(string_t& tok0, const char* ch, int32_t validateArgCoun
 
 
 
-}//ns Game
+}//ns BR2

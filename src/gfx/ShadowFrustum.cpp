@@ -405,4 +405,4 @@ void ShadowFrustum::endRenderShadowFrustum()
 
 
 
-}//ns Game
+}//ns BR2

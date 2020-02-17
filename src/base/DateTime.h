@@ -94,7 +94,7 @@ public:
     STATIC string_t getTimeString();//time as string. hh:mm:ss:uuuu
 };
 
-}//ns game
+}//ns BR2
 
 
 

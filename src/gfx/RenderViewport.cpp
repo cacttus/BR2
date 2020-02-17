@@ -97,4 +97,4 @@ bool RenderViewport::containsPointRelativeToWindow(vec2& mp) {
 
 
 
-}//ns game
+}//ns BR2

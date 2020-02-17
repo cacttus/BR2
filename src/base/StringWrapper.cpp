@@ -29,4 +29,4 @@
 ////    return _iHash32;
 ////}
 //
-//}//ns game
+//}//ns BR2

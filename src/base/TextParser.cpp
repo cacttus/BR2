@@ -219,4 +219,4 @@ void TextParser::eatLine(int32_t& lineCountToAddTo) {
 
 
 
-}//Ns Game
+}//ns BR2

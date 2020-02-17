@@ -674,7 +674,7 @@ void Allocator<Tx>::swapChunk(size_t iOff, size_t iCountToRemove, const Tx* pDat
 
 
 
-}//ns game
+}//ns BR2
 
 
 

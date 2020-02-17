@@ -78,4 +78,4 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelData> mod, int3
 
 
 
-}//ns Game
+}//ns BR2

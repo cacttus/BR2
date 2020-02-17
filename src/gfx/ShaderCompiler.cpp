@@ -350,4 +350,4 @@ std::vector<string_t> ShaderCompiler::getErrorList(const std::shared_ptr<ShaderS
 
 
 
-}//ns Game
+}//ns BR2

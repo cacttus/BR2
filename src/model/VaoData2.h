@@ -34,7 +34,7 @@
 //    void draw(int32_t iCount = -1);
 //};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //

@@ -11,4 +11,4 @@ void RenderSettings::init(){
 }
 
 
-}//ns Game
+}//ns BR2

@@ -91,7 +91,7 @@ private:
   void createManagers();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

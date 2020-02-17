@@ -3343,4 +3343,4 @@ std::shared_ptr<GraphicsWindow> UiScreen::getWindow() {
 //#pragma endregion
 
 
-}//ns Game
+}//ns BR2

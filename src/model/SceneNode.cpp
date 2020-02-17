@@ -422,4 +422,4 @@ std::shared_ptr<Scene> SceneNode::getScene() {
 }
 
 
-}//ns Game
+}//ns BR2

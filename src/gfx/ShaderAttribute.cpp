@@ -164,4 +164,4 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
 
 
 
-}//ns Game
+}//ns BR2

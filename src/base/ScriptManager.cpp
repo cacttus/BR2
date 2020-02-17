@@ -28,4 +28,4 @@ std::shared_ptr<CSharpScript> loadScript(string_t filepath) {
 }
 
 
-}//ns Game
+}//ns BR2

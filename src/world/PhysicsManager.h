@@ -133,7 +133,7 @@ private:
         std::set<ivec3*, ivec3::Vec3xCompLess>& grids, int32_t& iDebugSweepCount);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

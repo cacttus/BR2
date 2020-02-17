@@ -23,7 +23,7 @@ public:
   void step();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

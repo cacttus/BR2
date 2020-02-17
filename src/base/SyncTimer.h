@@ -26,7 +26,7 @@ public:
     virtual ~SyncTimer() override;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

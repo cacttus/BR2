@@ -46,7 +46,7 @@ protected:
   void msg(string_t msg, bool error = false);
 };
 
-}//ns game
+}//ns BR2
 
 
 

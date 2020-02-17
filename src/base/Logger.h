@@ -65,7 +65,7 @@ private:
   string_t addStackTrace(string_t msg);
 };
 
-}//ns game
+}//ns BR2
 
 
 //Macros

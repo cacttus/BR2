@@ -62,4 +62,4 @@ void GpuQuad3::copyQuadColor(Color4f* color)
     //_vertex[3]->c = *(static_cast<Vec4f*>(color));
 }
 
-}//ns game
+}//ns BR2

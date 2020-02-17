@@ -123,7 +123,7 @@ namespace BR2 {
 
 
 
-}//ns Game
+}//ns BR2
 
 
 

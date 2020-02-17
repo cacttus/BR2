@@ -34,4 +34,4 @@ void SyncTimer::tick(uint64_t duration, std::function<void()> func) {
 
 
 
-}//ns Game
+}//ns BR2

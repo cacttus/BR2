@@ -37,7 +37,7 @@ public:
     virtual ~GraphicsApi() override;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

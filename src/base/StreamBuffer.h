@@ -47,7 +47,7 @@ private:
   //void checkToGrowOrShrink();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

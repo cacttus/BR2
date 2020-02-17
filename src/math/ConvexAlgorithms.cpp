@@ -302,4 +302,4 @@ Vec3f ConvexUtils::closestPointOnHull(Vec3f& point, Vec3f* hullPoints, int32_t n
 
 
 
-}//ns game
+}//ns BR2

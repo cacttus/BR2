@@ -48,7 +48,7 @@ private:
   ViewportConstraint _constraint;
 };
 
-}//ns game
+}//ns BR2
 
 
 

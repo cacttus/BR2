@@ -22,7 +22,7 @@
 ////    virtual ~UniformBuffer() override;
 ////};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //

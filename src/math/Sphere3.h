@@ -107,7 +107,7 @@ FORCE_INLINE Sphere3f::~Sphere3f(){
 
 
 
-}//ns game
+}//ns BR2
 
 
 

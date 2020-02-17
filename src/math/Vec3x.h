@@ -861,7 +861,7 @@ STATIC FORCE_INLINE string_t tstr(const uvec3& x) { return x.toString(); }
 
 
 
-}//ns game
+}//ns BR2
 
 
 #endif

@@ -1,23 +1,24 @@
 #include "../base/GlobalIncludes.h"
 #include "../base/BaseHeader.h"
 #include "../base/TypeConv.h"
-
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/InputManager.h"
 #include "../base/Sequencer.h"
-
 #include "../base/FrameSync.h"
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
 #include "../base/AppBase.h"
 #include "../base/ApplicationPackage.h"
-
+#include "../base/OperatingSystem.h"
+#include "../base/Logger.h" 
+#include "../base/SDLUtils.h" 
+#include "../base/EngineConfig.h" 
+#include "../base/EngineConfigFile.h" 
 #include "../math/MathAll.h"
-
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ParticleMaker.h"
 #include "../gfx/TexCache.h"
@@ -29,8 +30,6 @@
 #include "../gfx/RenderSettings.h"
 #include "../gfx/GraphicsContext.h"
 #include "../base/GraphicsWindow.h"
-#include "../base/Logger.h" 
-
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
 
@@ -99,10 +98,27 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
 }
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
   //Enable runtime errors.
-  return OglErr::chkErrRt(getThis<GLContext>(), bDoNotBreak, doNotLog);
+  if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking() == true) {
+
+    bool e = OglErr::chkErrRt(getThis<GLContext>(), bDoNotBreak, doNotLog);
+    int32_t e = OperatingSystem::getError();
+    if (e != 0) {
+      Br2LogError("OS Error: " + e);
+    }
+    SDLUtils::checkSDLErr();
+  }
 }
 bool GLContext::chkErrDbg(bool bDoNotBreak, bool doNotLog) {
-  return OglErr::chkErrDbg(getThis<GLContext>(), bDoNotBreak, doNotLog);
+#ifdef _DEBUG
+  if (Gu::getEngineConfig()->getEnableDebugErrorChecking() == true) {
+    bool e = OglErr::chkErrDbg(getThis<GLContext>(), bDoNotBreak, doNotLog);
+    int32_t e = OperatingSystem::getError();
+    if (e != 0) {
+      Br2LogError("OS Error: " + e);
+    }
+    SDLUtils::checkSDLErr();
+  }
+#endif
 }
 bool GLContext::loadOpenGLFunctions() {
   bool bValid = true;
@@ -267,7 +283,6 @@ void GLContext::setLineWidth(float w) {
   Br2LogErrorOnce("glLineWidth not supported");
 #endif
 }
-
 void GLContext::pushCullFace() {
   GLint cull;
   glGetIntegerv(GL_CULL_FACE, &cull);
@@ -468,12 +483,7 @@ void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_
       + " Update your graphics driver by going to www.nvidia.com, www.ati.com or www.intel.com.\n\n"
     );
   }
-
-
 }
-
-
-
 void GLContext::loadCheckProc() {
   //Check that OpenGL initialized successfully by checking a library pointer.
   PFNGLUSEPROGRAMPROC proc = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
@@ -487,8 +497,6 @@ void GLContext::loadCheckProc() {
   }
 }
 void GLContext::printHelpfulDebug() {
-
-
   int tmp = 0;
   SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &tmp);
   Br2LogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
@@ -511,7 +519,6 @@ void GLContext::printHelpfulDebug() {
   SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &tmp);
   Br2LogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
 }
-
 void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
   //Attribs
   SDL_GL_ResetAttributes();
@@ -560,4 +567,4 @@ void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
 
 
 
-}//ns Game
+}//ns BR2

@@ -1154,4 +1154,4 @@ void ModelNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_
 
 
 
-}//ns Game
+}//ns BR2

@@ -32,7 +32,7 @@ public:
     FontSize getFontSize() { return _iFontSize; }
 };
 
-}//ns game
+}//ns BR2
 
 
 

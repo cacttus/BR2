@@ -33,7 +33,7 @@ private:
     Box3f* _pCube;
 };
 
-}//ns game
+}//ns BR2
 
 
 

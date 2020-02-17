@@ -66,4 +66,4 @@ void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_of
 //    _vecBoundShaderVarLists.resize(0);
 //}
 
-}//ns game
+}//ns BR2

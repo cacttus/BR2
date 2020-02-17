@@ -92,7 +92,7 @@ typedef CollisionEquations Ceq;
 
 
 
-}//ns game
+}//ns BR2
 
 
 

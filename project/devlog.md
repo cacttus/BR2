@@ -23,6 +23,10 @@
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
 7. Much of PhysicsManager must be moved to Scene, Object Creation.
 
+*2/17/2020*
+
+* Removed error checking from Gu.  Instead, error checking is done via the context: both GPU errors, and Operating system errors.
+
 *2/16/2020*
 * Renamed BaseNode to SceneNode (could also be SceneGraphNode, but Scenenode is more compact).
 
@@ -42,6 +46,8 @@ respective node class in the hierarchy.  This makes no sense either, since you'r
 	all *Node data's inherit from NodeData'
 	MeshData is it's own respective class. no inheritance
 	MaterialData is its own respective class, no inheritance.
+
+* Commented out particlemaker, for later use.
 
 *2/15/2020*
 * Moved Model Rendering from PhysicsManager to Scene

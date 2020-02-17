@@ -54,7 +54,7 @@
 //    virtual ~ModFile() override ;
 //};
 //
-//}//ns game
+//}//ns BR2
 //
 //
 //

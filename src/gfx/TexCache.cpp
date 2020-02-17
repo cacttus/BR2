@@ -117,4 +117,4 @@ std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(string_t name, cons
 
 
 
-}//ns Game
+}//ns BR2

@@ -37,7 +37,7 @@ private:
   int32_t _iLine = 1;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

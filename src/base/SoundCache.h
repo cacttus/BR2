@@ -105,7 +105,7 @@ public:
     std::shared_ptr<SoundInst> tryPlay(std::string file, SoundPlayInfo inf);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

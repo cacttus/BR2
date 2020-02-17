@@ -145,4 +145,4 @@
 //    return getBuffer()->byteSize();
 //}
 //
-//}//ns game
+//}//ns BR2

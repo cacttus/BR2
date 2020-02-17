@@ -51,7 +51,7 @@ public:
   void draw(RenderParams& rp);
 
 };
-}//ns Game
+}//ns BR2
 
 
 

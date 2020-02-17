@@ -77,4 +77,4 @@ vec3 PhysicsGridAwareness::getAwarenessPos() {
 
 
 
-}//ns Game
+}//ns BR2

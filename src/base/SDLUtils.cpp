@@ -67,4 +67,4 @@ void SDLUtils::checkSDLErr(bool doNotLog) {
 
 
 
-}//ns Game
+}//ns BR2

@@ -32,7 +32,7 @@ private:
     int32_t _nSlices,_nStacks;
 };
 
-}//ns game
+}//ns BR2
 
 
 

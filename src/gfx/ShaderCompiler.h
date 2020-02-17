@@ -46,7 +46,7 @@ private:
   void addSourceLineAt(size_t pos, std::vector<string_t>& vec, string_t line);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

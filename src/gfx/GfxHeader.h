@@ -47,6 +47,10 @@ typedef enum {
     ,Pick
 } RenderMode;
 
+namespace SpriteFlags {
+typedef enum { Shift_V = 0x01, Shift_H = 0x02 } e;
+}
+
 //Bits that turn on/off render layers.
 typedef std::bitset<16> PipeBits;
 
@@ -220,7 +224,6 @@ typedef enum {
  class AtlasSprite;
  class FrustumProjectionParameters;
  class PointLight;
- class ParticleMaker;
  class Particle;
  class DeferredFramebuffer;
  class FontTextBuffer;
@@ -415,7 +418,7 @@ typedef enum {
  };
 
 
-}//ns game
+}//ns BR2
 
 
 #include "../gfx/RenderParams.h"

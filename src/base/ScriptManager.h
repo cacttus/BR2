@@ -25,7 +25,7 @@ private:
   std::shared_ptr<CSharpCompiler> _compiler = nullptr;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

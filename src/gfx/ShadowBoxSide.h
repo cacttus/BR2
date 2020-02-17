@@ -56,7 +56,7 @@ public:
     void renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool);
     bool computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum);
 };
-}//ns Game
+}//ns BR2
 
 
 

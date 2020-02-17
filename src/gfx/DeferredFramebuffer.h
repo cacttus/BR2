@@ -37,7 +37,7 @@ public:
     int getNumNonDepthTargets();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

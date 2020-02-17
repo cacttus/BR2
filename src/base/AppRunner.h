@@ -45,7 +45,7 @@ private:
 };
 
 
-}//NS Game
+}//ns BR2
 #endif /* AppRunner_h */
 
 

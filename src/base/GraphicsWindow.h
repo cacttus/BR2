@@ -41,9 +41,7 @@ public:
   SDL_Window* getSDLWindow() { return _pSDLWindow; }
   void printHelpfulDebug();
   void updateWidthHeight(uint32_t w, uint32_t h, bool force);
-  void checkErrorsDbg();
-  void checkErrorsRt();
-  
+
   void setScene(std::shared_ptr<Scene> s) { _pScene=s; }
   std::shared_ptr<Scene> getScene() { return _pScene; }
   std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
@@ -79,7 +77,7 @@ private:
   void createSDL_OpenGLWindow(string_t title);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

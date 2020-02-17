@@ -28,8 +28,8 @@ public:
   static std::shared_ptr<WindowManager> getWindowManager();
 
   //Make the graphics context current.
-  static void setContext(std::shared_ptr<GLContext> ct);
-  static std::shared_ptr<GLContext> getContext();
+  //static void setContext(std::shared_ptr<GLContext> ct);
+  //static std::shared_ptr<GLContext> getContext();
 
   // static std::shared_ptr<GLContext> getGraphicsContext();
   static std::shared_ptr<RenderSettings> getRenderSettings();
@@ -50,8 +50,7 @@ public:
 
   static void updateGlobals();
   static void createManagers();
-  static void checkErrorsDbg();
-  static void checkErrorsRt();
+  
   static void initGlobals(const std::vector<std::string>& args);
   static void deleteGlobals();
   static void debugBreak();
@@ -123,7 +122,7 @@ private:
 #define Config Gu::getEngineConfig()
 
 
-}//ns Game
+}//ns BR2
 
 
 

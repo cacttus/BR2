@@ -695,7 +695,7 @@ protected:
 //  void drawForward(RenderParams& rp, Box2f& b2ClipRect);
 //};
 
-}//ns Game
+}//ns BR2
 
 
 

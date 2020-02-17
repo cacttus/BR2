@@ -28,7 +28,7 @@ private:
   bool _bInvalid = false;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

@@ -58,4 +58,4 @@ void TextDataFile::save(string_t& loc) {
   Br2ThrowNotImplementedException();
 }
 
-}//ns game
+}//ns BR2

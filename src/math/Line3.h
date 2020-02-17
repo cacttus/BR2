@@ -66,7 +66,7 @@ FORCE_INLINE float Line3f::dist2(vec3& pt)
     return (pt-pointOnLine(pt)).length2();
 }
 
-}//ns game
+}//ns BR2
 
 
 

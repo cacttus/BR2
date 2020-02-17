@@ -308,7 +308,7 @@ inline bool fuzzyEquals(float a, float b, float e) {
 typedef Vec4ub Pixel4ub;
 
 
-}//NS Game
+}//ns BR2
 
 
 #endif

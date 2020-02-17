@@ -8,13 +8,13 @@
 #define __ENGINECONFIG_14942867052644616215_H__
 
 #include "../base/BaseHeader.h"
+#include "../base/XmlFile.h"
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
 /**
 *  @class EngineConfig
-*  @brief Global configuration for the engine.
-*  Engine configuration should be per application.
+*  @brief Global configuration for the engine. Engine configuration should be per application.
 */
 class EngineConfig {
 public:
@@ -52,9 +52,8 @@ public:
   int32_t getShadowMapResolution() { return _iShadowMapResolution; }
   int32_t getShadowMapMaxInfluences() { return _iShadowMapMaxInfluences; }
   float getMaxPointLightShadowDistance() { return _fMaxPointLightShadowDistance; }
-  //void setEnableRuntimeErrorChecking(bool b) { _bEnableRuntimeErrorChecking = b; }//For convenience to speed up debugging
   int getMaxFrustShadowSamples() { return _iMaxFrustShadowSamples; }
-  int     getMaxCubeShadowSamples() { return _iMaxCubeShadowSamples; }
+  int getMaxCubeShadowSamples() { return _iMaxCubeShadowSamples; }
   int getFullscreenWidth() { return _iFullscreenWidth; }
   int getFullscreenHeight() { return _iFullscreenHeight; }
   int getModelThumbSize() { return _iModelThumbSize; }
@@ -84,15 +83,9 @@ private:
   int _iMaxDirLights = 32;
   int _iFullscreenWidth = 0;
   int _iFullscreenHeight = 0;
-
   RenderSystem::e _eRenderSystem = RenderSystem::OpenGL;
-
   bool _bEnableRuntimeErrorChecking = true;
-#ifdef _DEBUG
   bool _bEnableDebugErrorChecking = true;
-#else
-  bool _bEnableDebugErrorChecking = false;
-#endif
   bool _bEnableMsaa = false;
   int32_t _iMsaaSamples = 4;
   bool _bSaveFrameTexture = false;
@@ -117,10 +110,26 @@ private:
   int _iGameHostTimeoutMs = 60000;
   int _iGameHostPort = 44244;
 };
+/**
+*  @class EngineConfigFile
+*  @brief Configuration data for the engine loaded from engine.xml.
+*/
+class EngineConfigFile : public XmlFile {
+public:
+  EngineConfigFile();
+  virtual ~EngineConfigFile() override;
+
+  std::shared_ptr<EngineConfig> getConfig() { return _pConfig; }
+
+protected:
+  virtual void pkp(std::vector<string_t>& tokens) override;
+  virtual void preLoad() override;
+  virtual void postLoad(bool success) override;
+  std::shared_ptr<EngineConfig> _pConfig = nullptr;
+};
 
 
-
-}//ns Game
+}//ns BR2
 
 
 

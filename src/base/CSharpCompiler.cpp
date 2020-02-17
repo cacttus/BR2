@@ -563,4 +563,4 @@ char c;
 
 
 
-}//ns Game
+}//ns BR2

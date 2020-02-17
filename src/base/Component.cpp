@@ -10,4 +10,4 @@ Component::~Component() {
 
 }
 
-}//ns Game
+}//ns BR2

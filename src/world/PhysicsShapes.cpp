@@ -42,4 +42,4 @@ void SphereShape::serialize( std::shared_ptr<BinaryFile> fb) {
 }
 
 
-}//ns Game
+}//ns BR2

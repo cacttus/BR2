@@ -47,7 +47,7 @@
 //    MeshSpec* findFirstMeshByName(t_string& name, bool caseSensitive); // - Get the mesh with the given name
 //};
 //
-//}//ns game
+//}//ns BR2
 //
 //
 //

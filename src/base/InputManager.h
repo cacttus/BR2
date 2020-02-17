@@ -57,7 +57,7 @@ private:
   bool keyState(SDL_Scancode key, ButtonState::e bs);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

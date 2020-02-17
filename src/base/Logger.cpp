@@ -203,4 +203,4 @@ void Logger::addLineFileToMsg(string_t msg, int line, char* file) {
   }
 }
 
-}//ns game
+}//ns BR2

@@ -47,7 +47,7 @@ public:
     VertexUserType::e getUserType() { return _eUserType; } //Our custom system type which gets matched in the VAO.
 
 };
-}//ns Game
+}//ns BR2
 
 
 

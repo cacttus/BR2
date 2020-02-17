@@ -18,7 +18,7 @@ namespace BR2 {
 class BufferRenderTarget : public VirtualMemory {
     friend class FramebufferBase;
 public:
-  BufferRenderTarget(bool bShared) : _bShared(bShared) {}
+  BufferRenderTarget(std::shared_ptr<GLContext> ctx, bool bShared);
   virtual ~BufferRenderTarget() override;
 
   bool getShared() { return _bShared; }
@@ -45,11 +45,12 @@ private:
     GLenum _eBlitBit; // GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
     RenderTargetType::e _eTargetType;
     bool _bShared = false;
+    std::shared_ptr<GLContext> _pContext = nullptr;
 
 };
 
 
-}//ns Game
+}//ns BR2
 
 
 

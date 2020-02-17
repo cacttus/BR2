@@ -414,4 +414,4 @@ bool Scene::detachChild(std::shared_ptr<TreeNode> pChild){
   return TreeNode::detachChild(pChild);
 }
 
-}//ns Game
+}//ns BR2

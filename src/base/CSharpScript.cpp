@@ -13,4 +13,4 @@ CSharpScript::~CSharpScript() {
 
 
 
-}//ns Game
+}//ns BR2

@@ -186,4 +186,4 @@ std::vector<std::shared_ptr<ShadowFrustum>> LightManager::getAllShadowFrustums()
 
 
 
-}//ns Game
+}//ns BR2

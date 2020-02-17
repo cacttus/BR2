@@ -87,4 +87,4 @@ void TextBufferMesh::getQuad(v_v2c4x2*& v0, v_v2c4x2*& v1, v_v2c4x2*& v2, v_v2c4
 }
 
 
-}//ns game
+}//ns BR2

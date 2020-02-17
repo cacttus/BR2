@@ -54,7 +54,7 @@ private:
   void updateRotate(std::shared_ptr<InputManager> pInput);
 };
 
-}//ns Game
+}//ns BR2
 
 
 

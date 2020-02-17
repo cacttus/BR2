@@ -50,4 +50,4 @@ VertexAdjacencyMap::FaceList* VertexAdjacencyMap::getVertexIndexMapping(v_index3
 }
 
 
-}//ns game
+}//ns BR2

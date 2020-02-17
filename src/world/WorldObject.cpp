@@ -23,4 +23,4 @@ void WorldObject::addComponent(std::shared_ptr<Component> comp) {
 
 
 
-}//ns Game
+}//ns BR2

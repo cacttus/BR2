@@ -24,7 +24,7 @@ public:
     vec3 _upVec; // camera up vec
     Vec3Basis _v3basis;    // basis vectors for projection with Z pointing into the viewport.
 };
-}//ns game
+}//ns BR2
 
 
 

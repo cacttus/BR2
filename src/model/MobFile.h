@@ -155,7 +155,7 @@ private:
   void cacheObjectsAndComputeBoxes();
 };
 
-}//ns Game
+}//ns BR2
 
 
 

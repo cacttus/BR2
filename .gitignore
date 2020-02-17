@@ -1,6 +1,9 @@
 UpgradeLog.htm
 *.ilk
 *.user
+CMakeCache.txt
+/CMakeFiles/
+/build/
 /tmp/
 /lib/
 /.vs/

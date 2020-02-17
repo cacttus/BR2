@@ -43,4 +43,4 @@ void OBB::calc(mat4& mat, const Box3f* base) {
 
 
 
-}//ns Game
+}//ns BR2

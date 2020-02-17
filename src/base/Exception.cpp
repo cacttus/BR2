@@ -19,4 +19,4 @@ string_t Exception::what() {
 }
 
 
-}//ns Game
+}//ns BR2

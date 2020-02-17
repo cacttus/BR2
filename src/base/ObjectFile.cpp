@@ -308,4 +308,4 @@ mat4 ObjectFile::parseMat4(BinaryFile& bf)
 
 }
 
-}//ns Game
+}//ns BR2

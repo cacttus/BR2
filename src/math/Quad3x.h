@@ -69,7 +69,7 @@ FORCE_INLINE string_t Quad3x<Tx>::toString()
 }
 
 
-}//ns game
+}//ns BR2
 
 
 

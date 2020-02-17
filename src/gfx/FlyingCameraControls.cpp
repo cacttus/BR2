@@ -192,4 +192,4 @@ void FlyingCameraControls::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
   updateCameraPosition();
 }
 
-}//ns Game
+}//ns BR2

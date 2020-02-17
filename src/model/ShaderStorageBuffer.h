@@ -30,7 +30,7 @@ public:
   void allocFill(size_t num_elements, const void* frags = NULL);
 
 
-};//ns game
+};//ns BR2
 
 
 }

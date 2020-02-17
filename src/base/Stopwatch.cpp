@@ -72,4 +72,4 @@ bool Stopwatch::pulse(t_timeval isGreaterThanMs) {
   return bRet;
 }
 
-}//ns game
+}//ns BR2

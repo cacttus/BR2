@@ -199,7 +199,7 @@ size_t DynamicBuffer<Tx>::getNumUsedChunks()
 
 
 
-}//ns Game
+}//ns BR2
 
 
 

@@ -34,7 +34,7 @@ public:
     IboData(std::shared_ptr<GLContext> ctx, size_t iElementSize);
     virtual ~IboData() override;
 };
-}//ns game
+}//ns BR2
 
 
 

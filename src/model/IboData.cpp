@@ -22,4 +22,4 @@ IboData::~IboData()
 }
 
 
-}//ns game
+}//ns BR2

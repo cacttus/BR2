@@ -32,7 +32,7 @@ public:
     virtual ~Net() override;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

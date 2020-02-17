@@ -592,4 +592,4 @@ wstring_t StringUtil::strToWStr(std::string str) {
   return wide;
 }
 
-}//nS GAME
+}//ns BR2

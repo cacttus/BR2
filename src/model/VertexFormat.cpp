@@ -286,4 +286,4 @@ int VertexFormat::matchTypeForShaderType(std::shared_ptr<VertexFormat> shaderTyp
 
 
 
-}//ns Game
+}//ns BR2

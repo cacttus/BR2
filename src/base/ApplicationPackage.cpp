@@ -241,4 +241,4 @@ string_t ApplicationPackage::getEngineConfigFilePath() {
   return _strEngineConfigFileName;
 }
 
-}//ns Game
+}//ns BR2

@@ -26,7 +26,7 @@
 //    virtual ~GameMemory() {}
 //};
 //
-//}//ns Game
+//}//ns BR2
 //
 //
 //
