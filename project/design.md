@@ -3,6 +3,19 @@
 
 Some design and implementation notes since the devlog was getting too big.
 
+## System Overview
+
+|  Folder | Description|
+|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  base   | All base classes, trees, graphs, generic systems, memory, engine operations, and operating system interfaces.
+|  ext    | All *lightweight* external libraries.  1-2 files or headers, go into this directory.  Large API's should be placed in ./external
+|  gfx    | GPU, and graphics classes.  Materials, lighting, framebuffers, shaders.
+|  math   | Math. Vectors, Matrices, Algorithms.
+|  model  | Meshes, Animation, Models, Characters, Skeletons, Bones.
+|  world  | Physics and Scenegraph. 
+
+
+
 ## Main Classes
 
 | Class            | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -12,8 +25,9 @@ Some design and implementation notes since the devlog was getting too big.
 |     Scene         | A scene for all items in the currently loaded game world.  Areas are separated into scenes in order to minimize memory footprint.  In the case of the designed game, scene differentiation is really unnecessary, as the world is "minecraft" infinite and it loads dynamically.  However, for a more linear game model the Scene would be used to separate game areas in order to reduce memory footprint.                                                       |
 |     Gu            | Global utility class used to access commonly used pieces of the engine (textures, meshes) through simple static methods.                                                      |
 |     GLContext     | OpenGL context.  There may be more than one OpenGL context in the engine.  "Sharable" items are shared across contexts, including textures, meshes and shaders.                                                 |
+|   Managers | All managers control their respective system.  PhysicsManager, InputManager, WorldManager, ModelManger, TexCache (TextureManager), ShaderMaker (ShaderManager) .. etc.
 
-## Hierarchy Overview
+## Class Hierarchy
 
 * Gu
     * Package (1)

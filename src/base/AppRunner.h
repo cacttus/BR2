@@ -1,6 +1,6 @@
 /**
-* @file AppRunner.h
-* @author MetalMario971
+*  @file AppRunner.h
+*  @author MetalMario971
 */
 #ifndef __57823905782390589020_AppRunner_h_2298357238957238957129348__
 #define __57823905782390589020_AppRunner_h_2298357238957238957129348__
@@ -11,8 +11,8 @@
 namespace BR2 {
 
 /**
-*   @class AppRunner
-*   @brief The entry point of the application from main()
+*  @class AppRunner
+*  @brief The entry point of the application from main()
 */
 class AppRunner : public VirtualMemory {
 public:
