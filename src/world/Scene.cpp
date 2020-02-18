@@ -15,7 +15,7 @@
 #include "../model/MeshNode.h"
 #include "../model/MeshUtils.h"
 #include "../model/Model.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/RenderViewport.h"
@@ -61,8 +61,8 @@ void Scene::update(float delta) {
 }
 void Scene::idle(int64_t us) {
 }
-std::shared_ptr<GraphicsContext> Scene::getContext() { 
-  return getWindow()->getGraphicsContext(); 
+std::shared_ptr<GLContext> Scene::getContext() { 
+  return getWindow()->getContext(); 
 }
 std::vector<std::shared_ptr<CameraNode>> Scene::getAllCameras() {
   std::vector<std::shared_ptr<CameraNode>> ret;
@@ -213,7 +213,7 @@ void Scene::drawDeferred(RenderParams& rp) {
     //if we have skin draw normally.
     //_pRenderBucket->sortAndDrawMeshes(
     //    [](std::shared_ptr<VertexFormat> vf) {
-    //        return getGraphicsContext()->getShaderMaker()->getDiffuseShader(vf);
+    //        return getContext()->getShaderManager()->getDiffuseShader(vf);
     //    },
     //    [&](std::shared_ptr<ShaderBase> sb) {
     //        sb->bind();
@@ -262,7 +262,7 @@ void Scene::drawForward(RenderParams& rp) {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getContext()->getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
+    _pTex = getContext()->getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
   }
 
   //Meshes
@@ -272,7 +272,7 @@ void Scene::drawForward(RenderParams& rp) {
     pm->drawForward(rp);
   }
 
-  RenderUtils::drawAxisShader();
+  RenderUtils::drawAxisShader(getContext());
 }
 void Scene::drawShadow(RenderParams& rp) {
 }
@@ -359,7 +359,7 @@ void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pScreen->screenChanged(w, h);
 }
 std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
-  std::shared_ptr<ModelNode> mn = ModelNode::create(ms);
+  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
   mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
   
   attachChild(mn);
@@ -406,11 +406,17 @@ std::shared_ptr<LightNodeDir> Scene::createDirLight(const vec3&& pos, const vec3
   return dir;
 }
 std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild){
-  _pPhysicsWorld->addObj(pChild, false, false);
+  std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
+  if (casted!=nullptr) {
+    _pPhysicsWorld->addObj(casted, false, false);
+  }
   return TreeNode::attachChild(pChild);
 }
 bool Scene::detachChild(std::shared_ptr<TreeNode> pChild){
-  _pPhysicsWorld->tryRemoveObj(pChild);
+  std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
+  if (casted != nullptr) {
+    _pPhysicsWorld->tryRemoveObj(casted);
+  }
   return TreeNode::detachChild(pChild);
 }
 

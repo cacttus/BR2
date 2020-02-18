@@ -40,6 +40,7 @@ public:
   virtual void drawForwardDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override;
   virtual void drawTransparent(RenderParams& rp) override;
+  virtual void drawUI(RenderParams&) override {}
 
   void setHidden(bool bHidden) { _bHidden = bHidden; }
   bool getHidden() { return _bHidden; }

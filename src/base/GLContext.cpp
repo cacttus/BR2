@@ -17,32 +17,54 @@
 #include "../base/Logger.h" 
 #include "../base/SDLUtils.h" 
 #include "../base/EngineConfig.h" 
+#include "../base/Delta.h" 
+#include "../base/FpsMeter.h" 
 #include "../base/EngineConfigFile.h" 
 #include "../math/MathAll.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ParticleMaker.h"
 #include "../gfx/TexCache.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/Picker.h"
 #include "../gfx/Gui2d.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderSettings.h"
-#include "../gfx/GraphicsContext.h"
+#include "../base/GLContext.h"
 #include "../base/GraphicsWindow.h"
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
 
 namespace BR2 {
+std::shared_ptr<ModelCache> GLContext::_pModelCache = nullptr;
+std::shared_ptr<TexCache> GLContext::_pTexCache = nullptr;
+std::shared_ptr<ParticleMaker> GLContext::_pParticleMaker = nullptr;
+std::shared_ptr<ShaderManager> GLContext::_pShaderMaker = nullptr;
 
 GLContext::GLContext() {
+  _fClearR = 0.02f;
+  _fClearG = 0.02f;
+  _fClearB = 0.021f;
+  _fClearA = 1.0f;
 }
 GLContext::~GLContext() {
+  _pParticleMaker = nullptr;
+  _pTexCache = nullptr;
+  _pShaderMaker = nullptr;
+  _pPicker = nullptr;
+  _pModelCache = nullptr;
+  _pDelta = nullptr;
+  _pFpsMeter = nullptr;
+
   if (_context) {
     /* SDL_GL_MakeCurrent(0, NULL); *//* doesn't do anything */
     SDL_GL_DeleteContext(_context);
   }
 }
+/**
+*  @fn create()
+*  @brief Creates the GL context, returning true if the context succeeded, or false on failure.
+*/
 bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile) {
   _profile = profile;
   _pWindow = pMainWindow;
@@ -76,11 +98,11 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
 
   printHelpfulDebug();
 
-  if (!GraphicsContext::init()) {
-    Br2LogError("Failed to init context.");
-    SDL_GL_DeleteContext(_context);
-    return false;
-  }
+  Br2LogInfo("GLContext - Making Vtx Formats.");
+  makeVertexFormats();
+
+  Br2LogInfo("GLContext - Creating Managers.");
+  createManagers();
 
   if (!loadOpenGLFunctions()) {
     Br2LogError("Failed to load context.");
@@ -96,30 +118,51 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
 
   return true;
 }
-bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
-  //Enable runtime errors.
-  if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking() == true) {
-
-    bool e = OglErr::chkErrRt(getThis<GLContext>(), bDoNotBreak, doNotLog);
-    int32_t e = OperatingSystem::getError();
-    if (e != 0) {
-      Br2LogError("OS Error: " + e);
-    }
-    SDLUtils::checkSDLErr();
+bool GLContext::chkErr(bool bDoNotBreak, bool doNotLog) {
+  bool e = OglErr::chkErrRt(getThis<GLContext>(), bDoNotBreak, doNotLog);
+  int32_t os = OperatingSystem::getError();
+  if (e != 0) {
+    Br2LogError("OS Error: " + e);
   }
+  SDLUtils::checkSDLErr();
+  return e || os;
+}
+bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
+  if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking() == true) {
+    chkErr(bDoNotBreak, doNotLog);
+  }
+  return false;
 }
 bool GLContext::chkErrDbg(bool bDoNotBreak, bool doNotLog) {
 #ifdef _DEBUG
   if (Gu::getEngineConfig()->getEnableDebugErrorChecking() == true) {
-    bool e = OglErr::chkErrDbg(getThis<GLContext>(), bDoNotBreak, doNotLog);
-    int32_t e = OperatingSystem::getError();
-    if (e != 0) {
-      Br2LogError("OS Error: " + e);
-    }
-    SDLUtils::checkSDLErr();
+    chkErr(bDoNotBreak, doNotLog);
   }
 #endif
+  return false;
 }
+void GLContext::createManagers() {
+  Br2LogInfo("GLContext - Creating FpsMeter");
+  _pFpsMeter = std::make_shared<FpsMeter>();
+
+  Br2LogInfo("Delta");
+  _pDelta = std::make_shared<Delta>();
+
+  Br2LogInfo("GLContext - Creating Particles");
+  _pParticleMaker = std::make_shared<ParticleMaker>(getThis<GLContext>());
+
+  //This was commented out.  Why? 11/6
+  Br2LogInfo("GLContext - Creating ShaderMaker & base shaders");
+  _pShaderMaker = std::make_shared<ShaderManager>(getThis<GLContext>());
+  _pShaderMaker->initialize();
+
+  Br2LogInfo("GLContext - Creating Texture Cache");
+  _pTexCache = std::make_shared<TexCache>(getThis<GLContext>());
+
+  Br2LogInfo("GLContext - Model Cache");
+  _pModelCache = std::make_shared<ModelCache>(getThis<GLContext>());
+}
+
 bool GLContext::loadOpenGLFunctions() {
   bool bValid = true;
 
@@ -372,7 +415,7 @@ void GLContext::popDepthTest() {
 //#ifdef _WIN32
 //#ifdef _DEBUG
 //    //**INLINE MODE -- REMOVE FOR RELEASE
-//    getGraphicsContext()->getShaderMaker()->shaderBound(nullptr);
+//    getGLContext()->getShaderManager()->shaderBound(nullptr);
 //    glBindBuffer(GL_ARRAY_BUFFER, 0);
 //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 //    glBindVertexArray(0);
@@ -398,13 +441,10 @@ void GLContext::enableBlend(bool enable) {
   if (enable)glEnable(GL_BLEND);
   else glDisable(GL_BLEND);
 }
-
 void GLContext::enableDepthTest(bool enable) {
   if (enable)glEnable(GL_DEPTH_TEST);
   else glDisable(GL_DEPTH_TEST);
 }
-
-
 void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver) {
   char* tmp;
   string_t glver;
@@ -531,8 +571,6 @@ void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
   //SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, _pGlState->gl_accum_blue_size);
   //SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, _pGlState->gl_accum_alpha_size);
   //SDL_GL_SetAttribute(SDL_GL_STEREO, _pGlState->gl_stereo);
-
-
   //SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 0);//deprecated
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, prof._iMinVersion);
@@ -556,6 +594,99 @@ void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
 
   // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, _pGlState->gl_multisamplebuffers);
   // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
+}
+void GLContext::updateGlobalManagers() {
+  if (_pModelCache) {
+//    _pModelCache->update();
+  }
+  if (_pShaderMaker) {
+ //   _pShaderMaker->update();
+  }
+  if (_pTexCache) {
+  //  _pTexCache->update();
+  }
+  if (_pParticleMaker != nullptr) {
+    //  _pParticleMaker->update(getDelta()->get());
+  }
+
+}
+void GLContext::updateThisContext() {
+  if (_pDelta != nullptr) {
+    _pDelta->update();
+  }
+  if (_pFpsMeter != nullptr) {
+    _pFpsMeter->update();
+  }
+
+}
+void GLContext::makeVertexFormats() {
+  v_v3c4x2::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3c4x2");
+  v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+  v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+
+  v_v2c4x2::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v2c4x2");
+  v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+  v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+  v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+
+  v_v3n3x2::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3n3x2");
+  v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+  v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+
+  v_v3x2::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3x2");
+  v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+
+  v_v3n3::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3n3");
+  v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+
+  v_v3::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3");
+  v_v3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+
+  v_v2x2::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v2x2");
+  v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+  v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+
+  v_v2c4::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v2c4");
+  v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+  v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+
+  //v_v3c3i4i4::_pVertexFormat = new VertexFormat(this, "v_v3c3i4i4");
+  //v_v3c3i4i4::_pVertexFormat->addComponent(GL_FLOAT, 3, sizeof(vec3), VertexUserType::e::v3_01);
+  //v_v3c3i4i4::_pVertexFormat->addComponent(GL_FLOAT, 3, sizeof(vec3), VertexUserType::e::c3_01);
+  //v_v3c3i4i4::_pVertexFormat->addComponent(GL_INT, 4, sizeof(ivec4));
+  //v_v3c3i4i4::_pVertexFormat->addComponent(GL_INT, 4, sizeof(ivec4));
+
+  v_v3c3x2n3::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3c3x2n3");
+  v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::c3_01);
+  v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+
+  v_v3i2n3::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3i2n3");
+  v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::i2_01);
+  v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+
+  v_v3c4::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3c4");
+  v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+
+  v_v3c4x2n3::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_v3c4x2n3");
+  v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+  v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+
+  v_GuiVert::_pVertexFormat = std::make_shared<VertexFormat>(getThis<GLContext>(), "v_GuiVert");
+  v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_01);
+  v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_02);
+  v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_03);
+  v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+  v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::u2_01);
 }
 
 

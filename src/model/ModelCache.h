@@ -13,29 +13,24 @@
 namespace BR2 {
 /**
 *  @class ModelCache
-*  @brief Handles meshes, and caches meshes on the GPU.  Also imports meshes, and converts them to proprietary mesh format.
+*  @brief Handles models, caches meshes on the GPU, imports meshes, and converts model data to BR2 format.
 */
-class ModelCache : public VirtualMemory {
-    std::map<Hash32, std::shared_ptr<ModelData>> _mapModels;
-    //std::map<int32_t, std::shared_ptr<Armature>> _mapArmaturesOrdered;
-    //std::map<Hash32, std::shared_ptr<ActionGroup>> _mapActions;
-    string_t getFilePathForMobName(string_t mobName, bool bBinary);
-    std::shared_ptr<Material> _pDefaultMaterial = nullptr;
+class ModelCache : public GLFramework {
 public:
-    ModelCache();
-    virtual ~ModelCache() override;
-    void addSpec(std::shared_ptr<ModelData> ms);
-    std::shared_ptr<ModelData> getModelByName(string_t name);
-    std::shared_ptr<ModelData> getModelByName(Hash32 hashed);
-    //int32_t addArmature(std::shared_ptr<Armature> a);
-    //std::shared_ptr<Armature> getArmature(int32_t iArmId);
-    //Hash32 addAction(std::shared_ptr<ActionGroup> a);
-    //std::shared_ptr<ActionGroup> getAction(Hash32 actName);
-    std::shared_ptr<ModelData> getOrLoadModel(string_t mobFolderAndMobName, bool bUseBinary = true);
-    string_t debugPrintAllModelNames();
-    void convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName);
-    void unloadModel(string_t strMobName, bool bErrorIfFailed = true);
-    std::shared_ptr<Material> getDefaultMaterial() { return _pDefaultMaterial; }
+  ModelCache(std::shared_ptr<GLContext> ct);
+  virtual ~ModelCache() override;
+  void addSpec(std::shared_ptr<ModelData> ms);
+  std::shared_ptr<ModelData> getModelByName(string_t name);
+  std::shared_ptr<ModelData> getModelByName(Hash32 hashed);
+  std::shared_ptr<ModelData> getOrLoadModel(string_t mobFolderAndMobName, bool bUseBinary = true);
+  string_t debugPrintAllModelNames();
+  void convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName);
+  void unloadModel(string_t strMobName, bool bErrorIfFailed = true);
+  std::shared_ptr<Material> getDefaultMaterial() { return _pDefaultMaterial; }
+private:
+  std::map<Hash32, std::shared_ptr<ModelData>> _mapModels;
+  string_t getFilePathForMobName(string_t mobName, bool bBinary);
+  std::shared_ptr<Material> _pDefaultMaterial = nullptr;
 };
 
 }//ns BR2

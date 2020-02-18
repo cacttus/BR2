@@ -12,16 +12,18 @@
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
-//Pass Scene + RenderTarget to the RenderPipe
+
 class RenderTarget : public VirtualMemoryShared<RenderTarget> {
 public:
-  virtual int64_t getWidth() = 0;
-  virtual int64_t getHeight() = 0;
-  std::shared_ptr<GLContext> getGraphicsContext() { return _pContext; }
+  RenderTarget() {}
+  virtual ~RenderTarget() override {}
+
+  virtual int32_t getWidth() = 0;
+  virtual int32_t getHeight() = 0;
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
 protected:
   std::shared_ptr<GLContext> _pContext = nullptr;
 };
-
 /**
 *  @class GraphicsWindow
 *  @brief Operating system window that is the final render output.  All rendering-surface related data is contained in the window.
@@ -35,8 +37,8 @@ public:
   void step() ;
   void idle(int64_t us);
 
-  virtual int64_t getWidth() override;
-  virtual int64_t getHeight() override;
+  virtual int32_t getWidth() override;
+  virtual int32_t getHeight() override;
 
   SDL_Window* getSDLWindow() { return _pSDLWindow; }
   void printHelpfulDebug();
@@ -62,10 +64,10 @@ private:
 
   SDL_Window* _pSDLWindow = nullptr;
   bool _bFullscreen = false;
-  uint32_t _iLastWidth = 0;
-  uint32_t _iLastHeight = 0;
-  uint32_t _iFullscreenToggleWidth = 0;
-  uint32_t _iFullscreenToggleHeight = 0;
+  int32_t _iLastWidth = 0;
+  int32_t _iLastHeight = 0;
+  int32_t _iFullscreenToggleWidth = 0;
+  int32_t _iFullscreenToggleHeight = 0;
 
   bool _bIsMainWindow = false;
 

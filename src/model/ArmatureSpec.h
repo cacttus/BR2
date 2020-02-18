@@ -46,7 +46,7 @@
 //    mat4 _matObjectMatrix;  //Matrix of the armature in local object space.
 //public:
 //    ArmatureSpec();
-//    OVERRIDES ~ArmatureSpec() OVERRIDE;
+//    virtual ~ArmatureSpec() override;
 //
 //    FORCE_INLINE uint32_t getNumJoints(){ return _nTotalJoints; }
 //    FORCE_INLINE size_t numJointTrees(){ return _vecJointTrees.size(); }

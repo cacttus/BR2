@@ -15,7 +15,7 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h" 
 #include "../gfx/UiControls.h"
 #include "../gfx/MegaTex.h"
@@ -1198,8 +1198,8 @@ void UiElement::drawDebug() {
   //Debug Rendering
   if (Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping()) {
     //draws all children
-    getWindow()->getGraphicsContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getGraphicsContext());
+    getWindow()->getContext()->setLineWidth(1.0f);
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     {
@@ -1211,8 +1211,8 @@ void UiElement::drawDebug() {
 
   if (Gu::getRenderSettings()->getDebug()->getPickGui()) {
     //draws all children
-    getWindow()->getGraphicsContext()->setLineWidth(2.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getGraphicsContext());
+    getWindow()->getContext()->setLineWidth(2.0f);
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getContext());
     mi->setDefaultColor(vec4(1, 0, 1, 1));
     mi->begin(GL_LINES);
     {
@@ -3188,7 +3188,7 @@ void UiScreen::init() {
   minWidth() = maxWidth() = _designSize.getWidth() - 1;//right();
   minHeight() = maxHeight() = _designSize.getHeight() - 1;//bottom();
   setName("Gui2d");
-  _pTex = std::make_shared<MegaTex>(getWindow()->getGraphicsContext());
+  _pTex = std::make_shared<MegaTex>(getWindow()->getContext());
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
@@ -3274,7 +3274,7 @@ void UiScreen::drawForward() {
 }
 
 void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
-  rp.setShader(getWindow()->getShaderMaker()->getGuiShader());
+  rp.setShader(getWindow()->getShaderManager()->getGuiShader());
 
   //Zero useless params.
   getTex()->bind(TextureChannel::e::Channel0, rp.getShader());

@@ -73,7 +73,7 @@ public:
 
 
     ObjectFile(std::shared_ptr<GLContext> ctx);
-    OVERRIDES ~ObjectFile() OVERRIDE;
+    virtual ~ObjectFile() override;
 };
 
 }//ns BR2

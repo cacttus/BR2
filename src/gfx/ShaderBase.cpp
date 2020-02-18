@@ -6,7 +6,7 @@
 #include "../gfx/Atlas.h"
 #include "../gfx/ShaderUniform.h"
 #include "../gfx/ShaderAttribute.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/LightNode.h"
@@ -25,20 +25,19 @@
 #include "../world/RenderBucket.h"
 
 namespace BR2 {
-ShaderBase::ShaderBase(std::shared_ptr<GLContext> ct, string_t strName) {
-  _pContext = ct;
+ShaderBase::ShaderBase(std::shared_ptr<GLContext> ct, string_t strName) : GLFramework(ct) {
   setProgramName(strName);
 }
 ShaderBase::~ShaderBase() {
   deleteUniforms();
   deleteAttributes();
-  _pContext->glDeleteProgram(_glId);
+  getContext()->glDeleteProgram(_glId);
 }
 void ShaderBase::init() {
-  _glId = _pContext->glCreateProgram();
+  _glId = getContext()->glCreateProgram();
 }
 bool ShaderBase::confirmInit() {
-  return ShaderMaker::isGoodStatus(_eProgramStatus);
+  return ShaderManager::isGoodStatus(_eProgramStatus);
 }
 void ShaderBase::deleteUniforms() {
   //for (std::pair<Hash32, std::shared_ptr<ShaderUniform>> p : _vecUniforms) {
@@ -66,13 +65,13 @@ void ShaderBase::bind() {
   //This system is used to make sure we don't bind multiple
   //shaders in between invocations - thus disturbing the
   //bound uniform state
-  _pContext->getShaderMaker()->shaderBound(shared_from_this());
+  getContext()->getShaderManager()->shaderBound(getThis<ShaderBase>());
 }
 void ShaderBase::unbind() {
   //This system is used to make sure we don't bind multiple
   //shaders in between invocations - thus disturbing the
   //bound uniform state
-  _pContext->getShaderMaker()->shaderBound(nullptr);
+  getContext()->getShaderManager()->shaderBound(nullptr);
 }
 void ShaderBase::unbindAllUniforms() {
   //Ensures our uniforms are properly bound for each shader invocation
@@ -96,10 +95,10 @@ void ShaderBase::bindAllUniforms() {
 void ShaderBase::recreateProgram() {
   //20160608 to do this we must rebind all VAO datas to the correctg programs
   //20160505 apparently this is needed by the shader cache.
-  if (_pContext->glIsProgram(_glId)) {
-    _pContext->glDeleteProgram(_glId);
+  if (getContext()->glIsProgram(_glId)) {
+    getContext()->glDeleteProgram(_glId);
   }
-  _glId = _pContext->glCreateProgram();
+  _glId = getContext()->glCreateProgram();
 
   _eProgramStatus = ShaderStatus::e::CreateComplete;
 
@@ -112,11 +111,11 @@ void ShaderBase::getProgramErrorLog(std::vector<string_t>& __out_ errs) {
 
   // - Do your stuff
   GLsizei buf_size;
-  _pContext->glGetProgramiv(getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
+  getContext()->glGetProgramiv(getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
 
   char* log_out = (char*)GameMemoryManager::allocBlock(buf_size);
   GLsizei length_out;
-  _pContext->glGetProgramInfoLog(getGlId(), buf_size, &length_out, log_out);
+  getContext()->glGetProgramInfoLog(getGlId(), buf_size, &length_out, log_out);
 
   errs.clear();
   string_t tempStr;
@@ -208,8 +207,8 @@ void ShaderBase::verifyBound() {
     glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
     if (prog > 0 && getGlId() != prog) {
       string_t na, nb;
-      na = _pContext->getShaderMaker()->getShaderNameForId(prog);
-      nb = _pContext->getShaderMaker()->getShaderNameForId(getGlId());
+      na = getContext()->getShaderManager()->getShaderNameForId(prog);
+      nb = getContext()->getShaderManager()->getShaderNameForId(getGlId());
 
       Br2LogError("Invalid shader was bound. '" + na + "' was bound, but we expected '" + nb + "'.");
     }
@@ -259,29 +258,29 @@ void ShaderBase::draw(std::shared_ptr<MeshNode> mesh, int32_t iCount, GLenum eDr
 }
 void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenum eDrawMode) {
   std::shared_ptr<VaoShader> vs = nullptr;
-  RenderUtils::debugGetRenderState();
-  vs = vao->getOrCreateVaoForShader(shared_from_this());
-  RenderUtils::debugGetRenderState();
+  RenderUtils::debugGetRenderState(getContext());
+  vs = vao->getOrCreateVaoForShader(getThis<ShaderBase>());
+  RenderUtils::debugGetRenderState(getContext());
   draw(vs, iCount, eDrawMode);
 }
 void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDrawMode) {
   //Removing the loopstate
-  if (_pContext->getLoopState() != EngineLoopState::e::Render) {
+  if (getContext()->getLoopState() != EngineLoopState::e::Render) {
     Br2LogWarn("Called a draw() function when the engine wan't in a valid render loop.");
   }
   AssertOrThrow2(vao != nullptr);
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
-  RenderUtils::debugGetRenderState();
+  RenderUtils::debugGetRenderState(getContext());
   bind();
   {
-    _pContext->chkErrDbg();
+    getContext()->chkErrDbg();
     bindAllUniforms();
 
-    _pContext->chkErrDbg();
+    getContext()->chkErrDbg();
     verifyBound();
 
-    RenderUtils::debugGetRenderState();
+    RenderUtils::debugGetRenderState(getContext());
 
     vao->bind();
     {
@@ -289,10 +288,10 @@ void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDr
         iCount = (int32_t)vao->getIbo()->getNumElements();
       }
       if (iCount > 0) {
-        RenderUtils::debugGetRenderState();
+        RenderUtils::debugGetRenderState(getContext());
         //GL_TRIANGLES = 0x0004
         glDrawElements(eDrawMode, iCount, GL_UNSIGNED_INT, (GLvoid*)0);
-        _pContext->chkErrDbg();
+        getContext()->chkErrDbg();
       }
     }
     vao->unbind();
@@ -325,23 +324,23 @@ void ShaderBase::setLightUf(std::shared_ptr<LightManager> pLightManager) {
     lightPtr = (void*)1;//No lights - not an error, Prevent the render system from thinking this wasn't set.
   }
   lightCopySizeBytes = pLightManager->getDeferredParams()->_iPointLightCount * sizeof(GpuPointLight);
-  _pContext->getShaderMaker()->setUfBlock("UfPointLights", lightPtr, lightCopySizeBytes, false);
+  getContext()->getShaderManager()->setUfBlock("UfPointLights", lightPtr, lightCopySizeBytes, false);
 
   lightPtr = pLightManager->getGpuDirLightBuffer();
   if (lightPtr == nullptr) {
     lightPtr = (void*)1;//No lights - not an error, Prevent the render system from thinking this wasn't set.
   }
   lightCopySizeBytes = pLightManager->getDeferredParams()->_iDirLightCount * sizeof(GpuDirLight);
-  _pContext->getShaderMaker()->setUfBlock("UfDirLights", lightPtr, lightCopySizeBytes, false);
+  getContext()->getShaderManager()->setUfBlock("UfDirLights", lightPtr, lightCopySizeBytes, false);
 
   void* dpPtr = (void*)pLightManager->getDeferredParams().get();
   size_t dpSizeBytes = sizeof(GpuDeferredParams);
-  _pContext->getShaderMaker()->setUfBlock("UfDeferredParams", dpPtr, dpSizeBytes, false);
+  getContext()->getShaderManager()->setUfBlock("UfDeferredParams", dpPtr, dpSizeBytes, false);
 }
 
 void ShaderBase::beginRaster(int iOrthoWidth, int iOrthoHeight) {
-  _pContext->pushDepthTest();
-  _pContext->pushCullFace();
+  getContext()->pushDepthTest();
+  getContext()->pushCullFace();
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
@@ -353,20 +352,20 @@ void ShaderBase::beginRaster(int iOrthoWidth, int iOrthoHeight) {
   bind();
   setUf("_ufProj", &_mOrthoProj);
   // setUf("_ufView", &ident);
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 }
 void ShaderBase::endRaster() {
-  _pContext->popCullFace();
-  _pContext->popDepthTest();
-  _pContext->chkErrDbg();
+  getContext()->popCullFace();
+  getContext()->popDepthTest();
+  getContext()->chkErrDbg();
 }
 
 
 void ShaderBase::dispatchCompute() {
   dispatchCompute(
-    _pContext->getShaderMaker()->getMaxWorkGroupDims()[0],
-    _pContext->getShaderMaker()->getMaxWorkGroupDims()[1],
-    _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
+    getContext()->getShaderManager()->getMaxWorkGroupDims()[0],
+    getContext()->getShaderManager()->getMaxWorkGroupDims()[1],
+    getContext()->getShaderManager()->getMaxWorkGroupDims()[2]);
 }
 /**
 *  @fn
@@ -383,7 +382,7 @@ void ShaderBase::dispatchCompute(int32_t elementCount) {
 
     if (f < 1.0f) {
       // add the remaining to X
-      if (x + remainder < _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]) {
+      if (x + remainder < getContext()->getShaderManager()->getMaxWorkGroupDims()[0]) {
         x += remainder;
         remainder = 0;
         break;
@@ -411,26 +410,26 @@ void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync
 
   dispatchCompute(x, y, z);
   sync->createFence();
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
 }
 void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z) {
 
-  if (x > _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]) {
-    Br2ThrowException("[Compute] X group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[0]);
+  if (x > getContext()->getShaderManager()->getMaxWorkGroupDims()[0]) {
+    Br2ThrowException("[Compute] X group greater than max work group GPU can handle which is " + getContext()->getShaderManager()->getMaxWorkGroupDims()[0]);
   }
-  if (y > _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]) {
-    Br2ThrowException("[Compute] Y group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[1]);
+  if (y > getContext()->getShaderManager()->getMaxWorkGroupDims()[1]) {
+    Br2ThrowException("[Compute] Y group greater than max work group GPU can handle which is " + getContext()->getShaderManager()->getMaxWorkGroupDims()[1]);
   }
-  if (z > _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]) {
-    Br2ThrowException("[Compute] Z group greater than max work group GPU can handle which is " + _pContext->getShaderMaker()->getMaxWorkGroupDims()[2]);
+  if (z > getContext()->getShaderManager()->getMaxWorkGroupDims()[2]) {
+    Br2ThrowException("[Compute] Z group greater than max work group GPU can handle which is " + getContext()->getShaderManager()->getMaxWorkGroupDims()[2]);
   }
 
   if ((x == 0) || (y == 0) || (z == 0)) {
     Br2ThrowException("[Compute] Can't dispatch a compute with a zero dimension brosaurus. if need be use glDisbatchCompute(x,1,1)");
   }
 
-  _pContext->glDispatchCompute(x, y, z);
-  Gu::checkErrorsDbg();
+  getContext()->glDispatchCompute(x, y, z);
+  getContext()->chkErrDbg();
 
   // unbindAllSsbos();
 }
@@ -439,9 +438,9 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
 
   // Weight Data
   pDat->bindBuffer(GL_SHADER_STORAGE_BUFFER);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
 
-  blockIndex = _pContext->glGetProgramResourceIndex(getGlId(), GL_SHADER_STORAGE_BLOCK, shaderBufferName);
+  blockIndex = getContext()->glGetProgramResourceIndex(getGlId(), GL_SHADER_STORAGE_BLOCK, shaderBufferName);
 
   if (blockIndex < 0) {
     Br2LogError(
@@ -455,17 +454,17 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
   }
 
   AssertOrThrow2(blockIndex >= 0);
-  //Gu::checkErrorsDbg();
+  //getContext()->chkErrDbg();
 
-  _pContext->glShaderStorageBlockBinding(getGlId(), blockIndex, shaderSsboIndex);
-  //Gu::checkErrorsDbg();
+  getContext()->glShaderStorageBlockBinding(getGlId(), blockIndex, shaderSsboIndex);
+  //getContext()->chkErrDbg();
 
-  _pContext->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, shaderSsboIndex, pDat->getGlId());
-  //Gu::checkErrorsDbg();
+  getContext()->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, shaderSsboIndex, pDat->getGlId());
+  //getContext()->chkErrDbg();
 
   // - Cache max bound index.
-  //if ((int32_t)shaderSsboIndex > _pContext->getShaderMaker()->getMaxSsboBindingIndex()) {
-  //    _pContext->getShaderMaker()->getMaxSsboBindingIndex() = shaderSsboIndex;
+  //if ((int32_t)shaderSsboIndex > getContext()->getShaderManager()->getMaxSsboBindingIndex()) {
+  //    getContext()->getShaderManager()->getMaxSsboBindingIndex() = shaderSsboIndex;
   //}
 }
 

@@ -40,20 +40,20 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
   //    return;
   //}
 
-  RenderUtils::debugGetRenderState();
+  RenderUtils::debugGetRenderState(_pRenderPipe->getContext());
 
   _pRenderPipe->getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, _pRenderPipe->getBlittedDeferred()->getFramebufferId());
-  Gu::checkErrorsDbg();
+  _pRenderPipe->getContext()->chkErrDbg();
 
   glReadBuffer(GL_COLOR_ATTACHMENT4);
 
-  Gu::checkErrorsDbg();
+  _pRenderPipe->getContext()->chkErrDbg();
 
-  RenderUtils::debugGetRenderState();
+  RenderUtils::debugGetRenderState(_pRenderPipe->getContext());
 
   samplePixelId(x, y, _uiLastSelectedPixelId);
 
-  Gu::checkErrorsDbg();
+  _pRenderPipe->getContext()->chkErrDbg();
 
 #ifdef _DEBUG
   if (_uiLastSelectedPixelId > 0) {
@@ -62,11 +62,13 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
     }
   }
 
-  Gu::checkErrorsDbg();
+  _pRenderPipe->getContext()->chkErrDbg();
+
 #endif
 
   glReadBuffer(GL_NONE);
-  Gu::checkErrorsDbg();
+  _pRenderPipe->getContext()->chkErrDbg();
+
 
 }
 void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId) {
@@ -75,7 +77,7 @@ void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId) {
   //https://www.khronos.org/opengles/sdk/docs/man/xhtml/glReadPixels.xml
   //If the currently bound framebuffer is not the default framebuffer object, color components 
   // are read from the color image attached to the GL_COLOR_ATTACHMENT0 attachment point.
-  RenderUtils::debugGetRenderState();
+  RenderUtils::debugGetRenderState(_pRenderPipe->getContext());
 
   int32_t iHeight = _pRenderPipe->getBufferHeight();
 
@@ -87,7 +89,8 @@ void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId) {
     (GLvoid*)&pixel
   );
 
-  Gu::checkErrorsDbg();
+  _pRenderPipe->getContext()->chkErrDbg();
+
 
   selectedId = pixel;
 }

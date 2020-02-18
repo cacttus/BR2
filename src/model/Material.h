@@ -15,7 +15,6 @@
 #include "../math/MathAll.h"
 
 namespace BR2 {
-
 /**
 *  @class Material
 *  Material Lighting Parameters + Texture maps + Binding.
@@ -32,11 +31,12 @@ public:
   void deserialize(std::shared_ptr<BinaryFile> fb);
   void serialize(std::shared_ptr<BinaryFile> fb);
 };
-class Material : public VirtualMemory {
+class Material : public GLFramework {
 public:
-  Material() {}//deser
-  Material(string_t name);
-  OVERRIDES ~Material() OVERRIDE;
+  Material(std::shared_ptr<GLContext> ct);
+  Material(std::shared_ptr<GLContext> ct, string_t name);
+  virtual ~Material() override;
+
   string_t getName() { return _strName; }
 
   std::map<TextureChannel::e, std::shared_ptr<TextureSlot>>& getTextureSlots() { return _mapTextureBindings; }

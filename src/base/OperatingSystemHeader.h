@@ -331,7 +331,7 @@ enum class OSErrorCode {
 ////#endif
 //
 //// Syntax helper.
-////#define OVERRIDES virtual 
+////#define virtual virtual 
 ////#define MUST_OVERRIDE virtual
 ////#define VIRTUAL virtual
 ////#define SHADOWS

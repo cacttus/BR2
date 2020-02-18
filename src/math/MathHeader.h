@@ -10,8 +10,6 @@
 //No includes
 #include "../base/BaseHeader.h"
 namespace BR2 {
-//////////////////////////////////////////////////////////////////////////
-
 //define for float instead of double data structres
 #define _MATH_USE_FLOAT_VECTORS 1
 #define _MATH_USE_FLOAT_MATRICES 1
@@ -215,168 +213,165 @@ std::string operator+(const std::string& str, const mat4& rhs);
 // Collision Results
 class LineHit : public VirtualMemory {
 public:
-    float t;
-    LineHit() { }
-    OVERRIDES ~LineHit() OVERRIDE { }
+  float t;
+  LineHit() {}
+  virtual ~LineHit() override {}
 };
 class PlanePoint : public VirtualMemory {
 public:
-    float t;            // - Position along the vector that was hit
-    bool contained;
-    PlanePoint() { }
-    OVERRIDES ~PlanePoint() OVERRIDE { }
+  float t;            // - Position along the vector that was hit
+  bool contained;
+  PlanePoint() {}
+  virtual ~PlanePoint() override {}
 };
 class PlaneHit : public VirtualMemory {
 public:
-    float _fHitTime;
-    bool _bContained;
+  float _fHitTime;
+  bool _bContained;
 
-    FORCE_INLINE float getHitTime() { return _fHitTime; }
-    FORCE_INLINE bool getIsContained() { return _bContained; }
+  FORCE_INLINE float getHitTime() { return _fHitTime; }
+  FORCE_INLINE bool getIsContained() { return _bContained; }
 
-    void makeFar()
-    {
-        _bContained = false;
-        _fHitTime = FLT_MAX;
-    }
-    PlaneHit() { }
-    OVERRIDES ~PlaneHit() OVERRIDE { }
+  void makeFar() {
+    _bContained = false;
+    _fHitTime = FLT_MAX;
+  }
+  PlaneHit() {}
+  virtual ~PlaneHit() override {}
 };
 // for quads
 class DualPlaneHit : public VirtualMemory {
 public:
-    bool hit;                // True if either of the planes were hit.
-    PlaneHit planeHit0;
-    PlaneHit planeHit1;
-    DualPlaneHit() { }
-    OVERRIDES ~DualPlaneHit() OVERRIDE { }
+  bool hit;                // True if either of the planes were hit.
+  PlaneHit planeHit0;
+  PlaneHit planeHit1;
+  DualPlaneHit() {}
+  virtual ~DualPlaneHit() override {}
 };
-
-//////////////////////////////////////////////////////////////////////////
 
 class MathUtils : public VirtualMemory {
 public:
-    //juvenile sqrt optimization - simply removes the prolog
-    //approx 30% faster than sqrtf
-    //#ifdef BRO_X64
-    FORCE_INLINE STATIC bool isEven(int32_t i) {
-        return ((i % 2) == 0);
-    }
-    FORCE_INLINE STATIC bool isOdd(int32_t i) {
-        return ((i % 2) != 0);
-    }
-    FORCE_INLINE STATIC double broSqrt(double x) {
-        return std::sqrt(x);
-    }
-    FORCE_INLINE STATIC float broSqrt(float x) {
-        return std::sqrtf(x);
-    }
-    FORCE_INLINE STATIC float broRsqrt(float x) {
-        return 1.0f / std::sqrtf(x);
-    }
-    FORCE_INLINE STATIC double broRsqrt(double x) {
-        return 1.0 / std::sqrt(x);
-    }
-    FORCE_INLINE STATIC float sqrf(float x) {
-        return x*x;
-    }
-    FORCE_INLINE STATIC double sqrd(double x) {
-        return x*x;
-    }
-    //Round is defined in the new MSVC lib.
-    FORCE_INLINE STATIC float round(float in) {
-        return (in >= 0.5000f) ? (ceilf(in)) : (floorf(in));
-    }
-    FORCE_INLINE STATIC double round(double in) {
-        return (in >= 0.5000) ? (ceil(in)) : (floor(in));
-    }
-    //http://stackoverflow.com/questions/3237247/c-rounding-to-the-nths-place
-    FORCE_INLINE STATIC float round(float value, int precision) {
-        const int adjustment = (int)pow(10, precision);
-        return floorf(value*(adjustment)+0.5f) / adjustment;
-    }
-    FORCE_INLINE STATIC double round(double value, int precision) {
-        const int adjustment = (int)pow(10, precision);
-        return floor(value*(adjustment)+0.5f) / adjustment;
-    }
-    FORCE_INLINE STATIC float degToRad(float d) {
+  //juvenile sqrt optimization - simply removes the prolog
+  //approx 30% faster than sqrtf
+  //#ifdef BRO_X64
+  FORCE_INLINE STATIC bool isEven(int32_t i) {
+    return ((i % 2) == 0);
+  }
+  FORCE_INLINE STATIC bool isOdd(int32_t i) {
+    return ((i % 2) != 0);
+  }
+  FORCE_INLINE STATIC double broSqrt(double x) {
+    return std::sqrt(x);
+  }
+  FORCE_INLINE STATIC float broSqrt(float x) {
+    return std::sqrtf(x);
+  }
+  FORCE_INLINE STATIC float broRsqrt(float x) {
+    return 1.0f / std::sqrtf(x);
+  }
+  FORCE_INLINE STATIC double broRsqrt(double x) {
+    return 1.0 / std::sqrt(x);
+  }
+  FORCE_INLINE STATIC float sqrf(float x) {
+    return x * x;
+  }
+  FORCE_INLINE STATIC double sqrd(double x) {
+    return x * x;
+  }
+  //Round is defined in the new MSVC lib.
+  FORCE_INLINE STATIC float round(float in) {
+    return (in >= 0.5000f) ? (ceilf(in)) : (floorf(in));
+  }
+  FORCE_INLINE STATIC double round(double in) {
+    return (in >= 0.5000) ? (ceil(in)) : (floor(in));
+  }
+  //http://stackoverflow.com/questions/3237247/c-rounding-to-the-nths-place
+  FORCE_INLINE STATIC float round(float value, int precision) {
+    const int adjustment = (int)pow(10, precision);
+    return floorf(value * (adjustment)+0.5f) / adjustment;
+  }
+  FORCE_INLINE STATIC double round(double value, int precision) {
+    const int adjustment = (int)pow(10, precision);
+    return floor(value * (adjustment)+0.5f) / adjustment;
+  }
+  FORCE_INLINE STATIC float degToRad(float d) {
 
-        return (float)((d*(float)(M_PI)) / (float)180.0);
-    }
-    FORCE_INLINE STATIC float radToDeg(float d) {
-        return (float)((d*(float)(180.0)) / (float)M_PI);
-    }
-    FORCE_INLINE STATIC int32_t getNumberOfDigits(int32_t i) {
-        return i > 0 ? (int)log10f((float)i) + 1 : 1;
-    }
-    FORCE_INLINE STATIC uint32_t getNumberOfDigits(uint32_t i) {
-        return i > 0 ? (int)log10((double)i) + 1 : 1;
-    }
-    //btMin/max copied from bullet.
-    template <class T>
-    FORCE_INLINE STATIC const T& broMin(const T& a, const T& b) {
-        return a < b ? a : b;
-    }
-    template <class T>
-    FORCE_INLINE STATIC const T& broMax(const T& a, const T& b) {
-        return  a > b ? a : b;
-    }
-    template <class T>
-    FORCE_INLINE STATIC T& broMin(T& a, T& b) {
-        return a < b ? a : b;
-    }
-    template <class T>
-    FORCE_INLINE STATIC T& broMax(T& a, T& b) {
-        return  a > b ? a : b;
-    }
-    template <class T>
-    FORCE_INLINE STATIC T& broClamp(T& x, T& a, T& b) {
-        return broMin(b, broMax(x, a));
-    }
-    template <class T>
-    FORCE_INLINE STATIC const T& broClamp(const T& x, const T& a, const T& b) {
-        return broMin(b, broMax(x, a));
-    }
-    FORCE_INLINE STATIC float broSign(const float& val) {
-        return (float)((float)(0.0f < val) - (float)(val < 0.0f));
-    }
-    //#define clamp(x,_min,_max) (broMin((_max),broMax((x),(_min))))
-    FORCE_INLINE STATIC bool fuzzyEquals(float fa, float fb, float epsilon = FUZZY_EQUALS_EPSILON) {
-        float bm = fb - epsilon;
-        float bp = fb + epsilon;
-        return (fa > bm) && (fa < bp);
-    }
-    template <class T>
-    FORCE_INLINE STATIC const bool broInRangeInclusive(const T& x, const T& a, const T& b) {
-        return ((x >= a) && (x <= b));
-    }
-    template <class T>
-    FORCE_INLINE STATIC const bool broInRangeInclusive(const T& x, const T& a) {
-        return broInRangeInclusive(x, -a, a);
-    }
-    FORCE_INLINE STATIC float modulateGridValue(float f_value, float f_grid_unit, float f_1_grid_unit) {
-        // - Modulate the given value.
-        // Returns the fractional part of f for the given 
-        // f_1_grid_unit - 1/f_grid_unit    - supply this as an optimization
-        // f_grid_unit - size of grid cubes
-        // f_value - value to modulate.
-        f_value = fmodf(f_value, f_grid_unit)*f_1_grid_unit;
-        f_value += 1.0;
-        f_value = fmodf(f_value, 1.0f);// this works for -.25 etc.  see complaint comment below
-        return f_value;
-    }
-    FORCE_INLINE STATIC int signi(float x) {
-        //    Return -1, or 1 sign of x
-        int a = (int)(x >= 0);
-        return (a*(1)) + ((!a)*(-1));
-    }
-    FORCE_INLINE STATIC float signf(float fx) {
-        return (float)(signi(fx));
-    }
-    FORCE_INLINE STATIC float ceil_signed(float x) {
-        //  return ceil of a number in the given direction. 0.6 = 1.0, -0.6 = -1.0
-        return ((float)ceil(fabs(x))) * (signf(x));
-    }
+    return (float)((d * (float)(M_PI)) / (float)180.0);
+  }
+  FORCE_INLINE STATIC float radToDeg(float d) {
+    return (float)((d * (float)(180.0)) / (float)M_PI);
+  }
+  FORCE_INLINE STATIC int32_t getNumberOfDigits(int32_t i) {
+    return i > 0 ? (int)log10f((float)i) + 1 : 1;
+  }
+  FORCE_INLINE STATIC uint32_t getNumberOfDigits(uint32_t i) {
+    return i > 0 ? (int)log10((double)i) + 1 : 1;
+  }
+  //btMin/max copied from bullet.
+  template <class T>
+  FORCE_INLINE STATIC const T& broMin(const T& a, const T& b) {
+    return a < b ? a : b;
+  }
+  template <class T>
+  FORCE_INLINE STATIC const T& broMax(const T& a, const T& b) {
+    return  a > b ? a : b;
+  }
+  template <class T>
+  FORCE_INLINE STATIC T& broMin(T& a, T& b) {
+    return a < b ? a : b;
+  }
+  template <class T>
+  FORCE_INLINE STATIC T& broMax(T& a, T& b) {
+    return  a > b ? a : b;
+  }
+  template <class T>
+  FORCE_INLINE STATIC T& broClamp(T& x, T& a, T& b) {
+    return broMin(b, broMax(x, a));
+  }
+  template <class T>
+  FORCE_INLINE STATIC const T& broClamp(const T& x, const T& a, const T& b) {
+    return broMin(b, broMax(x, a));
+  }
+  FORCE_INLINE STATIC float broSign(const float& val) {
+    return (float)((float)(0.0f < val) - (float)(val < 0.0f));
+  }
+  //#define clamp(x,_min,_max) (broMin((_max),broMax((x),(_min))))
+  FORCE_INLINE STATIC bool fuzzyEquals(float fa, float fb, float epsilon = FUZZY_EQUALS_EPSILON) {
+    float bm = fb - epsilon;
+    float bp = fb + epsilon;
+    return (fa > bm) && (fa < bp);
+  }
+  template <class T>
+  FORCE_INLINE STATIC const bool broInRangeInclusive(const T& x, const T& a, const T& b) {
+    return ((x >= a) && (x <= b));
+  }
+  template <class T>
+  FORCE_INLINE STATIC const bool broInRangeInclusive(const T& x, const T& a) {
+    return broInRangeInclusive(x, -a, a);
+  }
+  FORCE_INLINE STATIC float modulateGridValue(float f_value, float f_grid_unit, float f_1_grid_unit) {
+    // - Modulate the given value.
+    // Returns the fractional part of f for the given 
+    // f_1_grid_unit - 1/f_grid_unit    - supply this as an optimization
+    // f_grid_unit - size of grid cubes
+    // f_value - value to modulate.
+    f_value = fmodf(f_value, f_grid_unit) * f_1_grid_unit;
+    f_value += 1.0;
+    f_value = fmodf(f_value, 1.0f);// this works for -.25 etc.  see complaint comment below
+    return f_value;
+  }
+  FORCE_INLINE STATIC int signi(float x) {
+    //    Return -1, or 1 sign of x
+    int a = (int)(x >= 0);
+    return (a * (1)) + ((!a) * (-1));
+  }
+  FORCE_INLINE STATIC float signf(float fx) {
+    return (float)(signi(fx));
+  }
+  FORCE_INLINE STATIC float ceil_signed(float x) {
+    //  return ceil of a number in the given direction. 0.6 = 1.0, -0.6 = -1.0
+    return ((float)ceil(fabs(x))) * (signf(x));
+  }
 
 };
 

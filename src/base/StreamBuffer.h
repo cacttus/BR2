@@ -13,9 +13,7 @@
 namespace BR2 {
 /**
 *  @class StreamBuffer
-*  @brief Stream Buffer.  Grows/shrinks.
-*    ADDS - To the end.
-*    REMOVES - From the beginning.
+*  @brief Stream Buffer.  A circular buffer which grows and shrinks by adding data to the end of the buffer, and removing data from the beginning.
 */
 class StreamBuffer : public IOBase<char> {
 public:

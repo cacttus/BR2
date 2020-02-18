@@ -30,14 +30,14 @@
 //
 //public:
 //    MeshSpecHierarchy();
-//    OVERRIDES ~MeshSpecHierarchy() OVERRIDE;
+//    virtual ~MeshSpecHierarchy() override;
 //
 //    //Get/Set
 //  //  VertexFormatType getVertexFormatType();
 //    void getAllMeshes(std::vector<MeshSpec*>& ); // - Get a flat vector of all the meshes in this hierarhcy.
 //    void setAutoGenerateContactBoxes(bool b){ _autoGenerateContactBoxes=b; }
 //    bool getAutoGenerateContactBoxes(){ return _autoGenerateContactBoxes; }
-//    OVERRIDES bool getIsHierarchyRoot() { return true; }
+//    virtual bool getIsHierarchyRoot() { return true; }
 //    //Methods
 //    void calculateMasterBoundBox();
 //    void mergeWith(MeshSpecHierarchy* eatThisOne);    // - Merges with the given hierarchy deleting it.

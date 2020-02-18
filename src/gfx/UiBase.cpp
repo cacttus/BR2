@@ -13,7 +13,7 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h" 
 #include "../base/Img32.h"
 #include "../gfx/UiBase.h"

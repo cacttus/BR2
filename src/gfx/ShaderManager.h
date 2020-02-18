@@ -10,14 +10,52 @@
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
-
 /**
 *  @class ShaderMaker
-*  @brief
-*
+*  @brief Stores and makes shaders.
 */
-class ShaderMaker : public VirtualMemory {
+class ShaderManager : public GLFramework {
   typedef std::map<std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase>> ShaderMap;
+public:
+  ShaderManager(std::shared_ptr<GLContext> ct);
+  virtual ~ShaderManager() override;
+  void initialize();
+
+  void shaderBound(std::shared_ptr<ShaderBase> sb);
+  std::shared_ptr<ShaderBase> makeShader(std::vector<string_t>& vecFiles);
+  std::shared_ptr<ShaderUniformBlock> getUniformBlockByName(string_t& blockName);
+
+  //std::shared_ptr<ShaderBase> getFlatShader_F() { return _pFlatShader; }
+  //std::shared_ptr<ShaderBase> getDiffuseShader_v3n3x2_d() { return _pDiffuseShader_v3n3x2_d; }
+  std::shared_ptr<ShaderBase> getDiffuseShader(std::shared_ptr<VertexFormat> fmt);
+  std::shared_ptr<ShaderBase> getGlassShader(std::shared_ptr<VertexFormat> fmt);
+  std::shared_ptr<ShaderBase> getFlatShader(std::shared_ptr<VertexFormat> fmt);
+  std::shared_ptr<ShaderBase> getShadowShader(std::shared_ptr<VertexFormat> fmt);
+
+  std::shared_ptr<ShaderBase> getImageShader_F() { return _pImageShader; }
+  //  std::shared_ptr<ShaderBase> getSkinComputeShader() { return _pSkinComputeShader; }
+  std::shared_ptr<ShaderBase> getNormalsShader_v3n3() { return _pNormalsShader; }
+  std::shared_ptr<ShaderBase> getShadowBlendShader() { return _pShadowBlendShader; }
+  std::shared_ptr<ShaderBase> getDepthOfFieldShader() { return _pDepthOfField; }
+  std::shared_ptr<ShaderBase> getSmoothGenShader() { return _pSmoothGen; }
+  //std::shared_ptr<ShaderBase> getShadowShader() { return _pShadowShader; }
+
+  std::shared_ptr<ShaderBase> getGuiShader() { return _pGuiShader; }
+
+  //std::shared_ptr<ShaderBase> getPickShader() { return _pPickShader; }
+  std::shared_ptr<ShaderBase> getShaderById(GLuint glId);
+  string_t getShaderNameForId(GLuint id);
+  std::shared_ptr<ShaderBase> getShaderByName(const string_t& name);
+
+  static bool isGoodStatus(ShaderStatus::e);
+  static string_t systemTypeToSTring(OpenGLShaderVarType::e eType);
+  std::shared_ptr<ShaderBase> getBound() { return _pBound; }
+  void setUfBlock(string_t name, void* value, size_t copySizeBytes, bool bIgnore = false);
+
+  int32_t* getMaxWorkGroupDims() { return _maxWorkGroupDims; }
+  int32_t getMaxBufferBindings() { return _maxBufferBindings; }
+  int32_t getMaxSsboBindingIndex() { return _iMaxSsboBindingIndex; }
+
 protected:
   std::shared_ptr<ShaderBase> _pBound = nullptr;
   std::map<Hash32, std::shared_ptr<ShaderBase>> _mapPrograms;
@@ -71,45 +109,7 @@ protected:
    //GLenum getGLShaderEnum(ShaderType::e type);
   void parseUniformBlocks(std::shared_ptr<ShaderBase> sb);
   std::shared_ptr<ShaderBase> getValidShaderForVertexType(ShaderMap& shaders, std::shared_ptr<VertexFormat> fmt);
-public:
-  ShaderMaker();
-  virtual ~ShaderMaker() override;
-  void initialize();
 
-  void shaderBound(std::shared_ptr<ShaderBase> sb);
-  std::shared_ptr<ShaderBase> makeShader(std::vector<string_t>& vecFiles);
-  std::shared_ptr<ShaderUniformBlock> getUniformBlockByName(string_t& blockName);
-
-  //std::shared_ptr<ShaderBase> getFlatShader_F() { return _pFlatShader; }
-  //std::shared_ptr<ShaderBase> getDiffuseShader_v3n3x2_d() { return _pDiffuseShader_v3n3x2_d; }
-  std::shared_ptr<ShaderBase> getDiffuseShader(std::shared_ptr<VertexFormat> fmt);
-  std::shared_ptr<ShaderBase> getGlassShader(std::shared_ptr<VertexFormat> fmt);
-  std::shared_ptr<ShaderBase> getFlatShader(std::shared_ptr<VertexFormat> fmt);
-  std::shared_ptr<ShaderBase> getShadowShader(std::shared_ptr<VertexFormat> fmt);
-
-  std::shared_ptr<ShaderBase> getImageShader_F() { return _pImageShader; }
-  //  std::shared_ptr<ShaderBase> getSkinComputeShader() { return _pSkinComputeShader; }
-  std::shared_ptr<ShaderBase> getNormalsShader_v3n3() { return _pNormalsShader; }
-  std::shared_ptr<ShaderBase> getShadowBlendShader() { return _pShadowBlendShader; }
-  std::shared_ptr<ShaderBase> getDepthOfFieldShader() { return _pDepthOfField; }
-  std::shared_ptr<ShaderBase> getSmoothGenShader() { return _pSmoothGen; }
-  //std::shared_ptr<ShaderBase> getShadowShader() { return _pShadowShader; }
-
-  std::shared_ptr<ShaderBase> getGuiShader() { return _pGuiShader; }
-
-  //std::shared_ptr<ShaderBase> getPickShader() { return _pPickShader; }
-  std::shared_ptr<ShaderBase> getShaderById(GLuint glId);
-  std::shared_ptr<ShaderBase> getShaderByName(const string_t& name);
-  string_t getShaderNameForId(GLuint id);
-
-  static bool isGoodStatus(ShaderStatus::e);
-  static string_t systemTypeToSTring(OpenGLShaderVarType::e eType);
-  std::shared_ptr<ShaderBase> getBound() { return _pBound; }
-  void setUfBlock(string_t name, void* value, size_t copySizeBytes, bool bIgnore = false);
-
-  int32_t* getMaxWorkGroupDims() { return _maxWorkGroupDims; }
-  int32_t getMaxBufferBindings() { return _maxBufferBindings; }
-  int32_t getMaxSsboBindingIndex() { return _iMaxSsboBindingIndex; }
 
 };
 

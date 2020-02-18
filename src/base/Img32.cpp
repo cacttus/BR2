@@ -862,7 +862,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
         voff.construct(x0, y0);
         vsiz.construct(x1 - x0, y1 - y0);
         img = master->copySubImageTo(voff, vsiz);
-        ret.push_back(img);//std::make_shared<Texture2DSpec>(img, Gu::getGraphicsContext(), eFilter));
+        ret.push_back(img);//std::make_shared<Texture2DSpec>(img, getContext(), eFilter));
       }
       else {
         //Invalid Patch segment

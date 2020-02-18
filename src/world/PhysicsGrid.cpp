@@ -4,7 +4,7 @@
 #include "../world/PhysicsManager.h"
 #include "../world/Manifold.h"
 #include "../world/PhysicsNode.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 
 
 namespace BR2 {

@@ -6,12 +6,12 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/LightManager.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/RenderParams.h"
 #include "../gfx/RenderSettings.h"
-#include "../gfx/GraphicsContext.h"
+#include "../base/GLContext.h"
 #include "../model/MeshUtils.h"
 #include "../model/MeshNode.h"
 #include "../model/UtilMeshInline.h"
@@ -25,7 +25,6 @@
 #include "../world/PhysicsGridAwareness.h"
 #include "../world/RenderBucket.h"
 #include "../world/Scene.h" 
-
 
 namespace BR2 {
 PhysicsManager::PhysicsManager(std::shared_ptr<Scene> ps, float fNodeWidth, float fNodeHeight, vec3& vUp,
@@ -45,8 +44,8 @@ PhysicsManager::~PhysicsManager() {
   //DEL_MEM(_pWorldBox);
   //DEL_MEM(_pAwareness);
 }
-std::shared_ptr<GraphicsContext> PhysicsManager::getContext() {
-  return _pScene->getWindow()->getGraphicsContext();
+std::shared_ptr<GLContext> PhysicsManager::getContext() {
+  return _pScene->getWindow()->getContext();
 }
 void PhysicsManager::getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ p1, bool bLimitByWorldBox) {
   //CreateCellsForVolume.

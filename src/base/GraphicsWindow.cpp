@@ -12,7 +12,7 @@
 #include "../base/FrameSync.h"
 
 #include "../gfx/RenderViewport.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ParticleMaker.h"
 #include "../gfx/LightManager.h"
@@ -52,10 +52,10 @@ void GraphicsWindow::idle(int64_t us) {
     _pScene->idle(us);
   }
 }
-int64_t GraphicsWindow::getWidth() {
+int32_t GraphicsWindow::getWidth() {
   return _iLastWidth;
 }
-int64_t GraphicsWindow::getHeight() {
+int32_t GraphicsWindow::getHeight() {
   return _iLastHeight;
 }
 void GraphicsWindow::createManagers() {
@@ -112,7 +112,7 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
     }
 
     //  //Unfortunately because SDL needs a window, we need to wait to create the context.
-    //  if (getGraphicsContext() == nullptr) {
+    //  if (getContext() == nullptr) {
     //    if (std::dynamic_pointer_cast<OpenGLApi>(getGraphicsApi())->makeContext(getThis<GraphicsWindow>(), profs[iProf]) != nullptr) {
     //      //Couldn't make context, try again.
     //      break;
@@ -123,7 +123,7 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
   _pFrameSync = std::make_shared<FrameSync>(_pContext);
 }
 void GraphicsWindow::makeCurrent() {
-  SDL_GL_MakeCurrent(getSDLWindow(), getGraphicsContext()->getSDLGLContext());
+  SDL_GL_MakeCurrent(getSDLWindow(), getContext()->getSDLGLContext());
 }
 void GraphicsWindow::getDrawableSize(int* w, int* h) {
   SDL_GL_GetDrawableSize(getSDLWindow(), w, h);
@@ -289,7 +289,6 @@ void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
   _pRenderPipe = std::make_shared<RenderPipeline>(getThis<GraphicsWindow>());
   _pRenderPipe->init(getWidth(), getHeight(), Gu::getAppPackage()->getEnvTextureFolder());
-
 }
 void GraphicsWindow::beginRender() {
 
@@ -311,7 +310,7 @@ void GraphicsWindow::endRender() {
 }
 void GraphicsWindow::step() {
   //Managers
-  _pContext->update();
+  _pContext->updateThisContext();
 
   beginRender();
   {
@@ -319,13 +318,13 @@ void GraphicsWindow::step() {
       toggleFullscreen();
     }
 
-    getGraphicsContext()->setLoopState(EngineLoopState::SyncBegin);
+    getContext()->setLoopState(EngineLoopState::SyncBegin);
     getFrameSync()->syncBegin();
     {
-      getGraphicsContext()->setLoopState(EngineLoopState::Update);
+      getContext()->setLoopState(EngineLoopState::Update);
       _pScene->update((float)_pContext->getDelta()->get());
 
-      getGraphicsContext()->setLoopState(EngineLoopState::Render);
+      getContext()->setLoopState(EngineLoopState::Render);
 
       //Main Render
       if (_pScene) {
@@ -334,14 +333,14 @@ void GraphicsWindow::step() {
         _pRenderPipe->renderScene(_pScene, pipebits);
       }
     }
-    getGraphicsContext()->setLoopState(EngineLoopState::SyncEnd);
+    getContext()->setLoopState(EngineLoopState::SyncEnd);
     getFrameSync()->syncEnd();
   }
 
   endRender();
 
   //Do not remove
-  getGraphicsContext()->chkErrRt();
+  getContext()->chkErrRt();
 
 }
 

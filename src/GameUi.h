@@ -4,9 +4,6 @@
 *    @date February 22, 2018
 *    @author MetalMario971
 *
-*    © 2018 
-*
-*
 */
 #pragma once
 #ifndef __GAMEUI_15193202931878573091_H__

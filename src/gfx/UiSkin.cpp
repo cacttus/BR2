@@ -14,7 +14,7 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h" 
 #include "../gfx/UiSkin.h"
 #include "../gfx/MegaTex.h"

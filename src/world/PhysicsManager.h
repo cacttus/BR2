@@ -32,7 +32,7 @@ public:
   void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
 
   void collectVisibleNodes(BvhCollectionParams* collectionParams);
-  std::shared_ptr<GraphicsContext> getContext();
+  std::shared_ptr<GLContext> getContext();
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();
   std::multimap<float, std::shared_ptr<SceneNode>>& getVisibleNodes();
   float getNodeWidth()const { return _fNodeWidth; }

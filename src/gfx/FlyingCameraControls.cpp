@@ -13,22 +13,22 @@
 
 namespace BR2 {
 FlyingCameraControls::FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene) : CSharpScript(nullptr), _pViewport(pv) {
-  Br2LogInfo("Creating Fly Camera.");
-  _pCamera = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
-  _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
-  updateCameraPosition();
-  _vMoveVel.construct(0, 0, 0);
-  _pCamera->setPos(vec3(30, 30, 30));
-  _pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-  _vCamNormal = _pCamera->getViewNormal();
-  _vCamPos = _pCamera->getPos();
 }
 FlyingCameraControls::~FlyingCameraControls() {
-
 }
 
 void FlyingCameraControls::start(){
+  std::shared_ptr<CameraNode> cam = getWorldObject<CameraNode>();
 
+  Br2LogInfo("Creating Fly Camera.");
+  cam = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
+  cam->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+  updateCameraPosition();
+  _vMoveVel.construct(0, 0, 0);
+  cam->setPos(vec3(30, 30, 30));
+  cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
+  _vCamNormal = cam->getViewNormal();
+  _vCamPos = cam->getPos();
 }
 void FlyingCameraControls::update(float delta) {
 }
@@ -182,9 +182,9 @@ void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
 
   updateCameraPosition();
 }
-void FlyingCameraControls::setActive() {
-  getWorldObject()->getScene()->setCamera(_pCamera);
-}
+//void FlyingCameraControls::setActive() {
+//  getWorldObject()->getScene()->setCamera(_pCamera);
+//}
 void FlyingCameraControls::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
   _vCamPos = pos;
   _vCamNormal = (lookat - pos).normalize();

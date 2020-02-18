@@ -23,7 +23,7 @@ namespace BR2 {
 #pragma error Error: Incorrect operating system, or undefined system.
 #endif
 
-#define OVERRIDES virtual 
+#define virtual virtual 
 #define MUST_OVERRIDE virtual
 #define VIRTUAL virtual
 #define SHADOWS

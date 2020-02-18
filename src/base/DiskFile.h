@@ -28,8 +28,8 @@ public:
   RetCode create(string_t szloc, size_t offset = 0);// - only create a file.
   bool checkEOF();
 
-  OVERRIDES RetCode read(char* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) OVERRIDE; // read into a buffer
-  OVERRIDES RetCode write(const char* bytes, size_t len, size_t offset = memsize_max) OVERRIDE;
+  virtual RetCode read(char* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) override; // read into a buffer
+  virtual RetCode write(const char* bytes, size_t len, size_t offset = memsize_max) override;
 
   RetCode openForRead(DiskLoc& szloc);
   //  RetCode read( char* buf, size_t len, size_t offset, size_t buflen=-1 ); // read from an offset into a buffer

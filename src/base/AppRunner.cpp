@@ -332,6 +332,8 @@ void AppRunner::runApplication() {
       if (handleSDLEvents() == true) {
         break;//SDL_QUIT
       }
+      
+      GLContext::updateGlobalManagers();
 
       Gu::getInputManager()->preUpdate();
 

@@ -30,7 +30,7 @@ void UtilMeshSphere::preDraw() {
     glPolygonMode(GL_FRONT, GL_LINE);
     glPolygonMode(GL_BACK, GL_LINE);
     glLineWidth(1.0f);
-    //Gu::getGraphicsContext()->setLineWidth(1.0f);
+    //getContext()->setLineWidth(1.0f);
   }
   //Gd::pushPolygonMode(GfxPolygonMode::PolygonModeWireframe);
 

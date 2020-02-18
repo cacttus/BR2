@@ -117,7 +117,7 @@ void LightManager::update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowF
 // - Main function to be called on the scene to set up all the lights.
 void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf) {
   //Physics world may not be instantiated.
-  if (_pScene->getPhysicsManager() != nullptr && _pScene->getPhysicsManager()->getRenderBucket() != nullptr) {
+  if (_pScene->getRenderBucket() != nullptr) {
     Perf::pushPerf();
     int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();
     int32_t nMaxDirLights = Gu::getConfig()->getMaxDirLights();
@@ -131,7 +131,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
 
     //Note: we collect all lights in the physics world collection step.
     //Update all lights that collide with the main frustum
-    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsManager()->getRenderBucket()->getPointLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getRenderBucket()->getPointLights()) {
       std::shared_ptr<LightNodePoint> pPointLight = p.second;
       if (_pGpuDeferredParams->_iPointLightCount < nMaxPointLights) {
         pPointLight->renderShadows(pf);
@@ -142,7 +142,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
         _vecGpuPointLights.push_back(*(pPointLight->getGpuLight().get()));
       }
     }
-    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsManager()->getRenderBucket()->getDirLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getRenderBucket()->getDirLights()) {
       std::shared_ptr<LightNodeDir> pDirLight = p.second;
       if (_pGpuDeferredParams->_iDirLightCount < nMaxDirLights) {
         pDirLight->renderShadows(mf);
@@ -154,14 +154,14 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
       }
     }
 
-    Gu::checkErrorsDbg();
+    _pContext->chkErrDbg();
     Perf::popPerf();
   }
 
 }
 std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
   std::vector<std::shared_ptr<ShadowBox>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getPhysicsManager()->getRenderBucket()->getPointLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getRenderBucket()->getPointLights()) {
     if (p.second->getShadowBox()) {
       sbs.push_back(p.second->getShadowBox());
     }
@@ -171,7 +171,7 @@ std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
 }
 std::vector<std::shared_ptr<ShadowFrustum>> LightManager::getAllShadowFrustums() {
   std::vector<std::shared_ptr<ShadowFrustum>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getPhysicsManager()->getRenderBucket()->getDirLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getRenderBucket()->getDirLights()) {
     if (p.second->getShadowFrustum()) {
       sbs.push_back(p.second->getShadowFrustum());
     }

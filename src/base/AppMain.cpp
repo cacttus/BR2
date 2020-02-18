@@ -88,16 +88,16 @@
 //  //  _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
 //  //}
 //  //std::shared_ptr<CameraNode> bc = Gu::getCamera();
-//  //getGraphicsContext()->getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-//  //getGraphicsContext()->getShaderMaker()->getImageShader_F()->beginRaster();
+//  //getContext()->getShaderManager()->getImageShader_F()->setCameraUf(bc);
+//  //getContext()->getShaderManager()->getImageShader_F()->beginRaster();
 //  //{
 //  //  //We want depth test so we can see what's in front.
 //  //  //glEnable(GL_DEPTH_TEST);
-//  //  _pTex->bind(TextureChannel::e::Channel0, getGraphicsContext()->getShaderMaker()->getImageShader_F());
+//  //  _pTex->bind(TextureChannel::e::Channel0, getContext()->getShaderManager()->getImageShader_F());
 //
-//  //  getGraphicsContext()->getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+//  //  getContext()->getShaderManager()->getImageShader_F()->draw(_pQuadMeshBackground);
 //  //}
-//  //getGraphicsContext()->getShaderMaker()->getImageShader_F()->endRaster();
+//  //getContext()->getShaderManager()->getImageShader_F()->endRaster();
 //
 //}
 //void AppMain::debugChangeRenderState() {

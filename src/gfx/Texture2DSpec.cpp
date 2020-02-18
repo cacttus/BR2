@@ -10,16 +10,16 @@
 #include "../gfx/RenderUtils.h"
 
 namespace BR2 {
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ct) {
+Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
 }
-Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV)  {
+Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : GLFramework(ctx) {
   load(loc, bRepeatU, bRepeatV);
 }
-Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter){
+Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : GLFramework(ctx) {
   create((unsigned char*)sp->getData()->ptr(), sp->getWidth(), sp->getHeight(), false, false, false);
   oglSetFilter(eFilter);
 }
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps)  {
+Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps) : GLFramework(ctx) {
   create(texData, iWidth, iHeight, mipmaps, false, false);
 }
 Texture2DSpec::~Texture2DSpec() {

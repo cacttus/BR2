@@ -85,10 +85,10 @@ void FramebufferBase::setDrawAllTargets() {
 }
 //void FramebufferBase::attachDepthTarget(std::shared_ptr<RenderTarget> pSharedDepth){
 //    if (pSharedDepth->getMsaaEnabled()) {
-//        Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, pSharedDepth->getGlTexId(), 0);
+//        getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, pSharedDepth->getGlTexId(), 0);
 //    }
 //    else {
-//        Gu::getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, pSharedDepth->getGlTexId(), 0);
+//        getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, pSharedDepth->getGlTexId(), 0);
 //    }
 //    getContext()->chkErrRt();
 //}

@@ -252,7 +252,7 @@ typedef enum {
  class ObjectButton;
  class VboData;
  class IboData;
- class ShaderMaker;
+ class ShaderManager;
  class ShaderCompiler;
  class ShaderCache;
  class ShaderUniform;
@@ -309,8 +309,6 @@ typedef enum {
  class MtFont;
  class ShaderCache;
  class GraphicsWindow;
- class GraphicsContext;
- class VulkanContext;
  class GLContext;
  class VaoDataGeneric;
  class MeshNode;

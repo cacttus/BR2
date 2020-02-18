@@ -30,10 +30,10 @@
 //    virtual ~UtilMeshPickBox() override ;
 //    
 //    void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
-//    OVERRIDES TRef(GlslShaderBase) getShader();
-//    OVERRIDES void generate();
-//    OVERRIDES void preDraw();
-//    OVERRIDES void postDraw();
+//    virtual TRef(GlslShaderBase) getShader();
+//    virtual void generate();
+//    virtual void preDraw();
+//    virtual void postDraw();
 //};
 //}//ns BR2
 //

@@ -135,7 +135,7 @@
     <ClInclude Include="src\gfx\ShaderBase.h" />
     <ClInclude Include="src\gfx\ShaderCache.h" />
     <ClInclude Include="src\gfx\ShaderCompiler.h" />
-    <ClInclude Include="src\gfx\ShaderMaker.h" />
+    <ClInclude Include="src\gfx\ShaderManager.h" />
     <ClInclude Include="src\gfx\ShaderSubProgram.h" />
     <ClInclude Include="src\gfx\ShaderUniform.h" />
     <ClInclude Include="src\gfx\ShadowBox.h" />
@@ -330,7 +330,7 @@
     <ClCompile Include="src\gfx\ShaderBase.cpp" />
     <ClCompile Include="src\gfx\ShaderCache.cpp" />
     <ClCompile Include="src\gfx\ShaderCompiler.cpp" />
-    <ClCompile Include="src\gfx\ShaderMaker.cpp" />
+    <ClCompile Include="src\gfx\ShaderManager.cpp" />
     <ClCompile Include="src\gfx\ShaderSubProgram.cpp" />
     <ClCompile Include="src\gfx\ShaderUniform.cpp" />
     <ClCompile Include="src\gfx\ShadowBox.cpp" />

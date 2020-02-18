@@ -1,7 +1,7 @@
 //#include "../base/Base.h"
 //
 //#include "../math/Random.h"
-//#include "../gfx/ParticleMaker.h"
+#include "../gfx/ParticleMaker.h"
 //#include "../gfx/Atlas.h"
 //#include "../gfx/QuadBufferMesh.h"
 //#include "../gfx/GpuQuad3.h"
@@ -10,16 +10,16 @@
 //#include "../gfx/FrustumBase.h"
 //#include "../gfx/RenderParams.h"
 //#include "../model/VertexFormat.h"
-//namespace BR2 {
+namespace BR2 {
 /////////////////////////////////////////////////////////////////////
-//ParticleMaker::ParticleMaker() {
-//}
-//ParticleMaker::~ParticleMaker() {
-//  //  DEL_MEM(_pQuadBufferMesh);
-////    DEL_MEM(_pParticleAtlas);
-//   // delete [] _pParticles;
-//   // DEL_MEM(_pPartyShader);
-//}
+ParticleMaker::ParticleMaker(std::shared_ptr<GLContext> ct) :GLFramework(ct) {
+}
+ParticleMaker::~ParticleMaker() {
+  //  DEL_MEM(_pQuadBufferMesh);
+//    DEL_MEM(_pParticleAtlas);
+   // delete [] _pParticles;
+   // DEL_MEM(_pPartyShader);
+}
 /////////////////////////////////////////////////////////////////////
 //void ParticleMaker::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles) {
 //  _iMaxParticles = iMaxParticles;
@@ -27,7 +27,7 @@
 //
 //  _pParticleAtlas = pAtlas;
 //
-//  _pQuadBufferMesh = std::make_unique<QuadBufferMesh>(Gu::getContext(), _iMaxParticles + 1);
+//  _pQuadBufferMesh = std::make_unique<QuadBufferMesh>(getContext(), _iMaxParticles + 1);
 //
 //  // _pPartyShader= new PartyShader(_pContext);
 //  // _pPartyShader>load("./data/party.vs", "./data/party.ps");
@@ -172,4 +172,4 @@
 //
 //
 //
-//}//ns BR2
+}//ns BR2

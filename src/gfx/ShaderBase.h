@@ -18,7 +18,7 @@ namespace BR2 {
 *  @class ShaderBase
 *  @brief Base class for creating OpenGL shaders.
 */
-class ShaderBase : public VirtualMemoryShared<ShaderBase> {
+class ShaderBase : public GLFramework {
 public:
   ShaderBase(std::shared_ptr<GLContext> ct, string_t strName);
   virtual ~ShaderBase() override;
@@ -75,7 +75,6 @@ private:
   std::set<ShaderAttribute*> _setAttributes;
   std::vector<string_t> _vecLinkErrors;
   std::vector<std::shared_ptr<ShaderSubProgram>> _vecSubPrograms;
-  std::shared_ptr<GLContext> _pContext = nullptr;
 
   void bindAllUniforms();
   void setShadowUf();

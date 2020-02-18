@@ -1,7 +1,7 @@
 #include "../base/Gu.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../base/GLContext.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshData.h"

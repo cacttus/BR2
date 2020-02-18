@@ -31,7 +31,7 @@ public:
   //static void setContext(std::shared_ptr<GLContext> ct);
   //static std::shared_ptr<GLContext> getContext();
 
-  // static std::shared_ptr<GLContext> getGraphicsContext();
+  // static std::shared_ptr<GLContext> getContext();
   static std::shared_ptr<RenderSettings> getRenderSettings();
 
   static std::shared_ptr<Sequencer> getSequencer();
@@ -118,7 +118,7 @@ private:
   static void loadConfig(const std::vector<std::string>& args);
 };
 
-#define Graphics Gu::getGraphicsContext()
+#define Graphics getContext()
 #define Config Gu::getEngineConfig()
 
 

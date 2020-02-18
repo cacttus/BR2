@@ -3,7 +3,7 @@
 #include "../base/GLContext.h"
 #include "../math/BitHacks.h"
 #include "../gfx/DeferredFramebuffer.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/BufferRenderTarget.h"

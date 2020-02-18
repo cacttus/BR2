@@ -6,13 +6,15 @@
 #include "../model/VaoDataGeneric.h"
 #include "../gfx/CameraNode.h" 
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 
 namespace BR2 {
-UtilMesh::UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<ShaderBase> ps, GLenum drawMode) :
-  _pShader(ps), _pContext(ctx), _pVertexFormat(fmt), _eDrawMode(drawMode) {
+UtilMesh::UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<ShaderBase> ps, GLenum drawMode) : GLFramework(ctx) {
+  _pShader = ps;
+  _pVertexFormat = fmt;
+  _eDrawMode = drawMode;
   _m4ModelMatrix = mat4::identity();
 }
 UtilMesh::~UtilMesh() {
@@ -25,7 +27,7 @@ void UtilMesh::copyFromSpec(std::shared_ptr<MeshData> sp) {
   _pIndexes = nullptr;
 
   _pVertexFormat = sp->getVertexFormat();
-  _pVaoData = std::make_shared<VaoDataGeneric>(_pContext, _pVertexFormat);
+  _pVaoData = std::make_shared<VaoDataGeneric>(getContext(), _pVertexFormat);
 
   sp->beginEdit();
   {
@@ -60,7 +62,7 @@ void UtilMesh::allocData(int nVerts, int nIndexes, std::shared_ptr<VertexFormat>
 }
 void UtilMesh::init() {
 
-  _pVaoData = std::make_shared<VaoDataGeneric>(_pContext, _pVertexFormat);
+  _pVaoData = std::make_shared<VaoDataGeneric>(getContext(), _pVertexFormat);
   generate();
 }
 void UtilMesh::copyBuffersToVao() {
@@ -68,7 +70,7 @@ void UtilMesh::copyBuffersToVao() {
 }
 std::shared_ptr<ShaderBase> UtilMesh::getShader() {
   if (_pShader == nullptr) {
-    return getGraphicsContext()->getShaderMaker()->getFlatShader(_pVertexFormat);
+    return getContext()->getShaderManager()->getFlatShader(_pVertexFormat);
   }
   return _pShader;
 }

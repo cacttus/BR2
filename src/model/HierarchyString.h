@@ -27,7 +27,7 @@ class HierarchyString : public VirtualMemory {
 public:
 
   HierarchyString(std::string h_str) { _h_str = h_str; }
-  OVERRIDES ~HierarchyString() OVERRIDE {
+  virtual ~HierarchyString() override {
     //Not sure if we keep the joints or what.
     //DELETE_VECTOR_ELEMENTS(_vecTx);
     _vecTx.resize(0);

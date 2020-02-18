@@ -2,7 +2,7 @@
 #include "../base/DiskFile.h"
 #include "../base/BinaryFile.h"
 #include "../gfx/ShaderCompiler.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderSubProgram.h"
 
 
@@ -102,7 +102,7 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, st
 
   // data = NULL;
 
-  if (pSubProg->getStatus() != ShaderStatus::e::Uninitialized && !ShaderMaker::isGoodStatus(pSubProg->getStatus())) {
+  if (pSubProg->getStatus() != ShaderStatus::e::Uninitialized && !ShaderManager::isGoodStatus(pSubProg->getStatus())) {
     pSubProg->getGeneralErrors().push_back("Subprogram was not in good state.");
     return;
   }

@@ -2,7 +2,7 @@
 #include "../base/Perf.h"
 #include "../math/MathAll.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderParams.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShadowBoxSide.h"
@@ -189,7 +189,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
     {
         _pVisibleSet->sortAndDrawMeshes(
             [](std::shared_ptr<VertexFormat> fmt) {
-            return getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
+            return getContext()->getShaderManager()->getShadowShader(fmt);
         },
             [&](std::shared_ptr<ShaderBase> sb) {
             sb->bind();
@@ -211,7 +211,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
             if (mn != nullptr) {
                 if (mn->getMeshData() != nullptr) {
                     std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
-                    sb = getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
+                    sb = getContext()->getShaderManager()->getShadowShader(fmt);
                     if(sb!=nullptr){
                         break;
 
@@ -231,7 +231,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
                 if (mn != nullptr) {
                     if (mn->getMeshData() != nullptr) {
                         std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
-                        std::shared_ptr<ShaderBase> sb = getGraphicsContext()->getShaderMaker()->getShadowShader(fmt);
+                        std::shared_ptr<ShaderBase> sb = getContext()->getShaderManager()->getShadowShader(fmt);
                         if (sb != nullptr) {
                             RenderParams rp;
                             rp.setShader(sb);
@@ -248,7 +248,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
     }
     pMasterBox->endRenderSide();
 
-    Gu::checkErrorsDbg();
+    getContext()->chkErrDbg();
     Perf::popPerf();
 }
 

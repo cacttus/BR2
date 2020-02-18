@@ -6,7 +6,7 @@
 #include "../base/GraphicsWindow.h"
 #include "../math/Random.h"
 #include "../gfx/GpuComputeSync.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderParams.h"
@@ -114,9 +114,9 @@ void MeshNode::createSkin() {
     }
   }
 
-  //  _pSkinCompute = new GpuComputeSync(Gu::getContext());
+  //  _pSkinCompute = new GpuComputeSync(getContext());
 
-  _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getContext(), sizeof(GpuAnimatedMeshSkinMatrix));
+  _pArmJoints = std::make_shared<ShaderStorageBuffer>(getContext(), sizeof(GpuAnimatedMeshSkinMatrix));
   _pArmJoints->allocate(iOrdCount);
   _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
 
@@ -179,7 +179,7 @@ void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& 
 
 void MeshNode::computeSkinFrame() {
   Perf::pushPerf();
-  Gu::getContext()->chkErrDbg();
+  getContext()->chkErrDbg();
   copyJointsToGpu();
   Perf::popPerf();
   // dispatchSkinCompute();
@@ -209,9 +209,9 @@ void MeshNode::copyJointsToGpu() {
   Perf::popPerf();
 }
 //void MeshNode::dispatchSkinCompute() {
-//    Gu::getContext()->chkErrDbg();
+//    getContext()->chkErrDbg();
 //
-//    std::shared_ptr<ShaderBase> pSkinShader = getContext()->getShaderMaker()->getSkinComputeShader();
+//    std::shared_ptr<ShaderBase> pSkinShader = getContext()->getShaderManager()->getSkinComputeShader();
 //    AssertOrThrow2(pSkinShader != nullptr);
 //    pSkinShader->bind();
 //
@@ -227,19 +227,19 @@ void MeshNode::copyJointsToGpu() {
 //    BINDIGN POINTS to the BLOCKS by calling glShaderSTorageBlockBinding
 //    */
 //    pSkinShader->bindSsbo(getMeshSpec()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
-//    //    Gu::checkErrorsDbg();
+//    //    getContext()->chkErrDbg();
 //    pSkinShader->bindSsbo(getMeshSpec()->getWeightsGpu(), "ssInJointWeights", 1);
-//    //   Gu::checkErrorsDbg();
+//    //   getContext()->chkErrDbg();
 //    pSkinShader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
-//    //   Gu::checkErrorsDbg();
+//    //   getContext()->chkErrDbg();
 //    pSkinShader->bindSsbo(getMeshSpec()->getVertsGpu(), "v_v3n3x2_buf_in", 3);
-//    //  Gu::checkErrorsDbg();
+//    //  getContext()->chkErrDbg();
 //    pSkinShader->bindSsbo(_pVaoData->getVbo(), "v_v3n3x2_buf_out", 4);
-//    // Gu::checkErrorsDbg();
+//    // getContext()->chkErrDbg();
 //
 //    pSkinShader->dispatchCompute(getMeshSpec()->getVertsGpu()->getNumElements(), 1, 1, _pSkinCompute);
 //    _pSkinCompute->isComputeComplete();
-//    //  Gu::checkErrorsDbg();
+//    //  getContext()->chkErrDbg();
 //      //while(!){
 //      //    int nnn=0;
 //      //    nnn++;
@@ -329,10 +329,10 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
   //Bind a new shader based on format.
   std::shared_ptr<ShaderBase> pShader;
   if (_pMaterial && _pMaterial->getEnableTransparency() && bTransparent) {
-    pShader = getContext()->getShaderMaker()->getGlassShader(meshFmt);
+    pShader = getContext()->getShaderManager()->getGlassShader(meshFmt);
   }
   else {
-    pShader = getContext()->getShaderMaker()->getDiffuseShader(meshFmt);
+    pShader = getContext()->getShaderManager()->getDiffuseShader(meshFmt);
   }
   if (pShader == nullptr) {
     Br2LogWarnCycle("Could not find shader for mesh '" + (getNodeData() ? getNodeData()->getName() : "") + "'");
@@ -370,9 +370,9 @@ void MeshNode::bindSkin(std::shared_ptr<ShaderBase> shader) {
       printDataToStdout();
     }
     shader->bindSsbo(getMeshData()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
-    //    Gu::checkErrorsDbg();
+    //    getContext()->chkErrDbg();
     shader->bindSsbo(getMeshData()->getWeightsGpu(), "ssInJointWeights", 1);
-    //   Gu::checkErrorsDbg();
+    //   getContext()->chkErrDbg();
     shader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
     wc = 1;
   }
@@ -386,7 +386,7 @@ void MeshNode::drawForward(RenderParams& rp) {
     std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
     mat4 mat_mesh;
     getMeshLocalMatrix(mat_mesh);
-    std::shared_ptr<ShaderBase> pShader = getContext()->getShaderMaker()->getNormalsShader_v3n3();
+    std::shared_ptr<ShaderBase> pShader = getContext()->getShaderManager()->getNormalsShader_v3n3();
     pShader->bind();
     rp.setShader(pShader);
     std::shared_ptr<CameraNode> bc = Gu::getCamera();

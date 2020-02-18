@@ -11,7 +11,7 @@
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/ForwardFramebuffer.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/BufferRenderTarget.h"
 #include "../gfx/LightManager.h"
@@ -76,7 +76,7 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
       {
         //**This shouldn't be an option ** 
         //Curetly we update lights at the same time as shadows.  this is erroneous
-          renderShadows(cam);
+        renderShadows(cam);
       }
       endRenderShadows();
       _pMsaaForward->clearFb();
@@ -140,7 +140,7 @@ void RenderPipeline::renderScene(std::shared_ptr<Scene> pScene, PipeBits pipeBit
 }
 
 std::shared_ptr<GLContext> RenderPipeline::getContext() {
-  return _pWindow->getGraphicsContext();
+  return _pWindow->getContext();
 }
 const vec4& RenderPipeline::getClear() {
   return _vClear;
@@ -192,11 +192,11 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
 
   //Shaders
   if (_pDeferredShader == nullptr) {
-    _pDeferredShader = getContext()->getShaderMaker()->makeShader(std::vector<string_t>{
+    _pDeferredShader = getContext()->getShaderManager()->makeShader(std::vector<string_t>{
       "d_v3x2_lighting.vs", "d_v3x2_lighting.ps" });
   }
   if (_pForwardShader == nullptr) {
-    _pForwardShader = getContext()->getShaderMaker()->makeShader(std::vector<string_t>{
+    _pForwardShader = getContext()->getShaderManager()->makeShader(std::vector<string_t>{
       "f_v3x2_fbo.vs", "f_v3x2_fbo.ps"});
   }
   getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -222,10 +222,10 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   _pDOFFbo = nullptr;
 
   //Base FBOs
-  _pBlittedDepth = FramebufferBase::createDepthTarget("depth blitted", iWidth, iHeight, 0, false, 0);
+  _pBlittedDepth = FramebufferBase::createDepthTarget(getContext(), "depth blitted", iWidth, iHeight, 0, false, 0);
 
   //Do not cahnge "Pick" name.  This is shared.
-  _pPick = FramebufferBase::createTarget("Pick", GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, iWidth, iHeight, RenderTargetType::e::Pick, 0, 0, 0);//4
+  _pPick = FramebufferBase::createTarget(getContext(), "Pick", GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, iWidth, iHeight, RenderTargetType::e::Pick, 0, 0, 0);//4
 
   _pBlittedDeferred = std::make_shared<DeferredFramebuffer>(getContext(), iWidth, iHeight, false, 0, _vClear);
   _pBlittedDeferred->init(iWidth, iHeight, _pBlittedDepth, _pPick);
@@ -238,7 +238,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   //Multisample
   if (_bMsaaEnabled == true) {
     Br2LogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
-    _pMsaaDepth = FramebufferBase::createDepthTarget("depth msaa", iWidth, iHeight, 0, _bMsaaEnabled, _nMsaaSamples);
+    _pMsaaDepth = FramebufferBase::createDepthTarget(getContext(), "depth msaa", iWidth, iHeight, 0, _bMsaaEnabled, _nMsaaSamples);
     _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(getContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
     _pMsaaDeferred->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
     _pMsaaForward = std::make_shared<ForwardFramebuffer>(getContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
@@ -284,7 +284,7 @@ void RenderPipeline::saveScreenshot() {
         for (std::shared_ptr<ShadowFrustum> sf : lightman->getAllShadowFrustums()) {
           string_t fname = FileSystem::getScreenshotFilename();
           fname = fname + "_shadow_frustum_" + iTarget + "_.png";
-          RenderUtils::saveTexture(std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
+          RenderUtils::saveTexture(getContext(), std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
           Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
           iTarget++;
         }
@@ -302,7 +302,7 @@ void RenderPipeline::saveScreenshot() {
             else if (i + GL_TEXTURE_CUBE_MAP_POSITIVE_X == GL_TEXTURE_CUBE_MAP_NEGATIVE_Z) side = "-Z";
 
             fname = fname + "_shadowbox_" + iTarget + "_side_" + side + "_.png";
-            RenderUtils::saveTexture(std::move(fname), sb->getGlTexId(), GL_TEXTURE_CUBE_MAP, i);
+            RenderUtils::saveTexture(getContext(), std::move(fname), sb->getGlTexId(), GL_TEXTURE_CUBE_MAP, i);
             Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
           }
           iTarget++;
@@ -312,14 +312,14 @@ void RenderPipeline::saveScreenshot() {
         for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedDeferred->getTargets()) {
           string_t fname = FileSystem::getScreenshotFilename();
           fname = fname + "_deferred_" + pTarget->getName() + "_" + iTarget++ + "_.png";
-          RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
+          RenderUtils::saveTexture(getContext(), std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
           Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         }
         iTarget = 0;
         for (std::shared_ptr<BufferRenderTarget> pTarget : _pBlittedForward->getTargets()) {
           string_t fname = FileSystem::getScreenshotFilename();
           fname = fname + "_forward_" + pTarget->getName() + "_" + iTarget++ + "_.png";
-          RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
+          RenderUtils::saveTexture(getContext(), std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
           Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         }
       }
@@ -330,7 +330,7 @@ void RenderPipeline::saveScreenshot() {
     else {
       //Basic Forward Screenshot
       string_t fname = FileSystem::getScreenshotFilename();
-      RenderUtils::saveTexture(std::move(fname), _pBlittedForward->getGlId(), GL_TEXTURE_2D);
+      RenderUtils::saveTexture(getContext(), std::move(fname), _pBlittedForward->getGlId(), GL_TEXTURE_2D);
       Br2LogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
     }
   }
@@ -441,7 +441,7 @@ void RenderPipeline::enableDisablePipeBits() {
 void RenderPipeline::blitDeferredRender(std::shared_ptr<Scene> pScene, std::shared_ptr<CameraNode> cam) {
   //NOTE:
   //Bind the forward framebuffer (_pBlittedForward is equal to _pMsaaForward if MSAA is disabled, if it isn't we call copyMSAASamples later)
-  getContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
+  getContext()->getShaderManager()->shaderBound(nullptr);//Unbind and reset shader.
   getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _pMsaaForward->getGlId());
   getContext()->chkErrDbg();
   getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -508,9 +508,10 @@ void RenderPipeline::setShadowUf() {
       }
       boxSamples.push_back(iTextureIndex);
       getContext()->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
-      Gu::checkErrorsDbg();
+      getContext()->chkErrDbg();
       glBindTexture(GL_TEXTURE_CUBE_MAP, texId);
-      Gu::checkErrorsDbg();
+      getContext()->chkErrDbg();
+
       iIndex++;
     }
     else {
@@ -518,7 +519,8 @@ void RenderPipeline::setShadowUf() {
     }
   }
   _pDeferredShader->setUf("_ufShadowBoxSamples", boxSamples.data(), (GLint)boxSamples.size());
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
+
 
   //We loop this way because we MUST fill all texture units in the GPU
   if (_pWindow->getScene()->getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowFrustums) {
@@ -536,9 +538,11 @@ void RenderPipeline::setShadowUf() {
       }
       frustSamples.push_back(iTextureIndex);
       getContext()->glActiveTexture(GL_TEXTURE0 + iTextureIndex);
-      Gu::checkErrorsDbg();
+      getContext()->chkErrDbg();
+
       glBindTexture(GL_TEXTURE_2D, texId);
-      Gu::checkErrorsDbg();
+      getContext()->chkErrDbg();
+
       iIndex++;
     }
     else {
@@ -546,7 +550,8 @@ void RenderPipeline::setShadowUf() {
     }
   }
   _pDeferredShader->setUf("_ufShadowFrustumSamples", frustSamples.data(), (GLint)frustSamples.size());
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
+
 
   //Set Mirror Environment map.
   if (_pEnvTex != nullptr) {
@@ -571,26 +576,26 @@ DOFFbo::DOFFbo(std::shared_ptr<GLContext> ct, int32_t w, int32_t h) {
 
   //Create Quick FBO
   getContext()->glGenFramebuffers(1, &_uiDOFFboId);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _uiDOFFboId);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, w);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, h);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   getContext()->glActiveTexture(GL_TEXTURE0);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
 
   //Texurev
   glGenTextures(1, &_uiTexId0);
   glBindTexture(GL_TEXTURE_2D, _uiTexId0);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, w, h, 0, GL_RGBA, GL_FLOAT, nullptr);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
   glBindTexture(GL_TEXTURE_2D, 0);
 
 }
@@ -601,7 +606,7 @@ DOFFbo::~DOFFbo() {
 void RenderPipeline::postProcessDOF(std::shared_ptr<CameraNode> pCam) {
   //If MSAA is enabled downsize the MSAA buffer to the _pBlittedForward buffer so we can execute post processing.
   //copyMsaaSamples(_pMsaaForward, _pBlittedForward);
-  std::shared_ptr<ShaderBase> pDofShader = getContext()->getShaderMaker()->getDepthOfFieldShader();
+  std::shared_ptr<ShaderBase> pDofShader = getContext()->getShaderManager()->getDepthOfFieldShader();
 
   if (pDofShader == nullptr || pCam == nullptr) {
     Br2LogErrorCycle("Error: nullptrs 348957");
@@ -642,7 +647,7 @@ void RenderPipeline::postProcessDOF(std::shared_ptr<CameraNode> pCam) {
     GLint horiz = 0;
     pDofShader->setUf("_ufHorizontal", (GLvoid*)&horiz);
     pDofShader->draw(_pQuadMesh);
-    Gu::checkErrorsDbg();
+    getContext()->chkErrDbg();
 
     //Draw Round 2
     //Bind rtColor back to the output.
@@ -660,10 +665,10 @@ void RenderPipeline::postProcessDOF(std::shared_ptr<CameraNode> pCam) {
     pDofShader->setUf("_ufHorizontal", (GLvoid*)&horiz);
     pDofShader->draw(_pQuadMesh);
 
-    Gu::checkErrorsDbg();
+    getContext()->chkErrDbg();
   }
   pDofShader->endRaster();
-  Gu::checkErrorsDbg();
+  getContext()->chkErrDbg();
 
   //Unbind / Delete
   getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -678,7 +683,7 @@ void RenderPipeline::endRenderAndBlit(std::shared_ptr<CameraNode> pCam) {
   //For now, we just pass camera, and assume the bound context is correct.
 
   //Do not bind anything - default framebuffer.
-  getContext()->getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
+  getContext()->getShaderManager()->shaderBound(nullptr);//Unbind and reset shader.
   getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
   getContext()->chkErrDbg();
   getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -798,7 +803,7 @@ std::shared_ptr<Img32> RenderPipeline::getResultAsImage() {
 
   std::shared_ptr<BufferRenderTarget> pTarget;
   pTarget = _pBlittedForward->getTargetByName("Color");
-  if (RenderUtils::getTextureDataFromGpu(bi, pTarget->getGlTexId(), GL_TEXTURE_2D) == true) {
+  if (RenderUtils::getTextureDataFromGpu(getContext(), bi, pTarget->getGlTexId(), GL_TEXTURE_2D) == true) {
     //the GL tex image must be flipped to show upriht/
   }
 

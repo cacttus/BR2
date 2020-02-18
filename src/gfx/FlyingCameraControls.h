@@ -27,7 +27,7 @@ public:
   void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
   void userZoom(float amt);
   void update(std::shared_ptr<InputManager> pInput, float dt);
-  void setActive();
+  //void setActive();
 
   void setPosAndLookAt(vec3&& pos, vec3&& lookat);
   std::shared_ptr<CameraNode> getCam() { return _pCamera; }

@@ -3,7 +3,7 @@
 #include "../base/AppBase.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
-#include "../gfx/GraphicsContext.h"
+#include "../base/GLContext.h"
 #include "../base/GLContext.h"
 #include "../base/GraphicsWindow.h"
 

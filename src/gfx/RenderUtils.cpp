@@ -4,7 +4,7 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderUniform.h"
 #include "../model/UtilMeshGrid.h"
 #include "../model/UtilMeshAxis.h"
@@ -24,7 +24,7 @@ void RenderUtils::setLineWidth(std::shared_ptr<GLContext> context, float width) 
 void RenderUtils::resetRenderState(std::shared_ptr<GLContext> context) {
   RenderUtils::debugGetRenderState(context);
   {
-    context->getShaderMaker()->shaderBound(nullptr);
+    context->getShaderManager()->shaderBound(nullptr);
 
     //glUseProgram(NULL);//DO NOT CALL - we must maintain consistency on the gpu driver
     context->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
@@ -403,11 +403,11 @@ void RenderUtils::debugGetBufferState(std::shared_ptr<GLContext> context, string
   appendLine(strState, Stz "Bound Shader Program Id:" + iCurrentProgram);
   context->chkErrRt();
 
-  if (context->getShaderMaker()->getBound() != nullptr) {
+  if (context->getShaderManager()->getBound() != nullptr) {
     appendLine(strState, Stz "Bound Shader Name:" +
-      context->getShaderMaker()->getBound()->getProgramName());
-    RenderUtils::debugPrintActiveUniforms(context, context->getShaderMaker()->getBound()->getGlId(), strState);
-    // appendLine(strState, context->getShaderMaker()->getBound()->debugGetUniformValues());
+      context->getShaderManager()->getBound()->getProgramName());
+    RenderUtils::debugPrintActiveUniforms(context, context->getShaderManager()->getBound()->getGlId(), strState);
+    // appendLine(strState, context->getShaderManager()->getBound()->debugGetUniformValues());
 
   }
   else {
@@ -497,9 +497,9 @@ void RenderUtils::debugPrintActiveUniforms(std::shared_ptr<GLContext> context, i
     }
 
     //Data
-    if (context->getShaderMaker()->getBound() != nullptr) {
+    if (context->getShaderManager()->getBound() != nullptr) {
 
-      std::shared_ptr<ShaderUniform> uf = context->getShaderMaker()->getBound()->getUniformByName(uniformName);
+      std::shared_ptr<ShaderUniform> uf = context->getShaderManager()->getBound()->getUniformByName(uniformName);
       if (uf != nullptr) {
         appendLine(strState, ("  Buffer Data:"));
         if (uf->hasBeenSet() == false) {
@@ -808,7 +808,7 @@ void RenderUtils::saveTexture(std::shared_ptr<GLContext> context, string_t&& str
     //the GL tex image must be flipped to show upriht/
     bi->flipV();
     Gu::saveImage(strLoc, bi);
-    Gu::checkErrorsRt();
+    context->chkErrRt();
   }
 }
 void RenderUtils::saveFramebufferAsPng(std::shared_ptr<GLContext> context, string_t&& strLoc, GLuint iFBOId) {
@@ -898,15 +898,15 @@ void RenderUtils::createDepthTexture(std::shared_ptr<GLContext> context, GLuint*
   getCompatibleDepthComponent(context, eRequestedDepth, [&](GLenum eDepth) {
     if (bMsaaEnabled) {
       context->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nMsaaSamples, eDepth, w, h, GL_TRUE);
-      Gu::checkErrorsRt();
+      context->chkErrRt();
     }
     else {
       glTexImage2D(texTarget, 0, eDepth, w, h, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-      Gu::checkErrorsRt();
+      context->chkErrRt();
     }
     });
 
-  Gu::checkErrorsRt();
+  context->chkErrRt();
 }
 
 GLenum RenderUtils::getSupportedDepthSize(std::shared_ptr<GLContext> context) {
@@ -1024,24 +1024,24 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<GLContext> context, std:
   }
 
   glGetIntegerv(eTexBinding, &iSavedTextureBinding);
-  Gu::checkErrorsRt();
+  context->chkErrRt();
 
   context->glActiveTexture(GL_TEXTURE0);
   glBindTexture(eTexTargetBase, iGLTexId);
-  Gu::checkErrorsRt();
+  context->chkErrRt();
   {
     GLint w, h;
     int32_t iMipLevel = 0;
     glGetTexLevelParameteriv(eTexTargetSide, iMipLevel, GL_TEXTURE_WIDTH, &w);
-    Gu::checkErrorsRt();
+    context->chkErrRt();
 
     glGetTexLevelParameteriv(eTexTargetSide, iMipLevel, GL_TEXTURE_HEIGHT, &h);
-    Gu::checkErrorsRt();
+    context->chkErrRt();
 
     //Adding for the pick texture test.
     GLenum internalFormat = 0;
     glGetTexLevelParameteriv(eTexTargetSide, iMipLevel, GL_TEXTURE_INTERNAL_FORMAT, (GLint*)&internalFormat);
-    Gu::checkErrorsRt();
+    context->chkErrRt();
 
     GLenum calculatedFmt = GL_RGBA;
     GLenum calculatedType = GL_UNSIGNED_BYTE;
@@ -1123,10 +1123,10 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<GLContext> context, std:
     //glGetTexImage(GL_TEXTURE_2D, iMipLevel, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)bi.getData()->ptr());
     image->init(w, h, nullptr);
     glGetTexImage(eTexTargetSide, iMipLevel, calculatedFmt, calculatedType, (GLvoid*)image->getData()->ptr());
-    Gu::checkErrorsRt();
+    context->chkErrRt();
   }
   glBindTexture(eTexTargetBase, iSavedTextureBinding);
-  Gu::checkErrorsRt();
+  context->chkErrRt();
 
 
   return true;

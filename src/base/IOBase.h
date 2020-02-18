@@ -79,8 +79,8 @@ public:
 
     Allocator<Tx>* getBuffer() { return _pBuffer; }
 
-    OVERRIDES RetCode write(const Tx* bytes, size_t len, size_t offset = memsize_max);
-    OVERRIDES RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max);
+    virtual RetCode write(const Tx* bytes, size_t len, size_t offset = memsize_max);
+    virtual RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max);
 };
 template < typename Tx >
 IOBufferBase<Tx>::IOBufferBase() :

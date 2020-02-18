@@ -13,7 +13,7 @@ namespace BR2 {
 /**
 *  @class ShaderUniform
 */
-class ShaderUniform : public VirtualMemory {
+class ShaderUniform : public GLFramework {
 public:
   ShaderUniform(std::shared_ptr<GLContext> ct, GLenum eType, GLint location, string_t name, size_t iArraySize);
   virtual ~ShaderUniform() override;
@@ -37,9 +37,6 @@ public:
     _dbgSetStackInfos.clear();
   }
 
-protected:
-  std::shared_ptr<GLContext> _pContext = nullptr;
-
 private:
   std::vector<string_t> _dbgSetStackInfos;
   string_t _strName;    //System name
@@ -62,7 +59,7 @@ private:
 };
 
 //These should be global and stored on ShaderMaker.
-class ShaderUniformBlock : public VirtualMemory {
+class ShaderUniformBlock : public GLFramework {
 public:
   ShaderUniformBlock(std::shared_ptr<GLContext> ct, string_t name, GLint iBlockIndex, GLint iBindingIndex, size_t iBufferByteSize);
   virtual ~ShaderUniformBlock() override;
@@ -72,7 +69,6 @@ public:
   void bindUniformFast();
 
 private:
-  std::shared_ptr<GLContext> _pContext = nullptr;
   GLint _iUboId = -2;
   GLint _iBlockIndex = -1;
   GLint _iBindingIndex = -1;

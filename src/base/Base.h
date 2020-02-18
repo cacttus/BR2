@@ -11,4 +11,4 @@
 #include "../base/Gu.h"
 #include "../base/Hash.h"
 #include "../base/ApplicationPackage.h"
-#include "../gfx/GraphicsContext.h"
+#include "../base/GLContext.h"

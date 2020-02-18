@@ -34,7 +34,7 @@ public:
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
   std::shared_ptr<ScriptManager> getScriptManager() { return _pScriptManager; }
   std::shared_ptr<GraphicsWindow> getWindow() { return _pGraphicsWindow; }
-  std::shared_ptr<GraphicsContext> getContext();
+  std::shared_ptr<GLContext> getContext();
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
   std::vector<std::shared_ptr<CameraNode>> getAllCameras();
   void setPhysicsWorld(std::shared_ptr<PhysicsManager> p) { _pPhysicsWorld = p; }

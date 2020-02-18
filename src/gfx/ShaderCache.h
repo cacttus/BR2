@@ -34,7 +34,7 @@ public:
 */
 class ShaderCache : public VirtualMemory {
 public:
-  ShaderCache( string_t cacheDir);
+  ShaderCache(std::shared_ptr<GLContext> ct, string_t cacheDir);
   virtual ~ShaderCache() override;
 
   void saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram);

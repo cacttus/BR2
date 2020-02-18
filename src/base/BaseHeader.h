@@ -73,6 +73,18 @@ Gu::showMessageBox(msg, "Error"); \
 __show=true; \
 }
 
+
+class GLFramework : public VirtualMemoryShared<GLFramework> {
+public:
+  GLFramework(std::shared_ptr<GLContext> ct) {
+    _pContext = ct;
+  }
+  virtual ~GLFramework() override { _pContext = nullptr; }
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
+private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
+};
+
 }//ns BR2
 
 

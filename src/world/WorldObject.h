@@ -23,6 +23,7 @@ public:
   WorldObject();
   virtual ~WorldObject() override;
 
+
   void addComponent(std::shared_ptr<Component> comp);
 private:
   std::vector<std::shared_ptr<Component>> _components;

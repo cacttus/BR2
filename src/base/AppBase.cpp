@@ -4,7 +4,7 @@
 //#include "../base/EngineConfig.h"
 //#include "../gfx/CameraNode.h"
 //#include "../gfx/RenderUtils.h"
-//#include "../gfx/GraphicsContext.h"
+//#include "../base/GLContext.h"
 //
 //
 //namespace Game {
@@ -21,7 +21,7 @@
 //void AppBase::drawDebug() {
 //  RenderUtils::drawGridShader(1, 1, 1, 20, 5.0f);
 //
-//    //if(Gu::getGraphicsContext() != nullptr && Gu::getCamera() != nullptr) {
+//    //if(getContext() != nullptr && Gu::getCamera() != nullptr) {
 //
 //    //    //RenderUtils::drawAxisShader(8.0f, 4.0f);
 //    //    //RenderUtils::drawWireSphereShader(4.0f, vec4(1, 1, 1, 1), 8, 8);

@@ -5,7 +5,7 @@
 #include "../app/AppBase.h"
 #include "../base/SoundCache.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/RenderParams.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShadowBox.h"

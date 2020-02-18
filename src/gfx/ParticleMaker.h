@@ -32,30 +32,30 @@ namespace BR2 {
 //*  @brief
 //*
 //*/
-class ParticleMaker : public VirtualMemoryShared<ParticleMaker> {
+class ParticleMaker : public GLFramework {
 public:
-//
-//  ParticleMaker();
-//  virtual ~ParticleMaker() override;
-//  void init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles);
-//  void make(vec3& pos, int count, Hash32 mat,
-//    float minSpeed, float maxSpeed,
-//    float minLife, float maxLife,
-//    float minScl, float maxScl,
-//    float minGrav, float maxGrav);
-//  void draw(std::shared_ptr<ShaderBase> pShader);
-//  void update(float delta);
-//
-//private:
-//  //const int _ciMaxParticles = 1024;
-//  int _iMaxParticles = 1024;
-//
-//  std::unique_ptr<Particle[]> _pParticles = nullptr;
-//  std::shared_ptr<Atlas> _pParticleAtlas = nullptr;
-//  std::unique_ptr<QuadBufferMesh> _pQuadBufferMesh = nullptr;
-//  // PartyShader* _pPartyShader = nullptr;
-//  string_t _sAtlasName;
-//  void reset();
+
+  ParticleMaker(std::shared_ptr<GLContext> ct);
+  virtual ~ParticleMaker() override;
+  //  void init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles);
+  //  void make(vec3& pos, int count, Hash32 mat,
+  //    float minSpeed, float maxSpeed,
+  //    float minLife, float maxLife,
+  //    float minScl, float maxScl,
+  //    float minGrav, float maxGrav);
+  //  void draw(std::shared_ptr<ShaderBase> pShader);
+  //  void update(float delta);
+  //
+  //private:
+  //  //const int _ciMaxParticles = 1024;
+  //  int _iMaxParticles = 1024;
+  //
+  //  std::unique_ptr<Particle[]> _pParticles = nullptr;
+  //  std::shared_ptr<Atlas> _pParticleAtlas = nullptr;
+  //  std::unique_ptr<QuadBufferMesh> _pQuadBufferMesh = nullptr;
+  //  // PartyShader* _pPartyShader = nullptr;
+  //  string_t _sAtlasName;
+  //  void reset();
 };
 
 }//ns BR2

@@ -4,7 +4,7 @@
 #include "../base/GLContext.h"
 #include "../base/EngineConfig.h"
 #include "../math/MathAll.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../model/GpuBufferData.h"
 
 namespace BR2 {

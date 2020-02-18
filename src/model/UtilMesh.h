@@ -17,20 +17,21 @@ namespace BR2 {
 *  @brief
 *
 */
-class UtilMesh : public VirtualMemory {
+class UtilMesh : public GLFramework {
 public:
   UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase> pShader, GLenum drawMode = GL_LINES);
   virtual ~UtilMesh() override;
 
-  void setModelMatrix(mat4& m) { _m4ModelMatrix = m; }
+  void init();
+  void draw();
 
   MUST_OVERRIDE void generate() = 0;
   MUST_OVERRIDE void preDraw() = 0;
   MUST_OVERRIDE void postDraw() = 0;
   virtual std::shared_ptr<ShaderBase> getShader();
 
-  void init();
-  void draw();
+  void setModelMatrix(mat4& m) { _m4ModelMatrix = m; }
+
 protected:
   void copyBuffersToVao();
   void copyFromSpec(std::shared_ptr<MeshData> sp);
@@ -41,10 +42,8 @@ protected:
   //void allocIndexes(int count);
   void allocData(int nVerts, int nIndexes, std::shared_ptr<VertexFormat> fmt);
   void cleanup();
-  std::shared_ptr<GLContext> getContext() { return _pContext; }
 
 private:
-  std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<VertexFormat> _pVertexFormat = nullptr;
   GLuint bdVerts, bdIndexes, vaoIndexes;
   bool _bInitialized = false;

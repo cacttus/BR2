@@ -15,9 +15,9 @@ namespace BR2 {
 *  @brief
 *
 */
-class SkyBox : public VirtualMemory {
+class SkyBox : public GLFramework {
 public:
-  SkyBox();
+  SkyBox(std::shared_ptr<GLContext> ctx);
   virtual ~SkyBox() override;
   void init(std::shared_ptr<Atlas> pAtlas, float fBoxDiagonalSize2, bool bDeferred);
   void draw(RenderParams& rp);

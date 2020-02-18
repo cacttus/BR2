@@ -1,7 +1,7 @@
 #include "../base/Base.h"
 #include "../base/AppBase.h"
 #include "../base/GLContext.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderSubProgram.h"
 #include "../gfx/ShaderCache.h"
@@ -13,18 +13,18 @@
 #include "../model/VertexFormat.h"
 
 namespace BR2 {
-ShaderMaker::ShaderMaker() {
+ShaderManager::ShaderManager(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
 }
-ShaderMaker::~ShaderMaker() {
+ShaderManager::~ShaderManager() {
   //Delete all Shaders
   //DELETE_VECTOR_ELEMENTS(_vecShaders);
   _pShaderCache = nullptr;
   _pShaderCompiler = nullptr;
 }
-void ShaderMaker::initialize() {
-  _pShaderCache = std::make_shared<ShaderCache>(Gu::getAppPackage()->getCacheDir());
+void ShaderManager::initialize() {
+  _pShaderCache = std::make_shared<ShaderCache>(Gu::getAppPackage()->getCacheFolder());
   //We might want to verify, that the graphics context here can in fact share shader objects without mucking-up context state.
-  _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getContext(), Gu::getAppPackage()->getShadersFolder());
+  _pShaderCompiler = std::make_shared<ShaderCompiler>(getContext(), Gu::getAppPackage()->getShadersFolder());
 
   //Single VT shaders
   _pImageShader = makeShader(std::vector<string_t> { "f_v3x2_diffuse.vs", "f_v3x2_diffuse.ps" });
@@ -55,19 +55,19 @@ void ShaderMaker::initialize() {
   //////////////////////////////////////////////////////////////////////////
   getComputeLimits();
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getDiffuseShader(std::shared_ptr<VertexFormat> reqType) {
+std::shared_ptr<ShaderBase> ShaderManager::getDiffuseShader(std::shared_ptr<VertexFormat> reqType) {
   return getValidShaderForVertexType(_pDiffuseShaders, reqType);
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getGlassShader(std::shared_ptr<VertexFormat> reqType) {
+std::shared_ptr<ShaderBase> ShaderManager::getGlassShader(std::shared_ptr<VertexFormat> reqType) {
   return getValidShaderForVertexType(_pGlassShaders, reqType);
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getShadowShader(std::shared_ptr<VertexFormat> reqType) {
+std::shared_ptr<ShaderBase> ShaderManager::getShadowShader(std::shared_ptr<VertexFormat> reqType) {
   return getValidShaderForVertexType(_pShadowShaders, reqType);
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getFlatShader(std::shared_ptr<VertexFormat> reqType) {
+std::shared_ptr<ShaderBase> ShaderManager::getFlatShader(std::shared_ptr<VertexFormat> reqType) {
   return getValidShaderForVertexType(_pFlatShaders, reqType);
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getValidShaderForVertexType(ShaderMap& shaders, std::shared_ptr<VertexFormat> reqType) {
+std::shared_ptr<ShaderBase> ShaderManager::getValidShaderForVertexType(ShaderMap& shaders, std::shared_ptr<VertexFormat> reqType) {
   std::shared_ptr<VertexFormat> match = nullptr;
   int n = 0;
   for (std::pair<std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase>> p : shaders) {
@@ -84,10 +84,10 @@ std::shared_ptr<ShaderBase> ShaderMaker::getValidShaderForVertexType(ShaderMap& 
   }
   return shaders.find(match)->second;
 }
-void ShaderMaker::getComputeLimits() {
-  Gu::getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &_maxWorkGroupDims[0]);
-  Gu::getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &_maxWorkGroupDims[1]);
-  Gu::getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &_maxWorkGroupDims[2]);
+void ShaderManager::getComputeLimits() {
+  getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &_maxWorkGroupDims[0]);
+  getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &_maxWorkGroupDims[1]);
+  getContext()->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &_maxWorkGroupDims[2]);
 
   GLint maxBindings;
   glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &maxBindings);
@@ -98,7 +98,7 @@ void ShaderMaker::getComputeLimits() {
   _maxBufferBindings = maxBindings;
 }
 
-std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<string_t>& vecFiles) {
+std::shared_ptr<ShaderBase> ShaderManager::makeShader(std::vector<string_t>& vecFiles) {
   std::vector<std::shared_ptr<ShaderSubProgram>> vecSubProgs;
   std::shared_ptr<ShaderBase> pShader = nullptr;
 
@@ -160,7 +160,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeShader(std::vector<string_t>& vecFi
 
   return pShader;
 }
-void ShaderMaker::deleteShader(std::shared_ptr<ShaderBase> ps) {
+void ShaderManager::deleteShader(std::shared_ptr<ShaderBase> ps) {
   if (ps != nullptr) {
     std::map<Hash32, std::shared_ptr<ShaderBase>>::iterator it = _mapPrograms.find(ps->getNameHashed());
     if (it != _mapPrograms.end()) {
@@ -169,13 +169,13 @@ void ShaderMaker::deleteShader(std::shared_ptr<ShaderBase> ps) {
     // delete ps;
   }
 }
-void ShaderMaker::fullyQualifyFiles(std::vector<string_t>& vecFiles) {
+void ShaderManager::fullyQualifyFiles(std::vector<string_t>& vecFiles) {
   for (size_t iFile = 0; iFile < vecFiles.size(); iFile++) { // strFile : vecFiles) {
     string_t qual = FileSystem::combinePath(Gu::getAppPackage()->getShadersFolder(), vecFiles[iFile]);
     vecFiles[iFile] = qual;
   }
 }
-string_t ShaderMaker::getShaderNameFromFileNames(std::vector<string_t>& vecFiles) {
+string_t ShaderManager::getShaderNameFromFileNames(std::vector<string_t>& vecFiles) {
   string_t progName = StringUtil::empty();
 
   for (size_t iFile = 0; iFile < vecFiles.size(); ++iFile) {
@@ -190,7 +190,7 @@ string_t ShaderMaker::getShaderNameFromFileNames(std::vector<string_t>& vecFiles
 
   return progName;
 }
-string_t ShaderMaker::getGeneralErrorsAsString(bool clear) {
+string_t ShaderManager::getGeneralErrorsAsString(bool clear) {
   if (_vecGeneralErrors.size() == 0) {
     return "";
   }
@@ -209,7 +209,7 @@ string_t ShaderMaker::getGeneralErrorsAsString(bool clear) {
   }
   return ret;
 }
-bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>& vecSubProgs, std::shared_ptr<ShaderBase> sp) {
+bool ShaderManager::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>& vecSubProgs, std::shared_ptr<ShaderBase> sp) {
 
   string_t errStr = getGeneralErrorsAsString();
 
@@ -256,7 +256,7 @@ bool ShaderMaker::checkForErrors(std::vector<std::shared_ptr<ShaderSubProgram>>&
 
 }
 
-void ShaderMaker::loadSubPrograms(std::vector<string_t>& vecFiles, std::vector<std::shared_ptr<ShaderSubProgram>>& __out_ subProgs) {
+void ShaderManager::loadSubPrograms(std::vector<string_t>& vecFiles, std::vector<std::shared_ptr<ShaderSubProgram>>& __out_ subProgs) {
   std::vector<std::shared_ptr<ShaderSubProgram>> vx;
   std::shared_ptr<ShaderSubProgram> pSubProg;
 
@@ -275,7 +275,7 @@ void ShaderMaker::loadSubPrograms(std::vector<string_t>& vecFiles, std::vector<s
     }
   }
 }
-void ShaderMaker::removeDuplicateSourceFiles(std::vector<string_t>& vecFiles) {
+void ShaderManager::removeDuplicateSourceFiles(std::vector<string_t>& vecFiles) {
   for (int i = 0; i < (int)vecFiles.size(); ++i) {
     for (int j = i + 1; j < (int)vecFiles.size(); ++j) {
       if (StringUtil::lowercase(vecFiles[j]) == StringUtil::lowercase(vecFiles[i])) {
@@ -286,7 +286,7 @@ void ShaderMaker::removeDuplicateSourceFiles(std::vector<string_t>& vecFiles) {
     }
   }
 }
-std::shared_ptr<ShaderSubProgram> ShaderMaker::getShaderSubProgramByLocation(DiskLoc loc) {
+std::shared_ptr<ShaderSubProgram> ShaderManager::getShaderSubProgramByLocation(DiskLoc loc) {
   for (std::shared_ptr<ShaderSubProgram> sp : _setSubPrograms) {
     if (StringUtil::equalsi(sp->getSourceLocation(), loc)) {
       return sp;
@@ -294,7 +294,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::getShaderSubProgramByLocation(Dis
   }
   return nullptr;
 }
-std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc loc) {
+std::shared_ptr<ShaderSubProgram> ShaderManager::preloadShaderSubProgram(DiskLoc loc) {
   // - See if we've already loaded the program.  If we have then compile it.
   std::shared_ptr<ShaderSubProgram> pSubProg;
 
@@ -303,7 +303,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
   if (pSubProg == nullptr) {
     //Adds subprog to map.
     pSubProg = std::make_shared<ShaderSubProgram>();
-    pSubProg->init(Gu::getContext(), loc, ShaderType::e::st_use_extension);
+    pSubProg->init(getContext(), loc, ShaderType::e::st_use_extension);
 
     _setSubPrograms.insert(pSubProg);
   }
@@ -325,7 +325,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
 
   return pSubProg;
 }
-void ShaderMaker::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pShader) {
+void ShaderManager::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pShader) {
   // - Next compile it
   _pShaderCompiler->compile(pShader);
   if (pShader->getStatus() != ShaderStatus::Compiled) {
@@ -334,7 +334,7 @@ void ShaderMaker::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pSha
   }
 
 }
-std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr<ShaderSubProgram>>& vecpsp, string_t& programName) {
+std::shared_ptr<ShaderBase> ShaderManager::makeProgram(std::vector<std::shared_ptr<ShaderSubProgram>>& vecpsp, string_t& programName) {
   std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(programName);
   pProgram->init(); //The program must be constructed for the shader cache.
 
@@ -368,7 +368,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
 
   for (std::shared_ptr<ShaderSubProgram> subProg : pProgram->getSubPrograms()) {//size_t i = 0; i<pProgram->_vecSubPrograms.size(); ++i) {
-    Gu::getContext()->glAttachShader(pProgram->getGlId(), subProg->getGlId());
+    getContext()->glAttachShader(pProgram->getGlId(), subProg->getGlId());
     GLuint err = glGetError();
 
     if (err != GL_NO_ERROR) {
@@ -391,7 +391,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
   }
 
   // - Link the program.
-  Gu::getContext()->glLinkProgram(pProgram->getGlId());
+  getContext()->glLinkProgram(pProgram->getGlId());
   pProgram->setProgramStatus(ShaderStatus::Linked);
 
   // - Add all remaining errors from the GL
@@ -404,7 +404,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
   // - Try to use it to see if we get an error, if so exit out.
   //Do not use Gd::BindSHader here -- this might fail.
-  Gu::getContext()->glUseProgram(pProgram->getGlId());
+  getContext()->glUseProgram(pProgram->getGlId());
   GLenum ex = glGetError();
   if (ex != GL_NO_ERROR) {
     string_t str = "";
@@ -444,12 +444,12 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
   return pProgram;
 }
-bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp) {
+bool ShaderManager::validateShadersForProgram(std::shared_ptr<ShaderBase> psp) {
   bool retVal = true;
 
   for (std::shared_ptr<ShaderSubProgram> subProg : psp->getSubPrograms()) {
     if (!validateSubProgram(subProg, psp)) {
-      Gu::getContext()->glDetachShader(psp->getGlId(), subProg->getGlId());
+      getContext()->glDetachShader(psp->getGlId(), subProg->getGlId());
       psp->getLinkErrors().push_back(Stz
         "[Link] Failed to validate sub-program " + subProg->getSourceLocation()
       );
@@ -467,7 +467,7 @@ bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp) {
 *  @return True if the program is valid.
 *  @return False if one or more shaders are invalid, or something else.
 */
-bool ShaderMaker::validateSubProgram(std::shared_ptr<ShaderSubProgram> prog, std::shared_ptr<ShaderBase> psp) {
+bool ShaderManager::validateSubProgram(std::shared_ptr<ShaderSubProgram> prog, std::shared_ptr<ShaderBase> psp) {
   if (prog == nullptr) {
     psp->getLinkErrors().push_back(Stz " Program was null: " + prog->getSourceLocation());
     return false;
@@ -481,16 +481,16 @@ bool ShaderMaker::validateSubProgram(std::shared_ptr<ShaderSubProgram> prog, std
 
   return true;
 }
-void ShaderMaker::getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vector<string_t>& __out_ outLog) {
+void ShaderManager::getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vector<string_t>& __out_ outLog) {
   AssertOrThrow2(psp != NULL);
 
   // - Do your stuff
   GLsizei buf_size;
-  Gu::getContext()->glGetProgramiv(psp->getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
+  getContext()->glGetProgramiv(psp->getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
 
   char* log_out = (char*)GameMemoryManager::allocBlock(buf_size);
   GLsizei length_out;
-  Gu::getContext()->glGetProgramInfoLog(psp->getGlId(), buf_size, &length_out, log_out);
+  getContext()->glGetProgramInfoLog(psp->getGlId(), buf_size, &length_out, log_out);
 
   string_t tempStr;
   char* c = log_out;
@@ -508,7 +508,7 @@ void ShaderMaker::getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vecto
 
   GameMemoryManager::freeBlock(log_out);
 }
-std::shared_ptr<ShaderUniformBlock> ShaderMaker::getUniformBlockByName(string_t& blockName) {
+std::shared_ptr<ShaderUniformBlock> ShaderManager::getUniformBlockByName(string_t& blockName) {
   Hash32 blockHash = STRHASH(blockName);
   std::map<Hash32, std::shared_ptr<ShaderUniformBlock>>::iterator ite = _mapUniformBlocks.find(blockHash);
   if (ite == _mapUniformBlocks.end()) {
@@ -517,7 +517,7 @@ std::shared_ptr<ShaderUniformBlock> ShaderMaker::getUniformBlockByName(string_t&
   return ite->second;
 }
 
-void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
+void ShaderManager::parseUniforms(std::shared_ptr<ShaderBase> sb) {
   GLint nUniforms = 0;
   static const int NBUFSIZ = 512;
   char name[NBUFSIZ];
@@ -525,7 +525,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
 
   //Uniforms
   Br2LogInfo(" Parsing " + nUniforms + " shader Uniforms..");
-  Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
+  getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
   for (int32_t i = 0; i < nUniforms; ++i) {
     GLint name_len = -1;
     GLint iArraySize = -1;
@@ -533,13 +533,13 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
     string_t uniformName;
 
     //Get name an d type
-    Gu::getContext()->glGetActiveUniform(sb->getGlId(), (GLuint)i, NBUFSIZ, &name_len, &iArraySize, &uniformType, (char*)name);
+    getContext()->glGetActiveUniform(sb->getGlId(), (GLuint)i, NBUFSIZ, &name_len, &iArraySize, &uniformType, (char*)name);
     AssertOrThrow2(name_len < NBUFSIZ);
     name[name_len] = 0;
     uniformName = string_t(name);
 
     //get location
-    GLint glLocation = Gu::getContext()->glGetUniformLocation((GLuint)sb->getGlId(), (GLchar*)uniformName.c_str());
+    GLint glLocation = getContext()->glGetUniformLocation((GLuint)sb->getGlId(), (GLchar*)uniformName.c_str());
 
     if (glLocation >= 0) {
       //If location >=0 - then we are not a buffer.
@@ -569,7 +569,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
         continue;
       }
 
-      std::shared_ptr<ShaderUniform> glVar = std::make_shared<ShaderUniform>(Gu::getGraphicsContext(), uniformType, glLocation, uniformName, iArraySize);
+      std::shared_ptr<ShaderUniform> glVar = std::make_shared<ShaderUniform>(getContext(), uniformType, glLocation, uniformName, iArraySize);
 
       sb->getUniforms().insert(std::make_pair(glVar->getNameHashed(), glVar));
     }
@@ -579,7 +579,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
   }
 
 }
-void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
+void ShaderManager::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
   //Blocks are global to all shaders.
 
   GLint nUniformBlocks = 0;
@@ -591,7 +591,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
 
   //Uniform Blocks
   Br2LogInfo(" Parsing " + nUniformBlocks + " shader Uniform Blocks..");
-  Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
+  getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
   for (int32_t iBlock = 0; iBlock < nUniformBlocks; ++iBlock) {
     string_t blockName;
     GLint blockDataSize;
@@ -599,11 +599,11 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
 
     //Because we haven't bound the block yet, the binding will be zero.
     //   GLint binding;
-    //  Gu::getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_BINDING, &binding);
-    Gu::getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize);
-    Gu::getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
+    //  getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_BINDING, &binding);
+    getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize);
+    getContext()->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
 
-    Gu::getContext()->glGetActiveUniformBlockName(sb->getGlId(), iBlock, NBUFSIZ, NULL, name);
+    getContext()->glGetActiveUniformBlockName(sb->getGlId(), iBlock, NBUFSIZ, NULL, name);
     blockName = string_t(name);
 
     std::shared_ptr<ShaderUniformBlock> pBlock;
@@ -621,10 +621,10 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
       }
 
       //set the program's buffer to be bound to this one.
-      bufferIndex = Gu::getContext()->glGetUniformBlockIndex(sb->getGlId(), blockName.c_str());
-      Gu::getContext()->glUniformBlockBinding(sb->getGlId(), bufferIndex, bindingIndex);
+      bufferIndex = getContext()->glGetUniformBlockIndex(sb->getGlId(), blockName.c_str());
+      getContext()->glUniformBlockBinding(sb->getGlId(), bufferIndex, bindingIndex);
 
-      pBlock = std::make_shared<ShaderUniformBlock>(Gu::getGraphicsContext(), blockName, bufferIndex, bindingIndex, blockDataSize);
+      pBlock = std::make_shared<ShaderUniformBlock>(getContext(), blockName, bufferIndex, bindingIndex, blockDataSize);
 
       //Uniform blocks are shared between programs.  We doulbe up the reference here.
       _mapUniformBlocks.insert(std::make_pair(STRHASH(blockName), pBlock));
@@ -635,7 +635,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
     }
   }
 }
-void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb) {
+void ShaderManager::parseAttributes(std::shared_ptr<ShaderBase> sb) {
   if (!sb->confirmInit())
     return;
 
@@ -644,7 +644,7 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb) {
   string_t err = "";
 
   GLsizei nAttributes;
-  Gu::getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_ATTRIBUTES, &nAttributes);
+  getContext()->glGetProgramiv(sb->getGlId(), GL_ACTIVE_ATTRIBUTES, &nAttributes);
 
   // std::vector<GlslShaderAttribute*> tempAttributes;
   for (GLsizei iAttr = 0; iAttr < nAttributes; ++iAttr) {
@@ -671,7 +671,7 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb) {
     addGeneralError(Stz "Shader " + sb->getProgramName() + "\r\n" + err);
   }
 }
-bool ShaderMaker::isGoodStatus(ShaderStatus::e stat) {
+bool ShaderManager::isGoodStatus(ShaderStatus::e stat) {
   bool b = true;
   b = b && (stat != ShaderStatus::e::CompileError);
   b = b && (stat != ShaderStatus::e::FileNotFound);
@@ -682,7 +682,7 @@ bool ShaderMaker::isGoodStatus(ShaderStatus::e stat) {
   b = b && (stat != ShaderStatus::e::Unloaded);
   return b;
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getShaderByName(const string_t& name) {
+std::shared_ptr<ShaderBase> ShaderManager::getShaderByName(const string_t& name) {
   Hash32 h = STRHASH(name);
   std::map<Hash32, std::shared_ptr<ShaderBase>>::iterator it = _mapPrograms.find(h);
   if (it != _mapPrograms.end()) {
@@ -690,7 +690,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::getShaderByName(const string_t& name) {
   }
   return nullptr;
 }
-std::shared_ptr<ShaderBase> ShaderMaker::getShaderById(GLuint id) {
+std::shared_ptr<ShaderBase> ShaderManager::getShaderById(GLuint id) {
   for (std::pair<Hash32, std::shared_ptr<ShaderBase>> p : _mapPrograms) {
     if (p.second->getGlId() == id) {
       return p.second;
@@ -698,31 +698,31 @@ std::shared_ptr<ShaderBase> ShaderMaker::getShaderById(GLuint id) {
   }
   return nullptr;
 }
-string_t ShaderMaker::getShaderNameForId(GLuint id) {
+string_t ShaderManager::getShaderNameForId(GLuint id) {
   std::shared_ptr<ShaderBase> sb = getShaderById(id);
   if (sb != nullptr) {
     return sb->getProgramName();
   }
   return "";
 }
-void ShaderMaker::shaderBound(std::shared_ptr<ShaderBase> sb) {
+void ShaderManager::shaderBound(std::shared_ptr<ShaderBase> sb) {
   //This system is here for sanity checking of uniform bindings.
   //It's not "necessary", but it ensures uniforms are set.
   if (_pBound != nullptr && _pBound != sb) {
     _pBound->unbindAllUniforms();
   }
   if (sb == nullptr) {
-    Gu::getContext()->glUseProgram(0);
+    getContext()->glUseProgram(0);
   }
   else {// if(_pBound != sb ){ //*this was causing errors because we must be calling UseProgram somewhere.
-    Gu::getContext()->glUseProgram(sb->getGlId());
+    getContext()->glUseProgram(sb->getGlId());
   }
   _pBound = sb;
 
 }
 
 
-string_t ShaderMaker::systemTypeToSTring(OpenGLShaderVarType::e eType) {
+string_t ShaderManager::systemTypeToSTring(OpenGLShaderVarType::e eType) {
   switch (eType) {
   case OpenGLShaderVarType::ut_notype: return  "ut_notype "; break;
   case OpenGLShaderVarType::GpuInt1: return    "GpuInt1   "; break;
@@ -752,7 +752,7 @@ string_t ShaderMaker::systemTypeToSTring(OpenGLShaderVarType::e eType) {
     break;
   }
 }
-void ShaderMaker::setUfBlock(string_t name, void* value, size_t copySizeBytes, bool bIgnore) {
+void ShaderManager::setUfBlock(string_t name, void* value, size_t copySizeBytes, bool bIgnore) {
   std::shared_ptr<ShaderUniformBlock> uf = getUniformBlockByName(name);
   if (uf == nullptr) {
     if (bIgnore == false) {
@@ -763,7 +763,7 @@ void ShaderMaker::setUfBlock(string_t name, void* value, size_t copySizeBytes, b
     uf->copyUniformData(value, copySizeBytes);
   }
 }
-void ShaderMaker::addGeneralError(string_t str) {
+void ShaderManager::addGeneralError(string_t str) {
   str = Stz "error: " + str + "\r\n";
   _vecGeneralErrors.push_back(str);
 }

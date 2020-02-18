@@ -42,7 +42,7 @@ public:
         , BoxSide::e eSide
         , bool bShadowMapEnabled
         );
-    OVERRIDES ~ShadowBoxSide() OVERRIDE;
+    virtual ~ShadowBoxSide() override;
 
     bool getMustUpdate() { return _bMustUpdate; }
     std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }

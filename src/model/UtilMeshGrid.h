@@ -16,9 +16,9 @@ namespace BR2 {
 */
 class UtilMeshGrid : public UtilMesh {
 public:
-  OVERRIDES void generate();
-  OVERRIDES void preDraw();
-  OVERRIDES void postDraw();
+  virtual void generate();
+  virtual void preDraw();
+  virtual void postDraw();
 
   //+-- CTOR/DTOR --+
   UtilMeshGrid(std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f,

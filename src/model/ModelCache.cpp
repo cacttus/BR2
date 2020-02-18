@@ -13,44 +13,44 @@
 #include "../model/Material.h"
 
 namespace BR2 {
-ModelCache::ModelCache() {
-    _pDefaultMaterial = std::make_shared<Material>();
-    //default material is the initial blender params.
+ModelCache::ModelCache(std::shared_ptr<GLContext> ct) :GLFramework(ct) {
+  _pDefaultMaterial = std::make_shared<Material>();
+  //default material is the initial blender params.
 }
 ModelCache::~ModelCache() {
-    std::map<Hash32, std::shared_ptr<ModelData>>::iterator it = _mapModels.begin();
-    /*for (; it != _mapModels.end(); it++) {
-        std::shared_ptr<ModelSpec> ms = it->second;
-        DEL_MEM(ms);
-    }*/
-    //for (std::pair<Hash32, std::shared_ptr<Armature>> p : _mapArmaturesOrdered) {
-    //    DEL_MEM(p.second);
-    //}
-    //for (std::pair<Hash32, std::shared_ptr<ActionGroup>> p1 : _mapActions) {
-    //    DEL_MEM(p1.second);
-    //}
+  std::map<Hash32, std::shared_ptr<ModelData>>::iterator it = _mapModels.begin();
+  /*for (; it != _mapModels.end(); it++) {
+      std::shared_ptr<ModelSpec> ms = it->second;
+      DEL_MEM(ms);
+  }*/
+  //for (std::pair<Hash32, std::shared_ptr<Armature>> p : _mapArmaturesOrdered) {
+  //    DEL_MEM(p.second);
+  //}
+  //for (std::pair<Hash32, std::shared_ptr<ActionGroup>> p1 : _mapActions) {
+  //    DEL_MEM(p1.second);
+  //}
 }
 void ModelCache::addSpec(std::shared_ptr<ModelData> ms) {
-    Hash32 h = ms->getNameHashed();
+  Hash32 h = ms->getNameHashed();
 
-    std::map<Hash32, std::shared_ptr<ModelData>>::iterator it = _mapModels.find(h);
-    if (it == _mapModels.end()) {
-        _mapModels.insert(std::make_pair(h, ms));
-    }
-    else {
-        Br2LogError("Tried to add duplicate model name '" + ms->getName() + "'");
-    }
+  std::map<Hash32, std::shared_ptr<ModelData>>::iterator it = _mapModels.find(h);
+  if (it == _mapModels.end()) {
+    _mapModels.insert(std::make_pair(h, ms));
+  }
+  else {
+    Br2LogError("Tried to add duplicate model name '" + ms->getName() + "'");
+  }
 }
 std::shared_ptr<ModelData> ModelCache::getModelByName(string_t name) {
-    Hash32 h = STRHASH(name);
-    return getModelByName(h);
+  Hash32 h = STRHASH(name);
+  return getModelByName(h);
 }
 std::shared_ptr<ModelData> ModelCache::getModelByName(Hash32 hash) {
-    auto it = _mapModels.find(hash);
-    if (it != _mapModels.end()) {
-        return it->second;
-    }
-    return nullptr;
+  auto it = _mapModels.find(hash);
+  if (it != _mapModels.end()) {
+    return it->second;
+  }
+  return nullptr;
 }
 
 //int32_t ModelCache::addArmature(std::shared_ptr<Armature> a) {
@@ -91,137 +91,137 @@ std::shared_ptr<ModelData> ModelCache::getModelByName(Hash32 hash) {
 //    return it->second;
 //}
 string_t ModelCache::getFilePathForMobName(string_t mobName, bool bUseBinary) {
-    string_t fileExt;
-    string_t modelsDir;
-    if (bUseBinary) {
-        modelsDir = Gu::getApp()->getModelsBinDir();
-        fileExt = ".mbi";
-    }
-    else {
-        modelsDir = Gu::getApp()->getModelsTextDir();
-        fileExt = ".mob";
-    }
+  string_t fileExt;
+  string_t modelsDir;
+  if (bUseBinary) {
+    modelsDir = Gu::getAppPackage()->getModelsBinFolder();
+    fileExt = ".mbi";
+  }
+  else {
+    modelsDir = Gu::getAppPackage()->getModelsTextFolder();
+    fileExt = ".mob";
+  }
 
-    string_t folderPath = Gu::getApp()->makeAssetPath(modelsDir, mobName);
-    string_t filename = FileSystem::combinePath(folderPath, mobName);
-    filename += fileExt;
+  string_t folderPath = Gu::getAppPackage()->makeAssetPath(modelsDir, mobName);
+  string_t filename = FileSystem::combinePath(folderPath, mobName);
+  filename += fileExt;
 
-    return filename;
+  return filename;
 }
 std::shared_ptr<ModelData> ModelCache::getOrLoadModel(string_t mobName, bool bUseBinary) {
 
-    std::shared_ptr<ModelData> ms = getModelByName(STRHASH(mobName));
-    if (ms == nullptr) {
-        string_t filename = getFilePathForMobName(mobName, bUseBinary);
-        if (FileSystem::fileExists(filename) == false) {
-            Br2LogError("Model File does not exist: '" + filename + "'");
-            if (false) {
-                debugPrintAllModelNames();
-            }
-            return nullptr;
+  std::shared_ptr<ModelData> ms = getModelByName(STRHASH(mobName));
+  if (ms == nullptr) {
+    string_t filename = getFilePathForMobName(mobName, bUseBinary);
+    if (FileSystem::fileExists(filename) == false) {
+      Br2LogError("Model File does not exist: '" + filename + "'");
+      if (false) {
+        debugPrintAllModelNames();
+      }
+      return nullptr;
+    }
+    else {
+      t_timeval t0 = Gu::getMicroSeconds();
+      Br2LogInfo("Loading model '" + mobName + "' from '" + filename + "'..");
+      {
+        if (bUseBinary) {
+          MbiFile mf;
+          if (mf.loadAndParse(filename) == false) {
+            Br2LogError("Failed to load model " + mobName + " ");
+          }
+          ms = getModelByName(STRHASH(mobName));
         }
         else {
-            t_timeval t0 = Gu::getMicroSeconds();
-            Br2LogInfo("Loading model '" + mobName + "' from '" + filename + "'..");
-            {
-                if (bUseBinary) {
-                    MbiFile mf;
-                    if (mf.loadAndParse(filename) == false) {
-                        Br2LogError("Failed to load model " + mobName + " ");
-                    }
-                    ms = getModelByName(STRHASH(mobName));
-                }
-                else {
-                    MobFile mf;
-                    mf.loadAndParse(filename);
-                    ms = getModelByName(STRHASH(mobName));
-                }
-            }
-            Br2LogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
-
+          MobFile mf;
+          mf.loadAndParse(filename);
+          ms = getModelByName(STRHASH(mobName));
         }
+      }
+      Br2LogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
+
     }
-    return ms;
+  }
+  return ms;
 }
 string_t ModelCache::debugPrintAllModelNames() {
-    string_t strOut = ("Loaded:\n");
+  string_t strOut = ("Loaded:\n");
 
-    for (std::pair<Hash32, std::shared_ptr<ModelData>> p : _mapModels) {
-        strOut += Stz "   " + p.second->getName()+ "\n";
-    }
-    strOut += ("In Dir:\n");
-    std::vector<string_t> vecFiles;
-    string_t mods = Gu::getApp()->getModelsTextDir();
-    mods = Gu::getApp()->makeAssetPath(mods);
-    FileSystem::getAllDirs(mods, vecFiles);
-    for (string_t file : vecFiles) {
-        strOut += Stz "  " +file+ "\n";
-    }
+  for (std::pair<Hash32, std::shared_ptr<ModelData>> p : _mapModels) {
+    strOut += Stz "   " + p.second->getName() + "\n";
+  }
+  strOut += ("In Dir:\n");
+  std::vector<string_t> vecFiles;
+  string_t mods = Gu::getAppPackage()->getModelsTextFolder();
+  mods = Gu::getAppPackage()->makeAssetPath(mods);
+  FileSystem::getAllDirs(mods, vecFiles);
+  for (string_t file : vecFiles) {
+    strOut += Stz "  " + file + "\n";
+  }
 
-    mods = Gu::getApp()->getModelsBinDir();
-    mods = Gu::getApp()->makeAssetPath(mods);
-    FileSystem::getAllDirs(mods, vecFiles);
-    for (string_t file : vecFiles) {
-        strOut += Stz "  " +file +"\n";
-    }
+  mods = Gu::getAppPackage()->getModelsBinFolder();
+  mods = Gu::getAppPackage()->makeAssetPath(mods);
+  FileSystem::getAllDirs(mods, vecFiles);
+  for (string_t file : vecFiles) {
+    strOut += Stz "  " + file + "\n";
+  }
 
-    return strOut;
+  return strOut;
 }
 void ModelCache::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName) {
 
-    string_t filepathText = getFilePathForMobName(strMobName, false);
-    string_t filepathBin = getFilePathForMobName(strMobName, true);
+  string_t filepathText = getFilePathForMobName(strMobName, false);
+  string_t filepathBin = getFilePathForMobName(strMobName, true);
 
-    if (FileSystem::fileExists(filepathText) == false) {
-        Br2LogError("Convert: Could not find mob file " + strMobName);
-        return;
+  if (FileSystem::fileExists(filepathText) == false) {
+    Br2LogError("Convert: Could not find mob file " + strMobName);
+    return;
+  }
+
+  bool bConvert = true;
+  if (bOnlyIfNewer) {
+    if (FileSystem::fileExists(filepathText) &&
+      FileSystem::fileExists(filepathBin)) {
+      time_t t0 = FileSystem::getLastModifyTime(filepathText);
+      time_t t1 = FileSystem::getLastModifyTime(filepathBin);
+      if (t1 > t0) {
+        bConvert = false;
+        // BroLogInfo("Convet: Mob ",strMobName," is not newer.");
+      }
+    }
+  }
+
+  if (bConvert) {
+    unloadModel(strMobName, false);
+    Br2LogInfo("Convert: Loading MOB " + strMobName);
+    MobFile mf;
+    mf.loadAndParse(filepathText);
+    for (std::shared_ptr<ModelData> ms : mf.getModelSpecs()) {
+      ms->postMobConversion();
+      ms->setFriendlyName(strFriendlyName);
     }
 
-    bool bConvert = true;
-    if (bOnlyIfNewer) {
-        if (FileSystem::fileExists(filepathText) &&
-            FileSystem::fileExists(filepathBin)) {
-            time_t t0 = FileSystem::getLastModifyTime(filepathText);
-            time_t t1 = FileSystem::getLastModifyTime(filepathBin);
-            if (t1 > t0) {
-                bConvert = false;
-               // BroLogInfo("Convet: Mob ",strMobName," is not newer.");
-            }
-        }
+    Br2LogInfo("Convert: Saving MOB " + strMobName);
+    MbiFile mb;
+    for (std::shared_ptr<ModelData> ms : mf.getModelSpecs()) {
+      mb.getModelSpecs().push_back(ms);
     }
-
-    if (bConvert) {
-        unloadModel(strMobName, false);
-        Br2LogInfo("Convert: Loading MOB " + strMobName);
-        MobFile mf;
-        mf.loadAndParse(filepathText);
-        for (std::shared_ptr<ModelData> ms : mf.getModelSpecs()) {
-            ms->postMobConversion();
-            ms->setFriendlyName(strFriendlyName);
-        }
-
-        Br2LogInfo("Convert: Saving MOB " + strMobName);
-        MbiFile mb;
-        for (std::shared_ptr<ModelData> ms : mf.getModelSpecs()) {
-            mb.getModelSpecs().push_back(ms);
-        }
-        mb.save(filepathBin);
-        unloadModel(strMobName);
-    }
+    mb.save(filepathBin);
+    unloadModel(strMobName);
+  }
 }
 void ModelCache::unloadModel(string_t strMobName, bool bErrorIfFailed) {
-    std::map<Hash32, std::shared_ptr<ModelData>>::iterator it = _mapModels.find(STRHASH(strMobName));
+  std::map<Hash32, std::shared_ptr<ModelData>>::iterator it = _mapModels.find(STRHASH(strMobName));
 
-    if (it == _mapModels.end()) {
-        if(bErrorIfFailed)
-        Br2LogError("Failed to find model " + strMobName + " to unload.");
-    }
-    else {
-        //std::shared_ptr<ModelSpec> ms = it->second;
-       // DEL_MEM(ms);
+  if (it == _mapModels.end()) {
+    if (bErrorIfFailed)
+      Br2LogError("Failed to find model " + strMobName + " to unload.");
+  }
+  else {
+    //std::shared_ptr<ModelSpec> ms = it->second;
+   // DEL_MEM(ms);
 
-        _mapModels.erase(it);
-    }
+    _mapModels.erase(it);
+  }
 }
 
 

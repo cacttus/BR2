@@ -36,7 +36,7 @@ template < class Tx >
 class GrowBuffer : public DynamicBuffer<Tx> {
 public:
     GrowBuffer(uint32_t iChunkSize);
-    OVERRIDES ~GrowBuffer() OVERRIDE;
+    virtual ~GrowBuffer() override;
 
     Tx* ptr();
     Tx* next();

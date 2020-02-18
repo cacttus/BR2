@@ -11,7 +11,7 @@
 #include "../gfx/Party.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/TexCache.h"

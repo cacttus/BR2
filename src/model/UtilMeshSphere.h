@@ -20,9 +20,9 @@ public:
   UtilMeshSphere(std::shared_ptr<GLContext> ctx, float radius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks);
   virtual ~UtilMeshSphere() override;
 
-  OVERRIDES void generate();
-  OVERRIDES void preDraw();
-  OVERRIDES void postDraw();
+  virtual void generate();
+  virtual void preDraw();
+  virtual void postDraw();
 private:
     float _fRadius;
     vec3 _vOffset;

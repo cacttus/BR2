@@ -20,7 +20,9 @@ public:
     Component(std::shared_ptr<WorldObject> ob);
     virtual ~Component() override;
     void setWorldObject(std::shared_ptr<WorldObject> ob) { _pWorldObject = ob;  }
-    std::shared_ptr<WorldObject> getWorldObject() { return _pWorldObject; }
+    
+    template < class Tx = WorldObject >
+    std::shared_ptr<Tx> getWorldObject() { return std::dynamic_pointer_cast<Tx>(_pWorldObject); }
 private:
   std::shared_ptr<WorldObject> _pWorldObject = nullptr;
 };
