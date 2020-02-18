@@ -12,27 +12,26 @@
 namespace BR2 {
 /**
 *  @class UtilMeshGrid
-*  @brief draws a grid.
+*  @brief Draws a grid.
 */
 class UtilMeshGrid : public UtilMesh {
 public:
-  virtual void generate();
-  virtual void preDraw();
-  virtual void postDraw();
-
-  //+-- CTOR/DTOR --+
-  UtilMeshGrid(std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f,
+  UtilMeshGrid(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f,
     int32_t nSlices = 60,
     float fSliceWidth = 20.0f,
     Vector3& center = Vector3(0, 0, 0));
   virtual ~UtilMeshGrid() override;
+
+  virtual void generate();
+  virtual void preDraw();
+  virtual void postDraw();
+
 private:
   Color4f _color;
   int32_t _nSlices;
   float _fSliceWidth;
   Vec3f _center;
   float _lineWidth;
-
 };
 
 }//ns BR2

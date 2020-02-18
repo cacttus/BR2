@@ -5,6 +5,8 @@
 #include "../model/OBB.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/MeshNode.h"
+#include "../model/Model.h"
+#include "../world/RenderBucket.h"
 #include "../math/Matrix4x4.h"
 #include "../base/Logger.h"
 
@@ -241,10 +243,10 @@ void SceneNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
   if (anm != nullptr) {
     std::shared_ptr<ActionGroup> aa = anm->getAction();
     if (aa != nullptr) {
-      if (getThis<SceneNode>()->getSpec() != nullptr) {
+      if (getThis<SceneNode>()->getNodeData() != nullptr) {
         //*Since we can have multiple animations for a model, this will silently fail on nodes
         // who don't have this particular animation name.
-        std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getThis<SceneNode>()->getSpec()->getNameHashed());
+        std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getThis<SceneNode>()->getNodeData()->getNameHashed());
         if (ak != nullptr) {
 
           ak->animate(anm, _mAnimated);

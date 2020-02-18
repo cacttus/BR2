@@ -76,7 +76,7 @@ std::shared_ptr<Tx> TreeNode::findParent() {
   std::shared_ptr<Tx> found = nullptr;
   std::function<bool(std::shared_ptr<Tx>)> fp;
 
-  fp = [&found](std::shared_ptr<TreeNode> cur) {
+  fp = [&found,&fp](std::shared_ptr<TreeNode> cur) {
     if (found != nullptr) {
       return;
     }

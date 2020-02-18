@@ -82,7 +82,7 @@ public:
   static void print(const char* msg);
   static void print(const string_t& msg);
 
-  static void guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp);//Transforms a quad for the matrix-less 
+  static void guiQuad2d(Box2f& pq, int32_t w, int32_t h);//Transforms a quad for the matrix-less 
 
   template < typename Tx >
   static bool addIfDoesNotContain(std::vector<Tx>& vec, Tx& rhs) {

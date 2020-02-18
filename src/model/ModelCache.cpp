@@ -14,7 +14,7 @@
 
 namespace BR2 {
 ModelCache::ModelCache(std::shared_ptr<GLContext> ct) :GLFramework(ct) {
-  _pDefaultMaterial = std::make_shared<Material>();
+  _pDefaultMaterial = std::make_shared<Material>(getContext());
   //default material is the initial blender params.
 }
 ModelCache::~ModelCache() {
@@ -125,14 +125,14 @@ std::shared_ptr<ModelData> ModelCache::getOrLoadModel(string_t mobName, bool bUs
       Br2LogInfo("Loading model '" + mobName + "' from '" + filename + "'..");
       {
         if (bUseBinary) {
-          MbiFile mf;
+          MbiFile mf(getContext());
           if (mf.loadAndParse(filename) == false) {
             Br2LogError("Failed to load model " + mobName + " ");
           }
           ms = getModelByName(STRHASH(mobName));
         }
         else {
-          MobFile mf;
+          MobFile mf(getContext());
           mf.loadAndParse(filename);
           ms = getModelByName(STRHASH(mobName));
         }
@@ -193,7 +193,7 @@ void ModelCache::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::st
   if (bConvert) {
     unloadModel(strMobName, false);
     Br2LogInfo("Convert: Loading MOB " + strMobName);
-    MobFile mf;
+    MobFile mf(getContext());
     mf.loadAndParse(filepathText);
     for (std::shared_ptr<ModelData> ms : mf.getModelSpecs()) {
       ms->postMobConversion();
@@ -201,7 +201,7 @@ void ModelCache::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::st
     }
 
     Br2LogInfo("Convert: Saving MOB " + strMobName);
-    MbiFile mb;
+    MbiFile mb(getContext());
     for (std::shared_ptr<ModelData> ms : mf.getModelSpecs()) {
       mb.getModelSpecs().push_back(ms);
     }

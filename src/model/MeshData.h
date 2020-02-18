@@ -15,14 +15,14 @@
 
 namespace BR2 {
 /**
-*  @class MeshSpec
+*  @class MeshSpec 
 *  @brief Mesh geometry storage and operations.
 */
-class MeshData : NodeData {
+class MeshData : public NodeData {
 public:
-  MeshData() { }//Serialize Version
-  MeshData(const void* cVerts, size_t vCount, const void* cIndexes, size_t iCount, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm);
-  MeshData(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile = nullptr, std::shared_ptr<PhysicsShape> ps = nullptr);
+  MeshData(std::shared_ptr<GLContext> ct); //Serialize Version
+  MeshData(std::shared_ptr<GLContext> ct, const void* cVerts, size_t vCount, const void* cIndexes, size_t iCount, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm);
+  MeshData(std::shared_ptr<GLContext> ct, string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile = nullptr, std::shared_ptr<PhysicsShape> ps = nullptr);
   virtual ~MeshData() override;
 
   //Edit funcs.
@@ -78,7 +78,7 @@ protected:
   std::shared_ptr<FragmentBufferData> _pFrags = nullptr;    //vertexes
   std::shared_ptr<IndexBufferData> _pIndexes = nullptr;    //indexes
   std::shared_ptr<Material> _pMaterial = nullptr;
-  std::shared_ptr<ObjectFile> _pObjectFile = nullptr;
+  std::shared_ptr<ObjFile> _pObjectFile = nullptr;
   mat4 _matLocalMatrix;   //The world matrix loaded from the mesh file. **UNUSED 2016 - freeze all meshes before export. Oterwise we'd have problems with this.
   std::vector<VertexWeightMob> _vecWeightsMob;//MOB file weights - invalid if not imported
   std::shared_ptr<ShaderStorageBuffer> _pWeightOffsetsGpu = nullptr; //Skin 12/9/2017
@@ -87,6 +87,10 @@ protected:
   MeshSkinStatus::e _eSkinStatus = MeshSkinStatus::e::Uninitialized;
   bool _bHideRender = false;
   std::shared_ptr<PhysicsShape> _pPhysicsShape = nullptr;
+
+  std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
+
 
   void fillWeightBuffersMob(std::shared_ptr<ModelData> ms);
   int32_t getGpuJointOrdinal(std::shared_ptr<ModelData> ms, int32_t arm, int32_t joint);

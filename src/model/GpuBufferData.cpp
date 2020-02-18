@@ -8,19 +8,18 @@
 #include "../model/GpuBufferData.h"
 
 namespace BR2 {
-GpuBufferData::GpuBufferData(std::shared_ptr<GLContext> ct, GLenum bufferType, size_t iElementSize) :
-  _glBufferType(bufferType)
-  , _iElementSize(iElementSize)
-  , _pContext(ct) {
-  ct->glGenBuffers(1, &_glId);
+GpuBufferData::GpuBufferData(std::shared_ptr<GLContext> ct, GLenum bufferType, size_t iElementSize) : GLFramework(ct) {
+  _glBufferType = bufferType;
+  _iElementSize = iElementSize;
+  getContext()->glGenBuffers(1, &_glId);
 }
 GpuBufferData::~GpuBufferData() {
-  _pContext->glDeleteBuffers(1, &_glId);
+  getContext()->glDeleteBuffers(1, &_glId);
 }
 void GpuBufferData::allocate(size_t iNumElements) {
   _iNumElements = iNumElements;
   bindBuffer();
-  _pContext->glBufferData(_glBufferType, _iNumElements * _iElementSize, nullptr, GL_STATIC_DRAW);
+  getContext()->glBufferData(_glBufferType, _iNumElements * _iElementSize, nullptr, GL_STATIC_DRAW);
   unbindBuffer();
   _bIsAllocated = true;
 }
@@ -65,7 +64,7 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
   if (readSize > byteSize) {
     Br2ThrowException("Tried to read " + readSize + " from Gpu Buffer with size of " + getByteSize() + ".");
   }
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
   bindBuffer();
   {
@@ -76,7 +75,7 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
   }
   unbindBuffer();
 
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
 }
 /**
@@ -122,7 +121,7 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
     memcpy_s((void*)pData, getByteSize(), frags, copySizeBytes);
     unmapBuffer();
 
-    _pContext->chkErrDbg();
+    getContext()->chkErrDbg();
   }
   unbindBuffer();
 }
@@ -132,7 +131,7 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
 */
 void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
   void* frags;
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
   if (_isBound == false) {
     Br2ThrowException("GPU BUffer was not bound prior to mapping");
@@ -146,11 +145,11 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
 
   if (false) {
     GLint dat;
-    _pContext->glGetBufferParameteriv(GL_SHADER_STORAGE_BUFFER, GL_BUFFER_MAPPED, &dat);
-    _pContext->chkErrDbg();
+    getContext()->glGetBufferParameteriv(GL_SHADER_STORAGE_BUFFER, GL_BUFFER_MAPPED, &dat);
+    getContext()->chkErrDbg();
   }
-  frags = _pContext->glMapBuffer(_glBufferType, access);
-  _pContext->chkErrDbg();
+  frags = getContext()->glMapBuffer(_glBufferType, access);
+  getContext()->chkErrDbg();
 
   _isMapped = true;
 
@@ -158,7 +157,7 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
     static bool sbLogged = false;
     if (sbLogged == false) {
       sbLogged = true;
-      _pContext->chkErrDbg();
+      getContext()->chkErrDbg();
       Br2LogError("Error - glMapBuffer returned nullptr.");
       Gu::debugBreak();
     }
@@ -172,11 +171,11 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
 */
 void GpuBufferData::unmapBuffer() {
   verifyValidBuffer();
-  if (_pContext->glUnmapBuffer(_glBufferType) == false) {
+  if (getContext()->glUnmapBuffer(_glBufferType) == false) {
     //video memory just got trashed.
     Br2LogError("Video Memory has been trashed by the OS. Graphics may be unstable.");
   }
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
   _isMapped = false;
 }
@@ -187,14 +186,14 @@ void GpuBufferData::unmapBuffer() {
 */
 void GpuBufferData::bindBuffer() {
   verifyValidBuffer();
-  _pContext->glBindBuffer(_glBufferType, _glId);
-  _pContext->chkErrDbg();
+  getContext()->glBindBuffer(_glBufferType, _glId);
+  getContext()->chkErrDbg();
   _isBound = true;
 }
 void GpuBufferData::bindBuffer(GLenum e) {
   verifyValidBuffer();
-  _pContext->glBindBuffer(e, _glId);
-  _pContext->chkErrDbg();
+  getContext()->glBindBuffer(e, _glId);
+  getContext()->chkErrDbg();
   _isBound = true;
 }
 /**
@@ -202,18 +201,18 @@ void GpuBufferData::bindBuffer(GLenum e) {
 *  @brief Unbind the VBO.
 */
 void GpuBufferData::unbindBuffer() {
-  _pContext->glBindBuffer(_glBufferType, 0);
-  _pContext->chkErrDbg();
+  getContext()->glBindBuffer(_glBufferType, 0);
+  getContext()->chkErrDbg();
   _isBound = false;
 }
 void GpuBufferData::verifyValidBuffer() {
   //GDebugger doesn't like this for some reason.
   if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking()) {
-    if (!_pContext->glIsBuffer(_glId)) {
+    if (!getContext()->glIsBuffer(_glId)) {
       //Buffer object doesn't exist in the context.
       //Error somewhere..
-      _pContext->glBindBuffer(_glBufferType, _glId);
-      if (!_pContext->glIsBuffer(_glId)) {
+      getContext()->glBindBuffer(_glBufferType, _glId);
+      if (!getContext()->glIsBuffer(_glId)) {
         Gu::debugBreak();
       }
     }

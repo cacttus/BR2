@@ -17,7 +17,7 @@
 
 
 namespace BR2 {
-MbiFile::MbiFile() {
+MbiFile::MbiFile(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
   _pFile = std::make_shared<BinaryFile>();
 }
 MbiFile::~MbiFile() {
@@ -85,10 +85,8 @@ bool MbiFile::loadAndParse(string_t file) {
     std::shared_ptr<ModelData> ms = std::make_shared<ModelData>();
     ms->deserialize(fb);
     _vecModels.push_back(ms);
-
-    Gu::getModelCache()->addSpec(ms);
+    GLContext::getModelCache()->addSpec(ms);
   }
-
 
   //Read textures
   Br2LogInfo("  Loading textures..");
@@ -102,11 +100,11 @@ bool MbiFile::loadAndParse(string_t file) {
 
     std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>(getContext());
     pTex->deserialize(fb);
-    if (Gu::getTexCache()->add(pTex->getLocation(), pTex, false) == false) {
+    if (GLContext::getTexCache()->add(pTex->getLocation(), pTex, false) == false) {
       string_t loc = pTex->getLocation();
       //DEL_MEM(pTex);
       pTex = nullptr;
-      pTex = Gu::getTexCache()->getOrLoad(loc);
+      pTex = GLContext::getTexCache()->getOrLoad(loc);
     }
     texs.insert(std::make_pair(hTex, pTex));
   }

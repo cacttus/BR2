@@ -63,7 +63,7 @@
     <ClInclude Include="src\base\MachineTypes.h" />
     <ClInclude Include="src\base\MemFile.h" />
     <ClInclude Include="src\base\Net.h" />
-    <ClInclude Include="src\base\ObjectFile.h" />
+    <ClInclude Include="src\base\ObjFile.h" />
     <ClInclude Include="src\base\oglErr.h" />
     <ClInclude Include="src\base\OpenGLWindow.h" />
     <ClInclude Include="src\base\OperatingSystem.h" />
@@ -267,7 +267,7 @@
     <ClCompile Include="src\base\Main.cpp" />
     <ClCompile Include="src\base\MemFile.cpp" />
     <ClCompile Include="src\base\Net.cpp" />
-    <ClCompile Include="src\base\ObjectFile.cpp" />
+    <ClCompile Include="src\base\ObjFile.cpp" />
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OpenGLWindow.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />

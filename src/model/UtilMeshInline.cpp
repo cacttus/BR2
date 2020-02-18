@@ -6,8 +6,8 @@
 //#include "../gfx/GLRenderSystem.h"
 
 namespace BR2 {
-UtilMeshInline::UtilMeshInline(std::shared_ptr<GLContext> ctx) :
-  UtilMesh(ctx, v_v3c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
+UtilMeshInline::UtilMeshInline(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx) :
+  UtilMesh(cam, ctx, v_v3c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
 {
   _vDefaultColor.construct(1, 0, 0, 1);
 }
@@ -81,8 +81,8 @@ void UtilMeshInline::addBox(vec3* points, vec4* color) {
   vt2(v[3], v[7], color);
 }
 
-UtilMeshInline2d::UtilMeshInline2d(std::shared_ptr<GLContext> ctx) :
-  UtilMesh(ctx, v_v2c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
+UtilMeshInline2d::UtilMeshInline2d(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx) :
+  UtilMesh(cam,ctx, v_v2c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
 {
   _vDefaultColor.construct(1, 0, 0, 1);
 }

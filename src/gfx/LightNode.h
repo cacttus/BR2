@@ -17,26 +17,23 @@ namespace BR2 {
 //TODO: Make the light node a composite on WorldObject, and remove PhysicsNode, making it a composite of WorldObject as well.
 class LightNodeBase : public PhysicsNode {
 public:
-  LightNodeBase(bool bShadow);
+  LightNodeBase(std::shared_ptr<LightManager> pm, bool bShadow);
   virtual ~LightNodeBase() override;
 
   Color4f* getColorPtr() { return &_color; }
   Color4f& getColor() { return _color; }
   void setLightColor(const Color4f&& c) { _color = c; _color.clampValues(); }
-  // vec3& getSpecColor() { return _vSpecColor; }
-  // float& getSpecExp() { return _fSpecExp; }
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   vec3* getFinalPosPtr();
   bool shadowsEnabled();
-
-private:
-  bool _bEnableShadows = false;
-
+  std::shared_ptr<LightManager> getLightManager() { return _pLightManager;  }
 protected:
   Color4f _color;
-  //float _fSpecExp = 2.0f;
-  //vec3 _vSpecColor;
   vec3 _vGpuBufferedPosition; // Temporary storage for the GPU - DO NOT CHANGE
+private:
+  bool _bEnableShadows = false;
+  std::shared_ptr<LightManager> _pLightManager;
+
 };
 /**
 *  @class LightNodeDir
@@ -44,7 +41,7 @@ protected:
 */
 class LightNodeDir : public LightNodeBase {
 public:
-  LightNodeDir(bool bShadow);
+  LightNodeDir(std::shared_ptr<LightManager> pm, bool bShadow);
   static std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow);
   virtual ~LightNodeDir() override;
   const vec3& getLookAt() { return _vLookAt; }
@@ -72,9 +69,11 @@ private:
 */
 class LightNodePoint : public LightNodeBase {
 public:
-  LightNodePoint(bool bhasShadowBox);
+  LightNodePoint(std::shared_ptr<LightManager> pm, bool bhasShadowBox);
   static std::shared_ptr<LightNodePoint> create(bool bhasShadowBox);
   virtual ~LightNodePoint() override;
+  
+  void createShadowBox(std::shared_ptr<GLContext> ct);
   std::shared_ptr<ShadowBox> getShadowBox() { return _pShadowBox; }
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;

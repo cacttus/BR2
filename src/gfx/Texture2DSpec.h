@@ -46,9 +46,6 @@ public:
   void deserialize(std::shared_ptr<BinaryFile> fb);
   static bool getTextureDataFromGpu(std::shared_ptr<Img32>  __out_ image, GLuint iGLTexId);
 
-protected:
-  std::shared_ptr<GLContext> _pContext = nullptr;
-
 private:
   GLuint _glId = -1;    // - Texture ID assigned by OpenGL
   GLenum _eTextureFormat = 0;

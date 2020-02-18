@@ -13,12 +13,23 @@
 namespace BR2 {
 /**
 *  @class TexCache
-*  @brief
-*
+*  @brief Texture and image cache on the GPU.
 */
-class TexCache : public VirtualMemory {
+class TexCache : public GLFramework {
 public:
-  ///Initialize in CPP file
+
+  TexCache(std::shared_ptr<GLContext> ctx);
+  virtual ~TexCache() override;
+
+  std::shared_ptr<Texture2DSpec> getOrLoad(std::string texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
+  std::vector<std::shared_ptr<Texture2DSpec>> getOrLoad(std::vector<std::string> texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
+  bool add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
+  std::shared_ptr<Texture2DSpec> addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss);
+  GLuint getDummy1x1TextureCube() { return _i1x1DummyCubeTexture; }
+  GLuint getDummy1x1Texture2D() { return _i1x2Dummy2DTexture; }
+  GLuint getDummy1x1NormalTexture2D() { return _i1x1DummyBump2DTexture; }
+
+  //Remove
   static const std::string WorldGrass;
   static const std::string WorldDirt;
   static const std::string WorldPlank;
@@ -33,16 +44,6 @@ public:
   static const std::string LadderWd;
   static const std::string MdWoodItem;
 
-  TexCache(std::shared_ptr<GLContext> ctx);
-  virtual ~TexCache() override;
-
-  std::shared_ptr<Texture2DSpec> getOrLoad(std::string texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
-  std::vector<std::shared_ptr<Texture2DSpec>> getOrLoad(std::vector<std::string> texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
-  bool add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
-  std::shared_ptr<Texture2DSpec> addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss);
-  GLuint getDummy1x1TextureCube() { return _i1x1DummyCubeTexture; }
-  GLuint getDummy1x1Texture2D() { return _i1x2Dummy2DTexture; }
-  GLuint getDummy1x1NormalTexture2D() { return _i1x1DummyBump2DTexture; }
 private:
   typedef std::map<Hash32, std::shared_ptr<Texture2DSpec>> TexMap;
   TexMap _cache;

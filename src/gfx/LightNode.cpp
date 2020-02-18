@@ -15,7 +15,9 @@
 #include "../model/OBB.h"
 
 namespace BR2 {
-LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNode(nullptr) {
+LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow) : PhysicsNode(nullptr) {
+  _pLightManager = lm;
+  _bEnableShadows = bShadow;
   _color = vec4(1, 1, 1, 1);
 }
 LightNodeBase::~LightNodeBase() {
@@ -33,7 +35,7 @@ bool LightNodeBase::shadowsEnabled() {
 }
 //////////////////////////////////////////////////////////////////////////
 
-LightNodeDir::LightNodeDir(bool bShadow) : LightNodeBase(bShadow) {
+LightNodeDir::LightNodeDir(std::shared_ptr<LightManager> pm, bool bShadow) : LightNodeBase(pm,bShadow) {
   _pNodeData = std::make_shared<NodeData>("*LightNodeDir");
   _vLookAt = vec3(0, 0, 0);
   _vDir = vec3(0, 0, 1);
@@ -106,17 +108,18 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
-LightNodePoint::LightNodePoint(bool bShadowBox) : LightNodeBase(bShadowBox) {
+LightNodePoint::LightNodePoint(std::shared_ptr<LightManager> pm, bool bShadowBox) : LightNodeBase(pm, bShadowBox) {
   _pNodeData = std::make_shared<NodeData>("*LightNodePoint");
   _pGpuLight = std::make_shared<GpuPointLight>();
-
-  int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowBox = std::make_shared<ShadowBox>(std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
-  _pShadowBox->init();
 }
 LightNodePoint::~LightNodePoint() {
   _pShadowBox = nullptr;
   _pGpuLight = nullptr;
+}
+void LightNodePoint::createShadowBox(std::shared_ptr<GLContext> ct) {
+  int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
+  _pShadowBox = std::make_shared<ShadowBox>(ct, std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
+  _pShadowBox->init();
 }
 void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (getHidden() == true) {

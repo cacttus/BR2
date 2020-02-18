@@ -184,7 +184,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   }
 
   Br2LogInfo("GLContext - Picker");
-  _pPicker = std::make_shared<Picker>(getContext());
+  _pPicker = std::make_shared<Picker>(getThis<RenderPipeline>());
 
   //Mesh
   Br2LogInfo("[RenderPipe] Creating Quad Mesh");
@@ -233,7 +233,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   _pBlittedForward = std::make_shared<ForwardFramebuffer>(getContext(), iWidth, iHeight, false, 0, _vClear);
   _pBlittedForward->init(iWidth, iHeight, _pBlittedDepth, _pPick);
 
-  _pDOFFbo = std::make_shared<DOFFbo>(iWidth, iHeight);
+  _pDOFFbo = std::make_shared<DOFFbo>(getContext(), iWidth, iHeight);
 
   //Multisample
   if (_bMsaaEnabled == true) {
@@ -254,7 +254,7 @@ void RenderPipeline::init(int32_t iWidth, int32_t iHeight, string_t strEnvTextur
   //These are here SOLELY for shadow map blending.
   //If we don't do any shadow blending then these are useless.
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowBoxFboMaster = std::make_shared<ShadowBox>(nullptr, iShadowMapRes, iShadowMapRes, true);
+  _pShadowBoxFboMaster = std::make_shared<ShadowBox>(getContext(), nullptr, iShadowMapRes, iShadowMapRes, true);
   _pShadowBoxFboMaster->init();
   _pShadowFrustumMaster = std::make_shared<ShadowFrustum>(nullptr, iShadowMapRes, iShadowMapRes, true);
   _pShadowFrustumMaster->init();
@@ -723,7 +723,7 @@ void RenderPipeline::endRenderAndBlit(std::shared_ptr<CameraNode> pCam) {
 void RenderPipeline::createQuadMesh(int w, int h) {
   //    DEL_MEM(_pQuadMesh);
   _pQuadMesh = nullptr;
-  _pQuadMesh = MeshUtils::createScreenQuadMesh(w, h);
+  _pQuadMesh = MeshUtils::createScreenQuadMesh(getContext(), w, h);
 }
 void RenderPipeline::checkDeviceCaps(int iWidth, int iHeight) {
   //TODO: later we'll create this async.
@@ -812,7 +812,6 @@ std::shared_ptr<Img32> RenderPipeline::getResultAsImage() {
   // if (RenderUtils::getTextureDataFromGpu(bi, pTarget->getGlTexId(), GL_TEXTURE_2D) == true) {
   //     //the GL tex image must be flipped to show upriht/
   // }
-
 
   return bi;
 }

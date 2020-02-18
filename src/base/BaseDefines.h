@@ -23,9 +23,7 @@ namespace BR2 {
 #pragma error Error: Incorrect operating system, or undefined system.
 #endif
 
-#define virtual virtual 
 #define MUST_OVERRIDE virtual
-#define VIRTUAL virtual
 #define SHADOWS
 
 #define BRO_MAX_PATH 512
@@ -208,7 +206,7 @@ class OperatingSystemMemory : DOES_NOT_INHERIT {
 public:
   OperatingSystemMemory() {
   }
-  VIRTUAL ~OperatingSystemMemory() DOES_NOT_OVERRIDE {
+  virtual ~OperatingSystemMemory() DOES_NOT_OVERRIDE {
   }
 };
 class GameMemoryManager : DOES_NOT_INHERIT {

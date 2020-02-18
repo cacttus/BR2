@@ -314,6 +314,7 @@ typedef enum {
  class MeshNode;
  class UtilMeshInline;
  class RenderTarget;
+ class VaoDataGeneric;
 
  namespace UiEventId {
  typedef enum {

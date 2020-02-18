@@ -15,15 +15,18 @@ namespace BR2 {
 *  @class MbiFile
 *  @brief Mob Binary file.  The main file for all models.
 */
-class MbiFile : public VirtualMemory {
+class MbiFile : public GLFramework {
 public:
   const float c_fVersion = 0.3f;
+  
+  MbiFile(std::shared_ptr<GLContext> ct);
+  virtual ~MbiFile() override;
+
   std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModels; }
 
   bool loadAndParse(string_t file);
   void save(string_t file);
-  MbiFile();
-  virtual ~MbiFile() override;
+
 
 private:
   std::vector<std::shared_ptr<ModelData>> _vecModels;

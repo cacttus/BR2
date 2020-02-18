@@ -17,8 +17,9 @@
 #include "../model/VaoDataGeneric.h"
 
 namespace BR2 {
-FramebufferBase::FramebufferBase(std::shared_ptr<GLContext> pc, bool bMsaa, int nMsaa, vec4& vClear) :
-  _pContext(pc), _bMsaaEnabled(bMsaa), _nMsaaSamples(nMsaa) {
+FramebufferBase::FramebufferBase(std::shared_ptr<GLContext> pc, bool bMsaa, int nMsaa, vec4& vClear) : GLFramework(pc) {
+  _bMsaaEnabled = bMsaa;
+  _nMsaaSamples = nMsaa;
   _vClear = vClear;
 }
 FramebufferBase::~FramebufferBase() {
@@ -34,30 +35,30 @@ std::shared_ptr<BufferRenderTarget> FramebufferBase::getTargetByName(std::string
   return nullptr;
 }
 void FramebufferBase::checkFramebufferComplete() {
-  _pContext->chkErrRt();
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->chkErrRt();
 
   attachAllTargets();
   setDrawAllTargets();
 
-  GLenum Status = _pContext->glCheckFramebufferStatus(GL_FRAMEBUFFER);
-  _pContext->chkErrRt();
+  GLenum Status = getContext()->glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  getContext()->chkErrRt();
 
   if (Status != GL_FRAMEBUFFER_COMPLETE) {
     if (Status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE) {
       Br2LogError("Framebuffer is not complete.  Multisampling error.  Make sure that you enable " +
         "multisampling on ALL textures, additionally make sure all textures have the same setting for FIXED_SAMPLE_LOCATIONS");
     }
-    _pContext->chkErrRt();
+    getContext()->chkErrRt();
     Br2ThrowException("Failed to create framebuffer.");
   }
 }
 void FramebufferBase::attachAllTargets() {
   for (std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
     inf->bind();
-    //_pContext->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, inf->getAttachment(), inf->getTextureTarget(), inf->getTexId(), 0);
-    //_pContext->chkErrRt();
+    //getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, inf->getAttachment(), inf->getTextureTarget(), inf->getTexId(), 0);
+    //getContext()->chkErrRt();
   }
 }
 void FramebufferBase::setDrawAllTargets() {
@@ -79,8 +80,8 @@ void FramebufferBase::setDrawAllTargets() {
     }
   }
 
-  _pContext->glDrawBuffers(iCount, attachments);
-  _pContext->chkErrDbg();
+  getContext()->glDrawBuffers(iCount, attachments);
+  getContext()->chkErrDbg();
 
 }
 //void FramebufferBase::attachDepthTarget(std::shared_ptr<RenderTarget> pSharedDepth){
@@ -96,14 +97,14 @@ void FramebufferBase::addTarget( string_t strName, GLenum internalFormat, GLenum
   GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType) {
   int iIndex = (int)_vecTargets.size();
 
-  std::shared_ptr<BufferRenderTarget> inf = createTarget(_pContext, strName, internalFormat, texFormat, dataType, w, h,
+  std::shared_ptr<BufferRenderTarget> inf = createTarget(getContext(), strName, internalFormat, texFormat, dataType, w, h,
     eTargetType, iIndex, _bMsaaEnabled, _nMsaaSamples);
   _vecTargets.push_back(inf);
 }
 void FramebufferBase::addTarget(std::shared_ptr<BufferRenderTarget> other) {
   int iIndex = (int)_vecTargets.size();
 
-  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(true);
+  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(getContext(),true);
   inf->_strName = other->_strName;
   inf->_iLayoutIndex = iIndex;
   inf->_eTextureTarget = other->_eTextureTarget;
@@ -118,7 +119,7 @@ void FramebufferBase::addTarget(std::shared_ptr<BufferRenderTarget> other) {
 std::shared_ptr<BufferRenderTarget> FramebufferBase::createTarget(std::shared_ptr<GLContext> context, string_t strName, GLenum internalFormat, GLenum texFormat,
   GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType, int32_t iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
 
-  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(false);
+  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(context, false);
   inf->_strName = strName;
   inf->_iLayoutIndex = iIndex;
   inf->_eTextureTarget = GL_TEXTURE_2D;
@@ -140,7 +141,7 @@ std::shared_ptr<BufferRenderTarget> FramebufferBase::createTarget(std::shared_pt
   return inf;
 }
 std::shared_ptr<BufferRenderTarget> FramebufferBase::createDepthTarget(std::shared_ptr<GLContext> context, string_t strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
-  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(true);
+  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(context, true);
   inf->_strName = strName;
   //**Note: index doesn't matter for depth target since we simply bind it to GL_Depth_attachment.  It confused the fuck out of me. 2/9/18
   inf->_iLayoutIndex = iIndex;
@@ -161,10 +162,10 @@ std::shared_ptr<BufferRenderTarget> FramebufferBase::createDepthTarget(std::shar
   return inf;
 }
 void FramebufferBase::deleteTargets() {
-  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 
   if (_uiGlFramebufferId > 0) {
-    _pContext->glDeleteFramebuffers(1, &_uiGlFramebufferId);
+    getContext()->glDeleteFramebuffers(1, &_uiGlFramebufferId);
   }
 
   for (size_t i = 0; i < _vecTargets.size(); ++i) {

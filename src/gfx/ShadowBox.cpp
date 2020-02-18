@@ -10,6 +10,7 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/LightManager.h"
+#include "../gfx/LightNode.h"
 #include "../gfx/ShadowBoxSide.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShadowBox.h"
@@ -17,17 +18,18 @@
 #include "../gfx/LightNode.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/RenderSettings.h"
-#include "../world/RenderBucket.h"
 #include "../model/MeshUtils.h"
+#include "../world/RenderBucket.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
-ShadowBox::ShadowBox(std::shared_ptr<GLContext> ct, std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
+ShadowBox::ShadowBox(std::shared_ptr<GLContext> ct, std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) : GLFramework(ct) {
   _bShadowMapEnabled = bShadowMapEnabled;
   _vCachedLastPos = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
   _fCachedLastRadius = FLT_MAX;
   _iFboHeightPixels = iFboHeight;
   _iFboWidthPixels = iFboWidth;
-  _pLightSource = pLightSource; ;
+  _pLightSource = pLightSource;
 
   //used for interpolating frames.
   static int64_t idGen = 0;
@@ -41,8 +43,7 @@ ShadowBox::~ShadowBox() {
 }
 void ShadowBox::init() {
   for (int i = 0; i < 6; ++i) {
-    _pShadowBoxSide[i] = std::make_shared<ShadowBoxSide>(shared_from_this(), _pLightSource, (BoxSide::e)i, _bShadowMapEnabled);
-
+    _pShadowBoxSide[i] = std::make_shared<ShadowBoxSide>(getThis<ShadowBox>(), _pLightSource, (BoxSide::e)i, _bShadowMapEnabled);
   }
   createFbo();
 
@@ -61,12 +62,12 @@ void ShadowBox::update() {
   //Note: even better performance would be to poll object
   //positions - if nothing moved then don't update the shadowmap.
   //TEST - update every x frames. usign ID allows sequential frame updates for shadow boxes.
-  if (!Gu::getFpsMeter()->frameMod(1 + _iShadowBoxId)) {
+  if (!getContext()->getFpsMeter()->frameMod(1 + _iShadowBoxId)) {
     _bMustUpdate = false;
     return;
   }
 
-  std::shared_ptr<LightManager> pLightMan = getContext()->getLightManager();
+  std::shared_ptr<LightManager> pLightMan = _pLightSource->getLightManager();
 
   //Update the camera for each shadowbox side if the light has changed position or radius.
   //See also: debugInvalidateAllLightProjections
@@ -90,7 +91,9 @@ void ShadowBox::update() {
   }
 
   // Tell the viewport we've changed
-  _pShadowBoxSide[0]->getViewport()->updateChanged(true);
+  //TODO: this is probably incorrect:
+  Gu::debugBreak();
+  _pShadowBoxSide[0]->getViewport()->bind(nullptr);
 
 }
 void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
@@ -113,28 +116,28 @@ void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
   pShadowBoxMaster->endRenderShadowBox();
 
   // Copy and blend this into 
-  pShadowBoxMaster->copyAndBlendToShadowMap(shared_from_this());
+  pShadowBoxMaster->copyAndBlendToShadowMap(getThis<ShadowBox>());
   Perf::popPerf();
 }
-
 void ShadowBox::debugRender() {
-  RenderUtils::drawFrustumShader(_pShadowBoxSide[BoxSide::Right]->getFrustum(), Color4f(1, 0, 0, 1));
-  RenderUtils::drawFrustumShader(_pShadowBoxSide[BoxSide::Left]->getFrustum(), Color4f(1, 0, 0, 1));
-  RenderUtils::drawFrustumShader(_pShadowBoxSide[BoxSide::Bottom]->getFrustum(), Color4f(0, 1, 0, 1));
-  RenderUtils::drawFrustumShader(_pShadowBoxSide[BoxSide::Top]->getFrustum(), Color4f(0, 1, 0, 1));
-  RenderUtils::drawFrustumShader(_pShadowBoxSide[BoxSide::Back]->getFrustum(), Color4f(0, 0, 1, 1));
-  RenderUtils::drawFrustumShader(_pShadowBoxSide[BoxSide::Front]->getFrustum(), Color4f(0, 0, 1, 1));
-}
+  std::shared_ptr<Scene> pScene = getLightSource()->getScene();
 
+  RenderUtils::drawFrustumShader(pScene->getActiveCamera(), getContext(), _pShadowBoxSide[BoxSide::Right]->getFrustum(), Color4f(1, 0, 0, 1));
+  RenderUtils::drawFrustumShader(pScene->getActiveCamera(), getContext(), _pShadowBoxSide[BoxSide::Left]->getFrustum(), Color4f(1, 0, 0, 1));
+  RenderUtils::drawFrustumShader(pScene->getActiveCamera(), getContext(), _pShadowBoxSide[BoxSide::Bottom]->getFrustum(), Color4f(0, 1, 0, 1));
+  RenderUtils::drawFrustumShader(pScene->getActiveCamera(), getContext(), _pShadowBoxSide[BoxSide::Top]->getFrustum(), Color4f(0, 1, 0, 1));
+  RenderUtils::drawFrustumShader(pScene->getActiveCamera(), getContext(), _pShadowBoxSide[BoxSide::Back]->getFrustum(), Color4f(0, 0, 1, 1));
+  RenderUtils::drawFrustumShader(pScene->getActiveCamera(), getContext(), _pShadowBoxSide[BoxSide::Front]->getFrustum(), Color4f(0, 0, 1, 1));
+}
 void ShadowBox::createFbo() {
   if (_bShadowMapEnabled == false) {
     return;
   }
   deleteFbo();
 
-  RenderUtils::debugGetRenderState();
+  RenderUtils::debugGetRenderState(getContext());
   // Create the depth buffer
-  RenderUtils::createDepthTexture(&_glDepthTextureId, _iFboWidthPixels, _iFboHeightPixels, false, 0, GL_DEPTH_COMPONENT24);
+  RenderUtils::createDepthTexture(getContext(), &_glDepthTextureId, _iFboWidthPixels, _iFboHeightPixels, false, 0, GL_DEPTH_COMPONENT24);
 
   //Bind framebuffer and attach depth texture.
   getContext()->glGenFramebuffers(1, &_glFrameBufferId);
@@ -229,15 +232,15 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
   if (_bShadowMapEnabled == false) {
     return;
   }
-  //Here we can do shadowmap operations.
 
+  //Here we can do shadowmap operations.
   if (pBox->getGlTexId() != 0) {
     if (Gu::getRenderSettings()->getSmoothShadows()) {
       std::shared_ptr<ShaderBase> pDofShader = getContext()->getShaderManager()->getSmoothGenShader();
-      std::shared_ptr<MeshNode> pQuadMesh = MeshUtils::createScreenQuadMesh(_iFboWidthPixels, _iFboHeightPixels);
+      std::shared_ptr<MeshNode> pQuadMesh = MeshUtils::createScreenQuadMesh(getContext(),_iFboWidthPixels, _iFboHeightPixels);
 
       //Blend color + position and store it in the color.
-      pDofShader->beginRaster();
+      pDofShader->beginRaster(_iFboWidthPixels, _iFboHeightPixels);
       {
         pBox->beginRenderShadowBox();
         for (int iSide = 0; iSide < 6; ++iSide) {
@@ -265,9 +268,6 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
       }
       pDofShader->endRaster();
       getContext()->chkErrDbg();
-
-
-
     }
     else {
       getContext()->glCopyImageSubData(
@@ -285,11 +285,8 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
       );
     }
 
-
-
     getContext()->chkErrDbg();
   }
-
 }
 //Basically implementing the screen quead deferred lighting here.
 void ShadowBox::updateScreenQuad() {

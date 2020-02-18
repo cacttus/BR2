@@ -47,6 +47,7 @@ public:
   void setScene(std::shared_ptr<Scene> s) { _pScene=s; }
   std::shared_ptr<Scene> getScene() { return _pScene; }
   std::shared_ptr<FrameSync> getFrameSync() { return _pFrameSync; }
+  std::shared_ptr<RenderPipeline> getRenderPipeline() { return _pRenderPipe; }
 
 protected:
   void makeSDLWindow(string_t title, int rendersystem);

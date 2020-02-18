@@ -481,15 +481,15 @@ std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delim
   return ret;
 }
 
-void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp) {
+void Gu::guiQuad2d(Box2f& pq, int32_t width, int32_t height) {
   //Transforms a quad for the matrix-less gui projection.
 
   //The resulting coordinates for the GPU are -0.5 +0.5 in both axes with the center being in the center of the screen
   //Translate a 2D screen quad to be rendered in a shader.
   //So* our quad is from TOP Left - OpenGL is Bottom Left - this fixes this.
-  float w = (float)vp->getWidth();
+  float w = (float)width;
   float w2 = w * 0.5f;
-  float h = (float)vp->getHeight();
+  float h = (float)height;
   float h2 = h * 0.5f;
 
   //Subtract from viewport center

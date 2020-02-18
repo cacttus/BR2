@@ -208,8 +208,8 @@ void RenderUtils::renderTexturedQuadAttrib(std::shared_ptr<GLContext> context, f
   context->glDeleteBuffers(1, (GLuint*)&bdIndexes);
   context->glDeleteVertexArrays(1, (GLuint*)&vaoIndexes);
 }
-void RenderUtils::drawAxisShader(std::shared_ptr<GLContext> context, float scale, float lineWidth, mat4& transform) {
-  UtilMeshAxis* ax = new UtilMeshAxis(context, scale, lineWidth, transform);
+void RenderUtils::drawAxisShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> context, float scale, float lineWidth, mat4& transform) {
+  UtilMeshAxis* ax = new UtilMeshAxis(cam, context, scale, lineWidth, transform);
   ax->init();
   ax->draw();
   delete ax;
@@ -221,8 +221,8 @@ void RenderUtils::drawAxisShader(std::shared_ptr<GLContext> context, float scale
 //    ax->draw();
 //    delete ax;
 //}
-void RenderUtils::drawWireSphereShader(std::shared_ptr<GLContext> context, float fRadius, vec4& vColor, int32_t nSlices, int32_t nStacks, mat4* pMatrix) {
-  UtilMeshSphere* ax = new UtilMeshSphere(context, fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
+void RenderUtils::drawWireSphereShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> context, float fRadius, vec4& vColor, int32_t nSlices, int32_t nStacks, mat4* pMatrix) {
+  UtilMeshSphere* ax = new UtilMeshSphere(cam, context, fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
   ax->init();
   if (pMatrix != nullptr) {
     ax->setModelMatrix(*pMatrix);
@@ -230,14 +230,14 @@ void RenderUtils::drawWireSphereShader(std::shared_ptr<GLContext> context, float
   ax->draw();
   delete ax;
 }
-void RenderUtils::drawWireBoxShader(std::shared_ptr<GLContext> context, Box3f* box, vec3& vOffset, vec4& vColor) {
-  UtilMeshBox* ax = new UtilMeshBox(context, box, vOffset, vColor);
+void RenderUtils::drawWireBoxShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> context, Box3f* box, vec3& vOffset, vec4& vColor) {
+  UtilMeshBox* ax = new UtilMeshBox(cam, context, box, vOffset, vColor);
   ax->init();
   ax->draw();
   delete ax;
 }
-void RenderUtils::drawSolidBoxShaded(std::shared_ptr<GLContext> context, Box3f* box, vec3& vOffset, vec4& vColor) {
-  UtilMeshBox* ax = new UtilMeshBox(context, box, vOffset, vColor);
+void RenderUtils::drawSolidBoxShaded(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> context, Box3f* box, vec3& vOffset, vec4& vColor) {
+  UtilMeshBox* ax = new UtilMeshBox(cam, context, box, vOffset, vColor);
   ax->setWireFrame(false);
   ax->init();
   ax->draw();
@@ -263,16 +263,16 @@ void RenderUtils::drawSolidBoxShaded(std::shared_ptr<GLContext> context, Box3f* 
 //{
 //    mesh.end();
 //}
-void RenderUtils::drawGridShader(std::shared_ptr<GLContext> context, float r, float g, float b, int32_t nSlices, float fSliceWidth, vec3& center, std::shared_ptr<ShaderBase> pShader) {
-  UtilMeshGrid* pGrid = new UtilMeshGrid(context, r, g, b, nSlices, fSliceWidth, center);
+void RenderUtils::drawGridShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> context, float r, float g, float b, int32_t nSlices, float fSliceWidth, vec3& center, std::shared_ptr<ShaderBase> pShader) {
+  UtilMeshGrid* pGrid = new UtilMeshGrid(cam, context, r, g, b, nSlices, fSliceWidth, center);
   pGrid->init();
   pGrid->draw();
   delete pGrid;
 }
-void RenderUtils::drawFrustumShader(std::shared_ptr<GLContext> context, std::shared_ptr<FrustumBase> pf, vec4& avColor) {
+void RenderUtils::drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> context, std::shared_ptr<FrustumBase> pf, vec4& avColor) {
   setLineWidth(context, 3.0f);
 
-  UtilMeshInline mi(context);
+  UtilMeshInline mi(cam, context);
   Color4f c4 = avColor;
   mi.begin(GL_LINES);
   {

@@ -377,7 +377,7 @@ bool AppRunner::runCommands(const std::vector<string_t>& args) {
   //  //Convert Mob
   //  t_string strMob = args[2];
   //  t_string strFriendlyName = args[3];
-  //  Gu::getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
+  //  GLContext::getModelCache()()->convertMobToBin(strMob, false, strFriendlyName);
   //  return true;
   //}
   //else 

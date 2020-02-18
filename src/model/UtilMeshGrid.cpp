@@ -5,13 +5,13 @@
 #include "../model/VaoDataGeneric.h"
 
 namespace BR2 {
-UtilMeshGrid::UtilMeshGrid(std::shared_ptr<GLContext> pc,
+UtilMeshGrid::UtilMeshGrid(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> pc,
   float r, float g, float b,
   int32_t nSlices,
   float fSliceWidth,
   Vector3& center
 ) :
-  UtilMesh(pc, v_v3c4::getVertexFormat(), nullptr),
+  UtilMesh(cam,pc, v_v3c4::getVertexFormat(), nullptr),
   _nSlices(nSlices),
   _fSliceWidth(fSliceWidth),
   _center(center),

@@ -20,17 +20,17 @@ GLuint ForwardFramebuffer::getGlColorBufferTexId() {
 void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) {
   deleteTargets();
 
-  _pContext->getShaderManager()->shaderBound(nullptr);
-  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  _pContext->chkErrRt();
-  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  _pContext->chkErrRt();
+  getContext()->getShaderManager()->shaderBound(nullptr);
+  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  getContext()->chkErrRt();
+  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  getContext()->chkErrRt();
 
-  _pContext->glGenFramebuffers(1, &_uiGlFramebufferId);
-  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, _uiGlFramebufferId);
-  _pContext->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, iWidth);
-  _pContext->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, iHeight);
-  _pContext->chkErrRt();
+  getContext()->glGenFramebuffers(1, &_uiGlFramebufferId);
+  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, iWidth);
+  getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, iHeight);
+  getContext()->chkErrRt();
 
   attachColorTargets(iWidth, iHeight);
   addTarget(sharedPick);
@@ -40,11 +40,11 @@ void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<B
   checkFramebufferComplete();
 
   //Return to default.
-  _pContext->getShaderManager()->shaderBound(nullptr);
-  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  _pContext->chkErrRt();
-  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//. The value zero is reserved, but there is no default renderbuffer object. Instead, renderbuffer set to zero effectively unbinds any renderbuffer object previously bound. 
-  _pContext->chkErrRt();
+  getContext()->getShaderManager()->shaderBound(nullptr);
+  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  getContext()->chkErrRt();
+  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);//. The value zero is reserved, but there is no default renderbuffer object. Instead, renderbuffer set to zero effectively unbinds any renderbuffer object previously bound. 
+  getContext()->chkErrRt();
 
   _eState = FramebufferState::e::Initialized;
 }
@@ -55,13 +55,13 @@ void ForwardFramebuffer::attachColorTargets(int32_t iWidth, int32_t iHeight) {
 }
 void ForwardFramebuffer::clearFb() {
   //Call this before we begin the defrred
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
   setDrawAllTargets();
 
   glClearColor(getClear().x, getClear().y, getClear().z, getClear().w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 void ForwardFramebuffer::beginRender() {
   if (_eState != FramebufferState::Initialized) {
@@ -69,8 +69,8 @@ void ForwardFramebuffer::beginRender() {
   }
 
   //Clear all buffers
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
 
   //Do not clear - previous deferred operation is in here. (clear happens in clearFb)
   //**Do not clear***

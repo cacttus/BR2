@@ -16,7 +16,7 @@ namespace BR2 {
 */
 class UtilMeshInline : public UtilMesh {
 public:
-  UtilMeshInline(std::shared_ptr<GLContext> ctx);
+  UtilMeshInline(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx);
   virtual ~UtilMeshInline() override;
 
   void setDefaultColor(vec4& v) { _vDefaultColor = v; }
@@ -43,7 +43,7 @@ private:
 };
 class UtilMeshInline2d : public UtilMesh {
 public:
-  UtilMeshInline2d(std::shared_ptr<GLContext> ctx);
+  UtilMeshInline2d(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx);
   virtual ~UtilMeshInline2d() override;
 
   void setDefaultColor(vec4& v) { _vDefaultColor = v; }

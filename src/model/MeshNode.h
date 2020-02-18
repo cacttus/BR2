@@ -19,9 +19,9 @@ namespace BR2 {
 */
 class MeshNode : public SceneNode {
 public:
-  MeshNode() {}
-  MeshNode(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn);
-  MeshNode(std::shared_ptr<MeshData> pd);
+  MeshNode(std::shared_ptr<GLContext> context);
+  MeshNode(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn);
+  MeshNode(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> pd);
   virtual ~MeshNode() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) override;
@@ -41,6 +41,7 @@ public:
   std::shared_ptr<Material> getMaterial() { return _pMaterial; }
   std::shared_ptr<MeshData> getMeshData() { return _pMeshData; }
   uint32_t getPickId() { return _iPickId; }
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
 
 protected:
   uint32_t _iPickId = INVALID_PICK_ID; //Pick Id must be separate from NodeId because non-node things can be picked.
@@ -50,7 +51,7 @@ protected:
   std::shared_ptr<ShaderStorageBuffer> _pArmJoints = nullptr; //Skin 12/9/2017
   std::vector<std::shared_ptr<BoneNode>> _vecBoneNodesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
   std::vector<std::shared_ptr<ArmatureNode>> _vecArmaturesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
-
+  std::shared_ptr<GLContext> _pContext = nullptr;
   //If we wanted to be picky we could make a "modifier" class to mimic 3D editors
   void createSkin();
   void computeSkinFrame();

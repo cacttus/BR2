@@ -13,18 +13,13 @@
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 namespace BR2 {
-class VaoDataGeneric;
-class TextBufferMesh : public VirtualMemory {
+
+class TextBufferMesh : public GLFramework {
 public:
-  std::shared_ptr<VaoDataGeneric> getVao() {
-    return _pVaoData;
-  }
-  TextBufferMesh(
-    std::shared_ptr<GLContext> pContext,
-    int32_t count
-  );
+  TextBufferMesh(std::shared_ptr<GLContext> pContext, int32_t count);
   virtual ~TextBufferMesh() override;
-  //void setTexture(std::shared_ptr<Texture2DSpec> tex);
+
+  std::shared_ptr<VaoDataGeneric> getVao() { return _pVaoData; }
   FORCE_INLINE int32_t getMaxQuads() { return _iMaxQuads; }
   FORCE_INLINE int32_t getQuadCount() { return _iCurrentQuadIndex; }
   FORCE_INLINE void resetCopy() { _iCurrentQuadIndex = 0; }

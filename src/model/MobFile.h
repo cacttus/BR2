@@ -29,12 +29,13 @@ public:
   MatData() {
   }
 };
+
 //Data ofr obj file - meshes
-class MeshSpecData : public VirtualMemory {
+class MeshSpecData : public GLFramework {
 public:
   const int32_t c_iNoComponent = -999999999;
 public:
-  MeshSpecData();
+  MeshSpecData(std::shared_ptr<GLContext> ct);
   virtual ~MeshSpecData();
 
   void setParentType(ParentType::e pt) { _eParentType = pt; }
@@ -132,7 +133,7 @@ public:
 */
 class MobFile : public PoundFile {
 public:
-  MobFile();
+  MobFile(std::shared_ptr<GLContext> c);
   virtual ~MobFile() override;
   ParentType::e parseParentType(string_t pt);
   string_t getMobDir();
@@ -147,6 +148,8 @@ private:
   std::vector<std::shared_ptr<ModelData>> _vecModelSpecs;
 
   std::shared_ptr<ModDataLoad> _pCurModDataLoad = nullptr;
+  std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<GLContext> getContext() {return _pContext;}
 
   //Inherited
   virtual void pkp(std::vector<string_t>& tokens);

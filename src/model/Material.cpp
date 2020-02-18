@@ -22,7 +22,7 @@ Material::~Material() {
   _mapTextureBindings.clear();
 }
 std::shared_ptr<Material> Material::makeCopy() {
-  std::shared_ptr<Material> ret = std::make_shared<Material>(_strName);
+  std::shared_ptr<Material> ret = std::make_shared<Material>(getContext(), _strName);
   //ret->_pContext                 = this->_pContext                ;
   //ret->_strName                  = this->_strName                 ;
   ret->_v4Spec = this->_v4Spec;

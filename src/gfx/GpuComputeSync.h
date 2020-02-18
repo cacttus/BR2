@@ -13,7 +13,7 @@
 namespace BR2 {
 /**
 *  @class GpuComputeSync
-*  @brief Stores information pertaining to the dispatching of computes to the compute shader system 
+*  @brief Stores information pertaining to the dispatching of computes to the compute shader system
 Usage
     For Gpu
         call createFence()
@@ -24,28 +24,26 @@ Usage
         when done call signalCpu()
         check isComputeComplete()==true
 */
-class GpuComputeSync : public VirtualMemory {
-    std::shared_ptr<GLContext> _pContext = nullptr;
+class GpuComputeSync : public GLFramework {
 public:
-    //TRef<ModelNode> _pModelOfMesh; //unneeded if stored on meshbuf
-    //MeshBuf* _pBufToCompute;
-    GLsync _glSyncObject = nullptr;
-    bool _bCpuDispatched = false;
-    bool _bGpuDispatched  = false;
-    bool _bCpuSignaled = false;
-    bool isDispatched(){ return (_bCpuDispatched||_bGpuDispatched); }
-    bool isCpuDispatched(){ return _bCpuDispatched; }
-    //void clearDispatched(){ _bDispatched=false; }
+  //TRef<ModelNode> _pModelOfMesh; //unneeded if stored on meshbuf
+  //MeshBuf* _pBufToCompute;
+  GpuComputeSync(std::shared_ptr<GLContext> pContext);
+  virtual ~GpuComputeSync() override;
 
-    void createCpuFence();    // - Creates a "virtual" fence to simulate the same GPU stuff on the CPU.
-    void signalCpu(); // - Manually signal via the CPU.  For the GPU signals simply call  isComputeComplete()
+  GLsync _glSyncObject = nullptr;
+  bool _bCpuDispatched = false;
+  bool _bGpuDispatched = false;
+  bool _bCpuSignaled = false;
+  bool isDispatched() { return (_bCpuDispatched || _bGpuDispatched); }
+  bool isCpuDispatched() { return _bCpuDispatched; }
+  //void clearDispatched(){ _bDispatched=false; }
 
-    void createFence();    // - Creates an OPENGL GPU instruction fence.
-    bool isComputeComplete();    // Returns true if the given compute fence has been passed and the compute is complete.
+  void createCpuFence();    // - Creates a "virtual" fence to simulate the same GPU stuff on the CPU.
+  void signalCpu(); // - Manually signal via the CPU.  For the GPU signals simply call  isComputeComplete()
 
-    GpuComputeSync(std::shared_ptr<GLContext> pContext);
-    virtual ~GpuComputeSync() override ;
-
+  void createFence();    // - Creates an OPENGL GPU instruction fence.
+  bool isComputeComplete();    // Returns true if the given compute fence has been passed and the compute is complete.
 };
 
 }//ns BR2

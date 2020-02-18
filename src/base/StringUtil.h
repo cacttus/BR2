@@ -19,7 +19,7 @@ namespace BR2 {
 class StringUtil : public VirtualMemory {
 public:
   StringUtil();
-  VIRTUAL ~StringUtil() DOES_NOT_OVERRIDE;
+  virtual ~StringUtil() DOES_NOT_OVERRIDE;
   static int32_t compare(string_t a, string_t b);
   static bool charIsLetterOrNumber(char c);
   static bool isEmpty(string_t str);

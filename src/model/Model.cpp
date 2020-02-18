@@ -804,7 +804,8 @@ std::shared_ptr<BoneData> ModelData::getBoneByArmJointOffset(int32_t ijo) {
   return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-ModelNode::ModelNode(std::shared_ptr<ModelData> data) : PhysicsNode(data) {
+ModelNode::ModelNode(std::shared_ptr<GLContext> ct, std::shared_ptr<ModelData> data) : PhysicsNode(data) {
+  _pContext = ct;
   stopAllActions();
   update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
 
@@ -820,7 +821,7 @@ ModelNode::ModelNode(std::shared_ptr<ModelData> data) : PhysicsNode(data) {
   }
   //Create meshes
   for (std::shared_ptr<MeshData> pMeshSpec : data->getMeshes()) {
-    std::shared_ptr<MeshNode> pMeshnode = std::make_shared<MeshNode>(pMeshSpec, getThis<ModelNode>());
+    std::shared_ptr<MeshNode> pMeshnode = std::make_shared<MeshNode>(getContext(),pMeshSpec, getThis<ModelNode>());
     _vecMeshes.push_back(pMeshnode);
     addNodeToCache(pMeshnode);
   }

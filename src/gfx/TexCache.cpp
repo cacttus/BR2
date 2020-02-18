@@ -24,7 +24,7 @@ const std::string TexCache::RopeWd = "./data/tx64-rope.png";
 const std::string TexCache::LadderWd = "./data/tx64-ladder.png";
 
 ///////////////////////////////////////////////////////////////////
-TexCache::TexCache(std::shared_ptr<GLContext> ct) : _pContext(ct) {
+TexCache::TexCache(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
   int iWidthHeight = 1;
   vec4 v(1, 1, 1, 1);
 
@@ -88,14 +88,14 @@ std::shared_ptr<Texture2DSpec> TexCache::getOrLoad(std::string texName, bool bIs
     ret = ite->second;
   }
   else if (bIsGenerated == false) {
-    ret = std::make_shared<Texture2DSpec>(texName, _pContext, bRepeatU, bRepeatV);
+    ret = std::make_shared<Texture2DSpec>(texName, getContext(), bRepeatU, bRepeatV);
     _cache.insert(std::make_pair(ih, ret));
   }
 
   return ret;
 }
 std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss) {
-  std::shared_ptr<Texture2DSpec> pRet = std::make_shared<Texture2DSpec>(ss, _pContext);
+  std::shared_ptr<Texture2DSpec> pRet = std::make_shared<Texture2DSpec>(ss, getContext());
   add(name, pRet);
 
   return pRet;

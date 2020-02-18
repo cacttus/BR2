@@ -32,7 +32,7 @@ public:
 *  @class ShaderCache
 *  @brief Caches compiled shaders as binary data.
 */
-class ShaderCache : public VirtualMemory {
+class ShaderCache : public GLFramework {
 public:
   ShaderCache(std::shared_ptr<GLContext> ct, string_t cacheDir);
   virtual ~ShaderCache() override;
@@ -54,7 +54,6 @@ private:
   bool _bCacheIsSupported = false;
   std::vector<GLProgramBinary*> _vecBinaries;
   string_t _strCacheDirectory;
-  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
 }//ns BR2

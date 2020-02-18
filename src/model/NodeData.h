@@ -14,7 +14,7 @@ namespace BR2 {
 *  @class NodeData 
 *  @brief Stores shared node data between @cBaseNode instances.
 */
-class NodeData : public Serializable<NodeData> {
+class NodeData : public ISerializable, public VirtualMemoryShared<NodeData> {
 public:
   NodeData() {} //Serialized version
   NodeData(string_t strName);
@@ -45,6 +45,7 @@ protected:
   //mat4 _mBasis;//Where the object is - base rotation &c.
   string_t _strParentName;
   ParentType::e _eParentType = ParentType::e::None;
+
   void setParentType(ParentType::e pt) { _eParentType = pt; }
 };
 

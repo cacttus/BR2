@@ -21,34 +21,23 @@ DO NOT ADD VIRTUAL METHODS
 */
 class PlaneEx3 : public Plane3f {
 public:
-    Vector3 t,b;    // - TBN
-    float u;        // - The value for texture space, this is initialized to 1.0
-    Vector3 origin;        // - Point on the plane.
+  //LINE_HIT    intersectLine(const Vector3& p1, const Vector3& p2) const;// - todo
+  FORCE_INLINE PlaneEx3();
+  FORCE_INLINE NOT_VIRTUAL ~PlaneEx3() override;
+  float        dist2d(Vec2f& e);    // - Return the X/Z distnace from a vector2 (where y is z)
+  FORCE_INLINE void        calcTBN();
+  FORCE_INLINE void        construct(Vector3& Normal, Vector3& Point);
+  FORCE_INLINE void        construct(Vector3& tri_p1, Vector3& tri_p2, Vector3& tri_p3);
+  FORCE_INLINE Matrix3x3 getTBNMatrix();
 
 public:
-    //LINE_HIT    intersectLine(const Vector3& p1, const Vector3& p2) const;// - todo
-   
-    float        dist2d(Vec2f& e);    // - Return the X/Z distnace from a vector2 (where y is z)
-
-    FORCE_INLINE void        calcTBN();
-    FORCE_INLINE void        construct( Vector3& Normal, Vector3& Point );
-    FORCE_INLINE void        construct( Vector3& tri_p1, Vector3& tri_p2, Vector3& tri_p3 );
-
-    FORCE_INLINE Matrix3x3 getTBNMatrix();
-
-    //virtual PlaneEx3&    operator=( const PlaneEx3& rhs ){
-    //    *this = rhs;
-    //    return *this;
-    //}
-    
-public:
-
-    FORCE_INLINE PlaneEx3();
-    FORCE_INLINE NOT_VIRTUAL ~PlaneEx3() override ;
+  Vector3 t, b;    // - TBN
+  float u;        // - The value for texture space, this is initialized to 1.0
+  Vector3 origin;        // - Point on the plane.
 };
 
 /**
-*  @fn construct()    
+*  @fn construct()
 *  @brief Construct the components of the plane out of a triangle.
 *    Also calculates the TBN
 *  @remarks
@@ -59,66 +48,61 @@ public:
 *
 *    assume CCW vertexes
 */
-FORCE_INLINE void PlaneEx3::construct( Vector3& tri_p1, Vector3& tri_p2, Vector3& tri_p3 )
-{
-    u = 1.0;
-    origin = tri_p1;
+FORCE_INLINE void PlaneEx3::construct(Vector3& tri_p1, Vector3& tri_p2, Vector3& tri_p3) {
+  u = 1.0;
+  origin = tri_p1;
 
-    t = (tri_p2-tri_p1);
-    b = (tri_p3-tri_p1);
-    
-    t/=u;
-    t.normalize();
-    n =b.cross(t);//20161129 - NOTE: CHANGED THIS FOR THE RHS COORDINATES
+  t = (tri_p2 - tri_p1);
+  b = (tri_p3 - tri_p1);
 
-    n.normalize();
-    b =    n.cross(t);
+  t /= u;
+  t.normalize();
+  n = b.cross(t);//20161129 - NOTE: CHANGED THIS FOR THE RHS COORDINATES
 
-    d = -n.dot(origin);
+  n.normalize();
+  b = n.cross(t);
+
+  d = -n.dot(origin);
 
 }
-FORCE_INLINE void PlaneEx3::construct( Vector3& normal, Vector3& point )
-{
-        Plane3f::construct(normal,point);
-        origin = point;
+FORCE_INLINE void PlaneEx3::construct(Vector3& normal, Vector3& point) {
+  Plane3f::construct(normal, point);
+  origin = point;
 }
 
 /*
 *  @fn getTBN()
 *  @brief Return the TBN of the matrix.
 */
-FORCE_INLINE Matrix3x3 PlaneEx3::getTBNMatrix()
-{
-    Matrix3x3 m;
-    m._m11 = t.x;
-    m._m12 = t.y;
-    m._m13 = t.z;
-    m._m21 = b.x;
-    m._m22 = b.y; 
-    m._m23 = b.z;
-    m._m31 = n.x;
-    m._m32 = n.y;
-    m._m33 = n.z;
-    return m;
+FORCE_INLINE Matrix3x3 PlaneEx3::getTBNMatrix() {
+  Matrix3x3 m;
+  m._m11 = t.x;
+  m._m12 = t.y;
+  m._m13 = t.z;
+  m._m21 = b.x;
+  m._m22 = b.y;
+  m._m23 = b.z;
+  m._m31 = n.x;
+  m._m32 = n.y;
+  m._m33 = n.z;
+  return m;
 }
 
 /*
 *  @fn calcTBN()
 *  @brief Without calling this the matrix will have no TB!!!!
 */
-FORCE_INLINE void PlaneEx3::calcTBN()
-{
+FORCE_INLINE void PlaneEx3::calcTBN() {
 }
 
 
 FORCE_INLINE PlaneEx3::PlaneEx3()/* : d(0.0f), n(0.0f,0.0f,0.0f), b(0.0f,0.0f,0.0f), t(0.0f,0.0f,0.0f), u(1.0)*/
 {
-    ;
+  ;
 }
-FORCE_INLINE PlaneEx3::~PlaneEx3()
-{
-    ;
-}    
+FORCE_INLINE PlaneEx3::~PlaneEx3() {
+  ;
+}
 
 
 }// ns game

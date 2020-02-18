@@ -22,7 +22,7 @@ ShaderManager::~ShaderManager() {
   _pShaderCompiler = nullptr;
 }
 void ShaderManager::initialize() {
-  _pShaderCache = std::make_shared<ShaderCache>(Gu::getAppPackage()->getCacheFolder());
+  _pShaderCache = std::make_shared<ShaderCache>(getContext(), Gu::getAppPackage()->getCacheFolder());
   //We might want to verify, that the graphics context here can in fact share shader objects without mucking-up context state.
   _pShaderCompiler = std::make_shared<ShaderCompiler>(getContext(), Gu::getAppPackage()->getShadersFolder());
 
@@ -335,7 +335,7 @@ void ShaderManager::compileShaderSubProgram(std::shared_ptr<ShaderSubProgram> pS
 
 }
 std::shared_ptr<ShaderBase> ShaderManager::makeProgram(std::vector<std::shared_ptr<ShaderSubProgram>>& vecpsp, string_t& programName) {
-  std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(programName);
+  std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(getContext(), programName);
   pProgram->init(); //The program must be constructed for the shader cache.
 
   //One compilation time which is the same across all sub-programs.

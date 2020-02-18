@@ -11,51 +11,48 @@
 #include "../math/MathHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
-//#include "../material/MaterialHeader.h"
-//#include "../scene/BvhHeader.h"
 
 namespace BR2 {
 /**
 *  @class ShadowFrustumSide
-*  @brief Side of a shadow cube frustum.
-*        This is basically a camera with a view frustum.
-*        Analogous to BaseCamera3D - without the extra node system overhead.
+*  @brief Side of a shadow cube frustum.  This is basically a camera with a view frustum. Analogous to BaseCamera3D - without the extra node system overhead.
 */
-class ShadowBoxSide : public VirtualMemory { 
-private:
-    std::shared_ptr<RenderViewport> _pViewport = nullptr;
-    BoxSide::e _eSide;
-    std::shared_ptr<FrustumBase> _pFrustum = nullptr;
-    std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
-    mat4 _projMatrix;    // Frustum, Proj, View - basic camera parameters
-    mat4 _viewMatrix;    //
-    std::shared_ptr<RenderBucket> _pVisibleSet;
-    std::shared_ptr<RenderBucket> _pLastSet;//TODO: check vs current set _bShadowDirty in BvhNOde
-    std::shared_ptr<ShadowBox> _pParentBox = nullptr;
-    bool _bMustUpdate;
-    bool _bShadowMapEnabled = false;
-
+class ShadowBoxSide : public VirtualMemory {
 public:
-    ShadowBoxSide(
-        std::shared_ptr<ShadowBox> pParentBox
-        , std::shared_ptr<LightNodePoint> rLightSource
-        , BoxSide::e eSide
-        , bool bShadowMapEnabled
-        );
-    virtual ~ShadowBoxSide() override;
+  ShadowBoxSide(
+    std::shared_ptr<ShadowBox> pParentBox
+    , std::shared_ptr<LightNodePoint> rLightSource
+    , BoxSide::e eSide
+    , bool bShadowMapEnabled
+  );
+  virtual ~ShadowBoxSide() override;
 
-    bool getMustUpdate() { return _bMustUpdate; }
-    std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
-    std::shared_ptr<FrustumBase> getFrustum() { return _pFrustum; }
-    std::shared_ptr<LightNodePoint> getLight() { return _pLightSource; }
-    mat4* getProjectionMatrix() { return &_projMatrix; }
-    mat4* getViewMatrix() { return &_viewMatrix; }
+  void updateView();
+  void collect();
+  void renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool);
+  bool computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum);
+  std::shared_ptr<GLContext> getContext();
+  bool getMustUpdate() { return _bMustUpdate; }
+  std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
+  std::shared_ptr<FrustumBase> getFrustum() { return _pFrustum; }
+  std::shared_ptr<LightNodePoint> getLight() { return _pLightSource; }
+  mat4* getProjectionMatrix() { return &_projMatrix; }
+  mat4* getViewMatrix() { return &_viewMatrix; }
 
-    void updateView();
-    void collect();
-    void renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool);
-    bool computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum);
+private:
+  std::shared_ptr<RenderViewport> _pViewport = nullptr;
+  BoxSide::e _eSide;
+  std::shared_ptr<FrustumBase> _pFrustum = nullptr;
+  std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
+  mat4 _projMatrix;    
+  mat4 _viewMatrix;    
+  std::shared_ptr<RenderBucket> _pVisibleSet;
+  std::shared_ptr<RenderBucket> _pLastSet;//TODO: check vs current set _bShadowDirty in BvhNOde
+  std::shared_ptr<ShadowBox> _pParentBox = nullptr;
+  bool _bMustUpdate;
+  bool _bShadowMapEnabled = false;
 };
+
 }//ns BR2
 
 

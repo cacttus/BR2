@@ -7,7 +7,7 @@
 #include "../model/VertexFormat.h"
 
 namespace BR2 {
-TextBufferMesh::TextBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : _pContext(c) {
+TextBufferMesh::TextBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : GLFramework(c) {
   _iMaxQuads = count;
   _iCurrentQuadIndex = 0;
   allocateQuads(count);
@@ -48,11 +48,11 @@ void TextBufferMesh::allocateQuads(int32_t count) {
   assignIndexes();
 
   AssertOrThrow2(_pVaoData == nullptr);
-  _pVaoData = std::make_shared<VaoDataGeneric>(_pContext, v_v2c4x2::getVertexFormat());
+  _pVaoData = std::make_shared<VaoDataGeneric>(getContext(), v_v2c4x2::getVertexFormat());
 
   copyToGpu(true);
 
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
 }
 void TextBufferMesh::assignIndexes() {

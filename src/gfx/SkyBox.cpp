@@ -81,14 +81,14 @@ void SkyBox::init(std::shared_ptr<Atlas> pAtlas, float fBoxDiagonalSize2, bool b
     }
   }
 
-  std::shared_ptr<MeshData> ms = std::make_shared<MeshData>(
+  std::shared_ptr<MeshData> ms = std::make_shared<MeshData>(getContext(),
     (void*)verts.data(), verts.size(),
     (void*)inds.data(), inds.size(), v_v3n3x2::getVertexFormat(), nullptr);
-  std::shared_ptr<Material> mt = std::make_shared<Material>();
+  std::shared_ptr<Material> mt = std::make_shared<Material>(getContext());
   mt->addTextureBinding(_pAtlas, TextureChannel::Channel0, TextureType::e::Color, 1.0f);
   ms->setMaterial(mt);
 
-  _pMesh = std::make_shared<MeshNode>(ms);
+  _pMesh = std::make_shared<MeshNode>(getContext(),ms);
 
 
 }
@@ -156,7 +156,7 @@ void SkyBox::draw(RenderParams& rp) {
 
 
     // //rp.addTexture(_pAtlas);
-    //// rp.addTexture(Gu::getTexCache()->getOrLoad("./data-dc/spr/barrier-1.png"));
+    //// rp.addTexture(GLContext::getTexCache()()->getOrLoad("./data-dc/spr/barrier-1.png"));
     // rp.setMesh(_pMesh);
     // rp.draw();
   }

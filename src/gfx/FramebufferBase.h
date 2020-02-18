@@ -14,7 +14,7 @@ namespace BR2 {
 *  @class FramebufferBase
 *  @brief Base class for interfacing with OpenGL framebuffers.
 */
-class FramebufferBase : public VirtualMemory {
+class FramebufferBase : public GLFramework {
 public:
   FramebufferBase(std::shared_ptr<GLContext> pc, bool bMsaa, int nMsaa, vec4& vClear);
   virtual ~FramebufferBase()  override;
@@ -36,7 +36,6 @@ public:
   static std::shared_ptr<BufferRenderTarget> createDepthTarget(std::shared_ptr<GLContext> context, string_t strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples);
  
 protected:
-  std::shared_ptr<GLContext> _pContext = nullptr;
   bool _bMsaaEnabled = false;
   uint32_t _nMsaaSamples = 0;
   GLuint _uiGlFramebufferId = 0;
@@ -51,11 +50,9 @@ protected:
   void addTarget(std::shared_ptr<BufferRenderTarget> other);//Copy target from other framebuffer
  // void attachDepthTarget(std::shared_ptr<RenderTarget> pSharedDepth);
   void deleteTargets();
-  std::shared_ptr<GLContext> getContext() { return _pContext;  }
 
   static void makeRenderTexture(std::shared_ptr<GLContext> context, GLuint* iTexId, GLenum eAttachment, GLenum eInternalFormat, GLenum eTextureFormat,
     GLenum eDataType, int32_t iWidth, int32_t iHeight, GLenum* eOutTarget, bool bMultisample, int32_t nSamples);
-
 };
 
 

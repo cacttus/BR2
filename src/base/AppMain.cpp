@@ -85,7 +85,7 @@
 //  //if (_pQuadMeshBackground == nullptr) {
 //  //  _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
 //  //    Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
-//  //  _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+//  //  _pTex = GLContext::getTexCache()()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
 //  //}
 //  //std::shared_ptr<CameraNode> bc = Gu::getCamera();
 //  //getContext()->getShaderManager()->getImageShader_F()->setCameraUf(bc);

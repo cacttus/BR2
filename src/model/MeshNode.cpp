@@ -13,9 +13,9 @@
 #include "../gfx/LightNode.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBoxSide.h"
+#include "../gfx/RenderPipeline.h"
 #include "../gfx/Picker.h"
 #include "../gfx/TexCache.h"
-#include "../gfx/RenderSettings.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/Picker.h"
 #include "../model/OBB.h"
@@ -38,7 +38,8 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-MeshNode::MeshNode() {
+MeshNode::MeshNode(std::shared_ptr<GLContext> context) {
+  _pContext = context;
   setHidden(getMeshData()->getHideRender());
 
   if (getMeshData()->getMaterial() != nullptr) {
@@ -50,10 +51,10 @@ MeshNode::MeshNode() {
   }
 
 }
-MeshNode::MeshNode(std::shared_ptr<MeshData> ms) : MeshNode() {
+MeshNode::MeshNode(std::shared_ptr<GLContext> ct, std::shared_ptr<MeshData> ms) : MeshNode(ct) {
   _pMeshData = ms;
 }
-MeshNode::MeshNode(std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn) : MeshNode() {
+MeshNode::MeshNode(std::shared_ptr<GLContext> ct, std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn) : MeshNode(ct) {
   _pModelNode = mn;
   _pMeshData = ps;
 }
@@ -65,7 +66,7 @@ MeshNode::~MeshNode() {
   _vecArmaturesOrdered.resize(0);
 }
 void MeshNode::afterChildInserted(std::shared_ptr<TreeNode>) {
-  _iPickId = getScene()->getWindow()->getPicker()->genPickId();
+  _iPickId = getScene()->getWindow()->getRenderPipeline()->getPicker()->genPickId();
 }
 void MeshNode::printDataToStdout() {
   GpuAnimatedMeshWeightData* wdat = new GpuAnimatedMeshWeightData[getMeshData()->getWeightOffsetsGpu()->getNumElements()];
@@ -321,7 +322,7 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
   std::shared_ptr<VertexFormat> meshFmt = getMeshData()->getVertexFormat();
 
   if (_pMaterial == nullptr) {
-    _pMaterial = Gu::getModelCache()->getDefaultMaterial();
+    _pMaterial = GLContext::getModelCache()->getDefaultMaterial();
     //showNoMaterialError();
     //meshFmt = v_v3::getVertexFormat();
   }
@@ -411,7 +412,7 @@ void MeshNode::drawShadow(RenderParams& rp) {
   bindSkin(rp.getShader());
 
   if (_pMaterial == nullptr) {
-    _pMaterial = Gu::getModelCache()->getDefaultMaterial();
+    _pMaterial = GLContext::getModelCache()()->getDefaultMaterial();
     // showNoMaterialError();
   }
 

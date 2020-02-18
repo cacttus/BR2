@@ -13,8 +13,8 @@
 * VI. Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 
 ## Currently Working On..
-1. Unlink the Window viewport with the Camera Viewport.  
-	* This requires us to upate RenderPipeline, and also Frustum class.
+1. ~~Unlink the Window viewport with the Camera Viewport.~~
+	* This is not possible, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height.
 2. MeshNode/MeshSpec, should be one class.  To create new meshes, we'd do a shallow copy of the class.
 	* The same goes for all the Spec/Data model classes.  We follow a Blender style Object/Data/User pattern.
 4. Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
@@ -25,9 +25,32 @@
 
 *2/17/2020*
 
+* So, after 2400 errors, and counting, I think it's best to revert the changes to passing around the GLContext, and using Gu, and 
+some contextual variables for Context and Camera I barrelled into this change, and broke too many things.  This will require too much testing
+to fix, and most of the changes are not necessary, for instance:
+	* ActiveCamera is the same as Gu::getcamera, as only 1 camera can ever be active.  So replacing Gu::getCamera EVERYWHERE is silly.
+	* There will be ONE main GLContext.  If we need new windows, we'll create new GLContexts, right.
+	* RenderPipe and Picker will REMAIN children of Window.
+		* We'll create copies of the Framebuffer stuff for each GL Context.
+		* One thing we haven't thought of is that Shadows and Cameras will need to be separated by GL context.
+	* We will REVERT the shared Viewport Changes, HOWEVER
+		* We will keep the simplified viewport code.
+	* Likewise, we will move all respective managers to the GLContext.  Gu:: will still give us the managers, but context-dependent managers will show the Active context.
+	* Error Checking stays on Gu::, there's no need for per-context error checking methods, as the Active context will be evaluated.
+	* New Stuff we will be Porting to the Old engine:
+		* Script API (pseudocode)
+		* Scene, WorldObject, Component
+		* We will  Rename *Spec to *Data
+		* ISerializable
+		* Movement of PhysicsManager stuff to Scene
+		* Renaming ObjectFile to ObjFile
+	* _Of course, this means we're going to need to redo the new formatting for all the files.  Tha'ts ok.  At least the system will compile!_
+
+
 * Removed error checking from Gu.  Instead, error checking is done via the context: both GPU errors, and Operating system errors.
 
 *2/16/2020*
+
 * Renamed BaseNode to SceneNode (could also be SceneGraphNode, but Scenenode is more compact).
 
 * II. part 2 Removal of Spec

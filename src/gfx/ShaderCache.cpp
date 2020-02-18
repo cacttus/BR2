@@ -26,9 +26,8 @@ GLProgramBinary::~GLProgramBinary() {
   _binaryData = NULL;
 }
 //////////////////////////////////////////////////////////////////////////
-ShaderCache::ShaderCache(std::shared_ptr<GLContext> ct, string_t cacheDir) {
+ShaderCache::ShaderCache(std::shared_ptr<GLContext> ct, string_t cacheDir) :GLFramework(ct){
   _strCacheDirectory = cacheDir;
-  _pContext = ct;
 
   GLint n;
   glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &n);
@@ -52,8 +51,8 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
   GLint binBufSz = 0;
   GLint outLen = 0;
 
-  _pContext->glGetProgramiv(prog->getGlId(), GL_PROGRAM_BINARY_LENGTH, &binBufSz);
-  _pContext->chkErrRt();
+  getContext()->glGetProgramiv(prog->getGlId(), GL_PROGRAM_BINARY_LENGTH, &binBufSz);
+  getContext()->chkErrRt();
 
   if (binBufSz == 0 || binBufSz > MemSize::e::MEMSZ_GIG2) {
     Br2ThrowException("Shader program binary was 0 or exceeded " + MemSize::e::MEMSZ_GIG2 + " bytes; actual: " + binBufSz);
@@ -61,8 +60,8 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
 
   GLProgramBinary* b = new GLProgramBinary(this, binBufSz);
 
-  _pContext->glGetProgramBinary(prog->getGlId(), binBufSz, &outLen, &(b->_glFormat), (void*)b->_binaryData);
-  _pContext->chkErrRt();
+  getContext()->glGetProgramBinary(prog->getGlId(), binBufSz, &outLen, &(b->_glFormat), (void*)b->_binaryData);
+  getContext()->chkErrRt();
 
   if (binBufSz != outLen) {
     delete b;
@@ -250,23 +249,23 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
 *  @return false if the program returned errors.
 */
 std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName, GLProgramBinary* bin) {
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
-  std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(programName);
+  std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(getContext(),programName);
   pProgram->init();
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
-  GLboolean b1 = _pContext->glIsProgram(pProgram->getGlId());
+  GLboolean b1 = getContext()->glIsProgram(pProgram->getGlId());
   if (b1 == false) {
     Br2LogWarn("[ShaderCache] Program was not valid before loading to GPU");
     return nullptr;
   }
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
 
   Br2LogDebug("[ShaderCache] Loading Cached Program Binary to GPU");
-  _pContext->glProgramBinary(pProgram->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
-  if (_pContext->chkErrRt(true, true)) {
+  getContext()->glProgramBinary(pProgram->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
+  if (getContext()->chkErrRt(true, true)) {
     //If we have en error here, we failed to load the binary.
     Br2LogWarn("[ShaderCache] Failed to load binary to GPU - we might be on a different platform.");
     return nullptr;
@@ -281,11 +280,11 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
 
   //validate program.
   GLint iValid;
-  _pContext->glValidateProgram(pProgram->getGlId());
-  _pContext->chkErrRt();
+  getContext()->glValidateProgram(pProgram->getGlId());
+  getContext()->chkErrRt();
 
-  _pContext->glGetProgramiv(pProgram->getGlId(), GL_VALIDATE_STATUS, (GLint*)&iValid);
-  _pContext->chkErrRt();
+  getContext()->glGetProgramiv(pProgram->getGlId(), GL_VALIDATE_STATUS, (GLint*)&iValid);
+  getContext()->chkErrRt();
 
   if (iValid == GL_FALSE) {
     // Program load faiiled
@@ -293,8 +292,8 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
     return nullptr;
   }
 
-  GLboolean b2 = _pContext->glIsProgram(pProgram->getGlId());
-  _pContext->chkErrRt();
+  GLboolean b2 = getContext()->glIsProgram(pProgram->getGlId());
+  getContext()->chkErrRt();
 
   if (b2 == false) {
     Br2ThrowException("[ShaderCache] glIsProgram says program was not valid after loading to GPU");
@@ -309,7 +308,7 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
   }
 
   pProgram->unbind();
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
   return pProgram;
 }

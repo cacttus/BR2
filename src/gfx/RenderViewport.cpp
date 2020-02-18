@@ -38,12 +38,23 @@ void RenderViewport::updateBox(std::shared_ptr<RenderTarget> target) {
   else if (_constraint == ViewportConstraint::AdjustHeight) {
   }
   else if (_constraint == ViewportConstraint::Fullscreen) {
-    _rect._min.x = 0;
-    _rect._min.y = 0;
-    _rect._max.x = target->getWidth();
-    _rect._max.y = target->getHeight();
+    if (target) {
+      _rect._min.x = 0;
+      _rect._min.y = 0;
+      _rect._max.x = target->getWidth();
+      _rect._max.y = target->getHeight();
+    }
+    else {
+      Br2ThrowException("Failed to find fullscreen target for updateBox");
+    }
   }
   _lastRect = _rect;
+}
+void RenderViewport::setX(int32_t x) {
+  _rect._min.x = x;
+}
+void RenderViewport::setY(int32_t y) {
+  _rect._min.y = y;
 }
 void RenderViewport::setHeight(int32_t h) {
   _rect._max.y = h;
@@ -63,12 +74,7 @@ int32_t RenderViewport::getX() {
 int32_t RenderViewport::getY() {
   return _rect._min.y;
 }
-void RenderViewport::setX(int32_t x) {
-  _rect._min.x = x;
-}
-void RenderViewport::setY(int32_t y) {
-  _rect._min.y = y;
-}
+
 float RenderViewport::getAspectRatio() {
   float ar = 0;
   if (getHeight() == 0) {

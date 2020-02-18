@@ -4,9 +4,8 @@
 
 
 namespace BR2 {
-BufferRenderTarget::BufferRenderTarget(std::shared_ptr<GLContext> ctx, bool bShared)  {
+BufferRenderTarget::BufferRenderTarget(std::shared_ptr<GLContext> ctx, bool bShared) :GLFramework(ctx) {
   _bShared = bShared;
-  _pContext = ctx;
 }
 BufferRenderTarget::~BufferRenderTarget() {
   glDeleteTextures(1, &_iGlTexId);
@@ -26,10 +25,10 @@ bool BufferRenderTarget::getMsaaEnabled() {
 void BufferRenderTarget::bind(GLenum eAttachment) {
   if (_eTargetType == RenderTargetType::e::Depth) {
     if (getMsaaEnabled()) {
-      _pContext->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, _iGlTexId, 0);
+      getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D_MULTISAMPLE, _iGlTexId, 0);
     }
     else {
-      _pContext->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _iGlTexId, 0);
+      getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _iGlTexId, 0);
     }
   }
   else {
@@ -37,13 +36,13 @@ void BufferRenderTarget::bind(GLenum eAttachment) {
       eAttachment = _eAttachment;
     }
     if (getMsaaEnabled()) {
-      _pContext->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, eAttachment, GL_TEXTURE_2D_MULTISAMPLE, _iGlTexId, 0);
+      getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, eAttachment, GL_TEXTURE_2D_MULTISAMPLE, _iGlTexId, 0);
     }
     else {
-      _pContext->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, eAttachment, GL_TEXTURE_2D, _iGlTexId, 0);
+      getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, eAttachment, GL_TEXTURE_2D, _iGlTexId, 0);
     }
   }
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 }
 
 

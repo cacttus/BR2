@@ -15,9 +15,9 @@ namespace BR2 {
 * @class LightManager
 * @brief Stores deferred light data on the GPU, and renders shadows.
 */
-class LightManager : public VirtualMemory {
+class LightManager : public GLFramework {
 public:
-  LightManager(std::shared_ptr<Scene> scene);
+  LightManager(std::shared_ptr<GLContext> ct, std::shared_ptr<Scene> scene);
   virtual ~LightManager() override;
 
   void update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf);

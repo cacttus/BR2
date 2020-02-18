@@ -24,16 +24,21 @@
 #include "../world/PhysicsShapes.h"
 
 namespace BR2 {
-MeshData::MeshData(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : NodeData(strName) {
+MeshData::MeshData(std::shared_ptr<GLContext> ct) {
+  _pContext = ct;
+}
+MeshData::MeshData(std::shared_ptr<GLContext> ct, std::string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile,
+  std::shared_ptr<PhysicsShape> ps) : NodeData(strName) {
+  _pContext = ct;
   _pVertexFormat = vf;
   _pObjectFile = objFile;
   _pPhysicsShape = ps;
 
   _matLocalMatrix = mat4::identity();
 }
-MeshData::MeshData(const void* pVerts, size_t vCount,
+MeshData::MeshData(std::shared_ptr<GLContext> ct, const void* pVerts, size_t vCount,
   const void* pIndexes, size_t iCount,
-  std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm) : MeshData("", fmt, nullptr, nullptr) {
+  std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm) : MeshData(ct, "", fmt, nullptr, nullptr) {
   _pMaterial = pm;
   allocMesh(pVerts, vCount, pIndexes, iCount, nullptr);
 }
@@ -138,7 +143,7 @@ void MeshData::printWeightsToStdout() {
   int n = 0;
   for (VertexWeightMob w : _vecWeightsMob) {
     for (std::pair<int32_t, std::map<int32_t, float>> p1 : w._mapWeights) {
-      // std::shared_ptr<Armature> pa = Gu::getModelCache()->getArmature(p1.first);
+      // std::shared_ptr<Armature> pa = GLContext::getModelCache()()->getArmature(p1.first);
       // if (pa != nullptr) {
       std::cout << n << ": " << p1.first << std::endl;
       for (std::pair<int32_t, float> p2 : p1.second) {
@@ -216,7 +221,7 @@ void MeshData::allocSkinMobFile(std::shared_ptr<ModelData> ms) {
 std::shared_ptr<MeshData> MeshData::createCopy() {
   std::shared_ptr<MeshData> ms = nullptr;
 
-  ms = std::make_shared<MeshData>(getName(), ms->getVertexFormat(), nullptr);
+  ms = std::make_shared<MeshData>(getContext(),getName(), ms->getVertexFormat(), nullptr);
   Br2ThrowNotImplementedException();
 
   //if (ms->_pFaceNormals != nullptr) {
@@ -872,7 +877,7 @@ void MeshData::deserialize(std::shared_ptr<BinaryFile> fb) {
   bool bHasMaterial;
   fb->readBool(bHasMaterial);
   if (bHasMaterial) {
-    std::shared_ptr<Material> mat = std::make_shared<Material>();
+    std::shared_ptr<Material> mat = std::make_shared<Material>(getContext());
     mat->deserialize(fb);
     setMaterial(mat);
   }

@@ -6,17 +6,18 @@
 #include "../model/VboData.h"
 
 namespace BR2 {
-GLenum VertexComponent::getAttributeType() {
-  return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
-}
-VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName) :
-  _pContext(pContext), _strName(strName) {
+
+VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName) : GLFramework(pContext) {
+  _strName = strName;
 }
 VertexFormat::~VertexFormat() {
   _vecComponents.clear();
   //for (size_t icomp = 0; icomp < _vecComponents.size(); icomp++) {
   //    DEL_MEM(_vecComponents[icomp]);
   //}
+}
+GLenum VertexComponent::getAttributeType() {
+  return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
 }
 void VertexFormat::addComponent(VertexUserType::e eUserType) {
 

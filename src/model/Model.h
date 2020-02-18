@@ -20,7 +20,7 @@ namespace BR2 {
 *  @class KeyFrame
 *  @brief A keyframe for a 3D mesh animation.
 */
-class KeyFrame : public Serializable<KeyFrame> {
+class KeyFrame : public ISerializable, public VirtualMemoryShared<KeyFrame> {
 public:
   KeyFrame(mat4& mat, int32_t iSeq);
   KeyFrame(vec3& p, quat& r, vec3& s, int32_t iSeq);
@@ -44,7 +44,7 @@ private:
   int32_t _iSequenceKeyFrame;//the keyframe that we loaded from the file
   mat4 compile(vec3& p, quat& r, vec3& s);
   KeyFrame(int32_t iSeq);
-  
+
   //TODO:
   // vec2 vCurveGraphPoint;       //TODO: this will implement bezier later
   //t_string strCurveType;
@@ -59,7 +59,7 @@ private:
 *  @class ActionKeys
 *  @brief Key frames for each object: mesh, armature, or bone
 */
-class ActionKeys : public Serializable<ActionKeys> {
+class ActionKeys : public ISerializable, public VirtualMemoryShared<ActionKeys> {
 public:
   ActionKeys() {}
   ActionKeys(string_t objName);
@@ -91,7 +91,7 @@ private:
 *  @brief A list of actions for an animated model.
 *  @note We had to change this from Action because it got ambiguous with ActionKeys
 */
-class ActionGroup : public Serializable<ActionGroup> {
+class ActionGroup : public ISerializable, public VirtualMemoryShared<ActionGroup> {
 public:
   ActionGroup() {}
   ActionGroup(string_t strName, int32_t iBaseFps);
@@ -174,7 +174,7 @@ public:
   virtual void deserialize(std::shared_ptr<BinaryFile> bf) override;
   virtual void serialize(std::shared_ptr<BinaryFile> bf) override;
 
-  string_t getName() { return _name;  }
+  string_t getName() { return _name; }
 private:
   Hash32 _iBoneName = 0;
   int32_t _iBoneId = -1;//**Bone ordinal
@@ -317,7 +317,7 @@ private:
 */
 class ModelNode : public PhysicsNode {
 public:
-  ModelNode(std::shared_ptr<ModelData>);
+  ModelNode(std::shared_ptr<GLContext> ct, std::shared_ptr<ModelData>);
   virtual ~ModelNode();
 
   void playAction(string_t name);
@@ -331,6 +331,7 @@ public:
   virtual void drawForward(RenderParams& rp) override;
   std::vector<std::shared_ptr<ArmatureNode>>& getArmatureNodes() { return _vecArmatures; }
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
 
 private:
   std::vector<std::shared_ptr<MeshNode>> _vecMeshes;
@@ -343,6 +344,7 @@ private:
   void addNodeToCache(std::shared_ptr<SceneNode> bn);
   std::shared_ptr<Animator> getAnimator(string_t actName);
   void buildNodeParents();
+  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
 

@@ -15,7 +15,7 @@ namespace BR2 {
 *
 */
 //Storage class for OpenGL render target data.
-class BufferRenderTarget : public VirtualMemory {
+class BufferRenderTarget : public GLFramework {
     friend class FramebufferBase;
 public:
   BufferRenderTarget(std::shared_ptr<GLContext> ctx, bool bShared);
@@ -45,7 +45,6 @@ private:
     GLenum _eBlitBit; // GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
     RenderTargetType::e _eTargetType;
     bool _bShared = false;
-    std::shared_ptr<GLContext> _pContext = nullptr;
 
 };
 

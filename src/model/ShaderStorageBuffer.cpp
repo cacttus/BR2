@@ -4,56 +4,55 @@
 
 namespace BR2 {
 
-ShaderStorageBuffer::ShaderStorageBuffer(std::shared_ptr<GLContext> gc, size_t eleSize) : 
-GpuBufferData(gc, GL_SHADER_STORAGE_BUFFER, eleSize) {
-    //_eleSize = eleSize;
+ShaderStorageBuffer::ShaderStorageBuffer(std::shared_ptr<GLContext> gc, size_t eleSize) :
+  GpuBufferData(gc, GL_SHADER_STORAGE_BUFFER, eleSize) {
+  //_eleSize = eleSize;
 }
-ShaderStorageBuffer::~ShaderStorageBuffer() { 
+ShaderStorageBuffer::~ShaderStorageBuffer() {
   //  detachAllShaderVarLists();
 }
 void ShaderStorageBuffer::allocFill(size_t num_elements, const void* frags) {
-    GpuBufferData::allocate(num_elements);
-    GpuBufferData::copyDataClientServer(num_elements, frags);
+  GpuBufferData::allocate(num_elements);
+  GpuBufferData::copyDataClientServer(num_elements, frags);
 }
 void ShaderStorageBuffer::syncRead(void* out_data, size_t num_bytes, size_t byte_offset, bool useMemoryBarrier) {
+  if (getByteSize() == 0) {
+    Br2ThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
+  }
+  if (useMemoryBarrier) {
+    getContext()->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  }
 
-    if(getByteSize()==0) {
-        Br2ThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
-    }
-    if(useMemoryBarrier){
-        _pContext->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-    }
+  bindBuffer(GL_SHADER_STORAGE_BUFFER);
+  void* v = getContext()->glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getByteSize(), GL_MAP_READ_BIT);
+  memcpy((void*)out_data, (void*)((char*)v + byte_offset), num_bytes);
+  getContext()->glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+  unbindBuffer();
 
-    bindBuffer(GL_SHADER_STORAGE_BUFFER);
-    void* v = _pContext->glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,getByteSize(),GL_MAP_READ_BIT);
-    memcpy((void*)out_data, (void*)((char*)v+byte_offset), num_bytes );
-    _pContext->glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
-    unbindBuffer();
-
-   // _pContext->chkErrDbg();
+  // getContext()->chkErrDbg();
 
 }
 void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_offset, bool useMemoryBarrier) {
-  
-    if(getByteSize()==0) {
-        Br2ThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
-    }
 
-    //Segfault
-    VerifyOrThrow(getByteSize()<=(byte_offset + num_bytes),
-        "Tried to write more data than OpenGL Buffer could handle, bufsize: " + getByteSize() + " tried to write " + num_bytes + " at offset " + byte_offset  );
+  if (getByteSize() == 0) {
+    Br2ThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
+  }
 
-    if(useMemoryBarrier) {
-        _pContext->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-    }
+  //Segfault
+  VerifyOrThrow(getByteSize() <= (byte_offset + num_bytes),
+    "Tried to write more data than OpenGL Buffer could handle, bufsize: " + getByteSize() + " tried to write " + num_bytes + " at offset " + byte_offset);
 
-    bindBuffer();
-    void* v = _pContext->glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,getByteSize(),GL_MAP_WRITE_BIT);
-    memcpy((void*)((char*)v+byte_offset), (void*)data, num_bytes);
-    _pContext->glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
-    unbindBuffer();
+  if (useMemoryBarrier) {
+    getContext()->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  }
 
-  //  _pContext->chkErrDbg();
+  bindBuffer();
+  void* v = getContext()->glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getByteSize(), GL_MAP_WRITE_BIT);
+  memcpy((void*)((char*)v + byte_offset), (void*)data, num_bytes);
+  getContext()->glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+  unbindBuffer();
+
+  //  getContext()->chkErrDbg();
 
 }
 //void GpuBufferGeneric::attachShaderVarList(GlslShaderUniformVariables* pu) {

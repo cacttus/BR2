@@ -20,6 +20,7 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/MegaTex.h"
 #include "../gfx/RenderSettings.h"
+#include "../gfx/RenderPipeline.h"
 #include "../base/FrameSync.h"
 
 #include "../model/MeshNode.h"
@@ -29,6 +30,7 @@
 #include "../model/VaoDataGeneric.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
+#include "../world/Scene.h"
 
 
 namespace BR2 {
@@ -233,7 +235,7 @@ bool UiElement::pick(std::shared_ptr<InputManager> InputManager) {
     if (getRenderVisible() == true) {
       if (getIsPickEnabled() == true) {
         if (q.containsPointInclusive(InputManager->getMousePos())) {
-          _iPickedFrameId = getWindow()->getFpsMeter()->getFrameNumber();
+          _iPickedFrameId = getWindow()->getContext()->getFpsMeter()->getFrameNumber();
 
           if (getPickRoot()) {
             //Pick root items pick by boundbox
@@ -804,7 +806,7 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Raster Quad (for drawing)
   _b2RasterQuad = _b2LayoutQuad;
-  Gu::guiQuad2d(_b2RasterQuad, getWindow()->getWindowViewport());
+  Gu::guiQuad2d(_b2RasterQuad, getWindow()->getWidth(), getWindow()->getHeight());
 }
 
 void UiElement::applyMinMax(float& wpx, float& hpx) {
@@ -909,7 +911,7 @@ void UiElement::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
 
 }
 void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, bool bPickedOnly) {
-  if (bPickedOnly && (_iPickedFrameId != getWindow()->getFpsMeter()->getFrameNumber())) {
+  if (bPickedOnly && (_iPickedFrameId != getWindow()->getContext()->getFpsMeter()->getFrameNumber())) {
     //return bc only picked gets showed
     return;
   }
@@ -1195,11 +1197,12 @@ void UiElement::setHover(MouseFunc cc) {
 }
 void UiElement::drawDebug() {
   //ONLY CALL ON Gui2d!!
+
   //Debug Rendering
   if (Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping()) {
     //draws all children
     getWindow()->getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getContext());
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getScene()->getActiveCamera(), getWindow()->getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     {
@@ -1212,7 +1215,7 @@ void UiElement::drawDebug() {
   if (Gu::getRenderSettings()->getDebug()->getPickGui()) {
     //draws all children
     getWindow()->getContext()->setLineWidth(2.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getContext());
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(getWindow()->getScene()->getActiveCamera(), getWindow()->getContext());
     mi->setDefaultColor(vec4(1, 0, 1, 1));
     mi->begin(GL_LINES);
     {
@@ -1276,7 +1279,7 @@ UiImage::UiImage(std::shared_ptr<UiScreen> sc, std::shared_ptr<UiTex> tex, UiIma
   this->_fTileHeightPx = fHeightPx;
   this->setSizeMode(eSizeX, eSizeY);
   this->setSizeMode(eSizeX, eSizeY);
-  this->_iPickId = sc->getWindow()->getPicker()->genPickId();
+  this->_iPickId = sc->getWindow()->getRenderPipeline()-> getPicker()->genPickId();
 }
 UiImage::~UiImage() {
 }
@@ -1441,11 +1444,11 @@ bool UiImage::pick(std::shared_ptr<InputManager> InputManager) {
   if (getLayoutVisible()) {
     if (getRenderVisible()) {
       if (_iPickId > 0) {
-        uint32_t pixid = getWindow()->getPicker()->getSelectedPixelId();
+        uint32_t pixid = getWindow()->getRenderPipeline()->getPicker()->getSelectedPixelId();
         if (pixid != 0) {
           if (pixid == _iPickId) {
 
-            _iPickedFrameId = getWindow()->getFpsMeter()->getFrameNumber();
+            _iPickedFrameId = getWindow()->getContext()->getFpsMeter()->getFrameNumber();
 
             return true;
           }
@@ -3145,7 +3148,8 @@ void UiImage::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& i
 
 //////////////////////////////////////////////////////////////////////////
 #pragma region UICursor
-UiCursor::UiCursor(std::shared_ptr<UiScreen> ss, std::shared_ptr<UiTex> tex) : UiImage(ss, tex, UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, tex->getWidth(), tex->getHeight()) {
+UiCursor::UiCursor(std::shared_ptr<UiScreen> ss, std::shared_ptr<UiTex> tex) : UiImage(ss, tex, UiImageSizeMode::e::Expand, 
+  UiImageSizeMode::e::Expand, tex->getWidth(), tex->getHeight()) {
   this->init();
   this->setName("UiCursor");
   this->setTexture(tex);
@@ -3192,8 +3196,8 @@ void UiScreen::init() {
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
-  _pMesh = MeshNode::create(
-    std::make_shared<MeshData>(
+  _pMesh = std::make_shared<MeshNode>(_pWindow->getContext(),
+    std::make_shared<MeshData>(_pWindow->getContext(),
       verts.data(), verts.size(),
       inds.data(), inds.size(),
       v_GuiVert::getVertexFormat(), nullptr)
@@ -3274,7 +3278,7 @@ void UiScreen::drawForward() {
 }
 
 void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
-  rp.setShader(getWindow()->getShaderManager()->getGuiShader());
+  rp.setShader(GLContext::getShaderManager()->getGuiShader());
 
   //Zero useless params.
   getTex()->bind(TextureChannel::e::Channel0, rp.getShader());

@@ -14,16 +14,7 @@ namespace BR2 {
 *  @class Serializable
 *  @brief Serializable interface for classes.
 */
-template < class Tx >
-class Serializable : public VirtualMemoryShared<Tx> {
-public:
-  Serializable() {
-  }
-  virtual ~Serializable() override {
-  }
-  virtual void deserialize(std::shared_ptr<BinaryFile> fb) = 0;
-  virtual void serialize(std::shared_ptr<BinaryFile> fb) = 0;
-};
+
 
 }//ns BR2
 

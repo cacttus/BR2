@@ -23,7 +23,6 @@ class UiTex : public VirtualMemoryShared<UiTex> {
   Hash32 _iNameHash;
   std::string _strName;
   const std::string& getName() { return  _strName; }
-  virtual bool validate() = 0;
   // static bool setAndValid(std::shared_ptr<UiSkinElement> ele);
   std::shared_ptr<MtTex> _pTex = nullptr;
 public:

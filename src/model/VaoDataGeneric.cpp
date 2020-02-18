@@ -15,7 +15,9 @@
 
 namespace BR2 {
 VaoShader::VaoShader(std::shared_ptr<GLContext> ctx, std::shared_ptr<ShaderBase> pShader, std::shared_ptr<VertexFormat> fmt) :
-  _pVertexFormat(fmt), _pShader(pShader), _pContext(ctx) {
+  GLFramework(ctx) {
+  _pVertexFormat = fmt;
+  _pShader = pShader;
 }
 VaoShader::~VaoShader() {
   deleteVao();
@@ -23,23 +25,23 @@ VaoShader::~VaoShader() {
 void VaoShader::constructVao(std::shared_ptr<VboData> pVboData, std::shared_ptr<IboData> pIboData) {
 
   // g_debugNumconst++;
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
   deleteVao();
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
   _pVboData = pVboData;
   _pIboData = pIboData;
 
-  _pContext->glGenVertexArrays(1, &_iGlVaoId);
-  _pContext->chkErrRt();
+  getContext()->glGenVertexArrays(1, &_iGlVaoId);
+  getContext()->chkErrRt();
 
   //You haveto add vertex components to the vertex dummy
   AssertOrThrow2(_pVertexFormat->getSizeBytes() > 0);
   AssertOrThrow2(pVboData != nullptr);
   AssertOrThrow2(pIboData != nullptr);
 
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 
   bind();
   {
@@ -50,20 +52,20 @@ void VaoShader::constructVao(std::shared_ptr<VboData> pVboData, std::shared_ptr<
     _pVboData->unbindBuffer();
   }
   unbind();
-  _pContext->chkErrRt();
+  getContext()->chkErrRt();
 }
 void VaoShader::deleteVao() {
   if (_iGlVaoId != 0) {
-    _pContext->glDeleteVertexArrays(1, &_iGlVaoId);
+    getContext()->glDeleteVertexArrays(1, &_iGlVaoId);
   }
 }
 void VaoShader::bind() {
-  _pContext->glBindVertexArray(_iGlVaoId);
+  getContext()->glBindVertexArray(_iGlVaoId);
   _pIboData->bindBuffer();
 }
 void VaoShader::unbind() {
   _pIboData->unbindBuffer();
-  _pContext->glBindVertexArray(0);
+  getContext()->glBindVertexArray(0);
 }
 void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, std::shared_ptr<VboData> pVboData) {
 
@@ -86,11 +88,11 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
       errStr += Stz "\r\n";
     }
     else {
-      _pContext->glEnableVertexAttribArray(attr->getGlLocation());
-      _pContext->chkErrDbg();
+      getContext()->glEnableVertexAttribArray(attr->getGlLocation());
+      getContext()->chkErrDbg();
 
       if (comp->getDataType() == GL_INT || comp->getDataType() == GL_UNSIGNED_INT) {
-        _pContext->glVertexAttribIPointer(
+        getContext()->glVertexAttribIPointer(
           attr->getGlLocation(),
           comp->getComponentCount(),
           comp->getDataType(),
@@ -99,7 +101,7 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
         );
       }
       else if (comp->getDataType() == GL_FLOAT) {
-        _pContext->glVertexAttribPointer(
+        getContext()->glVertexAttribPointer(
           attr->getGlLocation(),                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
           comp->getComponentCount(),                  // size
           comp->getDataType(),       // type
@@ -111,7 +113,7 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
       else {
         Br2ThrowNotImplementedException();
       }
-      _pContext->chkErrDbg();
+      getContext()->chkErrDbg();
     }
   }
 
@@ -133,13 +135,14 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
 }
 ///////////////////////////////////////////////////////////////////
 
-VaoDataGeneric::VaoDataGeneric(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt) : _pContext(ctx), _pVertexInfo(fmt) {
+VaoDataGeneric::VaoDataGeneric(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt) : GLFramework(ctx) {
   //You haveto add vertex components to the vertex dummy
   AssertOrThrow2(_pVertexInfo->getSizeBytes() > 0);
 
-  _pContext->chkErrRt();
-  _pVboData = std::make_shared<VboData>(_pContext, _pVertexInfo->getSizeBytes());
-  _pIboData = std::make_shared<IboData>(_pContext, sizeof(v_index32));
+  getContext()->chkErrRt();
+  _pVertexInfo = fmt;
+  _pVboData = std::make_shared<VboData>(getContext(), _pVertexInfo->getSizeBytes());
+  _pIboData = std::make_shared<IboData>(getContext(), sizeof(v_index32));
 }
 VaoDataGeneric::~VaoDataGeneric() {
   //DEL_MEM(_pVboData);
@@ -184,7 +187,7 @@ std::shared_ptr<VaoShader> VaoDataGeneric::getOrCreateVaoForShader(std::shared_p
     return ite->second;
   }
 
-  std::shared_ptr<VaoShader> vao = std::make_shared<VaoShader>(_pContext, pShader, _pVertexInfo);
+  std::shared_ptr<VaoShader> vao = std::make_shared<VaoShader>(getContext(), pShader, _pVertexInfo);
   vao->constructVao(_pVboData, _pIboData);
   _mapVaoShaders.insert(std::make_pair(pShader, vao));
 

@@ -85,6 +85,12 @@ private:
   std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
+class ISerializable {
+public:
+  virtual void deserialize(std::shared_ptr<BinaryFile> fb) = 0;
+  virtual void serialize(std::shared_ptr<BinaryFile> fb) = 0;
+};
+
 }//ns BR2
 
 

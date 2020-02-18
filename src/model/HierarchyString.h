@@ -25,7 +25,6 @@ namespace BR2 {
 template <class Tx>
 class HierarchyString : public VirtualMemory {
 public:
-
   HierarchyString(std::string h_str) { _h_str = h_str; }
   virtual ~HierarchyString() override {
     //Not sure if we keep the joints or what.

@@ -13,7 +13,7 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-LightManager::LightManager(std::shared_ptr<Scene> scene) {
+LightManager::LightManager(std::shared_ptr<GLContext> ct, std::shared_ptr<Scene> scene) :GLFramework(ct) {
   _pScene = scene;
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();
   if (Gu::getConfig()->getColorSpace() == ColorSpace::e::SRGB) {
@@ -154,7 +154,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
       }
     }
 
-    _pContext->chkErrDbg();
+    getContext()->chkErrDbg();
     Perf::popPerf();
   }
 

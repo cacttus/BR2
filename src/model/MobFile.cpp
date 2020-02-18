@@ -8,10 +8,11 @@
 #include "../model/MeshCache.h"
 #include "../model/ModelCache.h"
 #include "../model/ModelThumb.h"
+#include "../model/NodeData.h"
 
 namespace BR2 {
-MobFile::MobFile() {
-
+MobFile::MobFile(std::shared_ptr<GLContext> ct)  {
+  _pContext = ct;
 }
 MobFile::~MobFile() {
   _setModData.clear();
@@ -81,7 +82,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
     //Create Model Spec
     std::shared_ptr<ModelData> ms = std::make_shared<ModelData>(mdd->_strModName, mdd->_iFrameRate);
     _vecModelSpecs.push_back(ms);
-    Gu::getModelCache()->addSpec(ms);
+    GLContext::getModelCache()->addSpec(ms);
 
     Br2LogInfo("  Caching data..");
     //Add specs to the Caches
@@ -346,8 +347,7 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-MeshSpecData::MeshSpecData() {
-
+MeshSpecData::MeshSpecData(std::shared_ptr<GLContext> ctx) :GLFramework(ctx) {
 }
 MeshSpecData::~MeshSpecData() {
   _vecVerts.resize(0);
@@ -728,7 +728,7 @@ std::shared_ptr<MeshData> MeshSpecData::makeSpec(MobFile* mb) {
     n++;
   }
 #endif
-  std::shared_ptr<MeshData> pSpec = std::make_shared<MeshData>(_strName, fmt, nullptr, pShape);
+  std::shared_ptr<MeshData> pSpec = std::make_shared<MeshData>(getContext(), _strName, fmt, nullptr, pShape);
   pSpec->setBind(_matBasis);
   pSpec->setParentName(_strParentName, _eParentType);
   pSpec->setParentInverse(_matParentInverse);
@@ -769,8 +769,6 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
 }
 void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pSpec) {
   if (_pMatData != nullptr) {
-    std::shared_ptr<AppBase> pRoom = Gu::getApp();
-    AssertOrThrow2(pRoom != nullptr);
 
     std::shared_ptr<Texture2DSpec> diffuse = nullptr;
     std::shared_ptr<Texture2DSpec> normal = nullptr;
@@ -784,7 +782,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pS
       //Texture should be placed in the same directory as the mob.
       path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strDiffuseTex);
       if (FileSystem::fileExists(path)) {
-        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
+        std::shared_ptr<Texture2DSpec> pTex = GLContext::getTexCache()->getOrLoad(path);
         mat->addTextureBinding(pTex, TextureChannel::e::Channel0, TextureType::e::Color, _pMatData->_fDiffuseTexInfluence);
       }
       else {
@@ -795,7 +793,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pS
     if (StringUtil::isNotEmpty(_pMatData->_strNormalTex)) {
       path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strNormalTex);
       if (FileSystem::fileExists(path)) {
-        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
+        std::shared_ptr<Texture2DSpec> pTex = GLContext::getTexCache()->getOrLoad(path);
         mat->addTextureBinding(pTex, TextureChannel::e::Channel1, TextureType::e::Normal, _pMatData->_fNormalTexInfluence);
       }
       else {

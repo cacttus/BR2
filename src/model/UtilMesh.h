@@ -14,12 +14,11 @@
 namespace BR2 {
 /**
 *  @class UtilMesh
-*  @brief
-*
+*  @brief Utility mesh rendering for debugging purposes.
 */
 class UtilMesh : public GLFramework {
 public:
-  UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase> pShader, GLenum drawMode = GL_LINES);
+  UtilMesh(std::shared_ptr<CameraNode> pCameraNode, std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase> pShader, GLenum drawMode = GL_LINES);
   virtual ~UtilMesh() override;
 
   void init();
@@ -56,7 +55,7 @@ private:
   std::shared_ptr<IndexBufferData> _pIndexes = nullptr;
   std::shared_ptr<VaoDataGeneric> _pVaoData = nullptr;
   std::shared_ptr<VaoDataGeneric> getVaoData() { return _pVaoData; }
-
+  std::shared_ptr<CameraNode> _pCameraNode = nullptr;
 };
 
 }//ns BR2

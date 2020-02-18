@@ -11,8 +11,9 @@
 #include "../gfx/ShaderManager.h"
 
 namespace BR2 {
-UtilMesh::UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<ShaderBase> ps, GLenum drawMode) : GLFramework(ctx) {
+UtilMesh::UtilMesh(std::shared_ptr<CameraNode> pCameraNode, std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<ShaderBase> ps, GLenum drawMode) : GLFramework(ctx) {
   _pShader = ps;
+  _pCameraNode = pCameraNode;
   _pVertexFormat = fmt;
   _eDrawMode = drawMode;
   _m4ModelMatrix = mat4::identity();
@@ -80,8 +81,7 @@ void UtilMesh::draw() {
     //Allcate and generate verts
     std::shared_ptr<ShaderBase> pShader = getShader();
     AssertOrThrow2(pShader != NULL);
-    std::shared_ptr<CameraNode> bc = Gu::getCamera();
-    pShader->setCameraUf(bc, &_m4ModelMatrix);
+    pShader->setCameraUf(_pCameraNode, &_m4ModelMatrix);
     pShader->draw(_pVaoData, -1, _eDrawMode);
   }
   postDraw();
