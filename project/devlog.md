@@ -25,8 +25,8 @@
 
 *2/17/2020*
 
-* So, after 2400 errors, and counting, I think it's best to revert the changes to passing around the GLContext, and using Gu, and 
-some contextual variables for Context and Camera I barrelled into this change, and broke too many things.  This will require too much testing
+* So, after 2400 errors, and counting, it is best to revert the changes to passing around the GLContext, and using Gu, and 
+some contextual variables for Context and Camera.  This will require too much testing
 to fix, and most of the changes are not necessary, for instance:
 	* ActiveCamera is the same as Gu::getcamera, as only 1 camera can ever be active.  So replacing Gu::getCamera EVERYWHERE is silly.
 	* There will be ONE main GLContext.  If we need new windows, we'll create new GLContexts, right.
@@ -44,7 +44,7 @@ to fix, and most of the changes are not necessary, for instance:
 		* ISerializable
 		* Movement of PhysicsManager stuff to Scene
 		* Renaming ObjectFile to ObjFile
-	* _Of course, this means we're going to need to redo the new formatting for all the files.  Tha'ts ok.  At least the system will compile!_
+	* _Of course, this means we're going to need to redo the new formatting for all the files.  That's ok.  At least the system will compile!_
 
 
 * Removed error checking from Gu.  Instead, error checking is done via the context: both GPU errors, and Operating system errors.
