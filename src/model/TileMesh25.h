@@ -19,16 +19,6 @@ namespace BR2 {
 class TileMesh25 : public VirtualMemory {
 public:
   typedef v_v3c3x2n3 TileMeshVert;
-protected:
-  std::vector<TileMeshVert> _verts;
-  std::vector<v_index32> _indexes;
-
-  int _iCurrentQuadIndex = 0;
-  std::shared_ptr<GLContext> _pContext = nullptr;
-  std::shared_ptr<VaoDataGeneric> _pVaoData = nullptr;
-  void freeData();
-  void allocateData();    //Allocates count quads
-  int32_t _nQuads = 0;
 public:
   TileMesh25(std::shared_ptr<GLContext> pContext, int32_t nQuads);
   virtual ~TileMesh25() override;
@@ -49,6 +39,18 @@ public:
   void getQuad(TileMeshVert*& p0, TileMeshVert*& p1, TileMeshVert*& p2, TileMeshVert*& p3);    // Gets the next client side GPU quad.  After setting the quad call nextQuad().  then copyToGpu() then draw() then resetCopy()
   void copyToGpu(bool bInit = false);// don't unnecessarily copy the indexes.  leave count -1 to copy all quads.
   void draw(RenderParams& rp);
+
+protected:
+  std::vector<TileMeshVert> _verts;
+  std::vector<v_index32> _indexes;
+
+  int _iCurrentQuadIndex = 0;
+  std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<VaoDataGeneric> _pVaoData = nullptr;
+  void freeData();
+  void allocateData();    //Allocates count quads
+  int32_t _nQuads = 0;
+
 
 };
 }//ns BR2

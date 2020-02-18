@@ -8,7 +8,6 @@
 
 
 namespace BR2 {
-///////////////////////////////////////////////////////////////////
 PhysicsGrid::PhysicsGrid(std::shared_ptr<PhysicsManager> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty) : _bEmpty(bEmpty),
 _pPhysicsWorld(pw), _viPos(viPos) {
   _fNodeHeight = fNodeHeight;
@@ -29,9 +28,7 @@ _pPhysicsWorld(pw), _viPos(viPos) {
 PhysicsGrid::~PhysicsGrid() {
   DEL_MEM(_pBoundBox);
   //DEL_MEM(_pManifold);
-
 }
-///////////////////////////////////////////////////////////////////
 std::shared_ptr<PhysicsGrid> PhysicsGrid::getNeighborOffset(float off_x, float off_y, float off_z) {
   vec3 pt = getBoundBox()->center();
   vec3 pt2(

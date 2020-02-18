@@ -11,15 +11,13 @@
 
 namespace BR2 {
 class Exception {
-    int _line;
-    string_t _msg;
-    const char* _file;
+  int _line;
+  string_t _msg;
+  const char* _file;
 public:
-    Exception(string_t c, int line, const char* file, bool bLogError = true);
-    string_t what();
-
+  Exception(string_t c, int line, const char* file, bool bLogError = true);
+  string_t what();
 };
-
 
 }//ns BR2
 

@@ -11,12 +11,11 @@
 #include "../math/PlaneEx3.h"
 
 namespace BR2 {
-
-
 /**
 *  @class QuadPlane
 *  @brief Derived plane for extra info and stuff.
 * DO NOT ADD VIRTUAL METHODS
+*  TODO: Difference between QuadPlane and Quad3x?? 
 */
 class QuadPlane : public PlaneEx3 {
 public:

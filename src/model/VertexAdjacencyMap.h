@@ -29,7 +29,6 @@ public:
   void addMappingIgnoreDupes(v_index32 index, uint32_t face_index);
   FaceList* getVertexIndexMapping(v_index32 index);
 private:
-
   AdjacencyMap* _vmap = nullptr;    // Maps vertex indexes to face indexes in a face buffer.
 };
 

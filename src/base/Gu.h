@@ -8,7 +8,6 @@
 #define __GU_14784108333124451735_H__
 
 #include "../base/BaseHeader.h"
-#include "../base/AppHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathHeader.h"
 #include "../world/WorldHeader.h"

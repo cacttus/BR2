@@ -15,21 +15,21 @@ namespace BR2 {
 *  @brief
 */
 class FontTextBuffer : public VirtualMemory {
-private:
-    string_t _strText;
-    FontSize _iFontSize = 16;
-    vec2 _pos;
-    string_t _fontName;    // Pointer to the name of the font.
-    vec4 _fontColor;
-
 public:
-    FontTextBuffer(string_t& txt, int32_t x, int32_t y, Color4f& cFont, string_t fontName, FontSize fontsize);
-    virtual ~FontTextBuffer() override;
-    vec4 getFontColor() { return _fontColor; }
-    string_t getFontName() { return _fontName; }
-    string_t getText() { return _strText; }
-    vec2 getPos() { return _pos; }
-    FontSize getFontSize() { return _iFontSize; }
+  FontTextBuffer(string_t& txt, int32_t x, int32_t y, Color4f& cFont, string_t fontName, FontSize fontsize);
+  virtual ~FontTextBuffer() override;
+  vec4 getFontColor() { return _fontColor; }
+  string_t getFontName() { return _fontName; }
+  string_t getText() { return _strText; }
+  vec2 getPos() { return _pos; }
+  FontSize getFontSize() { return _iFontSize; }
+
+private:
+  string_t _strText;
+  FontSize _iFontSize = 16;
+  vec2 _pos;
+  string_t _fontName;    // Pointer to the name of the font.
+  vec4 _fontColor;
 };
 
 }//ns BR2

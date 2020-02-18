@@ -148,6 +148,12 @@ class SyncTimer;
 class FpsMeter;
 class FrameSync;
 class Component;
+class ProjectFile;
+class CSharpScript;
+class GraphicsWindow;
+class OpenGLWindow;
+class VulkanWindow;
+class WindowManager;
 
 class CSharpScript;
 class CSharpCompiler;

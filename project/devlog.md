@@ -23,31 +23,15 @@
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
 7. Much of PhysicsManager must be moved to Scene, Object Creation.
 
+*2/18/2020*
+
+*Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
+	* GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have
+	multiple contexts active at one time (wglMakeCurrent called on either of them).
+
 *2/17/2020*
 
-* So, after 2400 errors, and counting, it is best to revert the changes to passing around the GLContext, and using Gu, 
-and some contextual variables for Context and Camera.  
-This will require too much testing to fix, and most of the changes are not necessary, for instance:
-	* ActiveCamera is the same as Gu::getcamera, as only 1 camera can ever be active.  So replacing Gu::getCamera EVERYWHERE is silly.
-	* There will be ONE main GLContext.  If we need new windows, we'll create new GLContexts, right.
-	* RenderPipe and Picker will REMAIN children of Window.
-		* We'll create copies of the Framebuffer stuff for each GL Context.
-		* One thing we haven't thought of is that Shadows and Cameras will need to be separated by GL context.
-	* We will REVERT the shared Viewport Changes, HOWEVER
-		* We will keep the simplified viewport code.
-	* Likewise, we will move all respective managers to the GLContext.  Gu:: will still give us the managers, but context-dependent managers will show the Active context.
-	* Error Checking stays on Gu::, there's no need for per-context error checking methods, as the Active context will be evaluated.
-	* New Stuff we will be Porting to the Old engine:
-		* Script API (pseudocode)
-		* Scene, WorldObject, Component
-		* We will  Rename *Spec to *Data
-		* ISerializable
-		* Movement of PhysicsManager stuff to Scene
-		* Renaming ObjectFile to ObjFile
-		* Converting the FlyCam to FlyingCameraController and making it a CSharpScript
-	* _Of course, this means we're going to need to redo the new formatting for all the files.  That's ok.  At least the system will compile!_
-
-
+* We resolved to pull the old verison of BR2, as this has become intractible.
 * Removed error checking from Gu.  Instead, error checking is done via the context: both GPU errors, and Operating system errors.
 
 *2/16/2020*

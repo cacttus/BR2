@@ -20,18 +20,10 @@ public:
   ShaderStorageBuffer(std::shared_ptr<GLContext> gc, size_t eleSize);
   virtual ~ShaderStorageBuffer() override;
 
-  //  void attachShaderVarList(GlslShaderUniformVariables* pu);
-  //  void detachShaderVarList(GlslShaderUniformVariables* pu);
-  //  void detachAllShaderVarLists();
-
   void syncRead(void* out_data, size_t num_bytes, size_t byte_offset = 0, bool useMemoryBarrier = true);
   void syncWrite(void* in_data, size_t num_bytes, size_t byte_offset = 0, bool useMemoryBarrier = true);
-
   void allocFill(size_t num_elements, const void* frags = NULL);
-
-
 };//ns BR2
-
 
 }
 

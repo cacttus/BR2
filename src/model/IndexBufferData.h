@@ -17,19 +17,21 @@ namespace BR2 {
     Note: We only use 32 bit indexes across the board, this is more for compatibility.
 */
 class IndexBufferData : public VirtualMemory {
-    Allocator<v_index32>* _pIndexes = nullptr;
 public:
-    IndexBufferData();
-    virtual ~IndexBufferData() override ;
-    void allocate(size_t count);
-    void deallocate();
-    v_index32& i32(size_t index);
-    size_t count() const;
-    void copyFrom(std::shared_ptr<IndexBufferData> rhs);
-    void copyFrom(const v_index32* fb, size_t countt);
-    Allocator<v_index32>* getBuf() { return _pIndexes; }
-    void appendToEnd(IndexBufferData* fb);
-    void* ptr();
+  IndexBufferData();
+  virtual ~IndexBufferData() override;
+
+  void allocate(size_t count);
+  void deallocate();
+  v_index32& i32(size_t index);
+  size_t count() const;
+  void copyFrom(std::shared_ptr<IndexBufferData> rhs);
+  void copyFrom(const v_index32* fb, size_t countt);
+  Allocator<v_index32>* getBuf() { return _pIndexes; }
+  void appendToEnd(IndexBufferData* fb);
+  void* ptr();
+private:
+  Allocator<v_index32>* _pIndexes = nullptr;
 };
 
 }//ns BR2

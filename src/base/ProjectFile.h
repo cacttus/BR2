@@ -7,7 +7,7 @@
 #ifndef __PROJECTFILE_15665753691467122366_H__
 #define __PROJECTFILE_15665753691467122366_H__
 
-#include "../base/AppHeader.h"
+#include "../base/BaseHeader.h"
 #include "../base/XmlFile.h"
 
 namespace BR2 {

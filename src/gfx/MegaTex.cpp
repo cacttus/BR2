@@ -5,7 +5,7 @@
 #include "../base/ApplicationPackage.h"
 #include "../base/BinaryFile.h"
 #include "../base/GLContext.h"
-#include "../gfx/Gui2d.h"
+#include "../gfx/UiControls.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/MegaTex.h"
 #include "../base/GraphicsWindow.h"

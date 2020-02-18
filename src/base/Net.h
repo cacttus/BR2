@@ -13,23 +13,26 @@
 namespace BR2 {
 /**
 *  @class Net
-*  @brief
-*
-* https://www.libsdl.org/projects/SDL_net/
+*  @brief Networking manager class using SDL_net.
+*  TODO: change to NetworkManager
+*  https://www.libsdl.org/projects/SDL_net/
 */
 class Net : public VirtualMemory {
-    bool _bError = false;
-
-    TCPsocket _server_control; // the server control socket.
-    std::vector<TCPsocket> _control_clients;
-
-    std::shared_ptr<SyncTimer> _pTimer;
-
-    void init();
 public:
-    void update();
-    Net();
-    virtual ~Net() override;
+  Net();
+  virtual ~Net() override;
+
+  void update();
+
+private:
+  bool _bError = false;
+
+  TCPsocket _server_control; // the server control socket.
+  std::vector<TCPsocket> _control_clients;
+
+  std::shared_ptr<SyncTimer> _pTimer;
+
+  void init();
 };
 
 }//ns BR2

@@ -12,22 +12,22 @@
 namespace BR2 {
 /**
 *  @class FpsMeter
-*  @brief
+*  @brief Computes Frames Per Second in the given OpenGL rendering context (or, likewise, the associated window).
 *
 */
 class FpsMeter {
-    t_timeval _last = 0;
-    t_timeval _tmr = 0;
-    float _fpsLast = 60;
-    uint64_t _iFrame = 0; //Current frame number
+  t_timeval _last = 0;
+  t_timeval _tmr = 0;
+  float _fpsLast = 60;
+  uint64_t _iFrame = 0; //Current frame number
 public:
-    bool deltaMs(t_timeval& __inout_ last, t_timeval ms);
-    float getFps() { return _fpsLast; }
-    void update();
-    uint64_t getFrameNumber() { return _iFrame; }
-    bool frameMod(uint64_t i) {
-        return (_iFrame % i) == 0;
-    }
+  bool deltaMs(t_timeval& __inout_ last, t_timeval ms);
+  float getFps() { return _fpsLast; }
+  void update();
+  uint64_t getFrameNumber() { return _iFrame; }
+  bool frameMod(uint64_t i) {
+    return (_iFrame % i) == 0;
+  }
 
 };
 

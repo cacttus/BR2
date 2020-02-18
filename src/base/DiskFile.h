@@ -10,7 +10,6 @@
 #include "../base/IOBase.h"
 
 namespace BR2 {
-
 /**
 *  @class DiskFile
 *  @brief Basic disk file access, unbuffered. For buffered files see various @cBufferedFile.

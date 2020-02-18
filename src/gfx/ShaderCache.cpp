@@ -25,7 +25,6 @@ GLProgramBinary::~GLProgramBinary() {
   }
   _binaryData = NULL;
 }
-//////////////////////////////////////////////////////////////////////////
 ShaderCache::ShaderCache(std::shared_ptr<GLContext> ct, string_t cacheDir) :GLFramework(ct){
   _strCacheDirectory = cacheDir;
 

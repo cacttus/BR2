@@ -17,45 +17,41 @@ namespace BR2 {
 */
 class PhysicsGrid : public VirtualMemoryShared<PhysicsGrid> {
 public:
-    static PhysicsGridSide::e getOppNeighborIndex(PhysicsGridSide::e iNeighbor);
-    static const int c_nNeighbors = 6;
+  static PhysicsGridSide::e getOppNeighborIndex(PhysicsGridSide::e iNeighbor);
+  static const int c_nNeighbors = 6;
+public:
+  PhysicsGrid(std::shared_ptr<PhysicsManager> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty);
+  virtual ~PhysicsGrid() override;
+
+  std::shared_ptr<PhysicsGrid> getNeighbor(int iSide);
+  Box3f* getBoundBox() { return _pBoundBox; }
+  std::unique_ptr<NodeManifold>& getManifold() { return _pManifold; }
+  const ivec3& getGridPos() { return _viPos; }
+  std::shared_ptr<PhysicsGrid> getNeighborOffset(float off_x, float off_y, float off_z);
+  bool canDelete();
+  virtual bool getIsGenerating() { return false; }
+  vec3 getNodeCenterR3();
+  vec3 getOriginR3();
+  bool isEmpty() { return _bEmpty; }
+
+  virtual std::shared_ptr<MeshNode> getMesh() { return nullptr; }
+protected:
+  void linkGrids();
+  void unlinkGrids();
 
 private:
+  //std::shared_ptr<PhysicsGrid> getThis() { return shared_from_this(); }
+  ivec3 _viPos;
+  Box3f* _pBoundBox = nullptr;
+  std::unique_ptr<NodeManifold> _pManifold = nullptr;
+  float _fNodeWidth, _fNodeHeight;
+  std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;
+  std::shared_ptr<PhysicsGrid> _pNeighbor[c_nNeighbors];
+  bool _bEmpty = false;
 
-    //std::shared_ptr<PhysicsGrid> getThis() { return shared_from_this(); }
-    ivec3 _viPos;
-    Box3f* _pBoundBox = nullptr;
-    std::unique_ptr<NodeManifold> _pManifold = nullptr;
-    float _fNodeWidth, _fNodeHeight;
-    std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;
-    std::shared_ptr<PhysicsGrid> _pNeighbor[c_nNeighbors];
-    bool _bEmpty = false;
-
-    void linkToGrid(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor);
-    void unsetGridNeighbor(PhysicsGridSide::e eSide);
-    void setGridNeighbor(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor);
-
-protected:
-    void linkGrids();
-    void unlinkGrids();
-
-public:
-    PhysicsGrid(std::shared_ptr<PhysicsManager> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty);
-    virtual ~PhysicsGrid() override;
-
-    std::shared_ptr<PhysicsGrid> getNeighbor(int iSide);
-    Box3f* getBoundBox() { return _pBoundBox; }
-    std::unique_ptr<NodeManifold>& getManifold() { return _pManifold; }
-    const ivec3& getGridPos() { return _viPos; }
-    std::shared_ptr<PhysicsGrid> getNeighborOffset(float off_x, float off_y, float off_z);
-    bool canDelete();
-    virtual bool getIsGenerating() { return false; }
-    vec3 getNodeCenterR3();
-    vec3 getOriginR3();
-    bool isEmpty() { return _bEmpty; }
-
-    virtual std::shared_ptr<MeshNode> getMesh() { return nullptr; }
-    
+  void linkToGrid(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor);
+  void unsetGridNeighbor(PhysicsGridSide::e eSide);
+  void setGridNeighbor(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor);
 };
 
 }//ns BR2

@@ -13,19 +13,18 @@
 namespace BR2 {
 /**
 *  @class Perf
-*  @brief
-*
+*  @brief Performance profiling utility class.
 */
 class Perf {
-  static string_t _strCachedProf;
-  static std::stack<Stopwatch> _stopw;
-  static void pulsePerf();
 public:
   static void beginPerf();
   static void endPerf();
   static void pushPerf();
   static void popPerf();
-
+private:
+  static string_t _strCachedProf;
+  static std::stack<Stopwatch> _stopw;
+  static void pulsePerf();
 };
 
 }//ns BR2

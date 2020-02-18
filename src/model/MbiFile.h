@@ -23,10 +23,8 @@ public:
   virtual ~MbiFile() override;
 
   std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModels; }
-
   bool loadAndParse(string_t file);
   void save(string_t file);
-
 
 private:
   std::vector<std::shared_ptr<ModelData>> _vecModels;

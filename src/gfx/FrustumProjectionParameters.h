@@ -19,10 +19,10 @@ namespace BR2 {
 */
 class FrustumProjectionParameters : public VirtualMemory {
 public:
-    vec3 _camView; //camera view
-    vec3 _camPos; //camera position
-    vec3 _upVec; // camera up vec
-    Vec3Basis _v3basis;    // basis vectors for projection with Z pointing into the viewport.
+  vec3 _camView; //camera view
+  vec3 _camPos; //camera position
+  vec3 _upVec; // camera up vec
+  Vec3Basis _v3basis;    // basis vectors for projection with Z pointing into the viewport.
 };
 }//ns BR2
 

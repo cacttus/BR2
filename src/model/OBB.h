@@ -18,6 +18,7 @@ class OBB : public VirtualMemory {
 public:
   OBB();
   virtual ~OBB() override;
+
   void setInvalid() { _bInvalid = true; }
   bool getInvalid() { return  _bInvalid; }
   void calc(mat4& mat, const Box3f* base);

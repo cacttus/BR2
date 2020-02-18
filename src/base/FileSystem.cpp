@@ -10,12 +10,10 @@
 
 namespace BR2 {
 string_t FileSystem::_strExePath = "";
-///////////////////////////////////////////////////////////////////
 FileSystem::FileSystem() {
 }
 FileSystem::~FileSystem() {
 }
-///////////////////////////////////////////////////////////////////
 void FileSystem::init(string_t executablePath) {
   FileSystem::setExecutablePath(executablePath);
   string_t a = FileSystem::getCurrentDirectory();

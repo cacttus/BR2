@@ -7,7 +7,7 @@
 #ifndef __WINDOWMANAGER_1581056461792934002_H__
 #define __WINDOWMANAGER_1581056461792934002_H__
 
-#include "../base/AppHeader.h"
+#include "../base/BaseHeader.h"
 
 namespace BR2 {
 /**

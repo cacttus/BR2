@@ -11,8 +11,6 @@
 #include "../math/PlaneEx3.h"
 #include "../math/Algorithm.h"
 namespace BR2 {
-
-
 /**
 *  @class TriPlane
 *  @brief Derived plane for extra info and stuff.
@@ -33,9 +31,8 @@ public:
   FORCE_INLINE void construct(const vec3& dp1, const vec3& dp2, const vec3& dp3);
   FORCE_INLINE void construct();
 
-  FORCE_INLINE STATIC bool containsPointSlowButWorks(const vec3& cp1, const vec3& cp2, const vec3& cp3, const vec3& point);
-  FORCE_INLINE STATIC bool containsPoint(const vec3& cp1, const vec3& cp2, const vec3& cp3, const vec3& point);
-
+  FORCE_INLINE static bool containsPointSlowButWorks(const vec3& cp1, const vec3& cp2, const vec3& cp3, const vec3& point);
+  FORCE_INLINE static bool containsPoint(const vec3& cp1, const vec3& cp2, const vec3& cp3, const vec3& point);
 };
 
 FORCE_INLINE TriPlane::TriPlane(const vec3& dp1, const  vec3& dp2, const  vec3& dp3) {

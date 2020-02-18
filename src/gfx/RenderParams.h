@@ -16,18 +16,6 @@ namespace BR2 {
 *  @brief
 */
 class RenderParams : public VirtualMemory {
-  std::shared_ptr<ShaderBase> _pShader = nullptr;
-  //  std::vector<std::shared_ptr<Texture2DSpec>> _setTextures; //Essentially we shouldjsut be using the material on MeshSpec
-  int32_t _iCount = -1; //Number of indexes
-  GLenum _eDrawMode = GL_TRIANGLES;
-
-  //Only one of these must be set.
-  std::shared_ptr<MeshNode> _pMeshNode = nullptr;
-  std::shared_ptr<VaoDataGeneric> _pVaoDataGeneric = nullptr;
-  std::shared_ptr<VaoShader> _pVaoShader = nullptr;
-  // std::shared_ptr<Material> _pMaterial = nullptr;
-  //std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
-
 public:
   RenderParams() {}
   RenderParams(std::shared_ptr<ShaderBase> pShader);
@@ -52,6 +40,18 @@ public:
 
   void draw();
 
+private:
+  std::shared_ptr<ShaderBase> _pShader = nullptr;
+  //  std::vector<std::shared_ptr<Texture2DSpec>> _setTextures; //Essentially we shouldjsut be using the material on MeshSpec
+  int32_t _iCount = -1; //Number of indexes
+  GLenum _eDrawMode = GL_TRIANGLES;
+
+  //Only one of these must be set.
+  std::shared_ptr<MeshNode> _pMeshNode = nullptr;
+  std::shared_ptr<VaoDataGeneric> _pVaoDataGeneric = nullptr;
+  std::shared_ptr<VaoShader> _pVaoShader = nullptr;
+  // std::shared_ptr<Material> _pMaterial = nullptr;
+  //std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
 };
 //class ShadowRenderParams : public VirtualMemory {
 //public:

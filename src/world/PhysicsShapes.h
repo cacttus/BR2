@@ -16,33 +16,38 @@ namespace BR2 {
 *
 */
 class PhysicsShape : public VirtualMemory {
-    bool _bKinematic = false;//Is bound to armature, and animates.
-    bool _bDynamic = true; // reacts physically with scenery. (otherwise it's just a trigger)
 public:
-    PhysicsShape() { }
-    virtual ~PhysicsShape() override { }
-    virtual void deserialize( std::shared_ptr<BinaryFile> fb);
-    virtual void serialize( std::shared_ptr<BinaryFile> fb);
+  PhysicsShape() {}
+  virtual ~PhysicsShape() override {}
+  virtual void deserialize(std::shared_ptr<BinaryFile> fb);
+  virtual void serialize(std::shared_ptr<BinaryFile> fb);
+private:
+  bool _bKinematic = false;//Is bound to armature, and animates.
+  bool _bDynamic = true; // reacts physically with scenery. (otherwise it's just a trigger)
+
 };
 class SphereShape : public PhysicsShape {
-    float _fRadius;
 public:
-    float& getRadius() { return _fRadius; }
-    SphereShape(){}
-    SphereShape(VertexBufferPointer& vbPointer, float r);
-    virtual ~SphereShape() override;
-    virtual void deserialize( std::shared_ptr<BinaryFile> fb) override;
-    virtual void serialize( std::shared_ptr<BinaryFile> fb) override;
+  float& getRadius() { return _fRadius; }
+  SphereShape() {}
+  SphereShape(VertexBufferPointer& vbPointer, float r);
+  virtual ~SphereShape() override;
+  virtual void deserialize(std::shared_ptr<BinaryFile> fb) override;
+  virtual void serialize(std::shared_ptr<BinaryFile> fb) override;
+private:
+  float _fRadius;
+
 };
 class HullShape : public PhysicsShape {
-    std::vector<vec3> _vecPoints;
 public:
-    std::vector<vec3>& getPoints() { return _vecPoints; }
-    HullShape(){}
-    HullShape(VertexBufferPointer& vbPointer);
-    virtual ~HullShape() override;
-    virtual void deserialize( std::shared_ptr<BinaryFile> fb) override;
-    virtual void serialize( std::shared_ptr<BinaryFile> fb) override;
+  std::vector<vec3>& getPoints() { return _vecPoints; }
+  HullShape() {}
+  HullShape(VertexBufferPointer& vbPointer);
+  virtual ~HullShape() override;
+  virtual void deserialize(std::shared_ptr<BinaryFile> fb) override;
+  virtual void serialize(std::shared_ptr<BinaryFile> fb) override;
+private:
+  std::vector<vec3> _vecPoints;
 };
 //class BoxShape : public PhysicsShape {
 //    Box3f* _pBox = nullptr;

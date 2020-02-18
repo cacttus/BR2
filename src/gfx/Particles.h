@@ -22,9 +22,6 @@ class Particles : public VirtualMemory {
 public:
 
     //TODO: use textureatlascomposer for this.
-
-
-
     Particles();
     virtual ~Particles() override;
     void update();

@@ -7,7 +7,7 @@
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
 
-#include "../gfx/Gui2d.h"
+#include "../gfx/UiControls.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderViewport.h"
