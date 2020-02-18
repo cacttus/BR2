@@ -68,7 +68,6 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelData> mod, int3
     //Gu::getRenderPipe()->setClear(savedClear);
     //Gu::setCamera(pOrigCam);
 
-
     return thumb;
 }
 

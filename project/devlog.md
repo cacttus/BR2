@@ -25,9 +25,9 @@
 
 *2/17/2020*
 
-* So, after 2400 errors, and counting, it is best to revert the changes to passing around the GLContext, and using Gu, and 
-some contextual variables for Context and Camera.  This will require too much testing
-to fix, and most of the changes are not necessary, for instance:
+* So, after 2400 errors, and counting, it is best to revert the changes to passing around the GLContext, and using Gu, 
+and some contextual variables for Context and Camera.  
+This will require too much testing to fix, and most of the changes are not necessary, for instance:
 	* ActiveCamera is the same as Gu::getcamera, as only 1 camera can ever be active.  So replacing Gu::getCamera EVERYWHERE is silly.
 	* There will be ONE main GLContext.  If we need new windows, we'll create new GLContexts, right.
 	* RenderPipe and Picker will REMAIN children of Window.

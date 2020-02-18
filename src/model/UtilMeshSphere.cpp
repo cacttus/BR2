@@ -20,7 +20,7 @@ UtilMeshSphere::~UtilMeshSphere() {
 }
 void UtilMeshSphere::generate() {
   //Note: to copy everything is too slow.  We will just keep the spec here and delete it when done
-  _pSpec = MeshUtils::makeSphere(_fRadius, _nSlices, _nStacks, &_vColor, &_vOffset, !_blnWireFrame);
+  _pSpec = MeshUtils::makeSphere(getContext(), _fRadius, _nSlices, _nStacks, &_vColor, &_vOffset, !_blnWireFrame);
   copyFromSpec(_pSpec);
   _pSpec = nullptr;
   //  DEL_MEM(_pSpec);
