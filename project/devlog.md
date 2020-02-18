@@ -44,6 +44,7 @@ to fix, and most of the changes are not necessary, for instance:
 		* ISerializable
 		* Movement of PhysicsManager stuff to Scene
 		* Renaming ObjectFile to ObjFile
+		* Converting the FlyCam to FlyingCameraController and making it a CSharpScript
 	* _Of course, this means we're going to need to redo the new formatting for all the files.  That's ok.  At least the system will compile!_
 
 
