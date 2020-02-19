@@ -62,7 +62,7 @@ to make the node classes public.
 					* SO WE MUST NOT HAVE NODEDATA, INSTEAD, MOVE ALL OF NODEDATA to SceneNode!
 		* Now, we want our other Link model to modify, and create clones of.  So we make a _deep copy_.
 			* As above, specify deep.  This will clone the data.
-			* For objects to animate independently we need separate animation buffers.  This is already covered.
+			* For objects to animate independently we need separate animation buffers.  This is already covered.git ba
 
 *2/17/2020*
 
