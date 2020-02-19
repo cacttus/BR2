@@ -13,18 +13,18 @@
 * VI. - [ ] Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 
 ## Currently Working On..
-1. - [x] ~~Unlink the Window viewport with the Camera Viewport.~~
+- [x] ~~Unlink the Window viewport with the Camera Viewport.~~
 	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
-2. - [ ] Data Class Separation
+- [ ] Data Class Separation
 	* Implement clone() on nodes.
 	* Move complex methods from all *data* classes to their respective Node classes.
 	* Remove inheritence from data classes.
-4. - [ ] Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
+- [ ] Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	* WorldObject will be composited by other items and not inherited.
-5. - [ ] *Dynamic skinning* where, mesh components are *components* and their *skin* is a separate component on WorldObject.
-6. - [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
-7. - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
-8. - [ ] Much of PhysicsManager must be moved to Scene, Object Creation.
+- [ ] *Dynamic skinning* where, mesh components are *components* and their *skin* is a separate component on WorldObject.
+- [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
+- [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
+- [ ] Much of PhysicsManager must be moved to Scene, Object Creation.
 
 *2/18/2020*
 *Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
