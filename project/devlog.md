@@ -1,9 +1,9 @@
 
 # Phase I Tasks
-- [x] ~~Unlink the Window viewport with the Camera Viewport.~~
-	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 - [ ] Data Class Separation
-	- [ ] Implement clone() on nodes.
+    - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
+	- [ ] Move Serialize/Deserialize from Data to _all_ node classes.
+	- [ ] Implement `clone()` and `copy()` on nodes.
 	- [ ] Move complex methods from all *data* classes to their respective Node classes.
 	- [ ] Remove inheritence from data classes.
 - [ ] CSharp inline *minimal* scripts.
@@ -18,9 +18,9 @@
 - [x] Move object creation of PhysicsManager to Scene.
 - [ ] Componentize these:
     - [ ] Remove "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
-	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh.
-		* We should copy Blender's data format.  Armature is a child of the object.
-
+	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
+- [x] ~~Unlink the Window viewport with the Camera Viewport.~~
+	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 #### Wishlist (TODO future tasks)
 - [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
 - [ ] Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
