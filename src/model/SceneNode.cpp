@@ -434,7 +434,7 @@ std::shared_ptr<Scene> SceneNode::getScene() {
   return x;
 }
 std::shared_ptr<SceneNode> SceneNode::clone() {
-  std::shared_ptr<SceneNode> ret = std::make_shared<SceneNode>()p;
+  std::shared_ptr<SceneNode> ret = std::make_shared<SceneNode>();
 
 }
 void SceneNode::copy(std::shared_ptr<SceneNode> rhs) {

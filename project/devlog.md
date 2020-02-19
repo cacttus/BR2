@@ -31,11 +31,8 @@
 
 *2/18/2020*
 
-* Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
-	* GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have
-	multiple contexts active at one time (wglMakeCurrent called on either of them).
-* Removed inheritance for Node data classes.  Instead, we're going to use multiple data classes on each inherited node class.  This way, we can share multiple
-data if we need to.
+* Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change. GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have multiple contexts active at one time (wglMakeCurrent called on either of them).
+* Removed inheritance for Node data classes.  Instead, we're going to use multiple data classes on each inherited node class.  This way, we can share multiple data if we need to.
 * Created the NamedData serializable 
 * _Not_ creating initial class datas, per design.  This is to decrease deserialization time, and to prevent unwanted garbage data from becoming confusing.
 * Data classes shouldn't have methods.  Our new goal is to clone objects using the data as a shared "user" system.
@@ -43,7 +40,6 @@ data if we need to.
 	* Data blocks should be almost method-less.
 * It appears we must move serialization off of the Data classes, and move it onto the Node class. this appears to make sense.  This would also mean, we need
 to make the node classes public.
-
 * *Rationale Behind the new system*
 * This is getting really destructive; the system isn't fully implemented yet, and still fails to compile.
 * So let's say I have 2 Link models.
