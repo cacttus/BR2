@@ -1,5 +1,5 @@
 
-## Phase I Roadmap
+# Phase I Tasks
 - [x] ~~Unlink the Window viewport with the Camera Viewport.~~
 	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 - [ ] Data Class Separation
@@ -18,13 +18,16 @@
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 - [x] Move object creation of PhysicsManager to Scene.
 
-## Wishlist
+### Wishlist (TODO future tasks)
 - [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
 - [ ] Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
 - [ ] detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 - [ ] All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
+#Devlog
+
 *2/18/2020*
+
 *Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
 	* GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have
 	multiple contexts active at one time (wglMakeCurrent called on either of them).
