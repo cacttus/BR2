@@ -16,12 +16,11 @@ namespace BR2 {
 */
 class NodeData : public ISerializable, public VirtualMemoryShared<NodeData> {
 public:
-  NodeData() {} //Serialized version
-  NodeData(string_t strName);
+  NodeData();
   virtual ~NodeData() override;
 
-  ParentType::e getParentType() { return _eParentType; }
-  Box3f* getBoundBoxObject() { return _pBox; }
+  ParentType getParentType() { return _eParentType; }
+  Box3f* getBoundBox() { return _pBox; }
   string_t getName() { return _strName; }
   Hash32 getNameHashed() { return _iNameHashed; }
   mat4& getBind() { return _mBind; }
@@ -30,8 +29,9 @@ public:
   void setParentInverse(mat4& m) { _mParentInverse = m; }
   void setBind(mat4& bind);
   void setInvBind(mat4& bind);
-  void setParentName(string_t str, ParentType::e ee) { _strParentName = str; setParentType(ee); }
+  void setParentName(string_t str, ParentType ee) { _strParentName = str; setParentType(ee); }
   string_t getParentName() { return _strParentName; }
+
   virtual void serialize(std::shared_ptr<BinaryFile> fb);
   virtual void deserialize(std::shared_ptr<BinaryFile> fb);
 
@@ -44,9 +44,9 @@ protected:
   mat4 _mParentInverse;   //This is just for mesh objects that have mesh parents.
   //mat4 _mBasis;//Where the object is - base rotation &c.
   string_t _strParentName;
-  ParentType::e _eParentType = ParentType::e::None;
+  ParentType _eParentType = ParentType::None;
 
-  void setParentType(ParentType::e pt) { _eParentType = pt; }
+  void setParentType(ParentType pt) { _eParentType = pt; }
 };
 
 

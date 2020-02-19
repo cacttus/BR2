@@ -15,19 +15,54 @@
 ## Currently Working On..
 1. ~~Unlink the Window viewport with the Camera Viewport.~~
 	* This is not possible, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height.
-2. MeshNode/MeshSpec, should be one class.  To create new meshes, we'd do a shallow copy of the class.
-	* The same goes for all the Spec/Data model classes.  We follow a Blender style Object/Data/User pattern.
+2. Data Class Sesparation
+	* Implement clone() on nodes.
+	* Move complex methods from all *data* classes to their respective Node classes.
+	* Remove inheritence from data classes.
 4. Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	* WorldObject will be composited by other items and not inherited.
 5. Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
 7. Much of PhysicsManager must be moved to Scene, Object Creation.
 
-*2/18/2020*
 
+*2/18/2020*
 *Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
 	* GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have
 	multiple contexts active at one time (wglMakeCurrent called on either of them).
+* Removed inheritance for Node data classes.  Instead, we're going to use multiple data classes on each inherited node class.  This way, we can share multiple
+data if we need to.
+* Created the NamedData serializable 
+* _Not_ creating initial class datas, per design.  This is to decrease deserialization time, and to prevent unwanted garbage data from becoming confusing.
+* Data classes shouldn't have methods.  Our new goal is to clone objects using the data as a shared "user" system.
+	* Separating the data classes is going to be a huge hurdle.
+	* Data blocks should be almost method-less.
+* It appears we must move serialization off of the Data classes, and move it onto the Node class. this appears to make sense.  This would also mean, we need
+to make the node classes public.
+
+* *Rationale Behind the new system*
+* This is getting really destructive; the system isn't fully implemented yet, and still fails to compile.
+* So let's say I have 2 Link models.
+	* Each piece of the model is a node tree which has a name, matrix, box, etc.
+	* Then there are armature, and bones, mesh, and "model".
+		* Essentially "model" is unnecessary.  I just added it for convenience when creating the object.  It's essentially what's now WorldObject.
+			* So really, instead of "ModelNode" we should place the animation operations as a WorldObject Component, or at least as part of armature.
+			* Essentially, even meshes can have all kinds of animation. The "skin" becomes a modifier, as in most modelling systems.
+	* So we want 2 link models. and then we want a link model where we can morph and deform.
+	* First, we create an instance of the link model.
+		* To do this, we need to clone the object, but share the data blocks.
+			* so we create a shallow copy.
+				* `std::shared_ptr<WorldObject> _pLinkObj = x;`
+				* `_pLinkObj->copy(bool is_deep=false)`
+					* `copy all data..`
+					* `if(isdeepcopy){`
+					* `	 _pModelData = _pModelData.clone(); // This is how we make a deep copy.`
+					* `}`
+					* `//NOTE* the NAME of the model must not match the previous, meaning, NodeData must not be shared in this case.`
+					* SO WE MUST NOT HAVE NODEDATA, INSTEAD, MOVE ALL OF NODEDATA to SceneNode!
+		* Now, we want our other Link model to modify, and create clones of.  So we make a _deep copy_.
+			* As above, specify deep.  This will clone the data.
+			* For objects to animate independently we need separate animation buffers.  This is already covered.
 
 *2/17/2020*
 

@@ -14,8 +14,10 @@
 #include "../model/ModelHeader.h"
 #include "../model/SceneNode.h"
 #include "../world/PhysicsNode.h"
+#include "../model/DataBlock.h"
 
 namespace BR2 {
+
 /**
 *  @class KeyFrame
 *  @brief A keyframe for a 3D mesh animation.
@@ -77,7 +79,7 @@ public:
 
 private:
   string_t _strObjectName;//armature or mesh
-  Hash32 _iNameHashed;
+  Hash32 _iNameHashed=0;
   std::vector<std::shared_ptr<KeyFrame>> _vecKeys;
   //t_string _sName;
 
@@ -156,27 +158,31 @@ private:
 *  @class BoneData
 *  @brief A bone (matrix) for skinned animation.
 */
-class BoneData : public NodeData {
+class BoneData : public IDataBlock<BoneData> {
 public:
   BoneData() {}
   BoneData(string_t name, int32_t id);
   virtual ~BoneData() override;
+
   void setParent(std::shared_ptr<BoneData> bs);
   void addChild(std::shared_ptr<BoneData> bs);
-  //t_string getParentName() { return _sParentName; }
   vec3 getTail() { return _vTail; }
   vec3 getHead() { return _vHead; }
   void setHead(vec3& v) { _vHead = v; }
   void setTail(vec3& v) { _vTail = v; }
   int32_t getBoneId() { return _iBoneId; }
-  //   std::set<Hash32>* getActions() { return &_setActions; }
   std::vector<std::shared_ptr<BoneData>>& getChildren() { return _vecChildren; }
   virtual void deserialize(std::shared_ptr<BinaryFile> bf) override;
   virtual void serialize(std::shared_ptr<BinaryFile> bf) override;
 
   string_t getName() { return _name; }
+  void setName(string_t n) { _name=n; }
+  //string_t getName() { return _name; }
+  //   std::set<Hash32>* getActions() { return &_setActions; }
+  //t_string getParentName() { return _sParentName; }
+
 private:
-  Hash32 _iBoneName = 0;
+  //Hash32 _iBoneName = 0;
   int32_t _iBoneId = -1;//**Bone ordinal
   std::vector<std::shared_ptr<BoneData>> _vecChildren;
   std::shared_ptr<BoneData> _pParent = nullptr;
@@ -184,7 +190,7 @@ private:
   vec3 _vHead;
   vec3 _vTail;
 
-  Hash32 getHashedBoneName() { return _iBoneName; }
+  //Hash32 getHashedBoneName() { return _iBoneName; }
   std::shared_ptr<BoneData> getParent() { return _pParent; }
 };
 
@@ -194,19 +200,12 @@ private:
 */
 class BoneNode : public SceneNode {
 public:
-  BoneNode() {}
-  BoneNode(std::shared_ptr<BoneData> b, std::shared_ptr<ArmatureNode> pa);
-  static std::shared_ptr<BoneNode> create(std::shared_ptr<BoneData> b, std::shared_ptr<ArmatureNode> pa);
-
+  BoneNode(std::shared_ptr<BoneData> b = nullptr, std::shared_ptr<ArmatureNode> pa = nullptr);
   virtual ~BoneNode() override;
+
   std::shared_ptr<BoneData> getBoneData() { return _pBone; }
   std::shared_ptr<ArmatureNode> getArmatureNode() { return _pArmatureNode; }
-  void setAdded() {
-    //Use this to avoid referencing bones in multiple meshes
-    //**Remove once we start using bone instances.
-    AssertOrThrow2(_bAdded == false);
-    _bAdded = true;
-  }
+  void setAdded();
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
   virtual void calcBoundBox() override { SceneNode::calcBoundBox(); }
 
@@ -215,14 +214,13 @@ private:
   bool _bAdded = false;
   std::shared_ptr<ArmatureNode> _pArmatureNode = nullptr;
   //  mat4 _mBone;
-
 };
 
 /**
 *  @class ArmatureData
 *  @brief An armature (skeleton) similar to an armature in Blender. Container for a bone armature, also parses it from the mobstr file
 */
-class ArmatureData : public NodeData {
+class ArmatureData : public IDataBlock<ArmatureData> {
 public:
   typedef std::map<int32_t, std::shared_ptr<BoneData>> BoneCache; //bones  map<Bone ID, Bone*>
 public:
@@ -231,22 +229,16 @@ public:
   virtual ~ArmatureData();
 
   int32_t getArmatureId() { return _iArmatureId; }
-  BoneCache* getBoneCacheOrdered() { return &_mapBoneCacheOrdered; }
-  std::shared_ptr<BoneData> getRootBone() { return _pArmRoot; }
   std::shared_ptr<BoneData> getBoneSpec(string_t boneName);
-  bool tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens);
   virtual void deserialize(std::shared_ptr<BinaryFile> fb) override;
   virtual void serialize(std::shared_ptr<BinaryFile> fb) override;
 
+  string_t getName() { return _name; }
+  void setName(string_t n) { _name=n; }
+
 private:
   int32_t _iArmatureId = -1;
-  BoneCache _mapBoneCacheOrdered;
-  std::shared_ptr<BoneData> _pArmRoot = nullptr;
-  std::shared_ptr<BoneData> _pCurBone = nullptr;   //Temps * no significance
-  std::shared_ptr<BoneData> _pCurKFBone = nullptr; //Temps * no significance
-
-  void compileHierarchy();
-  std::shared_ptr<BoneData> getCachedBoneByName(string_t name);
+  string_t _name;
 };
 
 /**
@@ -264,12 +256,24 @@ public:
   std::shared_ptr<ArmatureData> getArmatureData() { return _pArmatureData; }
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+  bool tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens);
+  BoneCache* getBoneCacheOrdered() { return &_mapBoneCacheOrdered; }
+  std::shared_ptr<BoneData> getRootBone() { return _pArmRoot; }
 
 private:
   std::shared_ptr<BoneNode> _pBoneRoot = nullptr;
   std::vector<std::shared_ptr<BoneNode>> _vecBonesOrdered;
   std::shared_ptr<ArmatureData> _pArmatureData = nullptr;
-  // std::vector<std::shared_ptr<MeshNode>> _vecMeshes;
+
+  //Remove these - use the Node structure for them.
+  std::shared_ptr<BoneData> _pArmRoot = nullptr;
+  std::shared_ptr<BoneData> _pCurBone = nullptr;   //Temps * no significance
+  std::shared_ptr<BoneData> _pCurKFBone = nullptr; //Temps * no significance
+  BoneCache _mapBoneCacheOrdered;
+
+  void compileHierarchy();
+  std::shared_ptr<BoneData> getCachedBoneByName(string_t name);
+
   void build(std::shared_ptr<BoneData> b, std::shared_ptr<BoneNode> bParent, std::vector<std::shared_ptr<BoneNode>>& vecBonesUnordered);
   void drawBones(std::shared_ptr<UtilMeshInline> mi, std::shared_ptr<BoneNode> bn, Color4f& c);
 };
@@ -278,7 +282,7 @@ private:
 * @class ModelData
 * @brief A renderable model that exists in the world, with a mesh.
 */
-class ModelData : public PhysicsData {
+class ModelData : public IDataBlock<ModelData> {
 public:
   ModelData(std::shared_ptr<GLContext> ct) { _pContext = ct; }//serialize only.
   ModelData(std::shared_ptr<GLContext> ct, string_t name, int32_t frameRate);
@@ -307,10 +311,11 @@ private:
   std::vector<std::shared_ptr<ActionGroup>> _vecActionGroups;
   std::map<Hash32, std::shared_ptr<ArmatureData>> _mapArmaturesOrdered; //Calculated from input vertex weights.
   std::shared_ptr<Img32> _pThumb = nullptr;
-  std::shared_ptr<BoneData> getBoneByArmJointOffset(int32_t ijo);
   std::string _strFriendlyName;
   std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<BoneData> getBoneByArmJointOffset(int32_t ijo);
 };
+
 
 /**
 *  @class ModelNode
@@ -318,7 +323,7 @@ private:
 */
 class ModelNode : public PhysicsNode {
 public:
-  ModelNode(std::shared_ptr<GLContext> ct, std::shared_ptr<ModelData>);
+  ModelNode(std::shared_ptr<GLContext> ct, std::shared_ptr<ModelData> md = nullptr);
   virtual ~ModelNode();
 
   void playAction(string_t name);
@@ -333,19 +338,22 @@ public:
   std::vector<std::shared_ptr<ArmatureNode>>& getArmatureNodes() { return _vecArmatures; }
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
   std::shared_ptr<GLContext> getContext() { return _pContext; }
+  std::shared_ptr<ModelData> getModelData() { return _pModelData; }
 
 private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<ModelData> _pModelData = nullptr;
+  std::shared_ptr<SceneNode> _pWorldNode = nullptr; // Reference to the world node *not owned
+
   std::vector<std::shared_ptr<MeshNode>> _vecMeshes;
   std::vector<std::shared_ptr<ArmatureNode>> _vecArmatures;
-  std::shared_ptr<SceneNode> _pWorldNode = nullptr; // Reference to the world node *not owned
-  // std::shared_ptr<Animator> _pAnimator = nullptr;
   std::map<Hash32, std::shared_ptr<Animator>> _mapAnimators;
   std::map<Hash32, std::shared_ptr<SceneNode>> _mapNodes;//Cache of all nodes appended including bones.  
+
   std::shared_ptr<SceneNode> getNodeByName(string_t name);
   void addNodeToCache(std::shared_ptr<SceneNode> bn);
   std::shared_ptr<Animator> getAnimator(string_t actName);
   void buildNodeParents();
-  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
 

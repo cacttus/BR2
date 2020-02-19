@@ -270,22 +270,22 @@ bool ModDataLoad::tkArms(MobFile* mb, std::vector<string_t>& tokens) {
   }
   return true;
 }
-ParentType::e MobFile::parseParentType(string_t strParentType) {
+ParentType MobFile::parseParentType(string_t strParentType) {
   if (StringUtil::equalsi(strParentType, "BONE")) {
-    return ParentType::e::Bone;
+    return ParentType::Bone;
   }
   else if (StringUtil::equalsi(strParentType, "ARMATURE")) {
-    return ParentType::e::Armature;
+    return ParentType::Armature;
   }
   else if (StringUtil::equalsi(strParentType, "OBJECT")) {
-    return ParentType::e::Object;
+    return ParentType::Object;
   }
   else if (StringUtil::equalsi(strParentType, "NONE")) {
-    return ParentType::e::None;
+    return ParentType::None;
   }
   else {
     parseErr(Stz "Invalid parent type '" + strParentType);
-    return ParentType::e::None;
+    return ParentType::None;
   }
 
 }
@@ -369,7 +369,7 @@ void MeshSpecData::resetData() {
   _bHasN = _bHasX = _bHasV = false;
   _bHideRender = false;
   _bKinematicShape = false;
-  _eParentType = ParentType::e::None;
+  _eParentType = ParentType::None;
 
   clearVertexCache();
   _matBasis = mat4::identity();

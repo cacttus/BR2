@@ -52,6 +52,7 @@ protected:
   std::vector<std::shared_ptr<BoneNode>> _vecBoneNodesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
   std::vector<std::shared_ptr<ArmatureNode>> _vecArmaturesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
   std::shared_ptr<GLContext> _pContext = nullptr;
+
   //If we wanted to be picky we could make a "modifier" class to mimic 3D editors
   void createSkin();
   void computeSkinFrame();

@@ -85,11 +85,15 @@ private:
   std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
-class ISerializable {
+template < class Tx >
+class ISerializable : public VirtualMemoryShared<Tx> {
 public:
+  ISerializable() {}
+  virtual ~ISerializable() override {}
   virtual void deserialize(std::shared_ptr<BinaryFile> fb) = 0;
   virtual void serialize(std::shared_ptr<BinaryFile> fb) = 0;
 };
+
 
 }//ns BR2
 

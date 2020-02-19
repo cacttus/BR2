@@ -23,7 +23,6 @@ typedef uint32_t GpuUInt;
 typedef GLuint GpuTexId;
 typedef GLenum GpuEnum;
 typedef GLuint GpuBufferId;
-
 //Make this global. stop the madness.
 typedef v_v3n3x2 ModelVertexType;
 
@@ -33,12 +32,10 @@ namespace BoxPoint { typedef enum { NBL, NBR, NTL, NTR, FBL, FBR, FTL, FTR } e; 
 //namespace GpuAnimationMemoryModel { typedef enum { MODEL_CPU_ANIMATION_OR_STATIC_MODEL, MODEL_GPU_ANIMATION_WITH_SWAP_BUFFERS } e; }
 namespace MeshSkinStatus { typedef enum { Uninitialized, NoSkin, Allocated, Error } e; }
 //namespace ModelDrawMode { typedef enum { Color, Pick } e; }
-namespace ParentType { typedef enum { None, Bone, Object, Armature} e;}
-
-//////////////////////////////////////////////////////////////////////////
-class UtilMeshInline2d;
+enum class ParentType { None, Bone, Object, Armature };
 
 //Class FWD
+class UtilMeshInline2d;
 class ModFile;
 class VboData;
 class VaoDataGeneric;
@@ -87,63 +84,48 @@ class OBB;
 class ModelCache;
 class MeshNode;
 
-//////////////////////////////////////////////////////////////////////////
-
 class MeshBufferData {
 public:
-    std::shared_ptr<FragmentBufferData> _frags;
-    std::shared_ptr<IndexBufferData> _indexes;
+  std::shared_ptr<FragmentBufferData> _frags;
+  std::shared_ptr<IndexBufferData> _indexes;
 };
-
 class VertexBufferPointer {
 public:
-    void* _pBuf;
-    size_t _iOffset;
-    size_t _iStride;
+  void* _pBuf;
+  size_t _iOffset;
+  size_t _iStride;
 };
-
 class VertexWeightMob : public VirtualMemory {
 public:
-
-    //Hash32 _iArmNameHashed;//hashed name of the armature that owns the bones
-    //we're now using armature ID instead of the hashed name.
-    std::map<int32_t, std::map<int32_t, float>> _mapWeights;
-    VertexWeightMob() { }
-    virtual ~VertexWeightMob() { _mapWeights.clear(); }
+  //Hash32 _iArmNameHashed;//hashed name of the armature that owns the bones
+  //we're now using armature ID instead of the hashed name.
+  std::map<int32_t, std::map<int32_t, float>> _mapWeights;
+  VertexWeightMob() {}
+  virtual ~VertexWeightMob() { _mapWeights.clear(); }
 };
-
-
 class GpuAnimatedMeshWeightData : public GpuMemory {
 public:
-    GpuInt _offset;    // offset into weight buffer (GpuAnimatedMeshWeight)
-    GpuInt _count;    // count of weights
+  GpuInt _offset;    // offset into weight buffer (GpuAnimatedMeshWeight)
+  GpuInt _count;    // count of weights
 
-    float pad[2];
+  float pad[2];
 };
-//Stores the mesh weights.
 class GpuAnimatedMeshWeight : public GpuMemory {
 public:
-    GpuInt _iArmJointOffset;    // - Offset into joint matrix buffer 12/2017 - sorted by armature! (GpuAnimatedMeshBindMatrix / GpuAnimatedMeshSkinMatrix)
-    GpuFloat _weight;        // weight of joint
-    float pad[2];
+  GpuInt _iArmJointOffset;    // - Offset into joint matrix buffer 12/2017 - sorted by armature! (GpuAnimatedMeshBindMatrix / GpuAnimatedMeshSkinMatrix)
+  GpuFloat _weight;        // weight of joint
+  float pad[2];
 };
-//class GpuAnimatedMeshBindMatrix : public GpuMemory {
-//public:
-//    GpuMat4f _matrix;
-//};
-
-// - Dynamic data.
 class GpuAnimatedMeshSkinMatrix : public GpuMemory {
 public:
-    GpuMat4f _matrix;
+  GpuMat4f _matrix;
 };
-
 class GpuAnimatedMeshBoundBox : public GpuMemory {
 public:
-    GpuVec3f _min;
-    float f0;
-    GpuVec3f _max;
-    float f1;
+  GpuVec3f _min;
+  float f0;
+  GpuVec3f _max;
+  float f1;
 };
 
 }//ns BR2

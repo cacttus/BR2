@@ -4,8 +4,8 @@
 
 
 namespace BR2 {
-NodeData::NodeData(string_t strName) {
-  _strName = strName;
+NodeData::NodeData() {
+  _strName = "";
   _iNameHashed = STRHASH(_strName);
   _mBind = mat4::identity();
   _mInvBind = _mBind.inverseOf();
@@ -15,7 +15,6 @@ NodeData::NodeData(string_t strName) {
 }
 NodeData::~NodeData() {
   DEL_MEM(_pBox);
-  //_pBox = nullptr;
 }
 void NodeData::serialize(std::shared_ptr<BinaryFile> fb) {
   fb->writeString(std::move(_strName));
@@ -32,7 +31,7 @@ void NodeData::deserialize(std::shared_ptr<BinaryFile> fb) {
   fb->readString(std::move(_strParentName));
   int32_t pt;
   fb->readInt32(pt);
-  _eParentType = (ParentType::e)pt;
+  _eParentType = (ParentType)pt;
   fb->readMat4(std::move(_mBind));
   _mInvBind = _mBind.inverseOf();
   fb->readMat4(std::move(_mParentInverse));

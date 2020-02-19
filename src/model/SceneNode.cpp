@@ -15,9 +15,8 @@
 
 
 namespace BR2 {
-SceneNode::SceneNode() {
-  _pNodeData = std::make_shared<NodeData>();
-
+SceneNode::SceneNode(std::shared_ptr<NodeData> nd = nullptr) {
+  _pNodeData = nd;
   _pBox = new Box3f();
   _pOBB = new OBB();
   _vPos = vec3(0, 0, 0);
@@ -31,43 +30,15 @@ SceneNode::SceneNode() {
   static NodeId id = 1;
   _iNodeId = id++;
 }
-SceneNode::SceneNode(std::shared_ptr<NodeData> data) : SceneNode() {
-  _pNodeData = data;
-}
 SceneNode::~SceneNode() {
   //    _setShadowInfluences.clear();
   DEL_MEM(_pBox);
   DEL_MEM(_pOBB);
 }
-string_t SceneNode::getName() {
-  if (getNodeData()) {
-    return getNodeData()->getName();
-  }
-  else {
-    Br2LogError("Treid to return a name of a model without a spec");
-    Gu::debugBreak();
-    return std::string("no spec");
-  }
-}
-Hash32 SceneNode::getSpecNameHashed() {
-  if (getNodeData()) {
-    return getNodeData()->getNameHashed();
-  }
-  else {
-    Br2LogError("Treid to return a hash of a model without a spec");
-    Gu::debugBreak();
-    return 0;
-  }
-}
-void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-  //    clearShadowInfluences();
-      //We shouldn't need this
-      //if (pParent == nullptr) {
-      //    pParent = dynamic_cast<Node3base*>(getParent());
-      //}
-      //static int b = 0;
 
-      //Force bind in case we don't have animations.
+void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+
+  //Force bind in case we don't have animations.
   setLocalBind();
 
   animate(mapAnimators);
@@ -106,6 +77,43 @@ void SceneNode::compileWorldMatrix() {
   mRot = mat4::getRotationRad(_fRotation, _vRotationNormal);
   mScl = mat4::getScale(_vScale);
   _mWorld = mScl * mRot * mPos;
+}
+string_t SceneNode::getName() {
+  if (getNodeData()) {
+    return getNodeData()->getName();
+  }
+  else {
+    Br2LogError("Treid to return a name of a model without a spec");
+    Gu::debugBreak();
+    return std::string("no spec");
+  }
+}
+Hash32 SceneNode::getSpecNameHashed() {
+  if (getNodeData()) {
+    return getNodeData()->getNameHashed();
+  }
+  else {
+    Br2LogError("Treid to return a hash of a model without a spec");
+    Gu::debugBreak();
+    return 0;
+  }
+}
+void SceneNode::setViewNormal(vec3& p) {
+  _vViewNormal = p;
+  _bTransformChanged = true;
+}
+void SceneNode::setScale(vec3& v) {
+  _vScale = v;
+  _bTransformChanged = true;
+}
+void SceneNode::setPos(const vec3&& p) {
+  _vLastPos = _vPos;
+  _vPos = p;
+  _bTransformChanged = true;
+}
+void SceneNode::setRot(vec4&& axis_angle_radians) {
+  _vRotationNormal = axis_angle_radians.xyz();
+  _fRotation = axis_angle_radians.w;
 }
 bool SceneNode::isCameraNode() {
   return getThis<CameraNode>() != nullptr;
@@ -171,9 +179,9 @@ void SceneNode::applyParent() {
       }
     }
     else if (
-      getNodeData()->getParentType() == ParentType::e::Armature ||
-      getNodeData()->getParentType() == ParentType::e::Object ||
-      getNodeData()->getParentType() == ParentType::e::None) {
+      getNodeData()->getParentType() == ParentType::Armature ||
+      getNodeData()->getParentType() == ParentType::Object ||
+      getNodeData()->getParentType() == ParentType::None) {
 
       if (isSkinnedMesh()) {
         //Setting this to ident here so we do't get confused.
@@ -187,7 +195,7 @@ void SceneNode::applyParent() {
         }
       }
     }
-    else if (getNodeData()->getParentType() == ParentType::e::Bone) {
+    else if (getNodeData()->getParentType() == ParentType::Bone) {
       if (getBoneParent() != nullptr) {
         static int n = 0;
         if (n == 0) {
@@ -305,7 +313,7 @@ void SceneNode::drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_
   if (isBoneNode()) {
     vec4 cOBB(1, 1, 0, 1);
     OBB ob;
-    ob.calc(an->getLocal(), getNodeData()->getBoundBoxObject());
+    ob.calc(an->getLocal(), getNodeData()->getBoundBox());
     mi->addBox(ob.getVerts(), &cOBB);
   }
 }
@@ -425,6 +433,12 @@ std::shared_ptr<Scene> SceneNode::getScene() {
   std::shared_ptr<Scene> x = findParent<Scene>();
   return x;
 }
+std::shared_ptr<SceneNode> SceneNode::clone() {
+  std::shared_ptr<SceneNode> ret = std::make_shared<SceneNode>()p;
 
+}
+void SceneNode::copy(std::shared_ptr<SceneNode> rhs) {
+
+}
 
 }//ns BR2

@@ -17,6 +17,7 @@ namespace BR2 {
 /**
 *  @class MeshSpec 
 *  @brief Mesh geometry storage and operations.
+*  TODO: inherit from base data, move complex methods to MeshNode
 */
 class MeshData : public NodeData {
 public:

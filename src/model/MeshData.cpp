@@ -322,18 +322,18 @@ std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, b
 */
 void MeshData::computeBox() {
   beginEdit();
-  getBoundBoxObject()->_max = VEC3_MIN;
-  getBoundBoxObject()->_min = VEC3_MAX;
+  getBoundBox()->_max = VEC3_MIN;
+  getBoundBox()->_min = VEC3_MAX;
 
   // - Lastly, minimax
   if (fragCount() > 0) {
     for (size_t i = 0; i < fragCount(); ++i) {
-      getBoundBoxObject()->_min = vec3::minv(getBoundBoxObject()->_min, v3f(i));
-      getBoundBoxObject()->_max = vec3::maxv(getBoundBoxObject()->_max, v3f(i));
+      getBoundBox()->_min = vec3::minv(getBoundBox()->_min, v3f(i));
+      getBoundBox()->_max = vec3::maxv(getBoundBox()->_max, v3f(i));
     }
   }
   else {
-    getBoundBoxObject()->_max = getBoundBoxObject()->_min = 0.0f;
+    getBoundBox()->_max = getBoundBox()->_min = 0.0f;
   }
   //_bIsBoundBoxCalculated = true;
 

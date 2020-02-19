@@ -13,27 +13,13 @@
 #include "../model/NodeData.h"
 
 namespace BR2 {
-//It doesn't make sense to have the "shape" on the model, even though the model has velocity.  Same goes for mesh.
-//TODO: remove spec
-class PhysicsData : public NodeData {
-public:
-  PhysicsData() {} //deserialize ctor
-  PhysicsData(string_t strName) : NodeData(strName) {}
-  virtual ~PhysicsData() override {}
-
-  bool getIsPersistent() { return false; }
-  float getMass() { return 0.0f; } //PHY_STATIC_MASS
-  float getHollow() { return false; }
-  virtual void serialize(std::shared_ptr<BinaryFile> fb) override;
-  virtual void deserialize(std::shared_ptr<BinaryFile> fb) override;
-};
 /**
 *  @class PhysicsNode
 *  @brief Movement and physics properties for node objects.
 */
 class PhysicsNode : public SceneNode {
 public:
-  PhysicsNode(std::shared_ptr<PhysicsData> ps);
+  PhysicsNode();
   virtual ~PhysicsNode();
 
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;

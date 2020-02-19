@@ -8,9 +8,7 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsData> ps) : SceneNode(ps) {
-  _fMass = ps->getMass();
-  _bHollow = ps->getHollow();
+PhysicsNode::PhysicsNode() : SceneNode(ps) {
   _pSpeedbox = new Box3f();
   _pManifold = std::make_shared<GridManifold>();
   _vHistoryPos.push_back(vec3(0, 0, 0));
@@ -35,7 +33,7 @@ void PhysicsNode::setVelocity(vec3& v) {
 std::shared_ptr<TreeNode> PhysicsNode::attachChild(std::shared_ptr<TreeNode> pChild) {
   if (std::dynamic_pointer_cast<PhysicsNode>(pChild) != nullptr) {
     //*Make sure the node is not in the scene.
-    getScene()->getPhysicsWorld()->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
+    getScene()->getPhysicsManager()->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
   }
   else {
     //This is not an error - like ArmatureNode will come here it's not a physicsnode.

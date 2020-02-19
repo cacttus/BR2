@@ -230,6 +230,11 @@ void BinaryFile::readUint32(uint32_t& val, size_t offset) {
   read((char*)&val, readSize, readSize, offset == memsize_max ? iFilePos : offset);
   iFilePos += readSize;
 }
+void BinaryFile::readUint64(uint64_t& val, size_t offset) {
+  int32_t readSize = sizeof(uint64_t);
+  read((char*)&val, readSize, readSize, offset == memsize_max ? iFilePos : offset);
+  iFilePos += readSize;
+}
 void BinaryFile::readVec2(vec2& val, size_t offset) {
   size_t readSize = sizeof(vec2);
   read((char*)&val, readSize, readSize, offset == memsize_max ? iFilePos : offset);
@@ -335,6 +340,11 @@ void BinaryFile::writeInt64(int64_t&& val, size_t offset) {
 }
 void BinaryFile::writeUint32(uint32_t&& val, size_t offset) {
   int32_t writeSize = sizeof(uint32_t);
+  write((char*)&val, writeSize, writeSize, offset == memsize_max ? iFilePos : offset);
+  iFilePos += writeSize;
+}
+void BinaryFile::writeUint64(uint64_t&& val, size_t offset) {
+  int32_t writeSize = sizeof(uint64_t);
   write((char*)&val, writeSize, writeSize, offset == memsize_max ? iFilePos : offset);
   iFilePos += writeSize;
 }

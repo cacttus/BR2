@@ -277,7 +277,7 @@ void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
     nnn++;
     mat_mesh = mat4::identity();
   }
-  if (mg->getNodeData()->getParentType() == ParentType::e::Bone) {
+  if (mg->getNodeData()->getParentType() == ParentType::Bone) {
     static int n = 0;
     if (n == 0)
       mat_mesh = mg->getLocal();;// * mat_model_world;
@@ -434,7 +434,7 @@ void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_p
     }
     else {
       //Simple mesh.  No skin.
-      getOBB()->calc(getLocal(), getNodeData()->getBoundBoxObject());
+      getOBB()->calc(getLocal(), getNodeData()->getBoundBox());
       for (int i = 0; i < 8; ++i) {
         pBox.genExpandByPoint(getOBB()->getVerts()[i]);
       }
