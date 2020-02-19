@@ -1,5 +1,7 @@
 
-# Phase I Tasks
+# Mine City Devlog
+
+## Phase I Tasks
 - [ ] Data Class Separation
     - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
 	- [ ] Move Serialize/Deserialize from Data to _all_ node classes.
@@ -27,7 +29,7 @@
 - [ ] detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 - [ ] All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
-# Devlog
+## Devlog
 
 *2/18/2020*
 
