@@ -74,24 +74,19 @@ to make the node classes public.
 *2/16/2020*
 
 * Renamed BaseNode to SceneNode (could also be SceneGraphNode, but Scenenode is more compact).
-
 * II. part 2 Removal of Spec
 * Removing init() from the node classes to make node construction a simple new-ing of the class, also removing static create() method, likewise.
 * The goal here is to have a data segment for each node, instead of one data segment.  This gives us the ability to clone variuos data segments instead of 
 requiring the entire data segment to be cloned.
-
 *So here is a design dilemma of II.  We want to do things such as, reference ONLY a mesh's vertex data.  Or we want to reference ONLY this armature data.  But to do that
 we need to separate the data classes into individual components.  Yet, the problem is a lot of the data components are shared with NodeData.  So it makes sense to inherit
 the data.  We currently have a single NodeData that comprises all of the data for any node.  The only option I can think of is to simply duplicate this node data across each
 respective node class in the hierarchy.  This makes no sense either, since you're duplciating the inherited information (name, invbind..).
-
 *PhysicsData should be separate from ModelData.  Physics will only involve colliders now.
-
 * We can have it like this:
 	all *Node data's inherit from NodeData'
 	MeshData is it's own respective class. no inheritance
 	MaterialData is its own respective class, no inheritance.
-
 * Commented out particlemaker, for later use.
 
 *2/15/2020*
@@ -107,8 +102,7 @@ respective node class in the hierarchy.  This makes no sense either, since you'r
 * Viewports are only on cameras now.  We now use 1 viewport per camera, since we may, want to render certain regions with different width/height settings.
 * So the only issue here, is when we want fullscreen mode, or we need to place the viewport in the window, so the viewport needs the window's width, height, or both.
 * The viewport may need window height
-* Viewport can be: 
-	Width & Height of window - this is the same as "fullscreen" regardless of whether the window is actually covering the screen.
+* Viewport can be: Width & Height of window - this is the same as "fullscreen" regardless of whether the window is actually covering the screen.
 * Change viewport's update to bind().  We bind() the viewport before rendering, in RenderPipe.
 * Camera also needs access to screen buffers so, when window resizes we may also resize screen buffers, but since window is depenent on camera w/h so the
 RenderPipeline will also be dependent on camera w/h
@@ -119,7 +113,6 @@ Camera->bind();
 ...viewport->bind();
 scene->render();
 ```
-
 * So here is the issue, we can only have 1 renderpipe per resolution.  We can't create a new renderpipe for each camera.
 Either way, it appears you have to share the screen dimensions with the camera.  In the least, you need to share the RenderPipe.
 If you didn't you'd end up creating more than 1 renderpipe.  Graphics isn't quite there yet, where we can establish
@@ -189,16 +182,12 @@ GLContext
 * Undo changes.  Gui2d is actually Screen.
 * Rename Gui2d to screen
 * add Screen(s) to a new Gui2d class.
-
 * TabButton - the basic of the UI
 * TODO Make the ui text not shrink vertically based on window size.  
 * TODO make the window not squash horizontally (keep the horizontal ratio)
-
 * We need to make the render system "windows" more modular.  Like, we need to create multiple windows if needed.
-
 * WindowManager
     * Get rid of "OpenGL Api" we don't need that.. right.
-
 * Moved Window control to applciation (not in the main core)
 * Removed Mob to Bin converter (apprunner.cpp)
 * Removed Cycle Logging in Logger.cpp
