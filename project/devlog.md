@@ -4,9 +4,9 @@
 * TODO - detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 * TODO - All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
-## Roadmap
-* I. CSharp inline *minimal* scripts.
-* II. Remove Spec System, use "data" system.
+## Phase I Roadmap
+* I. Remove Spec System, use "data" system.
+* II. CSharp inline *minimal* scripts.
 * III. Remove WorldObject inheritence, and use Component model.
 * IV. CMake integration. Test on iOS, Linux, Android.
 * V. Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
@@ -14,7 +14,7 @@
 
 ## Currently Working On..
 1. ~~Unlink the Window viewport with the Camera Viewport.~~
-	* This is not possible, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height.
+	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 2. Data Class Sesparation
 	* Implement clone() on nodes.
 	* Move complex methods from all *data* classes to their respective Node classes.
@@ -24,7 +24,6 @@
 5. Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 6. Move window update logic from AppRunner to GraphicsWindow so they can run async.
 7. Much of PhysicsManager must be moved to Scene, Object Creation.
-
 
 *2/18/2020*
 *Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
