@@ -280,8 +280,8 @@ private:
 */
 class ModelData : public PhysicsData {
 public:
-  ModelData() {}//serialize only.
-  ModelData(string_t name, int32_t frameRate);
+  ModelData(std::shared_ptr<GLContext> ct) { _pContext = ct; }//serialize only.
+  ModelData(std::shared_ptr<GLContext> ct, string_t name, int32_t frameRate);
   virtual ~ModelData();
 
   int32_t getFrameRate() { return _iFrameRate; }
@@ -309,6 +309,7 @@ private:
   std::shared_ptr<Img32> _pThumb = nullptr;
   std::shared_ptr<BoneData> getBoneByArmJointOffset(int32_t ijo);
   std::string _strFriendlyName;
+  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
 /**

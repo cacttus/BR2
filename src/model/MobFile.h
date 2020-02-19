@@ -123,8 +123,9 @@ public:
   std::shared_ptr<MeshSpecData> _pCurMeshData = nullptr;
   std::shared_ptr<ArmatureData> _pCurArmData = nullptr;
   std::shared_ptr<ActionKeys>  _pCurActionKeys = nullptr;
+  std::shared_ptr<GLContext> _pContext = nullptr;
 
-  ModDataLoad();
+  ModDataLoad(std::shared_ptr<GLContext> c);
   virtual ~ModDataLoad();
 };
 /**
@@ -138,6 +139,7 @@ public:
   ParentType::e parseParentType(string_t pt);
   string_t getMobDir();
   std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModelSpecs; }
+  std::shared_ptr<GLContext> getContext() {return _pContext;}
 
 private:
   float _fVersion = 0.02f;
@@ -149,7 +151,6 @@ private:
 
   std::shared_ptr<ModDataLoad> _pCurModDataLoad = nullptr;
   std::shared_ptr<GLContext> _pContext = nullptr;
-  std::shared_ptr<GLContext> getContext() {return _pContext;}
 
   //Inherited
   virtual void pkp(std::vector<string_t>& tokens);

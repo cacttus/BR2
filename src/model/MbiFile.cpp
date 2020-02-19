@@ -1,7 +1,6 @@
 #include "../base/Base.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
-#include "../base/AppBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderPipeline.h"
 #include "../gfx/TexCache.h"
@@ -82,7 +81,7 @@ bool MbiFile::loadAndParse(string_t file) {
   int32_t nModels;
   fb->readInt32(nModels);
   for (int32_t iModel = 0; iModel < nModels; ++iModel) {
-    std::shared_ptr<ModelData> ms = std::make_shared<ModelData>();
+    std::shared_ptr<ModelData> ms = std::make_shared<ModelData>(getContext());
     ms->deserialize(fb);
     _vecModels.push_back(ms);
     GLContext::getModelCache()->addSpec(ms);

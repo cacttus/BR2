@@ -28,6 +28,8 @@ public:
   void setDrawMode(GLenum e) { _eDrawMode = e; }
   std::shared_ptr<ShaderBase> getShader() { return _pShader; }
   void setShader(std::shared_ptr<ShaderBase> sb) { _pShader = sb; }
+  void setCamera(std::shared_ptr<CameraNode> c) { _pCamera = c; }
+  std::shared_ptr<CameraNode> getCamera() { return _pCamera ; }
   //    void addTexture(std::shared_ptr<Texture2DSpec> ps) { _setTextures.push_back(ps);}
 
   //void setWindow(std::shared_ptr<GraphicsWindow> w) { _pWindow = w; }
@@ -50,6 +52,7 @@ private:
   std::shared_ptr<MeshNode> _pMeshNode = nullptr;
   std::shared_ptr<VaoDataGeneric> _pVaoDataGeneric = nullptr;
   std::shared_ptr<VaoShader> _pVaoShader = nullptr;
+  std::shared_ptr<CameraNode> _pCamera = nullptr;
   // std::shared_ptr<Material> _pMaterial = nullptr;
   //std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
 };

@@ -23,7 +23,6 @@
 #include "../math/MathAll.h"
 
 #include "../gfx/GraphicsApi.h"
-#include "../gfx/OpenGLApi.h"
 #include "../gfx/VulkanApi.h"
 
 #include "../model/ModelCache.h"

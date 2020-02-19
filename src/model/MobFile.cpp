@@ -5,7 +5,6 @@
 #include "../model/MobFile.h"
 #include "../model/MeshData.h"
 #include "../model/Model.h"
-#include "../model/MeshCache.h"
 #include "../model/ModelCache.h"
 #include "../model/ModelThumb.h"
 #include "../model/NodeData.h"
@@ -25,7 +24,7 @@ void MobFile::pkp(std::vector<string_t>& tokens) {
   int iind = 1;
   if (lcmp(tokens[0], "mod_beg", 3)) {
     if (_pCurModDataLoad == nullptr) {
-      _pCurModDataLoad = std::make_shared<ModDataLoad>();
+      _pCurModDataLoad = std::make_shared<ModDataLoad>(_pContext);
       _pCurModDataLoad->_strModName = getCleanToken(tokens, iind);
       _pCurModDataLoad->_fVersion = TypeConv::strToFloat(getCleanToken(tokens, iind));
       if (_fVersion != _pCurModDataLoad->_fVersion) {
@@ -80,7 +79,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
   _vecModelSpecs.clear();
   for (std::shared_ptr<ModDataLoad> mdd : _setModData) {
     //Create Model Spec
-    std::shared_ptr<ModelData> ms = std::make_shared<ModelData>(mdd->_strModName, mdd->_iFrameRate);
+    std::shared_ptr<ModelData> ms = std::make_shared<ModelData>(_pContext, mdd->_strModName, mdd->_iFrameRate);
     _vecModelSpecs.push_back(ms);
     GLContext::getModelCache()->addSpec(ms);
 
@@ -109,8 +108,8 @@ void MobFile::cacheObjectsAndComputeBoxes() {
 
 
 //////////////////////////////////////////////////////////////////////////
-ModDataLoad::ModDataLoad() {
-
+ModDataLoad::ModDataLoad(std::shared_ptr<GLContext> c) {
+  _pContext = c;
 }
 ModDataLoad::~ModDataLoad() {
   _setMeshSpecs.clear();
@@ -312,7 +311,7 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
       //Do not reset hte obj data - obj file uses all verts above..
     }
     else {
-      _pCurMeshData = std::make_shared<MeshSpecData>();
+      _pCurMeshData = std::make_shared<MeshSpecData>(_pContext);
 
     }
     _pCurMeshData->setName(strName);
@@ -774,7 +773,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pS
     std::shared_ptr<Texture2DSpec> normal = nullptr;
     //create material
 
-    std::shared_ptr<Material> mat = std::make_shared<Material>(_pMatData->_strMatName);
+    std::shared_ptr<Material> mat = std::make_shared<Material>(getContext(), _pMatData->_strMatName);
     string_t path;
 
     if (StringUtil::isNotEmpty(_pMatData->_strDiffuseTex)) {

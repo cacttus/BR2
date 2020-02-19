@@ -5,7 +5,6 @@
 #include "../base/Gu.h"
 #include "../base/DebugHelper.h"
 #include "../base/StringUtil.h"
-#include "../base/AppBase.h"
 #include "../base/GLContext.h"
 #include "../base/FpsMeter.h"
 #include "../base/GraphicsWindow.h"

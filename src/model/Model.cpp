@@ -1,7 +1,6 @@
 #include "../base/Base.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
-#include "../base/AppBase.h"
 #include "../base/Perf.h"
 #include "../math/Algorithm.h"
 #include "../gfx/Texture2DSpec.h"
@@ -15,7 +14,6 @@
 #include "../model/Material.h"
 #include "../model/MobFile.h"
 #include "../model/ModelCache.h"
-#include "../model/MeshCache.h"
 #include "../model/MeshData.h"
 #include "../model/MeshNode.h"
 #include "../model/UtilMeshInline.h"
@@ -653,7 +651,8 @@ void ArmatureNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
-ModelData::ModelData(string_t name, int32_t frameRate) : PhysicsData(name), _iFrameRate(frameRate) {
+ModelData::ModelData(std::shared_ptr<GLContext> ct, string_t name, int32_t frameRate) : PhysicsData(name), _iFrameRate(frameRate) {
+  _pContext = ct;
   //_iNameHash = STRHASH(name);
 }
 ModelData::~ModelData() {
@@ -707,7 +706,7 @@ void ModelData::deserialize(std::shared_ptr<BinaryFile> fb) {
   fb->readInt32(nMeshes);
   for (int32_t iMesh = 0; iMesh < nMeshes; ++iMesh) {
     Br2LogInfo("  Mesh " + iMesh + "..");
-    std::shared_ptr<MeshData> pMesh = std::make_shared<MeshData>();
+    std::shared_ptr<MeshData> pMesh = std::make_shared<MeshData>(_pContext);
     pMesh->deserialize(fb);
     getMeshes().push_back(pMesh);
   }
@@ -958,7 +957,7 @@ void ModelNode::drawForward(RenderParams& rp) {
   //Debug Boxes and Soforth
   if (Gu::getRenderSettings()->getDebug()->getShowArmatures()) {
     getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(getContext());
+    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(rp.getCamera(), getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     for (std::shared_ptr<ArmatureNode> pa : _vecArmatures) {
@@ -969,7 +968,7 @@ void ModelNode::drawForward(RenderParams& rp) {
   //Recursive!
   if (Gu::getRenderSettings()->getDebug()->getShowBoneBindBoxes()) {
     getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(getContext());
+    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(rp.getCamera(), getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     for (std::shared_ptr<ArmatureNode> an : _vecArmatures) {
@@ -979,7 +978,7 @@ void ModelNode::drawForward(RenderParams& rp) {
   }
   if (Gu::getRenderSettings()->getDebug()->getShowBoneBoxes()) {
     getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(getContext());
+    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(rp.getCamera(), getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     for (std::shared_ptr<ArmatureNode> an : _vecArmatures) {
@@ -990,7 +989,7 @@ void ModelNode::drawForward(RenderParams& rp) {
   }
   if (Gu::getRenderSettings()->getDebug()->getShowMeshBoxes()) {
     getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(getContext());
+    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(rp.getCamera(), getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     drawMeshBoxes(mi);
@@ -998,7 +997,7 @@ void ModelNode::drawForward(RenderParams& rp) {
   }
   if (Gu::getRenderSettings()->getDebug()->getShowModelBoxes()) {
     getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(getContext());
+    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(rp.getCamera(), getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     drawBoxes(mi);
@@ -1006,7 +1005,7 @@ void ModelNode::drawForward(RenderParams& rp) {
   }
   if (Gu::getRenderSettings()->getDebug()->getShowModelBoundBox()) {
     getContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(getContext());
+    std::shared_ptr<UtilMeshInline> mi = std::make_shared<UtilMeshInline>(rp.getCamera(), getContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     drawBox(mi);

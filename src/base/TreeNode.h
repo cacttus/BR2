@@ -74,7 +74,8 @@ std::shared_ptr<Tx> TreeNode::findParent() {
   //Finds the first parent, from the given node of type Tx
   //Need to test this
   std::shared_ptr<Tx> found = nullptr;
-  std::function<bool(std::shared_ptr<Tx>)> fp;
+  std::function<void(std::shared_ptr<TreeNode>)> fp;
+
 
   fp = [&found,&fp](std::shared_ptr<TreeNode> cur) {
     if (found != nullptr) {
@@ -84,8 +85,8 @@ std::shared_ptr<Tx> TreeNode::findParent() {
     if (casted != nullptr) {
       found = casted;
     }
-    else if (getParent() != nullptr) {
-      fp(getParent());
+    else if (cur->getParent() != nullptr) {
+      fp(cur->getParent());
     }
   };
 

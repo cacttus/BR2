@@ -3,7 +3,6 @@
 #include "../base/DebugHelper.h"
 #include "../base/AppRunner.h"
 #include "../base/Gu.h"
-#include "../base/AppMain.h"
 
 using namespace BR2;
 int main(int argc, char** argv) {

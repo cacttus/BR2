@@ -3,7 +3,6 @@
 #include "../base/ApplicationPackage.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
-#include "../base/AppBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderPipeline.h"
 #include "../gfx/TexCache.h"
@@ -68,7 +67,9 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelData> mod, int3
     //Gu::getRenderPipe()->setClear(savedClear);
     //Gu::setCamera(pOrigCam);
 
-    return thumb;
+  //return thumb;
+  return nullptr;
+
 }
 
 

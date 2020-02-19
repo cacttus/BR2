@@ -1,5 +1,4 @@
 #include "../base/Base.h"
-#include "../base/AppBase.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
@@ -8,7 +7,6 @@
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
 #include "../base/GraphicsWindow.h"
-#include "../base/OpenGLWindow.h"
 #include "../base/FrameSync.h"
 
 #include "../gfx/RenderViewport.h"
@@ -21,7 +19,6 @@
 #include "../gfx/RenderPipeline.h"
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
-#include "../gfx/OpenGLApi.h"
 #include "../gfx/VulkanApi.h"
 #include "../gfx/UiControls.h"
 #include "../gfx/CameraNode.h"

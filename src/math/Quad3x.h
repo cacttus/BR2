@@ -23,6 +23,9 @@ namespace BR2 {
 template < class Tx >
 class Quad3x : public VirtualMemory {
 public:
+  typedef Vec3x<Tx> VecType;
+
+public:
   FORCE_INLINE Quad3x();
   FORCE_INLINE Quad3x(vec2& vTopLeft, vec2& vBottomRight);
 
@@ -38,7 +41,6 @@ public:
   FORCE_INLINE string_t toString();
 
 public:
-  typedef Vec3x<Tx> VecType;
   VecType _p[4];    // Quad Corners
 };
 template < class Tx >

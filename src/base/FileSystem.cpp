@@ -1,6 +1,5 @@
 #include "../base/FileSystem.h"
 #include "../base/GLContext.h"
-#include "../base/AppBase.h"
 #include "../base/ApplicationPackage.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"

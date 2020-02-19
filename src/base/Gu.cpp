@@ -4,8 +4,6 @@
 #include "../base/Allocator.h"
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
-#include "../base/EngineConfigFile.h"
-#include "../base/AppBase.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
@@ -44,7 +42,6 @@
 #include "../gfx/ParticleMaker.h"   
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderManager.h"
-#include "../gfx/OpenGLApi.h"
 #include "../base/GLContext.h"
 
 #include "../model/ModelCache.h"

@@ -1,6 +1,4 @@
 #include "../base/Perf.h"
-#include "../base/AppMain.h"
-#include "../base/AppBase.h"
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Logger.h"

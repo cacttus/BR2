@@ -1,6 +1,4 @@
-#include "../base/AppBase.h"
 #include "../base/Base.h"
-#include "../base/AppBase.h"
 #include "../base/Img32.h"
 
 #include "../gfx/CameraNode.h"
