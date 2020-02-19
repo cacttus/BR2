@@ -5,12 +5,12 @@
 * TODO - All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
 ## Phase I Roadmap
-I. - [ ] Remove Spec System, use "data" system.
-II. - [ ] CSharp inline *minimal* scripts.
-III. - [ ] Remove WorldObject inheritence, and use Component model.
-IV. - [ ] CMake integration. Test on iOS, Linux, Android.
-V. - [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
-VI. - [ ] Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
+- [ ] Remove Spec System, use "data" system.
+- [ ] CSharp inline *minimal* scripts.
+- [ ] Remove WorldObject inheritence, and use Component model.
+- [ ] CMake integration. Test on iOS, Linux, Android.
+- [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
+- [ ] Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 
 ## Currently Working On..
 - [x] ~~Unlink the Window viewport with the Camera Viewport.~~
