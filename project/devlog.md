@@ -13,7 +13,6 @@
 - [ ] Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 - [ ] Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	- [ ] WorldObject will be composited by other items and not inherited.
-
 - [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 - [x] Move object creation of PhysicsManager to Scene.
