@@ -18,7 +18,7 @@
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 - [x] Move object creation of PhysicsManager to Scene.
 
-### Wishlist (TODO future tasks)
+#### Wishlist (TODO future tasks)
 - [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
 - [ ] Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
 - [ ] detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
