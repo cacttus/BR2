@@ -1,10 +1,10 @@
 
 # Mine City Devlog
 
-## Phase I Tasks
+## Tasks
 - [ ] Data Class Separation
     - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
-	- [ ] Move Serialize/Deserialize from Data to _all_ node classes.
+	- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
 	- [ ] Implement `clone()` and `copy()` on nodes.
 	- [ ] Move complex methods from all *data* classes to their respective Node classes.
 	- [ ] Remove inheritence from data classes.
@@ -17,10 +17,10 @@
 	- [ ] WorldObject will be composited by other items and not inherited.
 - [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
-- [x] Move object creation of PhysicsManager to Scene.
 - [ ] Componentize these:
     - [ ] Remove "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
 	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
+- [x] Move object creation of PhysicsManager to Scene.
 - [x] ~~Unlink the Window viewport with the Camera Viewport.~~
 	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 #### Wishlist (TODO future tasks)
@@ -35,7 +35,7 @@
 
 * Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change. GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have multiple contexts active at one time (wglMakeCurrent called on either of them).
 * Removed inheritance for Node data classes.  Instead, we're going to use multiple data classes on each inherited node class.  This way, we can share multiple data if we need to.
-* Created the NamedData serializable 
+* Created the NamedData serializable. Then removed it.  It's nonsensical as we're removing serialization and inheritence from data classes.
 * _Not_ creating initial class datas, per design.  This is to decrease deserialization time, and to prevent unwanted garbage data from becoming confusing.
 * Data classes shouldn't have methods.  Our new goal is to clone objects using the data as a shared "user" system.
 	* Separating the data classes is going to be a huge hurdle.
