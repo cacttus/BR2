@@ -13,10 +13,14 @@
 - [ ] Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 - [ ] Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	- [ ] WorldObject will be composited by other items and not inherited.
-- [ ] *Dynamic skinning* where, mesh components are *components* and their *skin* is a separate component on WorldObject.
+
 - [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 - [x] Move object creation of PhysicsManager to Scene.
+- [ ] Componentize these:
+    - [ ] Remove "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
+	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh.
+		* We should copy Blender's data format.  Armature is a child of the object.
 
 #### Wishlist (TODO future tasks)
 - [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
@@ -28,7 +32,7 @@
 
 *2/18/2020*
 
-*Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
+* Although we resolved to pull the old (working) version of BR2, it wouldn't make sense to go back to this change.  
 	* GL Contexts *Must* be separate from Gu::getContext().  Since, to render multiple OpenGL windows Asynchronously, you need to have
 	multiple contexts active at one time (wglMakeCurrent called on either of them).
 * Removed inheritance for Node data classes.  Instead, we're going to use multiple data classes on each inherited node class.  This way, we can share multiple
