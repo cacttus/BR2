@@ -54,8 +54,7 @@ protected:
   //To mimick the behavior of PoundFile.
   virtual void pkp(std::vector<string_t>& tokens) = 0;
 private:
-  pugi::xml_document _doc;
-  pugi::xml_parse_result _parseResult;
+
 };
 
 }//ns BR2

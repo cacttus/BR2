@@ -72,6 +72,9 @@ std::shared_ptr<PackageConfiguration> XmlFile::getXMLConfiguration(string_t file
 }
 
 void XmlFile::parse(char* buf, int64_t size) {
+  pugi::xml_document _doc;
+  pugi::xml_parse_result _parseResult;
+
   // The block can be allocated by any method; the block is modified during parsing
   _parseResult = _doc.load_buffer_inplace((void*)buf, size);
 

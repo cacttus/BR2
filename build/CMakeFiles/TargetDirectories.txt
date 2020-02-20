@@ -1,0 +1,3 @@
+C:/git/BR2/build/CMakeFiles/rebuild_cache.dir
+C:/git/BR2/build/CMakeFiles/BR2.dir
+C:/git/BR2/build/CMakeFiles/edit_cache.dir

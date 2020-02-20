@@ -2,14 +2,8 @@
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 #include "../base/StringUtil.h"
-#ifdef _WIN32
-#include <windows.h>
-#include <TlHelp32.h>
-#include <DbgHelp.h>
-#elif _WIN64
-#include <Windows.h>
-#include <TlHelp32.h>
-#endif
+#include "../base/WindowsIncludes.h"
+
 
 namespace BR2 {
 HANDLE hCrtLog;

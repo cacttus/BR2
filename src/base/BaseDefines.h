@@ -13,16 +13,6 @@ namespace BR2 {
 //Operating System global defines
 //We can use either SDL's defines, or use the defines in the expected OS headers
 // BR2_OS_WINDOWS, BR2_OS_ANDROID, BRO_OS_LINUX, BR2_OS_IOS, BRO_OS_OSX
-#ifdef __APPLE__
-#ifdef TARGET_OS_IPHONE
-#define BR2_OS_IOS 1
-#endif
-#elif __WINDOWS__
-#define BR2_OS_WINDOWS 1
-#else
-#pragma error Error: Incorrect operating system, or undefined system.
-#endif
-
 #define MUST_OVERRIDE virtual
 #define SHADOWS
 

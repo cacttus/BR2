@@ -9,37 +9,58 @@
 #define __BUILDCONFIG_14597134672299218799_H__
 namespace BR2 {
 
-#ifdef _DEBUG
+//Project defines
+#define SOLTAR_PHASE1
+#define ENGINE_REBUILD
 
+///
+///
+///
+///
+// Only put defines in this file!  Nothing else please.
+///This header must come before all other header files.
+///
+///
+///
+
+#ifdef _DEBUG
 //Uncomment this to debug pure header files
 #define __SK_DEBUG_INCLUDES__ 1
-
 #endif
-
 
 //////////////////////////////////////////////////////////////////////////
 //G++ / CLANG - NDEBUG is enabled by DEFAULT messing up builds.
-//#ifdef _DEBUG
-//#ifdef NDEBUG
-//#undef NDEBUG
-//#endif
-//#ifdef _NDEBUG
-//#undef _NDEBUG
-//#endif
-//#endif
+#ifdef _DEBUG
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+#ifdef _NDEBUG
+#undef _NDEBUG
+#endif
+#endif
 
 //////////////////////////////////////////////////////////////////////////
-// OPERATING SYSEMT
-//#ifndef __unix
-//#define BR2_OS_WINDOWS
-////#define BRO_USE_DIRECTX
+// OPERATING SYSTEM
+#ifdef __WINDOWS__  
+//Note Win64 is defined WITH win32
+#define BR2_OS_WINDOWS
+//#define BRO_USE_DIRECTX
+//We're not using winsock anymore due to SDL_Net
 //#define BRO_USE_WINSOCK
-//#else
-////**Bro OS Android MUST BE DEFINED in the android makefile.
-//#ifndef BR2_OS_ANDROID
-//#error "Operating System Error"
-//#endif
-//#endif
+#elif BR2_OS_ANDROID
+//**Bro OS Android MUST BE DEFINED in the android makefile.
+#ifndef 
+#error "Operating System Error"
+#endif
+#elif __APPLE__
+#ifdef TARGET_OS_IPHONE
+#define BR2_OS_IOS 1
+#endif
+#else
+#pragma error Error: Incorrect operating system, or undefined system.
+#endif
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // - Undefine to enable runtime debugging which enables 

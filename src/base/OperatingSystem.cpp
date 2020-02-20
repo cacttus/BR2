@@ -3,12 +3,7 @@
 #include "../base/BaseAll.h"
 #include "../base/OperatingSystem.h"
 
-#ifdef BR2_OS_WINDOWS
-//For opening folder
-#include <Shlobj.h>
-#include <Shlobj_core.h>
-#include <commdlg.h>
-#endif
+#include "../base/WindowsOS.h"
 
 namespace BR2 {
 

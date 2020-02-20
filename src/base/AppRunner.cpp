@@ -1,5 +1,9 @@
 #include <signal.h>
 
+#include <SDL.h>
+#include <SDL_syswm.h>
+#include <SDL_net.h>
+
 #include "../base/AppRunner.h"
 #include "../base/DebugHelper.h"
 #include "../base/SoundCache.h"

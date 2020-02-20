@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="base">
+      <UniqueIdentifier>{6a9aa1c2-d9c6-4040-bdf7-1800b57c24e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{31f4621e-936e-440c-a11e-746e114bbf75}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\base\AppRunner.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Main.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\DebugHelper.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Gu.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\HeaderTest.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\Random.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\base\AppRunner.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\DebugHelper.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Gu.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\GfxHeader.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\WindowsIncludes.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Random.h">
+      <Filter>math</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

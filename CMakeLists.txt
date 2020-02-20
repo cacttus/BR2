@@ -16,6 +16,17 @@
 #     https://stackoverflow.com/questions/9680420/looking-for-a-cmake-clean-command-to-clear-up-cmake-output
 #     https://stackoverflow.com/questions/6921695/how-can-i-build-a-c-project-with-multiple-interdependent-subdirectories
 #
+# Note: Currently we have some issues
+# - [ ] This is currently a test CMakeLists to build the test project.  Switch this to /br2/.
+# - [ ] The output folder isn't /bin/ for some reason.  Fix this.
+#
+
+#Force Unix makefile
+#We want to build with GCC on windows, using CYGWIN
+#Install CYGWIN if on Windows.
+#set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
+message("Generator is set to ${CMAKE_GENERATOR}")
+
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -42,14 +53,19 @@ set(BR2_GLOBAL_BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/)
 #set(BR2_CONFIG_SHORT d) #$<$<CONFIG:Debug>:d, $<CONFIG:Release>:r>)
 #On VS systems this doesn't appear to work (intuitively)
 #SET(CMAKE_BUILD_TYPE Debug CACHE) 
-message("BUILD TYPE " ${CMAKE_BUILD_TYPE})
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-set(BR2_CONFIG_SHORT "d")
-else ()
-set(BR2_CONFIG_SHORT "r")
-endif()
-message("BUILD TYPE " ${BR2_CONFIG_SHORT})
+if(${GENERATOR_IS_MULTI_CONFIG)
+	#Per CMAKE doc.
+	# "Multi-config generators use CMAKE_CONFIGURATION_TYPES as the set of configurations and ignore CMAKE_BUILD_TYPE."
 
+else()
+	message("BUILD TYPE " ${CMAKE_BUILD_TYPE})
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(BR2_CONFIG_SHORT "d")
+	else ()
+		set(BR2_CONFIG_SHORT "r")
+	endif()
+	message("BUILD TYPE " ${BR2_CONFIG_SHORT})
+endif()
 project(${BR2_PROJECT_NAME} VERSION ${BR2_PROJECT_VERSION})
 
 set(CMAKE_CACHEFILE_DIR ${BR2_BUILD_DIR})
@@ -72,8 +88,15 @@ foreach (_headerFile ${BR2_HEADERS_BR2})
     list (APPEND BR2_INCLUDE_DIRS ${_dir})
 endforeach()
 list(REMOVE_DUPLICATES BR2_INCLUDE_DIRS)
-message("Found Sources: " ${BR2_SOURCES_BR2})
-message("Found Headers: " ${BR2_HEADERS_BR2})
+
+#TEST -- Header directory for temp source file
+list (APPEND BR2_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/cmake_test_src/)
+#TEST
+
+message("Info ")
+message("  + Found Sources: " ${BR2_SOURCES_BR2})
+message("  + Found Headers: " ${BR2_HEADERS_BR2})
+message("  + Include Directories: " ${BR2_INCLUDE_DIRS})
 
 set(BR2_TARGET_NAME_BR2 ${BR2_PROJECT_NAME})
 set(BR2_EXE_NAME_BR2 ${BR2_TARGET_NAME_BR2}_${BR2_CONFIG_SHORT}${BR2_BUILD_ARCH})
@@ -90,9 +113,54 @@ set_target_properties(${BR2_TARGET_NAME_BR2} PROPERTIES
 )
 
 #target_link_libraries(${BR2_TARGET_NAME_BR2} PUBLIC TestLibrary)
+###############################################################################################
+#Compile Options
+
+function(add_compile_options_config CONFIG)
+	#This function adds compile options for a TARGET to debug/release.
+	#https://stackoverflow.com/questions/48895687/cmake-add-compile-options-error-with-release-debug-config
+    foreach(opt ${ARGN})
+        add_compile_options("$<$<CONFIG:${CONFIG}>:${opt}>")
+    endforeach()
+endfunction()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+	message("Setting GCC/CLANG options.")
+	
+	#Static c linkage
+	set(BR2_C_GCC_STATIC_C -static-libgcc)
+	set(BR2_C_GCC_STATIC_CPP -static-libstdc++)
+	
+	#These will add just to the target.
+	#add_compile_options_config(RELEASE "-W" "-Wall" "-O3" "-pedantic" ${BR2_C_GCC_STATIC_C} ${BR2_C_GCC_STATIC_CPP})
+	#add_compile_options_config(DEBUG "-W" "-Wall" "-O0" "-g" "-pedantic" ${BR2_C_GCC_STATIC_C} ${BR2_C_GCC_STATIC_CPP})
+
+	#This adds to ALL targets 
+	string(APPEND CMAKE_CXX_FLAGS_RELEASE " -W -Wall -03 -pedantic" ${BR2_C_GCC_STATIC_C} ${BR2_C_GCC_STATIC_CPP})
+	
+endif()
 
 ###############################################################################################
-#Set Default Target
+#Set Default Target for Visual Studio
 #https://stackoverflow.com/questions/7304625/how-do-i-change-the-startup-project-of-a-visual-studio-solution-via-cmake
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${BR2_TARGET_NAME_BR2})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
