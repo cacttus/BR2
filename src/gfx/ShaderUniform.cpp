@@ -105,7 +105,7 @@ size_t ShaderUniform::getByteSizeForType(OpenGLShaderVarType::e etype) {
     // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
   case OpenGLShaderVarType::e::GpuMat3:   return sizeof(mat3); break;
   case OpenGLShaderVarType::e::GpuMat4:   return sizeof(mat4); break;
-  default: Br2ThrowNotImplementedException();
+  default: BrThrowNotImplementedException();
 
   }
 }
@@ -126,7 +126,7 @@ size_t ShaderUniform::getCountForType(OpenGLShaderVarType::e etype) {
     // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
   case OpenGLShaderVarType::e::GpuMat3:   return 1; break;
   case OpenGLShaderVarType::e::GpuMat4:   return 1; break;
-  default: Br2ThrowNotImplementedException();
+  default: BrThrowNotImplementedException();
 
   }
 }
@@ -201,7 +201,7 @@ void ShaderUniform::validateSystemTypeEqualsOpenGlType(OpenGLShaderVarType::e sy
   else if (systemNameType == OpenGLShaderVarType::e::GpuDouble3)      AssertOrThrow2(shaderDefinedUniformType == GL_DOUBLE_VEC3);
   else if (systemNameType == OpenGLShaderVarType::e::GpuDouble4)      AssertOrThrow2(shaderDefinedUniformType == GL_DOUBLE_VEC4);
   else
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
 
 }
 

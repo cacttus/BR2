@@ -3,10 +3,10 @@
 #include "../base/Gu.h"   
 
 namespace BR2 {
-TreeNode::TreeNode() :
-  _pParent(NULL)
-  , _iRecursionStamp(0)
-  , _bUnloading(0) {
+TreeNode::TreeNode() {
+  _pParent = nullptr;
+  _iRecursionStamp = 0;
+  _bUnloading = 0;
   _mapChildren = std::make_unique<std::vector<std::shared_ptr<TreeNode>>>();
 }
 TreeNode::~TreeNode() {
@@ -18,27 +18,23 @@ TreeNode::~TreeNode() {
   //_mapChildren->clear();
   //DEL_MEM(_mapChildren);
 }
-void TreeNode::attachToParent(std::shared_ptr<TreeNode> pParent)  // calls insert()
-{
+void TreeNode::attachToParent(std::shared_ptr<TreeNode> pParent) {
   AssertOrThrow2(pParent != nullptr);
   pParent->insert(getThis<TreeNode>());
 }
-bool TreeNode::detachFromParent()  //calls remove()
-{
+bool TreeNode::detachFromParent() {
   if (getParent() == nullptr) {
     return false;
   }
   getParent()->remove(getThis<TreeNode>());
   return true;
 }
-std::shared_ptr<TreeNode> TreeNode::attachChild(std::shared_ptr<TreeNode> pChild)  // calls insert()
-{
+std::shared_ptr<TreeNode> TreeNode::attachChild(std::shared_ptr<TreeNode> pChild) {
   AssertOrThrow2(pChild != nullptr);
   pChild->detachFromParent();
   return this->insert(pChild);
 }
-bool TreeNode::detachChild(std::shared_ptr<TreeNode> pChild)  //calls remove()
-{
+bool TreeNode::detachChild(std::shared_ptr<TreeNode> pChild) {
   AssertOrThrow2(pChild != nullptr);
   return this->remove(pChild);
 }
@@ -69,7 +65,6 @@ void TreeNode::internalRemoveChildNode(std::shared_ptr<TreeNode> pTreeNode) {
 //        return true;
 //    });
 //}
-
 void TreeNode::flattenBreadthFirst(TreeNode::NodeList& ret) {
   // - Gets a list of all items in breadth first
   // traversal.  This will give us a list of all dependencies first
@@ -81,7 +76,6 @@ void TreeNode::flattenBreadthFirst(TreeNode::NodeList& ret) {
   for (std::shared_ptr<TreeNode> item : (*_mapChildren)) {
     getBreadthFirstList_r(item, ret);
   }
-
 }
 //This returns the node you passed in, kind of pointlesss return value
 std::shared_ptr<TreeNode> TreeNode::insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent) {
@@ -197,8 +191,9 @@ void TreeNode::getBreadthFirstList_r(std::shared_ptr<TreeNode> parent, NodeList&
   outList.push_back(parent);
 }
 void TreeNode::find_r(std::shared_ptr<TreeNode> nodeToFind, std::shared_ptr<TreeNode> parent, std::shared_ptr<TreeNode>& found) {
-  if (found != nullptr)
+  if (found != nullptr) {
     return;
+  }
 
   if (parent == nodeToFind) {
     found = parent;
@@ -206,12 +201,12 @@ void TreeNode::find_r(std::shared_ptr<TreeNode> nodeToFind, std::shared_ptr<Tree
   }
 
   for (std::shared_ptr<TreeNode> n : *(parent->_mapChildren)) {
-    if (found != nullptr)
+    if (found != nullptr) {
       break;
+    }
 
     find_r(nodeToFind, n, found);
   }
-
 }
 bool TreeNode::getIsLeaf() const {
   return _mapChildren->size() == 0;

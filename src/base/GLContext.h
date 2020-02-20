@@ -72,7 +72,6 @@ public:
   std::shared_ptr<FpsMeter> getFpsMeter() { return _pFpsMeter; }
   std::shared_ptr<Delta> getDelta() { return _pDelta; }
 
-  static std::shared_ptr<ModelCache> getModelCache() { return _pModelCache; }
   static std::shared_ptr<TexCache> getTexCache() { return _pTexCache; }
   static std::shared_ptr<ParticleMaker> getParticleManager() { return _pParticleMaker; }
   static std::shared_ptr<ShaderManager> getShaderManager() { return _pShaderMaker; }
@@ -84,7 +83,6 @@ private:
   std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
   std::shared_ptr<Delta> _pDelta = nullptr;
   //Shared context data.
-  static std::shared_ptr<ModelCache> _pModelCache;
   static std::shared_ptr<TexCache> _pTexCache;
   static std::shared_ptr<ParticleMaker> _pParticleMaker;
   static std::shared_ptr<ShaderManager> _pShaderMaker;

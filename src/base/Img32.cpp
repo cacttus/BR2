@@ -10,7 +10,7 @@ Img32::Img32(string_t path, bool bLoad) {
   _strNameOrFilePath = path;
   if (bLoad) {
     //TODO: this
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
 }
 Img32::Img32(int w, int h, uint8_t* data) {

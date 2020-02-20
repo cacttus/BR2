@@ -12,6 +12,8 @@
 #include "../world/Scene.h"
 #include "../math/Matrix4x4.h"
 #include "../base/Logger.h"
+#include "../base/Hash.h"
+#include "../base/BinaryFile.h"
 
 
 namespace BR2 {
@@ -27,6 +29,14 @@ SceneNode::SceneNode(std::shared_ptr<NodeData> nd = nullptr) {
   _vScale = vec3(1, 1, 1);
   _bTransformChanged = true;
 
+  _strName = "";
+  _iNameHashed = STRHASH(_strName);
+  _mBind = mat4::identity();
+  _mInvBind = _mBind.inverseOf();
+  _mParentInverse = mat4::identity();
+  //    _mBasis = mat4::identity();
+  _pBindingBoundBox = new Box3f();
+
   static NodeId id = 1;
   _iNodeId = id++;
 }
@@ -34,6 +44,7 @@ SceneNode::~SceneNode() {
   //    _setShadowInfluences.clear();
   DEL_MEM(_pBox);
   DEL_MEM(_pOBB);
+  DEL_MEM(_pBindingBoundBox);
 }
 
 void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
@@ -78,26 +89,7 @@ void SceneNode::compileWorldMatrix() {
   mScl = mat4::getScale(_vScale);
   _mWorld = mScl * mRot * mPos;
 }
-string_t SceneNode::getName() {
-  if (getNodeData()) {
-    return getNodeData()->getName();
-  }
-  else {
-    Br2LogError("Treid to return a name of a model without a spec");
-    Gu::debugBreak();
-    return std::string("no spec");
-  }
-}
-Hash32 SceneNode::getSpecNameHashed() {
-  if (getNodeData()) {
-    return getNodeData()->getNameHashed();
-  }
-  else {
-    Br2LogError("Treid to return a hash of a model without a spec");
-    Gu::debugBreak();
-    return 0;
-  }
-}
+
 void SceneNode::setViewNormal(vec3& p) {
   _vViewNormal = p;
   _bTransformChanged = true;
@@ -150,7 +142,7 @@ void SceneNode::setLocalBind() {
       _mLocal = mat4::identity();
     }
     else {
-      _mLocal = getNodeData()->getBind();
+      _mLocal = getBind();
     }
   }
   else {
@@ -167,21 +159,19 @@ void SceneNode::applyParent() {
   std::shared_ptr<SceneNode> pParent = std::dynamic_pointer_cast<SceneNode>(getParent());
   //Apply the parent transform.
   if (isBoneNode()) {
-    _mLocal = getNodeData()->getInvBind() * _mLocal * getNodeData()->getBind();
+    _mLocal = getInvBind() * _mLocal * getBind();
     if (pParent != nullptr) {
       _mLocal = _mLocal * pParent->getLocal();
     }
   }
   else if (isMeshNode() || isArmatureNode() || isLightNode() || isModelNode() || isCameraNode()) {
-    if (getNodeData() == nullptr) {
-      if (pParent != nullptr) {
-        _mLocal = _mLocal * pParent->getLocal();
-      }
+    if (pParent != nullptr) {
+      _mLocal = _mLocal * pParent->getLocal();
     }
     else if (
-      getNodeData()->getParentType() == ParentType::Armature ||
-      getNodeData()->getParentType() == ParentType::Object ||
-      getNodeData()->getParentType() == ParentType::None) {
+      getParentType() == ParentType::Armature ||
+      getParentType() == ParentType::Object ||
+      getParentType() == ParentType::None) {
 
       if (isSkinnedMesh()) {
         //Setting this to ident here so we do't get confused.
@@ -189,13 +179,13 @@ void SceneNode::applyParent() {
         //see CopyJointsToGPU
       }
       else {
-        _mLocal = _mLocal * getNodeData()->getParentInverse();
+        _mLocal = _mLocal * getParentInverse();
         if (pParent != nullptr) {
           _mLocal = _mLocal * pParent->getLocal();
         }
       }
     }
-    else if (getNodeData()->getParentType() == ParentType::Bone) {
+    else if (getParentType() == ParentType::Bone) {
       if (getBoneParent() != nullptr) {
         static int n = 0;
         if (n == 0) {
@@ -204,25 +194,25 @@ void SceneNode::applyParent() {
           if (pParent != nullptr) {
             static int a = 4;
             if (a == 0)
-              _mLocal = getBoneParent()->getNodeData()->getInvBind() * _mLocal * getBoneParent()->getLocal() * pParent->getLocal();//Armature
+              _mLocal = getBoneParent()->getInvBind() * _mLocal * getBoneParent()->getLocal() * pParent->getLocal();//Armature
             if (a == 1)
-              _mLocal = _mLocal * getBoneParent()->getNodeData()->getInvBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
+              _mLocal = _mLocal * getBoneParent()->getInvBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
             if (a == 2)
-              _mLocal = getBoneParent()->getNodeData()->getBind() * _mLocal * getBoneParent()->getLocal() * pParent->getLocal();//Armature
+              _mLocal = getBoneParent()->getBind() * _mLocal * getBoneParent()->getLocal() * pParent->getLocal();//Armature
             if (a == 3)
-              _mLocal = _mLocal * getBoneParent()->getNodeData()->getBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
+              _mLocal = _mLocal * getBoneParent()->getBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
             if (a == 4)
               //**ALMOST
-              _mLocal = getBoneParent()->getNodeData()->getInvBind() * _mLocal * getBoneParent()->getNodeData()->getBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
+              _mLocal = getBoneParent()->getInvBind() * _mLocal * getBoneParent()->getBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
             if (a == 5)
               //Didn't work
-              _mLocal = getBoneParent()->getNodeData()->getInvBind() * _mLocal * getBoneParent()->getLocal() * getBoneParent()->getNodeData()->getBind() * pParent->getLocal();//Armature
+              _mLocal = getBoneParent()->getInvBind() * _mLocal * getBoneParent()->getLocal() * getBoneParent()->getBind() * pParent->getLocal();//Armature
             if (a == 6)
-              _mLocal = _mLocal * getBoneParent()->getNodeData()->getBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
+              _mLocal = _mLocal * getBoneParent()->getBind() * getBoneParent()->getLocal() * pParent->getLocal();//Armature
           }
         }
         if (n == 1) {
-          _mLocal = getBoneParent()->getNodeData()->getInvBind() * getBoneParent()->getAnimated() * _mLocal * getBoneParent()->getNodeData()->getBind();
+          _mLocal = getBoneParent()->getInvBind() * getBoneParent()->getAnimated() * _mLocal * getBoneParent()->getBind();
           if (getBoneParent()->getParent() != nullptr) {
             _mLocal = _mLocal * std::dynamic_pointer_cast<SceneNode>(getBoneParent()->getParent())->getLocal();
           }
@@ -236,7 +226,7 @@ void SceneNode::applyParent() {
       }
     }
     else {
-      Br2ThrowNotImplementedException();
+      BrThrowNotImplementedException();
     }
 
   }
@@ -254,20 +244,18 @@ void SceneNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
   if (anm != nullptr) {
     std::shared_ptr<ActionGroup> aa = anm->getAction();
     if (aa != nullptr) {
-      if (getThis<SceneNode>()->getNodeData() != nullptr) {
-        //*Since we can have multiple animations for a model, this will silently fail on nodes
-        // who don't have this particular animation name.
-        std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getThis<SceneNode>()->getNodeData()->getNameHashed());
-        if (ak != nullptr) {
+      //*Since we can have multiple animations for a model, this will silently fail on nodes
+      // who don't have this particular animation name.
+      std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getNameHashed());
+      if (ak != nullptr) {
 
-          ak->animate(anm, _mAnimated);
+        ak->animate(anm, _mAnimated);
 
-          _mLocal = _mAnimated;
+        _mLocal = _mAnimated;
 
-          if (false) {
-            vec4 p; vec4 r; vec4 s;
-            _mLocal.decompose(p, r, s, true);
-          }
+        if (false) {
+          vec4 p; vec4 r; vec4 s;
+          _mLocal.decompose(p, r, s, true);
         }
       }
     }
@@ -278,6 +266,7 @@ void SceneNode::calcBoundBox() {
   Box3f* pBox = getBoundBoxObject();
   calcBoundBox(*pBox, getPos(), 0.0f);
 }
+
 void SceneNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   _pOBB->setInvalid();
 
@@ -313,13 +302,12 @@ void SceneNode::drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_
   if (isBoneNode()) {
     vec4 cOBB(1, 1, 0, 1);
     OBB ob;
-    ob.calc(an->getLocal(), getNodeData()->getBoundBox());
+    ob.calc(an->getLocal(), getBoundBox());
     mi->addBox(ob.getVerts(), &cOBB);
   }
 }
 void SceneNode::drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi) {
   std::shared_ptr<SceneNode> that = getThis<SceneNode>();
-
   iterateDepthFirst<SceneNode>([&](std::shared_ptr<SceneNode> tx) {
     if (tx != that) {
       tx->drawBoneBoxes(mi);
@@ -433,12 +421,43 @@ std::shared_ptr<Scene> SceneNode::getScene() {
   std::shared_ptr<Scene> x = findParent<Scene>();
   return x;
 }
-std::shared_ptr<SceneNode> SceneNode::clone() {
+std::shared_ptr<SceneNode> SceneNode::clone(bool deep) {
   std::shared_ptr<SceneNode> ret = std::make_shared<SceneNode>();
-
 }
-void SceneNode::copy(std::shared_ptr<SceneNode> rhs) {
-
+void SceneNode::copy(std::shared_ptr<SceneNode> rhs, bool deep) {
 }
+void SceneNode::serialize(std::shared_ptr<BinaryFile> fb) {
+  fb->writeString(std::move(_strName));
+  fb->writeString(std::move(_strParentName));
+  fb->writeInt32(std::move((int32_t)_eParentType));
+  fb->writeMat4(std::move(_mBind));
+  fb->writeMat4(std::move(_mParentInverse));
+  fb->writeVec3(std::move(_pBox->_min));
+  fb->writeVec3(std::move(_pBox->_max));
+}
+void SceneNode::deserialize(std::shared_ptr<BinaryFile> fb) {
+  fb->readString(std::move(_strName));
+  _iNameHashed = STRHASH(_strName);
+  fb->readString(std::move(_strParentName));
+  int32_t pt;
+  fb->readInt32(pt);
+  _eParentType = (ParentType)pt;
+  fb->readMat4(std::move(_mBind));
+  _mInvBind = _mBind.inverseOf();
+  fb->readMat4(std::move(_mParentInverse));
+
+  _pBox = new Box3f();
+  fb->readVec3(std::move(_pBox->_min));
+  fb->readVec3(std::move(_pBox->_max));
+}
+void SceneNode::setBind(mat4& bind) {
+  _mBind = bind;
+  _mInvBind = _mBind.inverseOf();
+}
+void SceneNode::setInvBind(mat4& bind) {
+  //_mBind = bind;
+  _mInvBind = bind;
+}
+
 
 }//ns BR2

@@ -55,7 +55,7 @@ void TextDataFile::loadAndParse(string_t& loc) {
   postLoad(success);
 }
 void TextDataFile::save(string_t& loc) {
-  Br2ThrowNotImplementedException();
+  BrThrowNotImplementedException();
 }
 
 }//ns BR2

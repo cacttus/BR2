@@ -42,7 +42,7 @@ public:
   MUST_OVERRIDE void addNode(Tx parent, Tx child) = 0;
 
   // not implemented by default.
-  virtual bool getIsDupe(Tx j1) { Br2ThrowNotImplementedException(); return FALSE; }
+  virtual bool getIsDupe(Tx j1) { BrThrowNotImplementedException(); return FALSE; }
 
 protected:
   std::string _h_str;

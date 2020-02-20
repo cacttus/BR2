@@ -15,7 +15,7 @@
 #include "../model/OBB.h"
 
 namespace BR2 {
-LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow) : PhysicsNode(nullptr) {
+LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow)  {
   _pLightManager = lm;
   _bEnableShadows = bShadow;
   _color = vec4(1, 1, 1, 1);
@@ -36,15 +36,13 @@ bool LightNodeBase::shadowsEnabled() {
 //////////////////////////////////////////////////////////////////////////
 
 LightNodeDir::LightNodeDir(std::shared_ptr<LightManager> pm, bool bShadow) : LightNodeBase(pm,bShadow) {
-  _pNodeData = std::make_shared<NodeData>("*LightNodeDir");
   _vLookAt = vec3(0, 0, 0);
   _vDir = vec3(0, 0, 1);
   _vUp = vec3(0, 1, 0);
   _vRight = vec3(1, 0, 0);
 
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowFrustum = std::make_shared<ShadowFrustum>(std::dynamic_pointer_cast<LightNodeDir>(shared_from_this()),
-    iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
+  _pShadowFrustum = std::make_shared<ShadowFrustum>(getThis<LightNodeDir>(), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
   _pShadowFrustum->init();
   _pShadowFrustum->getFrustum()->setZFar(500);
 
@@ -109,7 +107,6 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
 }
 //////////////////////////////////////////////////////////////////////////
 LightNodePoint::LightNodePoint(std::shared_ptr<LightManager> pm, bool bShadowBox) : LightNodeBase(pm, bShadowBox) {
-  _pNodeData = std::make_shared<NodeData>("*LightNodePoint");
   _pGpuLight = std::make_shared<GpuPointLight>();
 }
 LightNodePoint::~LightNodePoint() {
@@ -118,7 +115,7 @@ LightNodePoint::~LightNodePoint() {
 }
 void LightNodePoint::createShadowBox(std::shared_ptr<GLContext> ct) {
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowBox = std::make_shared<ShadowBox>(ct, std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
+  _pShadowBox = std::make_shared<ShadowBox>(ct, getThis<LightNodePoint>(), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
   _pShadowBox->init();
 }
 void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {

@@ -178,6 +178,7 @@
     <ClInclude Include="src\model\ModelHeader.h" />
     <ClInclude Include="src\model\ModelThumb.h" />
     <ClInclude Include="src\model\NodeData.h" />
+    <ClInclude Include="src\model\NodeDataManager.h" />
     <ClInclude Include="src\model\OBB.h" />
     <ClInclude Include="src\model\SceneNode.h" />
     <ClInclude Include="src\model\ShaderStorageBuffer.h" />
@@ -327,6 +328,7 @@
     <ClCompile Include="src\model\ModelCache.cpp" />
     <ClCompile Include="src\model\ModelThumb.cpp" />
     <ClCompile Include="src\model\NodeData.cpp" />
+    <ClCompile Include="src\model\NodeDataManager.cpp" />
     <ClCompile Include="src\model\OBB.cpp" />
     <ClCompile Include="src\model\SceneNode.cpp" />
     <ClCompile Include="src\model\ShaderStorageBuffer.cpp" />

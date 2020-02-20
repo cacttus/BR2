@@ -22,16 +22,16 @@ public:
   MbiFile(std::shared_ptr<GLContext> ct);
   virtual ~MbiFile() override;
 
-  std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModels; }
-  bool loadAndParse(string_t file);
-  void save(string_t file);
+  //std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModels; }
+  //bool loadAndParse(string_t file);
+  //void save(string_t file);
 
 private:
-  std::vector<std::shared_ptr<ModelData>> _vecModels;
-  void parseErr(string_t str, bool bDebugBreak, bool bFatal);
-  std::shared_ptr<BinaryFile> _pFile = nullptr;
-  string_t _fileLoc;
-  void postLoad();
+  //std::vector<std::shared_ptr<ModelData>> _vecModels;
+  //std::shared_ptr<BinaryFile> _pFile = nullptr;
+  //string_t _fileLoc;
+  //void postLoad();
+  //void parseErr(string_t str, bool bDebugBreak, bool bFatal);
 };
 
 }//ns BR2

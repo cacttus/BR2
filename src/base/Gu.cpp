@@ -93,7 +93,7 @@ bool Gu::is64Bit() {
   if (sizeof(size_t) == 4)
     return false;
   //WTF
-  Br2ThrowNotImplementedException();
+  BrThrowNotImplementedException();
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {

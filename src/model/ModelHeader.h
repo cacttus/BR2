@@ -43,7 +43,6 @@ class IboData;
 class ObjFile;
 class MeshCache;
 class KeyFrame;
-class BoneData;
 class Mover;
 class Animator;
 class BoneNode;
@@ -68,20 +67,16 @@ class VertexComponent;
 class VertexFormat;
 class TextBufferMesh;
 class TileMesh25;
-class ModelData;
 class ModelNode;
 class GpuBufferData;
 class MobFile;
-class ArmatureData;
 class ArmatureNode;
 class ActionKeys; //Action was ambiguous
 class ActionGroup;
-class NodeData;
 class SceneNode;
 class PhysicsNode;
 class MbiFile;
 class OBB;
-class ModelCache;
 class MeshNode;
 
 class MeshBufferData {

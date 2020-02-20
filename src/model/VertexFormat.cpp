@@ -200,7 +200,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_FLOAT_VEC4;
     }
     else {
-      Br2ThrowNotImplementedException();
+      BrThrowNotImplementedException();
     }
   }
   else if (type == GL_INT) {
@@ -217,7 +217,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_INT_VEC4;
     }
     else {
-      Br2ThrowNotImplementedException();
+      BrThrowNotImplementedException();
     }
   }
   else if (type == GL_UNSIGNED_INT) {
@@ -234,11 +234,11 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_UNSIGNED_INT_VEC4;
     }
     else {
-      Br2ThrowNotImplementedException();
+      BrThrowNotImplementedException();
     }
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
 }
 string_t VertexFormat::getUserTypeName(VertexUserType::e eUserType) {

@@ -23,7 +23,7 @@ namespace BR2 {
 */
 class SceneNode : public TreeNode, public ISerializable<SceneNode> {
 public:
-  SceneNode(std::shared_ptr<NodeData> nd = nullptr);
+  SceneNode();
   virtual ~SceneNode() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
@@ -34,8 +34,8 @@ public:
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad);
   template <class Tx> bool findNode(std::shared_ptr<Tx>& __out_ node);
 
-  std::shared_ptr<SceneNode> clone();
-  void copy(std::shared_ptr<SceneNode> rhs);
+  std::shared_ptr<SceneNode> clone(bool deep);
+  void copy(std::shared_ptr<SceneNode> rhs, bool deep);
 
   virtual void serialize(std::shared_ptr<BinaryFile> fb);
   virtual void deserialize(std::shared_ptr<BinaryFile> fb);
@@ -57,8 +57,10 @@ public:
   std::shared_ptr<BoneNode> getBoneParent() { return _pBoneParent; }
   void setHidden(bool bHidden) { _bHidden = bHidden; }
   bool getHidden() { return _bHidden; }
-  void setNodeData(std::shared_ptr<NodeData> nd) { _pNodeData = nd; }
-  std::shared_ptr<NodeData> getNodeData() { return _pNodeData; }
+  
+  /*void setNodeData(std::shared_ptr<NodeData> nd) { _pNodeData = nd; }
+  std::shared_ptr<NodeData> getNodeData() { return _pNodeData; }*/
+
   NodeId getId() { return _iNodeId; }
   OBB* getOBB() { return _pOBB; }
   Box3f* getBoundBoxObject() { return _pBox; }
@@ -74,8 +76,7 @@ public:
   mat4& getWorld() { return _mWorld; }
   mat4& getAnimated() { return _mAnimated; }
   std::shared_ptr<Scene> getScene();
-  string_t getName();
-  Hash32 getSpecNameHashed();
+  Hash32 getSpecNameHashed() {return _iNameHashed;}
   vec3 getFinalPos();
 
   //mat4& getFinal() {return _mFinal;}
@@ -87,17 +88,43 @@ public:
   bool isModelNode();
   bool isCameraNode();
 
+  ParentType getParentType() { return _eParentType; }
+  Box3f* getBindingBoundBox() { return _pBindingBoundBox; }
+  string_t getName() { return _strName; }
+  mat4& getBind() { return _mBind; }
+  mat4& getInvBind() { return _mInvBind; }
+  mat4& getParentInverse() { return _mParentInverse; }
+  void setParentInverse(mat4& m) { _mParentInverse = m; }
+  void setBind(mat4& bind);
+  void setInvBind(mat4& bind);
+  void setParentName(string_t str, ParentType ee) { _strParentName = str; setParentType(ee); }
+  string_t getParentName() { return _strParentName; }
 protected:
-  std::shared_ptr<BoneNode> _pBoneParent = nullptr;
-  std::shared_ptr<NodeData> _pNodeData = nullptr;
-  Box3f* _pBox = nullptr; //Computed AABB.
-  OBB* _pOBB = nullptr; //Computed OBB.
+  mat4 _mWorld; //User manipulated PRS that has been compiled.
+  mat4 _mLocal; //Local animation outside of the manipulated PRS.
   vec3 _vViewNormal; //TODO: use an orthonormal matrix.
   vec3 _vRotationNormal;//User manipulated rotation normal.
   float _fRotation; //User manipulated rotation.
   vec3 _vScale; //User manipulated scale.
-  mat4 _mWorld; //User manipulated PRS that has been compiled.
-  mat4 _mLocal; //Local animation outside of the manipulated PRS.
+
+private:
+  NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
+  vec3 _vPos;
+  vec3 _vLastPos;
+  bool _bTransformChanged = true;
+
+  Box3f* _pBindingBoundBox = nullptr;//Base Box.
+  string_t _strName;
+  Hash32 _iNameHashed;
+  mat4 _mInvBind;
+  mat4 _mBind;
+  mat4 _mParentInverse;   //This is just for mesh objects that have mesh parents.
+  string_t _strParentName;
+  ParentType _eParentType = ParentType::None;
+
+  std::shared_ptr<BoneNode> _pBoneParent = nullptr;
+  Box3f* _pBox = nullptr; //Computed AABB.
+  OBB* _pOBB = nullptr; //Computed OBB.
   float _fCullDistance2 = FLT_MAX;//squared cull distance.  Defaults to ALWAYS show
   mat4 _mAnimated; //The computed animation matrix.
   bool _bHidden = false; //Visibility
@@ -106,12 +133,8 @@ protected:
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void applyLocalAnimation(std::shared_ptr<Animator>);
   void applyParent();
+  void setParentType(ParentType pt) { _eParentType = pt; }
 
-private:
-  NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
-  vec3 _vPos;
-  vec3 _vLastPos;
-  bool _bTransformChanged = true;
 };
 
 template < typename Tx >

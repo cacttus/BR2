@@ -34,7 +34,7 @@
 #include "../model/ModelCache.h"
 
 namespace BR2 {
-std::shared_ptr<ModelCache> GLContext::_pModelCache = nullptr;
+//std::shared_ptr<ModelCache> GLContext::_pModelCache = nullptr;
 std::shared_ptr<TexCache> GLContext::_pTexCache = nullptr;
 std::shared_ptr<ParticleMaker> GLContext::_pParticleMaker = nullptr;
 std::shared_ptr<ShaderManager> GLContext::_pShaderMaker = nullptr;
@@ -50,7 +50,6 @@ GLContext::~GLContext() {
   _pTexCache = nullptr;
   _pShaderMaker = nullptr;
   _pPicker = nullptr;
-  _pModelCache = nullptr;
   _pDelta = nullptr;
   _pFpsMeter = nullptr;
 
@@ -156,11 +155,7 @@ void GLContext::createManagers() {
 
   Br2LogInfo("GLContext - Creating Texture Cache");
   _pTexCache = std::make_shared<TexCache>(getThis<GLContext>());
-
-  Br2LogInfo("GLContext - Model Cache");
-  _pModelCache = std::make_shared<ModelCache>(getThis<GLContext>());
 }
-
 bool GLContext::loadOpenGLFunctions() {
   bool bValid = true;
 
@@ -594,9 +589,6 @@ void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
   // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
 }
 void GLContext::updateGlobalManagers() {
-  if (_pModelCache) {
-//    _pModelCache->update();
-  }
   if (_pShaderMaker) {
  //   _pShaderMaker->update();
   }

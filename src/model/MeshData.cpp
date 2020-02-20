@@ -218,30 +218,8 @@ void MeshData::allocSkinMobFile(std::shared_ptr<ModelData> ms) {
   }
   Br2LogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
 }
-std::shared_ptr<MeshData> MeshData::createCopy() {
-  std::shared_ptr<MeshData> ms = nullptr;
-
-  ms = std::make_shared<MeshData>(getContext(),getName(), ms->getVertexFormat(), nullptr);
-  Br2ThrowNotImplementedException();
-
-  //if (ms->_pFaceNormals != nullptr) {
-  //    ms->_pFaceNormals->copyFrom(_pFaceNormals);
-  //}
-  //if (ms->_pIndexes != nullptr) {
-  //    ms->_pIndexes->copyFrom(_pIndexes);
-  //}
-  //if (ms->_pTangents != nullptr) {
-  //    ms->_pTangents->copyFrom(_pTangents);
-  //}
-  //if (ms->_pFrags != nullptr) {
-  //    ms->_pFrags->copyFrom(_pFrags);
-  //}
-  //ms->_vecWeightsMob = _vecWeightsMob;
-
-  return ms;
-}
 std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, bool automaticallyRecalculateIndexOffsets) {
-  Br2ThrowNotImplementedException();
+  BrThrowNotImplementedException();
   //AssertOrThrow2(_pVaoData!=nullptr);
   //char* c = _pVaoData->getVbo()->copyDataServerClient()
 
@@ -320,20 +298,20 @@ std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, b
 *  @fn computeMinimax();
 *
 */
-void MeshData::computeBox() {
+void MeshData::computeBox(Box3f* __inout box) {
   beginEdit();
-  getBoundBox()->_max = VEC3_MIN;
-  getBoundBox()->_min = VEC3_MAX;
+  box->_max = VEC3_MIN;
+  box->_min = VEC3_MAX;
 
   // - Lastly, minimax
   if (fragCount() > 0) {
     for (size_t i = 0; i < fragCount(); ++i) {
-      getBoundBox()->_min = vec3::minv(getBoundBox()->_min, v3f(i));
-      getBoundBox()->_max = vec3::maxv(getBoundBox()->_max, v3f(i));
+      box->_min = vec3::minv(box->_min, v3f(i));
+      box->_max = vec3::maxv(box->_max, v3f(i));
     }
   }
   else {
-    getBoundBox()->_max = getBoundBox()->_min = 0.0f;
+    box->_max = box->_min = 0.0f;
   }
   //_bIsBoundBoxCalculated = true;
 
@@ -552,17 +530,6 @@ void MeshData::calculateVertexNormals() {
 
   endEdit();
 }
-//void MeshSpec::createMaterial(t_string strName, std::shared_ptr<Texture2DSpec> tmd, std::shared_ptr<Texture2DSpec> tmn) {
-//    DEL_MEM(_pMaterial);
-//
-//    _pMaterial = new Material(getContext(), strName);
-//    if (tmd != nullptr) {
-//        _pMaterial->addTextureBinding(tmd, TextureChannel::e::Channel0);
-//    }
-//    if (tmn != nullptr) {
-//        _pMaterial->addTextureBinding(tmn, TextureChannel::e::Channel1);
-//    }
-//}
 void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelData> ms) {
   // Debug values
   int32_t minOrd = 100000;
@@ -600,11 +567,6 @@ void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelData> ms) {
   _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(getContext(), sizeof(GpuAnimatedMeshWeight));
 
   std::set<int32_t> setUniqueJointOrdinals;
-
-  //bool bAnus = false;
-  //if(false){
-  //    bAnus = true;
-  //}
 
   for (uint32_t iFrag = 0; iFrag < nFragCount; ++iFrag) {
     VertexWeightMob& curWeight = _vecWeightsMob.at(iFrag);
@@ -728,75 +690,79 @@ void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelData> ms) {
  // _vecWeightsMob.resize(0);
 }
 int32_t MeshData::getGpuJointOrdinal(std::shared_ptr<ModelData> ms, int32_t arm, int32_t joint) {
-  //**This must corespond to ArmatureNode : _vecNodesOrdered
-  //Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
+  Phase1NotImplemented();
+  ////**This must corespond to ArmatureNode : _vecNodesOrdered
+  ////Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
 
-  int32_t iJointOrd = 0;
-  for (std::pair<int32_t, std::shared_ptr<ArmatureData>> parm : ms->getArmatureMapOrdered()) {
-    int32_t parm_joint = 0;
-    for (std::pair<int32_t, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
+  //int32_t iJointOrd = 0;
+  //for (std::pair<int32_t, std::shared_ptr<ArmatureData>> parm : ms->getArmatureMapOrdered()) {
+  //  int32_t parm_joint = 0;
+  //  for (std::pair<int32_t, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
 
-      if (parm.first == arm && parm_joint == joint) {
-        return iJointOrd;
-      }
+  //    if (parm.first == arm && parm_joint == joint) {
+  //      return iJointOrd;
+  //    }
 
-      parm_joint++;
-      iJointOrd++;
-    }
-  }
-  return -1;//Not Found
+  //    parm_joint++;
+  //    iJointOrd++;
+  //  }
+  //}
+  //return -1;//Not Found
 }
 
 void MeshData::testAccess(std::shared_ptr<ModelData> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
   GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights) {
-  if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
-    return;
-  }
-
-  Br2LogDebug("Testing Skin Access..");
-
-  //Armature Existence
-  for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
-    VertexWeightMob& vw = vecWeights->at(iweight);
-    for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
-      if (ms->getArmatureById(parms.first) == nullptr) {
-        Br2LogError("Skin test failed.  Armature does not exist for one or more weights.");
-        _eSkinStatus = MeshSkinStatus::e::Error;
-        Gu::debugBreak();
-        //break;
-      }
-    }
-  }
-  //Buffer Access
-  for (size_t iWeightOff = 0; iWeightOff < weightOffsetsGpuSize; ++iWeightOff) {
-    int32_t off = weightOffsetsGpu[iWeightOff]._offset;
-    int32_t count = weightOffsetsGpu[iWeightOff]._count;
-    if (off + count > (int32_t)weightsGpuSize) {
-      Br2LogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
-      _eSkinStatus = MeshSkinStatus::e::Error;
-      Gu::debugBreak();
-    }
-    else {
-      for (int iWeight = 0; iWeight < count; ++iWeight) {
-        GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
-        if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
-          Br2LogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
-          _eSkinStatus = MeshSkinStatus::e::Error;
-          Gu::debugBreak();
-        }
-        if (gpuWeight._weight < 0.0f) {
-          Br2LogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
-          _eSkinStatus = MeshSkinStatus::e::Error;
-          Gu::debugBreak();
-        }
-      }
+  Phase1NotImplemented();
 
 
-    }
-  }
+  //if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
+  //  return;
   //}
 
-  Br2LogDebug("..Skin test complete.");
+  //Br2LogDebug("Testing Skin Access..");
+
+  ////Armature Existence
+  //for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
+  //  VertexWeightMob& vw = vecWeights->at(iweight);
+  //  for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
+  //    if (ms->getArmatureById(parms.first) == nullptr) {
+  //      Br2LogError("Skin test failed.  Armature does not exist for one or more weights.");
+  //      _eSkinStatus = MeshSkinStatus::e::Error;
+  //      Gu::debugBreak();
+  //      //break;
+  //    }
+  //  }
+  //}
+  ////Buffer Access
+  //for (size_t iWeightOff = 0; iWeightOff < weightOffsetsGpuSize; ++iWeightOff) {
+  //  int32_t off = weightOffsetsGpu[iWeightOff]._offset;
+  //  int32_t count = weightOffsetsGpu[iWeightOff]._count;
+  //  if (off + count > (int32_t)weightsGpuSize) {
+  //    Br2LogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
+  //    _eSkinStatus = MeshSkinStatus::e::Error;
+  //    Gu::debugBreak();
+  //  }
+  //  else {
+  //    for (int iWeight = 0; iWeight < count; ++iWeight) {
+  //      GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
+  //      if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
+  //        Br2LogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
+  //        _eSkinStatus = MeshSkinStatus::e::Error;
+  //        Gu::debugBreak();
+  //      }
+  //      if (gpuWeight._weight < 0.0f) {
+  //        Br2LogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
+  //        _eSkinStatus = MeshSkinStatus::e::Error;
+  //        Gu::debugBreak();
+  //      }
+  //    }
+
+
+  //  }
+  //}
+  ////}
+
+  //Br2LogDebug("..Skin test complete.");
 }
 void MeshData::deserialize(std::shared_ptr<BinaryFile> fb) {
   NodeData::deserialize(fb);
@@ -975,6 +941,30 @@ void MeshData::serialize(std::shared_ptr<BinaryFile> fb) {
 //    _pVertsGpu->allocate(_pFrags->count());
 //    _pVertsGpu->copyDataClientServer(_pFrags->count(), _pFrags->ptr());
 //}
+
+std::shared_ptr<NodeData> MeshData::clone() {
+  std::shared_ptr<MeshData> ms = std::make_shared<MeshData>(getContext(), getName(), ms->getVertexFormat(), nullptr);
+  BrThrowNotImplementedException();
+
+  //if (ms->_pFaceNormals != nullptr) {
+  //    ms->_pFaceNormals->copyFrom(_pFaceNormals);
+  //}
+  //if (ms->_pIndexes != nullptr) {
+  //    ms->_pIndexes->copyFrom(_pIndexes);
+  //}
+  //if (ms->_pTangents != nullptr) {
+  //    ms->_pTangents->copyFrom(_pTangents);
+  //}
+  //if (ms->_pFrags != nullptr) {
+  //    ms->_pFrags->copyFrom(_pFrags);
+  //}
+  //ms->_vecWeightsMob = _vecWeightsMob;
+  return ms;
+}
+void MeshData::copy(std::shared_ptr<NodeData> other) {
+  BrThrowNotImplementedException();
+  //TODO
+}
 
 
 

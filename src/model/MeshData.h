@@ -35,8 +35,11 @@ public:
   vec3& n3f(size_t index);
   void endEdit();
 
+  virtual std::shared_ptr<NodeData> clone() override;
+  virtual void copy(std::shared_ptr<NodeData> other) override;
+
   std::vector<VertexWeightMob>& getWeightsMob() { return _vecWeightsMob; }
-  std::set<std::shared_ptr<BoneData>>& getBoneCache() { return _boneCache; }
+  std::set<std::shared_ptr<BoneNode>>& getBoneCache() { return _boneCache; }
 
   void allocSkinMobFile(std::shared_ptr<ModelData> ms); //This is called separately in the MOB loader.
 
@@ -63,9 +66,8 @@ public:
   std::shared_ptr<FragmentBufferData> getFrags();
   std::shared_ptr<IndexBufferData> getIndexes();
 
-  std::shared_ptr<MeshData> createCopy();// Duplicates this spec data
   std::shared_ptr<MeshData> mergeWith(std::shared_ptr<MeshData> other, bool automaticallyRecalculateIndexOffsets = true);
-  void computeBox();
+  void computeBox(Box3f* __inout box);
 
   std::shared_ptr<ShaderStorageBuffer> getWeightOffsetsGpu() { return _pWeightOffsetsGpu; }
   std::shared_ptr<ShaderStorageBuffer> getWeightsGpu() { return _pWeightsGpu; }
@@ -84,14 +86,13 @@ protected:
   std::vector<VertexWeightMob> _vecWeightsMob;//MOB file weights - invalid if not imported
   std::shared_ptr<ShaderStorageBuffer> _pWeightOffsetsGpu = nullptr; //Skin 12/9/2017
   std::shared_ptr<ShaderStorageBuffer> _pWeightsGpu = nullptr;//Skin 12/9/2017
-  std::set<std::shared_ptr<BoneData>> _boneCache;
+  std::set<std::shared_ptr<BoneNode>> _boneCache;
   MeshSkinStatus::e _eSkinStatus = MeshSkinStatus::e::Uninitialized;
   bool _bHideRender = false;
   std::shared_ptr<PhysicsShape> _pPhysicsShape = nullptr;
 
   std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<GLContext> getContext() { return _pContext; }
-
 
   void fillWeightBuffersMob(std::shared_ptr<ModelData> ms);
   int32_t getGpuJointOrdinal(std::shared_ptr<ModelData> ms, int32_t arm, int32_t joint);

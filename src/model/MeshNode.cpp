@@ -99,7 +99,6 @@ void MeshNode::printDataToStdout() {
   delete[] arms;
 }
 void MeshNode::createSkin() {
-
   AssertOrThrow2(_pModelNode != nullptr);
   AssertOrThrow2(getMeshData() != nullptr);
   // AssertOrThrow2(getMeshSpec()->getArmatureMapOrdered().size() > 0);
@@ -107,8 +106,8 @@ void MeshNode::createSkin() {
    //Fill identity buffer of skin mats
   int32_t iOrdCount = 0;
   std::vector <mat4> idents;
-  for (std::pair<Hash32, std::shared_ptr<ArmatureData>> parm : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
-    for (std::pair<Hash32, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
+  for (std::pair<Hash32, std::shared_ptr<ArmatureNode>> parm : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
+    for (std::pair<Hash32, std::shared_ptr<BoneNode>> pbone : *parm.second->getBoneCacheOrdered()) {
       iOrdCount++;
       idents.push_back(mat4::identity());
     }
@@ -418,28 +417,29 @@ void MeshNode::drawShadow(RenderParams& rp) {
   _pMaterial->bind(rp.getShader(), true, false);
   rp.getShader()->draw(getThis<MeshNode>());
 }
-
 void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   pBox.genResetLimits();
-  if (getNodeData()) {
-    std::shared_ptr<MeshNode> mn = getThis<MeshNode>();
-    if (mn->getMeshData()->hasSkin()) {
-      //Mesh + skin - compute box by the bone boxes.
-      for (std::shared_ptr<BoneNode> bn : mn->getBoneNodesOrdered()) {
-        pBox.genExpandByBox(bn->getBoundBoxObject());
-      }
-      //Make the OBB be the same as the box
-      //bone node boxes are already transformed to armature space
-      getOBB()->calc(mat4::identity(), &pBox);
+
+  std::shared_ptr<MeshNode> mn = getThis<MeshNode>();
+  mn->getMeshData()->computeBox(&pBox);
+
+  if (mn->getMeshData()->hasSkin()) {
+    //Mesh + skin - compute box by the bone boxes.
+    for (std::shared_ptr<BoneNode> bn : mn->getBoneNodesOrdered()) {
+      pBox.genExpandByBox(bn->getBoundBoxObject());
     }
-    else {
-      //Simple mesh.  No skin.
-      getOBB()->calc(getLocal(), getNodeData()->getBoundBox());
-      for (int i = 0; i < 8; ++i) {
-        pBox.genExpandByPoint(getOBB()->getVerts()[i]);
-      }
+    //Make the OBB be the same as the box
+    //bone node boxes are already transformed to armature space
+    getOBB()->calc(mat4::identity(), &pBox);
+  }
+  else {
+    //Simple mesh.  No skin.
+    getOBB()->calc(getLocal(), getBoundBox());
+    for (int i = 0; i < 8; ++i) {
+      pBox.genExpandByPoint(getOBB()->getVerts()[i]);
     }
   }
+
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 
 }

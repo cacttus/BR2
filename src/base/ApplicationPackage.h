@@ -56,6 +56,13 @@ public:
   string_t getAppName() { return _appName; }
 
   void userZoom(float amt);
+
+  //Stuff from ModelCache
+  string_t getFilePathForMobName(string_t mobName, bool bUseBinary);
+  std::shared_ptr<ModelNode> ApplicationPackage::getOrLoadModel(string_t mobName, bool bUseBinary);
+  void convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName);
+  //void unloadModel(string_t strMobName, bool bErrorIfFailed);
+
 private:
   std::vector<ProjectPackageFileEntry*> _vecEntries;
   int32_t _iExeLenBytes = 0;

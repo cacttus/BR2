@@ -208,7 +208,7 @@ bool ApplicationPackage::fileExists(string_t file) {
     return FileSystem::fileExists(file);
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
 }
 time_t ApplicationPackage::getLastModifyTime(string_t str) {
@@ -240,5 +240,167 @@ string_t ApplicationPackage::getEngineConfigFilePath() {
   }
   return _strEngineConfigFileName;
 }
+
+string_t ApplicationPackage::getFilePathForMobName(string_t mobName, bool bUseBinary) {
+  string_t fileExt;
+  string_t modelsDir;
+  if (bUseBinary) {
+    modelsDir = Gu::getAppPackage()->getModelsBinFolder();
+    fileExt = ".mbi";
+  }
+  else {
+    modelsDir = Gu::getAppPackage()->getModelsTextFolder();
+    fileExt = ".mob";
+  }
+
+  string_t folderPath = Gu::getAppPackage()->makeAssetPath(modelsDir, mobName);
+  string_t filename = FileSystem::combinePath(folderPath, mobName);
+  filename += fileExt;
+
+  return filename;
+}
+std::shared_ptr<ModelNode> ApplicationPackage::getOrLoadModel(string_t mobName, bool bUseBinary, std::shared_ptr<GLContext> ctx) {
+  //t_timeval t0 = Gu::getMicroSeconds();
+  std::shared_ptr<ModelNode> ms = nullptr;
+  BrThrowNotImplementedException();
+  //string_t filename = getFilePathForMobName(mobName, bUseBinary);
+  //if (FileSystem::fileExists(filename) == false) {
+  //  Br2LogError("Model File does not exist: '" + filename + "'");
+  //  if (false) {
+  //    //debugPrintAllModelNames();
+  //  }
+  //  return nullptr;
+  //}
+
+  //Br2LogInfo("Loading model '" + mobName + "' from '" + filename + "'..");
+  //{
+  //  if (bUseBinary) {
+  //    MbiFile mf(ctx);
+  //    if (mf.loadAndParse(filename) == false) {
+  //      Br2LogError("Failed to load model " + mobName + " ");
+  //    }
+  //    mf.
+  //    ms = getModelByName(STRHASH(mobName));
+  //  }
+  //  else {
+  //    MobFile mf(ctx);
+  //    mf.loadAndParse(filename);
+  //    ms = getModelByName(STRHASH(mobName));
+  //  }
+  //}
+  //Br2LogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
+
+
+  //std::shared_ptr<ModelNode> ms = getModelByName(STRHASH(mobName));
+  //if (ms == nullptr) {
+  //  string_t filename = getFilePathForMobName(mobName, bUseBinary);
+  //  if (FileSystem::fileExists(filename) == false) {
+  //    Br2LogError("Model File does not exist: '" + filename + "'");
+  //    if (false) {
+  //      debugPrintAllModelNames();
+  //    }
+  //    return nullptr;
+  //  }
+  //  else {
+
+
+  //  }
+  //}
+  return ms;
+}
+//string_t ApplicationPackage::debugPrintAllModelNames() {
+//  string_t strOut = ("Loaded:\n");
+//
+//  for (std::pair<Hash32, std::shared_ptr<ModelData>> p : _mapModels) {
+//    strOut += Stz "   " + p.second->getName() + "\n";
+//  }
+//  strOut += ("In Dir:\n");
+//  std::vector<string_t> vecFiles;
+//  string_t mods = Gu::getAppPackage()->getModelsTextFolder();
+//  mods = Gu::getAppPackage()->makeAssetPath(mods);
+//  FileSystem::getAllDirs(mods, vecFiles);
+//  for (string_t file : vecFiles) {
+//    strOut += Stz "  " + file + "\n";
+//  }
+//
+//  mods = Gu::getAppPackage()->getModelsBinFolder();
+//  mods = Gu::getAppPackage()->makeAssetPath(mods);
+//  FileSystem::getAllDirs(mods, vecFiles);
+//  for (string_t file : vecFiles) {
+//    strOut += Stz "  " + file + "\n";
+//  }
+//
+//  return strOut;
+//}
+void ApplicationPackage::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName) {
+
+  BrThrowNotImplementedException();
+  //string_t filepathText = getFilePathForMobName(strMobName, false);
+  //string_t filepathBin = getFilePathForMobName(strMobName, true);
+
+  //if (FileSystem::fileExists(filepathText) == false) {
+  //  Br2LogError("Convert: Could not find mob file " + strMobName);
+  //  return;
+  //}
+
+  //bool bConvert = true;
+  //if (bOnlyIfNewer) {
+  //  if (FileSystem::fileExists(filepathText) &&
+  //    FileSystem::fileExists(filepathBin)) {
+  //    time_t t0 = FileSystem::getLastModifyTime(filepathText);
+  //    time_t t1 = FileSystem::getLastModifyTime(filepathBin);
+  //    if (t1 > t0) {
+  //      bConvert = false;
+  //      // BroLogInfo("Convet: Mob ",strMobName," is not newer.");
+  //    }
+  //  }
+  //}
+
+  //if (bConvert) {
+  //  unloadModel(strMobName, false);
+  //  Br2LogInfo("Convert: Loading MOB " + strMobName);
+  //  MobFile mf(getContext());
+  //  mf.loadAndParse(filepathText);
+  //  for (std::shared_ptr<ModelNode> ms : mf.getModelSpecs()) {
+  //    ms->postMobConversion();
+  //    ms->setFriendlyName(strFriendlyName);
+  //  }
+
+  //  Br2LogInfo("Convert: Saving MOB " + strMobName);
+  //  MbiFile mb(getContext());
+  //  for (std::shared_ptr<ModelNode> ms : mf.getModelSpecs()) {
+  //    mb.getModelSpecs().push_back(ms);
+  //  }
+  //  mb.save(filepathBin);
+  //  unloadModel(strMobName);
+  //}
+}
+//void ApplicationPackage::unloadModel(string_t strMobName, bool bErrorIfFailed) {
+//  std::map<Hash32, std::shared_ptr<ModelNode>>::iterator it = _mapModels.find(STRHASH(strMobName));
+//
+//  if (it == _mapModels.end()) {
+//    if (bErrorIfFailed)
+//      Br2LogError("Failed to find model " + strMobName + " to unload.");
+//  }
+//  else {
+//    //std::shared_ptr<ModelSpec> ms = it->second;
+//   // DEL_MEM(ms);
+//
+//    _mapModels.erase(it);
+//  }
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }//ns BR2

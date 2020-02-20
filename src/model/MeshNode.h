@@ -16,6 +16,7 @@ namespace BR2 {
 *  @class MeshNode
 *  @brief Basically this is MeshNode*
 *     We carete this from tnhse meshspec class..
+* Mesh should be a component, really.
 */
 class MeshNode : public SceneNode {
 public:

@@ -182,7 +182,7 @@ void Texture2DSpec::setWrapU(TexWrap::e wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
   unbind();
 }
@@ -195,7 +195,7 @@ void Texture2DSpec::setWrapV(TexWrap::e wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
   unbind();
 }
@@ -232,7 +232,7 @@ void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
     }
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
 
   unbind();

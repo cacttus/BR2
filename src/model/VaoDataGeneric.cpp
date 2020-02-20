@@ -111,7 +111,7 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
         );
       }
       else {
-        Br2ThrowNotImplementedException();
+        BrThrowNotImplementedException();
       }
       getContext()->chkErrDbg();
     }

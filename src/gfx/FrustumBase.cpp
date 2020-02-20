@@ -34,7 +34,7 @@ void FrustumBase::update(const Vector3& NormalizedView, const Vector3& CamPos, c
     setupOrthographic(&params);
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
 
   //    updateBoundBox();
@@ -324,7 +324,7 @@ bool FrustumBase::hasTri(Vector3& p1, Vector3& p2, Vector3& p3) {
   //if(p.hitTest(Points[fpt_ntl],Points[fpt_nbl]).point.contained ) return true;
   //if(p.hitTest(Points[fpt_ntr],Points[fpt_nbr]).point.contained ) return true;
 
-  Br2ThrowNotImplementedException();
+  BrThrowNotImplementedException();
   return false;
 }
 /**
@@ -367,7 +367,7 @@ bool FrustumBase::hasQuad(Vector3& p1, Vector3& p2, Vector3& p3, Vector3& p4) {
   //if(p.hitTest(Points[fpt_ntl],Points[fpt_nbl]).point.contained ) return true;
   //if(p.hitTest(Points[fpt_ntr],Points[fpt_nbr]).point.contained ) return true;
 
-  Br2ThrowNotImplementedException();
+  BrThrowNotImplementedException();
   return false;
 }
 /**
@@ -541,7 +541,7 @@ mat4 FrustumBase::getProjectionMatrix() {
     return mm;
   }
   else {
-    Br2ThrowNotImplementedException();
+    BrThrowNotImplementedException();
   }
 
 }

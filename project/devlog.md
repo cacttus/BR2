@@ -8,6 +8,16 @@
 	- [ ] Implement `clone()` and `copy()` on nodes.
 	- [ ] Move complex methods from all *data* classes to their respective Node classes.
 	- [ ] Remove inheritence from data classes.
+	- [ ] Implement some kind of management system that prevents NodeData name collisions. (they must be unique as name and hashedname are the GUIDs for the nodedata).
+	- [ ] Update Scene File
+		- [ ] Create a data model that holds all nodes in the game.  Currently, there's no 'scene' file, but we have the glob/world files.
+			- [ ] *Recursive Serialization* of nodes, instead of the linear Serialization.  
+			- [ ] Control this serialization through a new type of manager file.
+	- [ ] Completely remove "Model" and either, 
+		* use some kind of Component interface for models, or just place Model's information on WorldObject.
+		* or just place Model's information on WorldObject.
+		* or just place Model's information on WorldObject
+		* or Subclass MeshNode with SkinnedMeshNode
 - [ ] CSharp inline *minimal* scripts.
 - [ ] Remove WorldObject inheritence, and use Component model.
 - [ ] CMake integration. Test on iOS, Linux, Android.
@@ -30,6 +40,16 @@
 - [ ] All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
 ## Devlog
+
+*2/19/2020*
+
+* We need to serialize all data in one way, as nodes reference data.  
+* All data needs unique identifiers.  (possibly, name).
+* Removed BoneData
+* Removed ArmatureData
+* Commenting out the model system for right now, until we get the rest of the changes squared away.
+* Deleted ModelCache.  ModelCache is no longer needed.  To access models, we're simply going to clone them from those in the scene.'
+
 
 *2/18/2020*
 

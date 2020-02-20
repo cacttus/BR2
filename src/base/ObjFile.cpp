@@ -230,7 +230,7 @@ void ObjFile::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
     }
   }
   pSpec->allocMesh((const void*)_vecMeshVerts.data(), _vecMeshVerts.size(), _vecMeshIndexes.data(), _vecMeshIndexes.size());
-  pSpec->computeBox();
+  //pSpec->computeBox();
 }
 
 int32_t ObjFile::findCachedVertex(int32_t vi, int32_t xi, int32_t ni) {

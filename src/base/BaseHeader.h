@@ -58,10 +58,13 @@ void runtimeAssertion(string_t str);
 //above BaseHeader.
 //if you use '-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated
 #define Br2ThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
-#define Br2ThrowNotImplementedException() throw new NotImplementedException()
+#define BrThrowNotImplementedException() throw new NotImplementedException()
 #define BroThrowDeprecatedException() throw new DeprecatedException()
 #define VerifyOrThrow(expr,x) do { if(!(expr)) Br2ThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()
+
+#define Phase1NotImplemented() Br2ThrowNotImplementedException()
+
 
 #define ShowMessageBoxOnce(msg) { \
 static bool __show=false; \
