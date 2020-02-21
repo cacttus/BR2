@@ -8,6 +8,11 @@
 #define __GLCONTEXT_14795781163972161943_H__
 
 #include "../gfx/GfxHeader.h"
+#include <SDL.h>
+#include <stack>
+
+#include <SDL_opengl.h>
+#include <SDL_opengl_glext.h>
 
 namespace BR2 {
 /**
@@ -32,8 +37,7 @@ public:
 
 /**
 *  @class GLContext
-*  @brief OpenGL render context
-*  All GL contexts require an SDL window.  To create another context, create a new window.  You can hide the window, and also disable the RenderPipeline if needed.
+*  @brief OpenGL context. All GL contexts require an SDL window.  To create another context, create a new window.  You can hide the window, and also disable the RenderPipeline if needed.
 */
 class GLContext : public VirtualMemoryShared<GLContext> {
 public:
@@ -116,6 +120,8 @@ private:
   bool chkErr(bool bDoNotBreak = false, bool doNotLog = false);
 
 public:
+  
+
 
   PFNGLUSEPROGRAMPROC         glUseProgram = nullptr;
   PFNGLBINDBUFFERARBPROC      glBindBuffer = nullptr;

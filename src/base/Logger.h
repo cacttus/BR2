@@ -17,6 +17,7 @@ enum class LogLevel {
   Warn,
   Error,
 };
+class LogInternal;
 /**
 *   @class Logger
 *   @brief Logs information to a text file or console.
@@ -53,8 +54,8 @@ private:
   string_t _logDir;
   string_t _logFileName;
   int32_t _nMsg = 0;    // - Profiling variables.  We increment them when we log.
-  std::atomic_bool _bSuppressLineFileDisplay = false;
-  std::mutex _mtLogWriteMutex;
+  LogInternal* _pLogInternal = nullptr;
+  
   bool _bEnabled = false;
   bool _bLogToFile = false;
   bool _bLogToConsole = false;

@@ -9,6 +9,7 @@
 
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
+#include <SDL.h>
 namespace BR2 {
 /**
 *  @class InputManager

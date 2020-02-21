@@ -21,18 +21,41 @@
   <ItemGroup>
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
+    <ClCompile Include="src\base\Exception.cpp" />
+    <ClCompile Include="src\base\FileSystem.cpp" />
+    <ClCompile Include="src\base\GLContext.cpp" />
+    <ClCompile Include="src\base\GraphicsWindow.cpp" />
     <ClCompile Include="src\base\Gu.cpp" />
     <ClCompile Include="src\base\HeaderTest.cpp" />
+    <ClCompile Include="src\base\InputManager.cpp" />
+    <ClCompile Include="src\base\Logger.cpp" />
     <ClCompile Include="src\base\Main.cpp" />
+    <ClCompile Include="src\base\Net.cpp" />
+    <ClCompile Include="src\base\SDLUtils.cpp" />
     <ClCompile Include="src\math\Random.cpp" />
+    <ClCompile Include="src\world\Manifold.cpp" />
+    <ClCompile Include="src\world\PhysicsManager.cpp" />
+    <ClCompile Include="src\world\PhysicsNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\DebugHelper.h" />
+    <ClInclude Include="src\base\Exception.h" />
+    <ClInclude Include="src\base\FileSystem.h" />
+    <ClInclude Include="src\base\GLContext.h" />
+    <ClInclude Include="src\base\GraphicsWindow.h" />
     <ClInclude Include="src\base\Gu.h" />
+    <ClInclude Include="src\base\InputManager.h" />
+    <ClInclude Include="src\base\Logger.h" />
+    <ClInclude Include="src\base\Net.h" />
+    <ClInclude Include="src\base\SDLUtils.h" />
     <ClInclude Include="src\base\WindowsIncludes.h" />
     <ClInclude Include="src\gfx\GfxHeader.h" />
     <ClInclude Include="src\math\Random.h" />
+    <ClInclude Include="src\world\Manifold.h" />
+    <ClInclude Include="src\world\PhysicsHeader.h" />
+    <ClInclude Include="src\world\PhysicsManager.h" />
+    <ClInclude Include="src\world\PhysicsNode.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>
@@ -151,7 +174,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2_x64d.lib;SDL2_Net_x64d.lib;SDL2_ttf_x64d.lib;SDL2_image_x64d.lib;opengl32.lib;vulkan-1.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2_x64d.lib;SDL2_Net_x64d.lib;opengl32.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

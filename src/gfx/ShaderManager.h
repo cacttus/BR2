@@ -8,7 +8,7 @@
 #define __SHADERMAKER_14940026902175372902_H__
 
 #include "../gfx/GfxHeader.h"
-
+#include <set>
 namespace BR2 {
 /**
 *  @class ShaderMaker

@@ -10,6 +10,8 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 
+#include <SDL.h>
+
 namespace BR2 {
 /**
 *  @class SDLUtils

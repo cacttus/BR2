@@ -7,6 +7,11 @@
 
 #include "../base/DateTime.h"
 
+#include <direct.h>
+#include <SDL.h>
+#include "../ext/dirent.h"
+#include <fstream>
+
 namespace BR2 {
 string_t FileSystem::_strExePath = "";
 FileSystem::FileSystem() {

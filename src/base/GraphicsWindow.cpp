@@ -87,10 +87,12 @@ void GraphicsWindow::createSDL_OpenGLWindow(string_t windowTitle) {
   minGLVersion = 3;
   minGLSubversion = 0;
   iProfile = SDL_GL_CONTEXT_PROFILE_ES;
-#elif BR2_OS_WINDOWS
+#else
+#ifdef BR2_OS_WINDOWS
   minGLVersion = 3;
   minGLSubversion = 3;
   iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+#endif
 #endif
 
   // if (getMainWindow() == nullptr) {
@@ -136,7 +138,8 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
 #ifdef BRO_OS_IPHONE
   x = 0, y = 0, w = 320, h = 480, flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
   title = "";
-#elif BR2_OS_WINDOWS
+#else
+#ifdef BR2_OS_WINDOWS
 
   //SDL_WINDOW_OPENGL | SDL_WINDOW_VULKAN;
 
@@ -149,6 +152,7 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
     x = 100, y = 100, w = 800, h = 600, flags = SDL_WINDOW_SHOWN | render_system | SDL_WINDOW_RESIZABLE;
   }
   title = windowTitle;
+#endif
 #endif
 
   //No0te: This calls SDL_GL_LOADLIBRARY if SDL_WINDOW_OPENGL is set.

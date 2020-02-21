@@ -8,9 +8,9 @@
 #define __GRIDMANAGER_15156110951778027750_H__
 
 #include "../world/WorldHeader.h"
+#include "../world/PhysicsHeader.h"
 
 namespace BR2 {
-
 /**
 *  @class PhysicsWorld
 *  @brief Operates on the world grid and manages the entire physical world and objects and collisions.

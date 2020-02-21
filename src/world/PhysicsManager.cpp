@@ -11,11 +11,12 @@
 #include "../gfx/ShadowBox.h"
 #include "../gfx/RenderParams.h"
 #include "../gfx/RenderSettings.h"
+#include "../gfx/FrustumBase.h"
 #include "../base/GLContext.h"
 #include "../model/MeshUtils.h"
 #include "../model/MeshNode.h"
 #include "../model/UtilMeshInline.h"
-#include "../model/Model.h"
+//#include "../model/Model.h"
 #include "../model/OBB.h"
 #include "../world/WorldHeader.h"
 #include "../world/PhysicsNode.h"
@@ -353,7 +354,7 @@ void PhysicsManager::update(float delta) {
 
   //Collect all nodes
   BvhCollectionParams bcp;
-  bcp._pFrustum = _pScene->getActiveCamera();
+  bcp._pFrustum = _pScene->getActiveCamera()->getFrustum();
   bcp._pRenderBucket = _pRenderBucket;
   float nw = getNodeWidth();
   float nh = getNodeHeight();
@@ -1116,7 +1117,7 @@ void PhysicsManager::refreshObjectManifold(std::shared_ptr<PhysicsNode> ob) {
   //If we have no grids in our manifold we are "orphaned"
   // Delete this object if it is not persistent.
   if (ob->getManifold()->getGrids()->size() == 0) {
-    std::shared_ptr<PhysicsData> ps = std::dynamic_pointer_cast<PhysicsData>(ob->getNodeData());
+    //std::shared_ptr<PhysicsData> ps = std::dynamic_pointer_cast<PhysicsData>(ob->getNodeData());
 
     Br2LogWarn("Object is outside of grid, wes hould probably destroy it");
     //if (ps && ps->getIsPersistent() == false) {

@@ -356,28 +356,28 @@ void Scene::drawDebugText() {
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pScreen->screenChanged(w, h);
 }
-std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
-  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
-  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-  
-  attachChild(mn);
-
-  return mn;
-}
-std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action) {
-  std::shared_ptr<ModelNode> mn = createObj(ms);
-
-  mn->stopAllActions();
-  if (StringUtil::isNotEmpty(action)) {
-    mn->playAction(action);
-  }
-
-  mn->setScale(std::move(scale));
-  mn->setRot(std::move(rot));
-  mn->setPos(std::move(pos));
-
-  return mn;
-}
+//std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
+//  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
+//  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
+//  
+//  attachChild(mn);
+//
+//  return mn;
+//}
+//std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action) {
+//  std::shared_ptr<ModelNode> mn = createObj(ms);
+//
+//  mn->stopAllActions();
+//  if (StringUtil::isNotEmpty(action)) {
+//    mn->playAction(action);
+//  }
+//
+//  mn->setScale(std::move(scale));
+//  mn->setRot(std::move(rot));
+//  mn->setPos(std::move(pos));
+//
+//  return mn;
+//}
 std::shared_ptr<LightNodePoint> Scene::createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled) {
   std::shared_ptr<LightNodePoint> lp = LightNodePoint::create(bShadowsEnabled);
   lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());

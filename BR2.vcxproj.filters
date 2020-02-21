@@ -7,6 +7,9 @@
     <Filter Include="math">
       <UniqueIdentifier>{31f4621e-936e-440c-a11e-746e114bbf75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="world">
+      <UniqueIdentifier>{e9089729-ad34-4a12-9470-ffff63928ee3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\AppRunner.cpp">
@@ -27,6 +30,39 @@
     <ClCompile Include="src\math\Random.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\PhysicsManager.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Logger.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\FileSystem.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\GLContext.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Net.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\SDLUtils.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\Exception.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\GraphicsWindow.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\InputManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\PhysicsNode.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\Manifold.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -46,6 +82,42 @@
     </ClInclude>
     <ClInclude Include="src\math\Random.h">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\PhysicsHeader.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\PhysicsManager.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Logger.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\FileSystem.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\GLContext.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Net.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\SDLUtils.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\Exception.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\GraphicsWindow.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\InputManager.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\PhysicsNode.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Manifold.h">
+      <Filter>world</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

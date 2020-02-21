@@ -10,6 +10,10 @@
 #include "../base/BaseHeader.h"
 
 namespace BR2 {
+/**
+*  @class Exception
+*  @brief Exception container.
+*/
 class Exception {
   int _line;
   string_t _msg;

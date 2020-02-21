@@ -9,6 +9,7 @@
 
 #include "../base/IOBase.h"
 
+#include <fstream>
 namespace BR2 {
 /**
 *  @class DiskFile

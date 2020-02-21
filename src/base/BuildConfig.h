@@ -41,7 +41,7 @@ namespace BR2 {
 
 //////////////////////////////////////////////////////////////////////////
 // OPERATING SYSTEM
-#ifdef __WINDOWS__  
+#ifdef _WIN32  
 //Note Win64 is defined WITH win32
 #define BR2_OS_WINDOWS
 //#define BRO_USE_DIRECTX

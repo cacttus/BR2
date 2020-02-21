@@ -9,29 +9,27 @@
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
-
+class AppRunnerInternal;
 /**
 *  @class AppRunner
 *  @brief The entry point of the application from main()
 */
 class AppRunner : public VirtualMemory {
 public:
+  AppRunner();
+  virtual ~AppRunner() override;
   void runApp(const std::vector<string_t>& args);
 
 private:
-  SDL_AudioSpec _audioSpec;
+
 
   t_timeval _tvInitStartTime = 0;
 
-  // accept a connection coming in on server_tcpsock
-  TCPsocket _gameHostSocket;//Send and receive data
-  TCPsocket _server_tcpsock;//Accept connections
+  AppRunnerInternal* _pInternal = nullptr;
 
   void initSDL();
   void doShowError(string_t err, Exception* e = nullptr);
-  SDL_bool initAudio();
   void initNet();
-  bool handleEvents(SDL_Event* event);
   void runApplication();
   void exitApp(string_t error, int rc);
   void runApplicationTryCatch();

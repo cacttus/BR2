@@ -9,10 +9,21 @@
 #include "../base/FpsMeter.h"
 #include "../base/GraphicsWindow.h"
 
+#include <atomic>
+#include <mutex>
+#include <fstream>
 namespace BR2 {
+class LogInternal {
+public:
+  std::atomic_bool _bSuppressLineFileDisplay = false;
+  std::mutex _mtLogWriteMutex;
+};
+
 Logger::Logger() {
+  _pLogInternal = new LogInternal();
 }
 Logger::~Logger() {
+  DEL_MEM(_pLogInternal);
 }
 void Logger::init(string_t cacheDir) {
   _logFileName = "Log.txt";
@@ -150,7 +161,7 @@ void Logger::logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e
   }
 }
 void Logger::log(string_t msg, string_t header, BR2::Exception* e) {
-  std::lock_guard<std::mutex> guard(_mtLogWriteMutex);
+  std::lock_guard<std::mutex> guard(_pLogInternal->_mtLogWriteMutex);
 
   string_t m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";
 
@@ -197,7 +208,7 @@ void Logger::enableLogToFile(bool bLogToFile) {
   _bEnabled = _bLogToConsole || _bLogToFile;
 }
 void Logger::addLineFileToMsg(string_t msg, int line, char* file) {
-  if (_bSuppressLineFileDisplay == false) {
+  if (_pLogInternal->_bSuppressLineFileDisplay == false) {
     msg = msg + "  (" + FileSystem::getFileNameFromPath(file) + " : " + line + ")";
   }
 }

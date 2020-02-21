@@ -8,6 +8,7 @@
 #define __SOUNDCACHE_1484887033955700376_H__
 
 #include "../base/BaseHeader.h"
+#include <mutex>
 
 namespace BR2 {
 class SoundPlayInfo : public VirtualMemory {

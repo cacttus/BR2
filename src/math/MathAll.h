@@ -18,7 +18,11 @@
 #include "../math/Minimax.h"
 #include "../math/Random.h"
 
-
+//#include <string.h>
+//This is for the ostringstream conversions below.
+#include <sstream>
+//For std::setprecision
+#include <iomanip>
 //////////////////////////////////////////////////////////////////////////
 //All the stuff here is the math templates which rely on other definitions.  We don't need
 //this file in MSVC because that compiler lazy evaluates template definitions but this is needed for G++.

@@ -17,8 +17,10 @@
 //Including both APIs.  In the future we abstract the API calls to interface and move the headers.
 
 //**Leaving SDL_openGL since we literally use OpenGL everywhere. In the future we may be able to abstract this header.
-#include <SDL_opengl.h>
-#include <SDL_opengl_glext.h>
+
+//#include <SDL_opengl.h>
+//#include <SDL_opengl_glext.h>
+
 //#include <SDL_vulkan.h>
 //Needed to get the main window handle so we can set the main window handle.
 
@@ -34,8 +36,9 @@
 #include <vector>
 #include <map>
 #include <functional>
-//#include <iostream>
+#include <bitset>
 //#include <set>
+//#include <iostream>
 //#include <stack>
 //#include <algorithm>
 //#include <fstream>
@@ -62,7 +65,6 @@
 ////std::array
 //#include <array>
 //
-#include <bitset>
 //
 ////for mkdir
 //#include <direct.h>

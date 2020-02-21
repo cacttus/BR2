@@ -5,6 +5,12 @@
 #include "../base/WindowsIncludes.h"
 
 
+#include <iostream>
+#ifdef BR2_OS_WINDOWS
+#include <DbgHelp.h>
+#include <TlHelp32.h>
+#endif
+
 namespace BR2 {
 HANDLE hCrtLog;
 bool _bDoDebug = false;

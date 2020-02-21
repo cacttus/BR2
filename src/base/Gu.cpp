@@ -50,6 +50,9 @@
 
 #include "../world/PhysicsManager.h"
 
+#include <iostream>
+#include "../ext/lodepng.h"
+
 extern "C" {
   //nothings commented on Apr 12, 2016
   //It's not meant to be #included. Don't #include it, just compile & link it.

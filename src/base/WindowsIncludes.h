@@ -13,23 +13,13 @@
 #ifdef BR2_OS_WINDOWS
 
 //For opening folder
-
+//This is already defined in SDL, AAAH why
 #define WIN32_LEAN_AND_MEAN
 
 #include <Windows.h>
 #include <Shlobj.h>
 #include <Shlobj_core.h>
 #include <commdlg.h>
-
-#ifdef _WIN32
-#ifdef _WIN64
-#include <Windows.h>
-#include <TlHelp32.h>
-#else
-#include <TlHelp32.h>
-#include <DbgHelp.h>
-#endif
-#endif
 
 
 

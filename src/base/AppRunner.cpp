@@ -33,6 +33,23 @@
 
 
 namespace BR2 {
+class AppRunnerInternal : public VirtualMemory {
+public:
+  SDL_AudioSpec _audioSpec;
+  SDL_bool initAudio();
+
+  // accept a connection coming in on server_tcpsock
+  TCPsocket _gameHostSocket;//Send and receive data
+  TCPsocket _server_tcpsock;//Accept connections
+  bool handleEvents(SDL_Event* event);
+};
+AppRunner::AppRunner() {
+  _pInternal = new AppRunnerInternal();
+}
+AppRunner::~AppRunner(){
+  DEL_MEM(_pInternal);
+}
+
 void AppRunner::runApp(const std::vector<string_t>& args) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
@@ -78,7 +95,7 @@ void AppRunner::initSDL() {
 
   printVideoDiagnostics();
 
-  initAudio();
+  _pInternal->initAudio();
   SDLUtils::checkSDLErr();
 
   initNet();
@@ -112,8 +129,8 @@ void AppRunner::attachToGameHost() {
     exitApp(std::string("") + "SDLNet_ResolveHost: " + SDLNet_GetError(), -1);
   }
 
-  _server_tcpsock = SDLNet_TCP_Open(&ip);
-  if (!_server_tcpsock) {
+  _pInternal->_server_tcpsock = SDLNet_TCP_Open(&ip);
+  if (!_pInternal->_server_tcpsock) {
     exitApp(std::string("") + "SDLNet_TCP_Open:" + SDLNet_GetError(), -1);
   }
 
@@ -128,8 +145,8 @@ void AppRunner::attachToGameHost() {
       break;//Unreachable, but just in case.
     }
 
-    _gameHostSocket = SDLNet_TCP_Accept(_server_tcpsock);
-    if (_gameHostSocket) {
+    _pInternal->_gameHostSocket = SDLNet_TCP_Accept(_pInternal->_server_tcpsock);
+    if (_pInternal->_gameHostSocket) {
       //  char data[512];
 
         //while(SDLNet_TCP_Recv(_gameHostSocket, data, 512) <= 0) {
@@ -195,7 +212,7 @@ void AppRunner::updateWindowHandleForGamehost() {
   //SetActiveWindow(hwnd);
 #endif
 }
-SDL_bool AppRunner::initAudio() {
+SDL_bool AppRunnerInternal::initAudio() {
   //AUDIO
   if (SDL_AudioInit(NULL) < 0) {
     fprintf(stderr, "Couldn't initialize audio driver: %s\n", SDL_GetError());
@@ -232,15 +249,16 @@ void AppRunner::runApplicationTryCatch() {
     doShowError("Runtime Error, Unhandled exception.", nullptr);
   }
 }
-bool AppRunner::handleEvents(SDL_Event* event) {
+bool AppRunnerInternal::handleEvents(SDL_Event* event) {
   static SDL_MouseMotionEvent lastEvent;
   int n = 0;
   vec2 delta;
   SDL_Scancode keyCode;
   std::shared_ptr<InputManager> pInput = Gu::getInputManager();
 
-  if (event == nullptr)
+  if (event == nullptr) {
     return true;
+  }
 
   switch (event->type) {
   case SDL_MOUSEMOTION:
@@ -311,7 +329,7 @@ bool AppRunner::handleSDLEvents() {
   SDL_Event event;
   bool done = false;
   while (SDL_PollEvent(&event)) {
-    if (handleEvents(&event) == false) {
+    if (_pInternal->handleEvents(&event) == false) {
       done = true;
     }
   }

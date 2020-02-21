@@ -11,6 +11,8 @@
 #include "../base/TreeNode.h"
 #include "../math/MathAll.h"
 
+#include <SDL_opengl.h>
+
 namespace BR2 {
 //GPU Types
 typedef int32_t GpuInt;

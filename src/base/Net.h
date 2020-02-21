@@ -11,6 +11,7 @@
 #include "../base/BaseHeader.h"
 
 namespace BR2 {
+class NetInternal;
 /**
 *  @class Net
 *  @brief Networking manager class using SDL_net.
@@ -27,8 +28,7 @@ public:
 private:
   bool _bError = false;
 
-  TCPsocket _server_control; // the server control socket.
-  std::vector<TCPsocket> _control_clients;
+  std::unique_ptr<NetInternal> _pInternal = nullptr;
 
   std::shared_ptr<SyncTimer> _pTimer;
 

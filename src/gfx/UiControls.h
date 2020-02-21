@@ -8,6 +8,7 @@
 #define __UICONTROLS_15188874023404093923_H__
 
 #include "../gfx/UiSkin.h"
+#include <future>
 
 namespace BR2 {
 class UiEventFunc : public VirtualMemoryShared<UiEventFunc> {

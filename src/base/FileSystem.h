@@ -12,6 +12,7 @@
 
 namespace BR2 {
 #ifdef BR2_OS_WINDOWS
+//Some unix thing I guess.
 typedef unsigned short mode_t;
 #endif
 /**
@@ -20,6 +21,9 @@ typedef unsigned short mode_t;
 */
 class FileInfo : public VirtualMemory {
 public:
+  FileInfo() {}
+  virtual ~FileInfo() override {}
+
   bool _exists = false;
   std::string _originalPath;
   std::string _rootedPath;
@@ -28,8 +32,6 @@ public:
   time_t _status;//Last status change time
   mode_t _protection; // should be mode_t
   int64_t _size; //size in bytes
-  FileInfo() {}
-  virtual ~FileInfo() {}
 };
 /**
 *  @class FileSystem

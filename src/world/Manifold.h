@@ -8,6 +8,7 @@
 #define __MANIFOLD_15150861112662815887_H__
 
 #include "../world/WorldHeader.h"
+#include <set>
 
 namespace BR2 {
 //GridManifold
