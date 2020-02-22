@@ -1,15 +1,14 @@
-#include "../base/BaseAll.h"
+#include "../base/Logger.h"
 #include "../base/EngineConfig.h"
 #include "../base/InputManager.h"
 #include "../base/Perf.h"
-
 #include "../gfx/CameraNode.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/LightNode.h"
-
+#include "../gfx/GLContext.h"
+#include "../gfx/RenderBucket.h"
 #include "../model/ShaderStorageBuffer.h"
 #include "../world/PhysicsManager.h"
-#include "../world/RenderBucket.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
@@ -28,10 +27,8 @@ LightManager::LightManager(std::shared_ptr<GLContext> ct, std::shared_ptr<Scene>
     _pGpuDeferredParams->_fHdrSampleExp = 1.6700005f;
   }
 
-
   Br2LogDebug("Light Manager Initializing");
   initializeDeferredFogData();
-
 }
 LightManager::~LightManager() {
 

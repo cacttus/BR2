@@ -1,17 +1,21 @@
-#include "../base/Base.h"
+#include "../base/Logger.h"
 #include "../base/Img32.h"
-
+#include "../base/FileSystem.h"
+#include "../base/Allocator.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderUniform.h"
+#include "../gfx/GLContext.h"
 #include "../model/UtilMeshGrid.h"
 #include "../model/UtilMeshAxis.h"
 #include "../model/UtilMeshSphere.h"
 #include "../model/UtilMeshBox.h"
 #include "../model/UtilMeshPickBox.h"
 #include "../model/UtilMeshInline.h"
+
+#include <iostream>
 
 namespace BR2 {
 
@@ -1105,12 +1109,16 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<GLContext> context, std:
           float r = ts[ih * (w * 4) + iw * 4 + 0];
           float g = ts[ih * (w * 4) + iw * 4 + 1];
           float b = ts[ih * (w * 4) + iw * 4 + 2];
+
           float a = ts[ih * (w * 4) + iw * 4 + 3];
           if (lastr != r || lastg != g || lastb != b || lasta != a) {
             std::cout << " ,(" << r << "," << g << "," << b << "," << a << ")";
             iNonZero++;
           }
-          lastr = r; lastg = g; lastb = b; lasta = a;
+          lastr = (uint8_t)r; 
+          lastg = (uint8_t)g; 
+          lastb = (uint8_t)b; 
+          lasta = (uint8_t)a;
 
         }
       }

@@ -311,7 +311,7 @@ typedef enum {
  class GraphicsWindow;
  class GLContext;
  class VaoDataGeneric;
- class MeshNode;
+ class MeshComponent;
  class UtilMeshInline;
  class RenderTarget;
  class VaoDataGeneric;

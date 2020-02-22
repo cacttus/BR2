@@ -1,8 +1,9 @@
-#include "../base/GLContext.h"
+#include "../base/Gu.h"
+#include "../base/Logger.h"
+#include "../gfx/GLContext.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/RenderViewport.h"
-#include "../base/Gu.h"
 
 namespace BR2 {
 CameraNode::CameraNode() {
@@ -48,8 +49,8 @@ void CameraNode::setFOV(t_radians fov) {
   //_pViewport->updateChanged(true);
   _pMainFrustum->setFov(_f_hfov);
 }
-void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-  PhysicsNode::update(dt, mapAnimators);
+void CameraNode::update(float dt, std::shared_ptr<CameraNode> cam,std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+  SceneNode::update(dt, cam, mapAnimators);
 
   //update view normal.
   vec3 vpos = getPos();

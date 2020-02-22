@@ -2,9 +2,9 @@
 #include "../base/Gu.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
-#include "../base/GLContext.h"
-#include "../base/GLContext.h"
-#include "../base/GraphicsWindow.h"
+#include "../gfx/GLContext.h"
+#include "../gfx/GLContext.h"
+#include "../gfx/GraphicsWindow.h"
 
 namespace BR2 {
 FrameSync::FrameSync(std::shared_ptr<GLContext> ct) {

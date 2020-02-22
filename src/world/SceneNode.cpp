@@ -1,24 +1,22 @@
-#include "../model/SceneNode.h"
-#include "../model/NodeData.h"
-#include "../model/MeshNode.h"
-#include "../gfx/CameraNode.h"
-#include "../gfx/LightNode.h"
-#include "../model/MeshData.h"
-#include "../model/OBB.h"
-#include "../model/UtilMeshInline.h"
-#include "../model/MeshNode.h"
-#include "../model/Model.h"
-#include "../world/RenderBucket.h"
-#include "../world/Scene.h"
-#include "../math/Matrix4x4.h"
 #include "../base/Logger.h"
 #include "../base/Hash.h"
 #include "../base/BinaryFile.h"
-
+#include "../math/Matrix4x4.h"
+#include "../gfx/CameraNode.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/RenderBucket.h"
+#include "../model/MeshData.h"
+#include "../model/OBB.h"
+#include "../model/UtilMeshInline.h"
+#include "../model/MeshComponent.h"
+#include "../model/Model.h"
+#include "../world/SceneNode.h"
+#include "../world/NodeData.h"
+#include "../model/MeshComponent.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
-SceneNode::SceneNode(std::shared_ptr<NodeData> nd = nullptr) {
-  _pNodeData = nd;
+SceneNode::SceneNode() {
   _pBox = new Box3f();
   _pOBB = new OBB();
   _vPos = vec3(0, 0, 0);
@@ -47,8 +45,7 @@ SceneNode::~SceneNode() {
   DEL_MEM(_pBindingBoundBox);
 }
 
-void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-
+void SceneNode::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   //Force bind in case we don't have animations.
   setLocalBind();
 
@@ -66,7 +63,7 @@ void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
       std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
-      pc->update(delta, mapAnimators);
+      pc->update(delta, cam, mapAnimators);
     }
   }
 
@@ -111,10 +108,10 @@ bool SceneNode::isCameraNode() {
   return getThis<CameraNode>() != nullptr;
 }
 bool SceneNode::isMeshNode() {
-  return getThis<MeshNode>() != nullptr;
+  return getThis<MeshComponent>() != nullptr;
 }
 bool SceneNode::isSkinnedMesh() {
-  return isMeshNode() && getThis<MeshNode>()->getMeshData()->hasSkin();
+  return isMeshNode() && getThis<MeshComponent>()->getMeshData()->hasSkin();
 }
 bool SceneNode::isBoneNode() {
   return getThis<BoneNode>() != nullptr;
@@ -248,7 +245,6 @@ void SceneNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
       // who don't have this particular animation name.
       std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getNameHashed());
       if (ak != nullptr) {
-
         ak->animate(anm, _mAnimated);
 
         _mLocal = _mAnimated;
@@ -423,6 +419,7 @@ std::shared_ptr<Scene> SceneNode::getScene() {
 }
 std::shared_ptr<SceneNode> SceneNode::clone(bool deep) {
   std::shared_ptr<SceneNode> ret = std::make_shared<SceneNode>();
+  return ret;
 }
 void SceneNode::copy(std::shared_ptr<SceneNode> rhs, bool deep) {
 }
@@ -458,6 +455,9 @@ void SceneNode::setInvBind(mat4& bind) {
   //_mBind = bind;
   _mInvBind = bind;
 }
-
+void SceneNode::addComponent(std::shared_ptr<Component> comp) {
+  comp->setWorldObject(getThis<WorldObject>());
+  _vecComponents.push_back(comp);
+}
 
 }//ns BR2

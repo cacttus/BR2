@@ -6,6 +6,7 @@
 #include "../base/BinaryFile.h"
 #include "../base/XmlFile.h"
 #include "../base/OperatingSystem.h"
+#include <fstream>
 
 namespace BR2 {
 string_t ApplicationPackage::_strCacheFolderName = "";

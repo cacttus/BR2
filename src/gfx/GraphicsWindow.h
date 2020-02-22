@@ -10,6 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
+#include "../base/SDLIncludes.h"
 
 namespace BR2 {
 

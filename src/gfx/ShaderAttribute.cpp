@@ -1,6 +1,8 @@
-#include "../base/BaseAll.h"
+#include "../base/Logger.h"
+#include "../base/Hash.h"
 #include "../gfx/ShaderAttribute.h"
 #include "../gfx/ShaderBase.h"
+#include "../gfx/GLContext.h"
 
 
 namespace BR2 {

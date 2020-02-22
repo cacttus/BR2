@@ -22,7 +22,7 @@ public:
   virtual ~ShadowBox() override;
 
   void init();
-  void update();
+  void update(std::shared_ptr<CameraNode> cam);
   void renderShadows(std::shared_ptr<ShadowBox> pMaster);
   void debugRender();
   std::shared_ptr<LightNodePoint> getLightSource() { return _pLightSource; }
@@ -54,7 +54,7 @@ private:
   uint32_t _iFboHeightPixels;
   Box2f _screenQuadPos;
   Box2f _screenQuadTCoords;
-  std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
+  std::shared_ptr<MeshComponent> _pScreenQuadMesh = nullptr;
   bool _bMustUpdate = false;
   bool _bForceUpdate = false;
   bool _bShadowMapEnabled = false;

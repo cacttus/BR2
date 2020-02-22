@@ -3,12 +3,13 @@
 #include "../base/FileSystem.h"
 #include "../base/Gu.h"
 #include "../base/Oglerr.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 
 #include "../gfx/ShaderCache.h"
 #include "../gfx/ShaderSubProgram.h"
 #include "../gfx/ShaderBase.h"
 
+#include <algorithm>
 
 namespace BR2 {
 GLProgramBinary::GLProgramBinary(ShaderCache* cc, size_t binLength) {

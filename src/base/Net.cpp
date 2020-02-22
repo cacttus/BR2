@@ -4,8 +4,7 @@
 #include "../base/SyncTimer.h"
 #include "../base/SDLUtils.h"
 
-#include <SDL.h>
-#include <SDL_net.h>
+#include "../base/SDLIncludes.h"
 
 namespace BR2 {
 class NetInternal : public VirtualMemory {

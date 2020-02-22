@@ -14,7 +14,9 @@
 
 //For opening folder
 //This is already defined in SDL, AAAH why
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 
 #include <Windows.h>
 #include <Shlobj.h>

@@ -40,6 +40,27 @@
 - [ ] All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
 
 ## Devlog
+*2/21/2020*
+
+* Commenting items out for the rebuild with **PHASE1**
+* Moved GraphicsWindow, GLContext and RenderBucket to /gfx
+* Removed Base.h and BaseAll.h
+* Removing WorldObject, it's not necessary.  We only need SceneObject. See Design
+	* I like "WorldObject" namme. We can always rename SceneNode in the future.  For now it's SceneNode.
+* Changed MeshNode to MeshComponent
+* Most, if not all nodes need a physics capability.  It makes sense to inherit SceneNode FROM physicsnode.  Yet, the reason we separate them, is because
+we want to optimize the physics routine.  Not hard, since we cxan simply separate ones that have no colldier on them.  Yet, anyway SCENE is really the
+same thing as PhysicsManager.  I just separated the collision handling code.
+	* Decision: combine physicsNode with SceneNode
+		* why? all nodes have a velocity, and thsu should get their positions updated.
+		* why not?  Because not all nodes have friction, etc.
+		I think physicsnode can be a part of the tree, rather than a component.
+		You can have volume hierarchies.  Yet, those are usually computed not added manually.  So if there's a hierarchy we're not going to be editing it.
+		so yes volumes should be components.
+
+		So here's the plan.
+		put Velocity on SceneNode
+		Put the rest of thee PhysicsNode properties on Collider'
 
 *2/19/2020*
 
@@ -50,6 +71,7 @@
 * Commenting out the model system for right now, until we get the rest of the changes squared away.
 * Deleted ModelCache.  ModelCache is no longer needed.  To access models, we're simply going to clone them from those in the scene.'
 
+** Commented out RenderPipe!!  We removed this in order to prevent compilation of the scene system.
 
 *2/18/2020*
 

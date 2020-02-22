@@ -1,10 +1,10 @@
 #include "../base/BaseHeader.h"
-#include "../gfx/oglErr.h"
+#include "../base/oglErr.h"
 #include "../base/Logger.h"
-#include "../gfx/GLContext.h"
 #include "../base/DebugHelper.h"
 #include "../base/EngineConfig.h"
 #include "../base/SDLUtils.h"
+#include "../gfx/GLContext.h"
 
 namespace BR2 {
 string_t glErrToStr(GLenum err) {

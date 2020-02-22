@@ -1,6 +1,6 @@
-#include "../base/BaseAll.h"
 #include "../base/Logger.h"
-#include "../base/GLContext.h"
+#include "../base/Hash.h"
+#include "../gfx/GLContext.h"
 #include "../math/BitHacks.h"
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/ShaderManager.h"

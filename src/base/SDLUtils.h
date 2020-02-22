@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 
-#include <SDL.h>
+#include "../base/SDLIncludes.h"
 
 namespace BR2 {
 /**

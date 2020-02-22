@@ -1,4 +1,3 @@
-#include "../base/GLContext.h"
 #include "../base/InputManager.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
@@ -12,6 +11,7 @@
 #include "../gfx/RenderViewport.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderPipeline.h"
+#include "../gfx/GLContext.h"
 
 
 namespace BR2 {

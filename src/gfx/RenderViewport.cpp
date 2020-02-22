@@ -1,6 +1,7 @@
+#include "../base/Logger.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GfxHeader.h"
-#include "../base/GraphicsWindow.h"
+#include "../gfx/GraphicsWindow.h"
 
 namespace BR2 {
 RenderViewport::RenderViewport(int32_t w, int32_t h, ViewportConstraint constraint) {

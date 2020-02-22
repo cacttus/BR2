@@ -8,27 +8,28 @@
 #ifndef __PHYSICS_NODE_14910105823111128827_H__
 #define __PHYSICS_NODE_14910105823111128827_H__
 
-#include "../model/SceneNode.h"
 #include "../world/WorldHeader.h"
-#include "../model/NodeData.h"
+#include "../world/Component.h"
 
 namespace BR2 {
 /**
 *  @class PhysicsNode
 *  @brief Movement and physics properties for node objects.
 */
-class PhysicsNode : public SceneNode {
+class BaseCollider : public Component {
 public:
-  PhysicsNode();
-  virtual ~PhysicsNode();
+  BaseCollider(std::shared_ptr<SceneNode> pnode);
+  virtual ~BaseCollider();
 
-  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;
-  std::shared_ptr<GridManifold> getManifold() { return _pManifold; }
+  //virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;
+  
+  GridManifold* getManifold() { return _pManifold; }
   void setTemps(vec3& vAccel, uint64_t frameId);
   void setTempPos(vec3& v) { _vTempPos = v; }
   void setTempVelocity(vec3& v) { _vTempVel = v; }
   vec3 getTempPos() { return _vTempPos; }
   vec3 getTempVelocity() { return _vTempVel; }
+
   float getFriction() { return _fFriction; }
   void setIsAtRest(bool b) { _bIsAtRest = b; }
   uint64_t getLastMovedFrame() { return _iLastMovedFrame; }
@@ -41,19 +42,26 @@ public:
   bool getIsAtRest() { return _bIsAtRest; }
   bool getIsStatic() { return _fMass <= 0.0f; }
   Box3f* getSpeedbox() { return _pSpeedbox; }
-  vec3 getVelocity() { return _vVelocity; }
-  void setVelocity(vec3& v);
+  Box3f* getBoundBox() { return _pBoundBox; }
+  
+  //Since we're not implementing this yet, let's just blank these out.
+  void setNodeVelocity(vec3& nodeVel);
+  void setNodePosition(vec3& nodePos);
+  
+  //**these are on the parent SceneNode
+  //vec3 getVelocity() { return _vVelocity; }
+  //void setVelocity(vec3& v);
+
   void validateSanePhysics();
 
   uint64_t _iStamp;
 
 private:
-  vec3 _vVelocity = vec3(0, 0, 0);
   Box3f* _pSpeedbox = nullptr;
+  Box3f* _pBoundBox = nullptr;
   bool _bIsAtRest = true;
   float _fMass = 1.0f;
   bool _bHollow = false;
-
   float _fFriction = 0.90f; // 0.9 m/s
   uint64_t _iLastMovedFrame = 0;
   uint64_t _iLastAccFrame = 0;
@@ -64,11 +72,7 @@ private:
   std::vector<vec3> _vHistoryPos;
   const int c_vHistoryVelSize = 10;
   std::vector<vec3> _vHistoryVel;
-
-  std::shared_ptr<GridManifold> _pManifold = nullptr;
-
-
-
+  GridManifold* _pManifold = nullptr;
 };
 
 }//ns BR2

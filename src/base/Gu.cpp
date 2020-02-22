@@ -1,4 +1,4 @@
-#include "../base/Base.h"
+#include "../base/BaseHeader.h"
 
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
@@ -9,7 +9,7 @@
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
-#include "../base/GraphicsWindow.h"
+#include "../gfx/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
@@ -19,7 +19,7 @@
 #include "../base/SoundCache.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../base/Net.h"
 #include "../base/Delta.h"
 
@@ -32,7 +32,7 @@
 #include "../gfx/LightManager.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderManager.h"
@@ -42,7 +42,7 @@
 #include "../gfx/ParticleMaker.h"   
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderManager.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 
 #include "../model/ModelCache.h"
 #include "../model/VertexTypes.h"
@@ -50,6 +50,9 @@
 
 #include "../world/PhysicsManager.h"
 
+#include "../gfx/GLContext.h"
+
+#include "../base/SDLIncludes.h"
 #include <iostream>
 #include "../ext/lodepng.h"
 

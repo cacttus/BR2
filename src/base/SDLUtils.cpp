@@ -1,4 +1,5 @@
-#include "../base/Base.h"
+#include "../base/Logger.h"
+#include "../base/EngineConfig.h"
 #include "../base/FileSystem.h"
 #include "../base/OglErr.h"
 #include "../base/SDLUtils.h"

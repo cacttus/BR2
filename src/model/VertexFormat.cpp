@@ -1,9 +1,11 @@
-#include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
-#include "../gfx/RenderUtils.h"
+
 #include "../model/VertexFormat.h"
 #include "../model/VboData.h"
+
+#include "../gfx/RenderUtils.h"
+#include "../gfx/GLContext.h"
 
 namespace BR2 {
 

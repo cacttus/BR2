@@ -28,7 +28,7 @@ public:
   virtual ~ShadowBoxSide() override;
 
   void updateView();
-  void collect();
+  void collect(std::shared_ptr<CameraNode> cam);
   void renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool);
   bool computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum);
   std::shared_ptr<GLContext> getContext();

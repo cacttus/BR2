@@ -1,14 +1,15 @@
-#include "../base/Base.h"
-#include "../model/UtilMesh.h"
-#include "../model/FragmentBufferData.h"
-#include "../model/MeshData.h"
-#include "../model/IndexBufferData.h"
-#include "../model/VaoDataGeneric.h"
+#include "../base/Logger.h"
+#include "../gfx/GLContext.h" 
 #include "../gfx/CameraNode.h" 
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShaderManager.h"
+#include "../model/UtilMesh.h"
+#include "../model/FragmentBufferData.h"
+#include "../model/MeshData.h"
+#include "../model/IndexBufferData.h"
+#include "../model/VaoDataGeneric.h"
 
 namespace BR2 {
 UtilMesh::UtilMesh(std::shared_ptr<CameraNode> pCameraNode, std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<ShaderBase> ps, GLenum drawMode) : GLFramework(ctx) {

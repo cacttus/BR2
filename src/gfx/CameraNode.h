@@ -11,7 +11,7 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
-#include "../world/WorldObject.h"
+#include "../world/SceneNode.h"
 
 namespace BR2 {
 /**
@@ -19,12 +19,12 @@ namespace BR2 {
 *  @brief Base class for cameras in the GL.
 *  Superclass of @cBaseCamera2D, @cBaseCamera3D
 */
-class CameraNode : public WorldObject {
+class CameraNode : public SceneNode {
 public:
   CameraNode();
   virtual ~CameraNode() override;
 
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   void zoom(float amt);
   const vec3& getLookAt() { return _vLookAt; }
   void setLookAt(vec3&& v) { _vLookAt = v; }

@@ -1,14 +1,13 @@
-#include "../base/Base.h"
-#include "../gfx/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
 #include "../base/Delta.h"
 #include "../base/FrameSync.h"
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
-#include "../gfx/GraphicsWindow.h"
 #include "../base/FrameSync.h"
-
+#include "../base/Logger.h"
+#include "../base/EngineConfig.h"
+#include "../base/ApplicationPackage.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/Picker.h"
@@ -23,9 +22,9 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderViewport.h"
-
+#include "../gfx/GraphicsWindow.h"
+#include "../gfx/GLContext.h"
 #include "../model/ModelCache.h"
-
 #include "../world/Scene.h"
 
 namespace BR2 {

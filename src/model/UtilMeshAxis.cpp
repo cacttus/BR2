@@ -1,8 +1,9 @@
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../model/UtilMeshAxis.h"
 #include "../model/VertexFormat.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"
+
 namespace BR2 {
 UtilMeshAxis::UtilMeshAxis(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx, float scale, float lineWidth, mat4& xform) :
   UtilMesh(cam, ctx, v_v3c4x2::getVertexFormat(), nullptr),

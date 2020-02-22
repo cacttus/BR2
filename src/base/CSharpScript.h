@@ -7,9 +7,8 @@
 #ifndef __CSHARPSCRIPT_15665746341154937548_H__
 #define __CSHARPSCRIPT_15665746341154937548_H__
 
-#include "../base/BaseHeader.h"
 #include "../world/WorldHeader.h"
-#include "../base/Component.h"
+#include "../world/Component.h"
 
 namespace BR2 {
 /**
@@ -18,7 +17,7 @@ namespace BR2 {
 */
 class CSharpScript : public Component {
 public:
-  CSharpScript(std::shared_ptr<WorldObject> myObj);
+  CSharpScript(std::shared_ptr<SceneNode> myObj);
   virtual ~CSharpScript() override;
 
   virtual void start() = 0;

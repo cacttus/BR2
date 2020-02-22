@@ -1,5 +1,5 @@
 #include "../base/Gu.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../model/UtilMeshSphere.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/MeshUtils.h"

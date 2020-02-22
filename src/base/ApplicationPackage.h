@@ -59,7 +59,7 @@ public:
 
   //Stuff from ModelCache
   string_t getFilePathForMobName(string_t mobName, bool bUseBinary);
-  std::shared_ptr<ModelNode> ApplicationPackage::getOrLoadModel(string_t mobName, bool bUseBinary);
+  std::shared_ptr<ModelNode> ApplicationPackage::getOrLoadModel(string_t mobName, bool bUseBinary, std::shared_ptr<GLContext> ctx);
   void convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName);
   //void unloadModel(string_t strMobName, bool bErrorIfFailed);
 

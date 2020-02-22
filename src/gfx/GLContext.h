@@ -8,7 +8,7 @@
 #define __GLCONTEXT_14795781163972161943_H__
 
 #include "../gfx/GfxHeader.h"
-#include <SDL.h>
+#include "../base/SDLIncludes.h"
 #include <stack>
 
 #include <SDL_opengl.h>

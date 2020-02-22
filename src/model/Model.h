@@ -9,10 +9,10 @@
 
 #include "../base/BaseHeader.h"
 #include "../base/Serializable.h"
-#include "../model/NodeData.h"
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
-#include "../model/SceneNode.h"
+#include "../world/SceneNode.h"
+#include "../world/NodeData.h"
 #include "../world/PhysicsNode.h"
 
 namespace BR2 {
@@ -214,7 +214,7 @@ public:
   std::vector<std::shared_ptr<BoneNode>>& getBonesOrdered() { return _vecBonesOrdered; }
   void drawForward(std::shared_ptr<UtilMeshInline> mi);
   //std::shared_ptr<ArmatureNode> getArmatureData() { return _pArmatureData; }
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
   bool tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens);
   BoneCache* getBoneCacheOrdered() { return &_mapBoneCacheOrdered; }
@@ -262,7 +262,7 @@ public:
   void stopAction(string_t actName);
   void stopAllActions();
   void attachToNode(std::shared_ptr<SceneNode> pNode) { _pWorldNode = pNode; }
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void drawForward(RenderParams& rp) override;
   std::vector<std::shared_ptr<ArmatureNode>>& getArmatureNodes() { return _vecArmatures; }
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
@@ -288,7 +288,7 @@ public:
 
 private:
   std::shared_ptr<GLContext> _pContext = nullptr;
-  std::shared_ptr<ModelData> _pModelData = nullptr;
+//  std::shared_ptr<ModelData> _pModelData = nullptr;
   std::shared_ptr<SceneNode> _pWorldNode = nullptr; // Reference to the world node *not owned
 
   //std::vector<std::shared_ptr<MeshNode>> _vecMeshes;

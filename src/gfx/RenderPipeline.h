@@ -52,7 +52,7 @@ public:
 private:
   bool _bMsaaEnabled = false;
   uint32_t _nMsaaSamples = 0;
-  std::shared_ptr<MeshNode> _pQuadMesh = nullptr;
+  std::shared_ptr<MeshComponent> _pQuadMesh = nullptr;
   std::shared_ptr<ShaderBase> _pDeferredShader = nullptr;
   std::shared_ptr<ShaderBase> _pForwardShader = nullptr;
 

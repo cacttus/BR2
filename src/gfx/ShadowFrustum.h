@@ -24,7 +24,7 @@ public:
   std::shared_ptr<FrustumBase> getFrustum() { return _pFrustum; }
   GLint getGlTexId() { return _glShadowMapId; }
   void init();
-  void update();
+  void update(std::shared_ptr<CameraNode> cam, std::shared_ptr<PhysicsManager> pm);
   void endRenderShadowFrustum();
   void beginRenderShadowFrustum();
   void debugRender();
@@ -47,7 +47,7 @@ private:
   GLuint _glShadowMapId = 0;
   uint32_t _iFboWidthPixels;
   uint32_t _iFboHeightPixels;
-  std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
+  std::shared_ptr<MeshComponent> _pScreenQuadMesh = nullptr;
 
   int32_t _iShadowFrustumId;
   std::shared_ptr<FrustumBase> _pFrustum = nullptr;
@@ -61,7 +61,7 @@ private:
   bool _bShadowMapEnabled = false;
   void deleteFbo();
   void createFbo();
-  void collect();
+  void collect(std::shared_ptr<CameraNode> cam, std::shared_ptr<PhysicsManager> pm);
   void updateView();
   void copyAndBlendToShadowMap(std::shared_ptr<ShadowFrustum> pBox);
 

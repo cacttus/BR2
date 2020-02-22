@@ -9,13 +9,13 @@
 #define __LIGHTNODE_115916903195042306423126_H__
 
 
-#include "../world/PhysicsNode.h"
-#include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
+#include "../gfx/GfxHeader.h"
+#include "../world/SceneNode.h"
 
 namespace BR2 {
 //TODO: Make the light node a composite on WorldObject, and remove PhysicsNode, making it a composite of WorldObject as well.
-class LightNodeBase : public PhysicsNode {
+class LightNodeBase : public SceneNode {
 public:
   LightNodeBase(std::shared_ptr<LightManager> pm, bool bShadow);
   virtual ~LightNodeBase() override;
@@ -23,7 +23,7 @@ public:
   Color4f* getColorPtr() { return &_color; }
   Color4f& getColor() { return _color; }
   void setLightColor(const Color4f&& c) { _color = c; _color.clampValues(); }
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   vec3* getFinalPosPtr();
   bool shadowsEnabled();
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager;  }
@@ -42,14 +42,14 @@ private:
 class LightNodeDir : public LightNodeBase {
 public:
   LightNodeDir(std::shared_ptr<LightManager> pm, bool bShadow);
-  static std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow);
+  //static std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow);
   virtual ~LightNodeDir() override;
   const vec3& getLookAt() { return _vLookAt; }
   const vec3& getDir() { return _vDir; }
   const vec3& getUp() { return _vUp; }
   void setLookAt(const vec3& v);
   bool renderShadows(std::shared_ptr<ShadowFrustum> pf);
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
   std::shared_ptr<ShadowFrustum> getShadowFrustum() { return _pShadowFrustum; }
   std::shared_ptr<GpuDirLight> getGpuLight() { return _pGpuLight; }
@@ -76,7 +76,7 @@ public:
   void createShadowBox(std::shared_ptr<GLContext> ct);
   std::shared_ptr<ShadowBox> getShadowBox() { return _pShadowBox; }
 
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
 
   std::shared_ptr<GpuPointLight> LightNodePoint::getGpuLight() { return _pGpuLight; }
   bool renderShadows(std::shared_ptr<ShadowBox> pf); // - Called by lightmanager to set up the light

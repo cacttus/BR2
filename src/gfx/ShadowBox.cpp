@@ -1,7 +1,7 @@
+#include "../base/Logger.h"
 #include "../base/Stopwatch.h"
 #include "../base/FpsMeter.h"
 #include "../base/Gu.h"
-#include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Perf.h"
 #include "../math/BoxUtils.h"
@@ -18,8 +18,9 @@
 #include "../gfx/LightNode.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/RenderSettings.h"
+#include "../gfx/GLContext.h"
+#include "../gfx/RenderBucket.h"
 #include "../model/MeshUtils.h"
-#include "../world/RenderBucket.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
@@ -52,7 +53,7 @@ void ShadowBox::init() {
 
   getContext()->chkErrRt(); //Rt error check - this is called only once.
 }
-void ShadowBox::update() {
+void ShadowBox::update(std::shared_ptr<CameraNode> cam) {
   AssertOrThrow2(_pLightSource != nullptr);
   // 2 optimizations here
   // frame modulus
@@ -86,7 +87,7 @@ void ShadowBox::update() {
   // Collect all objects for each frustum.
   // if objects don't change don't render that frustum (bMustUpate)
   for (int iFace = iStartDebug; iFace < 6; ++iFace) {
-    _pShadowBoxSide[iFace]->collect();
+    _pShadowBoxSide[iFace]->collect(cam);
     _bMustUpdate = _bMustUpdate || _pShadowBoxSide[iFace]->getMustUpdate();
   }
 
@@ -237,7 +238,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
   if (pBox->getGlTexId() != 0) {
     if (Gu::getRenderSettings()->getSmoothShadows()) {
       std::shared_ptr<ShaderBase> pDofShader = getContext()->getShaderManager()->getSmoothGenShader();
-      std::shared_ptr<MeshNode> pQuadMesh = MeshUtils::createScreenQuadMesh(getContext(),_iFboWidthPixels, _iFboHeightPixels);
+      std::shared_ptr<MeshComponent> pQuadMesh = MeshUtils::createScreenQuadMesh(getContext(),_iFboWidthPixels, _iFboHeightPixels);
 
       //Blend color + position and store it in the color.
       pDofShader->beginRaster(_iFboWidthPixels, _iFboHeightPixels);

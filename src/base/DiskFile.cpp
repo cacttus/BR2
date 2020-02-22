@@ -1,3 +1,4 @@
+#include "../base/Logger.h"
 #include "../base/DiskFile.h"
 #include "../base/StringUtil.h"
 #include "../base/FileSystem.h"
@@ -5,16 +6,28 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 
+#include <fstream>
+
 namespace BR2 {
+class DiskFileInternal : public VirtualMemory {
+public:
+  size_t getPointerOffset() { return off; }
+  size_t off=0; // - offset in the file
+  DiskLoc loc;  // - location
+  std::fstream pStream; // - The saved file stream.
+  size_t filesize;
+
+};
 DiskFile::DiskFile() {
-  off = 0;
+  _internal = std::make_shared<DiskFileInternal>();
 }
 DiskFile::~DiskFile() {
+  _internal = nullptr;
 }
-size_t DiskFile::getFileSize() const { return filesize; }
+size_t DiskFile::getFileSize() const { return _internal->filesize; }
 bool DiskFile::checkEOF() {
   if (state == file_opened_read || state == file_opened_write) {
-    if (pStream.eof()) {
+    if (_internal->pStream.eof()) {
       return true;
     }
     else {
@@ -33,7 +46,7 @@ bool DiskFile::checkEOF() {
 RetCode DiskFile::create(string_t szloc, size_t offset) {
   std::fstream fs;
 
-  this->off = offset;
+  _internal->off = offset;
 
   state = file_error; // set before returning
 
@@ -70,38 +83,40 @@ RetCode DiskFile::openForRead(DiskLoc& szloc) {
     Br2ThrowException("File was in a bad state.");
   }
 
-  if (!szloc.length())
-    l = loc;
-  else
+  if (!szloc.length()) {
+    l = _internal->loc;
+  }
+  else {
     l = szloc;
+  }
 
   //CheckOsErrorsDbg();
   // std::fstream stream;
-  pStream.clear();
+  _internal->pStream.clear();
   //CheckOsErrorsDbg();
-  pStream.open(l.c_str(), std::ios::in | std::ios::binary);
+  _internal->pStream.open(l.c_str(), std::ios::in | std::ios::binary);
   //OperatingSystem::suppressError(OperatingSystem::FileNotFound, false);//In windows error 2 is file not found.
   //OperatingSystem::suppressError(OperatingSystem::PathNotFound, false);//In windows error 2 is file not found.
   //CheckOsErrorsDbg();
 
   //Globals::getLogger()->logInfo(t_string("Loading ")+l);
-  if (!pStream.good()) {
-    pStream.close();
+  if (!_internal->pStream.good()) {
+    _internal->pStream.close();
     Br2LogError("Could not open file '" + szloc + "' for read.");
     return GR_FILE_NOT_FOUND_ON_DISK;
     //BroThrowException("File does not exist at the location \'", szloc, "\'");
   }
 
   size_t size;
-  pStream.seekg(0, std::ios::end);
-  size = (size_t)pStream.tellg();
-  pStream.seekg(0, std::ios::beg);
+  _internal->pStream.seekg(0, std::ios::end);
+  size = (size_t)_internal->pStream.tellg();
+  _internal->pStream.seekg(0, std::ios::beg);
 
-  this->filesize = size;
+  _internal->filesize = size;
 
-  if (off > 0) {
-    AssertOrThrow2(off < size);
-    pStream.seekg((long)off, std::ios::beg);
+  if (_internal->off > 0) {
+    AssertOrThrow2(_internal->off < size);
+    _internal->pStream.seekg((long)_internal->off, std::ios::beg);
   }
 
   state = file_opened_read;
@@ -119,9 +134,11 @@ RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
   }
 
   if (!szloc.length()) {
-    l = loc;
+    l = _internal->loc;
   }
-  else l = szloc;
+  else {
+    l = szloc; 
+  }
 
   // - Get Write Mode
   std::ios::_Openmode appOrTrunc;
@@ -141,27 +158,27 @@ RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
 
 
   // - Open File
-  pStream.open(l.c_str(), std::ios::out | std::ios::binary | appOrTrunc);
+  _internal->pStream.open(l.c_str(), std::ios::out | std::ios::binary | appOrTrunc);
 
   //CheckOsErrorsDbg();
 
-  if (!pStream.good()) {
-    pStream.close();
+  if (!_internal->pStream.good()) {
+    _internal->pStream.close();
     Br2LogError("File " + szloc + " does not exist.");
     return GR_FILE_NOT_FOUND_ON_DISK;
     //BroThrowException();
   }
 
   size_t size;
-  pStream.seekp(0, std::ios::end);
-  size = (size_t)pStream.tellp();
-  pStream.seekp(0, std::ios::beg);
+  _internal->pStream.seekp(0, std::ios::end);
+  size = (size_t)_internal->pStream.tellp();
+  _internal->pStream.seekp(0, std::ios::beg);
 
-  filesize = size;
+  _internal->filesize = size;
 
-  if (off > 0) {
-    AssertOrThrow2(off < size);
-    pStream.seekp((long)this->off, std::ios::end);
+  if (_internal->off > 0) {
+    AssertOrThrow2(_internal->off < size);
+    _internal->pStream.seekp((long)_internal->off, std::ios::end);
   }
 
   state = file_opened_write;
@@ -175,7 +192,7 @@ RetCode DiskFile::write(const char* bytes, size_t len, size_t offset) {
     Br2ThrowException("Offset is an invalid parameter in DiskFile - and is not implemented.");
   }
 
-  pStream.write(bytes, (std::streamsize)len);
+  _internal->pStream.write(bytes, (std::streamsize)len);
   return GR_OK;
 }
 /**
@@ -240,7 +257,7 @@ RetCode DiskFile::read(char* buf, size_t len, size_t buflen, size_t offset) {
     AssertOrThrow2((size_t)len < buflen);
   }
 
-  pStream.read(buf, (std::streamsize)len);
+  _internal->pStream.read(buf, (std::streamsize)len);
   return GR_OK;
 }
 /**
@@ -275,16 +292,16 @@ RetCode DiskFile::readTo(char* buf, const string_t& delims, size_t buflen) {
       setState(file_error);
       return FILE_BUFFEROVERFLOW;
     }
-    pStream.read(buf + count, 1);
+    _internal->pStream.read(buf + count, 1);
     lastRead = *(buf + count);
   } while (!StringUtil::isDelim(lastRead, delims));
 
   return GR_OK;
 }
 void DiskFile::close() {
-  if (pStream.is_open()) {
-    pStream.close();
-    pStream.clear(std::ios::goodbit);
+  if (_internal->pStream.is_open()) {
+    _internal->pStream.close();
+    _internal->pStream.clear(std::ios::goodbit);
   }
   state = file_closed;
 }
@@ -293,29 +310,29 @@ void DiskFile::close() {
 *  @brief Return the read/write streams
 *  @param newStream The stream to return.
 */
-RetCode DiskFile::getReadStream(std::fstream& newStream) {
-  if (newStream.is_open()) {
-    return FILE_HANDLEISOPEN;
-  }
-
-  newStream.open(loc.c_str(), std::ios::in | std::ios::binary);
-  //CheckOsErrorsDbg();
-  if (!newStream.good()) {
-    newStream.close();
-    return FILE_OPENFAILED;//throw new Exception(Game::EX_FILE_OPEN_FAILED,"FILE_OPEN_FAILED",__LINE__,__FILE__);
-  }
-
-  size_t size;
-  newStream.seekg(0, std::ios::end);
-  size = (size_t)newStream.tellg();
-  newStream.seekg(0, std::ios::beg);
-
-  AssertOrThrow2(off < size);
-
-  newStream.seekg(this->off, std::ios::end);
-
-  return GR_OK;
-}
+//RetCode DiskFile::getReadStream(std::fstream& newStream) {
+//  if (newStream.is_open()) {
+//    return FILE_HANDLEISOPEN;
+//  }
+//
+//  newStream.open(loc.c_str(), std::ios::in | std::ios::binary);
+//  //CheckOsErrorsDbg();
+//  if (!newStream.good()) {
+//    newStream.close();
+//    return FILE_OPENFAILED;//throw new Exception(Game::EX_FILE_OPEN_FAILED,"FILE_OPEN_FAILED",__LINE__,__FILE__);
+//  }
+//
+//  size_t size;
+//  newStream.seekg(0, std::ios::end);
+//  size = (size_t)newStream.tellg();
+//  newStream.seekg(0, std::ios::beg);
+//
+//  AssertOrThrow2(off < size);
+//
+//  newStream.seekg(this->off, std::ios::end);
+//
+//  return GR_OK;
+//}
 RetCode DiskFile::readAllBytes(string_t loc, Allocator<char>& __out_ outBuf) {
   if (!FileSystem::fileExists(loc)) {
     Br2LogError("File " + loc + " did not exist.");

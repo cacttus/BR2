@@ -1,4 +1,4 @@
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../model/UtilMeshBox.h"
 #include "../model/MeshUtils.h"
 

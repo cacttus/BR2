@@ -1,8 +1,8 @@
 #include "../base/EngineConfig.h"
-#include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
+#include "../gfx/GLContext.h"
 
 namespace BR2 {
 

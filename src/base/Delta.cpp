@@ -1,5 +1,6 @@
 #include "../base/Delta.h"
 
+#include "../base/SDLIncludes.h"
 namespace BR2 {
 Delta::Delta() {
 }

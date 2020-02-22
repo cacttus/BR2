@@ -73,6 +73,7 @@ public:
 
 
 };
+class SoundCacheInternal;
 /**
 *  @class SoundCache
 *  @brief Sound Manager class (TODO: rename SoundManager)
@@ -90,14 +91,8 @@ public:
   void mixSamplesAsync(uint8_t* stream, int len);
 
 private:
-  typedef std::map<Hash32, std::shared_ptr<SoundSpec>> SoundMap;
-  SoundMap _cache;
-  bool _bError = false;
-  SDL_AudioSpec _desired, _have;
-  std::mutex _mutex;
+  std::shared_ptr< SoundCacheInternal> _internal = nullptr;
 
-  void printSoundInfo();
-  static void my_audio_callback(void* userdata, uint8_t* stream, int len);
 
 };
 

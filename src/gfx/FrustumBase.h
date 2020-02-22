@@ -19,7 +19,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../gfx/GfxHeader.h"
-#include "../model/SceneNode.h"
+
 namespace BR2 {
 /**
 *  @class Frustum
@@ -31,11 +31,10 @@ public:
   virtual ~FrustumBase() override;
 
   mat4 getProjectionMatrix();
-  // - Get / SET
   Box3f* getBoundBox() { return _minimax; }
   //Line3f* getSatLine() { return _satLine; }
   Line3f getCenterAxis();    // - Returns the view vector of this frustum.
-  Vector3    getViewVector();    // - Returns the view vector of this frustum.
+  Vector3 getViewVector();    // - Returns the view vector of this frustum.
   Vec3f getNearPlaneCenterPoint();
   //Matrix4x4 getProjMat(){ return proj_mat; }
   QuadPlane PlaneAt(int i) { return Planes[i]; }

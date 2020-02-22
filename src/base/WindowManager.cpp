@@ -1,6 +1,6 @@
 #include "../base/Gu.h"
 #include "../base/WindowManager.h"
-#include "../base/GraphicsWindow.h"
+#include "../gfx/GraphicsWindow.h"
 #include "../gfx/GraphicsApi.h"
 
 namespace BR2 {

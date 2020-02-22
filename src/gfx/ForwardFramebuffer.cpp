@@ -1,10 +1,10 @@
-#include "../base/BaseAll.h"
 #include "../base/Gu.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/ForwardFramebuffer.h"
 #include "../gfx/BufferRenderTarget.h"
+#include "../gfx/GLContext.h"
 
 
 namespace BR2 {

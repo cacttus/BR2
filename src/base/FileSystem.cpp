@@ -1,5 +1,5 @@
 #include "../base/FileSystem.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../base/ApplicationPackage.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
@@ -8,7 +8,8 @@
 #include "../base/DateTime.h"
 
 #include <direct.h>
-#include <SDL.h>
+
+#include "../base/SDLIncludes.h"
 #include "../ext/dirent.h"
 #include <fstream>
 
@@ -104,7 +105,7 @@ bool FileSystem::createDirectoryRecursive(string_t dirName) {
     }
   }
   catch (Exception * ex) {
-    Gu::getLogger()->logError("Failed to create directory recursive '" + dirName + "'");
+    Gu::getLogger()->logError("Failed to create directory recursive '" + dirName + "' " + ex->what());
     bRet = false;
   }
   return bRet;

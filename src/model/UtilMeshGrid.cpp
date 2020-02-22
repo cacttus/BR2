@@ -1,4 +1,4 @@
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../model/UtilMeshGrid.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"

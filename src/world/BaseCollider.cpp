@@ -1,57 +1,53 @@
 #include "../base/Gu.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-#include "../world/PhysicsNode.h"
+#include "../world/BaseCollider.h"
 #include "../world/Manifold.h"
 #include "../world/PhysicsManager.h"
 #include "../world/Scene.h"
+#include "../world/SceneNode.h" 
 
 namespace BR2 {
-PhysicsNode::PhysicsNode() : SceneNode(ps) {
+BaseCollider::BaseCollider(std::shared_ptr<SceneNode> pnode): Component(pnode) {
   _pSpeedbox = new Box3f();
-  _pManifold = std::make_shared<GridManifold>();
+  _pBoundBox = new Box3f();
+  _pManifold = new GridManifold();
   _vHistoryPos.push_back(vec3(0, 0, 0));
   _vHistoryVel.push_back(vec3(0, 0, 0));
   //  _vTempAcc = 0.0f;S
-  _vTempPos = getPos();
+  _vTempPos = pnode->getPos();
   _vTempVel = 0.0f;
   //calcBoundBox();//don't call this here, tTHIIS is null
 }
-PhysicsNode::~PhysicsNode() {
-  //   DEL_MEM(_pCellManifold);
- // DEL_MEM(_pManifold);
+BaseCollider::~BaseCollider() {
+  DEL_MEM(_pManifold);
   DEL_MEM(_pSpeedbox);
+  DEL_MEM(_pBoundBox);
 }
-//void PhysicsNode::init() {
-//  BaseNode::init();
+//TODO: manage this, somehow.
+void BaseCollider::setNodeVelocity(vec3& nodeVel){ BrThrowNotImplementedException(); }
+void BaseCollider::setNodePosition(vec3& nodePos){ BrThrowNotImplementedException(); }
+//void BaseCollider::setVelocity(vec3& v) {
+//  _vVelocity = v;
+//  //Don't update anything here. we set this often.
 //}
-void PhysicsNode::setVelocity(vec3& v) {
-  _vVelocity = v;
-  //Don't update anything here. we set this often.
-}
-std::shared_ptr<TreeNode> PhysicsNode::attachChild(std::shared_ptr<TreeNode> pChild) {
-  if (std::dynamic_pointer_cast<PhysicsNode>(pChild) != nullptr) {
-    //*Make sure the node is not in the scene.
-    getScene()->getPhysicsManager()->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
-  }
-  else {
-    //This is not an error - like ArmatureNode will come here it's not a physicsnode.
-    //THis is just an extra safe check I guess
-    //cast fail
-//    Gu::debugBreak();
-  }
-  return TreeNode::attachChild(pChild);
-}
+//std::shared_ptr<TreeNode> BaseCollider::attachChild(std::shared_ptr<TreeNode> pChild) {
+//  if (std::dynamic_pointer_cast<BaseCollider>(pChild) != nullptr) {
+//    //*Make sure the node is not in the scene.
+//    getScene()->getPhysicsManager()->tryRemoveObj(std::dynamic_pointer_cast<BaseCollider>(pChild));
+//  }
+//  else {
+//    //This is not an error - like ArmatureNode will come here it's not a BaseCollider.
+//    //THis is just an extra safe check I guess
+//    //cast fail
+////    Gu::debugBreak();
+//  }
+//  return TreeNode::attachChild(pChild);
+//}
 
-void PhysicsData::serialize(std::shared_ptr<BinaryFile> fb) {
-  NodeData::serialize(fb);
-}
-void PhysicsData::deserialize(std::shared_ptr<BinaryFile> fb) {
-  NodeData::deserialize(fb);
-}
-void PhysicsNode::validateSanePhysics() {
-  vec3 pos = getPos();
+void BaseCollider::validateSanePhysics() {
+  vec3 pos = getNode()->getPos();
   vec3 origpos = pos;
 
   //Make this a huge number.
@@ -64,41 +60,41 @@ void PhysicsNode::validateSanePhysics() {
     //    _vTempAcc = 0;
     //    Gu::debugBreak();
     //}
-  if (_vVelocity.squaredLength() > PHY_MAX_VELOCITY_LENGTH_SQR) {
+  if (getNode()->getVelocity().squaredLength() > PHY_MAX_VELOCITY_LENGTH_SQR) {
     //You're going too fast, stap.//Stop moving.
 //    Gu::debugBreak();
-    _vVelocity = 0;
+    setNodeVelocity(std::move(vec3(0, 0, 0)));
   }
   if (!pos.isNormalFloat()) {
     //    Gu::debugBreak();
     pos = 0;
   }
 
-#define pos_msg(aa) BroLogWarn("Object has reached the edge of the world!! p=("+ aa.x+ " "+ aa.y+ " "+ aa.z + ") resetting position.")
+#define pos_msg(aa) Br2LogWarn("Object has reached the edge of the world!! p=("+ aa.x+ " "+ aa.y+ " "+ aa.z + ") resetting position.")
 
   // if the object is out of bounds throw it up to the sky
-  if (pos.x < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.x = PHY_MAX_OBJECT_DISTANCE - getBoundBoxObject()->getWidth(); }
-  if (pos.y < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.y = PHY_MAX_OBJECT_DISTANCE - getBoundBoxObject()->getHeight(); }
-  if (pos.z < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.z = PHY_MAX_OBJECT_DISTANCE - getBoundBoxObject()->getDepth(); }
-  if (pos.x > PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.x = -PHY_MAX_OBJECT_DISTANCE + getBoundBoxObject()->getWidth(); }
-  if (pos.y > PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.y = -PHY_MAX_OBJECT_DISTANCE + getBoundBoxObject()->getHeight(); }
-  if (pos.z > PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.z = -PHY_MAX_OBJECT_DISTANCE + getBoundBoxObject()->getDepth(); }
+  if (pos.x < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.x = PHY_MAX_OBJECT_DISTANCE - getBoundBox()->getWidth(); }
+  if (pos.y < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.y = PHY_MAX_OBJECT_DISTANCE - getBoundBox()->getHeight(); }
+  if (pos.z < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.z = PHY_MAX_OBJECT_DISTANCE - getBoundBox()->getDepth(); }
+  if (pos.x > PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.x = -PHY_MAX_OBJECT_DISTANCE + getBoundBox()->getWidth(); }
+  if (pos.y > PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.y = -PHY_MAX_OBJECT_DISTANCE + getBoundBox()->getHeight(); }
+  if (pos.z > PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.z = -PHY_MAX_OBJECT_DISTANCE + getBoundBox()->getDepth(); }
 
   if (pos != origpos) {
-    setPos(std::move(pos));
+    setNodePosition(std::move(pos));
   }
 
 }
-//void PhysicsNode::calcBoundBox() {
+//void BaseCollider::calcBoundBox() {
 //    Box3f* pBox = getBoundBoxObject();
 //    calcBoundBox(pBox, getPos());
 //}
 
-void PhysicsNode::calcSpeedBox() {
-  vec3 vVel = getVelocity();
+void BaseCollider::calcSpeedBox() {
+  vec3 vVel = getNode()->getVelocity();
   Box3f* pSpeedbox = getSpeedbox();
-  pSpeedbox->_min = getBoundBoxObject()->_min;
-  pSpeedbox->_max = getBoundBoxObject()->_max;
+  pSpeedbox->_min = getBoundBox()->_min;
+  pSpeedbox->_max = getBoundBox()->_max;
 
   if (vVel.x > 0) {
     pSpeedbox->_max.x += vVel.x;
@@ -124,18 +120,18 @@ void PhysicsNode::calcSpeedBox() {
   pSpeedbox->validateBoundBox();
 }
 
-void PhysicsNode::setTemps(vec3& vVel, uint64_t frameId) {
+void BaseCollider::setTemps(vec3& vVel, uint64_t frameId) {
   //Last Pos
-  _vHistoryPos.push_back(getPos());
+  _vHistoryPos.push_back(getNode()->getPos());
   if ((int)_vHistoryPos.size() > c_vHistoryPosSize) {
     _vHistoryPos.erase(_vHistoryPos.begin());
   }
-  _vHistoryVel.push_back(getVelocity());
+  _vHistoryVel.push_back(getNode()->getVelocity());
   if ((int)_vHistoryVel.size() > c_vHistoryVelSize) {
     _vHistoryVel.erase(_vHistoryVel.begin());
   }
   //Store the temps that get modified in Smasher
-  _vTempPos = getPos();
+  _vTempPos = getNode()->getPos();
   //20
   _vTempVel = vVel; //getVelocity();
 
@@ -147,11 +143,11 @@ void PhysicsNode::setTemps(vec3& vVel, uint64_t frameId) {
 }
 //void Phy25::unstickOb(Phy25* other){
 //}
-//void PhysicsNode::calcBoundBox() {
+//void BaseCollider::calcBoundBox() {
 //    Box3f* pBox = getBoundBoxObject();
 //    calcBoundBox(pBox, getPos());
 //}
-//void PhysicsNode::calcBoundBox(Box3f* __out_ pBox, vec3& obPos, float extra_pad) {
+//void BaseCollider::calcBoundBox(Box3f* __out_ pBox, vec3& obPos, float extra_pad) {
 //
 //    //if (_pGrid != nullptr)
 //    //{

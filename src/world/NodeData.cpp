@@ -1,6 +1,6 @@
-#include "../model/NodeData.h"
 #include "../base/Hash.h"
 #include "../base/BinaryFile.h"
+#include "../world/NodeData.h"
 
 
 namespace BR2 {

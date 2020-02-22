@@ -15,7 +15,7 @@
 #include "../model/MobFile.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshData.h"
-#include "../model/MeshNode.h"
+#include "../model/MeshComponent.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/OBB.h"
@@ -586,13 +586,13 @@ void ArmatureNode::build(std::shared_ptr<BoneNode> b, std::shared_ptr<BoneNode> 
     build(bs, new_bn, vecBonesUnordered);
   }
 }
-void ArmatureNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void ArmatureNode::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (_pBoneRoot) {
     //Bones are separate from scene.  Bones don't get model transform.
     //This is intentional.  We would end up with 2 transforms on mesh.
     _pBoneRoot->update(delta, mapAnimators);
   }
-  SceneNode::update(delta, mapAnimators);
+  SceneNode::update(delta, cam, mapAnimators);
 }
 void ArmatureNode::drawBones(std::shared_ptr<UtilMeshInline> mi, std::shared_ptr<BoneNode> bn, Color4f& c4) {
   ///mat4 mBind = bn->getSpec()->getBind();
@@ -841,7 +841,7 @@ ModelNode::ModelNode(std::shared_ptr<GLContext> ct) {
   _pContext = ct;
 
   stopAllActions();
-  update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
+  update(0.0, nullptr, std::map<Hash32, std::shared_ptr<Animator>>());
 
   ////Create armatures
   //for (std::shared_ptr<ArmatureNode> pArmSpec : data->getArmatures()) {
@@ -962,7 +962,7 @@ std::shared_ptr<SceneNode> ModelNode::getNodeByName(string_t name) {
   }
   return it->second;
 }
-void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void ModelNode::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   Perf::pushPerf();
   //Do nothing with input animators.  We use our own animators.
 

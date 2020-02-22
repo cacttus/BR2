@@ -47,6 +47,18 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
 |     GLContext     | OpenGL context.  There may be more than one OpenGL context in the engine.  "Sharable" items are shared across contexts, including textures, meshes and shaders.                                                 |
 |   Managers | All managers control their respective system.  PhysicsManager, InputManager, WorldManager, ModelManger, TexCache (TextureManager), ShaderMaker (ShaderManager) .. etc.
 
+## New Design (2020)
+* Scene
+	* .. nodes
+		* SceneNode
+			 * .. components
+			 * MeshComponent : Component
+			 * CollisionShape : Component
+			 * CSharpScript : Component
+		* CameraNode : SceneNode
+		* LightNode : SceneNode
+	* PhysicsManager
+
 ## Classes
 
 * Gu

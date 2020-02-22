@@ -1,7 +1,6 @@
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
 #include "../base/Gu.h"
-
 #include "../base/Logger.h"
 #include "../base/BinaryFile.h"
 

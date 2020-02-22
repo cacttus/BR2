@@ -26,7 +26,7 @@ public:
   SceneNode();
   virtual ~SceneNode() override;
 
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
+  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void collect(std::shared_ptr<RenderBucket> rb);
 
   void compileWorldMatrix();
@@ -34,8 +34,8 @@ public:
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad);
   template <class Tx> bool findNode(std::shared_ptr<Tx>& __out_ node);
 
-  std::shared_ptr<SceneNode> clone(bool deep);
-  void copy(std::shared_ptr<SceneNode> rhs, bool deep);
+  virtual std::shared_ptr<SceneNode> clone(bool deep);
+  virtual void copy(std::shared_ptr<SceneNode> rhs, bool deep);
 
   virtual void serialize(std::shared_ptr<BinaryFile> fb);
   virtual void deserialize(std::shared_ptr<BinaryFile> fb);
@@ -57,10 +57,6 @@ public:
   std::shared_ptr<BoneNode> getBoneParent() { return _pBoneParent; }
   void setHidden(bool bHidden) { _bHidden = bHidden; }
   bool getHidden() { return _bHidden; }
-  
-  /*void setNodeData(std::shared_ptr<NodeData> nd) { _pNodeData = nd; }
-  std::shared_ptr<NodeData> getNodeData() { return _pNodeData; }*/
-
   NodeId getId() { return _iNodeId; }
   OBB* getOBB() { return _pOBB; }
   Box3f* getBoundBoxObject() { return _pBox; }
@@ -76,18 +72,8 @@ public:
   mat4& getWorld() { return _mWorld; }
   mat4& getAnimated() { return _mAnimated; }
   std::shared_ptr<Scene> getScene();
-  Hash32 getSpecNameHashed() {return _iNameHashed;}
+  Hash32 getSpecNameHashed() { return _iNameHashed; }
   vec3 getFinalPos();
-
-  //mat4& getFinal() {return _mFinal;}
-  bool isMeshNode();
-  bool isBoneNode();
-  bool isArmatureNode();
-  bool isSkinnedMesh();
-  bool isLightNode();
-  bool isModelNode();
-  bool isCameraNode();
-
   ParentType getParentType() { return _eParentType; }
   Box3f* getBindingBoundBox() { return _pBindingBoundBox; }
   string_t getName() { return _strName; }
@@ -99,13 +85,28 @@ public:
   void setInvBind(mat4& bind);
   void setParentName(string_t str, ParentType ee) { _strParentName = str; setParentType(ee); }
   string_t getParentName() { return _strParentName; }
+  Hash32 getNameHashed() { return _iNameHashed; }
+
+  bool isMeshNode();
+  bool isBoneNode();
+  bool isArmatureNode();
+  bool isSkinnedMesh();
+  bool isLightNode();
+  bool isModelNode();
+  bool isCameraNode();
+
+  Box3f* getBoundBox() { return _pBox; }
+
+  void addComponent(std::shared_ptr<Component> comp);
+  vec3 getVelocity() { return _vVelocity; }
 protected:
   mat4 _mWorld; //User manipulated PRS that has been compiled.
   mat4 _mLocal; //Local animation outside of the manipulated PRS.
-  vec3 _vViewNormal; //TODO: use an orthonormal matrix.
-  vec3 _vRotationNormal;//User manipulated rotation normal.
-  float _fRotation; //User manipulated rotation.
-  vec3 _vScale; //User manipulated scale.
+  vec3 _vViewNormal = vec3(0, 0, -1);; //TODO: use an orthonormal matrix.
+  vec3 _vRotationNormal = vec3(0,1 , 0);//User manipulated rotation normal.
+  float _fRotation = 0; //User manipulated rotation.
+  vec3 _vScale = vec3(1, 1, 1);; //User manipulated scale.
+  vec3 _vVelocity = vec3(0, 0, 0);
 
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
@@ -122,6 +123,8 @@ private:
   string_t _strParentName;
   ParentType _eParentType = ParentType::None;
 
+  std::vector<std::shared_ptr<Component>> _vecComponents;
+
   std::shared_ptr<BoneNode> _pBoneParent = nullptr;
   Box3f* _pBox = nullptr; //Computed AABB.
   OBB* _pOBB = nullptr; //Computed OBB.
@@ -134,7 +137,6 @@ private:
   void applyLocalAnimation(std::shared_ptr<Animator>);
   void applyParent();
   void setParentType(ParentType pt) { _eParentType = pt; }
-
 };
 
 template < typename Tx >

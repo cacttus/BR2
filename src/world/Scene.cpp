@@ -10,7 +10,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../model/MeshNode.h"
+#include "../model/MeshComponent.h"
 #include "../model/MeshUtils.h"
 #include "../model/Model.h"
 #include "../gfx/ShaderManager.h"

@@ -34,7 +34,7 @@ class RenderBucket;
 class BvhCollectionParams;
 class RenderBucket;
 class Scene;
-class WorldObject;
+class SceneNode;
 
 }//ns BR2
 

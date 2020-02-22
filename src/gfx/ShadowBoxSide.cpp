@@ -1,5 +1,6 @@
-#include "../base/Base.h"
+#include "../base/Logger.h"
 #include "../base/Perf.h"
+#include "../base/EngineConfig.h"
 #include "../math/MathAll.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderManager.h"
@@ -12,9 +13,10 @@
 #include "../gfx/LightNode.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/RenderSettings.h"
+#include "../gfx/GLContext.h"
+#include "../gfx/RenderBucket.h"
 #include "../model/MeshData.h"
-#include "../model/MeshNode.h"
-#include "../world/RenderBucket.h"
+#include "../model/MeshComponent.h"
 #include "../world/PhysicsManager.h"
 #include "../world/PhysicsGrid.h"
 #include "../world/Scene.h"
@@ -136,7 +138,7 @@ bool ShadowBoxSide::computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum) {
 
   return pCamFrustum->hasFrustum(_pFrustum);
 }
-void ShadowBoxSide::collect() {
+void ShadowBoxSide::collect(std::shared_ptr<CameraNode> cam) {
   if (_bShadowMapEnabled == false) {
     return;
   }
@@ -144,7 +146,7 @@ void ShadowBoxSide::collect() {
   AssertOrThrow2(_pVisibleSet != nullptr);
   // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
 
-  _pVisibleSet->clear();
+  _pVisibleSet->clear(cam);
 
   std::shared_ptr<Scene> ps = _pLightSource->getScene();
   if (ps == nullptr) {
@@ -211,7 +213,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
     //Find an appropriate shader for the terrain meshes
     std::shared_ptr<ShaderBase> sb;
     for (auto p : _pVisibleSet->getGrids()) {
-      std::shared_ptr<MeshNode> mn = p.second->getMesh();
+      std::shared_ptr<MeshComponent> mn = p.second->getMesh();
       if (mn != nullptr) {
         if (mn->getMeshData() != nullptr) {
           std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
@@ -231,7 +233,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
       sb->setUf("_ufShadowLightPos", (void*)getLight()->getFinalPosPtr(), 1, false);
       //if shadow topology
       for (auto p : _pVisibleSet->getGrids()) {
-        std::shared_ptr<MeshNode> mn = p.second->getMesh();
+        std::shared_ptr<MeshComponent> mn = p.second->getMesh();
         if (mn != nullptr) {
           if (mn->getMeshData() != nullptr) {
             std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();

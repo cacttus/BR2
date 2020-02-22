@@ -1,9 +1,11 @@
 
 
-#include "../base/BaseAll.h"
+#include "../base/Logger.h"
+#include "../base/FileSystem.h"
 #include "../base/OperatingSystem.h"
+#include "../base/WindowsIncludes.h"
 
-#include "../base/WindowsOS.h"
+#include <iostream>
 
 namespace BR2 {
 

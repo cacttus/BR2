@@ -1,4 +1,3 @@
-#include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/EngineConfig.h"
@@ -12,7 +11,9 @@
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowFrustum.h"
+#include "../gfx/GLContext.h"
 #include "../model/OBB.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
 LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow)  {
@@ -22,8 +23,8 @@ LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow)  {
 }
 LightNodeBase::~LightNodeBase() {
 }
-void LightNodeBase::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-  PhysicsNode::update(delta, mapAnimators);
+void LightNodeBase::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+  PhysicsNode::update(delta, cam, mapAnimators);
 }
 vec3* LightNodeBase::getFinalPosPtr() {
   _vGpuBufferedPosition = getFinalPos();//getTransform()->getPos();
@@ -62,15 +63,17 @@ void LightNodeDir::setMaxDistance(float f) {
   _pShadowFrustum->getFrustum()->setZFar(f);
   _pShadowFrustum->setChanged();
 }
-void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void LightNodeDir::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (getHidden() == true) {
     return;
   }
   Perf::pushPerf();
   {
-    LightNodeBase::update(delta, mapAnimators);
+    LightNodeBase::update(delta, cam, mapAnimators);
     if (_pShadowFrustum != nullptr) {
-      _pShadowFrustum->update();
+      if (getScene()) {
+        _pShadowFrustum->update(cam, getScene()->getPhysicsManager());
+      }
     }
 
     _vDir = (getLookAt() - getFinalPos()).normalized();
@@ -118,15 +121,15 @@ void LightNodePoint::createShadowBox(std::shared_ptr<GLContext> ct) {
   _pShadowBox = std::make_shared<ShadowBox>(ct, getThis<LightNodePoint>(), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
   _pShadowBox->init();
 }
-void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void LightNodePoint::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (getHidden() == true) {
     return;
   }
   Perf::pushPerf();
   {
-    LightNodeBase::update(delta, mapAnimators);
+    LightNodeBase::update(delta, cam, mapAnimators);
     if (_pShadowBox != nullptr) {
-      _pShadowBox->update();
+      _pShadowBox->update(cam);
     }
     updateFlicker();
 

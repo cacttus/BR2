@@ -1,5 +1,7 @@
-#include "../base/BaseAll.h"
 #include "../base/Perf.h"
+#include "../base/Logger.h"
+#include "../base/Hash.h"
+#include "../base/EngineConfig.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderSubProgram.h"
@@ -16,13 +18,13 @@
 #include "../gfx/GpuComputeSync.h"
 #include "../gfx/ShadowBoxSide.h"
 #include "../gfx/ShadowFrustum.h"
+#include "../gfx/GLContext.h"
 #include "../model/VaoDataGeneric.h"
-#include "../model/MeshNode.h"
+#include "../model/MeshComponent.h"
 #include "../model/MeshData.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
 #include "../world/PhysicsManager.h"
-#include "../world/RenderBucket.h"
 
 namespace BR2 {
 ShaderBase::ShaderBase(std::shared_ptr<GLContext> ct, string_t strName) : GLFramework(ct) {
@@ -250,7 +252,7 @@ void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
   setUf(ufName, &iChannel, -1, bIgnoreIfNotFound);
 }
 
-void ShaderBase::draw(std::shared_ptr<MeshNode> mesh, int32_t iCount, GLenum eDrawMode) {
+void ShaderBase::draw(std::shared_ptr<MeshComponent> mesh, int32_t iCount, GLenum eDrawMode) {
   Perf::pushPerf();
 
   draw(mesh->getMeshData()->getVaoData(), iCount, eDrawMode);

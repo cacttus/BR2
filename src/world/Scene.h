@@ -11,14 +11,14 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
-#include "../world/WorldObject.h"
+#include "../world/SceneNode.h"
 
 namespace BR2 {
 /**
 *  @class Scene
 *  @brief The scenegraph holding all relevant objects.
 */
-class Scene : public WorldObject {
+class Scene : public SceneNode {
 public:
   Scene();
   virtual ~Scene() override;
@@ -31,6 +31,9 @@ public:
   std::shared_ptr<PhysicsManager> getPhysicsManager() { return _pPhysicsWorld; }
 
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
+  //**TODO: we need to differentiate the different cameras by keeping exactly one camera defined as the "main player camera"
+  std::shared_ptr<CameraNode> getPlayerCamera() { return _pActiveCamera; }
+
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
   std::shared_ptr<ScriptManager> getScriptManager() { return _pScriptManager; }
   std::shared_ptr<GraphicsWindow> getWindow() { return _pGraphicsWindow; }

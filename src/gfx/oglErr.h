@@ -25,6 +25,7 @@ private:
   static string_t glDebugGetMessageType(int eCode);
   static string_t glDebugGetMessageSeverity(int eCode);
   static void printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog);
+  static string_t glErrToStr(/*Glenum*/ int err);
   static bool handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog = true);
   static bool checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog = true);
 };

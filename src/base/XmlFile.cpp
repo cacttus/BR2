@@ -3,6 +3,8 @@
 #include "../base/FileSystem.h"
 #include "../base/HashMap.h"
 
+#include "../ext/pugixml/pugixml.hpp"
+
 namespace BR2 {
 XmlFile::XmlFile() {
 }

@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
-#include "../model/SceneNode.h"
+#include "../world/Component.h"
 
 namespace BR2 {
 /**
@@ -17,23 +17,24 @@ namespace BR2 {
 *  @brief Basically this is MeshNode*
 *     We carete this from tnhse meshspec class..
 * Mesh should be a component, really.
+* TODO: we can change this to "mesh" or something.
 */
-class MeshNode : public SceneNode {
+class MeshComponent : public Component {
 public:
-  MeshNode(std::shared_ptr<GLContext> context);
-  MeshNode(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<ModelNode> mn);
-  MeshNode(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> pd);
-  virtual ~MeshNode() override;
+  //MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<SceneNode> pn);
+  MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<SceneNode> pn);
+  //MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> pd);
+  virtual ~MeshComponent() override;
 
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) override;
+  void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) ;
 
-  virtual void drawDeferred(RenderParams& rp) override;
-  virtual void drawTransparent(RenderParams& rp) override;
-  virtual void drawForward(RenderParams& rp) override;
-  virtual void drawShadow(RenderParams& rp) override;
-  virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+  void drawDeferred(RenderParams& rp);
+  void drawTransparent(RenderParams& rp);
+  void drawForward(RenderParams& rp);
+  void drawShadow(RenderParams& rp);
+  void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) ;
 
-  virtual void afterChildInserted(std::shared_ptr<TreeNode>) override;
+ // virtual void afterChildInserted(std::shared_ptr<TreeNode>) override;
 
   std::vector<std::shared_ptr<BoneNode>>& getBoneNodesOrdered() { return _vecBoneNodesOrdered; }//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
   void printDataToStdout();

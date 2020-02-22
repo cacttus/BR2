@@ -1,4 +1,4 @@
-#include "../base/BaseAll.h"
+#include "../base/Logger.h"
 #include "../model/IboData.h"
 //#include "../gfx/GLRenderSystem.h"
 //#include "../math/Vec2x.h"

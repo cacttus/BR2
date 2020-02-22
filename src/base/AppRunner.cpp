@@ -1,16 +1,13 @@
 #include <signal.h>
 
-#include <SDL.h>
-#include <SDL_syswm.h>
-#include <SDL_net.h>
-
+#include "../base/SDLIncludes.h"
 #include "../base/AppRunner.h"
 #include "../base/DebugHelper.h"
 #include "../base/SoundCache.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../base/InputManager.h"
 #include "../base/Logger.h"
-#include "../base/GraphicsWindow.h"
+#include "../gfx/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
 #include "../base/Perf.h"
 #include "../base/Delta.h"
@@ -21,14 +18,10 @@
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
 #include "../base/ApplicationPackage.h"
-
 #include "../base/WindowManager.h"
-
 #include "../math/MathAll.h"
-
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/VulkanApi.h"
-
 #include "../model/ModelCache.h"
 
 
@@ -49,7 +42,6 @@ AppRunner::AppRunner() {
 AppRunner::~AppRunner(){
   DEL_MEM(_pInternal);
 }
-
 void AppRunner::runApp(const std::vector<string_t>& args) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
@@ -310,7 +302,7 @@ bool AppRunnerInternal::handleEvents(SDL_Event* event) {
 
       //This should really instigate a script
       if (Gu::getAppPackage()) {
-        Gu::getAppPackage()->userZoom(n);
+        Gu::getAppPackage()->userZoom((float)n);
       }
       n++;
     }

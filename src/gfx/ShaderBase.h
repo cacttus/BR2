@@ -53,7 +53,7 @@ public:
   void verifyBound();
   void setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound = false);
   void setLightUf(std::shared_ptr<LightManager> pLightManager);//Deferred BLIT only (called once)
-  void draw(std::shared_ptr<MeshNode> mesh, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
+  void draw(std::shared_ptr<MeshComponent> mesh, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   void draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   string_t debugGetUniformValues();

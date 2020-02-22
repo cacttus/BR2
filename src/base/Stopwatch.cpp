@@ -6,7 +6,6 @@
 
 
 namespace BR2 {
-
 Stopwatch::Stopwatch(string_t strName, bool bStart) :
   _tA(0)
   , _tB(0) {

@@ -1,5 +1,6 @@
 #include "../base/Stopwatch.h"
-#include "../base/Base.h"
+#include "../base/Logger.h"
+#include "../base/EngineConfig.h"
 #include "../math/BoxUtils.h"
 #include "../gfx/ShadowFrustum.h"
 #include "../gfx/FrustumBase.h"
@@ -10,8 +11,9 @@
 #include "../gfx/LightNode.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderManager.h"
-#include "../model/MeshNode.h"
-#include "../world/RenderBucket.h"
+#include "../gfx/RenderBucket.h"
+#include "../gfx/GLContext.h"
+#include "../model/MeshComponent.h"
 #include "../world/PhysicsManager.h"
 #include "../world/Scene.h"
 
@@ -47,7 +49,7 @@ void ShadowFrustum::init() {
 std::shared_ptr<GLContext> ShadowFrustum::getContext() {
   return _pLightSource->getLightManager()->getContext();
 }
-void ShadowFrustum::update() {
+void ShadowFrustum::update(std::shared_ptr<CameraNode> cam, std::shared_ptr<PhysicsManager> pm) {
   static int n = 0;
   if (n == 1) { return; }
   AssertOrThrow2(_pLightSource != nullptr);
@@ -65,7 +67,7 @@ void ShadowFrustum::update() {
   //    return;
   //}
 
-  std::shared_ptr<LightManager> pLightMan = _pLightSource->getLightManager();
+  //std::shared_ptr<LightManager> pLightMan = _pLightSource->getLightManager();
 
   //Update the camera for each ShadowFrustum side if the light has changed position or radius.
   //See also: debugInvalidateAllLightProjections
@@ -82,7 +84,7 @@ void ShadowFrustum::update() {
      // Collect all objects for each frustum.
      // if objects don't change don't render that frustum (bMustUpate)
 
-  collect();
+  collect(cam,pm);
 
   //If we don't need to update then return.
 //   if (bMustUpdate == false){
@@ -179,15 +181,15 @@ void ShadowFrustum::updateView() {
     //if(n==3)
     //_viewProjMatrix = mat4(_viewMatrix * _projMatrix).transposed();
 }
-void ShadowFrustum::collect() {
-  std::shared_ptr<Scene> ps = _pLightSource->getScene();
-  if (ps == nullptr) {
-    Br2LogErrorCycle("could not get scene for shadow frustum (light source may not be added however this update shouldn't be called.)");
-  }
-  std::shared_ptr<PhysicsManager> pm = ps->getPhysicsManager();
-  if (pm == nullptr) {
-    Br2LogErrorCycle("could not get PhysicsManager for shadow frustum (light source may not be added however this update shouldn't be called.)");
-  }
+void ShadowFrustum::collect(std::shared_ptr<CameraNode> cam, std::shared_ptr<PhysicsManager> pm) {
+  //std::shared_ptr<Scene> ps = _pLightSource->getScene();
+  //if (ps == nullptr) {
+  //  Br2LogErrorCycle("could not get scene for shadow frustum (light source may not be added however this update shouldn't be called.)");
+  //}
+  //std::shared_ptr<PhysicsManager> pm = ps->getPhysicsManager();
+  //if (pm == nullptr) {
+  //  Br2LogErrorCycle("could not get PhysicsManager for shadow frustum (light source may not be added however this update shouldn't be called.)");
+  //}
   if (_bShadowMapEnabled == false) {
     return;
   }
@@ -195,7 +197,7 @@ void ShadowFrustum::collect() {
   AssertOrThrow2(_pVisibleSet != nullptr);
   // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
 
-  _pVisibleSet->clear();
+  _pVisibleSet->clear(cam);
 
   BvhCollectionParams p;
   p._fMaxDist = MathUtils::broMin(_pFrustum->getZFar(), Gu::getEngineConfig()->getMaxPointLightShadowDistance());
@@ -367,7 +369,7 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
         sb->setUf("_ufShadowLightPos", (void*)&vFinal, 1, false);
 
       },
-        [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshNode> bn) {
+        [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshComponent> bn) {
         RenderParams rp;
         rp.setShader(sb);
         bn->drawShadow(rp);

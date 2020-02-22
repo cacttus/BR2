@@ -5,9 +5,9 @@
 #include "../base/Gu.h"
 #include "../base/DebugHelper.h"
 #include "../base/StringUtil.h"
-#include "../base/GLContext.h"
+#include "../gfx/GLContext.h"
 #include "../base/FpsMeter.h"
-#include "../base/GraphicsWindow.h"
+#include "../gfx/GraphicsWindow.h"
 
 #include <atomic>
 #include <mutex>

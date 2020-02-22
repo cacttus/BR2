@@ -9,6 +9,13 @@
 
 #include "../base/BuildConfig.h"
 
+//////////////////////////////////////////////////////////////////////////
+//
+// This is the root of all *system and api* include files.
+// Note: This file is included everywhere, so we must spare the heavy includes!
+//
+//////////////////////////////////////////////////////////////////////////
+
 // Engine Rebuild.
 // Removing Windows, SDL, and Vulkan from the global includes, to increase compile time.
 
@@ -32,6 +39,8 @@
 //#include <vulkan/vulkan.h>
 
 //STL
+#include <set>
+#include <stack>
 #include <string>
 #include <vector>
 #include <map>
@@ -85,14 +94,7 @@
 //#include <mono/jit/jit.h>
 //#include <mono/metadata/assembly.h>
 
-#ifdef __IPHONEOS__
-//#include "CGGeometry.h"
-//#define FLT_MAX CGFLOAT_MAX
-#endif
-
-#ifdef main
-#  undef main
-#endif /* main */
+//TODO
 
 ////////////
 //Externals
@@ -103,26 +105,5 @@
 //XML files.
 //#include "../ext/pugixml/pugixml.hpp"
 
-
-//CL, annoying errors.  This must come before we include the actual windows stuff.
-#ifdef __WINDOWS__
-//disable wctombs_s
-#pragma warning(disable:4996)
-//not all control paths return a value - must be an error.
-#pragma warning(error:4715)
-//'==': operator has no effect; did you intend '='?
-#pragma warning(error:4553)
-//warning C4002: too many arguments for function-like macro invocation 'BroLogWarn'
-#pragma warning(error:4002)
-//recursive on all control paths
-#pragma warning(error:4717)
-
-
-//Winsock (old)
-//#include <ws2tcpip.h>
-//Reinclude if we can't get sdl net to work
-//#include <winsock2.h>
-//Note to link with ws2_32.lib and wsock32.lib
-#endif
 
 #endif

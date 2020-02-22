@@ -11,6 +11,7 @@
 #include "../base/Stopwatch.h"
 
 namespace BR2 {
+class PerfInternal;
 /**
 *  @class Perf
 *  @brief Performance profiling utility class.
@@ -22,9 +23,7 @@ public:
   static void pushPerf();
   static void popPerf();
 private:
-  static string_t _strCachedProf;
-  static std::stack<Stopwatch> _stopw;
-  static void pulsePerf();
+  static std::shared_ptr<PerfInternal> _internal;
 };
 
 }//ns BR2

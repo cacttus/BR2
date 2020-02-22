@@ -9,8 +9,8 @@
 
 #include "../base/IOBase.h"
 
-#include <fstream>
 namespace BR2 {
+class DiskFileInternal;
 /**
 *  @class DiskFile
 *  @brief Basic disk file access, unbuffered. For buffered files see various @cBufferedFile.
@@ -43,17 +43,10 @@ public:
   void close();
 
   //RetCode getWriteStream( std::fstream& newStream );
-  RetCode getReadStream(std::fstream& newStream);
-
-protected:
-  void setState(file_state s) { state = s; }
-  size_t getPointerOffset() { return off; }
+  //RetCode getReadStream(std::fstream& newStream);
 
 private:
-  size_t off; // - offset in the file
-  DiskLoc loc;  // - location
-  std::fstream pStream; // - The saved file stream.
-  size_t filesize;
+  std::shared_ptr<DiskFileInternal> _internal = nullptr;
 };
 
 

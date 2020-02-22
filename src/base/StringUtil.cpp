@@ -9,7 +9,7 @@
 #include <locale>
 #include <codecvt>
 #include <string>
-
+#include <algorithm>
 
 namespace BR2 {
 

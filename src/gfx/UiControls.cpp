@@ -23,7 +23,7 @@
 #include "../gfx/RenderPipeline.h"
 #include "../base/FrameSync.h"
 
-#include "../model/MeshNode.h"
+#include "../model/MeshComponent.h"
 #include "../model/MeshData.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/TextBufferMesh.h"
