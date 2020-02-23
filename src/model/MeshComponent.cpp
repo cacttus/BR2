@@ -39,7 +39,7 @@
 
 namespace BR2 {
 
-MeshComponent::MeshComponent(std::shared_ptr<GLContext> ct, std::shared_ptr<MeshData> ms, std::shared_ptr<SceneNode> pn) :Component(pn) {
+MeshComponent::MeshComponent(std::shared_ptr<GLContext> ct, std::shared_ptr<MeshData> ms, std::shared_ptr<SceneNode> owner) : Component(owner) {
   _pMeshData = ms;
 
   _pContext = ct;

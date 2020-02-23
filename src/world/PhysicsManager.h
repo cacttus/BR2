@@ -19,11 +19,11 @@ namespace BR2 {
 *    Centerpoint of your game. Inherit from this class to process your game world.  call update() each frame
 */
 class PhysicsManager : public VirtualMemoryShared<PhysicsManager> {
-//public:
+public:
 //  friend class PhysicsNode;
 //    typedef std::map<ivec3*, std::shared_ptr<PhysicsGrid>, ivec3::Vec3xCompLess> GridMap;
 //    typedef std::map<NodeId, std::shared_ptr<PhysicsNode>> ObjMap;
-//public:
+public:
 //  PhysicsManager(std::shared_ptr<Scene> pScene, float fNodeWidth, float fNodeHeight, vec3& vUp,
 //    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
 //    MpInt mpNodesY, uint32_t iGridCountLimit);
@@ -31,7 +31,7 @@ class PhysicsManager : public VirtualMemoryShared<PhysicsManager> {
 //
 //  virtual void update(float delta);
 //  void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
-//  void collectVisibleNodes(BvhCollectionParams* collectionParams);
+  void collectVisibleNodes(BvhCollectionParams* collectionParams);
 //  std::shared_ptr<GLContext> getContext();
 //  
 //  std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();

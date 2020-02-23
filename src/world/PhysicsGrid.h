@@ -34,7 +34,7 @@ public:
   vec3 getOriginR3();
   bool isEmpty() { return _bEmpty; }
 
-  virtual std::shared_ptr<MeshNode> getMesh() { return nullptr; }
+  virtual std::shared_ptr<MeshComponent> getMesh() { return nullptr; }
 protected:
   void linkGrids();
   void unlinkGrids();

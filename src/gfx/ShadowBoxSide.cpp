@@ -203,12 +203,12 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
         sb->setUf("_ufView", (void*)getViewMatrix(), 1, false);
         sb->setUf("_ufShadowLightPos", (void*)getLight()->getFinalPosPtr(), 1, false);
       },
-        [&](std::shared_ptr<ShaderBase> sb, std::shared_ptr<SceneNode> n) {
+        [&](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshComponent> n) {
         RenderParams rp;
         rp.setShader(sb);
         n->drawShadow(rp);
       }
-      );
+    );
 
     //Find an appropriate shader for the terrain meshes
     std::shared_ptr<ShaderBase> sb;

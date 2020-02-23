@@ -306,6 +306,15 @@
     <ClCompile Include="src\model\MeshComponent.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
+    <ClCompile Include="src\model\Model.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model\MobFile.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model\MeshData.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -624,6 +633,15 @@
       <Filter>src\world</Filter>
     </ClInclude>
     <ClInclude Include="src\model\MeshComponent.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\Model.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\MobFile.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model\MeshData.h">
       <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>

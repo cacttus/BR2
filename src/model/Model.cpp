@@ -1,14 +1,17 @@
-#include "../base/Base.h"
+#include "../base/Logger.h"
+#include "../base/Hash.h"
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/Perf.h"
 #include "../math/Algorithm.h"
+#include "../base/ApplicationPackage.h"
 #include "../gfx/Texture2DSpec.h"
+#include "../gfx/GLContext.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderSettings.h"
-#include "../model/SceneNode.h"
+#include "../world/SceneNode.h"
 #include "../model/ShaderStorageBuffer.h"
 #include "../model/Model.h"
 #include "../model/Material.h"
@@ -19,6 +22,7 @@
 #include "../model/UtilMeshInline.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/OBB.h"
+#include "../model/MobFile.h"
 
 namespace BR2 {
 #pragma region KeyFrame 
@@ -567,7 +571,7 @@ ArmatureNode::~ArmatureNode() {
 //    delete ps;
 //}
   _vecBonesOrdered.resize(0);
-  //  _vecMeshes.resize(0);
+  _vecMeshes.resize(0);
 }
 void ArmatureNode::build(std::shared_ptr<BoneNode> b, std::shared_ptr<BoneNode> bParent, std::vector<std::shared_ptr<BoneNode>>& vecBonesUnordered) {
   AssertOrThrow2(b != nullptr);
@@ -678,7 +682,7 @@ void ModelNode::deserialize(std::shared_ptr<BinaryFile> fb) {
     Br2LogInfo("  Mesh " + iMesh + "..");
     std::shared_ptr<MeshData> pMesh = std::make_shared<MeshData>(_pContext);
     pMesh->deserialize(fb);
-    //_vecMeshes.push_back(pMesh);
+    _vecMeshes.push_back(pMesh);
   }
 
   bool bHasThumb = false;
@@ -861,7 +865,7 @@ ModelNode::ModelNode(std::shared_ptr<GLContext> ct) {
   //}
 
   buildNodeParents();
-  getContext()->chkErrRt();
+  ct->chkErrRt();
 }
 ModelNode::~ModelNode() {
   //for (std::pair<Hash32,  std::shared_ptr<Animator>> p : _mapAnimators) {
@@ -946,9 +950,9 @@ void ModelNode::buildNodeParents() {
 }
 void ModelNode::addNodeToCache(std::shared_ptr<SceneNode> bn) {
   AssertOrThrow2(bn != nullptr);
-  Hash32 bnName = STRHASH(bn->getNodeData()->getName());
+  Hash32 bnName = STRHASH(bn->getName());
   if (_mapNodes.find(bnName) != _mapNodes.end()) {
-    Br2LogError("ModelNode: Failed to add base node '" + bn->getNodeData()->getName() + "' as it already exists in node cache.");
+    Br2LogError("ModelNode: Failed to add base node '" + bn->getName() + "' as it already exists in node cache.");
   }
   else {
     _mapNodes.insert(std::make_pair(bnName, bn));
@@ -972,10 +976,10 @@ void ModelNode::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Ha
   }
 
   //Update all nodes ONCE
-  SceneNode::update(delta, _mapAnimators);
+  SceneNode::update(delta, cam, _mapAnimators);
 
   //*Dispatch final skin for all meshes
-  for (std::shared_ptr<MeshNode> mn : _vecMeshes) {
+  for (std::shared_ptr<MeshComponent> mn : _vecMeshes) {
     mn->computeAndDispatchSkin();
   }
   Perf::popPerf();

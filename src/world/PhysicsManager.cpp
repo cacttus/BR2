@@ -1234,39 +1234,39 @@ namespace BR2 {
 //
 //  return vOut;
 //}
-//void PhysicsManager::collectVisibleNodes(BvhCollectionParams* parms) {
-//  AssertOrThrow2(parms->_pFrustum != nullptr);
-//  AssertOrThrow2(parms->_pRenderBucket != nullptr);
-//
-//  parms->_pRenderBucket->clear(parms->_pCamera);
-//  std::set<ivec3*, ivec3::Vec3xCompLess> grids;
-//
-//  //Get All Grids
-//  sweepGridFrustum([&](ivec3& cv) {
-//    std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
-//    if (pGrid != nullptr) {
-//      std::shared_ptr<FrustumBase> frust = parms->_pFrustum;
-//      Box3f* box = pGrid->getBoundBox();
-//      if (frust->hasBox(box)) {
-//        parms->_pRenderBucket->addGrid(pGrid);
-//      }
-//    }
-//    }, parms->_pFrustum, parms->_fMaxDist);
-//
-//  //Add meshes to render bucket
-//  int32_t dbgHidden = 0;
-//  for (std::pair<NodeId, std::shared_ptr<PhysicsNode>> p : _mapObjects) {
-//    if (p.second->getHidden() == false) {
-//      if (parms->_pFrustum->hasBox(p.second->getBoundBoxObject())) {
-//        float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - p.second->getBoundBoxObject()->center()).length2();
-//        parms->_pRenderBucket->addObj(p.second);
-//      }
-//      else {
-//        dbgHidden++;
-//      }
-//    }
-//  }
-//}
+void PhysicsManager::collectVisibleNodes(BvhCollectionParams* parms) {
+  //AssertOrThrow2(parms->_pFrustum != nullptr);
+  //AssertOrThrow2(parms->_pRenderBucket != nullptr);
+
+  //parms->_pRenderBucket->clear(parms->_pCamera);
+  //std::set<ivec3*, ivec3::Vec3xCompLess> grids;
+
+  ////Get All Grids
+  //sweepGridFrustum([&](ivec3& cv) {
+  //  std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
+  //  if (pGrid != nullptr) {
+  //    std::shared_ptr<FrustumBase> frust = parms->_pFrustum;
+  //    Box3f* box = pGrid->getBoundBox();
+  //    if (frust->hasBox(box)) {
+  //      parms->_pRenderBucket->addGrid(pGrid);
+  //    }
+  //  }
+  //  }, parms->_pFrustum, parms->_fMaxDist);
+
+  ////Add meshes to render bucket
+  //int32_t dbgHidden = 0;
+  //for (std::pair<NodeId, std::shared_ptr<PhysicsNode>> p : _mapObjects) {
+  //  if (p.second->getHidden() == false) {
+  //    if (parms->_pFrustum->hasBox(p.second->getBoundBoxObject())) {
+  //      float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - p.second->getBoundBoxObject()->center()).length2();
+  //      parms->_pRenderBucket->addObj(p.second);
+  //    }
+  //    else {
+  //      dbgHidden++;
+  //    }
+  //  }
+  //}
+}
 //void PhysicsManager::sweepGridFrustum(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2) {
 //  vec3 cp = pf->getNearPlaneCenterPoint();
 //  int32_t iDebugSweepCount = 0;

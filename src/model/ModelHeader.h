@@ -50,7 +50,6 @@ class Animator;
 class BoneNode;
 class PRSAnimation;
 class RotateTo;
-class MeshNode;
 class ShaderStorageBuffer;
 class MeshData;
 class UtilMesh;
@@ -79,8 +78,8 @@ class SceneNode;
 class PhysicsNode;
 class MbiFile;
 class OBB;
-class MeshNode;
-
+class MeshComponent;
+ 
 class MeshBufferData {
 public:
   std::shared_ptr<FragmentBufferData> _frags;

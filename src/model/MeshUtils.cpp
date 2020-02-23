@@ -900,9 +900,7 @@ void MeshUtils::finalizeSpec(std::shared_ptr<MeshData> ms, vec3* minV, vec3* max
   //_pContactManager->generateDefaultBoundaryContactBoxForMesh(ms, minV, maxV);
   //ms->computeMinimax();
 }
-std::shared_ptr<MeshNode> MeshUtils::createScreenQuadMesh(std::shared_ptr<GLContext> context, int w, int h) {
-  std::shared_ptr<MeshNode> quadMesh = nullptr;
-
+std::shared_ptr<MeshData> MeshUtils::createScreenQuadMesh(std::shared_ptr<GLContext> context, int w, int h) {
   std::vector<v_v3x2> verts;
   std::vector<v_index32> inds;
 
@@ -932,13 +930,11 @@ std::shared_ptr<MeshNode> MeshUtils::createScreenQuadMesh(std::shared_ptr<GLCont
   inds.push_back(3);
   inds.push_back(2);
 
-  quadMesh = std::make_shared<MeshNode>(context, std::make_shared<MeshData>(context, verts.data(),
+  std::shared_ptr<MeshData> dat = std::make_shared<MeshData>(context, verts.data(),
     verts.size(), inds.data(), inds.size(), v_v3x2::getVertexFormat(), nullptr
-    )
-  );
+    );
 
-
-  return quadMesh;
+  return dat;
 }
 vec3* MeshUtils::getVertexElementOffset(vec3* verts, size_t iElementIndex, size_t vOffBytes, size_t vStrideBytes, size_t vCount) {
   //Similar to opengl's way of claculating components this gets you a vertex at a element index

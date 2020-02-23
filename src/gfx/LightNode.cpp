@@ -24,7 +24,7 @@ LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow)  {
 LightNodeBase::~LightNodeBase() {
 }
 void LightNodeBase::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-  PhysicsNode::update(delta, cam, mapAnimators);
+  SceneNode::update(delta, cam, mapAnimators);
 }
 vec3* LightNodeBase::getFinalPosPtr() {
   _vGpuBufferedPosition = getFinalPos();//getTransform()->getPos();

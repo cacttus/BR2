@@ -45,7 +45,7 @@ public:
 public:
   MeshUtils() {}
   virtual ~MeshUtils() override {}
-  static std::shared_ptr<MeshNode> createScreenQuadMesh(std::shared_ptr<GLContext> context, int w, int h);
+  static std::shared_ptr<MeshData> createScreenQuadMesh(std::shared_ptr<GLContext> context, int w, int h);
   static std::shared_ptr<MeshData> makeCone(std::shared_ptr<GLContext> context, float radius, float h, int32_t slices); //YOU MUST ADD THE SPEC TO THE MESH MANAGER!!!!! @cMeshFactory
   static std::shared_ptr<MeshData> makeSphere(std::shared_ptr<GLContext> context, float radius, int32_t slices, int32_t stacks, vec4* color = NULL, vec3* vOffset = NULL, bool blnDoNormals = true);//YOU MUST ADD THE SPEC TO THE MESH MANAGER!!!!! @cMeshFactory
   static std::shared_ptr<MeshData> makeArcSegment(std::shared_ptr<GLContext> context, float radius, float radius2, float refHeight, Vec3f refPos, int32_t slices);

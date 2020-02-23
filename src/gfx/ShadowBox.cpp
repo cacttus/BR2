@@ -238,7 +238,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
   if (pBox->getGlTexId() != 0) {
     if (Gu::getRenderSettings()->getSmoothShadows()) {
       std::shared_ptr<ShaderBase> pDofShader = getContext()->getShaderManager()->getSmoothGenShader();
-      std::shared_ptr<MeshComponent> pQuadMesh = MeshUtils::createScreenQuadMesh(getContext(),_iFboWidthPixels, _iFboHeightPixels);
+      std::shared_ptr<MeshData> pQuadMesh = MeshUtils::createScreenQuadMesh(getContext(),_iFboWidthPixels, _iFboHeightPixels);
 
       //Blend color + position and store it in the color.
       pDofShader->beginRaster(_iFboWidthPixels, _iFboHeightPixels);

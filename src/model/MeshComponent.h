@@ -22,7 +22,7 @@ namespace BR2 {
 class MeshComponent : public Component {
 public:
   //MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<SceneNode> pn);
-  MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<SceneNode> pn);
+  MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<SceneNode> owner);
   //MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> pd);
   virtual ~MeshComponent() override;
 

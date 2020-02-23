@@ -1,10 +1,9 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-
-#include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/BinaryFile.h"
 #include "../gfx/Texture2DSpec.h"
+#include "../gfx/GLContext.h"
 #include "../model/ModelHeader.h"
 #include "../model/Model.h"
 #include "../model/Material.h"
@@ -22,6 +21,8 @@
 #include "../model/VboData.h"
 #include "../world/PhysicsShapes.h"
 #include "../world/PhysicsShapes.h"
+
+#include <iostream>
 
 namespace BR2 {
 MeshData::MeshData(std::shared_ptr<GLContext> ct) {
@@ -193,31 +194,31 @@ void MeshData::printWeightBuffersToStdout() {
   //}
 
 }
-//void MeshData::allocSkinMobFile(std::shared_ptr<ModelData> ms) {
-//  if (false) {
-//    printWeightsToStdout();
-//  }
-//  //Create skin on GPU
-//  t_timeval t0 = Gu::getMicroSeconds();
-//  Br2LogInfo("Creating GPU skin '" + getName() + "'..");
-//  {
-//    if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
-//      //2018/1/15 so we made all armatures be global in ModelSpec
-//      //sendVertsToGpu();
-//      //TODO - replace with new vao 1/26/18
-//
-//      // Many cards have a max uniform buffer of 128 matrixes.  This should be enough for 1 model.
-//      //MAX_VERTEX_UNIFORM_COMPONENTS_ARB
-//      //[ARM0 mat1, mat2... ARM1 mat1 mat2...]
-//      fillWeightBuffersMob(ms);
-//      if (false) {
-//        printWeightBuffersToStdout();
-//      }
-//      _eSkinStatus = MeshSkinStatus::e::Allocated;
-//    }
-//  }
-//  Br2LogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
-//}
+void MeshData::allocSkinMobFile(std::shared_ptr<ModelNode > ms) {
+  if (false) {
+    printWeightsToStdout();
+  }
+  //Create skin on GPU
+  t_timeval t0 = Gu::getMicroSeconds();
+  Br2LogInfo("Creating GPU skin '" + getName() + "'..");
+  {
+    if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
+      //2018/1/15 so we made all armatures be global in ModelSpec
+      //sendVertsToGpu();
+      //TODO - replace with new vao 1/26/18
+
+      // Many cards have a max uniform buffer of 128 matrixes.  This should be enough for 1 model.
+      //MAX_VERTEX_UNIFORM_COMPONENTS_ARB
+      //[ARM0 mat1, mat2... ARM1 mat1 mat2...]
+      fillWeightBuffersMob(ms);
+      if (false) {
+        printWeightBuffersToStdout();
+      }
+      _eSkinStatus = MeshSkinStatus::e::Allocated;
+    }
+  }
+  Br2LogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
+}
 std::shared_ptr<MeshData> MeshData::mergeWith(std::shared_ptr<MeshData> other, bool automaticallyRecalculateIndexOffsets) {
   BrThrowNotImplementedException();
   //AssertOrThrow2(_pVaoData!=nullptr);
@@ -530,238 +531,237 @@ void MeshData::calculateVertexNormals() {
 
   endEdit();
 }
-//void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelData> ms) {
-//  // Debug values
-//  int32_t minOrd = 100000;
-//  int32_t maxOrd = 0;
-//  int32_t minCount = INT_MAX;
-//  int32_t maxCount = -INT_MAX;
-//  int32_t minOff = INT_MAX;
-//  int32_t maxOff = -INT_MAX;
-//
-//  //Main weight values
-//  uint32_t ind = 0;
-//  uint32_t off = 0;
-//  uint32_t num_added_weights = 0;
-//
-//  int64_t nFragInvalid = 0;
-//  int64_t nJointInvalid = 0;
-//  int64_t iValidJointId = -1;
-//
-//  uint32_t nFragCount = (uint32_t)fragCount();
-//  size_t nTotalWeights = 0;
-//  for (VertexWeightMob w : _vecWeightsMob) {
-//    for (std::pair<int32_t, std::map<int32_t, float>> parm : w._mapWeights) {
-//      for (std::pair<int32_t, float> pweight : parm.second) {
-//        nTotalWeights++;
-//      }
-//    }
-//  }
-//  AssertOrThrow2(nFragCount > 0);
-//  AssertOrThrow2(nTotalWeights > 0);
-//
-//  GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nFragCount];
-//  GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nTotalWeights];
-//
-//  _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(getContext(), sizeof(GpuAnimatedMeshWeightData));
-//  _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(getContext(), sizeof(GpuAnimatedMeshWeight));
-//
-//  std::set<int32_t> setUniqueJointOrdinals;
-//
-//  for (uint32_t iFrag = 0; iFrag < nFragCount; ++iFrag) {
-//    VertexWeightMob& curWeight = _vecWeightsMob.at(iFrag);
-//
-//    //Copy each weight.
-//    int32_t nLocalInvalid = 0;
-//    int32_t nTotalWeightsForVert = 0;
-//    //Loop <armature name hashed, <weights>>
-//    for (std::pair<int32_t, std::map<int32_t, float>> parms : curWeight._mapWeights) {
-//      //Loop <bone id for armature, weight>
-//      for (std::pair<int32_t, float> pweights : parms.second) {
-//        int32_t iJointOrdinal = getGpuJointOrdinal(ms, parms.first, pweights.first);
-//        float fWeight = pweights.second;
-//
-//        setUniqueJointOrdinals.insert(iJointOrdinal);
-//
-//        if (iJointOrdinal < 0) { //JOINT_ORDINAL_INVALID = -1
-//          nLocalInvalid++;
-//        }
-//        else if (iValidJointId == -1) {
-//          iValidJointId = iJointOrdinal;
-//        }
-//        //if(bAnus) { iJointOrdinal = 1-iJointOrdinal; }
-//
-//        weightsGpu[num_added_weights]._iArmJointOffset = iJointOrdinal;
-//        weightsGpu[num_added_weights]._weight = fWeight;
-//        num_added_weights++;
-//        nTotalWeightsForVert++;
-//
-//        //Testing / Debug
-//        if (iJointOrdinal >= 0 && iJointOrdinal > maxOrd) {
-//          maxOrd = iJointOrdinal;
-//        }
-//        if (iJointOrdinal >= 0 && iJointOrdinal < minOrd) {
-//          minOrd = iJointOrdinal;
-//        }
-//
-//      }
-//    }
-//    if (nLocalInvalid > 0) {
-//      nFragInvalid++;
-//    }
-//    nJointInvalid += nLocalInvalid;
-//
-//    //Calculate weight offsets last because we need to count the total number of weights in the buffer.
-//    weightOffsetsGpu[iFrag]._offset = off;
-//    weightOffsetsGpu[iFrag]._count = nTotalWeightsForVert;
-//    off += weightOffsetsGpu[iFrag]._count;
-//
-//    ////Testing / Debug
-//    if (weightOffsetsGpu[iFrag]._count > maxCount) {
-//      maxCount = weightOffsetsGpu[iFrag]._count;
-//    }
-//    if (weightOffsetsGpu[iFrag]._count < minCount) {
-//      minCount = weightOffsetsGpu[iFrag]._count;
-//    }
-//    if (weightOffsetsGpu[iFrag]._offset < minOff) {
-//      minOff = weightOffsetsGpu[iFrag]._offset;
-//    }
-//    if (weightOffsetsGpu[iFrag]._offset > maxOff) {
-//      maxOff = weightOffsetsGpu[iFrag]._offset;
-//    }
-//
-//  }
-//
-//  //Fix invalid weights 
-//  if (nFragInvalid > 0) {
-//    for (uint32_t iW = 0; iW < num_added_weights; ++iW) {
-//      if (weightsGpu[iW]._iArmJointOffset < 0) {
-//        weightsGpu[iW]._iArmJointOffset = (GpuInt)iValidJointId;
-//        weightsGpu[iW]._weight = 0.0f; //disablinmg weght
-//      }
-//    }
-//  }
-//
-//  ////copy data to gpu.
-//  _pWeightOffsetsGpu->allocate(nFragCount);
-//  _pWeightOffsetsGpu->copyDataClientServer(nFragCount, (void*)weightOffsetsGpu);
-//  _pWeightsGpu->allocate(nTotalWeights);
-//  _pWeightsGpu->copyDataClientServer(nTotalWeights, (void*)weightsGpu);
-//
-//  testAccess(ms, weightOffsetsGpu, nFragCount, weightsGpu, nTotalWeights, &_vecWeightsMob);
-//
-//  delete[] weightOffsetsGpu;
-//  delete[] weightsGpu;
-//
-//  ////Skin Data Logging
-//  if (nFragInvalid > 0) {
-//    Br2LogError(nJointInvalid + " invalid Joint IDs Encountered making "
-//      + nFragInvalid + " skin vertexes invalid, default Joint ID "
-//      + " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
-//  }
-//
-//  if (maxOrd > 200000) {
-//    Br2LogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
-//  }
-//  if (minOrd < 0) {
-//    Br2LogWarn("Min joint index was invalid: " + minOrd);
-//  }
-//
-//  Br2LogDebug("Skin Stats:");
-//  Br2LogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
-//  Br2LogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
-//  Br2LogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
-//  Br2LogDebug(">  nTotalWeights: " + nTotalWeights);
-//  Br2LogDebug(">  nFragCount: " + nFragCount);
-//  Br2LogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
-//
-//  if (maxOrd >= (int32_t)setUniqueJointOrdinals.size()) {
-//    Br2LogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
-//  }
-//  if (maxOff >= (int32_t)nTotalWeights) {
-//    Br2LogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
-//  }
-//
-//  getContext()->chkErrRt();
-//  setUniqueJointOrdinals.clear();
-//
-//  //**We still need the vec weights to compute bone boxes later (optimally putting them here.
-//  //**We no longer need _vecWeights;
-// // _vecWeightsMob.resize(0);
-//}
-//int32_t MeshData::getGpuJointOrdinal(std::shared_ptr<ModelData> ms, int32_t arm, int32_t joint) {
-//  Phase1NotImplemented();
-//  //**This must corespond to ArmatureNode : _vecNodesOrdered
-//  //Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
-//
-//  int32_t iJointOrd = 0;
-//  for (std::pair<int32_t, std::shared_ptr<ArmatureData>> parm : ms->getArmatureMapOrdered()) {
-//    int32_t parm_joint = 0;
-//    for (std::pair<int32_t, std::shared_ptr<BoneData>> pbone : *parm.second->getBoneCacheOrdered()) {
-//
-//      if (parm.first == arm && parm_joint == joint) {
-//        return iJointOrd;
-//      }
-//
-//      parm_joint++;
-//      iJointOrd++;
-//    }
-//  }
-//  return -1;//Not Found
-//}
-//void MeshData::testAccess(std::shared_ptr<ModelData> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
-//  GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights) {
-//  Phase1NotImplemented();
-//
-//  if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
-//    return;
-//  }
-//
-//  Br2LogDebug("Testing Skin Access..");
-//
-//  //Armature Existence
-//  for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
-//    VertexWeightMob& vw = vecWeights->at(iweight);
-//    for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
-//      if (ms->getArmatureById(parms.first) == nullptr) {
-//        Br2LogError("Skin test failed.  Armature does not exist for one or more weights.");
-//        _eSkinStatus = MeshSkinStatus::e::Error;
-//        Gu::debugBreak();
-//        //break;
-//      }
-//    }
-//  }
-//  //Buffer Access
-//  for (size_t iWeightOff = 0; iWeightOff < weightOffsetsGpuSize; ++iWeightOff) {
-//    int32_t off = weightOffsetsGpu[iWeightOff]._offset;
-//    int32_t count = weightOffsetsGpu[iWeightOff]._count;
-//    if (off + count > (int32_t)weightsGpuSize) {
-//      Br2LogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
-//      _eSkinStatus = MeshSkinStatus::e::Error;
-//      Gu::debugBreak();
-//    }
-//    else {
-//      for (int iWeight = 0; iWeight < count; ++iWeight) {
-//        GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
-//        if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
-//          Br2LogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
-//          _eSkinStatus = MeshSkinStatus::e::Error;
-//          Gu::debugBreak();
-//        }
-//        if (gpuWeight._weight < 0.0f) {
-//          Br2LogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
-//          _eSkinStatus = MeshSkinStatus::e::Error;
-//          Gu::debugBreak();
-//        }
-//      }
-//
-//
-//    }
-//  }
-//  //}
-//
-//  Br2LogDebug("..Skin test complete.");
-//}
+void MeshData::fillWeightBuffersMob(std::shared_ptr<ModelNode> ms) {
+  // Debug values
+  int32_t minOrd = 100000;
+  int32_t maxOrd = 0;
+  int32_t minCount = INT_MAX;
+  int32_t maxCount = -INT_MAX;
+  int32_t minOff = INT_MAX;
+  int32_t maxOff = -INT_MAX;
+
+  //Main weight values
+  uint32_t ind = 0;
+  uint32_t off = 0;
+  uint32_t num_added_weights = 0;
+
+  int64_t nFragInvalid = 0;
+  int64_t nJointInvalid = 0;
+  int64_t iValidJointId = -1;
+
+  uint32_t nFragCount = (uint32_t)fragCount();
+  size_t nTotalWeights = 0;
+  for (VertexWeightMob w : _vecWeightsMob) {
+    for (std::pair<int32_t, std::map<int32_t, float>> parm : w._mapWeights) {
+      for (std::pair<int32_t, float> pweight : parm.second) {
+        nTotalWeights++;
+      }
+    }
+  }
+  AssertOrThrow2(nFragCount > 0);
+  AssertOrThrow2(nTotalWeights > 0);
+
+  GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nFragCount];
+  GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nTotalWeights];
+
+  _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(getContext(), sizeof(GpuAnimatedMeshWeightData));
+  _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(getContext(), sizeof(GpuAnimatedMeshWeight));
+
+  std::set<int32_t> setUniqueJointOrdinals;
+
+  for (uint32_t iFrag = 0; iFrag < nFragCount; ++iFrag) {
+    VertexWeightMob& curWeight = _vecWeightsMob.at(iFrag);
+
+    //Copy each weight.
+    int32_t nLocalInvalid = 0;
+    int32_t nTotalWeightsForVert = 0;
+    //Loop <armature name hashed, <weights>>
+    for (std::pair<int32_t, std::map<int32_t, float>> parms : curWeight._mapWeights) {
+      //Loop <bone id for armature, weight>
+      for (std::pair<int32_t, float> pweights : parms.second) {
+        int32_t iJointOrdinal = getGpuJointOrdinal(ms, parms.first, pweights.first);
+        float fWeight = pweights.second;
+
+        setUniqueJointOrdinals.insert(iJointOrdinal);
+
+        if (iJointOrdinal < 0) { //JOINT_ORDINAL_INVALID = -1
+          nLocalInvalid++;
+        }
+        else if (iValidJointId == -1) {
+          iValidJointId = iJointOrdinal;
+        }
+        //if(bAnus) { iJointOrdinal = 1-iJointOrdinal; }
+
+        weightsGpu[num_added_weights]._iArmJointOffset = iJointOrdinal;
+        weightsGpu[num_added_weights]._weight = fWeight;
+        num_added_weights++;
+        nTotalWeightsForVert++;
+
+        //Testing / Debug
+        if (iJointOrdinal >= 0 && iJointOrdinal > maxOrd) {
+          maxOrd = iJointOrdinal;
+        }
+        if (iJointOrdinal >= 0 && iJointOrdinal < minOrd) {
+          minOrd = iJointOrdinal;
+        }
+
+      }
+    }
+    if (nLocalInvalid > 0) {
+      nFragInvalid++;
+    }
+    nJointInvalid += nLocalInvalid;
+
+    //Calculate weight offsets last because we need to count the total number of weights in the buffer.
+    weightOffsetsGpu[iFrag]._offset = off;
+    weightOffsetsGpu[iFrag]._count = nTotalWeightsForVert;
+    off += weightOffsetsGpu[iFrag]._count;
+
+    ////Testing / Debug
+    if (weightOffsetsGpu[iFrag]._count > maxCount) {
+      maxCount = weightOffsetsGpu[iFrag]._count;
+    }
+    if (weightOffsetsGpu[iFrag]._count < minCount) {
+      minCount = weightOffsetsGpu[iFrag]._count;
+    }
+    if (weightOffsetsGpu[iFrag]._offset < minOff) {
+      minOff = weightOffsetsGpu[iFrag]._offset;
+    }
+    if (weightOffsetsGpu[iFrag]._offset > maxOff) {
+      maxOff = weightOffsetsGpu[iFrag]._offset;
+    }
+
+  }
+
+  //Fix invalid weights 
+  if (nFragInvalid > 0) {
+    for (uint32_t iW = 0; iW < num_added_weights; ++iW) {
+      if (weightsGpu[iW]._iArmJointOffset < 0) {
+        weightsGpu[iW]._iArmJointOffset = (GpuInt)iValidJointId;
+        weightsGpu[iW]._weight = 0.0f; //disablinmg weght
+      }
+    }
+  }
+
+  ////copy data to gpu.
+  _pWeightOffsetsGpu->allocate(nFragCount);
+  _pWeightOffsetsGpu->copyDataClientServer(nFragCount, (void*)weightOffsetsGpu);
+  _pWeightsGpu->allocate(nTotalWeights);
+  _pWeightsGpu->copyDataClientServer(nTotalWeights, (void*)weightsGpu);
+
+  testAccess(ms, weightOffsetsGpu, nFragCount, weightsGpu, nTotalWeights, &_vecWeightsMob);
+
+  delete[] weightOffsetsGpu;
+  delete[] weightsGpu;
+
+  ////Skin Data Logging
+  if (nFragInvalid > 0) {
+    Br2LogError(nJointInvalid + " invalid Joint IDs Encountered making "
+      + nFragInvalid + " skin vertexes invalid, default Joint ID "
+      + " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
+  }
+
+  if (maxOrd > 200000) {
+    Br2LogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
+  }
+  if (minOrd < 0) {
+    Br2LogWarn("Min joint index was invalid: " + minOrd);
+  }
+
+  Br2LogDebug("Skin Stats:");
+  Br2LogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
+  Br2LogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
+  Br2LogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
+  Br2LogDebug(">  nTotalWeights: " + nTotalWeights);
+  Br2LogDebug(">  nFragCount: " + nFragCount);
+  Br2LogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
+
+  if (maxOrd >= (int32_t)setUniqueJointOrdinals.size()) {
+    Br2LogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
+  }
+  if (maxOff >= (int32_t)nTotalWeights) {
+    Br2LogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
+  }
+
+  getContext()->chkErrRt();
+  setUniqueJointOrdinals.clear();
+
+  //**We still need the vec weights to compute bone boxes later (optimally putting them here.
+  //**We no longer need _vecWeights;
+ // _vecWeightsMob.resize(0);
+}
+int32_t MeshData::getGpuJointOrdinal(std::shared_ptr<ModelNode> ms, int32_t arm, int32_t joint) {
+  
+  //**This must corespond to ArmatureNode : _vecNodesOrdered
+  //Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
+
+  int32_t iJointOrd = 0;
+  for (std::pair<int32_t, std::shared_ptr<ArmatureNode>> parm : ms->getArmatureMapOrdered()) {
+    int32_t parm_joint = 0;
+    for (std::pair<int32_t, std::shared_ptr<BoneNode>> pbone : *parm.second->getBoneCacheOrdered()) {
+
+      if (parm.first == arm && parm_joint == joint) {
+        return iJointOrd;
+      }
+
+      parm_joint++;
+      iJointOrd++;
+    }
+  }
+  return -1;//Not Found
+}
+void MeshData::testAccess(std::shared_ptr<ModelNode> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
+  GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights) {
+
+  if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
+    return;
+  }
+
+  Br2LogDebug("Testing Skin Access..");
+
+  //Armature Existence
+  for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
+    VertexWeightMob& vw = vecWeights->at(iweight);
+    for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
+      if (ms->getArmatureById(parms.first) == nullptr) {
+        Br2LogError("Skin test failed.  Armature does not exist for one or more weights.");
+        _eSkinStatus = MeshSkinStatus::e::Error;
+        Gu::debugBreak();
+        //break;
+      }
+    }
+  }
+  //Buffer Access
+  for (size_t iWeightOff = 0; iWeightOff < weightOffsetsGpuSize; ++iWeightOff) {
+    int32_t off = weightOffsetsGpu[iWeightOff]._offset;
+    int32_t count = weightOffsetsGpu[iWeightOff]._count;
+    if (off + count > (int32_t)weightsGpuSize) {
+      Br2LogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
+      _eSkinStatus = MeshSkinStatus::e::Error;
+      Gu::debugBreak();
+    }
+    else {
+      for (int iWeight = 0; iWeight < count; ++iWeight) {
+        GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
+        if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
+          Br2LogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
+          _eSkinStatus = MeshSkinStatus::e::Error;
+          Gu::debugBreak();
+        }
+        if (gpuWeight._weight < 0.0f) {
+          Br2LogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
+          _eSkinStatus = MeshSkinStatus::e::Error;
+          Gu::debugBreak();
+        }
+      }
+
+
+    }
+  }
+  //}
+
+  Br2LogDebug("..Skin test complete.");
+}
 
 void MeshData::deserialize(std::shared_ptr<BinaryFile> fb) {
   NodeData::deserialize(fb);

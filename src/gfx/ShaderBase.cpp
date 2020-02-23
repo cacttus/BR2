@@ -251,7 +251,12 @@ void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
 
   setUf(ufName, &iChannel, -1, bIgnoreIfNotFound);
 }
+void ShaderBase::draw(std::shared_ptr<MeshData> mesh, int32_t iCount, GLenum eDrawMode) {
+  Perf::pushPerf();
 
+  draw(mesh->getVaoData(), iCount, eDrawMode);
+  Perf::popPerf();
+}
 void ShaderBase::draw(std::shared_ptr<MeshComponent> mesh, int32_t iCount, GLenum eDrawMode) {
   Perf::pushPerf();
 

@@ -13,7 +13,6 @@
 #include "../model/ModelHeader.h"
 #include "../world/SceneNode.h"
 #include "../world/NodeData.h"
-#include "../world/PhysicsNode.h"
 
 namespace BR2 {
 
@@ -251,7 +250,7 @@ private:
 *  @class ModelNode
 *  @brief A 3D Model, defined as Meshes, Skeleton, and Animations.
 */
-class ModelNode : public PhysicsNode {
+class ModelNode : public SceneNode {
 public:
   ModelNode(std::shared_ptr<GLContext> ct);
   virtual ~ModelNode();
@@ -269,7 +268,7 @@ public:
   std::shared_ptr<GLContext> getContext() { return _pContext; }
 
   int32_t getFrameRate() { return _iFrameRate; }
-  std::vector<std::shared_ptr<MeshNode>>& getAllMeshes();
+  std::vector<std::shared_ptr<MeshComponent>>& getAllMeshes() { return _vecMeshes; }
   std::vector<std::shared_ptr<ArmatureNode>>& getArmatures() { return _vecArmatures; }
   std::vector<std::shared_ptr<ActionGroup>>& getActionGroups() { return _vecActionGroups; }
   virtual void deserialize(std::shared_ptr<BinaryFile> bf) override;
@@ -291,7 +290,7 @@ private:
 //  std::shared_ptr<ModelData> _pModelData = nullptr;
   std::shared_ptr<SceneNode> _pWorldNode = nullptr; // Reference to the world node *not owned
 
-  //std::vector<std::shared_ptr<MeshNode>> _vecMeshes;
+  std::vector<std::shared_ptr<MeshComponent>> _vecMeshes;
   //std::vector<std::shared_ptr<ArmatureNode>> _vecArmatures;
   std::map<Hash32, std::shared_ptr<Animator>> _mapAnimators;
   std::map<Hash32, std::shared_ptr<SceneNode>> _mapNodes;//Cache of all nodes appended including bones.  

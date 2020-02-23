@@ -91,6 +91,9 @@
     <ClCompile Include="src\model\IboData.cpp" />
     <ClCompile Include="src\model\IndexBufferData.cpp" />
     <ClCompile Include="src\model\MeshComponent.cpp" />
+    <ClCompile Include="src\model\MeshData.cpp" />
+    <ClCompile Include="src\model\MobFile.cpp" />
+    <ClCompile Include="src\model\Model.cpp" />
     <ClCompile Include="src\model\OBB.cpp" />
     <ClCompile Include="src\model\ShaderStorageBuffer.cpp" />
     <ClCompile Include="src\model\UtilMesh.cpp" />
@@ -197,6 +200,9 @@
     <ClInclude Include="src\model\IboData.h" />
     <ClInclude Include="src\model\IndexBufferData.h" />
     <ClInclude Include="src\model\MeshComponent.h" />
+    <ClInclude Include="src\model\MeshData.h" />
+    <ClInclude Include="src\model\MobFile.h" />
+    <ClInclude Include="src\model\Model.h" />
     <ClInclude Include="src\model\OBB.h" />
     <ClInclude Include="src\model\ShaderStorageBuffer.h" />
     <ClInclude Include="src\model\UtilMesh.h" />

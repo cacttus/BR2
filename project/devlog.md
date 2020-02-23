@@ -2,7 +2,7 @@
 # Mine City Devlog
 
 ## Tasks
-- [ ] Data Class Separation
+- [ ] Data Class Separation. Replace Node/Spec with a clone() and copy() system.
     - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
 	- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
 	- [ ] Implement `clone()` and `copy()` on nodes.
