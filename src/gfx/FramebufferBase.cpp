@@ -16,7 +16,7 @@
 #include "../model/VboData.h"
 #include "../model/VaoDataGeneric.h"
 
-namespace Game {
+namespace BR2 {
 FramebufferBase::FramebufferBase(std::shared_ptr<GLContext> pc, bool bMsaa, int nMsaa, vec4& vClear) :
     _pContext(pc), _bMsaaEnabled(bMsaa), _nMsaaSamples(nMsaa){
     _vClear = vClear;

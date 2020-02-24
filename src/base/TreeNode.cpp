@@ -2,7 +2,7 @@
 #include "../base/Exception.h"
 #include "../base/Gu.h"   
 
-namespace Game {
+namespace BR2 {
 TreeNode::TreeNode() :
   _pParent(NULL)
   , _iRecursionStamp(0)

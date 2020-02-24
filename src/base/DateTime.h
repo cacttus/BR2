@@ -1,20 +1,15 @@
 /**
-*
-*    @file Date.h
-*    @date August 23, 2010
-*    @author MetalMario971
-*
-*    © 2011
-*
-*
+*  @file Date.h
+*  @date August 23, 2010
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __DATE_2689426881206782656826687_H__
 #define __DATE_2689426881206782656826687_H__
 
 #include "../base/BaseHeader.h"
-namespace Game {
 
+namespace BR2 {
 #define TIME_HH_RSH (0)
 #define TIME_MM_RSH (6)
 #define TIME_SS_RSH (13)
@@ -24,7 +19,6 @@ namespace Game {
 #define TIME_MM_LSH (18)
 #define TIME_SS_LSH (11)
 #define TIME_MS_LSH (2)
-
 
 //masks for the given time components if their least significant bit is at bit 0
 #define TIME_HH_CH_MASK (64+32+16+8+4+2+1)
@@ -50,9 +44,7 @@ public:
   static t_datetime getDateTime(int32_t mm, int32_t dd, int32_t y1, int32_t y2, int32_t h, int32_t m, int32_t s, int32_t ms);
   static t_date getDate(int32_t mm, int32_t dd, int32_t y1, int32_t y2);
   static t_time getTime(int32_t hb, int32_t mm, int32_t ss, int32_t ms);
-
   static t_datetime fromUTime(time_t t);
-
   static t_date strToDate(const t_string& szDate, char separator = '/');
   static t_datetime strToDateTime(const t_string& szDateTime);
   static t_time strToTime(t_string& time, char separator = ':');

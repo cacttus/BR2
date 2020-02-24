@@ -9,7 +9,7 @@
 
 #include "../gfx/UiBase.h"
 
-namespace Game {
+namespace BR2 {
 
 class UiSkinElement : public VirtualMemoryShared<UiSkinElement> {
 public:

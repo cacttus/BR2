@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../base/IOBase.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *   @class DynamicBuffer
 *   @details
@@ -25,13 +25,13 @@ template < class Tx >
 class DynamicBuffer : public IOBufferBase<Tx> {
 public:
   DynamicBuffer(int32_t chunkSizeItems);
-  OVERRIDES ~DynamicBuffer() OVERRIDE;
+  virtual ~DynamicBuffer() override;
 
   bool getIsEmpty() { return _iAddCountItems == 0; }
 
   void copyFrom(DynamicBuffer<Tx>* rhs);
-  OVERRIDES RetCode write(const Tx* bytes, size_t len, size_t offset = memsize_max) OVERRIDE;
-  OVERRIDES RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) OVERRIDE;
+  virtual RetCode write(const Tx* bytes, size_t len, size_t offset = memsize_max) override;
+  virtual RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) override;
 
   virtual void clear();
   Allocator<Tx>* getData();

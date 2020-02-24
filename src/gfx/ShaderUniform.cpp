@@ -8,7 +8,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
 
-namespace Game {
+namespace BR2 {
 ShaderUniform::ShaderUniform(std::shared_ptr<GLContext> ct, GLenum eType, GLint location, t_string name, size_t iArraySize) :
   _pContext(ct) {
   _glType = eType;

@@ -20,7 +20,7 @@
 #include "../world/RenderBucket.h"
 #include "../model/MeshUtils.h"
 
-namespace Game {
+namespace BR2 {
 /*
 TODO:
     encapsulate frustums/fbo/visible set/viewport in

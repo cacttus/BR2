@@ -12,7 +12,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class ShadowFrustumSide
 *  @brief Side of a shadow cube frustum.  This is basically a camera with a view frustum. Analogous to BaseCamera3D - without the extra node system overhead.
@@ -38,7 +38,7 @@ public:
         , BoxSide::e eSide
         , bool bShadowMapEnabled
         );
-    OVERRIDES ~ShadowBoxSide() OVERRIDE;
+    virtual ~ShadowBoxSide() override;
 
     bool getMustUpdate() { return _bMustUpdate; }
     std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }

@@ -1,7 +1,7 @@
 #include "Particles.h"
 
 
-namespace Game {
+namespace BR2 {
 Particles::Particles() {
 
 }

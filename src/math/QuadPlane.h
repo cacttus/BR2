@@ -10,7 +10,7 @@
 #include "../math/TriPlane.h"
 #include "../math/PlaneEx3.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class QuadPlane
 *  @brief Derived plane for extra info and stuff.  DO NOT ADD VIRTUAL METHODS

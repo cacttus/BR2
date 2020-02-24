@@ -8,21 +8,46 @@
 #include "../gfx/ShaderUniform.h"
 
 
-namespace Game {
-RenderParams::RenderParams(std::shared_ptr<ShaderBase> pShader) : _pShader(pShader) {
+namespace BR2 {
+class RenderParams_Internal {
+public:
+  std::shared_ptr<ShaderBase> _pShader = nullptr;
+  int32_t _iCount = -1; //Number of indexes
+  GLenum _eDrawMode = GL_TRIANGLES;
+  //Only one of these must be set.
+  std::shared_ptr<MeshNode> _pMeshNode = nullptr;
+  std::shared_ptr<VaoDataGeneric> _pVaoDataGeneric = nullptr;
+  std::shared_ptr<VaoShader> _pVaoShader = nullptr;
+};
+//////////////////////////////////////////////////////////////////////////
+RenderParams::RenderParams(){
+  _pint = std::make_unique<RenderParams_Internal>();
+}
+RenderParams::RenderParams(std::shared_ptr<ShaderBase> pShader) : RenderParams() {
+  _pint->_pShader = pShader;
 }
 RenderParams::~RenderParams() {
+  _pint = nullptr;
 }
+int32_t RenderParams::getCount() { return _pint->_iCount; }
+void RenderParams::setCount(int32_t i) { _pint->_iCount = i; }
+void RenderParams::setDrawMode(GLenum e) { _pint->_eDrawMode = e; }
+std::shared_ptr<ShaderBase> RenderParams::getShader() { return _pint->_pShader; }
+void RenderParams::setShader(std::shared_ptr<ShaderBase> sb) { _pint->_pShader = sb; }
+void RenderParams::setMesh(std::shared_ptr<MeshNode> x) { _pint->_pMeshNode = x; }
+void RenderParams::setVaoGeneric(std::shared_ptr<VaoDataGeneric> x) { _pint->_pVaoDataGeneric = x; }
+void RenderParams::setVaoShader(std::shared_ptr<VaoShader> x) { _pint->_pVaoShader = x; }
+
 void RenderParams::draw() {
     //Check some stuff
     int nd = 0;
-    if (_pMeshNode != nullptr) {
+    if (_pint->_pMeshNode != nullptr) {
         nd++;
     }
-    if (_pVaoDataGeneric != nullptr) {
+    if (_pint->_pVaoDataGeneric != nullptr) {
         nd++;
     }
-    if (_pVaoShader != nullptr) {
+    if (_pint->_pVaoShader != nullptr) {
         nd++;
     }
     if (nd != 1) {
@@ -30,7 +55,7 @@ void RenderParams::draw() {
         return;
     }
 
-    if (_pShader == nullptr) {
+    if (_pint->_pShader == nullptr) {
         BRLogWarnCycle("[RenderParams] Couldn't render - shader was not set.");
         return;
     }
@@ -61,14 +86,14 @@ void RenderParams::draw() {
     //}
 
     //Draw via shader.
-    if (_pMeshNode != nullptr) {
-        _pShader->draw(_pMeshNode, _iCount, _eDrawMode);
+    if (_pint->_pMeshNode != nullptr) {
+      _pint->_pShader->draw(_pint->_pMeshNode, _pint->_iCount, _pint->_eDrawMode);
     }
-    else if (_pVaoDataGeneric != nullptr) {
-        _pShader->draw(_pVaoDataGeneric, _iCount, _eDrawMode);
+    else if (_pint->_pVaoDataGeneric != nullptr) {
+      _pint->_pShader->draw(_pint->_pVaoDataGeneric, _pint->_iCount, _pint->_eDrawMode);
     }
-    else if (_pVaoShader != nullptr) {
-        _pShader->draw(_pVaoShader, _iCount, _eDrawMode);
+    else if (_pint->_pVaoShader != nullptr) {
+      _pint->_pShader->draw(_pint->_pVaoShader, _pint->_iCount, _pint->_eDrawMode);
     }
     else {
         BRLogWarnCycle("Drawable Item was not set on RenderParams.");

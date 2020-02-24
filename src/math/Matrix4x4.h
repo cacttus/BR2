@@ -13,7 +13,7 @@
 #include "../math/Matrix3x3.h"
 #include "../base/TypeConv.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @stuct Matrix4x4
 *  @brief Row Major.  The matrix is ordered by row,column

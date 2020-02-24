@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 class DOFFbo {
 public:
   GLuint _uiDOFFboId;

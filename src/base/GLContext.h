@@ -8,9 +8,9 @@
 #define __GLCONTEXT_14795781163972161943_H__
 
 #include "../gfx/GraphicsContext.h"
-
-namespace Game {
-
+#include "../base/SDLIncludes.h"
+#include "../base/SDLGLIncludes.h"
+namespace BR2 {
 /**
 *  @class GLContext
 *  @brief OpenGL render context

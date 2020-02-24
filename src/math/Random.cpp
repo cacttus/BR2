@@ -1,9 +1,19 @@
 #include "../math/Random.h"
 #include "../base/TypeConv.h"
 
-namespace Game {
-int32_t Random::_last = 1283094874;//Arbitrary
+#include <time.h>
 
+namespace BR2 {
+int32_t Random::_last = 1283094874;//Arbitrary
+Random::Random() {
+#ifdef _USE_C_RAND
+  srand((unsigned int)time(NULL));
+#else
+  _last = (int32_t)time(NULL);
+#endif
+}
+Random::~Random() {
+}
 t_string Random::randomNumericString(int nDigits) {
   t_string ret;
   for (int i = 0; i < nDigits; ++i) {

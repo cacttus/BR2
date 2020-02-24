@@ -6,7 +6,7 @@
 #include "../base/Img32.h"
 
 
-namespace Game {
+namespace BR2 {
 
 void SDLUtils::trySetWindowIcon(SDL_Window* w, t_string iconPath) {
   if (iconPath.length()) {

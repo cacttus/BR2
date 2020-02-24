@@ -6,7 +6,7 @@
 #include "../base/SDLUtils.h"
 #include "../base/GraphicsWindow.h"
 
-namespace Game {
+namespace BR2 {
 GraphicsApi::GraphicsApi() {
 }
 GraphicsApi::~GraphicsApi() {

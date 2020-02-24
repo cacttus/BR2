@@ -1,7 +1,7 @@
 #include "../base/StreamBuffer.h"
 
 
-namespace Game {
+namespace BR2 {
 StreamBuffer::StreamBuffer(int32_t chunkSizeBytes) :
   _iChunkSizeBytes(chunkSizeBytes) {
   AssertOrThrow2(_iChunkSizeBytes > 0);

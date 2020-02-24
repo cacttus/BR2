@@ -10,7 +10,7 @@
 
 #include "../model/GpuBufferData.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class ShaderStorageBuffer  SSBO
 *  @brief TODO: change the name to GpuShaderStorageBuffer

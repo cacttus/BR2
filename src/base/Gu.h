@@ -14,7 +14,7 @@
 #include "../world/WorldHeader.h"
 #include "../base/Stopwatch.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Gu
 *  @brief Global Utilities.
@@ -72,6 +72,7 @@ public:
 
   static void debugBreak();
 
+  static void sleepThread(uint64_t milliseconds);
 
   static bool isDebug();
 

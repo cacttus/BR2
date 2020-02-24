@@ -12,7 +12,7 @@
 #include "../math/MathAll.h"
 #include "../world/PhysicsNode.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class CameraNode
 *  @brief Base class for cameras in the GL. Superclass of @cBaseCamera2D, @cBaseCamera3D
@@ -43,6 +43,7 @@ public:
   const vec3& getRightNormal() { return _vRight; }
   const vec3& getUpNormal() { return _vUp; }
   std::shared_ptr<FrustumBase> getFrustum() { return _pMainFrustum; }
+
 protected:
   std::shared_ptr<WindowViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
   float _f_hfov = 60;            // - Field of view.

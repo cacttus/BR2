@@ -11,7 +11,7 @@
 #include "../model/ModelCache.h"
 #include "../model/ModelThumb.h"
 
-namespace Game {
+namespace BR2 {
 MobFile::MobFile() {
 
 }

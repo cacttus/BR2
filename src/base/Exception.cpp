@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 
 
-namespace Game {
+namespace BR2 {
 Exception::Exception(t_string c, int line, const char* file, bool bLogError) {
   _line = line;
   _msg = c;

@@ -5,7 +5,7 @@
 #include "../model/MeshUtils.h"
 #include "../model/MeshSpec.h"
 
-namespace Game {
+namespace BR2 {
 UtilMeshSphere::UtilMeshSphere(std::shared_ptr<GLContext> ctx, float radius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks) :
   UtilMesh(ctx, MeshUtils::MeshMakerVert::getVertexFormat(), nullptr, GL_TRIANGLES)
   , _fRadius(radius)

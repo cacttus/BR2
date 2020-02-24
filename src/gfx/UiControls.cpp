@@ -26,7 +26,7 @@
 #include "../model/VboData.h"
 #include "../model/IboData.h"
 
-namespace Game {
+namespace BR2 {
 std::shared_ptr<UiEventFunc> UiEventFunc::create(std::function<void(UiEventId::e eventId, void*)> f) {
   std::shared_ptr<UiEventFunc> ef = std::make_shared<UiEventFunc>();
   ef->_func = f;

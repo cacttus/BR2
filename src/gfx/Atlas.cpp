@@ -8,7 +8,7 @@
 #include "../gfx/Atlas.h"
 #include "../gfx/TexCache.h"
 
-namespace Game {
+namespace BR2 {
 Atlas::Atlas(std::shared_ptr<GLContext> ct, t_string na, ivec2& ivGridSize) : _strName(na), Texture2DSpec(ct) {
   _vGridSize = ivGridSize; //_pSpriteMap->getGridDimensions();
 }
@@ -244,7 +244,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
         ite->second->_viGridPos.y = (iImage / _vGridSize.y);
       }
     }
-    catch (Game::Exception * ex) {
+    catch (BR2::Exception * ex) {
       BRLogError("Failed to Copy Sub-Image during texture composition.:\r\n" + ex->what());
     }
 

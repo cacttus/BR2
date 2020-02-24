@@ -10,7 +10,7 @@
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/RenderUtils.h"
 
-namespace Game {
+namespace BR2 {
 Texture2DSpec::Texture2DSpec(t_string loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : _pContext(ctx) {
   load(loc, bRepeatU, bRepeatV);
 }

@@ -3,7 +3,10 @@
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
 
-namespace Game {
+#include "../base/SDLIncludes.h"
+#include <mutex>
+
+namespace BR2 {
 #pragma region SoundSpec
 SoundSpec::SoundSpec(t_string sFIle) : _sFilePath(sFIle) {
   load(sFIle);
@@ -121,7 +124,19 @@ void SoundInst::checkPlayback() {
 #pragma endregion
 
 #pragma region SoundCache
-void SoundCache::my_audio_callback(void* userdata, uint8_t* stream, int len) {
+class SoundCache_Internal {
+public:
+  typedef std::map<Hash32, std::shared_ptr<SoundSpec>> SoundMap;
+  SoundMap _cache;
+  bool _bError = false;
+  SDL_AudioSpec _desired, _have;
+  std::mutex _mutex;
+
+  void printSoundInfo();
+  static void my_audio_callback(void* userdata, uint8_t* stream, int len);
+};
+
+void SoundCache_Internal::my_audio_callback(void* userdata, uint8_t* stream, int len) {
   SoundCache* sc = (SoundCache*)userdata;
   if (sc == nullptr) {
     return;
@@ -129,7 +144,9 @@ void SoundCache::my_audio_callback(void* userdata, uint8_t* stream, int len) {
 
   sc->mixSamplesAsync(stream, len);
 }
+//////////////////////////////////////////////////////////////////////////
 SoundCache::SoundCache() {
+  _pint = std::make_unique<SoundCache_Internal>();
   init();
 }
 SoundCache::~SoundCache() {
@@ -138,35 +155,36 @@ SoundCache::~SoundCache() {
   //    ss = null
   //    DEL_MEM(ss);
   //}
-  _cache.clear();
+  _pint->_cache.clear();
   SDL_LockAudio();
   SDL_CloseAudio();
   SDL_UnlockAudio();
+  _pint = nullptr;
 }
 void SoundCache::init() {
   int buffer = 1024;
 
-  _desired.callback = my_audio_callback;
-  _desired.channels = 2;
-  _desired.format = AUDIO_S16; //*this is teh stb_vorbis input format
-  _desired.freq = 44100;
-  _desired.samples = 1024;
-  _desired.userdata = this;
+  _pint->_desired.callback = SoundCache_Internal::my_audio_callback;
+  _pint->_desired.channels = 2;
+  _pint->_desired.format = AUDIO_S16; //*this is teh stb_vorbis input format
+  _pint->_desired.freq = 44100;
+  _pint->_desired.samples = 1024;
+  _pint->_desired.userdata = this;
 
-  if (SDL_OpenAudio(&_desired, &_have) < 0) {
+  if (SDL_OpenAudio(&_pint->_desired, &_pint->_have) < 0) {
     //SDL_OpenAudioDevice(NULL, 0, &_desired, &_have, SDL_AUDIO_ALLOW_ANY_CHANGE);
     // if (_iSDLAudioDevice <= 0) {
     BRLogError("SDL Couldn't open audio: " + SDL_GetError());
 
-    _bError = true;
+    _pint->_bError = true;
   }
   else {
     SDL_PauseAudio(0);
   }
 
-  printSoundInfo();
+  _pint->printSoundInfo();
 }
-void SoundCache::printSoundInfo() {
+void SoundCache_Internal::printSoundInfo() {
   /* print out some info on the formats this run of SDL_mixer supports */
   //int i, n = Mix_GetNumChunkDecoders();
   //BroLogInfo("There are ", n, " available chunk(sample) decoders");
@@ -194,10 +212,10 @@ void SoundCache::mixSamplesAsync(uint8_t* stream, int len) {
   SDL_LockAudio();
   {
     //Silence the buffer.
-    SDL_memset(stream, _have.silence, len);
+    SDL_memset(stream, _pint->_have.silence, len);
 
     int debug_NumMixed = 0;
-    for (std::pair<Hash32, std::shared_ptr<SoundSpec>> p : _cache) {
+    for (std::pair<Hash32, std::shared_ptr<SoundSpec>> p : _pint->_cache) {
       std::shared_ptr<SoundSpec> ss = p.second;
 
       //Mix the dumb spec into the dumb buffer.
@@ -210,27 +228,27 @@ void SoundCache::mixSamplesAsync(uint8_t* stream, int len) {
   SDL_UnlockAudio();
 }
 std::shared_ptr<SoundSpec> SoundCache::getOrLoad(std::string file) {
-  if (_bError == true) {
+  if (_pint->_bError == true) {
     return nullptr;
   }
 
   std::shared_ptr<SoundSpec> ret = nullptr;
 
   Hash32 ih = Hash::computeStringHash32bit(file, 0);
-  SoundMap::iterator ite = _cache.find(ih);
+  SoundCache_Internal::SoundMap::iterator ite = _pint->_cache.find(ih);
 
-  if (ite != _cache.end()) {
+  if (ite != _pint->_cache.end()) {
     ret = ite->second;
   }
   else {
     ret = std::make_shared<SoundSpec>(file);
-    _cache.insert(std::make_pair(ih, ret));
+    _pint->_cache.insert(std::make_pair(ih, ret));
   }
 
   return ret;
 }
 void SoundCache::update() {
-  for (SoundMap::iterator ite = _cache.begin(); ite != _cache.end(); ite++) {
+  for (SoundCache_Internal::SoundMap::iterator ite = _pint->_cache.begin(); ite != _pint->_cache.end(); ite++) {
     std::shared_ptr<SoundSpec> ss = ite->second;
     ss->update();
   }

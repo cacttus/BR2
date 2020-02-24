@@ -9,7 +9,7 @@
 
 #include "../model/UtilMesh.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class UtilMeshAxis
 *  @brief draws an axis centered in the world.

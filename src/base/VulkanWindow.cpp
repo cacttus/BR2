@@ -1,7 +1,7 @@
 #include "VulkanWindow.h"
 
 
-namespace Game {
+namespace BR2 {
 VulkanWindow::VulkanWindow(bool ismain) : GraphicsWindow(ismain) {
 
 }

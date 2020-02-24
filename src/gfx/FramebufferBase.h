@@ -8,7 +8,7 @@
 #define __FRAMEBUFFERBASE_14942908062084042827_H__
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class FramebufferBase
 *  @brief Base for all framebuffers

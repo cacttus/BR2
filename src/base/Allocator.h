@@ -10,7 +10,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Allocator
 *  @brief Base class that manages the allocation of user-defined memory blocks.
@@ -20,7 +20,7 @@ class Allocator : public VirtualMemory {
 public:
   FORCE_INLINE Allocator();
   FORCE_INLINE Allocator(size_t allocCount, Tx* ptFill = nullptr);
-  FORCE_INLINE OVERRIDES ~Allocator() OVERRIDE;
+  FORCE_INLINE virtual ~Allocator() override;
   FORCE_INLINE void init();
 
   FORCE_INLINE bool isAllocated() const { return (_pT != NULL); } // - Return true if this Allocator instance has allocated data.

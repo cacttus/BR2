@@ -9,7 +9,7 @@
 
 #include "../base/MachineTypes.h"
 
-namespace Game {
+namespace BR2 {
 class Exception {
 public:
   Exception(t_string c, int line, const char* file, bool bLogError = true);

@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 #include "../math/Algorithm.h"
 
-namespace Game {
+namespace BR2 {
 //Prime Numbers
 //Gneeratoer: https://asecuritysite.com/encryption/random3
 const uint32_t Hash::Fnv_Basis_32[FNV_MAX_ALGORITHMS_32] = {

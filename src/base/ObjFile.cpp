@@ -7,7 +7,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/MeshSpec.h"
 
-namespace Game {
+namespace BR2 {
 ObjFile::ObjFile(std::shared_ptr<GLContext> c) :
   _pContext(c)
   , _bDebugDisableVertexCompression(false) //**Set this to false to disable compressed vertexes (optimized meshes)

@@ -10,7 +10,8 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
+class Net_Internal;
 /**
 *  @class Net
 *  @brief Manages networking and sending packets. https://www.libsdl.org/projects/SDL_net/
@@ -21,15 +22,7 @@ public:
   virtual ~Net() override;
   void update();
 private:
-  bool _bError = false;
-
-  TCPsocket _server_control; // the server control socket.
-  std::vector<TCPsocket> _control_clients;
-
-  std::shared_ptr<SyncTimer> _pTimer;
-
-  void init();
-
+  std::unique_ptr<Net_Internal> _pint = nullptr;
 };
 
 }//ns Game

@@ -9,7 +9,7 @@
 
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class PhysicsWorld
 *  @brief Operates on the world grid and manages the entire physical world and objects and collisions.

@@ -8,7 +8,7 @@
 #include "../gfx/RenderTarget.h"
 
 
-namespace Game {
+namespace BR2 {
 ForwardFramebuffer::ForwardFramebuffer(std::shared_ptr<GLContext> pc, int32_t w, int32_t h, bool bMsaa, int nMsaa, vec4& vClear) :
   FramebufferBase(pc, bMsaa, nMsaa, vClear) {
 }

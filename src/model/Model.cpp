@@ -23,7 +23,7 @@
 #include "../model/FragmentBufferData.h"
 #include "../model/OBB.h"
 
-namespace Game {
+namespace BR2 {
 KeyFrame::KeyFrame(mat4& mat, int32_t iSeq) : KeyFrame(iSeq) {
     //We're removing matrices because it's damn impossible to use them.
     vec4 pos, rot, scl;

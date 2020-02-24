@@ -2,7 +2,7 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 
-namespace Game {
+namespace BR2 {
 TextConfigFile::TextConfigFile(t_string loc) : TextDataFile(loc) {
 
 }

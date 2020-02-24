@@ -32,7 +32,7 @@
 #include <vulkan/vulkan.h>
 
 
-namespace Game {
+namespace BR2 {
 
 
 }//ns Game

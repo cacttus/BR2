@@ -1,7 +1,7 @@
 #include "../gfx/FontTextBuffer.h"
 
 
-namespace Game {
+namespace BR2 {
 
 FontTextBuffer::FontTextBuffer(t_string& txt, int32_t x, int32_t y, vec4& cFont, t_string fontName, FontSize iFontSize) {
   _strText = txt;

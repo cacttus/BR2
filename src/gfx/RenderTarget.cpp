@@ -2,7 +2,7 @@
 #include "../base/GLContext.h"
 #include "../gfx/RenderTarget.h"
 
-namespace Game {
+namespace BR2 {
 RenderTarget::~RenderTarget() {
   glDeleteTextures(1, &_iGlTexId);
 }

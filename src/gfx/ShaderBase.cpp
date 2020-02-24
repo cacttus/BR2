@@ -30,7 +30,7 @@
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
 
-namespace Game {
+namespace BR2 {
 ShaderBase::ShaderBase(t_string strName) {
     setProgramName(strName);
 }

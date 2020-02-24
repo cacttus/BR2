@@ -9,7 +9,7 @@
 
 #include "../base/TextParser.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class TextDataFile
 *  @brief Base class for in-memory text files.

@@ -5,7 +5,7 @@
 #include "../base/FpsMeter.h"
 #include "../gfx/GraphicsContext.h"
 
-namespace Game {
+namespace BR2 {
 
 FrameSync::FrameSync() :_bVsyncDisabled(false) {
 

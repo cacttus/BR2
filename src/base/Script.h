@@ -9,7 +9,7 @@
 
 #include "../base/AppHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class Script
 *    @brief

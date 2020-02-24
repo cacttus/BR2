@@ -18,6 +18,10 @@
 #include "../math/Minimax.h"
 #include "../math/Random.h"
 
+//This is for the ostringstream conversions below.
+#include <sstream>
+//For std::setprecision
+#include <iomanip>
 
 //////////////////////////////////////////////////////////////////////////
 //All the stuff here is the math templates which rely on other definitions.  We don't need
@@ -25,7 +29,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 
-namespace Game {
+namespace BR2 {
 
 
 template < class Tx >

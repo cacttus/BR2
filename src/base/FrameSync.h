@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 //#include "../scene/SceneHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class FrameSync
 *  @brief Synchronize the number of updates or "frames" per second in a running application (i.e. in a while loop).

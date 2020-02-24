@@ -1,7 +1,7 @@
 #include "Sequencer.h"
 #include "../base/Gu.h"
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 Sequence* Sequencer::exec(
     std::function<void()> begin, std::function<void()> run, std::function<void()> end,

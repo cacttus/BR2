@@ -7,7 +7,7 @@
 #include "../model/IndexBufferData.h"
 #include "../model/VaoDataGeneric.h"
 
-namespace Game {
+namespace BR2 {
 UtilMeshGrid::UtilMeshGrid(std::shared_ptr<GLContext> pc,
   float r, float g, float b,
   int32_t nSlices,

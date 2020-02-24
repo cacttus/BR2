@@ -10,7 +10,7 @@
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Material
 *  Material Lighting Parameters + Texture maps + Binding + other stuff like sounds, bumpiness, perhaps physics
@@ -30,7 +30,7 @@ class Material : public VirtualMemory {
 public:
   Material() {}//deser
   Material(t_string name);
-  OVERRIDES ~Material() OVERRIDE;
+  virtual ~Material() override;
   t_string getName() { return _strName; }
 
   std::map<TextureChannel::e, std::shared_ptr<TextureSlot>>& getTextureSlots() { return _mapTextureBindings; }

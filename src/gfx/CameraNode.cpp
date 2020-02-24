@@ -4,7 +4,7 @@
 #include "../gfx/WindowViewport.h"
 #include "../base/Gu.h"
 
-namespace Game {
+namespace BR2 {
 CameraNode::CameraNode(std::shared_ptr<WindowViewport> ppViewport) : PhysicsNode(nullptr),
 _pViewport(ppViewport) {
   _vWorldUp.construct(0, 1, 0);

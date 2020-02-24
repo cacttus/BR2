@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class String
 *    @brief String utility functions

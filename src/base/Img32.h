@@ -9,7 +9,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../base/RetCode.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class BaseImage
 *  @brief The base class for images.  The BaseImage class also includes functions for convolution filtering.

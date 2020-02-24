@@ -2,7 +2,7 @@
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 
-namespace Game {
+namespace BR2 {
 PoundFile::PoundFile() {
 }
 PoundFile::PoundFile(t_string& loc) :

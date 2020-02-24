@@ -5,7 +5,7 @@
 #include "../base/DebugHelper.h"
 
 
-namespace Game {
+namespace BR2 {
 static int g_bPerfFrame = false;
 
 std::stack<Stopwatch> Perf::_stopw;

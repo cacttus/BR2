@@ -2,7 +2,7 @@
 #include "../base/Allocator.h"
 
 
-namespace Game {
+namespace BR2 {
 IndexBufferData::IndexBufferData() {
 }
 IndexBufferData::~IndexBufferData() {

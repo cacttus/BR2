@@ -5,7 +5,13 @@
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 
-namespace Game {
+//For wstring conversion
+#include <locale>
+#include <codecvt>
+#include <string>
+#include <algorithm>
+
+namespace BR2 {
 
 StringUtil::StringUtil() {
 }

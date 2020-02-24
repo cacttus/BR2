@@ -1,6 +1,6 @@
 #include "../math/Minimax.h"
 #include "../math/Random.h"
-namespace Game {
+namespace BR2 {
 
 float MpFloat::next() {
   checkWasSet();

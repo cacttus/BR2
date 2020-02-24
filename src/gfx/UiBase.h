@@ -18,7 +18,7 @@
 #include "../base/PoundFile.h"
 
 
-namespace Game {
+namespace BR2 {
 class Orientation {
 public:
     typedef enum { Horizontal, Vertical } e; 

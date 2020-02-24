@@ -10,7 +10,7 @@
 #include "../model/BaseNode.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 //It doesn't make sense to have the "shape" on the model, even though the model has velocity.  Same goes for mesh.
 class PhysicsSpec : public BaseSpec {
 public:

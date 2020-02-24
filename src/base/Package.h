@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Package
 *  @brief package of all our data in the filesystem on the end of the EE

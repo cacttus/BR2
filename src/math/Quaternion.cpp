@@ -1,6 +1,6 @@
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @fn toMat4
 *    @brief Fairly quick operation to turn from Quat to Matrix

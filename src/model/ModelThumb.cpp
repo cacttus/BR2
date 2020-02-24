@@ -17,7 +17,7 @@
 #include "../model/ModelThumb.h"
 #include "../world/PhysicsWorld.h"
 
-namespace Game {
+namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 //We need to generate 8 thumbs.
 

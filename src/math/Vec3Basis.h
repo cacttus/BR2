@@ -9,7 +9,7 @@
 
 #include "../math/Vec3x.h"
 
-namespace Game {
+namespace BR2 {
 /*
     Defines a set of basis vectors.
     This is used for viewport calcs

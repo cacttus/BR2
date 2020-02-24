@@ -10,7 +10,7 @@
 #include "../base/AppHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class AppBase
 *  @brief Base class for application.

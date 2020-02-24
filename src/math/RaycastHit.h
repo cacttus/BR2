@@ -10,7 +10,7 @@
 #include "../math/MathHeader.h"
 #include "../math/Vec3x.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @struct RaycastHit
 *  @brief Returns hit test data from a projected ray.

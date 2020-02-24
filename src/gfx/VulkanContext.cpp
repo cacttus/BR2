@@ -1,7 +1,7 @@
 #include "VulkanContext.h"
 
 
-namespace Game {
+namespace BR2 {
 VulkanContext::VulkanContext() {
 
 }

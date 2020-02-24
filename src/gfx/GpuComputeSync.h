@@ -10,7 +10,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class GpuComputeSync
 *  @brief Stores information pertaining to the dispatching of computes to the compute shader system

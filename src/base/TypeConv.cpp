@@ -4,7 +4,7 @@
 
 #include "../base/Logger.h"
 //#endif
-namespace Game {
+namespace BR2 {
 //Explicit versions
 bool TypeConv::strToBool(t_string& s1, bool bThrowIfInvalid) {
   t_string s = StringUtil::lowercase(s1);

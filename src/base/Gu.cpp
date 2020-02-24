@@ -52,6 +52,14 @@
 
 #include "../world/PhysicsWorld.h"
 
+#include "../base/SDLIncludes.h"
+#include "../base/SDLGLIncludes.h"
+#include "../ext/lodepng.h" 
+#include <chrono>
+#include <thread>
+#include <iostream>
+
+
 extern "C" {
   //nothings commented on Apr 12, 2016
   //It's not meant to be #included. Don't #include it, just compile & link it.
@@ -67,7 +75,7 @@ extern "C" {
 #endif
 #endif
 
-namespace Game {
+namespace BR2 {
 //std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
 std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
 std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
@@ -157,11 +165,11 @@ bool Gu::is64Bit() {
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
-    Gu::getEngineConfig()->setShowConsole(Game::TypeConv::strToBool(value));
+    Gu::getEngineConfig()->setShowConsole(BR2::TypeConv::strToBool(value));
     BRLogInfo("Overriding show console window: " + value);
   }
   else if (key == "--game-host") {
-    Gu::getEngineConfig()->setGameHostAttached(Game::TypeConv::strToBool(value));
+    Gu::getEngineConfig()->setGameHostAttached(BR2::TypeConv::strToBool(value));
     BRLogInfo("Overriding game host: " + value);
   }
   else {
@@ -455,7 +463,7 @@ void Gu::checkMemory() {
 
 t_string Gu::getOperatingSystemName() {
   t_string res;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   OSVERSIONINFOEX vex;
   vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionEx((OSVERSIONINFO*)&vex);
@@ -509,7 +517,7 @@ t_string Gu::getOperatingSystemName() {
 
 uint32_t Gu::getCurrentThreadId() {
   uint32_t threadId = 0;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //TODO: std::this_thread::get_id()
   threadId = (uint32_t)GetCurrentThreadId();
 #else
@@ -571,7 +579,6 @@ void Gu::print(char msg) {
 void Gu::print(const t_string& msg) {
   print(msg.c_str());
 }
-
 void Gu::print(const char* msg) {
   if (Gu::getEngineConfig() == nullptr) {
     std::cout << msg;
@@ -676,6 +683,9 @@ void Gu::updateGlobals() {
   }
 
 
+}
+void Gu::sleepThread(uint64_t milliseconds) {
+  std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
 }//ns Game

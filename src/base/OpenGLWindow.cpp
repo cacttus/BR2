@@ -6,7 +6,7 @@
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/OpenGLApi.h"
 
-namespace Game {
+namespace BR2 {
 OpenGLWindow::OpenGLWindow(bool is_main) : GraphicsWindow(is_main) {
 }
 OpenGLWindow::~OpenGLWindow() {
@@ -20,14 +20,16 @@ void OpenGLWindow::create(t_string windowTitle) {
   int iProfile = SDL_GL_CONTEXT_PROFILE_CORE;
   bool bVsync = false;
 
-#ifdef BRO_OS_IPHONE
+#ifdef BR2_OS_IPHONE
   minGLVersion = 3;
   minGLSubversion = 0;
   iProfile = SDL_GL_CONTEXT_PROFILE_ES;
-#elif BRO_OS_WINDOWS
+#else
+#ifdef BR2_OS_WINDOWS
   minGLVersion = 3;
   minGLSubversion = 3;
   iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+#endif
 #endif
 
   // if (getMainWindow() == nullptr) {
@@ -67,13 +69,13 @@ void OpenGLWindow::createRenderer() {
 
 
 void OpenGLWindow::makeCurrent() {
-  SDL_GL_MakeCurrent(getSDLWindow(), Gu::getGraphicsContext()->getSDLGLContext());
+  SDL_GL_MakeCurrent((SDL_Window*)getSDLWindow(), Gu::getGraphicsContext()->getSDLGLContext());
 }
 void OpenGLWindow::getDrawableSize(int* w, int* h) {
-  SDL_GL_GetDrawableSize(getSDLWindow(), w, h);
+  SDL_GL_GetDrawableSize((SDL_Window*)getSDLWindow(), w, h);
 }
 void OpenGLWindow::swapBuffers() {
-  SDL_GL_SwapWindow(getSDLWindow());
+  SDL_GL_SwapWindow((SDL_Window*)getSDLWindow());
 }
 
 

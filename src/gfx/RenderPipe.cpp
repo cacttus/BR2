@@ -24,7 +24,7 @@
 #include "../model/MeshUtils.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 RenderPipe::RenderPipe(std::shared_ptr<GraphicsWindow> w) {
   _vClear = vec4(0, 0, 0, 1);
   _pWindow = w;

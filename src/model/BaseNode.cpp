@@ -16,7 +16,7 @@
 #include "../math/MathAll.h"
 #include "../world/RenderBucket.h"
 
-namespace Game {
+namespace BR2 {
 BaseSpec::BaseSpec(t_string strName) {
   _strName = strName;
   _iNameHashed = STRHASH(_strName);

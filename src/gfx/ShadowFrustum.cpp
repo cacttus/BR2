@@ -19,7 +19,7 @@
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 
-namespace Game {
+namespace BR2 {
 ShadowFrustum::ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
   _bShadowMapEnabled = bShadowMapEnabled;
   _vCachedLastPos = vec3(FLT_MAX, FLT_MAX, FLT_MAX);

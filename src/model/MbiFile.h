@@ -10,7 +10,7 @@
 #include "../base/IOBase.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class MbiFile
 *  @brief Mob Binary file.  The main file for all models.

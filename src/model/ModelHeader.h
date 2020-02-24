@@ -11,7 +11,9 @@
 #include "../base/TreeNode.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+#include "../base/SDLGLIncludes.h"
+
+namespace BR2 {
 //GPU Types
 typedef int32_t GpuInt;
 typedef float GpuFloat;
@@ -86,6 +88,8 @@ class PhysicsNode;
 class MbiFile;
 class OBB;
 class ModelCache;
+class VaoDataGeneric;
+class VaoShader;
 
 //////////////////////////////////////////////////////////////////////////
 

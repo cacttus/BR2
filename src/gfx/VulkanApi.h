@@ -9,60 +9,24 @@
 
 #include "../gfx/GraphicsApi.h"
 
-namespace Game {
+namespace BR2 {
 #define VkExtFn(_vkFn) PFN_##_vkFn _vkFn = nullptr;
 /**
 *  @class VulkanApi
 *  @brief
 */
+class VulkanApi_Internal;
 class VulkanApi : public GraphicsApi {
-  // std::vector<VkLayerProperties> _availableLayers;
-
-  bool _bEnableValidationLayers = true;
-
-  std::optional<uint32_t> graphicsFamily;
-  std::optional<uint32_t> presentFamily;
-
-  std::vector<const char*> getValidationLayers();
-  std::vector<const char*> getExtensionNames();
-
-  VkSurfaceKHR surface = VK_NULL_HANDLE;
-  VkInstance instance = VK_NULL_HANDLE;
-  VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-  VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
-  VkDevice device = VK_NULL_HANDLE;
-  VkSwapchainKHR swapChain = VK_NULL_HANDLE;
-  VkExtent2D swapChainExtent;
-  VkFormat swapChainImageFormat;
-
-  std::vector<VkImage> swapChainImages;
-  std::vector<VkImageView> swapChainImageViews;
-
-  VkQueue graphicsQueue; //Device queues are implicitly cleaned up when the device is destroyed, so we don't need to do anything in cleanup.
-  VkQueue presentQueue;
-
-  // void loadCaps();
-  bool extensionSupported(std::string ext);
-  void setupDebug();
-  void loadExtensions();
-  void createVulkanInstance(t_string title);
-  void pickPhysicalDevice();
-  void findQueueFamilies();
-  void createLogicalDevice();
-  void makeSwapChain();
-  void makeImageViews();
-
-  VkExtFn(vkCreateDebugUtilsMessengerEXT);  //PFN_vkCreateDebugUtilsMessengerEXT vkCreateDebugUtilsMessengerEXT;
-  VkExtFn(vkDestroyDebugUtilsMessengerEXT);
-
 public:
-  virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) override;
-  virtual void cleanup() override;
-
-  virtual void createRenderer() {}
-
   VulkanApi();
   virtual ~VulkanApi() override;
+
+  virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) override;
+  virtual void cleanup() override;
+  virtual void createRenderer() {}
+
+private:
+  std::unique_ptr<VulkanApi_Internal> _pint = nullptr;
 };
 
 }//ns Game

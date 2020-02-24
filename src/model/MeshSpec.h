@@ -12,7 +12,7 @@
 #include "../model/BaseNode.h"
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class MeshSpec
 *  @brief Describes a geometry mesh.
@@ -34,7 +34,7 @@ public:
   vec3& n3f(size_t index);
   void endEdit();
 
-  OVERRIDES ~MeshSpec() OVERRIDE;
+  virtual ~MeshSpec() override;
   std::vector<VertexWeightMob>& getWeightsMob() { return _vecWeightsMob; }
   std::set<std::shared_ptr<BoneSpec>>& getBoneCache() { return _boneCache; }
 

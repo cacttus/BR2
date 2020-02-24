@@ -34,7 +34,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
 
-namespace Game {
+namespace BR2 {
 
 GLContext::GLContext() {
 }
@@ -46,7 +46,7 @@ GLContext::~GLContext() {
 }
 bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile) {
   _profile = profile;
-  _context = SDL_GL_CreateContext(pMainWindow->getSDLWindow());
+  _context = SDL_GL_CreateContext((SDL_Window*)pMainWindow->getSDLWindow());
   if (!_context) {
     BRThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
   }

@@ -14,38 +14,47 @@
 	- [x] Rename "bro.." to "br.." in...
 		- [x] Exceptions
 		- [x] math
-		- [x] Compile, Run.
-	- [ ] Compile, Run.
+	- [x] Compile, Run.
 - [ ] File Additions, and Replacements (from broken version)	
+	- [x] Remove most of Globalincludes.
+		- [x] Add SDLIncludes
+	- [ ] Compile, run.
+	- [ ] Rename t_string to string_t and remove string_t
 	- [ ] Replace OperatingSystem file
-	- [ ] Replace BuildConfig
-	- [ ] Add Scene
-	- [ ] Implement Package to -> ApplicationPackage 
+	- [x] Replace BuildConfig
 	- [ ] Rename Fingers -> InputManager
 	- [ ] Rename Party -> ParticleManager
 	- [ ] Rename ObjectFile to ObjFile
-	- [ ] Remove App
 	- [ ] Compile, Run.
-- [ ] Engine Rename - Rename engine to BR2
-	- [ ] Rename "bro.." to "br.." in...
-		- [ ] Exceptions
-		- [ ] math
-		- [ ] Compile, Run.
+- [ ] "App" Removal
+	- [x] Move /app into /base/
+	- [ ] Add Scene (from broken version)
+	* For some reason our old files got mixed in with the new...ugh.
+	- [ ] Remove App, AppBase
+	- [ ] Place this stuff on scene
+	- [ ] Add ApplicationPackage (from broken version), remove Package 
+- [x] Engine Rename - Rename engine to BR2
+	- [x] Rename "bro.." to "br.." in...
+		- [x] Exceptions
+		- [x] math
+		- [x] Compile, Run.
 	- [ ] Rename ObjectFile to ObjFile
 	- [ ] Compile, Run.
 - [ ] Move object creation in PhysicsManager to Scene.
 	- [ ] Compile, Run.
-- [ ] Multiple Window Rendering
-	- [ ] Remove Vulkan
-	- [ ] Hard code GL context. Remove GraphicsContext
-	- [ ] Add GL Context to all required Classes
-	- [ ] Compile, Run.
+- [ ] ~~Multiple Window Rendering~~
+	* This isn't necessary for the purpose of completing the game.
+	- [ ] ~~Remove Vulkan~~
+	- [ ] ~~Hard code GL context. Remove GraphicsContext~~
+	- [ ] ~~Add GL Context to all required Classes~~
+	- [ ] ~~Compile, Run.~~
 - [ ] Squashed viewport Bug
 	- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 - [ ] CSharp inline *minimal* scripts.
 	- [ ] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
 - [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
 - [ ] Data Class Separation. Replace Node/Spec with a clone() and copy() system.
+	- [ ] Rename BaseNode -> SceneNode
     - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
 	- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
 	- [ ] Implement `clone()` and `copy()` on nodes.

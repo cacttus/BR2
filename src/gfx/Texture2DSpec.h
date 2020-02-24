@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Texture2D
 *  @brief Stores information about a texture map.

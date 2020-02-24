@@ -9,7 +9,9 @@
 
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
-namespace Game {
+#include "../base/SDLIncludes.h"
+
+namespace BR2 {
 /**
 *  @class Fingers
 *  @brief  Manages user input.
@@ -44,7 +46,7 @@ public:
 
   void preUpdate(); //before frame
   void postUpdate(); //after frame
-  void updateButtState(Game::ButtonState::e& eState);
+  void updateButtState(BR2::ButtonState::e& eState);
 
 
   ButtonState::e getLmbState() { return _eLmb; }

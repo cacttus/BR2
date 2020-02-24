@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../gfx/GraphicsApi.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class OpenGLApi
 *  @brief Handles the OpenGL API.

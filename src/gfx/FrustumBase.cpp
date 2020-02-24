@@ -3,7 +3,7 @@
 #include "../gfx/FrustumProjectionParameters.h"
 #include "../gfx/WindowViewport.h"
 
-namespace Game {
+namespace BR2 {
 // - CONSTRUCTOR/ DESTRUCTOR
 FrustumBase::FrustumBase(std::shared_ptr<WindowViewport> pv, float fov) : _pViewportRef(pv) {
   //_satLine = new Line3f();
@@ -18,7 +18,7 @@ FrustumBase::~FrustumBase() {
 
 // - Returns the center of this frustum's near plane.
 Vec3f FrustumBase::getNearPlaneCenterPoint() {
-  return PointAt(Game::fpt_nbl) + (PointAt(Game::fpt_ntr) - PointAt(Game::fpt_nbl)) / 2.0f;
+  return PointAt(BR2::fpt_nbl) + (PointAt(BR2::fpt_ntr) - PointAt(BR2::fpt_nbl)) / 2.0f;
 }
 
 /**

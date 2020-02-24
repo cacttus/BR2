@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class PointLightShadowBox
 *  @brief Shadow map box for a point light.
@@ -17,7 +17,7 @@ namespace Game {
 class ShadowBox : public VirtualMemoryShared<ShadowBox> {
 public:
   ShadowBox(std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight, bool bShadowMapEnabled);
-  OVERRIDES ~ShadowBox() OVERRIDE;
+  virtual ~ShadowBox() override;
   void init();
   void update();
   void renderShadows(std::shared_ptr<ShadowBox> pMaster);

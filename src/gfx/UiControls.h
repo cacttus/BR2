@@ -9,7 +9,7 @@
 
 #include "../gfx/UiSkin.h"
 
-namespace Game {
+namespace BR2 {
 class UiEventFunc : public VirtualMemoryShared<UiEventFunc> {
   std::function<void(UiEventId::e eventId, void*)> _func;
 public:
@@ -614,7 +614,7 @@ class Gui2d : public UiElement {
   ButtonState::e _eMmb = ButtonState::e::Up;
   //void updateCursorPos(const vec2& vMouse);
   bool _bDebugForceLayoutChange = false;
-  std::future<bool> _updateFuture;
+  //std::future<bool> _updateFuture;
   std::shared_ptr<MegaTex> _pTex = nullptr;
   std::shared_ptr<MeshNode> _pMesh = nullptr;
   //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;

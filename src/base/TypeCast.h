@@ -7,7 +7,7 @@
 #ifndef __TYPECAST_14601720251282440992_H__
 #define __TYPECAST_14601720251282440992_H__
 
-namespace Game {
+namespace BR2 {
 
 template < typename Tx, typename Ty >
 inline Tx bro_safe_cast(Ty pb) {

@@ -11,7 +11,7 @@
 #include "../base/Allocator.h"
 #include "../base/DynamicBuffer.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class GrowBuffer
 *  @brief AUtomatically grows when items are added.
@@ -21,7 +21,7 @@ template < class Tx >
 class GrowBuffer : public DynamicBuffer<Tx> {
 public:
   GrowBuffer(uint32_t iChunkSize);
-  OVERRIDES ~GrowBuffer() OVERRIDE;
+  virtual ~GrowBuffer() override;
 
   Tx* ptr();
   Tx* next();

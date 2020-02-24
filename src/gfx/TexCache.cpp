@@ -4,7 +4,7 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
 
-namespace Game {
+namespace BR2 {
 
 const std::string TexCache::WorldGrass = "./data/tx32-grass.png";
 const std::string TexCache::WorldDirt = "./data/tx64_dirt.png";

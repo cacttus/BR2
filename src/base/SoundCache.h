@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 class SoundPlayInfo : public VirtualMemory {
 public:
   bool _bLoop = false;
@@ -67,6 +67,7 @@ private:
   int32_t start_len = 0;
   void checkPlayback();
 };
+class SoundCache_Internal;
 class SoundCache : public VirtualMemory {
 public:
   SoundCache();
@@ -80,14 +81,7 @@ public:
   void mixSamplesAsync(uint8_t* stream, int len);
 
 private:
-  typedef std::map<Hash32, std::shared_ptr<SoundSpec>> SoundMap;
-  SoundMap _cache;
-  bool _bError = false;
-  SDL_AudioSpec _desired, _have;
-  std::mutex _mutex;
-
-  void printSoundInfo();
-  static void my_audio_callback(void* userdata, uint8_t* stream, int len);
+  std::unique_ptr<SoundCache_Internal> _pint = nullptr;
 };
 
 }//ns Game

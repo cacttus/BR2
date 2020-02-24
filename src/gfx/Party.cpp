@@ -10,7 +10,7 @@
 #include "../gfx/RenderParams.h"
 #include "../model/VertexFormat.h"
 
-namespace Game {
+namespace BR2 {
 Party::Party(std::shared_ptr<GLContext> pContext) : _pContext(pContext) {
 }
 Party::~Party() {

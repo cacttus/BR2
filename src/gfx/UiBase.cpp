@@ -24,7 +24,7 @@
 #include "../model/TextBufferMesh.h"
 
 
-namespace Game {
+namespace BR2 {
 std::shared_ptr<UiBorderDim> UiBorderDim::create(uDim d0, uDim d1, uDim d2, uDim d3) {
   std::shared_ptr<UiBorderDim> ret = std::make_shared<UiBorderDim>();
   ret->_border[0] = d0;

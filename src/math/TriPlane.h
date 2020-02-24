@@ -10,7 +10,7 @@
 #include "../math/Vec4x.h"
 #include "../math/PlaneEx3.h"
 #include "../math/Algorithm.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class TriPlane
 *  @brief Derived plane for extra info and stuff. DO NOT ADD VIRTUAL METHODS

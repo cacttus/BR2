@@ -13,7 +13,7 @@
 #include "../model/BaseNode.h"
 #include "../world/PhysicsNode.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class KeyFrame
 *  @brief Key frame of  an animation track.

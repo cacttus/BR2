@@ -11,7 +11,7 @@
 #include "../gfx/FramebufferBase.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class DeferredFramebuffer
 *  @brief Deferred render target. This can be either a direct framebuffer & textures OR a multisample framebuffer

@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Crc32
 *  @brief Simplified version of https://damieng.com/blog/2006/08/08/calculating_crc32_in_c_and_net

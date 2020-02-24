@@ -10,7 +10,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class HierarchyString
 *  @brief A string "flat file" hierarchy.  Sort of like an L system string it parses data between nodes demarcated by (..) with values separated by commas and push and pop operations are demarcated by [...]
@@ -24,7 +24,7 @@ class HierarchyString : public VirtualMemory {
 public:
 
   HierarchyString(std::string h_str) { _h_str = h_str; }
-  OVERRIDES ~HierarchyString() OVERRIDE {
+  virtual ~HierarchyString() override {
     //Not sure if we keep the joints or what.
     //DELETE_VECTOR_ELEMENTS(_vecTx);
     _vecTx.resize(0);
@@ -34,10 +34,10 @@ public:
   void parse(bool bThrowIfDuplicateFound = FALSE);
 
   //TODO: va_list (i'm lazy)
-  //OVERRIDE this function.  The parameters are whatever you put in the node (...) separated by ',' commas. 
-  MUST_OVERRIDE Tx createNode() = 0;
-  //OVERRIDE
-  MUST_OVERRIDE void addNode(Tx parent, Tx child) = 0;
+  //override this function.  The parameters are whatever you put in the node (...) separated by ',' commas. 
+  virtual Tx createNode() = 0;
+  //override
+  virtual void addNode(Tx parent, Tx child) = 0;
 
   // not implemented by default.
   virtual bool getIsDupe(Tx j1) { BRThrowNotImplementedException(); return FALSE; }

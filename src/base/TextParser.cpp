@@ -1,7 +1,7 @@
 #include "../base/TextParser.h"
 #include "../base/Exception.h"
 
-namespace Game {
+namespace BR2 {
 
 TextParser::TextParser(char* data) {
   _ptr = data;

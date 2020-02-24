@@ -8,7 +8,7 @@
 
 #include "../base/GlobalIncludes.h"
 
-namespace Game {
+namespace BR2 {
 
 typedef std::string t_string;
 

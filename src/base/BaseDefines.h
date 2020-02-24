@@ -123,31 +123,35 @@ class Exception;
 class SoundSpec;
 class SoundCache;
 class TouchInfo;
-class InputManager;
+class Fingers; // Renamed InputManager;
 class GameMemory;
 class AppRunner;
 class Delta;
 class EngineConfig;
 class EngineConfigFile;
 class TreeNode;
-class ApplicationPackage;
+class Package; // ApplicationPackage;
 class Crc32;
 class StreamBuffer;
 class Net;
 class SyncTimer;
 class FpsMeter;
 class FrameSync;
-class Component;
+//class Component;
 class ProjectFile;
 class CSharpScript;
 class GraphicsWindow;
 class OpenGLWindow;
 class VulkanWindow;
 class WindowManager;
-
 class CSharpScript;
 class CSharpCompiler;
 class ScriptManager;
+class Packet;
+
+//Classes that will be removed
+class AppBase;
+class AppMain;
 
 template < class Tx >
 class DynamicBuffer;
@@ -192,7 +196,6 @@ public:
   VirtualMemoryShared() {
   }
   virtual ~VirtualMemoryShared() DOES_NOT_OVERRIDE {
-
   }
   template<class Tx> std::shared_ptr<Tx> getThis() {
     return std::dynamic_pointer_cast<Tx>(this->shared_from_this());

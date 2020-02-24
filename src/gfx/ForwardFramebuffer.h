@@ -9,7 +9,7 @@
 
 #include "../gfx/FramebufferBase.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class ForwardFramebuffer
 *  @brief Framebuffer used in forward rendering.

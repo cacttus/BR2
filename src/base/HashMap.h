@@ -8,7 +8,7 @@
 #define __HASHMAP_2256332660273822544327474_H__
 
 #include "../base/BaseHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class HashMap
 *  @brief Maps strings to items.  This allows you to use

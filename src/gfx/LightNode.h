@@ -17,7 +17,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 
 class LightNodeBase : public PhysicsNode {
 public:

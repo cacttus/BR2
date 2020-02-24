@@ -10,7 +10,7 @@
 #include "../math/MathHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class ShadowFrustum
 *  @brief

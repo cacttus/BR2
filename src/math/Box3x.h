@@ -18,7 +18,7 @@
 #include "../math/Plane3.h"
 #include "../math/RaycastHit.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Box3x
 *  @brief Axis Aligned Bounding Box.

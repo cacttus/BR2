@@ -12,7 +12,7 @@
 #include "../world/RenderBucket.h"
 
 
-namespace Game {
+namespace BR2 {
 LightManager::LightManager(std::shared_ptr<GLContext> tc) :
   _pContext(tc) {
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();

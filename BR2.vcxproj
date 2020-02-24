@@ -59,6 +59,7 @@
     <ClCompile Include="src\base\StreamBuffer.cpp" />
     <ClCompile Include="src\base\StringExtensions.cpp" />
     <ClCompile Include="src\base\StringUtil.cpp" />
+    <ClCompile Include="src\base\StringWrapper.cpp" />
     <ClCompile Include="src\base\SyncTimer.cpp" />
     <ClCompile Include="src\base\TextConfigFile.cpp" />
     <ClCompile Include="src\base\TextDataFile.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="src\base\AppHeader.h" />
     <ClInclude Include="src\base\AppMain.h" />
     <ClInclude Include="src\base\AppRunner.h" />
+    <ClInclude Include="src\base\BaseDefines.h" />
     <ClInclude Include="src\base\BaseHeader.h" />
     <ClInclude Include="src\base\BinaryFile.h" />
     <ClInclude Include="src\base\BuildConfig.h" />
@@ -208,6 +210,8 @@
     <ClInclude Include="src\base\ProjectFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
     <ClInclude Include="src\base\Script.h" />
+    <ClInclude Include="src\base\SDLGLIncludes.h" />
+    <ClInclude Include="src\base\SDLIncludes.h" />
     <ClInclude Include="src\base\SDLUtils.h" />
     <ClInclude Include="src\base\Sequencer.h" />
     <ClInclude Include="src\base\SoundCache.h" />
@@ -215,6 +219,7 @@
     <ClInclude Include="src\base\StreamBuffer.h" />
     <ClInclude Include="src\base\StringExtensions.h" />
     <ClInclude Include="src\base\StringUtil.h" />
+    <ClInclude Include="src\base\StringWrapper.h" />
     <ClInclude Include="src\base\SyncTimer.h" />
     <ClInclude Include="src\base\TextConfigFile.h" />
     <ClInclude Include="src\base\TextDataFile.h" />
@@ -224,6 +229,7 @@
     <ClInclude Include="src\base\TypeCast.h" />
     <ClInclude Include="src\base\TypeConv.h" />
     <ClInclude Include="src\base\VulkanWindow.h" />
+    <ClInclude Include="src\base\WindowsIncludes.h" />
     <ClInclude Include="src\base\XmlFile.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
@@ -417,7 +423,7 @@
     <TargetName>Br2_x64d</TargetName>
     <IncludePath>.\external\SDL2_net;.\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;$(IncludePath)</IncludePath>
     <IntDir>.\tmp\core\debug64</IntDir>
-    <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>.\lib\;.\external\Mono\lib\;.\external\LunarG\VulkanSDK\1.1.114.0\Lib\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -464,6 +470,7 @@
       <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
       <StructMemberAlignment>Default</StructMemberAlignment>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

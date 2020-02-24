@@ -10,7 +10,7 @@
 #include "../model/ModelHeader.h"
 #include "../base/Allocator.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class FragmentBufferData
 *  @brief Fragment Buffer Data. Stores vertexes (fragments) in a flexible buffer allowing multiple vertex formats.

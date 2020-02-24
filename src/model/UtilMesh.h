@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class UtilMesh
 *  @brief
@@ -22,9 +22,9 @@ public:
 
   void setModelMatrix(mat4& m) { _m4ModelMatrix = m; }
 
-  MUST_OVERRIDE void generate() = 0;
-  MUST_OVERRIDE void preDraw() = 0;
-  MUST_OVERRIDE void postDraw() = 0;
+  virtual void generate() = 0;
+  virtual void preDraw() = 0;
+  virtual void postDraw() = 0;
   virtual std::shared_ptr<ShaderBase> getShader();
 
   void init();

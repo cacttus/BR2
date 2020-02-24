@@ -12,7 +12,7 @@
 #include "../math/Box3x.h"
 #include "../math/ConvexAlgorithms.h"
 
-namespace Game {
+namespace BR2 {
 #define i_in(a) ((unsigned int&) a)
 #define i_min(a,b) (((a)<(b))?(a):(b))
 #define i_max(a,b) (((a)>(b))?(a):(b))

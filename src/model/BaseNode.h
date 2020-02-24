@@ -16,7 +16,7 @@
 #include "../math/Matrix4x4.h"
 #include "../base/TreeNode.h"
 
-namespace Game {
+namespace BR2 {
 class UtilMeshInline;
 class BaseSpec : public VirtualMemoryShared<BaseSpec> {
 public:
@@ -66,7 +66,6 @@ protected:
 *    @brief The base of the node system.
 */
 class BaseNode : public TreeNode {
-
 public:
   BaseNode(std::shared_ptr<BaseSpec>);
   virtual ~BaseNode() override;
@@ -91,6 +90,8 @@ public:
   virtual void drawDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override;
   virtual void drawTransparent(RenderParams& rp) override;
+  virtual void drawForwardDebug(RenderParams& rp) override {}
+  virtual void drawUI(RenderParams& rp) override {}
 
   template < typename Tx > std::shared_ptr<Tx> getData() {
     return std::dynamic_pointer_cast<Tx>(_pSpec);

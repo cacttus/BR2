@@ -14,7 +14,7 @@
 #include "../gfx/ShadowFrustum.h"
 #include "../model/OBB.h"
 
-namespace Game {
+namespace BR2 {
 LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNode(nullptr) {
   _color = vec4(1, 1, 1, 1);
   //    _vSpecColor = vec3(1, 1, 1);

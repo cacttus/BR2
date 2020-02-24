@@ -2,7 +2,7 @@
 #include "../model/UtilMeshBox.h"
 #include "../model/MeshUtils.h"
 
-namespace Game {
+namespace BR2 {
 
 UtilMeshBox::UtilMeshBox(std::shared_ptr<GLContext> ctx, Box3f* pCube, vec3& vOffset, Color4f& color) :
   UtilMesh(ctx, MeshUtils::MeshMakerVert::getVertexFormat(), nullptr, GL_TRIANGLES)

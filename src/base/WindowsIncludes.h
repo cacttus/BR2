@@ -25,6 +25,16 @@
 
 
 
+//#ifdef _WIN32
+//#include <windows.h>
+//#include <TlHelp32.h>
+//#include <DbgHelp.h>
+//#elif _WIN64
+//#include <Windows.h>
+//#include <TlHelp32.h>
+//#endif
+
+
 #endif
 
 //**NOTE** This drags in WINNT.h  It's required to come after the Windows include.  As such, put it down into the CPP file.

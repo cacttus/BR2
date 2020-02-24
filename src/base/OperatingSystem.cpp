@@ -4,9 +4,9 @@
 #include "../base/Hash.h"
 #include "../base/OperatingSystem.h"
 
-namespace Game {
+namespace BR2 {
 int32_t OperatingSystem::getNumberOfProcessors() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   SYSTEM_INFO si;
   GetSystemInfo(&si);
   return (int32_t)si.dwNumberOfProcessors;
@@ -17,7 +17,7 @@ int32_t OperatingSystem::getNumberOfProcessors() {
 #endif
 }
 void OperatingSystem::showMouseCursor() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(CURSORINFO);
 
@@ -33,7 +33,7 @@ void OperatingSystem::showMouseCursor() {
 #endif
 }
 void OperatingSystem::hideMouseCursor() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(CURSORINFO);
   int nFailover = 10000;
@@ -47,7 +47,7 @@ void OperatingSystem::hideMouseCursor() {
 #endif
 }
 bool OperatingSystem::getMouseCursorIsVisible() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(ci);
   GetCursorInfo(&ci);
@@ -59,7 +59,7 @@ bool OperatingSystem::getMouseCursorIsVisible() {
 }
 t_string  OperatingSystem::getOperatingSystemName() {
   t_string res;
-  //#ifdef BRO_OS_WINDOWS
+  //#ifdef BR2_OS_WINDOWS
   //    OSVERSIONINFOEX vex;
   //    vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   //    GetVersionExA((OSVERSIONINFO*)&vex);
@@ -136,7 +136,7 @@ void OperatingSystem::createDirectory(t_string& dir) {
   //    {
   //        BroThrowException(TStr("Failed to make directory ",dirName," the parameters to mkdir did not create the full hierarchy before calling"));
   //    }
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     //SECURITY_ATTRIBUTES sc;
     //sc.nLength = sizeof(sc);
     //sc.bInheritHandle = false;
@@ -159,7 +159,7 @@ t_string OperatingSystem::getUserFolderPath()
 {
     t_string ret;
     CheckOsErrorsDbg();
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     char lpstrPath[BRO_MAX_PATH];
     //TODO: Vista and beyond
     //SHGetKnownFolderPath
@@ -177,7 +177,7 @@ t_string OperatingSystem::getUserFolderPath()
 }
 bool OperatingSystem::isVistaOrGreater() {
   bool ret = false;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //if( IsWindowsVistaOrGreater(void) )
   //    ret = true;
 #endif
@@ -195,7 +195,7 @@ t_string OperatingSystem::getGamesFolderPath() {
   t_string ret;
   /*
  // CheckOsErrorsDbg();
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     PWSTR lpwstrPath = NULL;
     HRESULT result;
 
@@ -224,7 +224,7 @@ t_string OperatingSystem::getGamesFolderPath() {
 //    }
 //}
 void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   t_string dialogPath =
     FileSystem::combinePath(
       FileSystem::getExecutableDirectory(), t_string("WindowsErrorDialog.exe")
@@ -264,7 +264,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //void OperatingSystem::getScreenDims(Quad2f* ret)
 //{
 //
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //
 //    RECT screen;
 //    HWND hwnd;
@@ -296,7 +296,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //void OperatingSystem::suppressError(ErrorCode ec, bool bWriteMessage)
 //{
 //    t_string strMsg="";
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    switch(ec)
 //    {
 //        case FileNotFound:
@@ -316,7 +316,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //}
 //void OperatingSystem::clearAllErrors()
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    SetLastError(0);
 //#else
 //    throw new NotImplementedException();
@@ -326,10 +326,10 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //void OperatingSystem::oser(int line, char* file, bool bThrow)
 //{
 //    int x=0;
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    while(x=getError()!=ErrorCode::NoError)
 //    {
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //        if(x==1)
 //        {
 //            clearAllErrors();
@@ -357,7 +357,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //}
 //int32_t OperatingSystem::getError()
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    return GetLastError();
 //#else
 //    throw new NotImplementedException();
@@ -366,7 +366,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 
 //size_t OperatingSystem::getAvailableMemory()
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    MEMORYSTATUSEX mmex;
 //    mmex.dwLength = sizeof(mmex);
 //
@@ -380,7 +380,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //size_t OperatingSystem::getProcessMemoryUsage()
 //{
 //    
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    PROCESS_MEMORY_COUNTERS pmex;
 //    GetProcessMemoryInfo( GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmex, sizeof(PROCESS_MEMORY_COUNTERS) );
 //
@@ -391,7 +391,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //}
 //void OperatingSystem::terminateThread(ThreadHandle handle)
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    TerminateThread(handle,0);
 //#else
 //    #error "Operating System Error"
@@ -409,7 +409,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //{
 //    OsWindowMessage osmsg = OS_MSG_NONE;
 //
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    MSG msg;
 //    BOOL bHasMessage;
 //    bHasMessage = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
@@ -442,7 +442,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //{
 //    OsWindowMessage osmsg = OS_MSG_NONE;
 //
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    MSG msg;
 //    while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE )  )
 //    {
@@ -458,7 +458,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //ThreadHandle OperatingSystem::createThread(ThreadCallbackMethod myCallback, void* parameter, uint32_t* threadId)
 //{
 //    ThreadHandle ret;
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //     ret = CreateThread(
 //    NULL,
 //    NULL,
@@ -476,7 +476,7 @@ void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
 //uint32_t OperatingSystem::getCurrentThreadId()
 //{
 //    uint32_t threadId;
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    //TODO: std::this_thread::get_id()
 //    threadId = (uint32_t) GetCurrentThreadId();
 //    OperatingSystem::osed(__LINE__, __FILE__);
@@ -514,7 +514,7 @@ t_string OperatingSystem::getRuntimeEnvironmentStr() {
 }
 //void OperatingSystem::suspendThread(uint32_t millis)
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 //    CheckOsErrorsDbg();
 //#else
@@ -523,7 +523,7 @@ t_string OperatingSystem::getRuntimeEnvironmentStr() {
 //}
 //void OperatingSystem::debugBreak()
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //#ifdef BRO_X86
 //    __asm {
 //        int 3
@@ -539,7 +539,7 @@ t_string OperatingSystem::getRuntimeEnvironmentStr() {
 //#endif
 //}
 int OperatingSystem::strCaseCmp(const t_string& str1, const t_string& str2) {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //win32 only
   return _stricmp(str1.c_str(), str2.c_str());
 #else
@@ -550,14 +550,14 @@ int OperatingSystem::strCaseCmp(const t_string& str1, const t_string& str2) {
 
 
 void OperatingSystem::showConsole() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   ShowWindow(GetConsoleWindow(), SW_SHOW);
 #else
 #error "Operating System Error"
 #endif
 }
 void OperatingSystem::hideConsole() {
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   ShowWindow(GetConsoleWindow(), SW_HIDE);
 #else
 #error "Operating System Error"
@@ -567,7 +567,7 @@ void OperatingSystem::hideConsole() {
 
 //bool OperatingSystem::keyDown(int code)
 //{
-//#ifdef BRO_OS_WINDOWS
+//#ifdef BR2_OS_WINDOWS
 //    return GetAsyncKeyState(code) & 0x8000;
 //#else
 //    #error "Operating System Error"

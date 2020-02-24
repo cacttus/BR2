@@ -9,10 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
-#ifdef BRO_OS_WINDOWS
-typedef unsigned short mode_t;
-#endif
+namespace BR2 {
 /**
 *  @class FileInfo
 *  @brief Boiled down unix stat() structure.

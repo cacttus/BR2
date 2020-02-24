@@ -1,13 +1,16 @@
-
-
 #include "../base/DebugHelper.h"
 #include "../base/AppRunner.h"
 #include "../base/Gu.h"
 #include "../base/AppMain.h"
 
-using namespace Game;
-int main(int argc, char** argv) {
+//This is needed, since SDL defines main.
+#ifdef main
+#  undef main
+#endif /* main */
 
+using namespace BR2;
+
+int main(int argc, char** argv) {
   DebugHelper::debugHeapBegin(false);
   {
     //Game::DebugHelper::setBreakAlloc(221975);
@@ -18,7 +21,6 @@ int main(int argc, char** argv) {
     ar->runApp(Gu::argsToVectorOfString(argc, argv), "Shake", cwr);
   }
   DebugHelper::debugHeapEnd();
-
 
   return 0;
 }

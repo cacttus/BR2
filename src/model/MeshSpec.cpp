@@ -1,6 +1,5 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
-
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/BinaryFile.h"
@@ -22,8 +21,9 @@
 #include "../model/VboData.h"
 #include "../world/PhysicsShapes.h"
 #include "../world/PhysicsShapes.h"
+#include <iostream>
 
-namespace Game {
+namespace BR2 {
 MeshSpec::MeshSpec(t_string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName) {
   _pVertexFormat = vf;
   _pObjectFile = objFile;

@@ -2,16 +2,17 @@
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 #include "../base/StringUtil.h"
-#ifdef _WIN32
-#include <windows.h>
-#include <TlHelp32.h>
+#include "../base/WindowsIncludes.h"
+
+
+#include <iostream>
+#ifdef BR2_OS_WINDOWS
 #include <DbgHelp.h>
-#elif _WIN64
-#include <Windows.h>
 #include <TlHelp32.h>
 #endif
 
-namespace Game {
+
+namespace BR2 {
 HANDLE hCrtLog;
 bool _bDoDebug = false;
 
@@ -74,7 +75,7 @@ void DebugHelper::debugHeapBegin(bool bDoDebug) {
     return;
 
 #ifdef _DEBUG
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 
   //This chekcs every block for problems
 #define VERBOSITY 
@@ -121,7 +122,7 @@ void DebugHelper::debugHeapEnd() {
     return;
   }
 #ifdef _DEBUG
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   _CrtCheckMemory();
   //LEAK_CHECK_DF flag will call this 
   _CrtDumpMemoryLeaks();
@@ -138,7 +139,7 @@ void DebugHelper::debugHeapEnd() {
 }
 void DebugHelper::checkMemory() {
 #ifdef _DEBUG
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   _CrtCheckMemory();
 #else
 #error "Operating System Error"
@@ -148,7 +149,7 @@ void DebugHelper::checkMemory() {
 
 t_string DebugHelper::modList() {
   t_string ret = "";
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
 
   MODULEENTRY32 me32;
   HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
@@ -191,7 +192,7 @@ t_string DebugHelper::modList() {
 }
 std::vector<std::string> DebugHelper::getCallStack(bool bIncludeFrameId) {
   std::vector<std::string> callStack;
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //Code copied from Msdn.
   uint32_t i;
   void* stack[512];

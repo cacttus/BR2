@@ -9,26 +9,25 @@
 
 #include "../base/TextConfigFile.h"
 
-namespace Game {
+namespace BR2 {
+class XmlFile_Internal;
 /**
 *  @class XmlFile
 *  @brief Brief interface that handles loading the XML file into a pugixml document.
 */
 class XmlFile : public TextConfigFile {
 public:
-  XmlFile() {}
+  XmlFile();
   XmlFile(t_string loc);
   virtual ~XmlFile() override;
 
 protected:
   virtual void parse(char* buf, int64_t size) override;
-
   //To mimick the behavior of PoundFile.
   virtual void pkp(std::vector<t_string>& tokens) = 0;
 
 private:
-  pugi::xml_document _doc;
-  pugi::xml_parse_result _parseResult;
+  std::unique_ptr<XmlFile_Internal> _pint = nullptr;
 };
 
 }//ns Game

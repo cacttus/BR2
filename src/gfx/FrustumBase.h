@@ -20,7 +20,7 @@
 #include "../math/MathAll.h"
 #include "../gfx/GfxHeader.h"
 #include "../model/BaseNode.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class Frustum
 *  @details Frustum class.

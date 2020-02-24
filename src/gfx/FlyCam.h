@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class FlyCam
 *  @brief A camera that lets you fly around.

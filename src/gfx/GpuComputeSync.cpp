@@ -1,7 +1,7 @@
 #include "../base/GLContext.h"
 #include "../gfx/GpuComputeSync.h"
 
-namespace Game {
+namespace BR2 {
 GpuComputeSync::GpuComputeSync(std::shared_ptr<GLContext> pc) : _pContext(pc) {
 }
 GpuComputeSync::~GpuComputeSync() {

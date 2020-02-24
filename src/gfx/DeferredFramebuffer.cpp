@@ -11,7 +11,7 @@
 #include "../gfx/ShaderBase.h"
 
 
-namespace Game {
+namespace BR2 {
 DeferredFramebuffer::DeferredFramebuffer(std::shared_ptr<GLContext> pc, uint32_t iWidth, uint32_t iHeight, bool bMultisample,
   uint32_t nSamples, vec4& vClear) :
   FramebufferBase(pc, bMultisample, nSamples, vClear) {

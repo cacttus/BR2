@@ -14,7 +14,9 @@
 #include "../model/UtilMeshBox.h"
 #include "../model/UtilMeshInline.h"
 
-namespace Game {
+#include <iostream>
+
+namespace BR2 {
 
 void RenderUtils::setLineWidth(float width) {
   //This is deprecated. so, idk.

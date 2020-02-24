@@ -11,7 +11,7 @@
 #include "../model/IndexBufferData.h"
 #include "../model/MeshNode.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @fn parseGenParams
 *  @brief Parse a string defining generation params for a mesh into a class structure.

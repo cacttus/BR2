@@ -11,7 +11,7 @@
 #include "../math/Vec3x.h"
 #include "../math/Quaternion.h"
 #include "../base/TypeConv.h"
-namespace Game {
+namespace BR2 {
 /**
 *  @class Matrix3x3
 *  @brief A 3x3 Matrix. Column major.

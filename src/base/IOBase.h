@@ -12,7 +12,7 @@
 #include "../base/RetCode.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-namespace Game {
+namespace BR2 {
 /**
 *   @class IOBase
 *   @brief Abstract class to derive file classes from, this class supports basic static file operations.
@@ -26,11 +26,11 @@ public:
   IOBase();
   virtual ~IOBase() override;
 
-  MUST_OVERRIDE RetCode write(const Tx* bytes, size_t len, size_t myOff = memsize_max) = 0;
-  MUST_OVERRIDE RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t myOff = memsize_max) = 0;                        // - Read into a buffer, increements the pointer as well.
+  virtual RetCode write(const Tx* bytes, size_t len, size_t myOff = memsize_max) = 0;
+  virtual RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t myOff = memsize_max) = 0;                        // - Read into a buffer, increements the pointer as well.
 
-  VIRTUAL void AssertGoodRead(int length) {}
-  VIRTUAL void AssertGoodWrite(int length) {}
+  virtual void AssertGoodRead(int length) {}
+  virtual void AssertGoodWrite(int length) {}
 
   //**Char only template members.
   void readVec3(vec3& val);

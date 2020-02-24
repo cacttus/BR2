@@ -14,7 +14,7 @@
 
 //No includes
 #include "../base/BaseHeader.h"
-namespace Game {
+namespace BR2 {
 //////////////////////////////////////////////////////////////////////////
 
 //define for float instead of double data structres
@@ -222,14 +222,14 @@ class LineHit : public VirtualMemory {
 public:
   float t;
   LineHit() {}
-  virtual ~LineHit() OVERRIDE {}
+  virtual ~LineHit() override {}
 };
 class PlanePoint : public VirtualMemory {
 public:
   float t;            // - Position along the vector that was hit
   bool contained;
   PlanePoint() {}
-  virtual ~PlanePoint() OVERRIDE {}
+  virtual ~PlanePoint() override {}
 };
 class PlaneHit : public VirtualMemory {
 public:
@@ -244,7 +244,7 @@ public:
     _fHitTime = FLT_MAX;
   }
   PlaneHit() {}
-  virtual ~PlaneHit() OVERRIDE {}
+  virtual ~PlaneHit() override {}
 };
 // for quads
 class DualPlaneHit : public VirtualMemory {
@@ -253,7 +253,7 @@ public:
   PlaneHit planeHit0;
   PlaneHit planeHit1;
   DualPlaneHit() {}
-  virtual ~DualPlaneHit() OVERRIDE {}
+  virtual ~DualPlaneHit() override {}
 };
 
 //////////////////////////////////////////////////////////////////////////

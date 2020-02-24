@@ -18,7 +18,7 @@
 #include "../base/Fingers.h"
 #include "../gfx/MegaTex.h"
 
-namespace Game {
+namespace BR2 {
 AppUi::AppUi() {
 
   t_string DEBUG_FONT = "Lato-Regular.ttf";
@@ -146,7 +146,7 @@ void AppMain::debugChangeRenderState() {
 
 
 
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     //#ifdef _DEBUG
     //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
   if (_bDebugShowWireframe == true) {
@@ -255,8 +255,12 @@ void AppMain::drawDebugText() {
   }
   _pAppUi->endDebugText();
 }
+void AppMain::drawForwardDebug(RenderParams& rp){
 
+}
+void AppMain::drawUI(RenderParams& rp) {
 
+}
 
 
 

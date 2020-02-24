@@ -1,6 +1,6 @@
 #include "../base/IOBase.h"
 
-namespace Game {
+namespace BR2 {
 void IOBase<char>::readVec3(vec3& val) {
   int32_t readSiz;
   readSiz = sizeof(vec3);

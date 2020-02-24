@@ -17,7 +17,7 @@
 #include "../gfx/RenderUtils.h"
 
 
-namespace Game {
+namespace BR2 {
 //static int g_debugNumconst = 0;
 //static int g_debugNumcr    = 0;
 //static int g_debugNumde    = 0;

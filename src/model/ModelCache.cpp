@@ -15,7 +15,7 @@
 #include "../model/MbiFile.h"
 #include "../model/Material.h"
 
-namespace Game {
+namespace BR2 {
 ModelCache::ModelCache(std::shared_ptr<GLContext> pc) : _pContext(pc) {
     _pDefaultMaterial = std::make_shared<Material>();
     //default material is the initial blender params.

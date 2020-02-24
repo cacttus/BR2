@@ -8,7 +8,7 @@
 #define __DEBUGHELPER_280862031362642290319991_H__
 
 #include "../base/BaseHeader.h"
-namespace Game {
+namespace BR2 {
 //class StackMod {
 //public:
 //    t_string name;

@@ -8,15 +8,15 @@
 #include "../gfx/ShaderSubProgram.h"
 #include "../gfx/ShaderBase.h"
 
+#include <algorithm>
 
-namespace Game {
+namespace BR2 {
 GLProgramBinary::GLProgramBinary(ShaderCache* cc, size_t binLength) :
   _pShaderCache(cc),
   _binaryLength(binLength),
   _binaryData(NULL),
   _compileTime(0) {
   _binaryData = new char[binLength];
-
 }
 GLProgramBinary::~GLProgramBinary() {
   if (_binaryData) {

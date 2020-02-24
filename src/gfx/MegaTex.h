@@ -10,7 +10,7 @@
 #include "../gfx/Texture2DSpec.h"
 #include "../ext/stb_truetype.h"
 
-namespace Game {
+namespace BR2 {
 namespace MtTexType { typedef enum { Image, Font } e; }
 /**
 *  @class MtNode

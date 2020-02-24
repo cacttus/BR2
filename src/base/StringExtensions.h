@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *   @class StringExtensions
 *   @brief This file extends std::string allowing for implicit casts to integral types (doing away with TStr).

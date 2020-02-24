@@ -1,7 +1,9 @@
 //#ifdef _DEBUG
 #include "../math/BitHacks.h"
 #include "../base/Gu.h"
-namespace Game {
+#include <iostream>
+
+namespace BR2 {
 //
 //    FUNCTIONS
 //

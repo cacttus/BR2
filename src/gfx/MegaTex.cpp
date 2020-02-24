@@ -15,7 +15,9 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../ext/stb_truetype.h"
 
-namespace Game {
+#include <algorithm>
+
+namespace BR2 {
 #pragma region MtTex
 
 void MtTex::setImg(std::shared_ptr<Img32> img) {

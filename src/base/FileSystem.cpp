@@ -6,8 +6,11 @@
 #include "../base/Exception.h"
 
 #include "../base/DateTime.h"
+#include <fstream>
+#include "../ext/dirent.h"
+#include <direct.h>
 
-namespace Game {
+namespace BR2 {
 t_string FileSystem::_strExePath = "";
 FileSystem::FileSystem() {
 
@@ -132,7 +135,7 @@ bool FileSystem::createDirectorySingle(t_string& dirName) {
     }
   }
   return true;
-  //#ifdef BRO_OS_WINDOWS
+  //#ifdef BR2_OS_WINDOWS
 //    //SECURITY_ATTRIBUTES sc;
 //    //sc.nLength = sizeof(sc);
 //    //sc.bInheritHandle = false;
@@ -223,7 +226,7 @@ bool FileSystem::fileExists(t_string filename) {
   struct stat buffer;
   exists = (stat(filename.c_str(), &buffer) == 0);
 
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
   //Fuck this shit
   // we get error 2 and 6 all the time because
   // windows sets it when we call stat()

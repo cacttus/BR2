@@ -9,7 +9,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 template < class Tx >
 class Vec2x : public PureMemory {
 public:

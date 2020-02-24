@@ -12,7 +12,7 @@
 #include "../gfx/WindowViewport.h"
 #include "../gfx/CameraNode.h"
 
-namespace Game {
+namespace BR2 {
 Picker::Picker(std::shared_ptr<GLContext> pc) : _pContext(pc), _uiLastSelectedPixelId(0) {
 }
 Picker::~Picker() {

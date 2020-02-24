@@ -5,7 +5,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/VboData.h"
 
-namespace Game {
+namespace BR2 {
 GLenum VertexComponent::getAttributeType() {
   return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
 }

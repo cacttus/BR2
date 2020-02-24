@@ -9,7 +9,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @struct Vec3x
 *  @brief 3 Component Generic vector

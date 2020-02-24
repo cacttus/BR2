@@ -9,7 +9,7 @@
 
 #include "../model/UtilMesh.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class UtilMeshInline
 *  @brief
@@ -21,9 +21,9 @@ public:
 
   void setDefaultColor(vec4& v) { _vDefaultColor = v; }
 
-  OVERRIDES void generate() OVERRIDE;
-  OVERRIDES void preDraw()  OVERRIDE {}
-  OVERRIDES void postDraw() OVERRIDE {}
+  virtual void generate() override;
+  virtual void preDraw()  override {}
+  virtual void postDraw() override {}
 
   void begin(GLenum type);
   void vt1(v_v3c4& v1);
@@ -48,9 +48,9 @@ public:
 
   void setDefaultColor(vec4& v) { _vDefaultColor = v; }
 
-  OVERRIDES void generate() OVERRIDE;
-  OVERRIDES void preDraw()  OVERRIDE {}
-  OVERRIDES void postDraw() OVERRIDE {}
+  virtual void generate() override;
+  virtual void preDraw()  override {}
+  virtual void postDraw() override {}
 
   void begin(GLenum type);
   void vt1(v_v2c4& v1);

@@ -17,7 +17,7 @@
 #include "../model/MbiFile.h"
 #include "../world/PhysicsWorld.h"
 
-namespace Game {
+namespace BR2 {
 MbiFile::MbiFile() {
   _pFile = std::make_shared<BinaryFile>();
 }

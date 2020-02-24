@@ -8,8 +8,8 @@
 #define __DISKFILE_22684246896097193333998_H__
 
 #include "../base/IOBase.h"
-namespace Game {
-
+namespace BR2 {
+class DiskFile_Internal;
 /**
 *  @class DiskFile
 *  @brief Basic disk file access, unbuffered. For buffered files see various @cBufferedFile.
@@ -26,8 +26,8 @@ public:
   RetCode create(t_string szloc, size_t offset = 0);// - only create a file.
   bool checkEOF();
 
-  OVERRIDES RetCode read(char* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) OVERRIDE; // read into a buffer
-  OVERRIDES RetCode write(const char* bytes, size_t len, size_t offset = memsize_max) OVERRIDE;
+  virtual RetCode read(char* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) override; // read into a buffer
+  virtual RetCode write(const char* bytes, size_t len, size_t offset = memsize_max) override;
 
   RetCode openForRead(DiskLoc& szloc);
   //  RetCode read( char* buf, size_t len, size_t offset, size_t buflen=-1 ); // read from an offset into a buffer
@@ -44,12 +44,9 @@ public:
   RetCode getReadStream(std::fstream& newStream);
 protected:
   void setState(file_state s) { state = s; }
-  size_t getPointerOffset() { return off; }
+  size_t getPointerOffset();
 private:
-  size_t off; // - offset in the file
-  DiskLoc loc;  // - location
-  std::fstream pStream; // - The saved file stream.
-  size_t filesize;
+  std::unique_ptr<DiskFile_Internal> _internal = nullptr;
 };
 
 

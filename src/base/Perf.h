@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../base/Stopwatch.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Perf
 *  @brief Monitors performance.

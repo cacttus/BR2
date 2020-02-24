@@ -7,9 +7,9 @@
 #ifndef __TREENODE_2292922995327663144523481_H__
 #define __TREENODE_2292922995327663144523481_H__
 
-#include "../base/BaseHeader.h"
+#include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class TreeNode
 *  @brief Tree structure serves as the base class for nodes.  Directed Acyclic Graph.
@@ -24,7 +24,7 @@ public:
 
 public:
   TreeNode();
-  virtual ~TreeNode()  override;
+  virtual ~TreeNode() override;
 
   template < class Tx >
   bool iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);

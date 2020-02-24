@@ -9,7 +9,7 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FlyCam.h"
 
-namespace Game {
+namespace BR2 {
 FlyCam::FlyCam(std::shared_ptr<WindowViewport> pv) : _pViewport(pv) {
     BRLogInfo("Creating Camera.");
     _pCamera = CameraNode::create(pv);

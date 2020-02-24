@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class OperatingSystem
 *  @brief Wraps OS kernel calls.
@@ -18,7 +18,7 @@ class OperatingSystem : public VirtualMemory {
 public:
   enum ErrorCode {
     //Note:Remember to add these codes to suppressError()
-#ifdef BRO_OS_WINDOWS
+#ifdef BR2_OS_WINDOWS
     NoError = 0,
     FileNotFound = 2,
     PathNotFound = 3,

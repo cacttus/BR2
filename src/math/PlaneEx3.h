@@ -10,7 +10,7 @@
 #include "../math/Plane3.h"
 #include "../math/Matrix3x3.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class PlaneEx3
 *  @brief Extension of the plane class to include tangent and binormal space.  DO NOT ADD VIRTUAL METHODS

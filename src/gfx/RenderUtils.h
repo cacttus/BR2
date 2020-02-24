@@ -10,7 +10,7 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class RenderUtils
 *  @brief Provides utility functions for creating basic shapes, and rendering to the screen.

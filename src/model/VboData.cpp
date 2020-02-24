@@ -1,6 +1,6 @@
 #include "../model/VboData.h"
 
-namespace Game {
+namespace BR2 {
 VboData::VboData(std::shared_ptr<GLContext> ct, size_t iElementSize) : GpuBufferData(ct, GL_ARRAY_BUFFER, iElementSize) {
 }
 VboData::~VboData() {

@@ -11,7 +11,7 @@
 #include "../math/Vec3x.h"
 #include "../math/Vec4x.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class Quaternion
 *  not that quaternions only support rotations and matrix translations would be lost in the conversion.

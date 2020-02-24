@@ -7,7 +7,7 @@
 #include "../base/EngineConfig.h"
 
 
-namespace Game {
+namespace BR2 {
 EngineConfigFile::EngineConfigFile() {
 
 }

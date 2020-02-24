@@ -9,7 +9,7 @@
 
 #include "../base/GraphicsWindow.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class OpenGLWindow
 *  @brief

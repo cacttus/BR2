@@ -2,7 +2,7 @@
 #include "../world/PhysicsShapes.h"
 
 
-namespace Game {
+namespace BR2 {
 
 SphereShape::SphereShape(VertexBufferPointer& vbPointer, float r) : _fRadius(r) {
 

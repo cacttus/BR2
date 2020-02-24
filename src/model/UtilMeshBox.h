@@ -9,7 +9,7 @@
 
 #include "../model/UtilMesh.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class UtilMeshBox
 *  @brief
@@ -20,9 +20,9 @@ public:
   virtual ~UtilMeshBox() override;
   void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
 
-  OVERRIDES void generate();
-  OVERRIDES void preDraw();
-  OVERRIDES void postDraw();
+  virtual void generate();
+  virtual void preDraw();
+  virtual void postDraw();
 
 private:
   float _fSize;

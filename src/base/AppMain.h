@@ -10,7 +10,7 @@
 #include "../gfx/RenderIncludes.h"
 #include "../base/AppBase.h"
 
-namespace Game {
+namespace BR2 {
 class AppUi : public VirtualMemoryShared<AppUi> {
 public:
   AppUi();
@@ -26,28 +26,7 @@ private:
 *  @brief Application entry point.
 */
 class AppMain : public AppBase {
-  bool _bDebugDisableCull = false;
-  bool _bDrawDebug = false;
-  bool _bShowDebugText = false;
-  bool _bDebugShowWireframe = false;
-  bool _bDebugClearWhite = false;
-  bool _bDebugDisableShadows = false;
-  bool _bDebugDisableDepthTest = false;
-
-  void debugChangeRenderState();
-  void drawBackgroundImage();
-  std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
-  std::shared_ptr<Texture2DSpec> _pTex = nullptr;
-
-  std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
-
-  void drawDebugText();
-  void draw2d();
-
-  std::shared_ptr<AppUi> _pAppUi = nullptr;
-  void setDebugMode();
 public:
-
   AppMain();
   virtual ~AppMain() override;
 
@@ -76,7 +55,32 @@ public:
   virtual void drawShadow(RenderParams& rp) override;
   virtual void drawDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override;
+  virtual void drawForwardDebug(RenderParams& rp) override;
+  virtual void drawUI(RenderParams& rp) override;
+
   virtual void drawTransparent(RenderParams& rp) override;
+private:
+  bool _bDebugDisableCull = false;
+  bool _bDrawDebug = false;
+  bool _bShowDebugText = false;
+  bool _bDebugShowWireframe = false;
+  bool _bDebugClearWhite = false;
+  bool _bDebugDisableShadows = false;
+  bool _bDebugDisableDepthTest = false;
+
+  void debugChangeRenderState();
+  void drawBackgroundImage();
+  std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
+  std::shared_ptr<Texture2DSpec> _pTex = nullptr;
+
+  std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
+
+  void drawDebugText();
+  void draw2d();
+
+  std::shared_ptr<AppUi> _pAppUi = nullptr;
+  void setDebugMode();
+
 
 };
 

@@ -9,7 +9,7 @@
 
 #include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class PhysicsGrid
 *  @brief This is a cell in a cell grid managed by the physics system.

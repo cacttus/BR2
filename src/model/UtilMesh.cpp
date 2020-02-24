@@ -10,7 +10,7 @@
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShaderMaker.h"
 
-namespace Game {
+namespace BR2 {
 UtilMesh::UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<ShaderBase> ps, GLenum drawMode) :
     _pShader(ps), _pContext(ctx), _pVertexFormat(fmt), _eDrawMode(drawMode)
 {

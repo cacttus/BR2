@@ -24,7 +24,7 @@
 #include "../world/PhysicsWorld.h"
 
 
-namespace Game {
+namespace BR2 {
 GraphicsContext::GraphicsContext(){
     _fClearR = 0.02f;
     _fClearG = 0.02f;

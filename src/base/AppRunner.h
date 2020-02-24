@@ -11,41 +11,20 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 
-namespace Game { 
-
+namespace BR2 {
+class AppRunner_Internal;
 /**
 *   @class AppRunner
 *   @brief The entry point of the application from main()
 */
 class AppRunner : public VirtualMemory {
-private:
-   // std::shared_ptr<Engine> _pEngine = nullptr;
-   // std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
-    SDL_AudioSpec _audioSpec;
-  
-    t_timeval _tvInitStartTime = 0;
-
-    // accept a connection coming in on server_tcpsock
-    TCPsocket _gameHostSocket;//Send and receive data
-    TCPsocket _server_tcpsock;//Accept connections
-
-    void initSDL(t_string windowTitle, std::shared_ptr<AppBase> app);
-    void doShowError(t_string err, Exception* e=nullptr);
-    SDL_bool initAudio();
-    void initNet();
-    bool handleEvents(SDL_Event * event);
-    void runGameLoop(std::shared_ptr<AppBase> rb);
-    void exitApp(t_string error, int rc);
-
-    void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
-    bool argMatch(const std::vector<t_string>& args,t_string arg, int32_t iCount);
-    bool runCommands(const std::vector<t_string>& args);
-    void printVideoDiagnostics();
-    void updateWindowHandleForGamehost();
-    void attachToGameHost();
-    bool handleSDLEvents();
 public:
-    void runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
+  AppRunner();
+  virtual ~AppRunner() override;
+  void runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
+
+private:
+  std::unique_ptr<AppRunner_Internal> _pint = nullptr;
 };
 
 

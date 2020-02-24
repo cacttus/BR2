@@ -11,7 +11,7 @@
 #include "../gfx/LightNode.h"
 #include "../gfx/RenderSettings.h"
 
-namespace Game {
+namespace BR2 {
 RenderBucket::RenderBucket() {
 }
 RenderBucket::~RenderBucket() {

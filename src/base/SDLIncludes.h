@@ -11,11 +11,4 @@
 #include <SDL_syswm.h>
 #include <SDL_net.h>
 
-//I think we need this for SDL
-#ifdef main
-#  undef main
-#endif /* main */
-
-
-
 #endif

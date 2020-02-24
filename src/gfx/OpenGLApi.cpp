@@ -10,7 +10,7 @@
 #include "../base/OpenGLWindow.h"
 #include "../gfx/OpenGLApi.h"
 
-namespace Game {
+namespace BR2 {
 OpenGLApi::OpenGLApi() {
 }
 OpenGLApi::~OpenGLApi() {

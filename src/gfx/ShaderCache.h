@@ -9,7 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 
-namespace Game {
+namespace BR2 {
 class GLProgramBinary : public VirtualMemory {
 public:
   GLProgramBinary(ShaderCache* c, size_t binLength);

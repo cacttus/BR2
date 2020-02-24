@@ -3,7 +3,7 @@
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 
-namespace Game {
+namespace BR2 {
 bool DateTime::dtLessThan(t_datetime d1, t_datetime d2) {
   return (
     dateLessThan(getDatePart(d1), getDatePart(d2)) &&

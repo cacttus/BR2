@@ -9,7 +9,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class ConvexUtils
 *  @brief Provides algorithms for dealing with convex hulls.
