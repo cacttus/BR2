@@ -315,6 +315,9 @@
     <ClCompile Include="src\model\MeshData.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Scene.cpp">
+      <Filter>src\world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -643,6 +646,9 @@
     </ClInclude>
     <ClInclude Include="src\model\MeshData.h">
       <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Scene.h">
+      <Filter>src\world</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -70,7 +70,7 @@ private:
 
   std::shared_ptr<LightManager> _pLightManager;
   std::shared_ptr<UiScreen> _pScreen = nullptr;
-  std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
+  std::shared_ptr<MeshComponent> _pQuadMeshBackground = nullptr;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
   std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
   std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;

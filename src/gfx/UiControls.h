@@ -671,7 +671,7 @@ private:
   bool _bDebugForceLayoutChange = false;
   std::future<bool> _updateFuture;
   std::shared_ptr<MegaTex> _pTex = nullptr;
-  std::shared_ptr<MeshNode> _pMesh = nullptr;
+  std::shared_ptr<MeshComponent> _pMesh = nullptr;
   std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
   //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;
   void updateMesh();

@@ -114,6 +114,7 @@
     <ClCompile Include="src\world\NodeDataManager.cpp" />
     <ClCompile Include="src\world\PhysicsGridAwareness.cpp" />
     <ClCompile Include="src\world\PhysicsManager.cpp" />
+    <ClCompile Include="src\world\Scene.cpp" />
     <ClCompile Include="src\world\SceneNode.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +225,7 @@
     <ClInclude Include="src\world\PhysicsGridAwareness.h" />
     <ClInclude Include="src\world\PhysicsHeader.h" />
     <ClInclude Include="src\world\PhysicsManager.h" />
+    <ClInclude Include="src\world\Scene.h" />
     <ClInclude Include="src\world\SceneNode.h" />
     <ClInclude Include="src\world\WorldHeader.h" />
   </ItemGroup>

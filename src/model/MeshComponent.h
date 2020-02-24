@@ -21,20 +21,18 @@ namespace BR2 {
 */
 class MeshComponent : public Component {
 public:
-  //MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<SceneNode> pn);
-  MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<SceneNode> owner);
-  //MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> pd);
+  MeshComponent(std::shared_ptr<GLContext> context, std::shared_ptr<MeshData> ps, std::shared_ptr<SceneNode> owner = nullptr);
   virtual ~MeshComponent() override;
 
-  void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) ;
+  void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator);
 
   void drawDeferred(RenderParams& rp);
   void drawTransparent(RenderParams& rp);
   void drawForward(RenderParams& rp);
   void drawShadow(RenderParams& rp);
-  void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) ;
+  void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad);
 
- // virtual void afterChildInserted(std::shared_ptr<TreeNode>) override;
+  // virtual void afterChildInserted(std::shared_ptr<TreeNode>) override;
 
   std::vector<std::shared_ptr<BoneNode>>& getBoneNodesOrdered() { return _vecBoneNodesOrdered; }//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
   void printDataToStdout();

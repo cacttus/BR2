@@ -14,19 +14,6 @@
 namespace BR2 {
 class BoxCollision : public VirtualMemory {
 public:
-  std::shared_ptr<PhysicsNode> _ob1;
-  std::shared_ptr<PhysicsNode> _ob2;
-  float _t;        // time to collision between 0 and 1, 20151212 - NOW if we are stuck T will give us the distance to the volume (plane dist, or sphere distance)
-  float _tx, _ty, _tz;
-  bool _bCollided; // if collided
-  bool _bStuck; // if stuck
-  uint64_t _frameID;    // - Checks weather this possibility was tested.
-  int32_t _nStuck;
-  int32_t _iType; // plane=0 edge=1 pt=2
-  CollisionResult::e _cx, _cy, _cz;
-
-  int _ax_t0;//box3 SAT axis
-
   BoxCollision() {
     clear();
   }
@@ -40,6 +27,19 @@ public:
     _nStuck = 0;
     _bCollided = false;
   }
+
+  std::shared_ptr<PhysicsNode> _ob1;
+  std::shared_ptr<PhysicsNode> _ob2;
+  float _t;        // time to collision between 0 and 1, 20151212 - NOW if we are stuck T will give us the distance to the volume (plane dist, or sphere distance)
+  float _tx, _ty, _tz;
+  bool _bCollided; // if collided
+  bool _bStuck; // if stuck
+  uint64_t _frameID;    // - Checks weather this possibility was tested.
+  int32_t _nStuck;
+  int32_t _iType; // plane=0 edge=1 pt=2
+  CollisionResult::e _cx, _cy, _cz;
+
+  int _ax_t0;//box3 SAT axis
 };
 class CheckedSet {
   std::map<std::shared_ptr<PhysicsNode>, std::set<std::shared_ptr<PhysicsNode>>> _mapChecked;

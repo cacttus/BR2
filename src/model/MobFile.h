@@ -111,7 +111,7 @@ public:
   string_t _strModName;
   int32_t _iFrameRate = 24;
   float _fVersion = 0.0f;
-  std::set<std::shared_ptr<MeshNode>> _setMeshSpecs;
+  std::set<std::shared_ptr<MeshData>> _setMeshSpecs;
   std::set<std::shared_ptr<ArmatureNode>> _setArmDatas;
   std::set<std::shared_ptr<ActionGroup>> _setActions;
   //std::set<std::shared_ptr<ActionGroup>> _setActions;

@@ -2,6 +2,7 @@
 #include "../base/Hash.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+#include "../gfx/GLContext.h"
 #include "../base/Gu.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
@@ -741,8 +742,6 @@ std::shared_ptr<MeshData> MeshSpecData::makeSpec(MobFile* mb) {
   // Copy spec vertexes.
   copySpecFragments(pSpec);
 
-  //  _vecMeshes.push_back(pSpec);
-
   _vecMeshVerts.resize(0);
   _vecMeshIndexes.resize(0);
   _vecMeshVertexWeights.resize(0);
@@ -772,11 +771,10 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
 }
 void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pSpec) {
   if (_pMatData != nullptr) {
-
     std::shared_ptr<Texture2DSpec> diffuse = nullptr;
     std::shared_ptr<Texture2DSpec> normal = nullptr;
+    
     //create material
-
     std::shared_ptr<Material> mat = std::make_shared<Material>(getContext(), _pMatData->_strMatName);
     string_t path;
 

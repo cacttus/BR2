@@ -29,6 +29,7 @@
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsManager.h"
 #include "../world/Scene.h"
+#include "../model/MeshComponent.h"
 
 namespace BR2 {
 Scene::Scene() {
@@ -258,8 +259,9 @@ void Scene::drawForward(RenderParams& rp) {
   debugChangeRenderState();
 
   if (_pQuadMeshBackground == nullptr) {
-    _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
+    _pQuadMeshBackground = std::make_shared<MeshComponent>(getContext(), 
+      MeshUtils::createScreenQuadMesh(getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
+
     _pTex = getContext()->getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
   }
 

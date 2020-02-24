@@ -3196,11 +3196,11 @@ void UiScreen::init() {
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
-  _pMesh = std::make_shared<MeshNode>(_pWindow->getContext(),
+  _pMesh = std::make_shared<MeshComponent>(_pWindow->getContext(),
     std::make_shared<MeshData>(_pWindow->getContext(),
       verts.data(), verts.size(),
       inds.data(), inds.size(),
-      v_GuiVert::getVertexFormat(), nullptr)
+      v_GuiVert::getVertexFormat(), nullptr), nullptr
   );
 }
 
