@@ -1,27 +1,12 @@
 #include "../base/BaseHeader.h"
-#include "../gfx/oglErr.h"
+#include "../base/oglErr.h"
 #include "../base/Logger.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../base/DebugHelper.h"
 #include "../base/EngineConfig.h"
 #include "../base/SDLUtils.h"
 
-namespace BR2 {
-string_t glErrToStr(GLenum err) {
-  switch (err) {
-  case 0: return  "GL_NO_ERROR         ";
-  case 0x0500: return  "GL_INVALID_ENUM     ";
-  case 0x0501: return  "GL_INVALID_VALUE    ";
-  case 0x0502: return  "GL_INVALID_OPERATION";
-  case 0x0503: return  "GL_STACK_OVERFLOW   ";
-  case 0x0504: return  "GL_STACK_UNDERFLOW  ";
-  case 0x0505: return  "GL_OUT_OF_MEMORY    ";
-  }
-  return " *GL Error code not recognized.";
-}
-
-//////////////////////////////////////////////////////////////////////////
-
+namespace Game {
 bool OglErr::chkErrRt(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool doNotLog) {
   if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking() == true) {
     return handleErrors(ctx, true, bDoNotBreak, doNotLog);
@@ -33,6 +18,19 @@ bool OglErr::chkErrDbg(std::shared_ptr<GLContext> ctx, bool bDoNotBreak, bool do
     return handleErrors(ctx, true, bDoNotBreak, doNotLog);
   }
   return false;
+}
+
+t_string OglErr::glErrToStr(GLenum err) {
+  switch (err) {
+  case 0: return  "GL_NO_ERROR         ";
+  case 0x0500: return  "GL_INVALID_ENUM     ";
+  case 0x0501: return  "GL_INVALID_VALUE    ";
+  case 0x0502: return  "GL_INVALID_OPERATION";
+  case 0x0503: return  "GL_STACK_OVERFLOW   ";
+  case 0x0504: return  "GL_STACK_UNDERFLOW  ";
+  case 0x0505: return  "GL_OUT_OF_MEMORY    ";
+  }
+  return " *GL Error code not recognized.";
 }
 bool OglErr::handleErrors(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bDoNotBreak, bool doNotLog) {
 
@@ -50,7 +48,7 @@ bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bD
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
     if (doNotLog == false) {
-      Br2LogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
+      BroLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
     }
 
     if (Gu::getEngineConfig()->getBreakOnOpenGLError() == true) {
@@ -68,11 +66,11 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
   //Enable this in engine.cpp
 //   glEnable(GL_DEBUG_OUTPUT);
   if (ctx == nullptr) {
-    Br2LogWarn("Context not initialized (context isseu");
+    BroLogWarn("Context not initialized (context isseu");
     return;
   }
   if (!ctx->glGetDebugMessageLog) {
-    Br2LogWarn("Opengl log not initialized (context isseu");
+    BroLogWarn("Opengl log not initialized (context isseu");
     return;
   }
 
@@ -86,7 +84,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
   }
 
   if (maxMsgLen <= 0) {
-    Br2LogError("GL_MAX_DEBUG_MESSAGE_LENGTH returned 0.");
+    BroLogError("GL_MAX_DEBUG_MESSAGE_LENGTH returned 0.");
     maxMsgLen = -2;
     return;
   }
@@ -120,7 +118,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
     ids.resize(numFound);
     lengths.resize(numFound);
 
-    std::vector<string_t> messages;
+    std::vector<t_string> messages;
     messages.reserve(numFound);
 
     std::vector<GLchar>::iterator currPos = msgData.begin();
@@ -140,10 +138,10 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
       else if (id == 0x07) { return; }// glLineWidth Deprecated (other driver)
 
 
-      string_t strMsg = std::string(currPos, currPos + lengths[iMsg] - 1);
-      string_t strSrc = glDebugGetErrorSource(sources[iMsg]);
-      string_t strType = glDebugGetMessageType(types[iMsg]);
-      string_t strSev = glDebugGetMessageSeverity(severities[iMsg]);
+      t_string strMsg = std::string(currPos, currPos + lengths[iMsg] - 1);
+      t_string strSrc = glDebugGetErrorSource(sources[iMsg]);
+      t_string strType = glDebugGetMessageType(types[iMsg]);
+      t_string strSev = glDebugGetMessageSeverity(severities[iMsg]);
 
       if (doNotLog == false) {
         strMsg = "GPU LOG\r\n ID: " + StringUtil::toHex(id, true) + "\r\n Msg: " + strMsg;
@@ -151,16 +149,16 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
         GLenum severity = severities[iMsg];
         GLenum type = types[iMsg];
         if (type == GL_DEBUG_TYPE_ERROR) {
-          string_t _strStackInfo = DebugHelper::getStackTrace();
-          Br2LogError(strMsg + "\r\n" + _strStackInfo);
+          t_string _strStackInfo = DebugHelper::getStackTrace();
+          BroLogError(strMsg + "\r\n" + _strStackInfo);
         }
         else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
-          string_t _strStackInfo = DebugHelper::getStackTrace();
-          Br2LogInfo(strMsg + "\r\n" + _strStackInfo);
+          t_string _strStackInfo = DebugHelper::getStackTrace();
+          BroLogInfo(strMsg + "\r\n" + _strStackInfo);
         }
         else {
-          string_t _strStackInfo = DebugHelper::getStackTrace();
-          Br2LogWarn(strMsg + "\r\n" + _strStackInfo);
+          t_string _strStackInfo = DebugHelper::getStackTrace();
+          BroLogWarn(strMsg + "\r\n" + _strStackInfo);
         }
       }
 
@@ -168,7 +166,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
     }
   } while (numFound > 0);
 }
-string_t OglErr::glDebugGetErrorSource(int eCode) {
+t_string OglErr::glDebugGetErrorSource(int eCode) {
   switch (eCode) {
   case GL_DEBUG_SOURCE_API: return " SOURCE API"; break;
   case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return (" WINDOW SYSTEM"); break;
@@ -179,7 +177,7 @@ string_t OglErr::glDebugGetErrorSource(int eCode) {
   }
   return ("*No Enum*");
 }
-string_t OglErr::glDebugGetMessageType(int eCode) {
+t_string OglErr::glDebugGetMessageType(int eCode) {
   switch (eCode) {
   case GL_DEBUG_TYPE_ERROR: return (" ERROR"); break;
   case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return (" DEPRECATED"); break;
@@ -193,7 +191,7 @@ string_t OglErr::glDebugGetMessageType(int eCode) {
   }
   return ("*No Enum*");
 }
-string_t OglErr::glDebugGetMessageSeverity(int eCode) {
+t_string OglErr::glDebugGetMessageSeverity(int eCode) {
   switch (eCode) {
   case GL_DEBUG_SEVERITY_HIGH: return (" HIGH"); break;
   case GL_DEBUG_SEVERITY_MEDIUM: return (" MEDIUM"); break;
@@ -207,4 +205,4 @@ string_t OglErr::glDebugGetMessageSeverity(int eCode) {
 
 
 
-}//ns BR2
+}//ns Game

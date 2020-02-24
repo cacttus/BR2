@@ -1,30 +1,28 @@
 /**
 *  @file CameraNode.h
 *  @author MetalMario971
-*  @date january 2010
-*  @date aug 2010 - moved src to cpp file
 */
 #pragma once
 #ifndef __BASE_CAMERA_H__
 #define __BASE_CAMERA_H__
 
+
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
-#include "../world/SceneNode.h"
+#include "../world/PhysicsNode.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class CameraNode
-*  @brief Base class for cameras in the GL.
-*  Superclass of @cBaseCamera2D, @cBaseCamera3D
+*  @brief Base class for cameras in the GL. Superclass of @cBaseCamera2D, @cBaseCamera3D
 */
-class CameraNode : public SceneNode {
+class CameraNode : public PhysicsNode {
 public:
-  CameraNode();
+  CameraNode(std::shared_ptr<WindowViewport> ppViewport);
+  static std::shared_ptr<CameraNode> create(std::shared_ptr<WindowViewport> ppViewport);
   virtual ~CameraNode() override;
 
-  virtual void update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   void zoom(float amt);
   const vec3& getLookAt() { return _vLookAt; }
   void setLookAt(vec3&& v) { _vLookAt = v; }
@@ -33,20 +31,21 @@ public:
   void setWorldUp(vec3&& v) { _vWorldUp = v; }
   void setProjectionMode(ProjectionMode::e eMode) { _eProjectionMode = eMode; }
   vec3 getLookAtOffset();
-  void setupProjectionMatrix();
-  void setupViewMatrix();
-  ProjectedRay projectPoint(vec2& mouse);
+
+  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;            // - Main update function, must be called if you override it.
+  void setupProjectionMatrix();// - Manipulate the view projection matrix to project points 
+  void setupViewMatrix();    // - Manipulate the modelview matrix to orient the camera
+  ProjectedRay projectPoint(vec2& mouse);    // - Project a ray into the screen.
   Ray_t projectPoint2(vec2& mouse);
-  void setFOV(t_radians fov);
+  void setFOV(t_radians fov);        // - Set Field of View
   float getFOV() const { return _f_hfov; }
-  std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
+  std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }
   const vec3& getRightNormal() { return _vRight; }
   const vec3& getUpNormal() { return _vUp; }
   std::shared_ptr<FrustumBase> getFrustum() { return _pMainFrustum; }
-
 protected:
-  std::shared_ptr<RenderViewport> _pViewport = nullptr;
-  float _f_hfov = 60;
+  std::shared_ptr<WindowViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
+  float _f_hfov = 60;            // - Field of view.
 
   std::shared_ptr<FrustumBase> _pMainFrustum = nullptr;
   mat4 _mView;

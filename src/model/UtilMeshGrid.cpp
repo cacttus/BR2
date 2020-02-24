@@ -1,17 +1,20 @@
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../model/UtilMeshGrid.h"
+//#include "../base/GlobalUtils.h"
+//#include "../gfx/UtilMeshGrid.h"
+//#include "../gpu/GraphicsDriver.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"
 #include "../model/VaoDataGeneric.h"
 
-namespace BR2 {
-UtilMeshGrid::UtilMeshGrid(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> pc,
+namespace Game {
+UtilMeshGrid::UtilMeshGrid(std::shared_ptr<GLContext> pc,
   float r, float g, float b,
   int32_t nSlices,
   float fSliceWidth,
   Vector3& center
 ) :
-  UtilMesh(cam,pc, v_v3c4::getVertexFormat(), nullptr),
+  UtilMesh(pc, v_v3c4::getVertexFormat(), nullptr),
   _nSlices(nSlices),
   _fSliceWidth(fSliceWidth),
   _center(center),
@@ -19,6 +22,7 @@ UtilMeshGrid::UtilMeshGrid(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLCo
   _lineWidth(1.0f) {
 }
 UtilMeshGrid::~UtilMeshGrid() {
+
 }
 void UtilMeshGrid::generate() {
   float gridWidth_2 = _nSlices * _fSliceWidth / 2.0f;
@@ -69,4 +73,4 @@ void UtilMeshGrid::postDraw() {
 }
 
 
-}//ns BR2
+}//ns game

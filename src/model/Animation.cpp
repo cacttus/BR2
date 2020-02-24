@@ -1,7 +1,7 @@
 #include "Animation.h"
 
 
-namespace BR2 {
+namespace Game {
 
 bool RotateTo::update(float delta) {
   bool bDone = false;
@@ -20,4 +20,4 @@ bool RotateTo::update(float delta) {
 
 
 
-}//ns BR2
+}//ns Game

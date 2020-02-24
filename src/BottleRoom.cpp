@@ -11,7 +11,7 @@
 #include "../gfx/Party.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/TexCache.h"
@@ -683,7 +683,15 @@ void BottleRoom::drawHover() {
 void BottleRoom::idle(t_timeval us) {
     _pWorld25->idleProcessing(us);
 }
-
+t_string BottleRoom::getIconFullPath() {
+    return makeAssetPath("tex", "icon.png");
+}
+t_string BottleRoom::getConfigPath() {
+    return makeAssetPath("", "config.xml");
+}
+t_string BottleRoom::getAssetsDir() {
+    return "./data/";
+}
 void BottleRoom::serverPacketReceived(std::shared_ptr<Packet> pack) {
     //todo
 }

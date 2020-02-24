@@ -2,7 +2,7 @@
 *
 *    @file WorldEditor.h
 *    @date May 3, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017
 *

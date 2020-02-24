@@ -1,11 +1,11 @@
 #include "../base/Delta.h"
 
-#include "../base/SDLIncludes.h"
-namespace BR2 {
+namespace Game {
 Delta::Delta() {
 }
 Delta::~Delta() {
 }
+
 void Delta::update() {
   _iDeltaNow = SDL_GetPerformanceCounter();
   double delta = (double)((_iDeltaNow - _iDeltaLast));
@@ -13,5 +13,7 @@ void Delta::update() {
   _iDeltaLast = _iDeltaNow;
   _fDelta = delta;
 }
-}//ns BR2
+
+
+}//ns Game
 

@@ -2,7 +2,7 @@
 #include "../base/Gu.h"
 
 
-namespace BR2 {
+namespace Game {
 SyncTimer::SyncTimer(bool start) {
   _bRunning = start;
 }
@@ -34,4 +34,4 @@ void SyncTimer::tick(uint64_t duration, std::function<void()> func) {
 
 
 
-}//ns BR2
+}//ns Game

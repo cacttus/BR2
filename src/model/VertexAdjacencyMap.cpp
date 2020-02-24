@@ -1,7 +1,7 @@
 #include "../model/VertexAdjacencyMap.h"
 
 
-namespace BR2 {
+namespace Game {
 VertexAdjacencyMap::VertexAdjacencyMap() {
   _vmap = new AdjacencyMap();
 }
@@ -34,9 +34,9 @@ void VertexAdjacencyMap::addMappingIgnoreDupes(v_index32 index, uint32_t face_in
 
 }
 /**
-*  @fn getVertexIndexMapping
-*  @brief
-*  @return NULL if the given face list wasn't found. OR a list of faces
+*    @fn getVertexIndexMapping
+*    @brief
+*    @return NULL if the given face list wasn't found. OR a list of faces
 */
 VertexAdjacencyMap::FaceList* VertexAdjacencyMap::getVertexIndexMapping(v_index32 index) {
   FaceList* ret = nullptr;
@@ -50,4 +50,4 @@ VertexAdjacencyMap::FaceList* VertexAdjacencyMap::getVertexIndexMapping(v_index3
 }
 
 
-}//ns BR2
+}//ns game

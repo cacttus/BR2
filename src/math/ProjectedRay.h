@@ -9,12 +9,10 @@
 
 #include "../math/MathHeader.h"
 #include "../math/Vec3x.h"
-namespace BR2 {
-
+namespace Game {
 
 class ProjectedRay : public VirtualMemory {
 public:
-  
   ProjectedRay() : _isOpt(false), Length(10000.0f) {}
   virtual ~ProjectedRay() override {}
 
@@ -48,6 +46,8 @@ public:
 
     _isOpt = true;
   }
+
+
 public:
   vec3 Origin;
   vec3 Dir;
@@ -86,13 +86,12 @@ public:
     vec3 ret = getBegin() + (getEnd() - getBegin()) * getTime();
     return ret;
   }
-
 private:
   float _t;
   vec3 _vNormal;
 };
 
-}//ns BR2
+}//ns game
 
 
 

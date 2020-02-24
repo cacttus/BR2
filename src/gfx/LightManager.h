@@ -10,14 +10,14 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
-* @class LightManager
-* @brief Stores deferred light data on the GPU, and renders shadows.
+*  @class LightManager
+*  @brief Manages both lights, and shadow maps, for all objects which emit.
 */
-class LightManager : public GLFramework {
+class LightManager : public VirtualMemory {
 public:
-  LightManager(std::shared_ptr<GLContext> ct, std::shared_ptr<Scene> scene);
+  LightManager(std::shared_ptr<GLContext> tc);
   virtual ~LightManager() override;
 
   void update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf);
@@ -35,6 +35,7 @@ public:
   std::vector<std::shared_ptr<ShadowFrustum>>& getGpuShadowFrustums() { return  _vecGpuShadowFrustums; }
   std::vector<std::shared_ptr<ShadowBox>> getAllShadowBoxes();
   std::vector<std::shared_ptr<ShadowFrustum>> getAllShadowFrustums();
+
 private:
   static const int c_iMaxLights = 64;
   std::shared_ptr<GLContext> _pContext = nullptr;
@@ -45,14 +46,13 @@ private:
   std::vector<std::shared_ptr<ShadowFrustum>> _vecGpuShadowFrustums;
   bool _bFogDisabled = false;
   float _fLastFogBlend;
-  std::shared_ptr<Scene> _pScene = nullptr;
 
   void updateRenderData();
   void initializeDeferredFogData();
   void setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf);    // - Sets up all the *enabled* lights for rendering.
 };
 
-}//ns BR2
+}//ns Game
 
 
 

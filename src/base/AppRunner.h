@@ -1,49 +1,55 @@
-/**
-*  @file AppRunner.h
-*  @author MetalMario971
-*/
+//
+//  AppRunner.h
+//  brom
+//
+//  Created by mac1224 on 11/5/16.
+//  Copyright © 2016 Swill. All rights reserved.
+//
 #ifndef __57823905782390589020_AppRunner_h_2298357238957238957129348__
 #define __57823905782390589020_AppRunner_h_2298357238957238957129348__
 
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 
-namespace BR2 {
-class AppRunnerInternal;
+namespace Game { 
+
 /**
-*  @class AppRunner
-*  @brief The entry point of the application from main()
+*   @class AppRunner
+*   @brief The entry point of the application from main()
 */
 class AppRunner : public VirtualMemory {
-public:
-  AppRunner();
-  virtual ~AppRunner() override;
-  void runApp(const std::vector<string_t>& args);
-
 private:
+   // std::shared_ptr<Engine> _pEngine = nullptr;
+   // std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
+    SDL_AudioSpec _audioSpec;
+  
+    t_timeval _tvInitStartTime = 0;
 
+    // accept a connection coming in on server_tcpsock
+    TCPsocket _gameHostSocket;//Send and receive data
+    TCPsocket _server_tcpsock;//Accept connections
 
-  t_timeval _tvInitStartTime = 0;
+    void initSDL(t_string windowTitle, std::shared_ptr<AppBase> app);
+    void doShowError(t_string err, Exception* e=nullptr);
+    SDL_bool initAudio();
+    void initNet();
+    bool handleEvents(SDL_Event * event);
+    void runGameLoop(std::shared_ptr<AppBase> rb);
+    void exitApp(t_string error, int rc);
 
-  AppRunnerInternal* _pInternal = nullptr;
-
-  void initSDL();
-  void doShowError(string_t err, Exception* e = nullptr);
-  void initNet();
-  void runApplication();
-  void exitApp(string_t error, int rc);
-  void runApplicationTryCatch();
-  bool argMatch(const std::vector<string_t>& args, string_t arg, int32_t iCount);
-  bool runCommands(const std::vector<string_t>& args);
-  void printVideoDiagnostics();
-  void updateWindowHandleForGamehost();
-  void attachToGameHost();
-  bool handleSDLEvents();
-  void loadAppPackage();
+    void runGameLoopTryCatch(std::shared_ptr<AppBase> rb);
+    bool argMatch(const std::vector<t_string>& args,t_string arg, int32_t iCount);
+    bool runCommands(const std::vector<t_string>& args);
+    void printVideoDiagnostics();
+    void updateWindowHandleForGamehost();
+    void attachToGameHost();
+    bool handleSDLEvents();
+public:
+    void runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> rb);
 };
 
 
-}//ns BR2
+}//NS Game
 #endif /* AppRunner_h */
 
 

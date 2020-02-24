@@ -9,11 +9,7 @@
 
 #include "../math/MathHeader.h"
 
-namespace BR2 {
-/**
-*  @class Vec2x
-*  @brief 2D vector class.
-*/
+namespace Game {
 template < class Tx >
 class Vec2x : public PureMemory {
 public:
@@ -50,7 +46,7 @@ public:
   //static Vec2x<Tx> minv(const Vec2x<Tx>& v_a, const Vec2x<Tx>& v_b);    // - Returns the minimum vector from the given two
   //static Vec2x<Tx> maxv(const Vec2x<Tx>& v_a, const Vec2x<Tx>& v_b);    // returns maximujm vector of given t2o
 
-  FORCE_INLINE string_t toString(int precis = -1) const;
+  FORCE_INLINE t_string toString(int precis = -1) const;
 
   FORCE_INLINE  static Vec2x<Tx> Vec2x_MIN();
   FORCE_INLINE  static Vec2x<Tx> Vec2x_MAX();
@@ -479,13 +475,13 @@ bool Vec2x<Tx>::compareTo(const Vec2x<Tx>* rhs) const {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 // - Vector shorthands
-static FORCE_INLINE Vec2f& normalize(Vec2f& v1) { return v1.normalize(); }
-static FORCE_INLINE Vec2f cross(Vec2f& v1, Vec2f& v2) { return v1.cross(v2); }
-static FORCE_INLINE float dot(Vec2f& v1, Vec2f& v2) { return v1.dot(v2); }
-static FORCE_INLINE string_t tstr(const vec2& x) { return x.toString(); }
-static FORCE_INLINE string_t tstr(const ivec2& x) { return x.toString(); }
-static FORCE_INLINE string_t tstr(const uvec2& x) { return x.toString(); }
-}//ns BR2
+STATIC FORCE_INLINE Vec2f& normalize(Vec2f& v1) { return v1.normalize(); }
+STATIC FORCE_INLINE Vec2f cross(Vec2f& v1, Vec2f& v2) { return v1.cross(v2); }
+STATIC FORCE_INLINE float dot(Vec2f& v1, Vec2f& v2) { return v1.dot(v2); }
+STATIC FORCE_INLINE t_string tstr(const vec2& x) { return x.toString(); }
+STATIC FORCE_INLINE t_string tstr(const ivec2& x) { return x.toString(); }
+STATIC FORCE_INLINE t_string tstr(const uvec2& x) { return x.toString(); }
+}//ns game
 
 
 

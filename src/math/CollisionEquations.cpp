@@ -10,7 +10,7 @@
 //#include "../physics/SphericalVolume.h"
 //#include "../physics/TriangleMeshVolume.h"
 
-namespace BR2 {
+namespace Game {
 
 CollisionResult::e CollisionEquations::sat_axis_box_t_fast(
   const float& v0, const float& c0, const float& r0,
@@ -89,7 +89,7 @@ bool CollisionEquations::sat_box_axis_t(float c1, float c2, float r1, float r2, 
   AssertOrThrow2(r2 > 0.0f);
 #else 
   if (r1 < 0.0f || r2 < 0.0f) {
-    Br2LogWarn("Error 922508- box radius was zero for object.");
+    BroLogWarn("Error 922508- box radius was zero for object.");
   }
 #endif
   countXYZ = true;
@@ -516,4 +516,4 @@ bool Ceq::triangleAabbTest(const vec3* vertices, const vec3& aabbMin, const vec3
 }
 
 
-}//ns BR2
+}//ns game

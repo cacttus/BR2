@@ -2,10 +2,7 @@
 *  @file DisplayHeader.h
 *  @date 7/18/2010
 *  @author MetalMario971
-*    This file holds the platform rendering system.
 */
-
-
 #pragma once
 #ifndef __RENDERHEADER_H__
 #define __RENDERHEADER_H__
@@ -16,10 +13,7 @@
 #include "../math/Vec4x.h"
 #include "../math/Matrix4x4.h"
 
-namespace BR2 {
-//Default picker ID.  Note if blending is enabled the blend operation will prevent accurate picking.
-#define INVALID_PICK_ID (0)
-
+namespace Game {
 // - Channel 1 is depth texture, 0 is base textures
 #define GFX_TEXTURE_CHANNEL_BASE TEXTURE_CHANNEL_0
 #define GFX_TEXTURE_CHANNEL_NORMAL TEXTURE_CHANNEL_1
@@ -47,12 +41,6 @@ typedef enum {
     ,Pick
 } RenderMode;
 
-namespace SpriteFlags {
-typedef enum { Shift_V = 0x01, Shift_H = 0x02 } e;
-}
-
-//Bits that turn on/off render layers.
-typedef std::bitset<16> PipeBits;
 
 namespace ShaderClass { typedef enum { Shadow, Diffuse } e; }
 
@@ -77,17 +65,15 @@ namespace ProjectionMode { typedef enum {Perspective, Orthographic}e; }
 namespace TexWrap { typedef enum { Clamp, Repeat } e; }
 namespace TexFilter { typedef enum { Linear, Nearest } e; }
 namespace PipeBit { typedef enum { 
-    Deferred,     // 1 Basic 3D lighted rendering
-    Shadow,       // 2 Shadow step
-    Forward,      // 3 Forward Rendering
-    Debug,        // 4 Debug rendering
-    NonDepth,     // 5 2D rendering, behind the UI
-    UI_Overlay,   // 6 The UI
-    Transparent,  // 7 Transparency Pass
-    BlitFinal,    // 8 Use this to blit to the screen, otherwise, the rendering stays offscreen.
-    DepthOfField, // 9 Depth of Field.
-    MaxPipes 
-} e; }
+    Deferred, 
+    Shadow, 
+    Forward, 
+    Debug,
+    NonDepth,
+    Transparent,
+    BlitFinal,
+    Full,
+    MaxPipes } e; }
 
 // - tells us how to orient the camera to destination positions based
 // on the state of the  chraacter.
@@ -213,22 +199,24 @@ typedef enum {
  //FWDDCL
  class ShaderSubProgram;
  class CameraNode;
- class RenderViewport;
+ class WindowViewport;
  class FrustumBase;
  class ShaderBase;
  class FboShader;
  class FramebufferForward;
  class ScreenQuadMesh;
- class ParticleMaker;
+ class Party;
  class Atlas;
  class AtlasSprite;
  class FrustumProjectionParameters;
  class PointLight;
+ class Party;
  class Particle;
  class DeferredFramebuffer;
  class FontTextBuffer;
  class FontSpec;
  class IScreenText;
+// class TextBoss;
  class GpuQuad3;
  class QuadBufferMesh;
  class FontSpec;
@@ -243,8 +231,9 @@ typedef enum {
  class Texture2DSpec;
  class TextureAtlas2d;
  class GLContext;
- class SkyBox;
+ class HappySky;
  class UiElement;
+ class Gui2d;
  class SpriteBucket;
  class SpriteSpec;
  class SpriteFrame;
@@ -252,12 +241,12 @@ typedef enum {
  class ObjectButton;
  class VboData;
  class IboData;
- class ShaderManager;
+ class ShaderMaker;
  class ShaderCompiler;
  class ShaderCache;
  class ShaderUniform;
  class ShaderAttribute;
- class RenderPipeline;
+ class RenderPipe;
  class LightNodePoint;
  class LightNodeBase;
  class LightManager;
@@ -267,16 +256,19 @@ typedef enum {
  class GpuPointLight;
  class RenderParams;
  class ForwardFramebuffer;
- class FlyingCameraControls;
+ class FlyCam;
  class GpuComputeSync;
- class BufferRenderTarget;
+ class RenderTarget;
  class Picker;
  class ShadowFrustum;
- class ShadowBox;
+ class ShadowBox;//1/22/18
  class ShadowBoxSide;
  class LightManager;
  class LightNodePoint;
  class LightNodeDir;
+ class GraphicsApi;
+ class OpenGLApi;
+ class VulkanApi;
  class RenderSettings;
  class UiTex;
  class Ui3Tex;
@@ -301,20 +293,17 @@ typedef enum {
  class UiVScrollbarThumb;
  class UiWindow;
  class UiCursor;
- class UiScreen;
- class RenderParams;
+ class Gui2d;
  class MegaTex;
  class MtNode;
  class MtTex;
  class MtFont;
  class ShaderCache;
  class GraphicsWindow;
+ class GraphicsContext;
+ class VulkanContext;
  class GLContext;
- class VaoDataGeneric;
- class MeshComponent;
- class UtilMeshInline;
- class RenderTarget;
- class VaoDataGeneric;
+ class GLProgramBinary;
 
  namespace UiEventId {
  typedef enum {
@@ -404,27 +393,14 @@ typedef enum {
      float _pad3;
  };
 
- //Goes here becauwse TreeNode inherits it.
- class Drawable : public VirtualMemoryShared<Drawable> {
- public:
-   virtual void drawDeferred(RenderParams& rp) = 0;
-   virtual void drawForward(RenderParams& rp) = 0;
-   virtual void drawShadow(RenderParams& rp) = 0;
-   virtual void drawForwardDebug(RenderParams& rp) = 0;
-   virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
-   virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
-   virtual void drawUI(RenderParams& rp) = 0;
- };
-
-
-}//ns BR2
+}//ns game
 
 
 #include "../gfx/RenderParams.h"
 
 extern "C" {
 
-//Note if you are updating stb_truetype, make sure to comment these structs out 2/7/18
+//DereK: note if you are updating stb_truetype, make sure to comment these structs out 2/7/18
 //STB namespace
 typedef struct
 {

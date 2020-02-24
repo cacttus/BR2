@@ -1,14 +1,11 @@
 #include "../base/Gu.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../world/PhysicsGridAwareness.h"
-#include "../world/Scene.h"
-#include "../world/PhysicsManager.h"
 
 
-namespace BR2 {
-PhysicsGridAwareness::PhysicsGridAwareness(std::shared_ptr<PhysicsManager> pm, MpFloat rxz, float incXZ, MpFloat ry, float incY) {
-  _pPhysicsManager = pm;
+namespace Game {
+PhysicsGridAwareness::PhysicsGridAwareness(MpFloat rxz, float incXZ, MpFloat ry, float incY) {
   _vLastAwarenessPos = getAwarenessPos();
   _mpXz = rxz;
   _mpY = ry;
@@ -18,6 +15,7 @@ PhysicsGridAwareness::PhysicsGridAwareness(std::shared_ptr<PhysicsManager> pm, M
   _fAwarenessRadiusY = ry.getMin();
 }
 PhysicsGridAwareness::~PhysicsGridAwareness() {
+
 }
 void PhysicsGridAwareness::update(float dt) {
   updateAwarenessSpheroidAxis(_fAwarenessRadiusY,
@@ -27,14 +25,16 @@ void PhysicsGridAwareness::update(float dt) {
   updateAwarenessSpheroidAxis(_fAwarenessRadiusXZ,
     _mpXz.getMin(),
     _mpXz.getMax(),
-    _incXz);
+    _incXz
+  );
+
 }
 void PhysicsGridAwareness::updateAwarenessSpheroidAxis(float& fAwareness, float minR, float maxR, float increment) {
-  float fLen = (_vLastAwarenessPos - _pPhysicsManager->getScene()->getPlayerCamera()->getPos()).squaredLength();
+  float fLen = (_vLastAwarenessPos - Gu::getCamera()->getPos()).squaredLength();
   //Reset awareness when we move some small value.
   if (fLen > 0.05) {
     fAwareness = minR;
-    _vLastAwarenessPos = _pPhysicsManager->getScene()->getPlayerCamera()->getPos();
+    _vLastAwarenessPos = Gu::getCamera()->getPos();
   }
 
   // float aMax = CongaUtils::getBvhAwarenessMaxRadius();
@@ -63,7 +63,7 @@ vec3 PhysicsGridAwareness::getAwarenessPos() {
   // all nodes now contain positions.
   //This is a debatable position.  If we use the "raycast" version we end up
   //creating / deleting tons of cells. 
-  vec3 vp = _pPhysicsManager->getScene()->getPlayerCamera()->getPos();//getRaycastViewCenter(); //->getCamera()->getPos();//getProjectedViewCenter();
+  vec3 vp = Gu::getCamera()->getPos();//getRaycastViewCenter(); //->getCamera()->getPos();//getProjectedViewCenter();
                                                     // vp.y = 0;
 
   return vp;
@@ -76,4 +76,4 @@ vec3 PhysicsGridAwareness::getAwarenessPos() {
 
 
 
-}//ns BR2
+}//ns Game

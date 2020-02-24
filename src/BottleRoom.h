@@ -2,7 +2,7 @@
 *
 *    @file DartRoom.h
 *    @date January 9, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

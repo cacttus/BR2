@@ -10,30 +10,24 @@
 #include "../math/TriPlane.h"
 #include "../math/PlaneEx3.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class QuadPlane
-*  @brief Derived plane for extra info and stuff.
-* DO NOT ADD VIRTUAL METHODS
-*  TODO: Difference between QuadPlane and Quad3x?? 
+*  @brief Derived plane for extra info and stuff.  DO NOT ADD VIRTUAL METHODS
 */
 class QuadPlane : public PlaneEx3 {
 public:
-  vec3 p1, p2, p3, p4;
+  FORCE_INLINE QuadPlane();
+  FORCE_INLINE QuadPlane(Vector3&, Vector3&, Vector3&, Vector3&);
+  FORCE_INLINE NOT_VIRTUAL ~QuadPlane() override;
 
   FORCE_INLINE PlanePoint containsPoint(Vector3& point); // - True if the point falls within the region of the quad plane.
   FORCE_INLINE PlaneHit hitTest(Vector3& p1, Vector3& p2);
   FORCE_INLINE void construct(Vector3& dp1, Vector3& dp2, Vector3& dp3, Vector3& dp4);
   FORCE_INLINE void construct();
-  //QuadPlane& QuadPlane::operator=( const QuadPlane& rhs )
-  //{
-  //    *this = rhs;
-  //    return *this;
-  //}
 
-  FORCE_INLINE QuadPlane();
-  FORCE_INLINE QuadPlane(Vector3&, Vector3&, Vector3&, Vector3&);
-  FORCE_INLINE NOT_VIRTUAL ~QuadPlane() override;
+public:
+  vec3 p1, p2, p3, p4;
 };
 
 FORCE_INLINE PlaneHit
@@ -68,8 +62,8 @@ QuadPlane::containsPoint(Vector3& point) {
 }
 
 /**
-*  @fn construct()
-*  @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
+*    @fn construct()
+*    @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
 */
 FORCE_INLINE void
 QuadPlane::construct(Vector3& dp1, Vector3& dp2, Vector3& dp3, Vector3& dp4) {
@@ -80,8 +74,8 @@ QuadPlane::construct(Vector3& dp1, Vector3& dp2, Vector3& dp3, Vector3& dp4) {
   construct();
 }
 /**
-*  @fn construct()
-*  @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
+*    @fn construct()
+*    @brief Override of the plane construct.  Will calculate the data inside of the QuadPlane
 */
 FORCE_INLINE void
 QuadPlane::construct() {

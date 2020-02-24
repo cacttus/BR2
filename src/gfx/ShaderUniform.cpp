@@ -1,14 +1,16 @@
 #include "../base/Logger.h"
-#include "../base/Hash.h"
+#include "../base/Gu.h"
+#include "../base/GLContext.h"
+#include "../base/FileSystem.h"
 #include "../base/Allocator.h"
+#include "../base/Hash.h"
 #include "../gfx/ShaderUniform.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/GLContext.h"
 
-
-namespace BR2 {
-ShaderUniform::ShaderUniform(std::shared_ptr<GLContext> ct, GLenum eType, GLint location, string_t name, size_t iArraySize) : GLFramework(ct) {
+namespace Game {
+ShaderUniform::ShaderUniform(std::shared_ptr<GLContext> ct, GLenum eType, GLint location, t_string name, size_t iArraySize) :
+  _pContext(ct) {
   _glType = eType;
   _glLocation = location;
   _strName = name; //this gets parsed and changed
@@ -38,7 +40,7 @@ void ShaderUniform::copyUniformData(void* pData, GLint count) {
   if (count == -1) {
     static bool bAlreadyLogged = false;
     if (_iArraySize > 1 && bAlreadyLogged == false) {
-      Br2LogWarn(getName() +
+      BroLogWarn(getName() +
         " NOTE: There are " + _iArraySize + " elements in the uniform array '" + getName() +
         "', and you did not explicitly set the count. Setting count to 1");
       bAlreadyLogged = true;
@@ -64,7 +66,7 @@ OpenGLShaderVarType::e ShaderUniform::getSystemType() {
 void ShaderUniform::validate() {
   validateSystemTypeEqualsOpenGlType(_systemType, _glType);
 }
-string_t ShaderUniform::debugGetUniformValueAsString() {
+t_string ShaderUniform::debugGetUniformValueAsString() {
   switch (_systemType) {
   case OpenGLShaderVarType::e::GpuInt1:   return Stz((*((int32_t*)_pStorage->ptr()))); break;
   case OpenGLShaderVarType::e::GpuInt2:   return Stz((*((ivec2*)_pStorage->ptr()))); break;
@@ -106,7 +108,7 @@ size_t ShaderUniform::getByteSizeForType(OpenGLShaderVarType::e etype) {
     // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
   case OpenGLShaderVarType::e::GpuMat3:   return sizeof(mat3); break;
   case OpenGLShaderVarType::e::GpuMat4:   return sizeof(mat4); break;
-  default: BrThrowNotImplementedException();
+  default: BroThrowNotImplementedException();
 
   }
 }
@@ -127,7 +129,7 @@ size_t ShaderUniform::getCountForType(OpenGLShaderVarType::e etype) {
     // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
   case OpenGLShaderVarType::e::GpuMat3:   return 1; break;
   case OpenGLShaderVarType::e::GpuMat4:   return 1; break;
-  default: BrThrowNotImplementedException();
+  default: BroThrowNotImplementedException();
 
   }
 }
@@ -172,7 +174,7 @@ OpenGLShaderVarType::e ShaderUniform::openglTypeToSystemType(GLenum eType) {
   case GL_SAMPLER_2D_ARRAY_SHADOW: return OpenGLShaderVarType::GpuInt1; break;
   case GL_SAMPLER_CUBE_SHADOW: return OpenGLShaderVarType::GpuInt1; break;
   }
-  Br2ThrowException("OpenGL shader variable type not yet supported.");
+  BroThrowException("OpenGL shader variable type not yet supported.");
 }
 void ShaderUniform::validateSystemTypeEqualsOpenGlType(OpenGLShaderVarType::e systemNameType, GLenum shaderDefinedUniformType) {
   //Samplers must be INT as per the GL spec.
@@ -202,7 +204,7 @@ void ShaderUniform::validateSystemTypeEqualsOpenGlType(OpenGLShaderVarType::e sy
   else if (systemNameType == OpenGLShaderVarType::e::GpuDouble3)      AssertOrThrow2(shaderDefinedUniformType == GL_DOUBLE_VEC3);
   else if (systemNameType == OpenGLShaderVarType::e::GpuDouble4)      AssertOrThrow2(shaderDefinedUniformType == GL_DOUBLE_VEC4);
   else
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
 
 }
 
@@ -217,40 +219,40 @@ void ShaderUniform::bindUniformFast() {
   //Not ven un ivorm arrays can be null..
   if (value == nullptr) {
     if (getIgnore() == false) {
-      Br2LogWarn("Shader Uniform variable " + getName() + " value was not set");
+      BroLogWarn("Shader Uniform variable " + getName() + " value was not set");
     }
     else {
       return;
     }
   }
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 
-  RenderUtils::debugGetRenderState(getContext());
+  RenderUtils::debugGetRenderState();
 
   switch (_systemType) {
-  case OpenGLShaderVarType::e::GpuInt1:   getContext()->glUniform1iv(_glLocation, count, (GLint*)value); break;
-  case OpenGLShaderVarType::e::GpuInt2:   getContext()->glUniform2iv(_glLocation, count, (GLint*)value); break;
-  case OpenGLShaderVarType::e::GpuInt3:   getContext()->glUniform3iv(_glLocation, count, (GLint*)value); break;
-  case OpenGLShaderVarType::e::GpuInt4:   getContext()->glUniform4iv(_glLocation, count, (GLint*)value); break;
-  case OpenGLShaderVarType::e::GpuUint1:  getContext()->glUniform1uiv(_glLocation, count, (GLuint*)value); break;
-  case OpenGLShaderVarType::e::GpuUint2:  getContext()->glUniform2uiv(_glLocation, count, (GLuint*)value); break;
-  case OpenGLShaderVarType::e::GpuUint3:  getContext()->glUniform3uiv(_glLocation, count, (GLuint*)value); break;
-  case OpenGLShaderVarType::e::GpuUint4:  getContext()->glUniform4uiv(_glLocation, count, (GLuint*)value); break;
-  case OpenGLShaderVarType::e::GpuFloat1: getContext()->glUniform1fv(_glLocation, count, (GLfloat*)value); break;
-  case OpenGLShaderVarType::e::GpuFloat2: getContext()->glUniform2fv(_glLocation, count, (GLfloat*)value); break;
-  case OpenGLShaderVarType::e::GpuFloat3: getContext()->glUniform3fv(_glLocation, count, (GLfloat*)value); break;
-  case OpenGLShaderVarType::e::GpuFloat4: getContext()->glUniform4fv(_glLocation, count, (GLfloat*)value); break;
-  case OpenGLShaderVarType::e::GpuMat2:   getContext()->glUniformMatrix2fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
-  case OpenGLShaderVarType::e::GpuMat3:   getContext()->glUniformMatrix3fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
-  case OpenGLShaderVarType::e::GpuMat4:   getContext()->glUniformMatrix4fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuInt1:   _pContext->glUniform1iv(_glLocation, count, (GLint*)value); break;
+  case OpenGLShaderVarType::e::GpuInt2:   _pContext->glUniform2iv(_glLocation, count, (GLint*)value); break;
+  case OpenGLShaderVarType::e::GpuInt3:   _pContext->glUniform3iv(_glLocation, count, (GLint*)value); break;
+  case OpenGLShaderVarType::e::GpuInt4:   _pContext->glUniform4iv(_glLocation, count, (GLint*)value); break;
+  case OpenGLShaderVarType::e::GpuUint1:  _pContext->glUniform1uiv(_glLocation, count, (GLuint*)value); break;
+  case OpenGLShaderVarType::e::GpuUint2:  _pContext->glUniform2uiv(_glLocation, count, (GLuint*)value); break;
+  case OpenGLShaderVarType::e::GpuUint3:  _pContext->glUniform3uiv(_glLocation, count, (GLuint*)value); break;
+  case OpenGLShaderVarType::e::GpuUint4:  _pContext->glUniform4uiv(_glLocation, count, (GLuint*)value); break;
+  case OpenGLShaderVarType::e::GpuFloat1: _pContext->glUniform1fv(_glLocation, count, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuFloat2: _pContext->glUniform2fv(_glLocation, count, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuFloat3: _pContext->glUniform3fv(_glLocation, count, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuFloat4: _pContext->glUniform4fv(_glLocation, count, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuMat2:   _pContext->glUniformMatrix2fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuMat3:   _pContext->glUniformMatrix3fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
+  case OpenGLShaderVarType::e::GpuMat4:   _pContext->glUniformMatrix4fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
 
   default:
-    Br2LogError("Uniform type binding method has not been implemented for uniform " + getName() +
-      " of type " + ShaderManager::systemTypeToSTring(_systemType) + " (" + _systemType + ") ");
+    BroLogError("Uniform type binding method has not been implemented for uniform " + getName() +
+      " of type " + ShaderMaker::systemTypeToSTring(_systemType) + " (" + _systemType + ") ");
     Gu::debugBreak();
     break;
   }
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -258,19 +260,19 @@ void ShaderUniform::bindUniformFast() {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-ShaderUniformBlock::ShaderUniformBlock(std::shared_ptr<GLContext> ct, string_t name, GLint iBlockIndex, GLint iBindingIndex, size_t iBufferByteSize) : GLFramework(ct) {
-  _iBlockIndex = iBlockIndex;
-  _iBindingIndex = iBindingIndex;
-
+ShaderUniformBlock::ShaderUniformBlock(std::shared_ptr<GLContext> ct, t_string name, GLint iBlockIndex, GLint iBindingIndex, size_t iBufferByteSize) :
+  _pContext(ct),
+  _iBlockIndex(iBlockIndex),
+  _iBindingIndex(iBindingIndex) {
   _strName = name;
   _iBufferSizeBytes = iBufferByteSize;
 
   AssertOrThrow2(_iBufferSizeBytes > 0);
 
-  getContext()->glGenBuffers(1, (GLuint*)&_iUboId);
-  getContext()->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);
-  getContext()->glBufferData(GL_UNIFORM_BUFFER, _iBufferSizeBytes, 0, GL_DYNAMIC_DRAW);
-  getContext()->glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  _pContext->glGenBuffers(1, (GLuint*)&_iUboId);
+  _pContext->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);
+  _pContext->glBufferData(GL_UNIFORM_BUFFER, _iBufferSizeBytes, 0, GL_DYNAMIC_DRAW);
+  _pContext->glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 }
 ShaderUniformBlock::~ShaderUniformBlock() {
@@ -281,29 +283,29 @@ void ShaderUniformBlock::copyUniformData(void* pData, size_t copySizeBytes) {
 
   _pValue = pData;
 
-  getContext()->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);
-  //    void* pBuf =getContext()->glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+  _pContext->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);
+  //    void* pBuf =_pContext->glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
       //if(pBuf != nullptr) {
       //    memcpy(pBuf, pData, copySizeBytes);
-      //    getContext()->glMapBuffer(GL_UNIFORM_BUFFER, 0);
+      //    _pContext->glMapBuffer(GL_UNIFORM_BUFFER, 0);
       //}
       //else {
       //    BroLogError("Uniform buffer could not be mapped.");
       //}
-      //getContext()->glBufferData(GL_UNIFORM_BUFFER, copySizeBytes, (void*)_pValue, GL_DYNAMIC_DRAW);
-  getContext()->glBufferSubData(GL_UNIFORM_BUFFER, 0, copySizeBytes, pData);
-  getContext()->glBindBuffer(GL_UNIFORM_BUFFER, 0);
+      //_pContext->glBufferData(GL_UNIFORM_BUFFER, copySizeBytes, (void*)_pValue, GL_DYNAMIC_DRAW);
+  _pContext->glBufferSubData(GL_UNIFORM_BUFFER, 0, copySizeBytes, pData);
+  _pContext->glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
   _bHasBeenSet = true;
 }
 void ShaderUniformBlock::bindUniformFast() {
   if (_pValue == nullptr) {
-    Br2LogWarn("Shader Uniform Block '" + getName() + "' value was not set ");
+    BroLogWarn("Shader Uniform Block '" + getName() + "' value was not set ");
   }
-  getContext()->glBindBufferBase(GL_UNIFORM_BUFFER, _iBindingIndex, _iUboId);
-  getContext()->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);
+  _pContext->glBindBufferBase(GL_UNIFORM_BUFFER, _iBindingIndex, _iUboId);
+  _pContext->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);
 }
 
 
-}//ns BR2
+}//ns Game

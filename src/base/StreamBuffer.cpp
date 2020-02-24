@@ -1,8 +1,7 @@
 #include "../base/StreamBuffer.h"
 
 
-namespace BR2 {
-//////////////////////////////////////////////////////////////////////////
+namespace Game {
 StreamBuffer::StreamBuffer(int32_t chunkSizeBytes) :
   _iChunkSizeBytes(chunkSizeBytes) {
   AssertOrThrow2(_iChunkSizeBytes > 0);
@@ -37,12 +36,12 @@ RetCode StreamBuffer::write(
 
   return GR_OK;
 }
-/**
-*  @fn read()
-*  @brief Read *len* data into the specified buffer *buf* buffer length of *buflen* and write to offset *offset*.
-*/
-RetCode StreamBuffer::read(char* buf, size_t len, int64_t buflen, int32_t offset) {
-  //**offset defaults to -1..?
+RetCode StreamBuffer::read(
+  char* buf
+  , size_t len
+  , int64_t buflen
+  , int32_t offset //Offset in BUF.
+) {
   AssertOrThrow2(_data.count() >= (offset + len));
   AssertOrThrow2(buflen >= (offset + len));
 
@@ -96,8 +95,8 @@ void StreamBuffer::next(size_t nBytesToAdd) {
   _iAddCountBytes += nBytesToAdd;
   checkToGrow();
 }
-string_t StreamBuffer::toString() {
-  string_t ret(_data.ptr(), _data.count());
+t_string StreamBuffer::toString() {
+  t_string ret(_data.ptr(), _data.count());
 
   return ret;
 }
@@ -108,4 +107,4 @@ void StreamBuffer::copyFrom(StreamBuffer* rhs) {
 
 
 
-}//ns BR2
+}//ns Game

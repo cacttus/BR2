@@ -1,60 +1,56 @@
-#include "../base/BaseHeader.h"
+#include "../base/Logger.h"
 
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
+#include "../base/EngineConfigFile.h"
+#include "../base/AppBase.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
-#include "../gfx/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
-#include "../base/InputManager.h"
-#include "../base/ApplicationPackage.h"
+#include "../base/Fingers.h"
+#include "../base/Package.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
 #include "../base/SoundCache.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../base/Net.h"
 #include "../base/Delta.h"
 
 #include "../math/Algorithm.h"
 
 #include "../base/ProjectFile.h"
-#include "../base/WindowManager.h"
 
 #include "../gfx/TexCache.h"
 #include "../gfx/LightManager.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/GraphicsApi.h"
-#include "../gfx/GLContext.h"
+#include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/ShaderManager.h"
-#include "../gfx/FlyingCameraControls.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/FlyCam.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
-#include "../gfx/ParticleMaker.h"   
+#include "../gfx/Party.h"   
 #include "../gfx/CameraNode.h"
-#include "../gfx/ShaderManager.h"
-#include "../gfx/GLContext.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/OpenGLApi.h"
+#include "../base/GLContext.h"
 
 #include "../model/ModelCache.h"
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 
-#include "../world/PhysicsManager.h"
-
-#include "../gfx/GLContext.h"
-
-#include "../base/SDLIncludes.h"
-#include <iostream>
-#include "../ext/lodepng.h"
+#include "../world/PhysicsWorld.h"
 
 extern "C" {
   //nothings commented on Apr 12, 2016
@@ -71,26 +67,84 @@ extern "C" {
 #endif
 #endif
 
-namespace BR2 {
+namespace Game {
+//std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
+std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
+std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
+std::shared_ptr<Party> Gu::_pParty = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
-std::shared_ptr<InputManager> Gu::_pInput = nullptr;
-std::shared_ptr<ApplicationPackage> Gu::_pAppPackage = nullptr;
+std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
+std::shared_ptr<Fingers> Gu::_pFingers = nullptr;
+std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
+std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
+std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
+std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
+std::shared_ptr<LightManager> Gu::_pLightManager = nullptr;
+std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
+std::shared_ptr<Picker> Gu::_pPicker = nullptr;
+std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
+std::shared_ptr<Package> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
+//std::shared_ptr<Engine> Gu::_pEngine = nullptr;
+std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
-std::shared_ptr<WindowManager> Gu::_pWindowManager = nullptr;
-std::shared_ptr<GLContext> Gu::_pActiveContext = nullptr;
+std::shared_ptr<Delta> Gu::_pDelta = nullptr;
 
-std::shared_ptr<ApplicationPackage> Gu::getAppPackage() { return _pAppPackage; }
-std::shared_ptr<Sequencer> Gu::getSequencer() { return _pSequencer; }
-std::shared_ptr<WindowManager> Gu::getWindowManager() { return _pWindowManager; }
-std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
-std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
+//std::shared_ptr<GLContext> Gu::getGraphicsContext() {
+//    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(_pContext);
+//    return ct;
+//}
+#define _STPROP(x) std::shared_ptr<##x> Gu::get##x() { return _p##x; }
+_STPROP(RenderSettings);
+_STPROP(Package);
+_STPROP(ModelCache);
+_STPROP(Sequencer);
+_STPROP(Fingers);
+_STPROP(FpsMeter);
+_STPROP(FrameSync);
+_STPROP(SoundCache);
+std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
+std::shared_ptr<AppBase> Gu::getApp() { return _pAppBase; }
+_STPROP(TexCache);
+_STPROP(LightManager);
+_STPROP(Picker);
+//std::shared_ptr<Gui2d> Gu::getGui() { return _pGui2d; }
+_STPROP(PhysicsWorld);
+_STPROP(Party);
+std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
+_STPROP(EngineConfig);
+//_STPROP(RenderPipe);
+_STPROP(Logger);
+_STPROP(GraphicsApi);
+std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
-std::shared_ptr<Net> Gu::getNet() { return _pNet; }
-//void Gu::setContext(std::shared_ptr<GLContext> ct) { _pActiveContext = ct; }
-void Gu::setPackage(std::shared_ptr<ApplicationPackage> x) { _pAppPackage = x; }
+std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
+_STPROP(Net);
+std::shared_ptr<GLContext> Gu::getGraphicsContext() {
+  std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
+  std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
+  return oglapi->getContext();
+}
+std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return Gu::getActiveWindow()->getRenderPipe(); }
+std::shared_ptr<Gui2d> Gu::getGui() {
+  return Gu::getActiveWindow()->getGui();
+}
+_STPROP(Delta);
+std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
+
+void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
+void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
+void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
+void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
+
+void Gu::checkErrorsDbg() {
+  Gu::getGraphicsContext()->chkErrDbg();
+}
+void Gu::checkErrorsRt() {
+  Gu::getGraphicsContext()->chkErrRt();
+}
 
 bool Gu::is64Bit() {
   if (sizeof(size_t) == 8) {
@@ -99,19 +153,19 @@ bool Gu::is64Bit() {
   if (sizeof(size_t) == 4)
     return false;
   //WTF
-  BrThrowNotImplementedException();
+  BroThrowNotImplementedException();
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
-    Gu::getEngineConfig()->setShowConsole(BR2::TypeConv::strToBool(value));
-    Br2LogInfo("Overriding show console window: " + value);
+    Gu::getEngineConfig()->setShowConsole(Game::TypeConv::strToBool(value));
+    BroLogInfo("Overriding show console window: " + value);
   }
   else if (key == "--game-host") {
-    Gu::getEngineConfig()->setGameHostAttached(BR2::TypeConv::strToBool(value));
-    Br2LogInfo("Overriding game host: " + value);
+    Gu::getEngineConfig()->setGameHostAttached(Game::TypeConv::strToBool(value));
+    BroLogInfo("Overriding game host: " + value);
   }
   else {
-    Br2LogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
+    BroLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
   }
 }
 //**TODO Move this crap to AppRunner
@@ -136,23 +190,36 @@ void parsearg(std::string arg) {
   parsearg(key, value);
 }
 
-void Gu::initGlobals(const std::vector<std::string>& args) {
-  createCache();
+void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>& args) {
+  //Try to create teh cache dir.
+  //Make sure to check this on IOS
+  FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
+
+  _pAppBase = rb;
 
   //Log
   Gu::_pLogger = std::make_shared<Logger>();
-  Gu::_pLogger->init(ApplicationPackage::getCacheFolder());
+  Gu::_pLogger->init(rb);
 
   //Config
-  loadConfig(args);
+  EngineConfigFile ef;
+  ef.loadAndParse(rb->getConfigPath());
+  Gu::_pEngineConfig = ef.getConfig();
+
+  //Override EngineConfig
+  for (std::string arg : args) {
+    //TODO: skip arg 0 (app)
+    parsearg(arg);
+  }
 
   //Setup Global Configruation
   getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
   getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
 
+
   //Print some environment Diagnostics
-  Br2LogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
-  Br2LogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
+  BroLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
+  BroLogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
 
   if (Gu::getEngineConfig()->getShowConsole() == false) {
     OperatingSystem::hideConsole();
@@ -161,47 +228,37 @@ void Gu::initGlobals(const std::vector<std::string>& args) {
     OperatingSystem::showConsole();
   }
 }
-void Gu::createCache() {
-  //Try to create the cache (temp) folder. Make sure to check this on IOS
-  string_t strCache = FileSystem::formatPath(ApplicationPackage::getCacheFolder());
-  Br2LogInfo("Creating cache: '" + strCache + "'");
-  if (FileSystem::createDirectoryRecursive(strCache) == false) {
-    Br2ThrowException("Failed to create cache folder in '" + strCache + "'.");
-  }
-}
-void Gu::loadConfig(const std::vector<std::string>& args) {
-  string_t configPath = ApplicationPackage::getEngineConfigFilePath();
-  Br2LogInfo("Loading config from '" + configPath + "'");
-  if (!FileSystem::fileExists(configPath)) {
-    Br2ThrowException("Engine configuration file '" + configPath + "' does not exist.");
-  }
-  else {
-    EngineConfigFile ef;
-    ef.loadAndParse(configPath);
-    Gu::_pEngineConfig = ef.getConfig();
-  }
-
-  //Override the EngineConfig
-  for (std::string arg : args) {
-    parsearg(arg);//TODO: skip arg 0 (app)
-  }
-
-}
 //void Gu::setContext(std::shared_ptr<GraphicsContext> rb) {
 //    Gu::_pContext = rb;
 //}
 void Gu::deleteGlobals() {
   //This must be called in order to delete these in order.
   //Teh GL context needs to come at the end.
+  _pTexCache = nullptr;
+  _pCamera = nullptr;
+  _pParty = nullptr;
   _pSequencer = nullptr;
+
   _pSoundCache = nullptr;
+  _pShaderMaker = nullptr;
+  _pLightManager = nullptr;
+  _pModelCache = nullptr;
+  _pPicker = nullptr;
+  _pPhysicsWorld = nullptr;
   _pRenderSettings = nullptr;
   _pEngineConfig = nullptr;
+
   //System Level
-  _pInput = nullptr;
-  _pAppPackage = nullptr;
+  _pFingers = nullptr;
+  _pPackage = nullptr;
   _pLogger = nullptr;
   _pNet = nullptr;
+  _pDelta = nullptr;
+  _pFpsMeter = nullptr;
+  _pFrameSync = nullptr;
+
+  _pGraphicsApi = nullptr;
+  _pAppBase = nullptr;
 }
 
 bool Gu::isBigEndian() {
@@ -220,13 +277,13 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
   std::shared_ptr<Img32> ret = nullptr;
 
   std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
-  if (Gu::getAppPackage()->getFile(imgLoc, fb)) {
+  if (Gu::getPackage()->getFile(imgLoc, fb)) {
     //decode
     err = lodepng_decode32(&image, &width, &height, (unsigned char*)fb->getData().ptr(), fb->getData().count());
     if (err != 0) {
       //FB should free itself.
     //  Gu::SDLFileFree(imgData);
-      Br2ThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
+      BroThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
     }
     else {
       Img32::flipImage20161206(image, width, height);
@@ -263,12 +320,12 @@ bool Gu::saveImage(std::string path, std::shared_ptr<Img32> spec) {
 
     RetCode rc = DiskFile::writeAllBytes(path, allocr);
     if (rc != GR_OK) {
-      Br2LogError("Error'" + (int)rc + "' occurred while saving image.");
+      BroLogError("Error'" + (int)rc + "' occurred while saving image.");
     }
     allocr.dealloc();
   }
   else {
-    Br2LogError("LodePng - Error encoding image '" + path + "'.");
+    BroLogError("LodePng - Error encoding image '" + path + "'.");
     bRet = false;
   }
   free(buffer);//lodepng_free
@@ -396,9 +453,9 @@ void Gu::checkMemory() {
 #endif
 }
 
-string_t Gu::getOperatingSystemName() {
-  string_t res;
-#ifdef BR2_OS_WINDOWS
+t_string Gu::getOperatingSystemName() {
+  t_string res;
+#ifdef BRO_OS_WINDOWS
   OSVERSIONINFOEX vex;
   vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
   GetVersionEx((OSVERSIONINFO*)&vex);
@@ -452,7 +509,7 @@ string_t Gu::getOperatingSystemName() {
 
 uint32_t Gu::getCurrentThreadId() {
   uint32_t threadId = 0;
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   //TODO: std::this_thread::get_id()
   threadId = (uint32_t)GetCurrentThreadId();
 #else
@@ -469,14 +526,14 @@ bool Gu::isDebug() {
   return false;
 #endif
 }
-std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
+std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
   int squot = 0, dquot = 0;
 
   //todo - fix the delimiter thing
-  std::vector<string_t> ret;
+  std::vector<t_string> ret;
   for (int i = 0; i < argc; ++i) {
 
-    string_t str(argv[i]);
+    t_string str(argv[i]);
 
 
     ret.push_back(str);
@@ -484,15 +541,15 @@ std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delim
   return ret;
 }
 
-void Gu::guiQuad2d(Box2f& pq, int32_t width, int32_t height) {
+void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp) {
   //Transforms a quad for the matrix-less gui projection.
 
   //The resulting coordinates for the GPU are -0.5 +0.5 in both axes with the center being in the center of the screen
   //Translate a 2D screen quad to be rendered in a shader.
   //So* our quad is from TOP Left - OpenGL is Bottom Left - this fixes this.
-  float w = (float)width;
+  float w = (float)vp->getWidth();
   float w2 = w * 0.5f;
-  float h = (float)height;
+  float h = (float)vp->getHeight();
   float h2 = h * 0.5f;
 
   //Subtract from viewport center
@@ -511,9 +568,10 @@ void Gu::print(char msg) {
   c[1] = 0;
   print((char*)c);
 }
-void Gu::print(const string_t& msg) {
+void Gu::print(const t_string& msg) {
   print(msg.c_str());
 }
+
 void Gu::print(const char* msg) {
   if (Gu::getEngineConfig() == nullptr) {
     std::cout << msg;
@@ -522,6 +580,11 @@ void Gu::print(const char* msg) {
     std::cout << msg;
   }
 }
+
+uint64_t Gu::getFrameNumber() {
+  return Gu::getFpsMeter()->getFrameNumber();
+}
+
 std::string Gu::getCPPVersion() {
   //https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
 
@@ -539,40 +602,80 @@ std::string Gu::getCPPVersion() {
   }
   return Stz "pre-standard C++";
 }
+
 void Gu::createManagers() {
+  std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext());
+
   _pRenderSettings = RenderSettings::create();
+  BroLogInfo("GLContext - Building Package");
+  _pPackage = std::make_shared<Package>();
+  _pPackage->build(FileSystem::getExecutableFullPath());
+  BroLogInfo("GLContext - Creating TexCache");
+  _pTexCache = std::make_shared<TexCache>(Gu::getGraphicsContext());
 
-  Br2LogInfo("Creating Sequencer");
+  BroLogInfo("GLContext - Creating TextBoss");
+  //    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
+  BroLogInfo("GLContext - Creating Party");
+  _pParty = std::make_shared<Party>(Gu::getGraphicsContext());
+  BroLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
-
-  Br2LogInfo("Creating Fingers");
-  _pInput = std::make_shared<InputManager>();
-  _pInput->init();
-
-  Br2LogInfo("Creating SoundCache");
+  BroLogInfo("GLContext - Creating Fingers");
+  _pFingers = std::make_shared<Fingers>();
+  _pFingers->init();
+  BroLogInfo("GLContext - Creating FpsMeter");
+  _pFpsMeter = std::make_shared<FpsMeter>();
+  BroLogInfo("GLContext - Creating FrameSync");
+  _pFrameSync = std::make_shared<FrameSync>();
+  //This was commented out.  Why? 11/6
+  BroLogInfo("GLContext - Creating SoundCache");
   _pSoundCache = std::make_shared<SoundCache>();
+  BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
+  _pShaderMaker = std::make_shared<ShaderMaker>();
+  _pShaderMaker->initialize(Gu::getApp());
+  BroLogInfo("GLContext -  Lights");
+  _pLightManager = std::make_shared<LightManager>(Gu::getGraphicsContext());
+  BroLogInfo("GLContext - Model Cache");
+  _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
 
-  Br2LogInfo("Creating Network");
+  BroLogInfo("GLContext - Picker");
+  _pPicker = std::make_shared<Picker>(Gu::getGraphicsContext());
+
+  //BroLogInfo("GLContext - Gui");
+//   _pGui2d = std::make_shared<Gui2d>();
+
+  BroLogInfo("GLContext - Physics World");
+  //Either A) subclass or B) remove genericy thing
+ // _pPhysicsWorld = std::make_shared<PhysicsWorld>();
+
+  BroLogInfo("Network");
   _pNet = std::make_shared<Net>();
 
-  //Packages are supposed to be projects.  This creates a 'default' package.
-  Br2LogInfo("Creating Package");
-  _pAppPackage = std::make_shared<ApplicationPackage>();
-  string_t defaultPackageLocation = FileSystem::combinePath(ApplicationPackage::getDataPath(), "package.xml");
-  _pAppPackage->load(defaultPackageLocation);
+  BroLogInfo("Delta");
+  _pDelta = std::make_shared<Delta>();
 }
 void Gu::updateGlobals() {
+  getDelta()->update();
 
   if (_pSequencer != nullptr) {
     _pSequencer->update();
   }
-
+  if (_pParty != nullptr) {
+    _pParty->update(getDelta()->get());
+  }
+  if (_pFpsMeter != nullptr) {
+    _pFpsMeter->update();
+  }
   if (_pSoundCache != nullptr) {
     _pSoundCache->update();
+  }
+  if (_pPicker != nullptr) {
+    _pPicker->update(_pFingers);
   }
   if (_pNet != nullptr) {
     _pNet->update();
   }
+
+
 }
 
-}//ns BR2
+}//ns Game

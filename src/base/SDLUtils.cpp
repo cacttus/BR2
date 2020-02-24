@@ -1,13 +1,14 @@
 #include "../base/Logger.h"
-#include "../base/EngineConfig.h"
 #include "../base/FileSystem.h"
+#include "../base/EngineConfig.h"
 #include "../base/OglErr.h"
 #include "../base/SDLUtils.h"
 #include "../base/Img32.h"
 
-namespace BR2 {
 
-void SDLUtils::trySetWindowIcon(SDL_Window* w, string_t iconPath) {
+namespace Game {
+
+void SDLUtils::trySetWindowIcon(SDL_Window* w, t_string iconPath) {
   if (iconPath.length()) {
     std::shared_ptr<Img32> img = nullptr;
     SDL_Surface* ss = nullptr;
@@ -24,7 +25,7 @@ void SDLUtils::trySetWindowIcon(SDL_Window* w, string_t iconPath) {
     }
   }
 }
-void SDLUtils::createSurfaceFromImage(const string_t strImage,
+void SDLUtils::createSurfaceFromImage(const t_string strImage,
   std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface) {
   pImage = nullptr;
   pSurface = nullptr;
@@ -33,7 +34,7 @@ void SDLUtils::createSurfaceFromImage(const string_t strImage,
     pSurface = createSurfaceFromImage(pImage);
   }
   else {
-    Br2LogError("Could not icon image '" + strImage + "'");
+    BroLogError("Could not icon image '" + strImage + "'");
   }
 }
 SDL_Surface* SDLUtils::createSurfaceFromImage(const std::shared_ptr<Img32> pImage) {
@@ -51,7 +52,7 @@ void SDLUtils::checkSDLErr(bool doNotLog) {
   const char* c;
   while ((c = SDL_GetError()) != nullptr && *c != 0) {
     if (doNotLog == false) {
-      Br2LogError("SDL: " + c);
+      BroLogError("SDL: " + c);
     }
 
     if (Gu::getEngineConfig()->getBreakOnSDLError() == true) {
@@ -68,4 +69,4 @@ void SDLUtils::checkSDLErr(bool doNotLog) {
 
 
 
-}//ns BR2
+}//ns Game

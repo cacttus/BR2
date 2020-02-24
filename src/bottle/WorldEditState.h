@@ -2,7 +2,7 @@
 *
 *    @file BottleGui.h
 *    @date February 2, 2018
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2018 
 *

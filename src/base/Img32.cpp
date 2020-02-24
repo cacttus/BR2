@@ -1,15 +1,16 @@
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
 #include "../base/Gu.h"
+
 #include "../base/Logger.h"
 #include "../base/BinaryFile.h"
 
-namespace BR2 {
-Img32::Img32(string_t path, bool bLoad) {
+namespace Game {
+Img32::Img32(t_string path, bool bLoad) {
   _strNameOrFilePath = path;
   if (bLoad) {
     //TODO: this
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
 }
 Img32::Img32(int w, int h, uint8_t* data) {
@@ -179,8 +180,8 @@ std::shared_ptr<Img32> Img32::applyFilter(Matrix3x3& kernel, size_t nPasses, boo
   return 0;
 }
 /**
-*  @fn getGridAt()
-*  @brief Returns a grid of pixel pointers from the given location.
+*    @fn getGridAt()
+*    @brief Returns a grid of pixel pointers from the given location.
 *
 *
 *    TODO: this wraps no matter WHAT!!!!!!!!!
@@ -245,11 +246,11 @@ void Img32::clearTo(Pixel4ub p) {
   }
 }
 /**
-*  @fn normalize()
-*  @brief Normalizes an input image as in it creates a bump map texture for it.
-*  @remarks The returned image data must be handled by the application.  It is
+*    @fn normalize()
+*    @brief Normalizes an input image as in it creates a bump map texture for it.
+*    @remarks The returned image data must be handled by the application.  It is
 *    not automatically freed.
-*  @return GR_OK if successful. GR_FAIL if the factory image is empty.
+*    @return GR_OK if successful. GR_FAIL if the factory image is empty.
 **/
 RetCode Img32::normalize(std::shared_ptr<Img32>& pRet, float depth) {
   if (!_pData) {
@@ -298,7 +299,7 @@ RetCode Img32::normalize(float depth) {
 }
 std::shared_ptr<Img32> Img32::normalized(float depth) {
   if (!_pData) {
-    Br2ThrowException(" Image data was null for normalization ");
+    BroThrowException(" Image data was null for normalization ");
   }
 
   std::shared_ptr<Img32> pRet = std::make_shared<Img32>();
@@ -361,9 +362,9 @@ Pixel4ub Img32::normalizePixel(int32_t x, int32_t y, float depth) {
   Fv /= len;
   depth /= len;
 
-  pix.r() = (t_byte)(BR2::MathUtils::round(Fh * 255.0f));
-  pix.g() = (t_byte)(BR2::MathUtils::round(Fv * 255.0f));
-  pix.b() = (t_byte)(BR2::MathUtils::round(depth * 255.0f));
+  pix.r() = (t_byte)(Game::MathUtils::round(Fh * 255.0f));
+  pix.g() = (t_byte)(Game::MathUtils::round(Fv * 255.0f));
+  pix.b() = (t_byte)(Game::MathUtils::round(depth * 255.0f));
   pix.a() = 255;
 
   return pix;
@@ -657,27 +658,27 @@ std::shared_ptr<Img32> Img32::copySubImageTo(Vec2i& off, Vec2i& size) {
 //Image formats must be identical
 void Img32::copySubImageFrom(Vec2i& myOff, Vec2i& otherOff, Vec2i& size, std::shared_ptr<Img32> pOtherImage) {
   if (getData() == NULL) {
-    Br2ThrowException("Copy SubImage 2 - From image was not allocated");
+    BroThrowException("Copy SubImage 2 - From image was not allocated");
   }
   if (pOtherImage == NULL) {
-    Br2ThrowException("Copy SubImage 1 - Input Image was null.");
+    BroThrowException("Copy SubImage 1 - Input Image was null.");
   }
   if (pOtherImage->getData() == NULL) {
-    Br2ThrowException("Copy SubImage 3 - Input Image TO was not allocated");
+    BroThrowException("Copy SubImage 3 - Input Image TO was not allocated");
   }
   //size constraint validation
   if (myOff.x < -1 || myOff.y < -1) {
-    Br2ThrowException("Copy SubImage 4");
+    BroThrowException("Copy SubImage 4");
   }
   if (myOff.x >= (int)_iWidth || myOff.y >= (int)_iHeight) {
-    Br2ThrowException("Copy SubImage 5.  This hits if you put too many textures in the db_atlas.dat file.  \
+    BroThrowException("Copy SubImage 5.  This hits if you put too many textures in the db_atlas.dat file.  \
         There can only be XxX textres (usually 16x16)");
   }
   if (otherOff.x < 0 || otherOff.y < 0) {
-    Br2ThrowException("Copy SubImage 6");
+    BroThrowException("Copy SubImage 6");
   }
   if (otherOff.x >= pOtherImage->getWidth() || otherOff.y >= pOtherImage->getHeight()) {
-    Br2ThrowException("Copy SubImage 7");
+    BroThrowException("Copy SubImage 7");
   }
 
   Vec2i scanPos = myOff;
@@ -829,7 +830,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
   for (size_t ix = 1; ix < vecXMarkers.size(); ix++) {
     if (vecXMarkers[ix] < vecXMarkers[ix - 1]) {
       //Error
-      Br2LogError("Image Patch makers were out of order ");
+      BroLogError("Image Patch makers were out of order ");
       bRet = false;
       //Gui2d::error(TStr("Image Patch makers were out of order for ", file));
       vecXMarkers.erase(vecXMarkers.begin() + ix);
@@ -839,7 +840,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
   for (size_t iy = 1; iy < vecYMarkers.size(); iy++) {
     if (vecYMarkers[iy] < vecYMarkers[iy - 1]) {
       //Error
-      Br2LogError("Image Patch makers were out of order ");
+      BroLogError("Image Patch makers were out of order ");
       bRet = false;
       // Gui2d::error(TStr("Image Patch makers were out of order for ", file));
       vecYMarkers.erase(vecYMarkers.begin() + iy);
@@ -861,7 +862,7 @@ bool Img32::parseImagePatch(std::shared_ptr<Img32> master, std::vector<std::shar
         voff.construct(x0, y0);
         vsiz.construct(x1 - x0, y1 - y0);
         img = master->copySubImageTo(voff, vsiz);
-        ret.push_back(img);//std::make_shared<Texture2DSpec>(img, getContext(), eFilter));
+        ret.push_back(img);//std::make_shared<Texture2DSpec>(img, Gu::getGraphicsContext(), eFilter));
       }
       else {
         //Invalid Patch segment
@@ -892,10 +893,10 @@ void Img32::deserialize(std::shared_ptr<BinaryFile> bf) {
 
   //So data->size should be nBytse.
   if (getData()->byteSize() != nBytes) {
-    Br2LogError("Deserializing image '" + _strNameOrFilePath + "'.. image too big.");
+    BroLogError("Deserializing image '" + _strNameOrFilePath + "'.. image too big.");
   }
   else if (getData()->ptr() == nullptr) {
-    Br2LogError("Deserializing image, data not allocated.");
+    BroLogError("Deserializing image, data not allocated.");
   }
   else {
     bf->read((const char*)getData()->ptr(), nBytes);
@@ -916,4 +917,4 @@ void Img32::deserialize(std::shared_ptr<BinaryFile> bf) {
 
 
 
-}//ns BR2
+}//ns game

@@ -10,32 +10,29 @@
 
 #include "../base/BaseHeader.h"
 
-namespace BR2 {
-class NetInternal;
+namespace Game {
 /**
 *  @class Net
-*  @brief Networking manager class using SDL_net.
-*  TODO: change to NetworkManager
-*  https://www.libsdl.org/projects/SDL_net/
+*  @brief Manages networking and sending packets. https://www.libsdl.org/projects/SDL_net/
 */
 class Net : public VirtualMemory {
 public:
   Net();
   virtual ~Net() override;
-
   void update();
-
 private:
   bool _bError = false;
 
-  std::unique_ptr<NetInternal> _pInternal = nullptr;
+  TCPsocket _server_control; // the server control socket.
+  std::vector<TCPsocket> _control_clients;
 
   std::shared_ptr<SyncTimer> _pTimer;
 
   void init();
+
 };
 
-}//ns BR2
+}//ns Game
 
 
 

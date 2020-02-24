@@ -2,7 +2,7 @@
 *
 *    @file W25MeshConf.h
 *    @date April 3, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

@@ -7,11 +7,10 @@
 #ifndef __SYSTEMERRORDEFS_27745226362187691023999_H__
 #define __SYSTEMERRORDEFS_27745226362187691023999_H__
 
-namespace BR2 {
+namespace Game {
 /**
 *  @typedef RetCode
 *  @brief Generalized error codes (across entire application)
-*
 */
 typedef enum {
   //**** GENERAL ****
@@ -190,7 +189,7 @@ typedef enum {
 }RetCode;
 
 
-}//ns BR2
+}//ns game
 
 
 

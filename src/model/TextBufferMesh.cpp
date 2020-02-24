@@ -6,8 +6,9 @@
 #include "../base/GLContext.h"
 #include "../model/VertexFormat.h"
 
-namespace BR2 {
-TextBufferMesh::TextBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : GLFramework(c) {
+namespace Game {
+;
+TextBufferMesh::TextBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : _pContext(c) {
   _iMaxQuads = count;
   _iCurrentQuadIndex = 0;
   allocateQuads(count);
@@ -48,11 +49,11 @@ void TextBufferMesh::allocateQuads(int32_t count) {
   assignIndexes();
 
   AssertOrThrow2(_pVaoData == nullptr);
-  _pVaoData = std::make_shared<VaoDataGeneric>(getContext(), v_v2c4x2::getVertexFormat());
+  _pVaoData = std::make_shared<VaoDataGeneric>(_pContext, v_v2c4x2::getVertexFormat());
 
   copyToGpu(true);
 
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 
 }
 void TextBufferMesh::assignIndexes() {
@@ -87,4 +88,4 @@ void TextBufferMesh::getQuad(v_v2c4x2*& v0, v_v2c4x2*& v1, v_v2c4x2*& v2, v_v2c4
 }
 
 
-}//ns BR2
+}//ns game

@@ -1,8 +1,8 @@
 #include "../model/ShaderStorageBuffer.h"
 #include "../math/MathAll.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 
-namespace BR2 {
+namespace Game {
 
 ShaderStorageBuffer::ShaderStorageBuffer(std::shared_ptr<GLContext> gc, size_t eleSize) :
   GpuBufferData(gc, GL_SHADER_STORAGE_BUFFER, eleSize) {
@@ -16,26 +16,27 @@ void ShaderStorageBuffer::allocFill(size_t num_elements, const void* frags) {
   GpuBufferData::copyDataClientServer(num_elements, frags);
 }
 void ShaderStorageBuffer::syncRead(void* out_data, size_t num_bytes, size_t byte_offset, bool useMemoryBarrier) {
+
   if (getByteSize() == 0) {
-    Br2ThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
+    BroThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
   }
   if (useMemoryBarrier) {
-    getContext()->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    _pContext->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   }
 
   bindBuffer(GL_SHADER_STORAGE_BUFFER);
-  void* v = getContext()->glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getByteSize(), GL_MAP_READ_BIT);
+  void* v = _pContext->glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getByteSize(), GL_MAP_READ_BIT);
   memcpy((void*)out_data, (void*)((char*)v + byte_offset), num_bytes);
-  getContext()->glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+  _pContext->glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
   unbindBuffer();
 
-  // getContext()->chkErrDbg();
+  // _pContext->chkErrDbg();
 
 }
 void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_offset, bool useMemoryBarrier) {
 
   if (getByteSize() == 0) {
-    Br2ThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
+    BroThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
   }
 
   //Segfault
@@ -43,16 +44,16 @@ void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_of
     "Tried to write more data than OpenGL Buffer could handle, bufsize: " + getByteSize() + " tried to write " + num_bytes + " at offset " + byte_offset);
 
   if (useMemoryBarrier) {
-    getContext()->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    _pContext->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   }
 
   bindBuffer();
-  void* v = getContext()->glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getByteSize(), GL_MAP_WRITE_BIT);
+  void* v = _pContext->glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, getByteSize(), GL_MAP_WRITE_BIT);
   memcpy((void*)((char*)v + byte_offset), (void*)data, num_bytes);
-  getContext()->glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+  _pContext->glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
   unbindBuffer();
 
-  //  getContext()->chkErrDbg();
+  //  _pContext->chkErrDbg();
 
 }
 //void GpuBufferGeneric::attachShaderVarList(GlslShaderUniformVariables* pu) {
@@ -65,4 +66,4 @@ void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_of
 //    _vecBoundShaderVarLists.resize(0);
 //}
 
-}//ns BR2
+}//ns game

@@ -5,30 +5,22 @@
 #include "../base/TypeConv.h"
 #include "../base/StringUtil.h"
 #include "../model/MeshUtils.h"
-#include "../model/MeshData.h"
+#include "../model/MeshSpec.h"
 #include "../model/VertexFormat.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/IndexBufferData.h"
 #include "../model/MeshNode.h"
 
-namespace BR2 {
-
+namespace Game {
 /**
 *  @fn parseGenParams
 *  @brief Parse a string defining generation params for a mesh into a class structure.
-
-    for now class is just "gen"
-    then specify algirhtm
-    then specify parameters like calling a class method.
-
-    gen.cone(1,1,1)
-
 */
-bool MeshGenParams::logAndExit(string_t str) {
-  Br2LogError(str);
+bool MeshGenParams::logAndExit(t_string str) {
+  BroLogError(str);
   return false;
 }
-bool MeshGenParams::parse(string_t genString) {
+bool MeshGenParams::parse(t_string genString) {
   // - 
   char* cx = new char[genString.length() + 1];
   int bufsiz = 128;
@@ -51,7 +43,7 @@ bool MeshGenParams::parse(string_t genString) {
     else if (ptc == '.') {
       //if(parseMode==0);
       if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");
-      _strClass = string_t(buf);
+      _strClass = t_string(buf);
       memset(buf, 0, bufsiz);
       bufind = 0;
       parseMode = 1;
@@ -60,7 +52,7 @@ bool MeshGenParams::parse(string_t genString) {
       if (!(parseMode == 1)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");
       if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");
       iparameter = 0;
-      string_t algorithm = string_t(buf);
+      t_string algorithm = t_string(buf);
 
       _eGenType = getGenerationAlgorithmFromString(algorithm);
 
@@ -72,7 +64,7 @@ bool MeshGenParams::parse(string_t genString) {
       if (!(parseMode == 2)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
       if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
       if (!(iparameter < MeshGenParams::MaxParams)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
-      _strParams[iparameter++] = string_t(buf);
+      _strParams[iparameter++] = t_string(buf);
       memset(buf, 0, bufsiz);
       bufind = 0;
       parseMode = 2;
@@ -81,7 +73,7 @@ bool MeshGenParams::parse(string_t genString) {
       if (!(parseMode == 2)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
       if (!(strlen((char*)buf))) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
       if (!(iparameter < MeshGenParams::MaxParams)) return logAndExit(" [MESH GEN] Sequence error parsing mesh gen string.");;
-      _strParams[iparameter++] = string_t(buf);
+      _strParams[iparameter++] = t_string(buf);
       memset(buf, 0, bufsiz);
       bufind = 0;
       parseMode = 3;
@@ -99,7 +91,7 @@ bool MeshGenParams::parse(string_t genString) {
 
   return true;
 }
-MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(string_t str) {
+MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(t_string str) {
   if (str == "cone")
     return MeshGenType::e::MGA_CONE;
   else if (str == "sphere")
@@ -113,7 +105,7 @@ MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(string_t str) {
   else if (str == "plane2x")
     return MeshGenType::e::MGA_CROSS_2_SIDE;
 
-  Br2ThrowException(" [MESH GEN] Failed to get generation algorithm from string ");
+  BroThrowException(" [MESH GEN] Failed to get generation algorithm from string ");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,17 +116,17 @@ MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(string_t str) {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-bool parseGenParams(string_t genString, MeshGenParams& __out_ params) {
+bool parseGenParams(t_string genString, MeshGenParams& __out_ params) {
   return params.parse(genString);
 }
 
 
 /**
-*  @fn generateFromParameters
-*  @brief
+*    @fn generateFromParameters
+*    @brief
 */
-std::shared_ptr<MeshData> MeshUtils::generateFromParameters(std::shared_ptr<GLContext> context, MeshGenParams* pgp) {
-  std::shared_ptr<MeshData> ret_spec = NULL;
+std::shared_ptr<MeshSpec> MeshUtils::generateFromParameters(MeshGenParams* pgp) {
+  std::shared_ptr<MeshSpec> ret_spec = NULL;
   MeshGenType::e mga = pgp->getGenType();
 
   int px = 0;
@@ -144,44 +136,44 @@ std::shared_ptr<MeshData> MeshUtils::generateFromParameters(std::shared_ptr<GLCo
     float b = TypeConv::strToFloat(pgp->getParam(px++));
     int32_t c = TypeConv::strToInt(pgp->getParam(px++));
 
-    ret_spec = makeCone(context, a, b, c);
+    ret_spec = makeCone(a, b, c);
   }
   else if (mga == MeshGenType::e::MGA_SPHERE) {
     float a = TypeConv::strToFloat(pgp->getParam(px++));
     int32_t b = TypeConv::strToInt(pgp->getParam(px++));
     int32_t c = TypeConv::strToInt(pgp->getParam(px++));
 
-    ret_spec = makeSphere(context, a, b, c);
+    ret_spec = makeSphere(a, b, c);
   }
   else if (mga == MeshGenType::e::MGA_C2BB2S) {
     float a = TypeConv::strToFloat(pgp->getParam(px++));
     int32_t b = TypeConv::strToInt(pgp->getParam(px++));
     int32_t c = TypeConv::strToInt(pgp->getParam(px++));
 
-    ret_spec = makeSphere(context, a, b, c);
+    ret_spec = makeSphere(a, b, c);
   }
   else if (mga == MeshGenType::e::MGA_PLANE_2_SIDE) {
     float a = TypeConv::strToFloat(pgp->getParam(px++));
     float b = TypeConv::strToFloat(pgp->getParam(px++));
     bool c = TypeConv::strToBool(pgp->getParam(px++));
 
-    ret_spec = makeBillboardXY(context, a, b, c);
+    ret_spec = makeBillboardXY(a, b, c);
   }
   else if (mga == MeshGenType::e::MGA_CROSS_2_SIDE) {
     float a = TypeConv::strToFloat(pgp->getParam(px++));
     float b = TypeConv::strToFloat(pgp->getParam(px++));
     bool c = TypeConv::strToBool(pgp->getParam(px++));
 
-    ret_spec = makeCrossboardXY(context, a, b, c);
+    ret_spec = makeCrossboardXY(a, b, c);
   }
   return ret_spec;
 }
 /**
-*  @fn generate_arc_segment
+*    @fn generate_arc_segment
 *    Generate an arc segment -  a square mapped onto a paraboloid
 */
-std::shared_ptr<MeshData> MeshUtils::makeArcSegment(std::shared_ptr<GLContext> context, float radius, float radius2, float refHeight, vec3 refPos, int32_t slices) {
-  std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(context, StringUtil::generate(), MeshMakerVert::getVertexFormat());//VertexFormatType::V_V3C4N3X2,IndexFormatType::INDEX_32_BIT_TYPE);
+std::shared_ptr<MeshSpec> MeshUtils::makeArcSegment(float radius, float radius2, float refHeight, vec3 refPos, int32_t slices) {
+  std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());//VertexFormatType::V_V3C4N3X2,IndexFormatType::INDEX_32_BIT_TYPE);
   int32_t nVerts = (slices + 1) * (slices + 1);
   int32_t nIndexes = (slices) * (slices) * 2 * 3;
   int32_t nFaces = nIndexes / 3;
@@ -308,7 +300,7 @@ std::shared_ptr<MeshData> MeshUtils::makeArcSegment(std::shared_ptr<GLContext> c
 
   return ma;
 }
-std::shared_ptr<MeshData> MeshUtils::makeBox(std::shared_ptr<GLContext> context, Box3f* pCube, vec4* color, Matrix4x4* applyMat, vec3* offset) {
+std::shared_ptr<MeshSpec> MeshUtils::makeBox(Box3f* pCube, vec4* color, Matrix4x4* applyMat, vec3* offset) {
   vec3 vi = pCube->_min;
   vec3 va = pCube->_max;
 
@@ -322,9 +314,9 @@ std::shared_ptr<MeshData> MeshUtils::makeBox(std::shared_ptr<GLContext> context,
   f[BoxPoint::FTL] = vec3(vi.x, va.y, va.z);
   f[BoxPoint::FTR] = vec3(va.x, va.y, va.z);
 
-  return makeBox(context,f, color, applyMat, offset);
+  return makeBox(f, color, applyMat, offset);
 }
-std::shared_ptr<MeshData> MeshUtils::makeBox(std::shared_ptr<GLContext> context, float length, vec4* color, mat4* applyMat, vec3* offset) {
+std::shared_ptr<MeshSpec> MeshUtils::makeBox(float length, vec4* color, mat4* applyMat, vec3* offset) {
   vec3 f[8];
   f[BoxPoint::FBL] = vec3(-1.0f, -1.0f, -1.0f);
   f[BoxPoint::FBR] = vec3(1.0f, -1.0f, -1.0f);
@@ -339,10 +331,10 @@ std::shared_ptr<MeshData> MeshUtils::makeBox(std::shared_ptr<GLContext> context,
     f[i] *= length;
   }
 
-  return makeBox(context, f, color, applyMat, offset);
+  return makeBox(f, color, applyMat, offset);
 }
-std::shared_ptr<MeshData> MeshUtils::makeBox(std::shared_ptr<GLContext> context, vec3(&extents)[8], Color4f* color, Matrix4x4* applyMat, vec3* offset) {
-  std::shared_ptr<MeshData> ms = std::make_shared<MeshData>(context, StringUtil::generate(), MeshMakerVert::getVertexFormat());
+std::shared_ptr<MeshSpec> MeshUtils::makeBox(vec3(&extents)[8], Color4f* color, Matrix4x4* applyMat, vec3* offset) {
+  std::shared_ptr<MeshSpec> ms = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
   ms->allocMesh(6 * 4, 2 * 6 * 3);
   // - Instantiate everything
  //ms->allocateFaceNormals(6 * 2);
@@ -478,17 +470,17 @@ std::shared_ptr<MeshData> MeshUtils::makeBox(std::shared_ptr<GLContext> context,
   return ms;
 }
 /**
-*  @fn generate_sphere
-*  @brief Generate a sphere
+*    @fn generate_sphere
+*    @brief Generate a sphere
 *    VERTEX type is V_V3C4N3X2
 *    CCW Winding
     vOffset = translates all points to the given offset
 *    blnDoNormals = optimization routine - set to false to avoid normal square roots
 */
-std::shared_ptr<MeshData> MeshUtils::makeSphere(std::shared_ptr<GLContext> context, float radius, int32_t slices, int32_t stacks, Color4f* color, vec3* vOffset, bool blnDoNormals) {
+std::shared_ptr<MeshSpec> MeshUtils::makeSphere(float radius, int32_t slices, int32_t stacks, Color4f* color, vec3* vOffset, bool blnDoNormals) {
   AssertOrThrow2(slices >= 3 && stacks >= 3);
   AssertOrThrow2(radius > 0.0);
-  std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(context,StringUtil::generate(), MeshMakerVert::getVertexFormat());
+  std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
 
   //Store Minimax for contact box
   vec3 vmin = Vec3f::VEC3X_MAX();
@@ -665,10 +657,10 @@ std::shared_ptr<MeshData> MeshUtils::makeSphere(std::shared_ptr<GLContext> conte
 *
 *    CCW Winding
 */
-std::shared_ptr<MeshData> MeshUtils::makeCone(std::shared_ptr<GLContext> context, float radius, float h, int32_t slices) {
+std::shared_ptr<MeshSpec> MeshUtils::makeCone(float radius, float h, int32_t slices) {
   AssertOrThrow2(slices >= 3);
   AssertOrThrow2(radius > 0.0);
-  std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(context,StringUtil::generate(), MeshMakerVert::getVertexFormat());
+  std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
 
   // - Exactly the same as generating two circles, one with height.
 
@@ -743,11 +735,11 @@ std::shared_ptr<MeshData> MeshUtils::makeCone(std::shared_ptr<GLContext> context
 *
 *    CCW Winding
 */
-std::shared_ptr<MeshData> MeshUtils::makeCircle(std::shared_ptr<GLContext> context, float radius, int32_t slices) {
+std::shared_ptr<MeshSpec> MeshUtils::makeCircle(float radius, int32_t slices) {
   AssertOrThrow2(slices >= 3);
   AssertOrThrow2(radius > 0.0);
 
-  std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(context,StringUtil::generate(), MeshMakerVert::getVertexFormat());
+  std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
 
   ma->allocMesh(slices + 1, (slices) * 3);
 
@@ -787,15 +779,15 @@ std::shared_ptr<MeshData> MeshUtils::makeCircle(std::shared_ptr<GLContext> conte
   return ma;
 }
 /**
-*  @fn generate_billboard
-*  @brief Creates 2 sided billboard along the XY axis in 3D without a z component
+*    @fn generate_billboard
+*    @brief Creates 2 sided billboard along the XY axis in 3D without a z component
 *        4 vertexes 12 indexes.
 *
-*  @param translateYToBottomOfBillboard) - translates the Y value to the bottom of the billboard for grass objects.
+*    @param translateYToBottomOfBillboard) - translates the Y value to the bottom of the billboard for grass objects.
 */
-std::shared_ptr<MeshData> MeshUtils::makeBillboardXY(std::shared_ptr<GLContext> context, float xscale, float yscale, bool translateYToBottomOfBillboard) {
+std::shared_ptr<MeshSpec> MeshUtils::makeBillboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard) {
   MeshMakerVert p[4];
-  std::shared_ptr<MeshData> ma = std::make_shared<MeshData>(context,StringUtil::generate(), MeshMakerVert::getVertexFormat());
+  std::shared_ptr<MeshSpec> ma = std::make_shared<MeshSpec>(StringUtil::generate(), MeshMakerVert::getVertexFormat());
   ma->allocMesh(8, 12);
 
   int ip = 0;
@@ -871,12 +863,12 @@ std::shared_ptr<MeshData> MeshUtils::makeBillboardXY(std::shared_ptr<GLContext> 
   return ma;
 }
 /**
-*  @fn
-*  @brief Generates a X cross billboard.
+*    @fn
+*    @brief Generates a X cross billboard.
 */
-std::shared_ptr<MeshData> MeshUtils::makeCrossboardXY(std::shared_ptr<GLContext> context, float xscale, float yscale, bool translateYToBottomOfBillboard) {
-  std::shared_ptr<MeshData> a = makeBillboardXY(context,xscale, yscale, translateYToBottomOfBillboard);
-  std::shared_ptr<MeshData> b = makeBillboardXY(context,xscale, yscale, translateYToBottomOfBillboard);
+std::shared_ptr<MeshSpec> MeshUtils::makeCrossboardXY(float xscale, float yscale, bool translateYToBottomOfBillboard) {
+  std::shared_ptr<MeshSpec> a = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);
+  std::shared_ptr<MeshSpec> b = makeBillboardXY(xscale, yscale, translateYToBottomOfBillboard);
 
   mat4 m = mat4::getRotationDeg(90, 0, 1, 0);
 
@@ -895,12 +887,14 @@ std::shared_ptr<MeshData> MeshUtils::makeCrossboardXY(std::shared_ptr<GLContext>
   return a;
 }
 
-void MeshUtils::finalizeSpec(std::shared_ptr<MeshData> ms, vec3* minV, vec3* maxV) {
+void MeshUtils::finalizeSpec(std::shared_ptr<MeshSpec> ms, vec3* minV, vec3* maxV) {
   //TODO: remove the contact box crap (opr is  it needed for OBBs? )
   //_pContactManager->generateDefaultBoundaryContactBoxForMesh(ms, minV, maxV);
   //ms->computeMinimax();
 }
-std::shared_ptr<MeshData> MeshUtils::createScreenQuadMesh(std::shared_ptr<GLContext> context, int w, int h) {
+std::shared_ptr<MeshNode> MeshUtils::createScreenQuadMesh(int w, int h) {
+  std::shared_ptr<MeshNode> quadMesh = nullptr;
+
   std::vector<v_v3x2> verts;
   std::vector<v_index32> inds;
 
@@ -930,11 +924,13 @@ std::shared_ptr<MeshData> MeshUtils::createScreenQuadMesh(std::shared_ptr<GLCont
   inds.push_back(3);
   inds.push_back(2);
 
-  std::shared_ptr<MeshData> dat = std::make_shared<MeshData>(context, verts.data(),
+  quadMesh = MeshNode::create(std::make_shared<MeshSpec>(verts.data(),
     verts.size(), inds.data(), inds.size(), v_v3x2::getVertexFormat(), nullptr
-    );
+    )
+  );
 
-  return dat;
+
+  return quadMesh;
 }
 vec3* MeshUtils::getVertexElementOffset(vec3* verts, size_t iElementIndex, size_t vOffBytes, size_t vStrideBytes, size_t vCount) {
   //Similar to opengl's way of claculating components this gets you a vertex at a element index
@@ -951,4 +947,4 @@ vec3* MeshUtils::getVertexElementOffset(vec3* verts, size_t iElementIndex, size_
 
 
 
-}//ns BR2
+}//ns game

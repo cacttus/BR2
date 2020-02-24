@@ -1,6 +1,6 @@
 #version 430
 // animation compute shader
-//MetalMario971 9/10/2014
+//derek page 9/10/2014
 // 10/7/2014
 //objective:
 //bind the vertex index to a list of joint matrixes and weight indexes

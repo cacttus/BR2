@@ -8,76 +8,57 @@
 #define __HASHMAP_2256332660273822544327474_H__
 
 #include "../base/BaseHeader.h"
-#include "../base/Hash.h"
-#include "../base/Logger.h"
-#include "../base/DebugHelper.h"
-
-namespace BR2 {
-/**
-*  @class HashMapItem
-*  @brief Container, storing a reference to a hashmap item, or nullptr.
-*/
-template <class TItem>
-class HashMapItem {
-public:
-  HashMapItem(TItem* t) : _val(t) {}
-
-  TItem* _val;
-  bool hasValue() {
-    return _val != nullptr;
-  }
-  TItem value() {
-    //Note, always use hasValue, or value() may return garbage.
-    return *_val;
-  }
-};
+namespace Game {
 /**
 *  @class HashMap
-*  @brief Maps strings to items.  This allows you to use strings in a lookup table.
+*  @brief Maps strings to items.  This allows you to use
+*          strings in a lookup table.
 */
-template <class Tx, class THashSize>
+template < class Tx, class TKey>
 class _HashMap : public VirtualMemory {
 public:
-  typedef std::map<THashSize, Tx> HashMapType;
+  template < class Ta >
+  struct RefItem {
+    Ta* _val;
+    Ta value() { return _val ? (*_val) : nullptr; }
+    RefItem(Ta* t) : _val(t) {}
+  };
+  typedef std::map<TKey, Tx> HashMapType;
   typedef typename HashMapType::iterator iterator;
   typedef typename HashMapType::const_iterator const_iterator;
-  typedef typename HashMapItem<Tx> Item;
-
+public:
   _HashMap();
   virtual ~_HashMap() override;
-
   iterator begin() { return _map.begin(); }
   iterator end() { return _map.end(); }
-  void add(string_t key, Tx& x);//Can't be const
-  bool remove(string_t key);
-  HashMapItem<Tx> find(string_t key);
+  void add(t_string key, Tx& x);//Can't be const
+  bool remove(t_string key);
+  RefItem<Tx> find(t_string key);
   size_t size() { return _map.size(); }
   void erase(const_iterator _Where) { _map.erase(_Where); }
   void clear() { _map.clear(); }
-  bool contains(string_t key);
-
+  bool contains(t_string key);
 protected:
   HashMapType _map;
   virtual int32_t getNumAlgorithms() = 0;
-  virtual THashSize computeHash(string_t str, int32_t iAlgorithm) = 0;
+  virtual TKey computeHash(t_string str, int32_t iAlgorithm) = 0;
 };
-template < class Tx, class THashSize >
-_HashMap<Tx, THashSize>::_HashMap() {
+template < class Tx, class TKey >
+_HashMap<Tx, TKey>::_HashMap() {
 }
-template < class Tx, class THashSize >
-_HashMap<Tx, THashSize>::~_HashMap() {
+template < class Tx, class TKey >
+_HashMap<Tx, TKey>::~_HashMap() {
   _map.clear();
 }
-template < class Tx, class THashSize >
-void _HashMap<Tx, THashSize>::add(string_t str, Tx& x) {
-  THashSize nHashVal;
+template < class Tx, class TKey >
+void _HashMap<Tx, TKey>::add(t_string str, Tx& x) {
+  TKey nHashVal;
   int i;
   for (i = 0; i < getNumAlgorithms(); ++i) {
     nHashVal = computeHash(str, i);
     if (_map.find(nHashVal) != _map.end()) {
-      Br2LogWarn("Hash Map collision using algorithm " + i);
-      //TODO: ITF this may be needed
-      //str.setHashAlgorithmIndex(i + 1);
+      BroLogWarn("Hash Map collision using algorithm " + i);
+      str.setHashAlgorithmIndex(i + 1);
     }
     else {
       break;
@@ -87,43 +68,42 @@ void _HashMap<Tx, THashSize>::add(string_t str, Tx& x) {
 #ifdef _DEBUG
   //We had a collision and ran out of algorithms.
   if (i == getNumAlgorithms() - 1) {
-    Br2LogWarn("No suitable hash algorithm for string.");
     DebugHelper::debugBreak();
   }
 #endif
 
-  _map.insert(std::make_pair(nHashVal, x));
+  _map.insert(nHashVal, x);
 }
 // - Returns false if remove failed.
-template < class Tx, class THashSize >
-bool _HashMap<Tx, THashSize>::remove(string_t key) {
-  THashSize n = computeHash(key, key.getHashAlgorithmIndex());
+template < class Tx, class TKey >
+bool _HashMap<Tx, TKey>::remove(t_string key) {
+  TKey n = computeHash(key, key.getHashAlgorithmIndex());
   bool b = _map.remove(n, true);
 
   if (b == false) {
-    Br2LogWarn(" [Hm] Failed to remove hashed string");
+    BroLogWarn(" [Hm] Failed to remove hashed string");
   }
 
   return b;
 }
 /**
-*  @fn find()
-*  @brief finds a string.  Returns a nullptr RefItem if not found.
+*   @fn find()
+*   @brief finds a string.  Returns a nullptr RefItem if not found.
 */
-template < class Tx, class THashSize >
-typename HashMapItem<Tx> _HashMap<Tx, THashSize>::find(string_t key) {
-  THashSize n = computeHash(key, 0/*key.getHashAlgorithmIndex()*/); //The string should in fact have a hash algorithm, in case of collisions.  We are just crossing our fingers here.
+template < class Tx, class TKey >
+_HashMap<Tx, TKey>::RefItem<Tx> _HashMap<Tx, TKey>::find(t_string key) {
+  TKey n = computeHash(key, key.getHashAlgorithmIndex());
 
   typename HashMapType::iterator ite = _map.find(n);
   if (ite == _map.end()) {
-    return HashMapItem<Tx>(nullptr);
+    return RefItem<Tx>(nullptr);
   }
 
-  return HashMapItem<Tx>(&(ite->second));
+  return RefItem<Tx>(&(ite->second));
 }
-template < class Tx, class THashSize >
-bool _HashMap<Tx, THashSize>::contains(string_t key) {
-  HashMapItem<Tx> ri = find(str);
+template < class Tx, class TKey >
+bool _HashMap<Tx, TKey>::contains(t_string key) {
+  RefItem<Tx> ri = find(str);
   if (ri._val == nullptr) {
     return false;
   }
@@ -131,8 +111,8 @@ bool _HashMap<Tx, THashSize>::contains(string_t key) {
 }
 
 /**
-*  @class HashMap32
-*  @brief Implementation of _HashMap for 32-bit hash.
+*   @class HashMap32
+*   @brief Implementation of _HashMap for 32-bit hash.
 */
 template < class Tx >
 class HashMap32 : public _HashMap<Tx, uint32_t> {
@@ -143,13 +123,14 @@ public:
   int32_t getNumAlgorithms() override {
     return FNV_MAX_ALGORITHMS_32;
   }
-  uint32_t computeHash(string_t str, int32_t iAlgorithm) override {
+  uint32_t computeHash(t_string str, int32_t iAlgorithm) override {
     return Hash::computeStringHash32bit(str, iAlgorithm);
   }
+
 };
 /**
-*  @class HashMap32
-*  @brief Implementation of _HashMap for 64-bit hash.
+*   @class HashMap32
+*   @brief Implementation of _HashMap for 64-bit hash.
 */
 template < class Tx >
 class HashMap64 : public _HashMap<Tx, uint64_t> {
@@ -160,14 +141,14 @@ public:
   int32_t getNumAlgorithms() override {
     return FNV_MAX_ALGORITHMS_64;
   }
-  uint64_t computeHash(string_t str, int32_t iAlgorithm) override {
+  uint64_t computeHash(t_string str, int32_t iAlgorithm) override {
     return Hash::computeStringHash64bit(str, iAlgorithm);
   }
 
 };
 /**
-*  @class HashMap
-*  @brief Hash map with 32-bit hash.
+*   @class HashMap
+*   @brief Hash map with 32-bit hash.
 */
 template < class Tx >
 class HashMap : public HashMap32<Tx> {
@@ -180,7 +161,7 @@ public:
 
 
 
-}//ns BR2
+}//ns game
 
 
 

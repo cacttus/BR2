@@ -2,7 +2,7 @@
 #include "../math/MathAll.h"
 
 #include "../model/VertexFormat.h"
-namespace BR2 {
+namespace Game {
 GpuQuad3::GpuQuad3() {
   for (int i = 0; i < 4; ++i) {
     _vertex[i] = NULL;
@@ -56,4 +56,4 @@ void GpuQuad3::copyQuadColor(Color4f* color) {
   //_vertex[3]->c = *(static_cast<Vec4f*>(color));
 }
 
-}//ns BR2
+}//ns game

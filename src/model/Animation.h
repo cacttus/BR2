@@ -9,7 +9,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 
 //PRS animation
 class PRSAnimation : public VirtualMemory {
@@ -20,10 +20,8 @@ public:
   PRSAnimation() {}
   virtual ~PRSAnimation() override {}
   virtual bool update(float delta) = 0;
-
 protected:
   mat4 _mFinal;
-
 };
 
 class RotateTo : public PRSAnimation {
@@ -40,11 +38,10 @@ private:
   vec3 _vAxis;
   float _fDuration = 1.0f;
   float _fCur = 0.0f;
-
 };
 
 
-}//ns BR2
+}//ns Game
 
 
 

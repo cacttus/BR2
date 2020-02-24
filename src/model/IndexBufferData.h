@@ -9,18 +9,15 @@
 
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class IndexBufferData
-*  @brief stores indexes in a generic buffer with either a 16 or 32 bit index format.
-*
-    Note: We only use 32 bit indexes across the board, this is more for compatibility.
+*  @brief stores indexes in a generic buffer with either a 16 or 32 bit index format.  Note: We only use 32 bit indexes across the board, this is more for compatibility.
 */
 class IndexBufferData : public VirtualMemory {
 public:
   IndexBufferData();
   virtual ~IndexBufferData() override;
-
   void allocate(size_t count);
   void deallocate();
   v_index32& i32(size_t index);
@@ -34,7 +31,7 @@ private:
   Allocator<v_index32>* _pIndexes = nullptr;
 };
 
-}//ns BR2
+}//ns game
 
 
 

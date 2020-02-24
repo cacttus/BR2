@@ -9,25 +9,21 @@
 
 #include "../math/Vec3x.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class Quad3x
 *  @brief 3D plane quad.  In 3 space with a normal.
-    vert
-    3*     *2
+   vert
+   3*     *2
 
-    1*     *0 ^
-    <--X      |Y
+   1*     *0 ^
+   <--X      |Y
 */
-//*TODO: Difference between QuadPlaneand Quad3x ? ?
 template < class Tx >
 class Quad3x : public VirtualMemory {
 public:
   typedef Vec3x<Tx> VecType;
-
-public:
-  FORCE_INLINE Quad3x();
-  FORCE_INLINE Quad3x(vec2& vTopLeft, vec2& vBottomRight);
+  VecType _p[4];    // Quad Corners
 
   FORCE_INLINE VecType& br() { return _p[0]; }
   FORCE_INLINE VecType& bl() { return _p[1]; }
@@ -38,10 +34,10 @@ public:
   FORCE_INLINE VecType& p1() { return _p[1]; }
   FORCE_INLINE VecType& p2() { return _p[2]; }
   FORCE_INLINE VecType& p3() { return _p[3]; }
-  FORCE_INLINE string_t toString();
+  FORCE_INLINE t_string toString();
 
-public:
-  VecType _p[4];    // Quad Corners
+  FORCE_INLINE Quad3x();
+  FORCE_INLINE Quad3x(vec2& vTopLeft, vec2& vBottomRight);
 };
 template < class Tx >
 FORCE_INLINE Quad3x<Tx>::Quad3x() {
@@ -65,12 +61,12 @@ FORCE_INLINE Quad3x<Tx>::Quad3x(vec2& vTopLeft, vec2& vBottomRight) {
   _p[0].z = 0;
 }
 template < class Tx >
-FORCE_INLINE string_t Quad3x<Tx>::toString() {
+FORCE_INLINE t_string Quad3x<Tx>::toString() {
   return Stz "{" + p0().toString() + "},{" + p1().toString() + "},{" + p2().toString() + "},{" + p3().toString() + "}";
 }
 
 
-}//ns BR2
+}//ns game
 
 
 

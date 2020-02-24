@@ -9,17 +9,12 @@
 
 #include "../base/BaseHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class FpsMeter
-*  @brief Computes Frames Per Second in the given OpenGL rendering context (or, likewise, the associated window).
-*
+*  @brief Manages game FPS per window.
 */
 class FpsMeter {
-  t_timeval _last = 0;
-  t_timeval _tmr = 0;
-  float _fpsLast = 60;
-  uint64_t _iFrame = 0; //Current frame number
 public:
   bool deltaMs(t_timeval& __inout_ last, t_timeval ms);
   float getFps() { return _fpsLast; }
@@ -28,10 +23,14 @@ public:
   bool frameMod(uint64_t i) {
     return (_iFrame % i) == 0;
   }
-
+private:
+  t_timeval _last = 0;
+  t_timeval _tmr = 0;
+  float _fpsLast = 60;
+  uint64_t _iFrame = 0; //Current frame number
 };
 
-}//ns BR2
+}//ns Game
 
 
 

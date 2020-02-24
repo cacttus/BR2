@@ -12,7 +12,7 @@
 #include "../math/Box3x.h"
 #include "../math/ConvexAlgorithms.h"
 
-namespace BR2 {
+namespace Game {
 #define i_in(a) ((unsigned int&) a)
 #define i_min(a,b) (((a)<(b))?(a):(b))
 #define i_max(a,b) (((a)>(b))?(a):(b))
@@ -29,9 +29,7 @@ public:
 };
 
 /**
-*  @fn
-*  @brief Static methods for collision handling
-*    TODO: move all methods into theis class.
+*  @brief static methods for collision handling
 */
 class CollisionEquations {
   static bool sat_box_int_1d_t(const float& c0, const float& c1,
@@ -92,7 +90,7 @@ typedef CollisionEquations Ceq;
 
 
 
-}//ns BR2
+}//ns game
 
 
 

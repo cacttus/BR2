@@ -1,31 +1,30 @@
 #include "../base/GLContext.h"
-#include "../base/InputManager.h"
+#include "../base/Fingers.h"
 #include "../base/Gu.h"
 
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
 
-#include "../gfx/UiControls.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h" 
 #include "../base/Img32.h"
 #include "../gfx/UiBase.h"
+#include "../gfx/UiControls.h"
 
 #include "../model/MeshNode.h"
-#include "../model/MeshData.h"
+#include "../model/MeshSpec.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/TextBufferMesh.h"
 
 
-namespace BR2 {
-
+namespace Game {
 std::shared_ptr<UiBorderDim> UiBorderDim::create(uDim d0, uDim d1, uDim d2, uDim d3) {
   std::shared_ptr<UiBorderDim> ret = std::make_shared<UiBorderDim>();
   ret->_border[0] = d0;
@@ -34,8 +33,6 @@ std::shared_ptr<UiBorderDim> UiBorderDim::create(uDim d0, uDim d1, uDim d2, uDim
   ret->_border[3] = d3;
   return ret;
 }
-
-//////////////////////////////////////////////////////////////////////////
 Orientation::e Orientation::parse(std::string str) {
   if (StringUtil::equals(str, "Horizontal")) { return Orientation::e::Horizontal; }
   else if (StringUtil::equals(str, "Vertical")) { return Orientation::e::Vertical; }
@@ -47,19 +44,19 @@ std::string Orientation::toString(Orientation::e eOr) {
   return "Invalid Enum!";
 }
 //////////////////////////////////////////////////////////////////////////
-void UiDragInfo::update(std::shared_ptr<InputManager> pInput) {
-  float mw = 1.0f / UiScreen::getDesignMultiplierW();
-  float mh = 1.0f / UiScreen::getDesignMultiplierH();
+void UiDragInfo::update(std::shared_ptr<Fingers> pFingers) {
+  float mw = 1.0f / Gui2d::getDesignMultiplierW();
+  float mh = 1.0f / Gui2d::getDesignMultiplierH();
 
   if (_bDragStart) {
-    if (pInput->getLmbState() == ButtonState::e::Up) {
+    if (pFingers->getLmbState() == ButtonState::e::Up) {
       //Avoid sticking
       _bDrag = false;
       _bDragStart = false;
     }
     else {
       //Check for mouse delta to prevent unnecessary updates.
-      vec2 dp = pInput->getMousePos() - _vDragStart;
+      vec2 dp = pFingers->getMousePos() - _vDragStart;
       if (MathUtils::fuzzyEquals(dp.x, 0.0f) == false || MathUtils::fuzzyEquals(dp.y, 0.0f) == false) {
         _bDrag = true;
       }
@@ -74,7 +71,7 @@ void UiDragInfo::update(std::shared_ptr<InputManager> pInput) {
         _func(dp);
 
         //Reset drag start
-        _vDragStart = pInput->getMousePos();
+        _vDragStart = pFingers->getMousePos();
       }
     }
   }
@@ -129,7 +126,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
   //    return DimUnit::e::Initial;
   //}
   else {
-    UiScreen::error(Stz "Invalid layout unit " + str);
+    Gui2d::error(Stz "Invalid layout unit " + str);
     bSuccess = false;
     return UiDimUnit::e::Pixel;
   }
@@ -137,7 +134,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
 //////////////////////////////////////////////////////////////////////////
 uDim::uDim(char* str) : uDim(std::string(str)) {
   if (str == 0) {
-    UiScreen::error("Passed 0 in for a char* string to uDim");
+    Gui2d::error("Passed 0 in for a char* string to uDim");
   }
 }
 uDim::uDim(std::string str) {
@@ -191,13 +188,13 @@ void uDim::setSize(std::string str) {
   float fs;
   if (UiParser::parseSize(str, fs, eunit)) {
     if (eunit == UiDimUnit::e::Percent && ((fs < 0) || (fs > 100))) {
-      UiScreen::error(Stz "Dim %units were not within 0/100" + fs);
+      Gui2d::error(Stz "Dim %units were not within 0/100" + fs);
     }
     _units = fs;
     _eDimUnit = eunit;
   }
   else {
-    UiScreen::error("Failed to parse seize.");
+    Gui2d::error("Failed to parse seize.");
   }
 
   debugThunk();
@@ -216,7 +213,7 @@ uDim uDim::autoHeight(std::shared_ptr<UiTex> tex) {
     }
   }
   else {
-    UiScreen::error("Tried to auto-height a non-pixel udim");
+    Gui2d::error("Tried to auto-height a non-pixel udim");
   }
   return uDim(1.0f, UiDimUnit::e::Pixel);
 }
@@ -231,7 +228,7 @@ uDim uDim::autoWidth(std::shared_ptr<UiTex> tex) {
     }
   }
   else {
-    UiScreen::error("Tried to auto-height a non-pixel udim");
+    Gui2d::error("Tried to auto-height a non-pixel udim");
   }
   return uDim(1.0f, UiDimUnit::e::Pixel);
 }
@@ -241,4 +238,4 @@ uDim uDim::autoWidth(std::shared_ptr<UiTex> tex) {
 
 
 
-}//ns BR2
+}//ns Game

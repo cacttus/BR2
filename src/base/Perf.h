@@ -10,11 +10,10 @@
 #include "../base/BaseHeader.h"
 #include "../base/Stopwatch.h"
 
-namespace BR2 {
-class PerfInternal;
+namespace Game {
 /**
 *  @class Perf
-*  @brief Performance profiling utility class.
+*  @brief Monitors performance.
 */
 class Perf {
 public:
@@ -23,10 +22,12 @@ public:
   static void pushPerf();
   static void popPerf();
 private:
-  static std::shared_ptr<PerfInternal> _internal;
+  static t_string _strCachedProf;
+  static std::stack<Stopwatch> _stopw;
+  static void pulsePerf();
 };
 
-}//ns BR2
+}//ns Game
 
 
 

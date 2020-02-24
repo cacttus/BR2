@@ -9,18 +9,15 @@
 
 #include "../world/WorldHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class PhysicsGrid
 *  @brief This is a cell in a cell grid managed by the physics system.
-*       A box in 3D space which is a "cell" that physics uses to optimize collisions
+*     A box in 3D space which is a "cell" that physics uses to optimize collisions
 */
 class PhysicsGrid : public VirtualMemoryShared<PhysicsGrid> {
 public:
-  static PhysicsGridSide::e getOppNeighborIndex(PhysicsGridSide::e iNeighbor);
-  static const int c_nNeighbors = 6;
-public:
-  PhysicsGrid(std::shared_ptr<PhysicsManager> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty);
+  PhysicsGrid(std::shared_ptr<PhysicsWorld> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty);
   virtual ~PhysicsGrid() override;
 
   std::shared_ptr<PhysicsGrid> getNeighbor(int iSide);
@@ -34,10 +31,9 @@ public:
   vec3 getOriginR3();
   bool isEmpty() { return _bEmpty; }
 
-  virtual std::shared_ptr<MeshComponent> getMesh() { return nullptr; }
-protected:
-  void linkGrids();
-  void unlinkGrids();
+  virtual std::shared_ptr<MeshNode> getMesh() { return nullptr; }
+  static PhysicsGridSide::e getOppNeighborIndex(PhysicsGridSide::e iNeighbor);
+  static const int c_nNeighbors = 6;
 
 private:
   //std::shared_ptr<PhysicsGrid> getThis() { return shared_from_this(); }
@@ -45,16 +41,20 @@ private:
   Box3f* _pBoundBox = nullptr;
   std::unique_ptr<NodeManifold> _pManifold = nullptr;
   float _fNodeWidth, _fNodeHeight;
-  std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;
+  std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
   std::shared_ptr<PhysicsGrid> _pNeighbor[c_nNeighbors];
   bool _bEmpty = false;
 
   void linkToGrid(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor);
   void unsetGridNeighbor(PhysicsGridSide::e eSide);
   void setGridNeighbor(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor);
+
+protected:
+  void linkGrids();
+  void unlinkGrids();
 };
 
-}//ns BR2
+}//ns Game
 
 
 

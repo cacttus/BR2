@@ -1,0 +1,39 @@
+<config>
+
+<MaxPointLights value="999"/>
+<MaxDirLights value="999"/>
+<MaxCubeShadowSamples value="4"/>
+<MaxFrustShadowSamples value="4"/>
+<StartFullscreen value="false"/>
+<DefaultScreenWidth value="800"/>
+<DefaultScreenHeight value="600"/>
+<ForceAspectRatio value="false"/>
+<EnableRuntimeErrorChecking value="true"/>
+<EnableFileLog value="true"/>
+<EnableConsoleLog value="true"/>
+<GameHostTimeoutMs value="5000"/>
+<GameHostPort value="50209"/>
+<GpuDeviceName value="default"/>
+<DefaultFieldOfView value="60"/>
+<ColorSpace value="Linear"/>
+<FontBitmapSize value="1024"/>
+<FontBakedCharSize value="64"/>
+<EnableObjectShadows value="true"/>
+<EnableTerrainShadows value="true"/>
+<ShadowMapResolution value="256"/>
+<ShadowMapMaxInfluences value="4"/>
+<MaxPointLightShadowDistance value="2000"/>
+<EnableMSAA value="false"/>
+<MSAASamples value="2"/>
+<NumTextQuads value="256"/>
+<BreakOnSDLError value="true"/>
+<BreakOnOpenGLError value="true"/>
+<ShowConsole value="true"/>
+<ModelThumbSize value="256"/>
+<MaxHardwareIncomingBufferSizeBytes value="32767"/>
+<MaxHardwareOutgoingBufferSizeBytes value="32767"/>
+<MaxSoftwareIncomingBufferSizeBytes value="32767"/>
+<MaxSoftwareOutgoingBufferSizeBytes value="32767"/>
+<RenderSystem value="OpenGL"/>
+
+</config>

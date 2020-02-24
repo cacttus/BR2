@@ -12,17 +12,18 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
-namespace BR2 {
 
-class TextBufferMesh : public GLFramework {
+namespace Game {
+class VaoDataGeneric;
+class TextBufferMesh : public VirtualMemory {
 public:
   TextBufferMesh(std::shared_ptr<GLContext> pContext, int32_t count);
   virtual ~TextBufferMesh() override;
 
-  std::shared_ptr<VaoDataGeneric> getVao() { return _pVaoData; }
   FORCE_INLINE int32_t getMaxQuads() { return _iMaxQuads; }
   FORCE_INLINE int32_t getQuadCount() { return _iCurrentQuadIndex; }
   FORCE_INLINE void resetCopy() { _iCurrentQuadIndex = 0; }
+  std::shared_ptr<VaoDataGeneric> getVao() { return _pVaoData; }
   FORCE_INLINE void backupQuad() {
     AssertOrThrow2(_iCurrentQuadIndex > 0);
     _iCurrentQuadIndex--;
@@ -35,12 +36,9 @@ public:
   bool isFull() {
     return _iCurrentQuadIndex >= _iMaxQuads;
   }
-
   void getQuad(v_v2c4x2*& v0, v_v2c4x2*& v1, v_v2c4x2*& v2, v_v2c4x2*& v3);    // Gets the next client side GPU quad.  After setting the quad call nextQuad().  then copyToGpu() then draw() then resetCopy()
   void allocateQuads(int32_t count);    //Allocates count quads
-                                        //  void createShader(t_string& srcName);
   void copyToGpu(bool bInit = false);// don't unnecessarily copy the indexes.  leave count -1 to copy all quads.
-
   void draw(RenderParams& rp);
 
 protected:
@@ -54,10 +52,9 @@ protected:
 
   void assignIndexes();
   void freeData();
-
-
 };
-}//ns BR2
+
+}//ns Game
 
 
 

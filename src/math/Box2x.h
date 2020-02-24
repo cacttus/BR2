@@ -1,10 +1,6 @@
 /**
-*  @file RectList.h
+*  @file Box2x.h
 *  @author MetalMario971
-*  @date 7 / 10 / 2008 - mgRect
-*    1/23/2010 - changed name from mgRectMap to RectList
-*    20150207 begin adding methods
-*    2/5/18changed name from Quad2f to Box2x
 */
 #pragma once
 #ifndef __MG_RECTMAP_H__
@@ -12,8 +8,7 @@
 
 #include "../math/Vec2x.h"
 
-namespace BR2 {
-;
+namespace Game {
 /**
 *  @class Box2x
 *  @brief Basic rect class.
@@ -68,7 +63,7 @@ public:
   FORCE_INLINE void genExpandByPoint(const VecType& pt);
   FORCE_INLINE void expand(Box2x<Tx>& rhs);
   FORCE_INLINE void validate();
-  FORCE_INLINE string_t toString();
+  FORCE_INLINE t_string toString();
   FORCE_INLINE void genReset();
 };
 template < class Tx >
@@ -180,7 +175,7 @@ FORCE_INLINE void Box2x<Tx>::validate() {
   }
 }
 template < class Tx >
-FORCE_INLINE string_t Box2x<Tx>::toString() {
+FORCE_INLINE t_string Box2x<Tx>::toString() {
   return TStr("{", p0().toString(), "},{", p1().toString(), "}");
 }
 

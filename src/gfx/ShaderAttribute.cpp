@@ -1,24 +1,22 @@
 #include "../base/Logger.h"
 #include "../base/Hash.h"
+#include "../base/GLContext.h"
 #include "../gfx/ShaderAttribute.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/GLContext.h"
 
 
-namespace BR2 {
-ShaderAttribute::ShaderAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_t attribIndex) {
-  _strName = "";
-  _strError = "";
+namespace Game {
+ShaderAttribute::ShaderAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_t attribIndex) :
+  _iGLLocation(NoAttribLocationFound)
+  , _strName("") {
   parseAttribute(pShaderBase, attribIndex);
 }
-ShaderAttribute::~ShaderAttribute() {
-}
 /**
-*  @fn assignLocation
-*  @brief Returns a nonempty string if there was an error.
+*    @fn assignLocation
+*    @brief Returns a nonempty string if there was an error.
 */
 void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, int32_t attribIndex) {
-  string_t err;
+  t_string err;
   static const int NBUFSIZ = 512;
   char buf[NBUFSIZ];
   GLsizei buflen;
@@ -26,7 +24,8 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
 
   memset(buf, 0, 512);
 
-  pShaderBase->getContext()->glGetActiveAttrib(
+
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveAttrib(
     pShaderBase->getGlId()
     , attribIndex
     , NBUFSIZ
@@ -38,14 +37,14 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
 
   AssertOrThrow2(buflen < NBUFSIZ);
 
-  _strName = string_t(buf);
+  _strName = t_string(buf);
   _iNameHashed = STRHASH(_strName);
 
   if (isOpenGLBuiltInAttrib(_strName)) {
     _bIsBuiltInAttrib = true;
   }
   else {
-    _iGLLocation = pShaderBase->getContext()->glGetAttribLocation(pShaderBase->getGlId(), getName().c_str());
+    _iGLLocation = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetAttribLocation(pShaderBase->getGlId(), getName().c_str());
 
     _eUserType = parseUserType(_strName);
 
@@ -55,13 +54,13 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
                              2) you may have forgotten to set it in addAttr()\r\n \
                              3) the attribute may not be in the shader, so you need to remove the addAttr(). \r\n";
 
-      Br2LogWarn(err);
+      BroLogWarn(err);
       Gu::debugBreak();
       // Don't throw but just exit gracefully so we can accumulate errors.
     }
   }
 }
-bool ShaderAttribute::isOpenGLBuiltInAttrib(string_t strName) {
+bool ShaderAttribute::isOpenGLBuiltInAttrib(t_string strName) {
   if (StringUtil::equals(strName, "gl_VertexID")) { return true; }
   else if (StringUtil::equals(strName, "gl_InstanceID")) { return true; }
   else if (StringUtil::equals(strName, "gl_DrawID")) { return true; }
@@ -69,11 +68,11 @@ bool ShaderAttribute::isOpenGLBuiltInAttrib(string_t strName) {
   else if (StringUtil::equals(strName, "gl_BaseInstance")) { return true; }
   return false;
 }
-VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
+VertexUserType::e ShaderAttribute::parseUserType(t_string& name) {
   VertexUserType::e ret = VertexUserType::e::None;
 
   //Validate some errors
-  string_t err = "";
+  t_string err = "";
   if (_strName.length() < 4) {
     err += Stz "  Invalid attribute identifier: '" + _strName + "'\r\n";
   }
@@ -81,10 +80,10 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
     err += Stz "  Invalid attribute identifier pattern: '" + _strName + "'\r\n";
   }
   else {
-    string_t strValue = _strName.substr(1, 4);
-    string_t strComponent = strValue.substr(0, 1);
-    string_t strVectorSize = strValue.substr(1, 1);
-    string_t strIndex = strValue.substr(2, 2);
+    t_string strValue = _strName.substr(1, 4);
+    t_string strComponent = strValue.substr(0, 1);
+    t_string strVectorSize = strValue.substr(1, 1);
+    t_string strIndex = strValue.substr(2, 2);
 
     //validate component size.
     if (_eGLAttribType == GL_FLOAT_VEC2 && !(strVectorSize == "2")) { err += Stz "  Vertex component for '" + strValue + "' is invalid.\r\n"; }
@@ -107,7 +106,7 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
   }
 
   if (StringUtil::isNotEmpty(err)) {
-    Br2LogError("Attribute '" + _strName + "'parse error: \r\n" + err);
+    BroLogError("Attribute '" + _strName + "'parse error: \r\n" + err);
     Gu::debugBreak();
   }
   else {
@@ -147,7 +146,7 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
     }
     else {
       //Wer're going to hit this in the beginning because we can have a lot of different attrib types.
-      Br2LogInfo("  Unrecognized vertex attribute '" + name + "'.");
+      BroLogInfo("  Unrecognized vertex attribute '" + name + "'.");
       Gu::debugBreak();
     }
 
@@ -163,4 +162,4 @@ VertexUserType::e ShaderAttribute::parseUserType(string_t& name) {
 
 
 
-}//ns BR2
+}//ns Game

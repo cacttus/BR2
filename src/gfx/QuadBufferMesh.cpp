@@ -1,15 +1,15 @@
-#include "../base/Base.h"
-
+#include "../base/Logger.h"
+#include "../base/GLContext.h"
 #include "../gfx/QuadBufferMesh.h"
 #include "../gfx/GpuQuad3.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../model/MeshNode.h"
-#include "../model/MeshData.h"
+#include "../model/MeshSpec.h"
 #include "../model/VertexFormat.h"
 
-namespace BR2 {
-QuadBufferMesh::QuadBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : GLFramework(c) {
+namespace Game {
+QuadBufferMesh::QuadBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : _pContext(c) {
   allocateQuads(count);
   _iCurrentQuadIndex = 0;
 
@@ -23,19 +23,6 @@ QuadBufferMesh::QuadBufferMesh(std::shared_ptr<GLContext> c, int32_t count) : GL
 QuadBufferMesh::~QuadBufferMesh() {
   freeData();
 }
-void QuadBufferMesh::backupQuad() {
-  AssertOrThrow2(_iCurrentQuadIndex > 0);
-  _iCurrentQuadIndex--;
-}
-void QuadBufferMesh::nextQuad() {
-  if (_iCurrentQuadIndex < _iMaxQuads) {
-    _iCurrentQuadIndex++;
-  }
-}
-bool QuadBufferMesh::isFull() {
-  return _iCurrentQuadIndex >= _iMaxQuads;
-}
-
 void QuadBufferMesh::setTexture(std::shared_ptr<Texture2DSpec> tex) {
   _pTexture = tex;
   ///_pMesh->setTexture(tex);
@@ -95,14 +82,15 @@ void QuadBufferMesh::allocateQuads(int32_t count) {
 
   assignIndexes();
 
-  _pMesh = std::make_shared<MeshNode>(getContext(),
-    std::make_shared<MeshData>(getContext(),_verts.data(), _verts.size(),
+  _pMesh = MeshNode::create(
+    std::make_shared<MeshSpec>(_verts.data(), _verts.size(),
       _indexes.data(), _indexes.size(),
       v_v3n3x2::getVertexFormat(), nullptr)
-    );
+  );
 
   copyToGpu(-1, true);
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
+
 }
 void QuadBufferMesh::assignIndexes() {
   /*
@@ -158,7 +146,7 @@ void QuadBufferMesh::copyToGpu(int32_t iQuadCount, bool bIndexes) {
   }
 
 
-  _pMesh->getMeshData()->allocMesh(_verts.data(), quadCount * 4, vi, iVi);
+  _pMesh->getMeshSpec()->allocMesh(_verts.data(), quadCount * 4, vi, iVi);
 }
 void QuadBufferMesh::getGpuQuad(GpuQuad3& q) {
   GpuQuad3* pq = &q;
@@ -187,4 +175,4 @@ void QuadBufferMesh::getQuad(v_v3n3x2*& v0, v_v3n3x2*& v1, v_v3n3x2*& v2, v_v3n3
 //}
 
 
-}//ns BR2
+}//ns game

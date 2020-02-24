@@ -7,7 +7,7 @@
 
 #include "../gfx/Atlas.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/Party.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
@@ -270,10 +270,10 @@ void BottleRoom::drawForward(RenderParams& rp) {
     }
 
     if (Gu::getRenderSettings()->getDebug()->getShowShadowBox()) {
-        for (std::shared_ptr<ShadowBox> sb : getGraphicsContext()->getLightManager()->getAllShadowBoxes()) {
+        for (std::shared_ptr<ShadowBox> sb : Gu::getLightManager()->getAllShadowBoxes()) {
             sb->debugRender();
         }
-        for (std::shared_ptr<ShadowFrustum> sb : getGraphicsContext()->getLightManager()->getAllShadowFrustums()) {
+        for (std::shared_ptr<ShadowFrustum> sb : Gu::getLightManager()->getAllShadowFrustums()) {
             sb->debugRender();
         }
     }
@@ -682,8 +682,15 @@ void BottleRoom::drawHover() {
 void BottleRoom::idle(t_timeval us) {
     _pWorld25->idleProcessing(us);
 }
-
-
+t_string BottleRoom::getIconFullPath() {
+    return makeAssetPath("tex", "icon.png");
+}
+t_string BottleRoom::getConfigPath() {
+    return makeAssetPath("", "config.xml");
+}
+t_string BottleRoom::getAssetsDir() {
+    return "./data/";
+}
 void BottleRoom::serverPacketReceived(std::shared_ptr<Packet> pack) {
     //todo
 }
@@ -790,16 +797,16 @@ void WorldSelect::draw2d() {
 }
 void WorldSelect::drawBackgroundImage() {
     std::shared_ptr<CameraNode> bc = Gu::getCamera();
-    getGraphicsContext()->getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-    getGraphicsContext()->getShaderMaker()->getImageShader_F()->beginRaster();
+    Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
+    Gu::getShaderMaker()->getImageShader_F()->beginRaster();
     {
         //We want depth test so we can see what's in front.
         //glEnable(GL_DEPTH_TEST);
-        _pTex->bind(TextureChannel::e::Channel0, getGraphicsContext()->getShaderMaker()->getImageShader_F());
+        _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
 
-        getGraphicsContext()->getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+        Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
     }
-    getGraphicsContext()->getShaderMaker()->getImageShader_F()->endRaster();
+    Gu::getShaderMaker()->getImageShader_F()->endRaster();
 
 }
 void WorldSelect::drawText() {

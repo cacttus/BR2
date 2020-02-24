@@ -6,7 +6,7 @@
 #include "../base/SDLUtils.h"
 #include "../base/GraphicsWindow.h"
 
-namespace BR2 {
+namespace Game {
 GraphicsApi::GraphicsApi() {
 }
 GraphicsApi::~GraphicsApi() {
@@ -42,4 +42,4 @@ void GraphicsApi::cleanup() {
 
 
 
-}//ns BR2
+}//ns Game

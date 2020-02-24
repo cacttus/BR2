@@ -1,15 +1,16 @@
 #include "../base/Logger.h"
-#include "../base/Hash.h"
-#include "../gfx/GLContext.h"
+#include "../base/FileSystem.h"
+#include "../base/Gu.h"
+#include "../base/GLContext.h"
 #include "../gfx/ShaderSubProgram.h"
 
 
-namespace BR2 {
+namespace Game {
 ShaderSubProgram::ShaderSubProgram() {
 }
 ShaderSubProgram::~ShaderSubProgram() {
 }
-void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, string_t loc, ShaderType::e type) {
+void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, t_string loc, ShaderType::e type) {
   ctx->chkErrRt();
   GLenum eShaderType;
 
@@ -39,8 +40,8 @@ void ShaderSubProgram::init(std::shared_ptr<GLContext> ctx, string_t loc, Shader
     setStatus(ShaderStatus::e::CreateComplete);
   }
 }
-string_t ShaderSubProgram::getHumanReadableErrorString() const {
-  string_t str;
+t_string ShaderSubProgram::getHumanReadableErrorString() const {
+  t_string str;
 
   str += "Errors loading ";
   str += _sourceLocation;
@@ -54,43 +55,43 @@ string_t ShaderSubProgram::getHumanReadableErrorString() const {
   return str;
 }
 void ShaderSubProgram::debugPrintShaderSource() const {
-  string_t str = "\n";
+  t_string str = "\n";
   str += Stz "Source For: " + _sourceLocation;
   str += "\n";
   for (size_t iLine = 0; iLine < _sourceLines.size(); ++iLine) {
-    str += string_t(StringUtil::getZeroPaddedNumber((int32_t)iLine + 0, 4));
+    str += t_string(StringUtil::getZeroPaddedNumber((int32_t)iLine + 0, 4));
     str += " ";
-    string_t nl = StringUtil::removeNewline(_sourceLines[iLine]);//.substr(0, _sourceLines[i].length() - 2);
+    t_string nl = StringUtil::removeNewline(_sourceLines[iLine]);//.substr(0, _sourceLines[i].length() - 2);
     if (nl.length() != 0) {
       //Zero length strings will add \0 which will terminate.  
       str += nl;
     }
-    str += string_t("\n");
+    str += t_string("\n");
   }
-  Br2LogDebug(str);
+  BroLogDebug(str);
 }
 ShaderType::e ShaderSubProgram::getShaderTypeByFileLocation(DiskLoc& loc) {
   ShaderType::e type = ShaderType::e::st_vertex;
 
   // - Get type by filename
 
-  string_t other;
+  t_string other;
   size_t off = loc.rfind('.');
 
-  AssertOrThrow2(off != string_t::npos);
+  AssertOrThrow2(off != t_string::npos);
 
   for (size_t x = off + 1; x < loc.size(); x++)
     other += loc.at(x);
 
-  if (!(other.compare(string_t("vs"))))
+  if (!(other.compare(t_string("vs"))))
     type = ShaderType::e::st_vertex;
-  else if (!(other.compare(string_t("ps"))))
+  else if (!(other.compare(t_string("ps"))))
     type = ShaderType::e::st_fragment;
-  else if (!(other.compare(string_t("fs"))))
+  else if (!(other.compare(t_string("fs"))))
     type = ShaderType::e::st_fragment;
-  else if (!(other.compare(string_t("gs"))))
+  else if (!(other.compare(t_string("gs"))))
     type = ShaderType::e::st_geometry;
-  else if (!(other.compare(string_t("cs"))))
+  else if (!(other.compare(t_string("cs"))))
     type = ShaderType::e::st_compute;
   else
     _generalErrors.push_back(Stz "[error] Shader file type '" + other + "' not recognized.");
@@ -114,4 +115,4 @@ GLenum ShaderSubProgram::getGLShaderEnum(ShaderType::e type) {
 
 
 
-}//ns BR2
+}//ns Game

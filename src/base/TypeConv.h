@@ -2,7 +2,6 @@
 *  @file TypeConv.hpp
 *  @date August 23, 2010
 *  @author MetalMario971
-* 5/1/2017 reformatted. removed inline. made nice
 */
 #pragma once
 #ifndef __TYPECONV_29189136032904720213337_H__
@@ -12,8 +11,8 @@
 #include "../base/MachineTypes.h"
 #include "../base/Exception.h"
 #include "../base/TypeCast.h"
-namespace BR2 {
 
+namespace Game {
 #define frameStampToStr(x) uint64ToStr(x)
 
 #ifndef FORCE_INLINE
@@ -23,39 +22,39 @@ namespace BR2 {
 class TypeConv {
 public:
   //ToVal
-  static bool strToBool(string_t& s, bool bThrowIfInvalid = false);
-  static long strToLong(string_t& s);
-  static int32_t strToInt(string_t& s);
-  static bool strToInt(string_t& s, int32_t& out);//Similar to .net' parseInt
-  static uint32_t strToUint(string_t& s);
-  static int8_t strToByte(string_t& s);
-  static float strToFloat(string_t& s);
-  static double strToDouble(string_t& s);
+  static bool strToBool(t_string& s, bool bThrowIfInvalid = false);
+  static long strToLong(t_string& s);
+  static int32_t strToInt(t_string& s);
+  static bool strToInt(t_string& s, int32_t& out);//Similar to .net' parseInt
+  static uint32_t strToUint(t_string& s);
+  static int8_t strToByte(t_string& s);
+  static float strToFloat(t_string& s);
+  static double strToDouble(t_string& s);
 
   //Silent Fail Verions
-  static float strToFloat(string_t& s, bool bFailed);
-  static double strToDouble(string_t& s, bool bFailed);
+  static float strToFloat(t_string& s, bool bFailed);
+  static double strToDouble(t_string& s, bool bFailed);
 
   //ToStr
-  static string_t intToStr(const int32_t i);
-  static string_t intToStr(const int64_t i);
-  static string_t intToStr(const uint64_t i);
-  static string_t intToStr(const uint32_t i);
-  static string_t sizetToStr(const size_t i);
-  static string_t longToStr(const long& i);
-  static string_t ulongToStr(const unsigned long& i);
-  static string_t int64ToStr(const int64_t& i);
-  static string_t uint64ToStr(const uint64_t& i);
-  static string_t floatToStr(const float i);
-  static string_t dblToStr(const double i);
-  static string_t wstrToStr(wchar_t* wstr);
+  static t_string intToStr(const int32_t i);
+  static t_string intToStr(const int64_t i);
+  static t_string intToStr(const uint64_t i);
+  static t_string intToStr(const uint32_t i);
+  static t_string sizetToStr(const size_t i);
+  static t_string longToStr(const long& i);
+  static t_string ulongToStr(const unsigned long& i);
+  static t_string int64ToStr(const int64_t& i);
+  static t_string uint64ToStr(const uint64_t& i);
+  static t_string floatToStr(const float i);
+  static t_string dblToStr(const double i);
+  static t_string wstrToStr(wchar_t* wstr);
 
   //Format Verions
-  static string_t intToStr(const  int32_t i, char* fmt);
+  static t_string intToStr(const  int32_t i, char* fmt);
 };
 
 
-}//ns BR2
+}//ns game
 
 #endif
 

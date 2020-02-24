@@ -3,25 +3,22 @@
 #include "../base/EngineConfig.h"
 #include "../math/MathAll.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderParams.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShadowBoxSide.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
-#include "../gfx/LightManager.h"
 #include "../gfx/RenderSettings.h"
-#include "../gfx/GLContext.h"
-#include "../gfx/RenderBucket.h"
-#include "../model/MeshData.h"
-#include "../model/MeshComponent.h"
-#include "../world/PhysicsManager.h"
+#include "../model/MeshSpec.h"
+#include "../model/MeshNode.h"
+#include "../world/RenderBucket.h"
+#include "../world/PhysicsWorld.h"
 #include "../world/PhysicsGrid.h"
-#include "../world/Scene.h"
 
-namespace BR2 {
+namespace Game {
 ShadowBoxSide::ShadowBoxSide(
   std::shared_ptr<ShadowBox> pParentBox
   , std::shared_ptr<LightNodePoint> pLightSource
@@ -37,11 +34,10 @@ ShadowBoxSide::ShadowBoxSide(
   _bMustUpdate = true;
   _pLightSource = pLightSource;
 
-  //TODO: make sure this works (new viewport code)
-  Gu::debugBreak();
-  _pViewport = std::make_shared<RenderViewport>(_pParentBox->getFboWidth()
+  _pViewport = std::make_shared<WindowViewport>(_pParentBox->getFboWidth()
     , _pParentBox->getFboHeight()
-    , ViewportConstraint::Fixed //VP_DONOTCHANGE
+    , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
+    , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
     );
 
   _pVisibleSet = std::make_shared<RenderBucket>();
@@ -54,6 +50,9 @@ ShadowBoxSide::~ShadowBoxSide() {
 //   DEL_MEM(_pVisibleSet);
 //   DEL_MEM(_pViewport);
 }
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 void ShadowBoxSide::updateView() {
   AssertOrThrow2(_pLightSource != nullptr);
 
@@ -79,7 +78,7 @@ void ShadowBoxSide::updateView() {
 
   // make sure frustum isn't **d uip
   if (_pLightSource->getLightRadius() < fNear) {
-    fFar = getLight()->getScene()->getActiveCamera()->getFrustum()->getZFar();
+    fFar = Gu::getCamera()->getFrustum()->getZFar();
   }
   else {
     fFar = _pLightSource->getLightRadius();
@@ -120,7 +119,7 @@ void ShadowBoxSide::updateView() {
 
   // _projMatrix = _pFrustum->getProjectionMatrix();
   float vpWidth_2 = _pFrustum->getTanFov2() * fNear;
-  float arat_1 = 1/_pViewport->getAspectRatio();
+  float arat_1 = _pViewport->getAspectRatio_1();
   float vw = vpWidth_2;
   float vh = vpWidth_2 * arat_1;
   _projMatrix = mat4::getProjection(
@@ -138,7 +137,7 @@ bool ShadowBoxSide::computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum) {
 
   return pCamFrustum->hasFrustum(_pFrustum);
 }
-void ShadowBoxSide::collect(std::shared_ptr<CameraNode> cam) {
+void ShadowBoxSide::collect() {
   if (_bShadowMapEnabled == false) {
     return;
   }
@@ -146,25 +145,18 @@ void ShadowBoxSide::collect(std::shared_ptr<CameraNode> cam) {
   AssertOrThrow2(_pVisibleSet != nullptr);
   // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
 
-  _pVisibleSet->clear(cam);
+  _pVisibleSet->clear();
 
-  std::shared_ptr<Scene> ps = _pLightSource->getScene();
-  if (ps == nullptr) {
-    Br2LogErrorCycle("could not get scene for shadow frustum (light source may not be added however this update shouldn't be called.)");
-  }
-  std::shared_ptr<PhysicsManager> pphysics = ps->getPhysicsManager();
-  if (pphysics == nullptr) {
-    Br2LogErrorCycle("could not get PhysicsManager for shadow frustum (light source may not be added however this update shouldn't be called.)");
-  }
-  if (_bShadowMapEnabled == false) {
+  if (Gu::getPhysicsWorld() == nullptr) {
     return;
   }
+
   BvhCollectionParams p;
   //fmaxdist is SQUARED
   p._fMaxDist = powf(MathUtils::broMin(_pLightSource->getLightRadius(), Gu::getEngineConfig()->getMaxPointLightShadowDistance()), 2);
   p._pFrustum = _pFrustum;
   p._pRenderBucket = _pVisibleSet;
-  pphysics->collectVisibleNodes(&p);
+  Gu::getPhysicsWorld()->collectVisibleNodes(&p);
 
   //////////////////////////////////////////////////////////////////////////
   //Loop through objects and find whether they have changed since last update.
@@ -195,7 +187,7 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
   {
     _pVisibleSet->sortAndDrawMeshes(
       [](std::shared_ptr<VertexFormat> fmt) {
-        return GLContext::getShaderManager()->getShadowShader(fmt);
+        return Gu::getShaderMaker()->getShadowShader(fmt);
       },
       [&](std::shared_ptr<ShaderBase> sb) {
         sb->bind();
@@ -203,21 +195,21 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
         sb->setUf("_ufView", (void*)getViewMatrix(), 1, false);
         sb->setUf("_ufShadowLightPos", (void*)getLight()->getFinalPosPtr(), 1, false);
       },
-        [&](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshComponent> n) {
+        [&](std::shared_ptr<ShaderBase> sb, std::shared_ptr<BaseNode> n) {
         RenderParams rp;
         rp.setShader(sb);
         n->drawShadow(rp);
       }
-    );
+      );
 
     //Find an appropriate shader for the terrain meshes
     std::shared_ptr<ShaderBase> sb;
     for (auto p : _pVisibleSet->getGrids()) {
-      std::shared_ptr<MeshComponent> mn = p.second->getMesh();
+      std::shared_ptr<MeshNode> mn = p.second->getMesh();
       if (mn != nullptr) {
-        if (mn->getMeshData() != nullptr) {
-          std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
-          sb = GLContext::getShaderManager()->getShadowShader(fmt);
+        if (mn->getMeshSpec() != nullptr) {
+          std::shared_ptr<VertexFormat> fmt = mn->getMeshSpec()->getVertexFormat();
+          sb = Gu::getShaderMaker()->getShadowShader(fmt);
           if (sb != nullptr) {
             break;
 
@@ -233,11 +225,11 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
       sb->setUf("_ufShadowLightPos", (void*)getLight()->getFinalPosPtr(), 1, false);
       //if shadow topology
       for (auto p : _pVisibleSet->getGrids()) {
-        std::shared_ptr<MeshComponent> mn = p.second->getMesh();
+        std::shared_ptr<MeshNode> mn = p.second->getMesh();
         if (mn != nullptr) {
-          if (mn->getMeshData() != nullptr) {
-            std::shared_ptr<VertexFormat> fmt = mn->getMeshData()->getVertexFormat();
-            std::shared_ptr<ShaderBase> sb = GLContext::getShaderManager()->getShadowShader(fmt);
+          if (mn->getMeshSpec() != nullptr) {
+            std::shared_ptr<VertexFormat> fmt = mn->getMeshSpec()->getVertexFormat();
+            std::shared_ptr<ShaderBase> sb = Gu::getShaderMaker()->getShadowShader(fmt);
             if (sb != nullptr) {
               RenderParams rp;
               rp.setShader(sb);
@@ -250,14 +242,12 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
     }
 
 
+
   }
   pMasterBox->endRenderSide();
 
-  getContext()->chkErrDbg();
+  Gu::checkErrorsDbg();
   Perf::popPerf();
 }
-std::shared_ptr<GLContext> ShadowBoxSide::getContext() {
-  return getLight()->getLightManager()->getContext();
-}
 
-}//ns BR2
+}//ns Game

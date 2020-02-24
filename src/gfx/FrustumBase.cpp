@@ -1,59 +1,39 @@
-
 #include "../base/Logger.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FrustumProjectionParameters.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 
-namespace BR2 {
-FrustumBase::FrustumBase(std::shared_ptr<RenderViewport> pv, float fov) : _pViewportRef(pv) {
+namespace Game {
+// - CONSTRUCTOR/ DESTRUCTOR
+FrustumBase::FrustumBase(std::shared_ptr<WindowViewport> pv, float fov) : _pViewportRef(pv) {
+  //_satLine = new Line3f();
   _minimax = new Box3f();
 
   setFov((fov));//fov is absolutely required for all frustum operattions.
 }
 FrustumBase::~FrustumBase() {
+  //DEL_MEM(_satLine);
+  //DEL_MEM(_minimax);
 }
-void FrustumBase::update(const Vector3& NormalizedView, const Vector3& CamPos, const Vector3& upVec, ProjectionMode::e fpt) {
-  FrustumProjectionParameters params;
-  params._camPos = CamPos;
-  params._camView = NormalizedView;
-  params._upVec = upVec;
 
-  params._v3basis = Alg::getNormalBasisZ(NormalizedView);
-
-  _eProjectionMode = fpt;
-
-  //NOTE: basis.X will be screwy in LHS coords see note below.
-
-  if (fpt == ProjectionMode::e::Perspective) {
-    setupPerspective(&params);
-  }
-  //else if(fpt==FrustumProjectionType::FPT_BOX) {
-  //    setupBox(&params);
-  //}
-  else if (fpt == ProjectionMode::e::Orthographic) {
-    setupOrthographic(&params);
-  }
-  else {
-    BrThrowNotImplementedException();
-  }
-
-  //    updateBoundBox();
-}
 // - Returns the center of this frustum's near plane.
 Vec3f FrustumBase::getNearPlaneCenterPoint() {
-  return PointAt(BR2::fpt_nbl) + (PointAt(BR2::fpt_ntr) - PointAt(BR2::fpt_nbl)) / 2.0f;
+  return PointAt(Game::fpt_nbl) + (PointAt(Game::fpt_ntr) - PointAt(Game::fpt_nbl)) / 2.0f;
 }
+
 /**
-*  @fn hasBox()
-*  @return true if the frustum collides with an axis-aligned bound-box
-*  @brief Collides cube with convex hull
+*    @fn hasBox()
+*    @return true if the frustum collides with an axis-aligned bound-box
+*    Collides cube with convex hull
 */
 bool FrustumBase::hasBox(const Box3f* pCube) {
+
   bool    ret = false; // Inside the frustum
   Vector3 min, max;
   float d1, d2;
   if (pCube->_max < pCube->_min) {
     AssertOrThrow2(pCube->_max >= pCube->_min);
+
   }
 
   for (int i = 0; i < 6; ++i) {
@@ -93,17 +73,20 @@ bool FrustumBase::hasBox(const Box3f* pCube) {
 }
 
 /**
-*  @fn getCenterAxis
-*  @brief Returns the center axis line that runs through the length of the frustum.
+*    @fn getCenterAxis
+*    @brief Returns the center axis line that runs through the length of the frustum.
+*
 */
 Line3f FrustumBase::getCenterAxis() {
+  // /
   Vector3 center_far = (Points[fpt_fbl] - Points[fpt_ftr]) * 0.5f;
   Vector3 center_near = (Points[fpt_nbl] - Points[fpt_ntr]) * 0.5f;
   return Line3f(center_near, center_far);
 }
 /**
-*  @fn getViewVector
-*  @brief returns the normalized view vector that would be projecting out of the face of the camera.
+*    @fn getViewVector
+*    @brief returns the normalized view vector that would be projecting out of the face of the camera.
+*
 */
 Vector3 FrustumBase::getViewVector() {
   // /
@@ -111,10 +94,39 @@ Vector3 FrustumBase::getViewVector() {
   Vector3 center_near = (Points[fpt_nbl] - Points[fpt_ntr]) * 0.5f;
   return (center_far - center_near).normalize();
 }
-
 /**
-*  @fn setupOrthographic
-*  @brief Sets up an orthographic projection given the parameters
+*    Update frustum planes
+*/
+void FrustumBase::update(const Vector3& NormalizedView, const Vector3& CamPos, const Vector3& upVec, ProjectionMode::e fpt) {
+  FrustumProjectionParameters params;
+  params._camPos = CamPos;
+  params._camView = NormalizedView;
+  params._upVec = upVec;
+
+  params._v3basis = Alg::getNormalBasisZ(NormalizedView);
+
+  _eProjectionMode = fpt;
+
+  //NOTE: basis.X will be screwy in LHS coords see note below.
+
+  if (fpt == ProjectionMode::e::Perspective) {
+    setupPerspective(&params);
+  }
+  //else if(fpt==FrustumProjectionType::FPT_BOX) {
+  //    setupBox(&params);
+  //}
+  else if (fpt == ProjectionMode::e::Orthographic) {
+    setupOrthographic(&params);
+  }
+  else {
+    BroThrowNotImplementedException();
+  }
+
+  //    updateBoundBox();
+}
+/**
+*    @fn
+*    @brief Sets up an orthographic projection given the parameters
 */
 void FrustumBase::setupOrthographic(FrustumProjectionParameters* params) {
   Vec3f nc, fc;
@@ -288,13 +300,13 @@ bool FrustumBase::hasPoint(Vector3& p) {
   return true;
 }
 /**
-*  @fn hasTri
-*  @brief Returns true if the triangle intersects the frustum, or is inside at all.
+*    @fn hasTri
+*    @brief Returns true if the triangle intersects the frustum, or is inside at all.
 *
 */
 bool FrustumBase::hasTri(Vector3& p1, Vector3& p2, Vector3& p3) {
   //-- 20160528 This algorithm is WAY incorrect.
-  //--  this isn't needed at all however >:)
+  //--  this isn't needed at all however >:(
 
   //if( hasPoint(p1) || hasPoint(p2) || hasPoint(p3) )
   //    return true;
@@ -324,13 +336,13 @@ bool FrustumBase::hasTri(Vector3& p1, Vector3& p2, Vector3& p3) {
   //if(p.hitTest(Points[fpt_ntl],Points[fpt_nbl]).point.contained ) return true;
   //if(p.hitTest(Points[fpt_ntr],Points[fpt_nbr]).point.contained ) return true;
 
-  BrThrowNotImplementedException();
+  BroThrowNotImplementedException();
   return false;
 }
 /**
-*  @fn hasQuad()
-*  @brief Returns true if the given quad intersects the frustum.
-*  @return true if the quad intersects the frustum.
+*    @fn hasQuad()
+*    @brief Returns true if the given quad intersects the frustum.
+*    @return true if the quad intersects the frustum.
 *
 *    Don't know if this works.  I think i've tested it before, but should probably make sure.
 */
@@ -367,12 +379,12 @@ bool FrustumBase::hasQuad(Vector3& p1, Vector3& p2, Vector3& p3, Vector3& p4) {
   //if(p.hitTest(Points[fpt_ntl],Points[fpt_nbl]).point.contained ) return true;
   //if(p.hitTest(Points[fpt_ntr],Points[fpt_nbr]).point.contained ) return true;
 
-  BrThrowNotImplementedException();
+  BroThrowNotImplementedException();
   return false;
 }
 /**
-*  @fn projectFrom()
-*  @brief This is for creating light frustums.
+*    @fn projectFrom()
+*    @brief This is for creating light frustums.
 *        We project a set of points onto the light's plane surface.
 *        We then calculate the orthographic viewport size based on the minimum and maximum points.
 */
@@ -417,8 +429,8 @@ void FrustumBase::projectFrom(std::shared_ptr<FrustumBase> pOther, Vec3f& viewNo
   setupOrthographic(&params);
 }
 /**
-*  @fn projectScreenPointToWorldPoint
-*  @brief Projects a point onto the screen Near or Far plane given 3 points.
+*    @fn projectScreenPointToWorldPoint
+*    @brief Projects a point onto the screen Near or Far plane given 3 points.
 */
 void FrustumBase::projectScreenPointToWorldPoint(
   const vec2& screenPoint,
@@ -431,8 +443,8 @@ void FrustumBase::projectScreenPointToWorldPoint(
 ) {
   AssertOrThrow2(_pViewportRef != NULL);
 
-  float wratio = screenPoint.x * (1 / _pViewportRef->getWidth()); // x / width = % of x
-  float hratio = screenPoint.y * (1 / _pViewportRef->getHeight()); // y / height
+  float wratio = screenPoint.x * _pViewportRef->getWidth_1(); // x / width = % of x
+  float hratio = screenPoint.y * _pViewportRef->getHeight_1(); // y / height
   vec3 pTl, pTr, pBl;
   if (!bTest) {
     pTl = PointAt(tl);
@@ -486,12 +498,14 @@ bool FrustumBase::hasFrustum(std::shared_ptr<FrustumBase> pf) {
 
 }
 mat4 FrustumBase::getProjectionMatrix() {
+
   if (_eProjectionMode == ProjectionMode::e::Perspective) {
     //calc proj matrix
     float vpWidth_2 = tan_fov_2 * z_near;
-    float arat_1 = 1.0f/_pViewportRef->getAspectRatio();
+    float arat_1 = _pViewportRef->getAspectRatio_1();
     float vw = vpWidth_2;
     float vh = vpWidth_2 * arat_1;
+
 
     return mat4::getProjection(
       z_near, z_far,
@@ -541,13 +555,13 @@ mat4 FrustumBase::getProjectionMatrix() {
     return mm;
   }
   else {
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
 
 }
 void FrustumBase::setFov(float fov) {
   if (fov > 179 || fov < 1) {
-    Br2LogWarn("Frustum FOV " + fov + " was invalid, setting to valid number");
+    BroLogWarn("Frustum FOV " + fov + " was invalid, setting to valid number");
     fov = 45;
   }
   tan_fov_2 = tanf(MathUtils::degToRad(fov / 2.0f));

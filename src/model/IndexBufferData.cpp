@@ -2,13 +2,12 @@
 #include "../base/Allocator.h"
 
 
-namespace BR2 {
+namespace Game {
 IndexBufferData::IndexBufferData() {
 }
 IndexBufferData::~IndexBufferData() {
   deallocate();
 }
-
 void IndexBufferData::allocate(size_t count) {
 
   deallocate();
@@ -35,4 +34,4 @@ void IndexBufferData::appendToEnd(IndexBufferData* fb) {
 void* IndexBufferData::ptr() {
   return _pIndexes->ptr();
 }
-}//ns BR2
+}//ns game

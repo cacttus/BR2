@@ -1,3 +1,4 @@
+#include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/EngineConfig.h"
@@ -11,20 +12,21 @@
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowFrustum.h"
-#include "../gfx/GLContext.h"
 #include "../model/OBB.h"
-#include "../world/Scene.h"
 
-namespace BR2 {
-LightNodeBase::LightNodeBase(std::shared_ptr<LightManager> lm, bool bShadow)  {
-  _pLightManager = lm;
-  _bEnableShadows = bShadow;
+namespace Game {
+LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNode(nullptr) {
   _color = vec4(1, 1, 1, 1);
+  //    _vSpecColor = vec3(1, 1, 1);
 }
 LightNodeBase::~LightNodeBase() {
+
 }
-void LightNodeBase::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-  SceneNode::update(delta, cam, mapAnimators);
+void LightNodeBase::init() {
+  PhysicsNode::init();
+}
+void LightNodeBase::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+  PhysicsNode::update(delta, mapAnimators);
 }
 vec3* LightNodeBase::getFinalPosPtr() {
   _vGpuBufferedPosition = getFinalPos();//getTransform()->getPos();
@@ -34,23 +36,17 @@ bool LightNodeBase::shadowsEnabled() {
   return _bEnableShadows && (Gu::getEngineConfig()->getEnableObjectShadows() ||
     Gu::getEngineConfig()->getEnableTerrainShadows());
 }
-//////////////////////////////////////////////////////////////////////////
+LightNodeDir::LightNodeDir(bool bShadow) : LightNodeBase(bShadow) {
 
-LightNodeDir::LightNodeDir(std::shared_ptr<LightManager> pm, bool bShadow) : LightNodeBase(pm,bShadow) {
-  _vLookAt = vec3(0, 0, 0);
-  _vDir = vec3(0, 0, 1);
-  _vUp = vec3(0, 1, 0);
-  _vRight = vec3(1, 0, 0);
-
-  int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowFrustum = std::make_shared<ShadowFrustum>(getThis<LightNodeDir>(), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
-  _pShadowFrustum->init();
-  _pShadowFrustum->getFrustum()->setZFar(500);
-
-  _pGpuLight = std::make_shared<GpuDirLight>();
-  setMaxDistance(100.0f);
-  _pShadowFrustum->setChanged();
 }
+std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow) {
+  std::shared_ptr<LightNodeDir> lp = std::make_shared<LightNodeDir>(bShadow);
+  lp->init();
+  lp->_pSpec = std::make_shared<BaseSpec>("*LightNodeDir");
+
+  return lp;
+}
+
 LightNodeDir::~LightNodeDir() {
   //DEL_MEM(_pGpuLight);
   //DEL_MEM(_pShadowFrustum);
@@ -59,21 +55,38 @@ void LightNodeDir::setLookAt(const vec3& v) {
   _vLookAt = v;
   _pShadowFrustum->setChanged();
 }
+void LightNodeDir::init() {
+  LightNodeBase::init();
+
+  _vLookAt = vec3(0, 0, 0);
+  _vDir = vec3(0, 0, 1);
+  _vUp = vec3(0, 1, 0);
+  _vRight = vec3(1, 0, 0);
+
+  int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
+  _pShadowFrustum = std::make_shared<ShadowFrustum>(std::dynamic_pointer_cast<LightNodeDir>(shared_from_this()),
+    iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
+  _pShadowFrustum->init();
+  _pShadowFrustum->getFrustum()->setZFar(500);
+
+  _pGpuLight = std::make_shared<GpuDirLight>();
+  setMaxDistance(100.0f);
+  _pShadowFrustum->setChanged();
+}
+
 void LightNodeDir::setMaxDistance(float f) {
   _pShadowFrustum->getFrustum()->setZFar(f);
   _pShadowFrustum->setChanged();
 }
-void LightNodeDir::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (getHidden() == true) {
     return;
   }
   Perf::pushPerf();
   {
-    LightNodeBase::update(delta, cam, mapAnimators);
+    LightNodeBase::update(delta, mapAnimators);
     if (_pShadowFrustum != nullptr) {
-      if (getScene()) {
-        _pShadowFrustum->update(cam, getScene()->getPhysicsManager());
-      }
+      _pShadowFrustum->update();
     }
 
     _vDir = (getLookAt() - getFinalPos()).normalized();
@@ -106,30 +119,40 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
   pBox = *_pShadowFrustum->getFrustum()->getBoundBox();
   getOBB()->setInvalid();
 
-  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
+  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
-LightNodePoint::LightNodePoint(std::shared_ptr<LightManager> pm, bool bShadowBox) : LightNodeBase(pm, bShadowBox) {
-  _pGpuLight = std::make_shared<GpuPointLight>();
+LightNodePoint::LightNodePoint(bool bShadowBox) : LightNodeBase(bShadowBox) {
 }
+std::shared_ptr<LightNodePoint> LightNodePoint::create(bool bhasShadowBox) {
+  std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(bhasShadowBox);
+  lp->init();
+  lp->_pSpec = std::make_shared<BaseSpec>("*LightNodePoint");
+  return lp;
+}
+
 LightNodePoint::~LightNodePoint() {
   _pShadowBox = nullptr;
   _pGpuLight = nullptr;
 }
-void LightNodePoint::createShadowBox(std::shared_ptr<GLContext> ct) {
+void LightNodePoint::init() {
+  LightNodeBase::init();
+  _pGpuLight = std::make_shared<GpuPointLight>();
+
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowBox = std::make_shared<ShadowBox>(ct, getThis<LightNodePoint>(), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
+  _pShadowBox = std::make_shared<ShadowBox>(std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes, shadowsEnabled());    //TEST
   _pShadowBox->init();
+
 }
-void LightNodePoint::update(float delta, std::shared_ptr<CameraNode> cam, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (getHidden() == true) {
     return;
   }
   Perf::pushPerf();
   {
-    LightNodeBase::update(delta, cam, mapAnimators);
+    LightNodeBase::update(delta, mapAnimators);
     if (_pShadowBox != nullptr) {
-      _pShadowBox->update(cam);
+      _pShadowBox->update();
     }
     updateFlicker();
 
@@ -143,29 +166,32 @@ void LightNodePoint::update(float delta, std::shared_ptr<CameraNode> cam, std::m
 }
 bool LightNodePoint::renderShadows(std::shared_ptr<ShadowBox> pf) {
   //**Update shadow map frustum.
+
   _pShadowBox->renderShadows(pf);
+
+
   return true;
 }
 void LightNodePoint::updateFlicker() {
-  //if (_bFlickerEnabled) {
+  if (_bFlickerEnabled) {
 
-  //  _fFlickerValue += (1 / 10.0f) * 1.0f / getFpsMeter()->getFps();
+    _fFlickerValue += (1 / 10.0f) * 1.0f / Gu::getFpsMeter()->getFps();
 
-  //  if (_fFlickerValue >= 1.0f) {
-  //    _fLastRandomValue = _fNextRandomValue;
-  //    _fNextRandomValue = Random::nextFloat(0.0f, 1.0f);
+    if (_fFlickerValue >= 1.0f) {
+      _fLastRandomValue = _fNextRandomValue;
+      _fNextRandomValue = Random::nextFloat(0.0f, 1.0f);
 
-  //    _fFlickerValue = 0.0f;
-  //  }
+      _fFlickerValue = 0.0f;
+    }
 
-  //  _fFlickerAddRadius = _fFlickerMaxRadius * (Alg::cosine_interpolate(_fLastRandomValue, _fNextRandomValue, _fFlickerValue));//pnoise in range -1,1 so make it 1,1
-  //}
+    _fFlickerAddRadius = _fFlickerMaxRadius * (Alg::cosine_interpolate(_fLastRandomValue, _fNextRandomValue, _fFlickerValue));//pnoise in range -1,1 so make it 1,1
+  }
 
-  //// optimized radius for shader.
-  //float f = getLightRadius();
-  //if (f != 0.0f) {
-  //  _f_1_Radius_2 = (1.0f) / (f * f);
-  //}
+  // optimized radius for shader.
+  float f = getLightRadius();
+  if (f != 0.0f) {
+    _f_1_Radius_2 = (1.0f) / (f * f);
+  }
 }
 float LightNodePoint::getLightRadius() {
   //Negative light radiuses are infinite
@@ -188,8 +214,8 @@ void LightNodePoint::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float e
   pBox._max += getLightRadius();
   getOBB()->setInvalid();
 
-  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
+  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 
 
-}//ns BR2
+}//ns game

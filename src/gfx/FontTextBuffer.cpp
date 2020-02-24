@@ -1,9 +1,9 @@
 #include "../gfx/FontTextBuffer.h"
 
 
-namespace BR2 {
+namespace Game {
 
-FontTextBuffer::FontTextBuffer(string_t& txt, int32_t x, int32_t y, vec4& cFont, string_t fontName, FontSize iFontSize) {
+FontTextBuffer::FontTextBuffer(t_string& txt, int32_t x, int32_t y, vec4& cFont, t_string fontName, FontSize iFontSize) {
   _strText = txt;
   _pos.x = (float)x;
   _pos.y = (float)y;
@@ -16,4 +16,4 @@ FontTextBuffer::~FontTextBuffer() {
 
 
 
-}//ns BR2
+}//ns game

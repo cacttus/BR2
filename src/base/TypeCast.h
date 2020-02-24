@@ -7,24 +7,20 @@
 #ifndef __TYPECAST_14601720251282440992_H__
 #define __TYPECAST_14601720251282440992_H__
 
-//#include "../base/BaseHeader.h"
-
-namespace BR2 {
-
+namespace Game {
 
 template < typename Tx, typename Ty >
-inline Tx bro_safe_cast(Ty pb)
-{
-    //Note:
-    // If this is giving compile errors make sure you
-    // included both the .h definition files of the casted
-    // object types.
-    Tx ret = dynamic_cast<Tx>(pb);
-    if (pb != nullptr && ret == nullptr) {
-        throw 0;
-    }
-    //    AssertOrThrow2(ret!=NULL);
-    return ret;
+inline Tx bro_safe_cast(Ty pb) {
+  //Note:
+  // If this is giving compile errors make sure you
+  // included both the .h definition files of the casted
+  // object types.
+  Tx ret = dynamic_cast<Tx>(pb);
+  if (pb != nullptr && ret == nullptr) {
+    throw 0;
+  }
+  //    AssertOrThrow2(ret!=NULL);
+  return ret;
 }
 #define BroSafeCast bro_safe_cast
 #define DirectCast(pObj, pType) dynamic_cast<pType>(pObj)
@@ -33,7 +29,7 @@ inline Tx bro_safe_cast(Ty pb)
 #define UnsafeCast(pObj, pType) reinterpret_cast<pType>(pObj)
 
 
-}//ns BR2
+}//ns Game
 
 
 

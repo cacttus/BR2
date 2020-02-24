@@ -1,45 +1,31 @@
 /**
-*
 *  @file Sphere3.h
 *  @date August 10, 2014
 *  @author MetalMario971
-*
-*    � 2014
-*
-*
 */
 #pragma once
 #ifndef __SPHERE3F_181043110271772801121301_H__
 #define __SPHERE3F_181043110271772801121301_H__
 
-//include "../base/ExLib.h"
-//#include "../math/Vector3.h"
-
 #include "../math/Vec3x.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class Sphere3f
-*  @brief Sphere geometry.
+*  @brief
 */
 class Sphere3f : public VirtualMemory {
 public:
-  Vec3f o;    //origin
-  float r;    //radius
-
   FORCE_INLINE Sphere3f();
   FORCE_INLINE virtual ~Sphere3f() override;
   FORCE_INLINE Vec3f project(const Vec3f& x, Vec3f* outNormal = NULL); // project a point onto the sphere.  May return the normal to the point.
+
+  Vec3f o;    //origin
+  float r;    //radius
 };
-
 /**
-*  @fn
-*  @brief Project point onto sphere.
-*        NOTE: square root.
-
-    possibly a faster way to do this would be to get the squared length of both vectors
-    and multiply the one by the fraction of the other
-
+*    @fn
+*    @brief Project point onto sphere.  possibly a faster way to do this would be to get the squared length of both vectors and multiply the one by the fraction of the other
 */
 FORCE_INLINE Vec3f Sphere3f::project(const Vec3f& x, Vec3f* outNormal) {
   Vec3f diff = x - o;
@@ -99,7 +85,7 @@ FORCE_INLINE Sphere3f::~Sphere3f() {
 
 
 
-}//ns BR2
+}//ns game
 
 
 

@@ -2,13 +2,13 @@
 //#include "../math/Algorithm.h"
 
 #include "../math/MathAll.h"
-namespace BR2 {
+namespace Game {
 
 /**
-*  @fn convex_axis_t
-*  @brief Smashes points of a convex hull along the line of a plane normal
+*    @fn convex_axis_t
+*    @brief Smashes points of a convex hull along the line of a plane normal
 *    This is a SAT function. (seaparate axis teheorom)
-*  @return returns the minimum and maximum "t" along the normal wehre (Normal * t)=extent
+*    @return returns the minimum and maximum "t" along the normal wehre (Normal * t)=extent
 */
 void ConvexUtils::convex_proj_t_3f(
   Vec3f* norm,
@@ -52,8 +52,8 @@ void ConvexUtils::convex_proj_t_3f(
 }
 
 /**
-*  @fn convex_n_proj_box
-*  @brief Project a box solid onto a line.  This is a SAT function.
+*    @fn convex_n_proj_box
+*    @brief Project a box solid onto a line.  This is a SAT function.
 *
     THID SIS MESSED UP
     THID SIS MESSED UP
@@ -167,8 +167,8 @@ int32_t ConvexUtils::boxBoxConvex(
   return 1;
 }
 /**
-*  @fn
-*  @brief Convex hull collision
+*    @fn
+*    @brief Convex hull collision
 *    Return true/false if collision and the time until the convex hulls collide,
     and the point index of the hull collisions
 */
@@ -201,7 +201,7 @@ int32_t ConvexUtils::convexConvexTest(
   return 0;
 }
 Vec3f ConvexUtils::closestPointOnHull(Vec3f& point, Vec3f* hullPoints, int32_t nPoints) {
-  BrThrowNotImplementedException();
+  BroThrowNotImplementedException();
   return Vec3f(0, 0, 0);
   // Abandoned
   // we need either normals or indexes in order to verify topology -- just points alone doesn't work.
@@ -302,4 +302,4 @@ Vec3f ConvexUtils::closestPointOnHull(Vec3f& point, Vec3f* hullPoints, int32_t n
 
 
 
-}//ns BR2
+}//ns game

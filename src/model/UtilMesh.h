@@ -7,33 +7,32 @@
 #ifndef __UTILMESH_12100900221286185268356_H__
 #define __UTILMESH_12100900221286185268356_H__
 
-
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class UtilMesh
-*  @brief Utility mesh rendering for debugging purposes.
+*  @brief
 */
-class UtilMesh : public GLFramework {
+class UtilMesh : public VirtualMemory {
 public:
-  UtilMesh(std::shared_ptr<CameraNode> pCameraNode, std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase> pShader, GLenum drawMode = GL_LINES);
+  UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase> pShader, GLenum drawMode = GL_LINES);
   virtual ~UtilMesh() override;
 
-  void init();
-  void draw();
+  void setModelMatrix(mat4& m) { _m4ModelMatrix = m; }
 
   MUST_OVERRIDE void generate() = 0;
   MUST_OVERRIDE void preDraw() = 0;
   MUST_OVERRIDE void postDraw() = 0;
   virtual std::shared_ptr<ShaderBase> getShader();
 
-  void setModelMatrix(mat4& m) { _m4ModelMatrix = m; }
+  void init();
+  void draw();
 
 protected:
   void copyBuffersToVao();
-  void copyFromSpec(std::shared_ptr<MeshData> sp);
+  void copyFromSpec(std::shared_ptr<MeshSpec> sp);
   std::shared_ptr<IndexBufferData> getIndexes() { return _pIndexes; }
   std::shared_ptr<FragmentBufferData> getVerts() { return _pVerts; }
   void setDrawMode(GLenum e) { _eDrawMode = e; }
@@ -41,8 +40,10 @@ protected:
   //void allocIndexes(int count);
   void allocData(int nVerts, int nIndexes, std::shared_ptr<VertexFormat> fmt);
   void cleanup();
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
 
 private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<VertexFormat> _pVertexFormat = nullptr;
   GLuint bdVerts, bdIndexes, vaoIndexes;
   bool _bInitialized = false;
@@ -55,10 +56,9 @@ private:
   std::shared_ptr<IndexBufferData> _pIndexes = nullptr;
   std::shared_ptr<VaoDataGeneric> _pVaoData = nullptr;
   std::shared_ptr<VaoDataGeneric> getVaoData() { return _pVaoData; }
-  std::shared_ptr<CameraNode> _pCameraNode = nullptr;
 };
 
-}//ns BR2
+}//ns game
 
 
 

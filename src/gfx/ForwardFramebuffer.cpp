@@ -1,13 +1,14 @@
+#include "../base/Logger.h"
 #include "../base/Gu.h"
-#include "../gfx/ShaderManager.h"
+#include "../base/GLContext.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/ForwardFramebuffer.h"
-#include "../gfx/BufferRenderTarget.h"
-#include "../gfx/GLContext.h"
+#include "../gfx/RenderTarget.h"
 
 
-namespace BR2 {
+namespace Game {
 ForwardFramebuffer::ForwardFramebuffer(std::shared_ptr<GLContext> pc, int32_t w, int32_t h, bool bMsaa, int nMsaa, vec4& vClear) :
   FramebufferBase(pc, bMsaa, nMsaa, vClear) {
 }
@@ -17,20 +18,20 @@ GLuint ForwardFramebuffer::getGlColorBufferTexId() {
   AssertOrThrow2(_vecTargets.size() > 0);
   return _vecTargets[0]->getGlTexId();
 }
-void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) {
+void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<RenderTarget> sharedDepth, std::shared_ptr<RenderTarget> sharedPick) {
   deleteTargets();
 
-  getContext()->getShaderManager()->shaderBound(nullptr);
-  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  getContext()->chkErrRt();
-  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  getContext()->chkErrRt();
+  Gu::getShaderMaker()->shaderBound(nullptr);
+  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  _pContext->chkErrRt();
+  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  _pContext->chkErrRt();
 
-  getContext()->glGenFramebuffers(1, &_uiGlFramebufferId);
-  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _uiGlFramebufferId);
-  getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, iWidth);
-  getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, iHeight);
-  getContext()->chkErrRt();
+  _pContext->glGenFramebuffers(1, &_uiGlFramebufferId);
+  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, _uiGlFramebufferId);
+  _pContext->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, iWidth);
+  _pContext->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, iHeight);
+  _pContext->chkErrRt();
 
   attachColorTargets(iWidth, iHeight);
   addTarget(sharedPick);
@@ -40,11 +41,11 @@ void ForwardFramebuffer::init(int32_t iWidth, int32_t iHeight, std::shared_ptr<B
   checkFramebufferComplete();
 
   //Return to default.
-  getContext()->getShaderManager()->shaderBound(nullptr);
-  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  getContext()->chkErrRt();
-  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);//. The value zero is reserved, but there is no default renderbuffer object. Instead, renderbuffer set to zero effectively unbinds any renderbuffer object previously bound. 
-  getContext()->chkErrRt();
+  Gu::getShaderMaker()->shaderBound(nullptr);
+  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  _pContext->chkErrRt();
+  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//. The value zero is reserved, but there is no default renderbuffer object. Instead, renderbuffer set to zero effectively unbinds any renderbuffer object previously bound. 
+  _pContext->chkErrRt();
 
   _eState = FramebufferState::e::Initialized;
 }
@@ -55,22 +56,22 @@ void ForwardFramebuffer::attachColorTargets(int32_t iWidth, int32_t iHeight) {
 }
 void ForwardFramebuffer::clearFb() {
   //Call this before we begin the defrred
-  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
+  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
   setDrawAllTargets();
 
   glClearColor(getClear().x, getClear().y, getClear().z, getClear().w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 void ForwardFramebuffer::beginRender() {
   if (_eState != FramebufferState::Initialized) {
-    Br2ThrowException("Framebuffer was not initialized.");
+    BroThrowException("Framebuffer was not initialized.");
   }
 
   //Clear all buffers
-  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
+  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);//_depthRenderBufferId);
 
   //Do not clear - previous deferred operation is in here. (clear happens in clearFb)
   //**Do not clear***
@@ -100,4 +101,4 @@ void ForwardFramebuffer::endRender() {
 
 
 
-}//ns BR2
+}//ns Game

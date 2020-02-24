@@ -2,7 +2,7 @@
 *
 *    @file WorldCellFile.h
 *    @date March 13, 2017
-*    @author MetalMario971  
+*    @author Derek Page
 *
 *    © 2017 
 *

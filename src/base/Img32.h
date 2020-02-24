@@ -1,12 +1,7 @@
 /**
 *  @file BaseImage.h
-*    //@file imgImage.h
-*
 *  @author MetalMario971
-*
 *  @date 7 / 9 / 2008
-*    modified: 2/21/2010
-*
 */
 #pragma once
 #ifndef __BASE_IMAGE_H__
@@ -14,16 +9,17 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../base/RetCode.h"
-namespace BR2 {
+namespace Game {
 /**
 *  @class BaseImage
-*  @brief The base class for 32-bit images.
-*  @note All images in this class are loaded from "PNG" And are RGBA format.
+*  @brief The base class for images.  The BaseImage class also includes functions for convolution filtering.
+*   All images are loaded from "PNG" And are RGBA format.
 */
 class Img32 : public VirtualMemoryShared<Img32> {
+
 public:
   Img32() {}
-  Img32(string_t path, bool bLoad = false);    // - Creates this class with no image data.
+  Img32(t_string path, bool bLoad = false);    // - Creates this class with no image data.
   Img32(int w, int h, uint8_t* data = nullptr);    // - Creates this class with no image data.
   virtual ~Img32() override;
 
@@ -35,12 +31,13 @@ public:
   int32_t getBytesPerPixel() const { return 4; }                           // - Get the bits per pixel of the image.
   Allocator<uint8_t>* getData() const { return _pData; }
 
+
   int32_t getPitch() const;//Needed for some parts of SDL
   int32_t getRMask() const;
   int32_t getGMask() const;
   int32_t getBMask() const;
   int32_t getAMask() const;
-  string_t getName() { return _strNameOrFilePath; }
+  t_string getName() { return _strNameOrFilePath; }
 
   // Copy
   void clearTo(Pixel4ub);  // Clear the image to a single color
@@ -87,7 +84,6 @@ public:
 
   void serialize(std::shared_ptr<BinaryFile> bf);
   void deserialize(std::shared_ptr<BinaryFile> fb);
-
 protected:
   typedef uint8_t Ele;
   // std::shared_ptr<GLContext> _pContext;
@@ -95,13 +91,12 @@ protected:
   uint32_t _iWidth = 0;        // - Width of the image in pixels.
   uint32_t _iHeight = 0;        // - Height of the image in pixels.
   Allocator<uint8_t>* _pData = nullptr;
-  string_t _strNameOrFilePath;
+  t_string _strNameOrFilePath;
 
   virtual void freeData();    // - Override from ResourceData
   void releaseData();
   void allocData(size_t size);
 };
-
 FORCE_INLINE float Img32::pixelAverage24(Pixel4ub& inpx) {
   static const float f_13 = (1.0f / 3.0f);
   static const float c_255 = (1.0f / 255.0f);
@@ -110,7 +105,6 @@ FORCE_INLINE float Img32::pixelAverage24(Pixel4ub& inpx) {
     (float)(inpx.g()) * c_255 +
     (float)(inpx.b()) * c_255) * f_13; // (r+g+b) /3
 }
-
 FORCE_INLINE float Img32::contrast(float pix, float C) {
   return powf(pix, C);
 }

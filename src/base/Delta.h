@@ -9,11 +9,11 @@
 
 #include "../base/BaseHeader.h"
 
-namespace BR2 {
+namespace Game {
+
 /**
 *  @class Delta
-*  @brief The delta is the timekeeper of the engine.  It represents the seconds since the previous frame code has finished, up to the point that you call it.  
-*  Delta is used for all the animation in the engine.
+*  @brief Store and retrieve the frame delta per thread
 */
 class Delta : public GameMemory {
 public:
@@ -21,15 +21,14 @@ public:
   virtual ~Delta();
   void update();
   float get() { return (float)_fDelta; }
-
 private:
-  uint64_t _iDeltaNow = 0;
-  uint64_t _iDeltaLast = 0;
+  uint64_t _iDeltaNow = 0, _iDeltaLast = 0;
   double _fDelta = 0;
 };
 
-}//ns BR2
+}//ns Game
 
 
 
 #endif
+

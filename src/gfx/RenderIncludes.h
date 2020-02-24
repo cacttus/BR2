@@ -2,7 +2,7 @@
 *
 *    @file RenderHeader.h
 *    @date September 1, 2019
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2019 
 *
@@ -35,7 +35,7 @@
 namespace Game {
 
 
-}//ns BR2
+}//ns Game
 
 
 

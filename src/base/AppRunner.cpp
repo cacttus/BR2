@@ -1,13 +1,12 @@
 #include <signal.h>
 
-#include "../base/SDLIncludes.h"
 #include "../base/AppRunner.h"
 #include "../base/DebugHelper.h"
 #include "../base/SoundCache.h"
-#include "../gfx/GLContext.h"
-#include "../base/InputManager.h"
+#include "../base/GLContext.h"
+#include "../base/Fingers.h"
 #include "../base/Logger.h"
-#include "../gfx/GraphicsWindow.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
 #include "../base/Perf.h"
 #include "../base/Delta.h"
@@ -17,65 +16,40 @@
 #include "../base/Delta.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../base/ApplicationPackage.h"
-#include "../base/WindowManager.h"
+
+#include "../base/AppBase.h"
+
 #include "../math/MathAll.h"
+
 #include "../gfx/GraphicsApi.h"
+#include "../gfx/OpenGLApi.h"
 #include "../gfx/VulkanApi.h"
+
 #include "../model/ModelCache.h"
 
 
-namespace BR2 {
-class AppRunnerInternal : public VirtualMemory {
-public:
-  SDL_AudioSpec _audioSpec;
-  SDL_bool initAudio();
-
-  // accept a connection coming in on server_tcpsock
-  TCPsocket _gameHostSocket;//Send and receive data
-  TCPsocket _server_tcpsock;//Accept connections
-  bool handleEvents(SDL_Event* event);
-};
-AppRunner::AppRunner() {
-  _pInternal = new AppRunnerInternal();
-}
-AppRunner::~AppRunner(){
-  DEL_MEM(_pInternal);
-}
-void AppRunner::runApp(const std::vector<string_t>& args) {
+namespace Game {
+void AppRunner::runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> app) {
   _tvInitStartTime = Gu::getMicroSeconds();
 
-  //Root the engine FIRST so we can find the config.xml
-  FileSystem::init(args[0]);
-
-  //Must come before globals to get the cache directory.
-  loadAppPackage();
+  //Root the engine FIRST so we can find the EngineConfig.dat
+  FileSystem::setExecutablePath(args[0]);
+  t_string a = FileSystem::getCurrentDirectory();
+  FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
+  t_string b = FileSystem::getCurrentDirectory();
 
   //**Must come first before other logic
-  Gu::initGlobals(args);
+  Gu::initGlobals(app, args);
   {
-    initSDL();
+    initSDL(windowTitle, app);
 
     if (runCommands(args) == false) {
-      runApplicationTryCatch();
+      runGameLoopTryCatch(app);
     }
   }
   Gu::deleteGlobals();
 }
-void AppRunner::loadAppPackage() {
-  string_t file = OperatingSystem::showOpenFileDialog("Open project package.", "(*.xml)\0*.xml\0\0", "*.xml", FileSystem::getExecutableDirectory());
-
-  if (StringUtil::isNotEmpty(file)) {
-    Br2LogInfo("Building Package");
-    std::shared_ptr<ApplicationPackage> pack = std::make_shared<ApplicationPackage>();
-    pack->build(FileSystem::getExecutableFullPath());
-    Gu::setPackage(pack);
-  }
-  else {
-    Br2LogInfo("Package could not be loaded.  Folder not selected, or invalid path.");
-  }
-}
-void AppRunner::initSDL() {
+void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
   //Nix main()
   SDL_SetMainReady();
 
@@ -87,7 +61,21 @@ void AppRunner::initSDL() {
 
   printVideoDiagnostics();
 
-  _pInternal->initAudio();
+  std::shared_ptr<GraphicsApi> api;
+  //Create graphics API
+  if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::OpenGL) {
+    api = std::make_shared<OpenGLApi>();
+  }
+  else if (Gu::getEngineConfig()->getRenderSystem() == RenderSystem::Vulkan) {
+    api = std::make_shared<VulkanApi>();
+  }
+  else {
+    BroThrowException("Invalid render engine.");
+  }
+  Gu::setGraphicsApi(api);
+  api->createWindow(windowTitle, true);
+
+  initAudio();
   SDLUtils::checkSDLErr();
 
   initNet();
@@ -98,14 +86,16 @@ void AppRunner::initSDL() {
     attachToGameHost();
   }
 
-  Br2LogInfo("Creating Managers.");
+  BroLogInfo("Creating Managers.");
   Gu::createManagers();
 
-  Br2LogInfo("Creating Main Window.");
-  Gu::getWindowManager()->createWindow(Gu::getAppPackage()->getAppName(), Gu::getEngineConfig()->getRenderSystem());
-}
 
-void AppRunner::doShowError(string_t err, Exception* e) {
+  BroLogInfo("Creating Rendere.");
+
+  api->createRenderer();
+
+}
+void AppRunner::doShowError(t_string err, Exception* e) {
   if (e != nullptr) {
     OperatingSystem::showErrorDialog(e->what() + err);
   }
@@ -121,8 +111,8 @@ void AppRunner::attachToGameHost() {
     exitApp(std::string("") + "SDLNet_ResolveHost: " + SDLNet_GetError(), -1);
   }
 
-  _pInternal->_server_tcpsock = SDLNet_TCP_Open(&ip);
-  if (!_pInternal->_server_tcpsock) {
+  _server_tcpsock = SDLNet_TCP_Open(&ip);
+  if (!_server_tcpsock) {
     exitApp(std::string("") + "SDLNet_TCP_Open:" + SDLNet_GetError(), -1);
   }
 
@@ -137,8 +127,8 @@ void AppRunner::attachToGameHost() {
       break;//Unreachable, but just in case.
     }
 
-    _pInternal->_gameHostSocket = SDLNet_TCP_Accept(_pInternal->_server_tcpsock);
-    if (_pInternal->_gameHostSocket) {
+    _gameHostSocket = SDLNet_TCP_Accept(_server_tcpsock);
+    if (_gameHostSocket) {
       //  char data[512];
 
         //while(SDLNet_TCP_Recv(_gameHostSocket, data, 512) <= 0) {
@@ -164,30 +154,30 @@ void AppRunner::printVideoDiagnostics() {
   //Drivers (useless in sdl2)
   const char* driver = SDL_GetCurrentVideoDriver();
   if (driver) {
-    Br2LogInfo("Default Video Driver: " + driver);
+    BroLogInfo("Default Video Driver: " + driver);
   }
-  Br2LogInfo("Installed Video Drivers: ");
+  BroLogInfo("Installed Video Drivers: ");
   int idrivers = SDL_GetNumVideoDrivers();
   for (int idriver = 0; idriver < idrivers; ++idriver) {
     driver = SDL_GetVideoDriver(idriver);
-    Br2LogInfo(" " + driver);
+    BroLogInfo(" " + driver);
   }
 
   // Get current display mode of all displays.
   int nDisplays = SDL_GetNumVideoDisplays();
-  Br2LogInfo(nDisplays + " Displays:");
+  BroLogInfo(nDisplays + " Displays:");
   for (int idisplay = 0; idisplay < nDisplays; ++idisplay) {
     SDL_DisplayMode current;
     int should_be_zero = SDL_GetCurrentDisplayMode(idisplay, &current);
 
     if (should_be_zero != 0) {
       // In case of error...
-      Br2LogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
+      BroLogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
       SDLUtils::checkSDLErr();
     }
     else {
       // On success, print the current display mode.
-      Br2LogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
+      BroLogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
       SDLUtils::checkSDLErr();
     }
   }
@@ -204,7 +194,7 @@ void AppRunner::updateWindowHandleForGamehost() {
   //SetActiveWindow(hwnd);
 #endif
 }
-SDL_bool AppRunnerInternal::initAudio() {
+SDL_bool AppRunner::initAudio() {
   //AUDIO
   if (SDL_AudioInit(NULL) < 0) {
     fprintf(stderr, "Couldn't initialize audio driver: %s\n", SDL_GetError());
@@ -213,16 +203,16 @@ SDL_bool AppRunnerInternal::initAudio() {
   return SDL_TRUE;
 }
 void AppRunner::initNet() {
-  Br2LogInfo("Initializing SDL Net");
+  BroLogInfo("Initializing SDL Net");
   if (SDLNet_Init() == -1) {
     exitApp(Stz "SDL Net could not be initialized: " + SDL_GetError(), -1);
   }
 }
 
 void SignalHandler(int signal) {
-  Br2ThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
+  BroThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
 }
-void AppRunner::runApplicationTryCatch() {
+void AppRunner::runGameLoopTryCatch(std::shared_ptr<AppBase> rb) {
   typedef void(*SignalHandlerPointer)(int);
 
   //Attempt to catch segfaults that doesn't really work.
@@ -230,9 +220,9 @@ void AppRunner::runApplicationTryCatch() {
   SignalHandlerPointer previousHandler;
   previousHandler = signal(SIGSEGV, SignalHandler);
 
-  Br2LogInfo("Entering Game Loop");
+  BroLogInfo("Entering Game Loop");
   try {
-    runApplication();
+    runGameLoop(rb);
   }
   catch (Exception * e) {
     doShowError("Runtime Error", e);
@@ -241,16 +231,15 @@ void AppRunner::runApplicationTryCatch() {
     doShowError("Runtime Error, Unhandled exception.", nullptr);
   }
 }
-bool AppRunnerInternal::handleEvents(SDL_Event* event) {
+bool AppRunner::handleEvents(SDL_Event* event) {
   static SDL_MouseMotionEvent lastEvent;
   int n = 0;
   vec2 delta;
   SDL_Scancode keyCode;
-  std::shared_ptr<InputManager> pInput = Gu::getInputManager();
+  std::shared_ptr<Fingers> pFingers = Gu::getFingers();
 
-  if (event == nullptr) {
+  if (event == nullptr)
     return true;
-  }
 
   switch (event->type) {
   case SDL_MOUSEMOTION:
@@ -258,33 +247,33 @@ bool AppRunnerInternal::handleEvents(SDL_Event* event) {
     break;
   case SDL_KEYDOWN:
     keyCode = event->key.keysym.scancode;
-    pInput->setKeyDown(keyCode);
+    pFingers->setKeyDown(keyCode);
     break;
   case SDL_KEYUP:
     keyCode = event->key.keysym.scancode;
-    pInput->setKeyUp(keyCode);
+    pFingers->setKeyUp(keyCode);
     break;
   case SDL_MOUSEBUTTONDOWN:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
-      pInput->setLmbState(ButtonState::Press);
+      pFingers->setLmbState(ButtonState::Press);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
-      pInput->setRmbState(ButtonState::Press);
+      pFingers->setRmbState(ButtonState::Press);
       break;
     }
     break;
   case SDL_MOUSEBUTTONUP:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
-      pInput->setLmbState(ButtonState::Release);
+      pFingers->setLmbState(ButtonState::Release);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
-      pInput->setRmbState(ButtonState::Release);
+      pFingers->setRmbState(ButtonState::Release);
       break;
     }
     break;
@@ -300,10 +289,7 @@ bool AppRunnerInternal::handleEvents(SDL_Event* event) {
 
       int n = MathUtils::broMin(10, MathUtils::broMax(-10, event->wheel.y));
 
-      //This should really instigate a script
-      if (Gu::getAppPackage()) {
-        Gu::getAppPackage()->userZoom((float)n);
-      }
+      Gu::getApp()->userZoom(n);
       n++;
     }
     if (event->wheel.x != 0) {
@@ -321,22 +307,24 @@ bool AppRunner::handleSDLEvents() {
   SDL_Event event;
   bool done = false;
   while (SDL_PollEvent(&event)) {
-    if (_pInternal->handleEvents(&event) == false) {
+    if (handleEvents(&event) == false) {
       done = true;
     }
   }
   return done;
 }
-void AppRunner::runApplication() {
+void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
 #ifdef __WINDOWS__
   SDL_ShowCursor(SDL_DISABLE);
 #endif
 
   //Print the setup time.
-  Br2LogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
+  BroLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
 
   //test the globals before starting the game loop
   Gu::updateGlobals();
+
+  rb->init();
 
   while (true) {
     Perf::beginPerf();
@@ -345,37 +333,42 @@ void AppRunner::runApplication() {
       if (handleSDLEvents() == true) {
         break;//SDL_QUIT
       }
-      
-      GLContext::updateGlobalManagers();
 
-      Gu::getInputManager()->preUpdate();
+      Gu::getFingers()->preUpdate();
 
       Gu::updateGlobals();
 
-      //For now run synchronously, since we share a lot of data.
-      Gu::getWindowManager()->step();
+      for (std::shared_ptr<GraphicsWindow> w : Gu::getGraphicsApi()->getGraphicsWindows()) {
+        w->step();
+      }
 
       //Update all button states.
-      Gu::getInputManager()->postUpdate();
+      Gu::getFingers()->postUpdate();
     }
     Perf::popPerf();
     Perf::endPerf();
     DebugHelper::checkMemory();
+
+    //**End of loop error -- Don't Remove** 
+    Gu::getGraphicsContext()->chkErrRt();
+    //**End of loop error -- Don't Remove** 
   }
 
   DebugHelper::checkMemory();
 }
-void AppRunner::exitApp(string_t error, int rc) {
+void AppRunner::exitApp(t_string error, int rc) {
   OperatingSystem::showErrorDialog(error + SDLNet_GetError());
 
   Gu::debugBreak();
+
+  Gu::getGraphicsApi()->cleanup();
 
   SDLNet_Quit();
   SDL_Quit();
 
   exit(rc);
 }
-bool AppRunner::argMatch(const std::vector<string_t>& args, string_t arg1, int32_t iCount) {
+bool AppRunner::argMatch(const std::vector<t_string>& args, t_string arg1, int32_t iCount) {
   if (args.size() <= 1) {
     return false;
   }
@@ -385,16 +378,15 @@ bool AppRunner::argMatch(const std::vector<string_t>& args, string_t arg1, int32
   }
   return false;
 }
-bool AppRunner::runCommands(const std::vector<string_t>& args) {
-  //if (argMatch(args, "/c", 4)) {
-  //  //Convert Mob
-  //  t_string strMob = args[2];
-  //  t_string strFriendlyName = args[3];
-  //  GLContext::getModelCache()()->convertMobToBin(strMob, false, strFriendlyName);
-  //  return true;
-  //}
-  //else 
-  if (argMatch(args, "/s", 3)) {
+bool AppRunner::runCommands(const std::vector<t_string>& args) {
+  if (argMatch(args, "/c", 4)) {
+    //Convert Mob
+    t_string strMob = args[2];
+    t_string strFriendlyName = args[3];
+    Gu::getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
+    return true;
+  }
+  else if (argMatch(args, "/s", 3)) {
     //Compile Shader
     // cw.exe /s "ShaderName"  "dir/ShaderFileDesc.dat"
 

@@ -1,16 +1,16 @@
-#include "../base/BaseAll.h"
 #include "../base/Logger.h"
+#include "../base/GLContext.h"
 #include "../base/BinaryFile.h"
+#include "../base/Hash.h"
+#include "../base/FileSystem.h"
 #include "../model/Material.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/RenderSettings.h"  
 
-namespace BR2 {
-Material::Material(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
-}
-Material::Material(std::shared_ptr<GLContext> ct, string_t name) : GLFramework(ct) {
+namespace Game {
+Material::Material(t_string name) {
   _strName = name;
   _v4Spec.construct(1, 1, 1, 1);
   _v4Diffuse.construct(1, 1, 1, 1);
@@ -22,7 +22,7 @@ Material::~Material() {
   _mapTextureBindings.clear();
 }
 std::shared_ptr<Material> Material::makeCopy() {
-  std::shared_ptr<Material> ret = std::make_shared<Material>(getContext(), _strName);
+  std::shared_ptr<Material> ret = std::make_shared<Material>(_strName);
   //ret->_pContext                 = this->_pContext                ;
   //ret->_strName                  = this->_strName                 ;
   ret->_v4Spec = this->_v4Spec;
@@ -53,7 +53,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
     TextureChannel::e channel = b.first;
 
     if (channelsBound.find(channel) != channelsBound.end()) {
-      Br2LogWarn("[Material] Multiple textures bound to channel " + channel);
+      BroLogWarn("[Material] Multiple textures bound to channel " + channel);
     }
     else {
       //TODO: set tex influence
@@ -63,7 +63,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
         channelsBound.insert(channel);
       }
       else {
-        Br2LogError("Texture was null for material.");
+        BroLogError("Texture was null for material.");
       }
     }
   }
@@ -88,8 +88,8 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
   if (u != nullptr) {
     std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Color);
     if (ts == nullptr) {
-      getContext()->glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, getContext()->getTexCache()->getDummy1x1Texture2D());
+      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1Texture2D());
       //Material has no normal map, set it to the default texture.
       pShader->setTextureUf(0);
     }
@@ -104,8 +104,8 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
   if (u2 != nullptr) {
     std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Normal);
     if (ts == nullptr) {
-      getContext()->glActiveTexture(GL_TEXTURE1);
-      glBindTexture(GL_TEXTURE_2D, getContext()->getTexCache()->getDummy1x1NormalTexture2D());
+      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1NormalTexture2D());
       //Material has no normal map, set it to the default texture.
       pShader->setTextureUf(1);
     }
@@ -121,7 +121,7 @@ void Material::addTextureBinding(std::shared_ptr<Texture2DSpec> ptm, TextureChan
   AssertOrThrow2(ptm != NULL);
 
   if (_mapTextureBindings.find(channel) != _mapTextureBindings.end()) {
-    Br2LogWarn("Texture channel " + (int)channel + " already used in material " + getName());
+    BroLogWarn("Texture channel " + (int)channel + " already used in material " + getName());
   }
 
   if (ptm->getIsTransparent()) {
@@ -163,7 +163,7 @@ void Material::deserialize(std::shared_ptr<BinaryFile> fb) {
     std::shared_ptr<TextureSlot> ts = std::make_shared<TextureSlot>();
     ts->deserialize(fb);
     if (_mapTextureBindings.find(ts->_eChannel) != _mapTextureBindings.end()) {
-      Br2LogWarn("Duplicate Texture binding for material." + (int)ts->_eChannel);
+      BroLogWarn("Duplicate Texture binding for material." + (int)ts->_eChannel);
       Gu::debugBreak();
     }
     _mapTextureBindings.insert(std::make_pair(ts->_eChannel, ts));
@@ -206,7 +206,7 @@ void TextureSlot::deserialize(std::shared_ptr<BinaryFile> fb) {
 }
 void TextureSlot::serialize(std::shared_ptr<BinaryFile> fb) {
   if (_pTex != nullptr) {
-    string_t fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
+    t_string fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
     if (StringUtil::isNotEmpty(_pTex->getLocation())) {
       Hash32 h = STRHASH(fn);
       _strDebugTextureFileName = fn;
@@ -223,4 +223,4 @@ void TextureSlot::serialize(std::shared_ptr<BinaryFile> fb) {
 
 
 
-}//ns BR2
+}//ns game

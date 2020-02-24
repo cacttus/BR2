@@ -2,7 +2,7 @@
 *
 *    @file Conga Header.h
 *    @date 3/1 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

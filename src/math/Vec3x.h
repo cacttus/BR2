@@ -1,10 +1,5 @@
 /**
 *  @file Vec3x.h
-*    Update: May 5, 2008
-*            Changed the return types to the machine types.
-*            Excluded interpolation.
-*
-*    Update: 2014 10 08
 *  @date August 24, 2014
 *  @author MetalMario971
 */
@@ -14,10 +9,11 @@
 
 #include "../math/MathHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @struct Vec3x
-*  @brief 3D vector class.
+*  @brief 3 Component Generic vector
+*  @details A structure to deal with vectors in 3 dimensions.
 */
 template < class Tx >
 class Vec3x : public PureMemory {
@@ -50,6 +46,7 @@ public:
   FORCE_INLINE const Tx& g() const { return y; }
   FORCE_INLINE const Tx& b() const { return z; }
 
+
   //Swizzle ops
   FORCE_INLINE Vec3x<Tx>    xz();
   FORCE_INLINE Vec3x<Tx>    xy();
@@ -78,7 +75,7 @@ public:
   //static Vec3x<Tx> minv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b);    // - Returns the minimum vector from the given two
   //static Vec3x<Tx> maxv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b);    // returns maximujm vector of given t2o
 
-  FORCE_INLINE string_t        toString(int precis = -1) const;
+  FORCE_INLINE t_string        toString(int precis = -1) const;
 
   FORCE_INLINE static Vec3x<Tx> zero();
   FORCE_INLINE static Vec3x<Tx> VEC3X_MIN();
@@ -152,18 +149,18 @@ public:
   };
 
   // - Vector shorthands
-  FORCE_INLINE static Vec3x<Tx> normalize(const Vec3x<Tx>& v1);
-  FORCE_INLINE static Vec3x<Tx> cross(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
-  //   FORCE_INLINE static Vec3x<Tx> rotate(const Vec3x<Tx>& v1, const float& angle, const Vec3x<Tx>& aboutNormal);
-  FORCE_INLINE static float dot(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
-  FORCE_INLINE static void bilinear_interpolate(const Vec3x<Tx>& a,
+  FORCE_INLINE STATIC Vec3x<Tx> normalize(const Vec3x<Tx>& v1);
+  FORCE_INLINE STATIC Vec3x<Tx> cross(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
+  //   FORCE_INLINE STATIC Vec3x<Tx> rotate(const Vec3x<Tx>& v1, const float& angle, const Vec3x<Tx>& aboutNormal);
+  FORCE_INLINE STATIC float dot(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
+  FORCE_INLINE STATIC void bilinear_interpolate(const Vec3x<Tx>& a,
     const Vec3x<Tx>& b,
     const Vec3x<Tx>& c,
     const Vec3x<Tx>& d,
     Vec3x<Tx>& __out_ avg,
     float pct = 0.5f
   );
-  FORCE_INLINE static void reflect(const Vec3x<Tx>& v, const Vec3x<Tx>& n, Vec3x<Tx>& __out_ v_r);
+  FORCE_INLINE STATIC void reflect(const Vec3x<Tx>& v, const Vec3x<Tx>& n, Vec3x<Tx>& __out_ v_r);
 
 
   void checkNormalOrZero(); // Set number to zero if it is not normal (component-wise)
@@ -755,7 +752,7 @@ void Vec3x<Tx>::checkNormalOrZeroAndLimitVector(float fMaxLength, bool bShowWarn
   // Make sure the vector length isn't too big.
   if (squaredLength() >= (fMaxLength * fMaxLength)) {
     if (bShowWarningMessage == true)
-      Br2LogWarn("Object has launched into orbit: v=("
+      BroLogWarn("Object has launched into orbit: v=("
         , x, " "
         , y, " "
         , z, ")");
@@ -771,13 +768,13 @@ void Vec3x<Tx>::checkNormalOrZeroAndLimitVector(float fMaxLength, bool bShowWarn
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-static FORCE_INLINE string_t tstr(const vec3& x) { return x.toString(); }
-static FORCE_INLINE string_t tstr(const ivec3& x) { return x.toString(); }
-static FORCE_INLINE string_t tstr(const uvec3& x) { return x.toString(); }
+STATIC FORCE_INLINE t_string tstr(const vec3& x) { return x.toString(); }
+STATIC FORCE_INLINE t_string tstr(const ivec3& x) { return x.toString(); }
+STATIC FORCE_INLINE t_string tstr(const uvec3& x) { return x.toString(); }
 
 
 
-}//ns BR2
+}//ns game
 
 
 #endif

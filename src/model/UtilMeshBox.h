@@ -9,31 +9,31 @@
 
 #include "../model/UtilMesh.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class UtilMeshBox
 *  @brief
-*
 */
 class UtilMeshBox : public UtilMesh {
 public:
-  UtilMeshBox(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx, Box3f* pCube, vec3& vOffset, Color4f& vColor);
+  UtilMeshBox(std::shared_ptr<GLContext> ctx, Box3f* pCube, vec3& vOffset, Color4f& vColor);
   virtual ~UtilMeshBox() override;
   void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
 
-  virtual void generate();
-  virtual void preDraw();
-  virtual void postDraw();
+  OVERRIDES void generate();
+  OVERRIDES void preDraw();
+  OVERRIDES void postDraw();
 
 private:
-    float _fSize;
-    vec3 _vOffset;
-    vec4 _vColor;
-    bool _blnWireFrame;
-    Box3f* _pCube;
+  float _fSize;
+  vec3 _vOffset;
+  vec4 _vColor;
+  bool _blnWireFrame;
+  Box3f* _pCube;
+
 };
 
-}//ns BR2
+}//ns game
 
 
 

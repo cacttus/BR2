@@ -1,74 +1,21 @@
 #include "../base/Logger.h"
-#include "../base/Hash.h"
-#include "../base/ApplicationPackage.h"
+#include "../base/Package.h"
 #include "../base/FileSystem.h"
-#include "../gfx/GLContext.h"
 #include "../base/DiskFile.h"
 #include "../base/BinaryFile.h"
+#include "../base/GLContext.h"
 #include "../gfx/ShaderCompiler.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderSubProgram.h"
+#include "../gfx/GraphicsContext.h"
 
 
-namespace BR2 {
-ShaderCompiler::ShaderCompiler(std::shared_ptr<GLContext> ct, string_t fileDir) : _fileDir(fileDir), _pContext(ct) {
+namespace Game {
+ShaderCompiler::ShaderCompiler(std::shared_ptr<GLContext> ct, t_string fileDir) : _fileDir(fileDir), _pContext(ct) {
 }
 /**
-*  @fn compile()
-*  @brief Compile a shader.
-*  @remarks Compiles a shader.
-*/
-void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg) {
-  Br2LogInfo("Compiling shader " + pSubProg->getSourceLocation());
-
-  //DOWNCAST:
- // GLstd::shared_ptr<ShaderSubProgram> shader = dynamic_cast<GLstd::shared_ptr<ShaderSubProgram>>(pSubProg);
-  GLint b;
-
-  if (pSubProg->getStatus() != ShaderStatus::e::Loaded) {
-    Br2ThrowException("Shader was in an invalid state when trying to compile.");
-  }
-
-  GLchar** arg = new char* [pSubProg->getSourceLines().size()];
-  for (size_t i = 0; i < pSubProg->getSourceLines().size(); ++i) {
-    if (pSubProg->getSourceLines()[i].size()) {
-      arg[i] = new char[pSubProg->getSourceLines()[i].size()];
-      memcpy_s(arg[i], pSubProg->getSourceLines()[i].size(), pSubProg->getSourceLines()[i].c_str(), pSubProg->getSourceLines()[i].size());
-    }
-  }
-
-  _pContext->glShaderSource(pSubProg->getGlId(), (GLsizei)pSubProg->getSourceLines().size(), (const GLchar**)arg, NULL);
-  _pContext->glCompileShader(pSubProg->getGlId());
-  _pContext->glGetShaderiv(pSubProg->getGlId(), GL_COMPILE_STATUS, &b);
-
-  // - Gets the Gpu's error list.  This may also include warnings and stuff.
-  pSubProg->getCompileErrors() = getErrorList(pSubProg);
-
-  //  if (EngineSetup::getSystemConfig()->getPrintShaderSourceOnError() == TRUE)
-  {
-    if (pSubProg->getCompileErrors().size() > 0) {
-      string_t str = pSubProg->getHumanReadableErrorString();
-      if (StringUtil::lowercase(str).find("error") != string_t::npos) {
-        pSubProg->debugPrintShaderSource();
-        Br2LogErrorNoStack(str);
-        Gu::debugBreak();
-      }
-      else {
-        Br2LogWarn(str);
-      }
-    }
-  }
-
-  if (!b) {
-    pSubProg->setStatus(ShaderStatus::CompileError);
-  }
-  else {
-    pSubProg->setStatus(ShaderStatus::Compiled);
-  }
-}
-/**
-*  @fn fileToArray()
-*  @brief I believe this turns a file into an array of lines.
+*    @fn fileToArray()
+*    @brief I believe this turns a file into an array of lines.
 */
 void ShaderCompiler::loadSource(std::shared_ptr<ShaderSubProgram> pSubProg) {
   AssertOrThrow2(pSubProg != NULL);
@@ -81,7 +28,7 @@ void ShaderCompiler::loadSource(std::shared_ptr<ShaderSubProgram> pSubProg) {
 
   // - First try to load the srouce
   try {
-    Br2LogDebug("Loading source for Shader " + pSubProg->getSourceLocation());
+    BroLogDebug("Loading source for Shader " + pSubProg->getSourceLocation());
     loadSource_r(pSubProg, pSubProg->getSourceLocation(), pSubProg->getSourceLines(), greatestModifyTime);
   }
   catch (Exception * e) {
@@ -100,24 +47,24 @@ void ShaderCompiler::loadSource(std::shared_ptr<ShaderSubProgram> pSubProg) {
 
   pSubProg->setStatus(ShaderStatus::e::Loaded);
 }
-void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, string_t& location, std::vector<string_t>& lines, time_t& greatestModifyTime) {
+void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, t_string& location, std::vector<t_string>& lines, time_t& greatestModifyTime) {
   //char* data;
   time_t modTime;
 
   // data = NULL;
 
-  if (pSubProg->getStatus() != ShaderStatus::e::Uninitialized && !ShaderManager::isGoodStatus(pSubProg->getStatus())) {
+  if (pSubProg->getStatus() != ShaderStatus::e::Uninitialized && !ShaderMaker::isGoodStatus(pSubProg->getStatus())) {
     pSubProg->getGeneralErrors().push_back("Subprogram was not in good state.");
     return;
   }
 
-  if (!Gu::getAppPackage()->fileExists((string_t)location)) {
+  if (!Gu::getPackage()->fileExists((t_string)location)) {
     pSubProg->setStatus(ShaderStatus::e::CompileError);
     Gu::debugBreak();
-    Br2ThrowException("Could not find shader file or #include file, " + location);
+    BroThrowException("Could not find shader file or #include file, " + location);
   }
   // - Store the greater modify time for shader cache.
-  modTime = Gu::getAppPackage()->getLastModifyTime((string_t)location);
+  modTime = Gu::getPackage()->getLastModifyTime((t_string)location);
   greatestModifyTime = MathUtils::broMax(modTime, greatestModifyTime);
 
   // - Load all source bytes
@@ -134,8 +81,8 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, st
   parseSourceIntoLines(bf, lines);
 
   //Helps Identify files.
-  string_t slashslash = "//-------------------------------------------------";
-  string_t nameHdr = Stz "//           " + FileSystem::getFileNameFromPath(location);
+  t_string slashslash = "//-------------------------------------------------";
+  t_string nameHdr = Stz "//           " + FileSystem::getFileNameFromPath(location);
   addSourceLineAt(0, lines, slashslash);
   addSourceLineAt(0, lines, nameHdr);
   addSourceLineAt(0, lines, slashslash);
@@ -145,21 +92,21 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, st
   searchIncludes(pSubProg, lines, greatestModifyTime);
 
 }
-void ShaderCompiler::addSourceLineAt(size_t pos, std::vector<string_t>& vec, string_t line) {
-  string_t linemod = line;
+void ShaderCompiler::addSourceLineAt(size_t pos, std::vector<t_string>& vec, t_string line) {
+  t_string linemod = line;
   linemod += '\n';
   linemod += '\0';
 
   vec.insert(vec.begin() + pos, linemod);
 }
 /**
-*  @fn
-*  @brief Includes files.
+*    @fn
+*    @brief Includes files.
 */
-void ShaderCompiler::searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, std::vector<string_t>& lines, time_t& greatestModifyTime) {
+void ShaderCompiler::searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, std::vector<t_string>& lines, time_t& greatestModifyTime) {
   IncludeVec _includes;    //map of include offsets in the data to their source locations.
-  string_t locStr;
-  std::vector<string_t> includeLines;
+  t_string locStr;
+  std::vector<t_string> includeLines;
   IncludeVec::iterator ite2;
   size_t includeOff;
 
@@ -190,12 +137,12 @@ void ShaderCompiler::searchIncludes(std::shared_ptr<ShaderSubProgram> subProg, s
 
 }
 /**
-*  @fn
-*  @brief Compiles all includes in the source lines into a map of include to its line number
+*    @fn
+*    @brief Compiles all includes in the source lines into a map of include to its line number
 */
-ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<string_t>& lines) {
+ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<t_string>& lines) {
   IncludeVec _includes;    //map of include offsets in the data to their source locations.
-  string_t locStr;
+  t_string locStr;
 
   for (size_t i = 0; i < lines.size(); ++i) {
     locStr = lines[i].substr(0, 8);
@@ -213,29 +160,29 @@ ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<string_t>& li
     i--;
 
     // - Split our include data
-    std::vector<string_t> vs = StringUtil::split(locStr, ' ');
+    std::vector<t_string> vs = StringUtil::split(locStr, ' ');
     vs[0] = StringUtil::trim(vs[0]);
 
     // error checking
     if (vs.size() != 2) {
       _loadStatus = ShaderStatus::e::CompileError;
-      _error = string_t("Compile Error -->\"") + vs[0] + string_t("\"");
+      _error = t_string("Compile Error -->\"") + vs[0] + t_string("\"");
 
       //free data
       IncludeVec::iterator ite = _includes.begin();
       for (; ite != _includes.end(); ite++)
         delete ite->str;
-      Br2ThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
+      BroThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
     }
 
     if (vs[0].compare("#include") != 0) {
       _loadStatus = ShaderStatus::e::CompileError;
-      _error = string_t("Compile Error -->\"") + vs[0] + string_t("\"");
+      _error = t_string("Compile Error -->\"") + vs[0] + t_string("\"");
       //free data
       IncludeVec::iterator ite = _includes.begin();
       for (; ite != _includes.end(); ite++)
         delete ite->str;
-      Br2ThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
+      BroThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
 
     }
 
@@ -244,30 +191,31 @@ ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<string_t>& li
 
     // - Insert the include by its offset in our base data so we can go back and paste it in.
     ShaderIncludeRef srf;
-    srf.str = new string_t(vs[1]);
+    srf.str = new t_string(vs[1]);
     srf.lineNo = i + 1;
     _includes.push_back(srf);
   }
 
   return _includes;
 }
-void ShaderCompiler::loadSourceData(string_t& location, std::shared_ptr<BinaryFile> __out_ sourceData) {
-  if (!Gu::getAppPackage()->fileExists(location)) {
+void ShaderCompiler::loadSourceData(t_string& location, std::shared_ptr<BinaryFile> __out_ sourceData) {
+  if (!Gu::getPackage()->fileExists(location)) {
     sourceData = NULL;
     _loadStatus = ShaderStatus::e::FileNotFound;
-    Br2LogError("Shader Source File not found : " + location);
-    Br2LogError(" CWD: " + FileSystem::getCurrentDirectory());
+    BroLogError("Shader Source File not found : " + location);
+    BroLogError(" CWD: " + FileSystem::getCurrentDirectory());
     return;
   }
 
-  Gu::getAppPackage()->getFile(location, sourceData, true);
+  Gu::getPackage()->getFile(location, sourceData, true);
   //  sourceData.fread(location, true);
     //DiskFile::readAllBytes(location, sourceData);
+
 }
-void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std::vector<string_t>& out_lines) {
+void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std::vector<t_string>& out_lines) {
 
   // - Parse file into lines
-  string_t strTemp;
+  t_string strTemp;
   char* c = data->getData().ptr(), * d;
   int len;
   int temp_filesize = 0;
@@ -318,18 +266,71 @@ void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std:
   }
 }
 /**
-*  @fn getErrorList()
-*  @brief Returns a list of strings that are the errors of the compiled shader source.
+*    @fn compile
+*    @brief Compile a shader.
+*    @remarks Compiles a shader.
 */
-std::vector<string_t> ShaderCompiler::getErrorList(const std::shared_ptr<ShaderSubProgram> shader) const {
+void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg) {
+  BroLogInfo("Compiling shader " + pSubProg->getSourceLocation());
+
+  //DOWNCAST:
+ // GLstd::shared_ptr<ShaderSubProgram> shader = dynamic_cast<GLstd::shared_ptr<ShaderSubProgram>>(pSubProg);
+  GLint b;
+
+  if (pSubProg->getStatus() != ShaderStatus::e::Loaded) {
+    BroThrowException("Shader was in an invalid state when trying to compile.");
+  }
+
+  GLchar** arg = new char* [pSubProg->getSourceLines().size()];
+  for (size_t i = 0; i < pSubProg->getSourceLines().size(); ++i) {
+    if (pSubProg->getSourceLines()[i].size()) {
+      arg[i] = new char[pSubProg->getSourceLines()[i].size()];
+      memcpy_s(arg[i], pSubProg->getSourceLines()[i].size(), pSubProg->getSourceLines()[i].c_str(), pSubProg->getSourceLines()[i].size());
+    }
+  }
+
+  _pContext->glShaderSource(pSubProg->getGlId(), (GLsizei)pSubProg->getSourceLines().size(), (const GLchar**)arg, NULL);
+  _pContext->glCompileShader(pSubProg->getGlId());
+  _pContext->glGetShaderiv(pSubProg->getGlId(), GL_COMPILE_STATUS, &b);
+
+  // - Gets the Gpu's error list.  This may also include warnings and stuff.
+  pSubProg->getCompileErrors() = getErrorList(pSubProg);
+
+  //  if (EngineSetup::getSystemConfig()->getPrintShaderSourceOnError() == TRUE)
+  {
+    if (pSubProg->getCompileErrors().size() > 0) {
+      t_string str = pSubProg->getHumanReadableErrorString();
+      if (StringUtil::lowercase(str).find("error") != t_string::npos) {
+        pSubProg->debugPrintShaderSource();
+        BroLogErrorNoStack(str);
+        Gu::debugBreak();
+      }
+      else {
+        BroLogWarn(str);
+      }
+    }
+  }
+
+  if (!b) {
+    pSubProg->setStatus(ShaderStatus::CompileError);
+  }
+  else {
+    pSubProg->setStatus(ShaderStatus::Compiled);
+  }
+}
+/**
+*    @fn getErrorList()
+*    @brief Returns a list of strings that are the errors of the compiled shader source.
+*/
+std::vector<t_string> ShaderCompiler::getErrorList(const std::shared_ptr<ShaderSubProgram> shader) const {
   int buf_size = 16384;
   char* log_out = (char*)GameMemoryManager::allocBlock(buf_size);
   GLsizei length_out;
 
   _pContext->glGetShaderInfoLog(shader->getGlId(), buf_size, &length_out, log_out);
 
-  std::vector<string_t> ret;
-  string_t tempStr;
+  std::vector<t_string> ret;
+  t_string tempStr;
   char* c = log_out;
 
   while ((*c)) {
@@ -354,4 +355,4 @@ std::vector<string_t> ShaderCompiler::getErrorList(const std::shared_ptr<ShaderS
 
 
 
-}//ns BR2
+}//ns Game

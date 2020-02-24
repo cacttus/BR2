@@ -2,7 +2,7 @@
 #include "ProjectFile.h"
 
 
-namespace BR2 {
+namespace Game {
 ProjectFile::ProjectFile() {
 
 }
@@ -19,4 +19,4 @@ ProjectFile::~ProjectFile() {
 
 
 
-}//ns BR2
+}//ns Game

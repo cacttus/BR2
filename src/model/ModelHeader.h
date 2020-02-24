@@ -11,9 +11,7 @@
 #include "../base/TreeNode.h"
 #include "../math/MathAll.h"
 
-#include <SDL_opengl.h>
-
-namespace BR2 {
+namespace Game {
 //GPU Types
 typedef int32_t GpuInt;
 typedef float GpuFloat;
@@ -25,6 +23,7 @@ typedef uint32_t GpuUInt;
 typedef GLuint GpuTexId;
 typedef GLenum GpuEnum;
 typedef GLuint GpuBufferId;
+
 //Make this global. stop the madness.
 typedef v_v3n3x2 ModelVertexType;
 
@@ -34,24 +33,28 @@ namespace BoxPoint { typedef enum { NBL, NBR, NTL, NTR, FBL, FBR, FTL, FTR } e; 
 //namespace GpuAnimationMemoryModel { typedef enum { MODEL_CPU_ANIMATION_OR_STATIC_MODEL, MODEL_GPU_ANIMATION_WITH_SWAP_BUFFERS } e; }
 namespace MeshSkinStatus { typedef enum { Uninitialized, NoSkin, Allocated, Error } e; }
 //namespace ModelDrawMode { typedef enum { Color, Pick } e; }
-enum class ParentType { None, Bone, Object, Armature };
+namespace ParentType { typedef enum { None, Bone, Object, Armature } e; }
+
+//////////////////////////////////////////////////////////////////////////
+class UtilMeshInline2d;
 
 //Class FWD
-class UtilMeshInline2d;
 class ModFile;
 class VboData;
 class VaoDataGeneric;
 class IboData;
-class ObjFile;
+class ObjectFile;
 class MeshCache;
 class KeyFrame;
+class BoneSpec;
 class Mover;
 class Animator;
 class BoneNode;
 class PRSAnimation;
 class RotateTo;
+class MeshNode;
 class ShaderStorageBuffer;
-class MeshData;
+class MeshSpec;
 class UtilMesh;
 class UtilMeshBox;
 class UtilMeshAxis;
@@ -68,37 +71,48 @@ class VertexComponent;
 class VertexFormat;
 class TextBufferMesh;
 class TileMesh25;
+class ModelSpec;
 class ModelNode;
 class GpuBufferData;
 class MobFile;
+class Armature;
 class ArmatureNode;
 class ActionKeys; //Action was ambiguous
 class ActionGroup;
-class SceneNode;
+class BaseSpec;
+//class BaseNode;
+class BaseNode;
 class PhysicsNode;
 class MbiFile;
 class OBB;
-class MeshComponent;
- 
+class ModelCache;
+
+//////////////////////////////////////////////////////////////////////////
+
 class MeshBufferData {
 public:
   std::shared_ptr<FragmentBufferData> _frags;
   std::shared_ptr<IndexBufferData> _indexes;
 };
+
 class VertexBufferPointer {
 public:
   void* _pBuf;
   size_t _iOffset;
   size_t _iStride;
 };
+
 class VertexWeightMob : public VirtualMemory {
 public:
+
   //Hash32 _iArmNameHashed;//hashed name of the armature that owns the bones
   //we're now using armature ID instead of the hashed name.
   std::map<int32_t, std::map<int32_t, float>> _mapWeights;
   VertexWeightMob() {}
   virtual ~VertexWeightMob() { _mapWeights.clear(); }
 };
+
+
 class GpuAnimatedMeshWeightData : public GpuMemory {
 public:
   GpuInt _offset;    // offset into weight buffer (GpuAnimatedMeshWeight)
@@ -106,16 +120,24 @@ public:
 
   float pad[2];
 };
+//Stores the mesh weights.
 class GpuAnimatedMeshWeight : public GpuMemory {
 public:
   GpuInt _iArmJointOffset;    // - Offset into joint matrix buffer 12/2017 - sorted by armature! (GpuAnimatedMeshBindMatrix / GpuAnimatedMeshSkinMatrix)
   GpuFloat _weight;        // weight of joint
   float pad[2];
 };
+//class GpuAnimatedMeshBindMatrix : public GpuMemory {
+//public:
+//    GpuMat4f _matrix;
+//};
+
+// - Dynamic data.
 class GpuAnimatedMeshSkinMatrix : public GpuMemory {
 public:
   GpuMat4f _matrix;
 };
+
 class GpuAnimatedMeshBoundBox : public GpuMemory {
 public:
   GpuVec3f _min;
@@ -124,7 +146,7 @@ public:
   float f1;
 };
 
-}//ns BR2
+}//ns Game
 
 
 #include "../model/VertexTypes.h"

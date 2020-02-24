@@ -1,10 +1,7 @@
 #include "../base/TouchInfo.h"
 #include "../base/Gu.h"
 
-namespace BR2 {
-///////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////
+namespace Game {
 void TouchInfo::copyFrom(TouchInfo* rhs) {
   this->_eState = rhs->_eState;
   this->_vMousePosPress = rhs->_vMousePosPress;
@@ -56,4 +53,4 @@ void TouchInfo::touchEnd(vec2& mouse, ButtonState::e b) {
 
 
 
-}//ns BR2
+}//ns Game

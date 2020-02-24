@@ -10,11 +10,10 @@
 #include "../math/Vec4x.h"
 #include "../math/PlaneEx3.h"
 #include "../math/Algorithm.h"
-namespace BR2 {
+namespace Game {
 /**
 *  @class TriPlane
-*  @brief Derived plane for extra info and stuff.
-*DO NOT ADD VIRTUAL METHODS
+*  @brief Derived plane for extra info and stuff. DO NOT ADD VIRTUAL METHODS
 */
 class TriPlane : public PlaneEx3 {
 public:
@@ -73,8 +72,8 @@ FORCE_INLINE bool TriPlane::hitTest(Ray_t* pr) const {
 }
 
 /*
-*  @fn containsPoint()
-*  @brief Test to see if the point is contained within the triangle
+*    @fn containsPoint()
+*    @brief Test to see if the point is contained within the triangle
 *
 *    **TODO:
 *        We need to test points and edges.
@@ -108,8 +107,8 @@ FORCE_INLINE bool TriPlane::containsPoint(const vec3& point) const {
   return containsPointSlowButWorks(p1, p2, p3, point);
 }
 /**
-*  @fn construct()
-*  @brief Override of the plane construct.  Will calculate the data inside of the TriPlane
+*    @fn construct()
+*    @brief Override of the plane construct.  Will calculate the data inside of the TriPlane
 */
 FORCE_INLINE void TriPlane::construct(const vec3& dp1, const vec3& dp2, const vec3& dp3) {
   p1 = dp1;
@@ -119,19 +118,18 @@ FORCE_INLINE void TriPlane::construct(const vec3& dp1, const vec3& dp2, const ve
   construct();
 }
 /**
-*  @fn construct()
-*  @brief Override of the plane construct.  Will calculate the data inside of the TriPlane
+*    @fn construct()
+*    @brief Override of the plane construct.  Will calculate the data inside of the TriPlane
 */
 FORCE_INLINE void TriPlane::construct() {
   PlaneEx3::construct(p1, p2, p3);
 }
 
 /*
-*  @fn containsPointSlowButWorks()
-*  @brief This isn't THAT slow, but it is slower than the one above.
+*    @fn containsPointSlowButWorks()
+*    @brief This isn't THAT slow, but it is slower than the one above.
 *    This method works.  Was used in place of the optimized method above.
 *    ***Extensively tested assuming pointOnLine_t does not change*
-*    Implemented: MetalMario971 1.19.14
 */
 FORCE_INLINE bool TriPlane::containsPointSlowButWorks(const vec3& cp1, const vec3& cp2, const vec3& cp3, const vec3& point) {
 

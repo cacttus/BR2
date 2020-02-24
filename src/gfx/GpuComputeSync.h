@@ -10,7 +10,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class GpuComputeSync
 *  @brief Stores information pertaining to the dispatching of computes to the compute shader system
@@ -24,7 +24,7 @@ Usage
         when done call signalCpu()
         check isComputeComplete()==true
 */
-class GpuComputeSync : public GLFramework {
+class GpuComputeSync : public VirtualMemory {
 public:
   //TRef<ModelNode> _pModelOfMesh; //unneeded if stored on meshbuf
   //MeshBuf* _pBufToCompute;
@@ -44,9 +44,12 @@ public:
 
   void createFence();    // - Creates an OPENGL GPU instruction fence.
   bool isComputeComplete();    // Returns true if the given compute fence has been passed and the compute is complete.
+
+private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
-}//ns BR2
+}//ns game
 
 
 

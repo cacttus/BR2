@@ -2,7 +2,7 @@
 *
 *    @file World25d.h
 *    @date March 2, 2017
-*    @author MetalMario971  
+*    @author Derek Page
 *
 *    © 2017
 *
@@ -13,7 +13,7 @@
 #define __WORLD25D_14884745582594951236_H__
 
 
-#include "../world/PhysicsManager.h"
+#include "../world/PhysicsWorld.h"
 #include "../bottle/BottleHeader.h"
 namespace Game {
 /**

@@ -8,43 +8,38 @@
 #define __MANIFOLD_15150861112662815887_H__
 
 #include "../world/WorldHeader.h"
-#include <set>
 
-namespace BR2 {
+namespace Game {
 //GridManifold
 //Simply a set of grids that an PhysicsNode intersects
 //Used by physics to make collision checking faster
 class GridManifold : public VirtualMemory {
-public:
-  //std::set<WorldCell*>* getCells() { return &_setCells; }
-  std::set<std::shared_ptr<PhysicsGrid>>* getGrids() { return &_setGrids; }
-  void addGrid(std::shared_ptr<PhysicsGrid> pc);
-  //void addCell(WorldCell* pc);
-
-  void clear();
-private:
     //std::set<WorldCell*> _setCells;
     std::set<std::shared_ptr<PhysicsGrid>> _setGrids;
+public:
+    //std::set<WorldCell*>* getCells() { return &_setCells; }
+    std::set<std::shared_ptr<PhysicsGrid>>* getGrids() { return &_setGrids; }
+    void addGrid(std::shared_ptr<PhysicsGrid> pc);
+    //void addCell(WorldCell* pc);
 
+    void clear();
 };
 //NodeManifold
 // Set of PhysicsNodes intersecting in a BaseGrid 
 //Used by physics to make collision checking faster
 class NodeManifold : public VirtualMemory {
-public:
-  std::set<std::shared_ptr<PhysicsNode>>* getAll() { return &_setAll; }
-  // std::set<PixObj*>* getStatic() { return &_setStatic; }
-  std::set<std::shared_ptr<PhysicsNode>>* getActive() { return &_setActive; }
-  std::set<std::shared_ptr<PhysicsNode>>* getResting() { return &_setResting; }
-
-  void remove(std::shared_ptr<PhysicsNode> ob);
-  void add(std::shared_ptr<PhysicsNode> ob);
-private:
     std::set<std::shared_ptr<PhysicsNode>> _setAll;
     //  std::set<PixObj*> _setStatic;
     std::set<std::shared_ptr<PhysicsNode>> _setActive;
     std::set<std::shared_ptr<PhysicsNode>> _setResting;
+public:
+    std::set<std::shared_ptr<PhysicsNode>>* getAll() { return &_setAll; }
+    // std::set<PixObj*>* getStatic() { return &_setStatic; }
+    std::set<std::shared_ptr<PhysicsNode>>* getActive() { return &_setActive; }
+    std::set<std::shared_ptr<PhysicsNode>>* getResting() { return &_setResting; }
 
+    void remove(std::shared_ptr<PhysicsNode> ob);
+    void add(std::shared_ptr<PhysicsNode> ob);
 };
 
 //W25ObjCellManfiold - for cells
@@ -58,7 +53,7 @@ private:
 //    void remove(std::shared_ptr<BaseNode> ob);
 //};
 
-}//ns BR2
+}//ns Game
 
 
 

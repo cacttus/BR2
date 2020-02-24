@@ -1,24 +1,21 @@
 #include "../base/SoundCache.h"
 #include "../base/Hash.h"
-
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
 
-#include "../base/SDLIncludes.h"
-
-namespace BR2 {
+namespace Game {
 #pragma region SoundSpec
-SoundSpec::SoundSpec(string_t sFIle) : _sFilePath(sFIle) {
+SoundSpec::SoundSpec(t_string sFIle) : _sFilePath(sFIle) {
   load(sFIle);
 }
 SoundSpec::~SoundSpec() {
   free(_pSoundData);
 }
-void SoundSpec::load(string_t file) {
+void SoundSpec::load(t_string file) {
   if (_eLoadState == LoadState::e::NotLoaded) {
 
     if (!FileSystem::fileExists(file)) {
-      Br2LogError("File " + file + " does not exist.");
+      BroLogError("File " + file + " does not exist.");
       _eLoadState = LoadState::e::LoadFailed;
     }
     else {
@@ -27,7 +24,7 @@ void SoundSpec::load(string_t file) {
         _eLoadState = LoadState::e::Loaded;
       }
       else {
-        Br2LogError("STB load audio failed with code: " + ret);
+        BroLogError("STB load audio failed with code: " + ret);
       }
     }
   }
@@ -124,19 +121,7 @@ void SoundInst::checkPlayback() {
 #pragma endregion
 
 #pragma region SoundCache
-class SoundCacheInternal : public VirtualMemory {
-public:
-  typedef std::map<Hash32, std::shared_ptr<SoundSpec>> SoundMap;
-  SoundMap _cache;
-  bool _bError = false;
-  SDL_AudioSpec _desired, _have;
-  std::mutex _mutex;
-
-  void printSoundInfo();
-  static void my_audio_callback(void* userdata, uint8_t* stream, int len);
-};
-
-void SoundCacheInternal::my_audio_callback(void* userdata, uint8_t* stream, int len) {
+void SoundCache::my_audio_callback(void* userdata, uint8_t* stream, int len) {
   SoundCache* sc = (SoundCache*)userdata;
   if (sc == nullptr) {
     return;
@@ -153,7 +138,7 @@ SoundCache::~SoundCache() {
   //    ss = null
   //    DEL_MEM(ss);
   //}
-  _internal->_cache.clear();
+  _cache.clear();
   SDL_LockAudio();
   SDL_CloseAudio();
   SDL_UnlockAudio();
@@ -161,27 +146,27 @@ SoundCache::~SoundCache() {
 void SoundCache::init() {
   int buffer = 1024;
 
-  _internal->_desired.callback = _internal->my_audio_callback;
-  _internal->_desired.channels = 2;
-  _internal->_desired.format = AUDIO_S16; //*this is teh stb_vorbis input format
-  _internal->_desired.freq = 44100;
-  _internal->_desired.samples = 1024;
-  _internal->_desired.userdata = this;
+  _desired.callback = my_audio_callback;
+  _desired.channels = 2;
+  _desired.format = AUDIO_S16; //*this is teh stb_vorbis input format
+  _desired.freq = 44100;
+  _desired.samples = 1024;
+  _desired.userdata = this;
 
-  if (SDL_OpenAudio(&_internal->_desired, &_internal->_have) < 0) {
+  if (SDL_OpenAudio(&_desired, &_have) < 0) {
     //SDL_OpenAudioDevice(NULL, 0, &_desired, &_have, SDL_AUDIO_ALLOW_ANY_CHANGE);
     // if (_iSDLAudioDevice <= 0) {
-    Br2LogError("SDL Couldn't open audio: " + SDL_GetError());
+    BroLogError("SDL Couldn't open audio: " + SDL_GetError());
 
-    _internal->_bError = true;
+    _bError = true;
   }
   else {
     SDL_PauseAudio(0);
   }
 
-  _internal->printSoundInfo();
+  printSoundInfo();
 }
-void SoundCacheInternal::printSoundInfo() {
+void SoundCache::printSoundInfo() {
   /* print out some info on the formats this run of SDL_mixer supports */
   //int i, n = Mix_GetNumChunkDecoders();
   //BroLogInfo("There are ", n, " available chunk(sample) decoders");
@@ -209,10 +194,10 @@ void SoundCache::mixSamplesAsync(uint8_t* stream, int len) {
   SDL_LockAudio();
   {
     //Silence the buffer.
-    SDL_memset(stream, _internal->_have.silence, len);
+    SDL_memset(stream, _have.silence, len);
 
     int debug_NumMixed = 0;
-    for (std::pair<Hash32, std::shared_ptr<SoundSpec>> p : _internal->_cache) {
+    for (std::pair<Hash32, std::shared_ptr<SoundSpec>> p : _cache) {
       std::shared_ptr<SoundSpec> ss = p.second;
 
       //Mix the dumb spec into the dumb buffer.
@@ -225,27 +210,27 @@ void SoundCache::mixSamplesAsync(uint8_t* stream, int len) {
   SDL_UnlockAudio();
 }
 std::shared_ptr<SoundSpec> SoundCache::getOrLoad(std::string file) {
-  if (_internal->_bError == true) {
+  if (_bError == true) {
     return nullptr;
   }
 
   std::shared_ptr<SoundSpec> ret = nullptr;
 
   Hash32 ih = Hash::computeStringHash32bit(file, 0);
-  SoundCacheInternal::SoundMap::iterator ite = _internal->_cache.find(ih);
+  SoundMap::iterator ite = _cache.find(ih);
 
-  if (ite != _internal->_cache.end()) {
+  if (ite != _cache.end()) {
     ret = ite->second;
   }
   else {
     ret = std::make_shared<SoundSpec>(file);
-    _internal->_cache.insert(std::make_pair(ih, ret));
+    _cache.insert(std::make_pair(ih, ret));
   }
 
   return ret;
 }
 void SoundCache::update() {
-  for (SoundCacheInternal::SoundMap::iterator ite = _internal->_cache.begin(); ite != _internal->_cache.end(); ite++) {
+  for (SoundMap::iterator ite = _cache.begin(); ite != _cache.end(); ite++) {
     std::shared_ptr<SoundSpec> ss = ite->second;
     ss->update();
   }
@@ -265,4 +250,4 @@ std::shared_ptr<SoundInst> SoundCache::tryPlay(std::string file, SoundPlayInfo i
 
 
 
-}//ns BR2
+}//ns Game

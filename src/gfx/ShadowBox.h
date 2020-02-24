@@ -7,22 +7,19 @@
 #ifndef __SHADOWMAPFRUSTUM_14616351763757858195_H__
 #define __SHADOWMAPFRUSTUM_14616351763757858195_H__
 
-
 #include "../gfx/GfxHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class PointLightShadowBox
 *  @brief Shadow map box for a point light.
-*
 */
-class ShadowBox : public GLFramework {
+class ShadowBox : public VirtualMemoryShared<ShadowBox> {
 public:
-  ShadowBox(std::shared_ptr<GLContext> ct, std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight, bool bShadowMapEnabled);
-  virtual ~ShadowBox() override;
-
+  ShadowBox(std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight, bool bShadowMapEnabled);
+  OVERRIDES ~ShadowBox() OVERRIDE;
   void init();
-  void update(std::shared_ptr<CameraNode> cam);
+  void update();
   void renderShadows(std::shared_ptr<ShadowBox> pMaster);
   void debugRender();
   std::shared_ptr<LightNodePoint> getLightSource() { return _pLightSource; }
@@ -54,7 +51,7 @@ private:
   uint32_t _iFboHeightPixels;
   Box2f _screenQuadPos;
   Box2f _screenQuadTCoords;
-  std::shared_ptr<MeshComponent> _pScreenQuadMesh = nullptr;
+  std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
   bool _bMustUpdate = false;
   bool _bForceUpdate = false;
   bool _bShadowMapEnabled = false;
@@ -62,10 +59,9 @@ private:
   void createFbo();
   void updateLightMatrix();
   void smoothShadows();
-
 };
 
-}//ns BR2
+}//ns Game
 
 
 

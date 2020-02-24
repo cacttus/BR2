@@ -1,18 +1,13 @@
 #include "Particles.h"
 
 
-namespace BR2 {
-///////////////////////////////////////////////////////////////////
-Particles::Particles()
-{
+namespace Game {
+Particles::Particles() {
 
 }
-Particles::~Particles()
-{
+Particles::~Particles() {
 
 }
-///////////////////////////////////////////////////////////////////
-
 
 void Particles::update() {
 
@@ -29,4 +24,4 @@ void Particles::draw() {
 
 
 
-}//ns BR2
+}//ns Game

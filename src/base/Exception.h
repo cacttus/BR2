@@ -7,23 +7,21 @@
 #ifndef __EXCEPTION_1479867204359778176_H__
 #define __EXCEPTION_1479867204359778176_H__
 
-#include "../base/BaseHeader.h"
+#include "../base/MachineTypes.h"
 
-namespace BR2 {
-/**
-*  @class Exception
-*  @brief Exception container.
-*/
+namespace Game {
 class Exception {
-  int _line;
-  string_t _msg;
-  const char* _file;
 public:
-  Exception(string_t c, int line, const char* file, bool bLogError = true);
-  string_t what();
+  Exception(t_string c, int line, const char* file, bool bLogError = true);
+  t_string what();
+
+private:
+  int _line;
+  t_string _msg;
+  const char* _file;
 };
 
-}//ns BR2
+}//ns Game
 
 
 

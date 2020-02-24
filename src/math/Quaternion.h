@@ -1,30 +1,30 @@
-//header:6 / 12 / 2010
+/**
+*  @file Quaternion.h
+*  @date 6 / 12 / 2010
+*  @author MetalMario971
+*/
 #pragma once
 #ifndef __QUATERNION_H__
 #define __QUATERNION_H__
 
-//#include "../mem/GameMemory.h"
 #include "../math/MathHeader.h"
 #include "../math/Vec3x.h"
 #include "../math/Vec4x.h"
 
-namespace BR2 {
-
-
+namespace Game {
 /**
 *  @class Quaternion
-*    not that quaternions only support rotations and matrix translations would be lost in the conversion.
-*    Q = [ (x,y,z), w ]
-*    Q = [ v, w ]
-*    Q = [ v sin(a) , cos(a) ]
-*
+*  not that quaternions only support rotations and matrix translations would be lost in the conversion.
+*  Q = [ (x,y,z), w ]
+*  Q = [ v, w ]
+*  Q = [ v sin(a) , cos(a) ]
 */
 class Quaternion : public PureMemory {
 public:
   float x, y, z, w;
 
-  FORCE_INLINE Quaternion();
-  FORCE_INLINE Quaternion(float, float, float, float);
+  Matrix4x4 toMat4();
+  Matrix3x3 toMat3();
 
   FORCE_INLINE float mag();
   FORCE_INLINE Vector3 vectorPart();
@@ -38,10 +38,8 @@ public:
   FORCE_INLINE Quaternion operator*(Vector3 v);
   FORCE_INLINE void getAxisAngle(vec4& v);
   FORCE_INLINE void construct(float dx, float dy, float dz, float dw);
-
-  Matrix4x4 toMat4();
-  Matrix3x3 toMat3();
-
+  FORCE_INLINE Quaternion();
+  FORCE_INLINE Quaternion(float, float, float, float);
 };
 FORCE_INLINE Quaternion::Quaternion() {
 

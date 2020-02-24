@@ -1,8 +1,10 @@
 ﻿#include "../base/Img32.h"
-#include "../base/Base.h"
+#include "../base/Logger.h"
+#include "../base/FileSystem.h"
+#include "../base/EngineConfig.h"
 #include "../base/Hash.h"
 #include "../base/Allocator.h"
-#include "../base/ApplicationPackage.h"
+#include "../base/Package.h"
 #include "../base/BinaryFile.h"
 #include "../base/GLContext.h"
 #include "../gfx/UiControls.h"
@@ -13,14 +15,9 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "../ext/stb_truetype.h"
 
-namespace BR2 {
-//////////////////////////////////////////////////////////////////////////
+namespace Game {
 #pragma region MtTex
-MtTex::MtTex(std::string imgName, int32_t iPatch) {
-  _strImgName = imgName; _iPatchImg = iPatch;
-}
-MtTex::~MtTex() {
-}
+
 void MtTex::setImg(std::shared_ptr<Img32> img) {
   _pImg = img;
   //We don't save the img data on the CPU, so just store what we need
@@ -32,29 +29,22 @@ void MtTex::freeTmp() {
   _pImg = nullptr;
   _pMtNode = nullptr;
 }
+
 #pragma endregion
-//////////////////////////////////////////////////////////////////////////
 #pragma region MtTexPatch
-MtTexPatch::MtTexPatch(std::shared_ptr<MegaTex> pTex, std::string imgName, Hash32 nameHash) {
-  _pMegaTex = pTex;
-  _strName = imgName;
-  _iNameHash = nameHash;
-}
-MtTexPatch::~MtTexPatch() {
-};
 void MtTexPatch::addTexImage(std::string img, int32_t iPatch) {
   std::shared_ptr<MtTex> mt = std::make_shared<MtTex>(img, iPatch);
   _vecTexs.push_back(mt);
 }
 void MtTexPatch::loadData() {
   if (_vecTexs.size() == 0) {
-    Br2LogError("Image patch was invalid for " + getName() + ".");
+    BroLogError("Image patch was invalid for " + getName() + ".");
   }
   else if (_vecTexs.size() == 1) {
     if (_vecTexs[0]->img() == nullptr) {
       //If image isn't null, then it was already provided and should be loaded.
       if (!FileSystem::fileExists(getName())) {
-        Br2LogError("Failed to load, image file '" + getName() + "' didn't exist");
+        BroLogError("Failed to load, image file '" + getName() + "' didn't exist");
         Gu::debugBreak();
       }
       else {
@@ -66,7 +56,7 @@ void MtTexPatch::loadData() {
   else {
     std::vector<std::shared_ptr<Img32>> imgs = parseImagePatch(getName());
     if (imgs.size() != _vecTexs.size()) {
-      Br2LogError("Tex Count Mismatch, or texture not found for '" + getName() + "'.");
+      BroLogError("Tex Count Mismatch, or texture not found for '" + getName() + "'.");
       Gu::debugBreak();
     }
     else {
@@ -80,7 +70,7 @@ std::vector<std::shared_ptr<Img32>> MtTexPatch::parseImagePatch(std::string file
   std::vector<std::shared_ptr<Img32>> ret;
 
   if (!FileSystem::fileExists(file)) {
-    Br2LogError("Failed to load, image file '" + file + "' didn't exist");
+    BroLogError("Failed to load, image file '" + file + "' didn't exist");
     return ret;
   }
 
@@ -88,20 +78,20 @@ std::vector<std::shared_ptr<Img32>> MtTexPatch::parseImagePatch(std::string file
 
   //So we have to flip it because we load it into OpenGL space but we're in screen space.
   if (master == nullptr) {
-    Br2LogError("Error parsing 9-tile. Invalid or missing master image file '" + file + "'");
+    BroLogError("Error parsing 9-tile. Invalid or missing master image file '" + file + "'");
     return ret;
   }
 
   if (Img32::parseImagePatch(master, ret) == false) {
-    Br2LogError("Error parsing image patch for file " + file);
+    BroLogError("Error parsing image patch for file " + file);
   }
 
   if (false) {
     //save images (and master
     Gu::saveImage("./data/cache/saved_9P_master.png", master);
     for (int n = 0; n < ret.size(); ++n) {
-      std::shared_ptr<Texture2DSpec> tex = std::make_shared<Texture2DSpec>(ret[n], _pMegaTex->getContext(), TexFilter::e::Nearest);
-      RenderUtils::saveTexture(_pMegaTex->getContext(), std::move(Stz"./data/cache/saved_9P_" + n + ".png"), tex->getGlId(), GL_TEXTURE_2D);
+      std::shared_ptr<Texture2DSpec> tex = std::make_shared<Texture2DSpec>(ret[n], Gu::getGraphicsContext(), TexFilter::e::Nearest);
+      RenderUtils::saveTexture(std::move(Stz"./data/cache/saved_9P_" + n + ".png"), tex->getGlId(), GL_TEXTURE_2D);
     }
   }
 
@@ -110,9 +100,11 @@ std::vector<std::shared_ptr<Img32>> MtTexPatch::parseImagePatch(std::string file
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region MtFont
-MtFont::MtFont(std::shared_ptr<MegaTex> pTex, std::string name, Hash32 nameHash) : MtTexPatch(pTex, name, nameHash) {
-}
 MtFont::~MtFont() {
+  //shouldn't get called
+  int nn = 0;
+  nn++;
+
 }
 void MtFont::loadData() {
   createFont();
@@ -122,11 +114,11 @@ void MtFont::createFont() {
   _atlasWidth = Gu::getConfig()->getFontBitmapSize();
   _atlasHeight = Gu::getConfig()->getFontBitmapSize();
 
-  Br2LogInfo("Creating font '" + getName() + "'. size=" + _atlasWidth + "x" + _atlasHeight + ".  Baked Char Size =" + _iBakedCharSizePixels);
+  BroLogInfo("Creating font '" + getName() + "'. size=" + _atlasWidth + "x" + _atlasHeight + ".  Baked Char Size =" + _iBakedCharSizePixels);
 
   _pFontBuffer = std::make_shared<BinaryFile>();
-  if (Gu::getAppPackage()->getFile(getName(), _pFontBuffer) == false) {
-    Br2LogError("Failed to get font file '" + getName() + "'");
+  if (Gu::getPackage()->getFile(getName(), _pFontBuffer) == false) {
+    BroLogError("Failed to get font file '" + getName() + "'");
     Gu::debugBreak();
     return;
   }
@@ -177,14 +169,14 @@ void MtFont::createFont() {
 
   stbtt_pack_context context;
   if (!stbtt_PackBegin(&context, atlasData.get(), _atlasWidth, _atlasHeight, 0, 1, nullptr)) {
-    Br2LogError("Failed to initialize font");
+    BroLogError("Failed to initialize font");
     Gu::debugBreak();
     return;
   }
 
   stbtt_PackSetOversampling(&context, _oversampleX, _oversampleY);
   if (!stbtt_PackFontRange(&context, (unsigned char*)_pFontBuffer->getData().ptr(), 0, _iBakedCharSizePixels, _firstChar, _charCount, _charInfo.get())) {
-    Br2LogError("Failed to pack font");
+    BroLogError("Failed to pack font");
     Gu::debugBreak();
     return;
   }
@@ -195,7 +187,7 @@ void MtFont::createFont() {
   std::shared_ptr<Img32> img = createFontImage(atlasData);
   if (false) {
     std::string imgName = Stz "./data/cache/dbg_font_" + FileSystem::getFileNameFromPath(getName()) + ".png";
-    Br2LogInfo("Saving " + imgName + "...");
+    BroLogInfo("Saving " + imgName + "...");
     Gu::saveImage(imgName, img);
   }
   std::shared_ptr<MtTex> mt = std::make_shared<MtTex>(getName(), 0);
@@ -232,7 +224,7 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
   stbtt_aligned_quad stbQuad;
   Box2f worldQuad;
   if (_bInitialized == false) {
-    Br2LogError("Font was not initialized.");
+    BroLogError("Font was not initialized.");
     Gu::debugBreak();
     return;
   }
@@ -249,7 +241,7 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
   stbtt_GetPackedQuad(_charInfo.get(), _atlasWidth, _atlasHeight, cCode - _firstChar, &curX, &curY, &stbQuad, 0);
   if (getTexs().size() == 0) {
     //You didn't save the image
-    Br2LogError("Failure to save font image somewhere.");
+    BroLogError("Failure to save font image somewhere.");
     Gu::debugBreak();
     return;
   }
@@ -273,9 +265,9 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
   //**End TExs
 
   //Debug - Save texture
-  //if (false) {
-  //  RenderUtils::saveTexture(_pMegaTex->getContext(), "./data/cache/saved_TEST.png", Gu::getActiveWindow()->getGui()->getTex()->getGlId(), GL_TEXTURE_2D);
-  //}
+  if (false) {
+    RenderUtils::saveTexture("./data/cache/saved_TEST.png", Gu::getActiveWindow()->getGui()->getTex()->getGlId(), GL_TEXTURE_2D);
+  }
 
   //**Pos
   //Transform quad by scale.  This is new - transorm the local quad only.  Not the whole text line.
@@ -293,6 +285,7 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
   fAdvWidth *= fScale;
   fBearing *= fScale;
 
+
   //Kerning, adds to padding not really necessary but, I assume it makes fonts look better rarely
   float fKern = 0.0f;
   if (cCodePrev >= 0) {
@@ -301,7 +294,8 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
     fKern = (float)kern * _fScaleForPixelHeight;
     fKern *= fScale;
   }
-  advWidth += (int)fKern;
+  advWidth += fKern;
+
 
   //Compute the glyph padding values, and spaceing
   //for some reason space has a negative x0
@@ -333,12 +327,8 @@ float MtFont::fontSizeToFontScale(float fs) {
 //    worldQuad->_p1 = basePos + (worldQuad->_p1 - basePos) * fScale;
 //}
 #pragma endregion
-//////////////////////////////////////////////////////////////////////////
+
 #pragma region MegaTex
-MegaTex::MegaTex(std::shared_ptr<GLContext> ct) : Texture2DSpec(ct) {
-}
-MegaTex::~MegaTex() {
-}
 std::shared_ptr<MtFont> MegaTex::getFont(std::string fn) {
   std::string low = StringUtil::lowercase(fn);
 
@@ -346,12 +336,12 @@ std::shared_ptr<MtFont> MegaTex::getFont(std::string fn) {
   auto f = _mapTexs.find(h);
   if (f == _mapTexs.end()) {
     if (_bImagesLoaded == true) {
-      Br2LogError("Images were already loaded while loading '" + fn + "'! Or the font path was incorrect (makeAssetPath used?)");
+      BroLogError("Images were already loaded while loading '" + fn + "'! Or the font path was incorrect (makeAssetPath used?)");
 
       Gu::debugBreak();
       nullptr;
     }
-    std::shared_ptr<MtFont> mtf = std::make_shared<MtFont>(getThis<MegaTex>(), fn, h);
+    std::shared_ptr<MtFont> mtf = std::make_shared<MtFont>(fn, h);
     _mapTexs.insert(std::make_pair(h, mtf));
     f = _mapTexs.find(h);
   }
@@ -367,7 +357,7 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::shared_ptr<Img32> tx) {
     p->getTexs()[0]->setImg(tx);
   }
   else {
-    Br2LogError("Failed to add texture 23458242");
+    BroLogError("Failed to add texture 23458242");
     Gu::debugBreak();
   }
 
@@ -382,7 +372,7 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
 
   if (bPreloaded == false) {
     if (!FileSystem::fileExists(imgNameLow)) {
-      Br2LogError("Image file " + img + " did not exis, when compiling MegaTex.");
+      BroLogError("Image file " + img + " did not exis, when compiling MegaTex.");
       return nullptr;
     }
   }
@@ -393,12 +383,12 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
   it = _mapTexs.find(hImg);
   if (it == _mapTexs.end()) {
     if (_bImagesLoaded == true && bPreloaded == false && bLoadNow == false) {
-      Br2LogError("Images were already loaded while loading '" + img + "'! Or the texture path was incorrect (makeAssetPath used?)!");
+      BroLogError("Images were already loaded while loading '" + img + "'! Or the texture path was incorrect (makeAssetPath used?)!");
       Gu::debugBreak();
       return nullptr;
     }
     //Add the new texure
-    ret = std::make_shared<MtTexPatch>(getThis<MegaTex>(), imgNameLow, hImg);
+    ret = std::make_shared<MtTexPatch>(imgNameLow, hImg);
     for (int i = 0; i < nPatches; ++i) {
       ret->addTexImage(img, i);//we could do "preloaded' as a bool, but it's probably nto necessary
     }
@@ -421,7 +411,7 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
 }
 
 void MegaTex::loadImages() {
-  Br2LogInfo("Mega Tex: Loading " + _mapTexs.size() + " images.");
+  BroLogInfo("Mega Tex: Loading " + _mapTexs.size() + " images.");
 
   for (auto p : _mapTexs) {
     std::shared_ptr<MtTexPatch> mtt = p.second;
@@ -437,7 +427,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
   //This is required because we use images sizes when constructing the gui
 
   //Flatten Patches into individual images
-  Br2LogInfo("Mega Tex: Flattening " + _mapTexs.size() + " images.");
+  BroLogInfo("Mega Tex: Flattening " + _mapTexs.size() + " images.");
   std::vector<std::shared_ptr<MtTex>> vecTexs;
   for (auto texPair : _mapTexs) {
     for (auto tex : texPair.second->getTexs()) {
@@ -446,11 +436,11 @@ std::shared_ptr<Img32> MegaTex::compile() {
   }
 
   //Sort by wh - speeds up + saves room
-  Br2LogInfo("Mega Tex: Sorting " + vecTexs.size() + ".");
+  BroLogInfo("Mega Tex: Sorting " + vecTexs.size() + ".");
   struct {
     bool operator()(std::shared_ptr<MtTex> a, std::shared_ptr<MtTex> b) const {
-      float f1 = (float)(a->getWidth() * a->getHeight());
-      float f2 = (float)(b->getWidth() * b->getHeight());
+      float f1 = a->getWidth() * a->getHeight();
+      float f2 = b->getWidth() * b->getHeight();
       return f1 > f2;
     }
   } customLess;
@@ -464,7 +454,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
 
   //Expand rect and grow by 128 if we fail,  this is a pretty quick procedure, so we
   //don't have to worry about sizes.
-  Br2LogInfo("Making space for " + vecTexs.size() + " texs.");
+  BroLogInfo("Making space for " + vecTexs.size() + " texs.");
   while (iImageSize <= _iMaxTexSize) {
     //Root
     _pRoot = std::make_shared<MtNode>();
@@ -502,10 +492,10 @@ std::shared_ptr<Img32> MegaTex::compile() {
 
   if (iImageSize > _iMaxTexSize) {
     //Failure
-    Br2LogError("Failed to compose mega texture, too many textures and not enough texture space.");
+    BroLogError("Failed to compose mega texture, too many textures and not enough texture space.");
   }
   else {
-    Br2LogInfo("Successful. Tex size=" + iImageSize + ".. Creating Bitmap..");
+    BroLogInfo("Successful. Tex size=" + iImageSize + ".. Creating Bitmap..");
 
     //Compose Master Image
     _pMaster = std::make_shared<Img32>();
@@ -518,7 +508,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
     float imgW = (float)iImageSize;
     float imgH = (float)iImageSize;
 
-    Br2LogInfo("Copying Sub-Images..");
+    BroLogInfo("Copying Sub-Images..");
     for (std::shared_ptr<MtTex> tex : vecTexs) {
       _pMaster->copySubImageFrom(tex->node()->_b2Rect._p0, ivec2(0, 0), ivec2(tex->getWidth(), tex->getHeight()), tex->img());
 
@@ -536,13 +526,13 @@ std::shared_ptr<Img32> MegaTex::compile() {
       tex->freeTmp();
     }
     std::string imgName = "./data/cache/ui_master.png";
-    Br2LogInfo("Saving " + imgName + "...");
+    BroLogInfo("Saving " + imgName + "...");
     Gu::saveImage(imgName, _pMaster);
   }
 
 
   //Now finally create
-  Br2LogInfo("Creating GPU Texture.");
+  BroLogInfo("Creating GPU Texture.");
   create(_pMaster->getData()->ptr(), iImageSize, iImageSize, false, false, false);
   oglSetFilter(TexFilter::e::Nearest);
 
@@ -624,4 +614,4 @@ std::shared_ptr<MtNode> MtNode::plop(std::shared_ptr<MtTex> tex) {
 #pragma endregion
 
 
-}//ns BR2
+}//ns Game

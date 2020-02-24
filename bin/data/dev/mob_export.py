@@ -1,5 +1,5 @@
 #
-#    MetalMario971
+#    Derek page
 #    20161221 
 #    20161221 
 #    2017 12 04  ----  This is version 2 of FK export using actions instead of the 'defined' in the editor.
@@ -439,7 +439,7 @@ class MobExport:
         strFile = ""
 
         strFile += "# Blender MOD/OBJ/SKN (MOB) file\n"
-        strFile += "# MetalMario971\n"
+        strFile += "# Derek Page\n"
         strFile += "# 20160507\n"
         
         strFile += "mod_beg \"" + self.strModelName + "\" \"" + str(self.fVersion) + "\"\n"
@@ -486,7 +486,7 @@ class MobExport:
         #strFile += "obj " + objName + "\n"
        # strFile += "\n"    
         #strFile += "# Blender OBJ file\n"
-        #strFile += "# MetalMario971\n"
+        #strFile += "# Derek Page\n"
         #strFile += "# 20160507\n"
         
         #Count objects and print to file

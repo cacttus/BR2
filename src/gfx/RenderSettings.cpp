@@ -1,12 +1,10 @@
-//#include "../gfx/.h"
 #include "../gfx/RenderSettings.h"
 
 
-namespace BR2 {
-
+namespace Game {
 void RenderSettings::init() {
   _pRenderDebug = std::make_shared<RenderDebug>();
 }
 
 
-}//ns BR2
+}//ns Game

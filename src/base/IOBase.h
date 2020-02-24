@@ -2,7 +2,6 @@
 *  @file IOBase.h
 *  @date September 8, 2010
 *  @author MetalMario971
-* 2016 07 09 Renamed to IOBase
 */
 #pragma once
 #ifndef __IOFILE_2872614527326632257223491_H__
@@ -13,11 +12,11 @@
 #include "../base/RetCode.h"
 #include "../math/Vec3x.h"
 #include "../math/Matrix4x4.h"
-namespace BR2 {
+namespace Game {
 /**
-*  @class IOBase
-*  @brief Abstract class to derive file classes from, this class supports basic static file operations.
-*  @remarks An IOFile Doesn't specify weather the file is on disk, in mem, or anywhere else, so it is used as the base class for all file resources.
+*   @class IOBase
+*   @brief Abstract class to derive file classes from, this class supports basic static file operations.
+*   @remarks An IOFile Doesn't specify weather the file is on disk, in mem, or anywhere else, so it is used as the base class for all file resources.
 */
 template < class Tx >
 class IOBase : public VirtualMemory {
@@ -30,8 +29,8 @@ public:
   MUST_OVERRIDE RetCode write(const Tx* bytes, size_t len, size_t myOff = memsize_max) = 0;
   MUST_OVERRIDE RetCode read(Tx* buf, size_t len, size_t buflen = memsize_max, size_t myOff = memsize_max) = 0;                        // - Read into a buffer, increements the pointer as well.
 
-  virtual void AssertGoodRead(int length) {}
-  virtual void AssertGoodWrite(int length) {}
+  VIRTUAL void AssertGoodRead(int length) {}
+  VIRTUAL void AssertGoodWrite(int length) {}
 
   //**Char only template members.
   void readVec3(vec3& val);
@@ -49,8 +48,8 @@ public:
   void writeInt32(int32_t& val, size_t offset = memsize_max);
   void writeInt64(int64_t& val);
   void writeUint32(uint32_t& val, size_t offset = memsize_max);
-  void writeStr(const string_t& str);
-  void writeTextLine(const string_t& str); //Writes a /n
+  void writeStr(const t_string& str);
+  void writeTextLine(const t_string& str); //Writes a /n
 };
 template <class Tx>
 IOBase<Tx>::IOBase() {
@@ -58,7 +57,6 @@ IOBase<Tx>::IOBase() {
 template <class Tx>
 IOBase<Tx>::~IOBase() {
 }
-
 //////////////////////////////////////////////////////////////////////////
 //Uniform buffer - base class
 template < class Tx >
@@ -109,7 +107,7 @@ RetCode IOBufferBase<Tx>::read(Tx* buf, size_t count, size_t bufcount, size_t of
   AssertOrThrow2((offset >= 0) || (offset == memsize_max));
 
   if (count > bufcount)
-    Br2ThrowException("DataBuffer - out of bounds.");
+    BroThrowException("DataBuffer - out of bounds.");
   if (offset == memsize_max)
     offset = 0;
 
@@ -148,7 +146,7 @@ public:
 
 
 
-}//ns BR2
+}//ns game
 
 
 

@@ -2,7 +2,7 @@
 *
 *    @file W25Config.h
 *    @date April 30, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

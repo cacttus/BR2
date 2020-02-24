@@ -2,7 +2,7 @@
 *
 *    @file Tile25Spec.h
 *    @date May 1, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

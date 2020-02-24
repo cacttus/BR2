@@ -1,25 +1,22 @@
+#include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
-
+#include "../gfx/RenderUtils.h"
 #include "../model/VertexFormat.h"
 #include "../model/VboData.h"
 
-#include "../gfx/RenderUtils.h"
-#include "../gfx/GLContext.h"
-
-namespace BR2 {
-
-VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName) : GLFramework(pContext) {
-  _strName = strName;
+namespace Game {
+GLenum VertexComponent::getAttributeType() {
+  return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
+}
+VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, t_string strName) :
+  _pContext(pContext), _strName(strName) {
 }
 VertexFormat::~VertexFormat() {
   _vecComponents.clear();
   //for (size_t icomp = 0; icomp < _vecComponents.size(); icomp++) {
   //    DEL_MEM(_vecComponents[icomp]);
   //}
-}
-GLenum VertexComponent::getAttributeType() {
-  return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
 }
 void VertexFormat::addComponent(VertexUserType::e eUserType) {
 
@@ -96,7 +93,7 @@ void VertexFormat::addComponent(VertexUserType::e eUserType) {
 //    size = sizeof(vec4);
 //    break;
   default:
-    Br2ThrowException("Vertex user type not impelmented.");
+    BroThrowException("Vertex user type not impelmented.");
   }
 
   addComponent(eType, compCount, size, eUserType);
@@ -107,7 +104,7 @@ void VertexFormat::addComponent(GLenum type, int componentCount, int size, Verte
   for (std::pair<int, std::shared_ptr<VertexComponent>> p : _vecComponents) {
     std::shared_ptr<VertexComponent> comp = p.second;
     if (comp->getUserType() == eUserType) {
-      Br2LogError("Duplicate Vertex component '" + getUserTypeName(eUserType) + "' for Vertex Type '" + getName() + "'.");
+      BroLogError("Duplicate Vertex component '" + getUserTypeName(eUserType) + "' for Vertex Type '" + getName() + "'.");
       Gu::debugBreak();
     }
   }
@@ -202,7 +199,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_FLOAT_VEC4;
     }
     else {
-      BrThrowNotImplementedException();
+      BroThrowNotImplementedException();
     }
   }
   else if (type == GL_INT) {
@@ -219,7 +216,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_INT_VEC4;
     }
     else {
-      BrThrowNotImplementedException();
+      BroThrowNotImplementedException();
     }
   }
   else if (type == GL_UNSIGNED_INT) {
@@ -236,14 +233,14 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
       return GL_UNSIGNED_INT_VEC4;
     }
     else {
-      BrThrowNotImplementedException();
+      BroThrowNotImplementedException();
     }
   }
   else {
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
 }
-string_t VertexFormat::getUserTypeName(VertexUserType::e eUserType) {
+t_string VertexFormat::getUserTypeName(VertexUserType::e eUserType) {
   switch (eUserType) {
   case VertexUserType::e::c4_01: return ("Color4f"); break;
   case VertexUserType::e::v2_01: return ("Position2f"); break;
@@ -289,4 +286,4 @@ int VertexFormat::matchTypeForShaderType(std::shared_ptr<VertexFormat> shaderTyp
 
 
 
-}//ns BR2
+}//ns Game

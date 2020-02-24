@@ -1,7 +1,12 @@
 /**
-*  @file VertexFormat.h
-*  @date May 8, 2017
-*  @author MetalMario971
+*
+*    @file VertexFormat.h
+*    @date May 8, 2017
+*    @author MetalMario971
+*
+*    © 2017
+*
+*
 */
 #pragma once
 #ifndef __VERTEXTYPES_14942223503900412386_H__
@@ -9,7 +14,7 @@
 
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 
 class VertexComponent : public VirtualMemory {
 public:
@@ -20,7 +25,8 @@ public:
   VertexUserType::e getUserType() { return _eUserType; }
   int32_t getByteOffset() { return _iByteOffset; }
   int32_t getLocation() { return _iLocation; }
-  string_t getUserTypeName();
+  t_string getUserTypeName();
+
 private:
   friend class VertexFormat;
   int32_t _iSizeBytes;
@@ -29,14 +35,12 @@ private:
   VertexUserType::e _eUserType = VertexUserType::e::None;
   int32_t _iLocation;
   int32_t _iByteOffset;
-
 };
-class VertexFormat : public GLFramework {
+class VertexFormat : public VirtualMemory {
 public:
-  VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName);
+  VertexFormat(std::shared_ptr<GLContext> pContext, t_string strName);
   virtual ~VertexFormat();
-
-  string_t getName() { return _strName; }
+  t_string getName() { return _strName; }
   int32_t getSizeBytes() const { return _iVertexSizeBytes; }
   // void enableAndBindAllArraysForVaoBuffer(std::shared_ptr<VboData> pVboData);
   void addComponent(VertexUserType::e eUserType);
@@ -44,15 +48,16 @@ public:
   std::shared_ptr<VertexComponent> getComponentForUserType(VertexUserType::e eUserType);
   const std::map<int, std::shared_ptr<VertexComponent>>& getComponents() { return _vecComponents; }
   static GLenum computeAttributeType(GLenum type, GLuint count);
-  static string_t getUserTypeName(VertexUserType::e t);
+  static t_string getUserTypeName(VertexUserType::e t);
   int matchTypeForShaderType(std::shared_ptr<VertexFormat> shaderType);
+
 private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
   std::map<int, std::shared_ptr<VertexComponent>> _vecComponents; //mapped to VertexUserType
   int32_t _iVertexSizeBytes;
-  string_t _strName;
-
+  t_string _strName;
 };
 
-}//ns BR2
+}//NS Game
 
 #endif

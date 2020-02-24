@@ -1,12 +1,7 @@
 /**
-*
 *  @file ConvexAlgorithms.h
 *  @date December 5, 2014
 *  @author MetalMario971
-*
-*    � 2014
-*
-*
 */
 #pragma once
 #ifndef __CONVEXALGORITHMS_186081759026531609525247_H__
@@ -14,8 +9,11 @@
 
 #include "../math/MathHeader.h"
 
-namespace BR2 {
-
+namespace Game {
+/**
+*  @class ConvexUtils
+*  @brief Provides algorithms for dealing with convex hulls.
+*/
 class ConvexUtils {
 public:
 
@@ -90,7 +88,7 @@ public:
 };
 
 
-}//ns BR2
+}//ns game
 
 
 

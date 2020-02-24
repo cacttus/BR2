@@ -9,10 +9,9 @@
 
 #include "../model/ModelHeader.h"
 #include "../model/GpuBufferData.h"
-namespace BR2 {
+namespace Game {
 /**
 *  @class VboData
-*    36 bytes
 *  @brief Represents a vertex buffer object in Opengl.
 */
 class VboData : public GpuBufferData {
@@ -23,8 +22,7 @@ public:
 
 
 
-
-}//ns BR2
+}//ns game
 
 
 

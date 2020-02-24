@@ -1,13 +1,11 @@
 #include "../base/GrowBuffer.h"
 #include "../model/UtilMeshInline.h"
-//#include "../base/GlobalUtils.h"
 #include "../model/IndexBufferData.h"
 #include "../model/FragmentBufferData.h"
-//#include "../gfx/GLRenderSystem.h"
 
-namespace BR2 {
-UtilMeshInline::UtilMeshInline(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx) :
-  UtilMesh(cam, ctx, v_v3c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
+namespace Game {
+UtilMeshInline::UtilMeshInline(std::shared_ptr<GLContext> ctx) :
+  UtilMesh(ctx, v_v3c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
 {
   _vDefaultColor.construct(1, 0, 0, 1);
 }
@@ -81,14 +79,16 @@ void UtilMeshInline::addBox(vec3* points, vec4* color) {
   vt2(v[3], v[7], color);
 }
 
-UtilMeshInline2d::UtilMeshInline2d(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx) :
-  UtilMesh(cam,ctx, v_v2c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
+//////////////////////////////////////////////////////////////////////////
+UtilMeshInline2d::UtilMeshInline2d(std::shared_ptr<GLContext> ctx) :
+  UtilMesh(ctx, v_v2c4::getVertexFormat(), nullptr, GL_NONE) //The prim type will begin as invalid.
 {
   _vDefaultColor.construct(1, 0, 0, 1);
 }
 UtilMeshInline2d::~UtilMeshInline2d() {
   _pBuf.resize(0);
 }
+///////////////////////////////////////////////////////////////////
 void UtilMeshInline2d::begin(GLenum type) {
   _pBuf.resize(0);
   setDrawMode(type);
@@ -133,4 +133,4 @@ void UtilMeshInline2d::end() {
 
 
 
-}//ns BR2
+}//ns Game

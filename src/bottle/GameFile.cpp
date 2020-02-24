@@ -63,7 +63,7 @@ void GameFile::save(t_string loc, std::shared_ptr<World25> pw) {
     }
     df.writeTextLine(Stz "g_world \""+ pw->getWorldName()+ "\"");
     df.writeTextLine("g_end");
-    //df.writeTextLine(TStr("#MetalMario971 ", dateTimeToStr(getDateTime())));
+    //df.writeTextLine(TStr("#Derek Page ", dateTimeToStr(getDateTime())));
     ////sprite image size
     //df.writeTextLine(TStr("isw ", _pSpriteSpec->getSize().x));
     //df.writeTextLine(TStr("ish ", _pSpriteSpec->getSize().y));

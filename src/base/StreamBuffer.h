@@ -10,10 +10,10 @@
 #include "../base/BaseHeader.h"
 #include "../base/IOBase.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class StreamBuffer
-*  @brief Stream Buffer.  A circular buffer which grows and shrinks by adding data to the end of the buffer, and removing data from the beginning.
+*  @brief A buffer that streams data in and out.  Grows/shrinks.  ADDS - To the end.  REMOVES - From the beginning.
 */
 class StreamBuffer : public IOBase<char> {
 public:
@@ -21,16 +21,14 @@ public:
   virtual ~StreamBuffer() override;
 
   bool getIsEmpty() { return _iAddCountBytes == 0; }
-
   void copyFrom(StreamBuffer* rhs);
   virtual RetCode write(const char* bytes, size_t len, int32_t offset = -1);
   virtual RetCode read(char* buf, size_t len, int64_t buflen = -1, int32_t offset = -1);
-
   virtual void clear();
   Allocator<char>* getData();
   void shiftOutFirstByte();
   void next(size_t allocCount);
-  string_t toString();
+  t_string toString();
 
 protected:
   size_t getAddedByteCount() { return _iAddCountBytes; }
@@ -45,7 +43,7 @@ private:
   //void checkToGrowOrShrink();
 };
 
-}//ns BR2
+}//ns Game
 
 
 

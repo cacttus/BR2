@@ -1,10 +1,7 @@
 /**
 *  @file Matrix3x3.cpp
 *  @author MetalMario971
-*
-*    � 2011
 *  @date 9 / 7 / 2009
-*
 */
 #pragma once
 #ifndef __MATRIX3X3_H__
@@ -14,11 +11,10 @@
 #include "../math/Vec3x.h"
 #include "../math/Quaternion.h"
 #include "../base/TypeConv.h"
-namespace BR2 {
+namespace Game {
 /**
 *  @class Matrix3x3
-*  @brief A 3x3 Matrix.
-*  @details This matrix is column major.
+*  @brief A 3x3 Matrix. Column major.
 */
 class Matrix3x3 : public PureMemory {
 public:
@@ -62,10 +58,9 @@ public:
   FORCE_INLINE STATIC Matrix3x3 getRotation(t_degrees a, float x, float y, float z);    // - Returns a rotation matrix from degrees.
   FORCE_INLINE STATIC Matrix3x3 getRotationRad(t_radians a, float x, float y, float z);    // - Returns a rotation matrix in radians.
   FORCE_INLINE STATIC Matrix3x3 getRotationRad(float a, const vec3& v);    // - Returns a rotation matrix in radians.
-  FORCE_INLINE string_t toString() const;
+  FORCE_INLINE t_string toString() const;
 
 };
-//////////////////////////////////////////////////////////////////////////
 FORCE_INLINE Matrix3x3::Matrix3x3() {
 }
 FORCE_INLINE Matrix3x3::Matrix3x3(float(&f)[9]) {
@@ -74,7 +69,6 @@ FORCE_INLINE Matrix3x3::Matrix3x3(float(&f)[9]) {
 FORCE_INLINE NOT_VIRTUAL Matrix3x3::~Matrix3x3() {
 }
 
-//////////////////////////////////////////////////////////////////////////
 // - The expanded cofactor adjoint.
 FORCE_INLINE Matrix3x3 Matrix3x3::adj() {
   Matrix3x3 m;
@@ -160,8 +154,8 @@ FORCE_INLINE Quaternion Matrix3x3::getQuaternion() {
   return ret;
 }
 /**
-*  @fn setIdentity()
-*  @brief Sets the identity of this matrix.
+*    @fn setIdentity()
+*    @brief Sets the identity of this matrix.
 */
 FORCE_INLINE void Matrix3x3::setIdentity() {
   /*
@@ -180,9 +174,9 @@ FORCE_INLINE void Matrix3x3::setIdentity() {
 
 
 /**
-*  @fn scaleCat()
-*  @details Scales the values of this matrix.
-*  @param x,y,z the scale value.
+*    @fn scaleCat()
+*    @details Scales the values of this matrix.
+*    @param x,y,z the scale value.
 *
 */
 FORCE_INLINE void Matrix3x3::scale(float x, float y, float z) {
@@ -190,9 +184,9 @@ FORCE_INLINE void Matrix3x3::scale(float x, float y, float z) {
 }
 
 /**
-*  @fn rotateCat()
-*  @details Rotates the values of this matrix.
-*  @param a, x,y,z the rotation value in axis-angle form.
+*    @fn rotateCat()
+*    @details Rotates the values of this matrix.
+*    @param a, x,y,z the rotation value in axis-angle form.
 *    a is in degrees
 */
 FORCE_INLINE void Matrix3x3::rotate(t_degrees a, float x, float y, float z) {
@@ -200,9 +194,9 @@ FORCE_INLINE void Matrix3x3::rotate(t_degrees a, float x, float y, float z) {
 
 }
 /**
-*  @fn rotateCat()
-*  @details Rotates the values of this matrix.
-*  @param a, x,y,z the rotation value in axis-angle form.
+*    @fn rotateCat()
+*    @details Rotates the values of this matrix.
+*    @param a, x,y,z the rotation value in axis-angle form.
 *    a is in degrees
 */
 FORCE_INLINE void Matrix3x3::rotateRad(t_radians a, float x, float y, float z) {
@@ -210,11 +204,11 @@ FORCE_INLINE void Matrix3x3::rotateRad(t_radians a, float x, float y, float z) {
 }
 
 /**
-*  @fn rotate()
-*  @details Returns a rotation matrix, but does not alter this matrix.
-*  @param a, x,y,z the axis-angle rotation.
-*  @return A matrix witht the specified rotation.d
-*  @param a - ANGLE IN DEGREES!
+*    @fn rotate()
+*    @details Returns a rotation matrix, but does not alter this matrix.
+*    @param a, x,y,z the axis-angle rotation.
+*    @return A matrix witht the specified rotation.d
+*    @param a - ANGLE IN DEGREES!
 */
 FORCE_INLINE Matrix3x3 Matrix3x3::getRotation(t_degrees a, float x, float y, float z) {
   // - Reference: The openGL reference.http://pyopengl.sourceforge.net/documentation/manual/reference-GL.html
@@ -222,10 +216,10 @@ FORCE_INLINE Matrix3x3 Matrix3x3::getRotation(t_degrees a, float x, float y, flo
   return getRotationRad(a, x, y, z);
 }
 /**
-*  @fn scale()
-*  @details Returns a scale matrix, but does not alter this matrix.
-*  @param x,y,z the scaling value.
-*  @return A matrix witht the specified scaling.
+*    @fn scale()
+*    @details Returns a scale matrix, but does not alter this matrix.
+*    @param x,y,z the scaling value.
+*    @return A matrix witht the specified scaling.
 *
 */
 FORCE_INLINE Matrix3x3 Matrix3x3::getScale(float x, float y, float z) {
@@ -240,7 +234,7 @@ FORCE_INLINE Matrix3x3 Matrix3x3::getScale(float x, float y, float z) {
   return m;
 }
 /**
-*  @fn operator[]
+*    @fn operator[]
 *
 *
 */
@@ -286,7 +280,7 @@ FORCE_INLINE Matrix3x3& Matrix3x3::operator=(const Matrix3x3& rhs) {
 
   return *this;
 }
-FORCE_INLINE string_t Matrix3x3::toString() const {
+FORCE_INLINE t_string Matrix3x3::toString() const {
   return
     TypeConv::floatToStr(_m11) + "," +
     TypeConv::floatToStr(_m12) + "," +
@@ -307,7 +301,7 @@ FORCE_INLINE string_t Matrix3x3::toString() const {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-STATIC FORCE_INLINE string_t tstr(const mat3& x) { return x.toString(); }
+STATIC FORCE_INLINE t_string tstr(const mat3& x) { return x.toString(); }
 
 
 }

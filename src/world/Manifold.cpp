@@ -2,8 +2,7 @@
 #include "../world/Manifold.h"
 
 
-namespace BR2 {
-///////////////////////////////////////////////////////////////////
+namespace Game {
 void NodeManifold::remove(std::shared_ptr<PhysicsNode> ob) {
   std::set<std::shared_ptr<PhysicsNode>>::iterator obit;
   obit = getAll()->find(ob);
@@ -141,4 +140,4 @@ void GridManifold::clear() {
 
 
 
-}//ns BR2
+}//ns Game

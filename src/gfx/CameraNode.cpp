@@ -1,19 +1,26 @@
-#include "../base/Gu.h"
-#include "../base/Logger.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
+#include "../base/Gu.h"
 
-namespace BR2 {
-CameraNode::CameraNode() {
+namespace Game {
+CameraNode::CameraNode(std::shared_ptr<WindowViewport> ppViewport) : PhysicsNode(nullptr),
+_pViewport(ppViewport) {
   _vWorldUp.construct(0, 1, 0);
-  _pMainFrustum = std::make_shared<FrustumBase>(_pViewport, _f_hfov);
+
+  _pMainFrustum = std::make_shared<FrustumBase>(ppViewport, _f_hfov);
   _vUp = vec3(0, 1, 0);
   _vLookAt = vec3(0, 0, 0);
-
   setPos(vec3(-100, -100, -100));
+
 }
+std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<WindowViewport> ppViewport) {
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
+  cn->init();
+  return cn;
+}
+
 CameraNode::~CameraNode() {
   //DEL_MEM(_boundEllipsoid);
   //DEL_MEM(_pMainFrustum);
@@ -44,13 +51,15 @@ ProjectedRay CameraNode::projectPoint(vec2& mouse) {
 
   return pr;
 }
+//////////////////////////////////////////////////////////////////////////
+
 void CameraNode::setFOV(t_radians fov) {
   _f_hfov = fov;
-  //_pViewport->updateChanged(true);
+  _pViewport->updateChanged(true);
   _pMainFrustum->setFov(_f_hfov);
 }
-void CameraNode::update(float dt, std::shared_ptr<CameraNode> cam,std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-  SceneNode::update(dt, cam, mapAnimators);
+void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+  PhysicsNode::update(dt, mapAnimators);
 
   //update view normal.
   vec3 vpos = getPos();
@@ -71,7 +80,7 @@ void CameraNode::update(float dt, std::shared_ptr<CameraNode> cam,std::map<Hash3
   //We force true here every frame because of shadow boxes changing viewport.
   //TODO: have an "isUpdated" or some other so we can spread shadowbox viewport update over time and not update this.
   //**NOTE: 1/23/18 we changed this to refresh viewport after shadow box step in render pipe
-  //_pViewport->updateChanged(true);
+  _pViewport->updateChanged(true);
 
   //**Note: This is important: sets up the projection matrix for the camera
   // either 2D 3D ortho 2point ...
@@ -132,8 +141,9 @@ void CameraNode::zoom(float amt) {
   finalPt = vec3(
     Alg::cerp_1D(minPt.x, maxPt.x, tVal),
     Alg::cerp_1D(minPt.y, maxPt.y, tVal),
-    Alg::cerp_1D(minPt.z, maxPt.z, tVal)
-  );
+    Alg::cerp_1D(minPt.z, maxPt.z, tVal));
+
+
 
   newP = _vLookAt + finalPt;
   // newP = getPos()+ _vViewNormal * amt;
@@ -142,4 +152,4 @@ void CameraNode::zoom(float amt) {
 }
 
 
-}//ns BR2
+}//ns game

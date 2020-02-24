@@ -10,45 +10,49 @@
 #include "../gfx/GfxHeader.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../math/MathAll.h"
-namespace BR2 {
+namespace Game {
+
+namespace SpriteFlags {
+typedef enum {
+  Shift_V = 0x01
+  , Shift_H = 0x02
+} e;
+}
 /**
 *  @class AtlasSprite
-*  @brief A piece of a texture @cAtlas.
+*  @brief A reference to a sprite in an @cAtlas
 */
 class AtlasSprite {
 public:
   Hash32 _hash;
   AtlasSprite(std::shared_ptr<Atlas> pa) : _pAtlas(pa) {}
   std::shared_ptr<Atlas> getAtlas() { return _pAtlas; }
-  string_t _imgLoc;
+  t_string _imgLoc;
   ivec2 _viGridPos;
   int _iId;
   std::shared_ptr<Img32> _pGeneratedImage = nullptr;
   //BwMat::e _eMat;
   bool getIsGenerated() { return _pGeneratedImage != nullptr; }
-
 private:
   std::shared_ptr<Atlas> _pAtlas = nullptr;
 };
 /**
 *  @class Atlas
-*  @brief A texture atlas.
+*  @brief Stores an atlas of sprites.
 */
 class Atlas : public Texture2DSpec {
 public:
-  Atlas(std::shared_ptr<GLContext> ct, string_t name, ivec2& ivGridSize);
+  static t_string getGeneratedFileName();
+  const t_string& getName() { return _strName; }
+
+  Atlas(std::shared_ptr<GLContext> ct, t_string name, ivec2& viSpriteSize, t_string strImageLoc);
+  Atlas(std::shared_ptr<GLContext> ct, t_string name, ivec2& ivGridSize);
   virtual ~Atlas() override;
 
-  static string_t getGeneratedFileName();
-  const string_t& getName() { return _strName; }
+  static t_string constructPrecompiledSpriteName(int32_t ix, int32_t iy);
 
-  Atlas(std::shared_ptr<GLContext> ct, string_t name, ivec2& viSpriteSize, string_t strImageLoc);
-
-
-  static string_t constructPrecompiledSpriteName(int32_t ix, int32_t iy);
-
-  void addImage(Hash32 en, string_t loc);
-  void addImage(Hash32 en, string_t loc, std::shared_ptr<Img32> imgData);
+  void addImage(Hash32 en, t_string loc);
+  void addImage(Hash32 en, t_string loc, std::shared_ptr<Img32> imgData);
 
   void removeImage(std::shared_ptr<AtlasSprite> ps);
   void compileFiles(bool bMipmaps = true, bool saveAndLoad = true); // Compiles an atlas from a list of sprite files.
@@ -60,17 +64,16 @@ public:
   ivec2 getSpriteSize() { return _vSpriteSize; }
   ivec2 getGridSize() { return _vGridSize; }
   int32_t getLinearTileOffset(Hash32 frameId);
-
 private:
   typedef std::map<Hash32, std::shared_ptr<AtlasSprite>> ImgMap;
   ImgMap _mapImages;
-  string_t _strName;
+  t_string _strName;
   ivec2 _vSpriteSize;
   ivec2 _vGridSize;
-  string_t _strPrecompileFileLocation;//This is only if the atlas is pre-compiled.
+  t_string _strPrecompileFileLocation;//This is only if the atlas is pre-compiled.
 
   std::shared_ptr<Img32> composeImage(bool bCache);
-  string_t getCachedImageFilePath();
+  t_string getCachedImageFilePath();
   time_t cacheGetGreatestModifyTimeForAllDependencies();
   std::shared_ptr<Img32> tryGetCachedImage();
   void printInfoAndErrors(std::shared_ptr<Img32>);
@@ -79,7 +82,7 @@ private:
 
 };
 
-}//ns BR2
+}//ns Game
 
 
 

@@ -2,7 +2,7 @@
 *
 *    @file ObFile.h
 *    @date March 30, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

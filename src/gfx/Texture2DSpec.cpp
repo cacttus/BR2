@@ -1,32 +1,31 @@
-#include "../base/Logger.h"
+
 #include "../base/GlobalIncludes.h"
+#include "../base/GLContext.h"
 #include "../base/Img32.h"
 #include "../base/Gu.h"
 #include "../base/Allocator.h"
 #include "../base/BinaryFile.h"
-#include "../gfx/GLContext.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/RenderUtils.h"
 
-namespace BR2 {
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
-}
-Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : GLFramework(ctx) {
+namespace Game {
+Texture2DSpec::Texture2DSpec(t_string loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : _pContext(ctx) {
   load(loc, bRepeatU, bRepeatV);
 }
-Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : GLFramework(ctx) {
+Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : _pContext(ctx) {
   create((unsigned char*)sp->getData()->ptr(), sp->getWidth(), sp->getHeight(), false, false, false);
   oglSetFilter(eFilter);
 }
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps) : GLFramework(ctx) {
+Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps) : _pContext(ctx) {
   create(texData, iWidth, iHeight, mipmaps, false, false);
 }
 Texture2DSpec::~Texture2DSpec() {
   dispose();
 }
-void Texture2DSpec::load(string_t imgLoc, bool bRepeatU, bool bRepeatV) {
+
+void Texture2DSpec::load(t_string imgLoc, bool bRepeatU, bool bRepeatV) {
   _strLocation = imgLoc;
   std::shared_ptr<Img32> sp = Gu::loadImage(imgLoc);
   if (sp != nullptr) {
@@ -37,14 +36,17 @@ void Texture2DSpec::load(string_t imgLoc, bool bRepeatU, bool bRepeatV) {
     _bLoadFailed = true;
   }
 }
+
 void Texture2DSpec::calculateTextureFormat() {
   //All textures are 32 bit
   //AssertOrThrow2(getBytesPerPixel() == 4);
   _eTextureFormat = (GL_RGBA);
   _eTextureMipmapFormat = GL_RGBA8;
+
 }
 void Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
-  getContext()->glActiveTexture(GL_TEXTURE0 + eChannel);
+
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0 + eChannel);
   glBindTexture(GL_TEXTURE_2D, getGlId());
 
   if (pShader != nullptr) {
@@ -55,7 +57,7 @@ void Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase>
 }
 void Texture2DSpec::unbind() {
   //  if (_iChannel == 0) {
-  getContext()->glActiveTexture(GL_TEXTURE0);
+  _pContext->glActiveTexture(GL_TEXTURE0);
   //}
   //else {
   //    BroThrowNotImplementedException();
@@ -66,9 +68,8 @@ int32_t Texture2DSpec::generateMipmapLevels() {
   // - Create log2 mipmaps
   int numMipMaps = 0;
   int x = MathUtils::broMax(getWidth(), getHeight());
-  for (; x; x = x >> 1) {
+  for (; x; x = x >> 1)
     numMipMaps++;
-  }
   return numMipMaps;
 }
 // - Make the texture known to OpenGL
@@ -79,16 +80,16 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
     _fSizeRatio = (float)w / (float)h;
   }
   // Bind texture
-  getContext()->glActiveTexture(GL_TEXTURE0);
-  getContext()->chkErrRt();
+  _pContext->glActiveTexture(GL_TEXTURE0);
+  _pContext->chkErrRt();
   glGenTextures(1, &_glId);
-  getContext()->chkErrRt();
+  _pContext->chkErrRt();
   glBindTexture(GL_TEXTURE_2D, _glId);
-  getContext()->chkErrRt();
+  _pContext->chkErrRt();
 
   //Calc format
   calculateTextureFormat();
-  getContext()->chkErrRt();
+  _pContext->chkErrRt();
 
   _bHasMipmaps = genMipmaps;
   _bRepeatU = bRepeatU;
@@ -100,16 +101,16 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
     //**2016 - this function FAILS in most profiles.
     // It's probably because it's legacy **DEPRECATED in 3.0
     //glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-    getContext()->chkErrRt();
+    _pContext->chkErrRt();
 
     int numMipMaps = generateMipmapLevels();
-    getContext()->glTexStorage2D(GL_TEXTURE_2D, numMipMaps, _eTextureMipmapFormat, getWidth(), getHeight());
-    getContext()->chkErrRt();
+    _pContext->glTexStorage2D(GL_TEXTURE_2D, numMipMaps, _eTextureMipmapFormat, getWidth(), getHeight());
+    _pContext->chkErrRt();
 
   }
   else {
-    getContext()->glTexStorage2D(GL_TEXTURE_2D, 1, _eTextureMipmapFormat, getWidth(), getHeight());
-    getContext()->chkErrRt();
+    _pContext->glTexStorage2D(GL_TEXTURE_2D, 1, _eTextureMipmapFormat, getWidth(), getHeight());
+    _pContext->chkErrRt();
   }
 
   // Copy texture date
@@ -123,7 +124,8 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
     (void*)imageData    //pixels
   );
 
-  getContext()->chkErrRt();
+  _pContext->chkErrRt();
+
 
   // Specify Parameters
   if (bRepeatU) {
@@ -161,8 +163,8 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
   // - Generate the mipmaps
   if (genMipmaps) {
     //GL 3.0 mipmaps
-    getContext()->glGenerateMipmap(GL_TEXTURE_2D);
-    getContext()->chkErrRt();
+    _pContext->glGenerateMipmap(GL_TEXTURE_2D);
+    _pContext->chkErrRt();
   }
 
   //Unbind so we don't modify it
@@ -183,7 +185,7 @@ void Texture2DSpec::setWrapU(TexWrap::e wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   }
   else {
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
   unbind();
 }
@@ -196,7 +198,7 @@ void Texture2DSpec::setWrapV(TexWrap::e wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   }
   else {
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
   unbind();
 }
@@ -209,8 +211,8 @@ void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-      getContext()->glGenerateMipmap(GL_TEXTURE_2D);
-      getContext()->chkErrRt();
+      _pContext->glGenerateMipmap(GL_TEXTURE_2D);
+      _pContext->chkErrRt();
     }
     else {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -223,8 +225,8 @@ void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-      getContext()->glGenerateMipmap(GL_TEXTURE_2D);
-      getContext()->chkErrRt();
+      _pContext->glGenerateMipmap(GL_TEXTURE_2D);
+      _pContext->chkErrRt();
     }
     else {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -233,13 +235,13 @@ void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
     }
   }
   else {
-    BrThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
 
   unbind();
 }
 bool Texture2DSpec::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image) {
-  return RenderUtils::getTextureDataFromGpu(getContext(),image, _glId, GL_TEXTURE_2D);
+  return RenderUtils::getTextureDataFromGpu(image, _glId, GL_TEXTURE_2D);
 }
 
 void Texture2DSpec::serialize(std::shared_ptr<BinaryFile> fb) {
@@ -280,4 +282,4 @@ void Texture2DSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
 }
 
 
-}//ns BR2
+}//ns game

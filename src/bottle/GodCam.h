@@ -2,7 +2,7 @@
 *
 *    @file GodCam.h
 *    @date March 31, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

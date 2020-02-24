@@ -1,23 +1,25 @@
 #include "../base/Stopwatch.h"
 #include "../base/Logger.h"
+#include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+#include "../base/Gu.h"
+#include "../base/GLContext.h"
 #include "../math/BoxUtils.h"
 #include "../gfx/ShadowFrustum.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/RenderViewport.h"
+#include "../gfx/WindowViewport.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderManager.h"
-#include "../gfx/RenderBucket.h"
-#include "../gfx/GLContext.h"
-#include "../model/MeshComponent.h"
-#include "../world/PhysicsManager.h"
-#include "../world/Scene.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/GraphicsContext.h"
+#include "../model/MeshNode.h"
+#include "../world/RenderBucket.h"
+#include "../world/PhysicsWorld.h"
 
-namespace BR2 {
+namespace Game {
 ShadowFrustum::ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
   _bShadowMapEnabled = bShadowMapEnabled;
   _vCachedLastPos = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
@@ -29,27 +31,26 @@ ShadowFrustum::ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t
   //used for interpolating frames.
   static int32_t idGen = 0;
   _iShadowFrustumId = ++idGen;
-
 }
 ShadowFrustum::~ShadowFrustum() {
   deleteFbo();
-
 }
-///////////////////////////////////////////////////////////////////
 void ShadowFrustum::init() {
 
-  _pViewport = std::make_shared<RenderViewport>(60, 60, ViewportConstraint::Fixed);
+  _pViewport = std::make_shared<WindowViewport>(60, 60
+    , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
+    , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
+    );
+
   _pVisibleSet = std::make_shared<RenderBucket>();
   _pFrustum = std::make_shared<FrustumBase>(_pViewport, 90.0f);
 
   createFbo();
 
-  getContext()->chkErrRt(); //Rt error check - this is called only once.
+
+  Gu::checkErrorsRt(); //Rt error check - this is called only once.
 }
-std::shared_ptr<GLContext> ShadowFrustum::getContext() {
-  return _pLightSource->getLightManager()->getContext();
-}
-void ShadowFrustum::update(std::shared_ptr<CameraNode> cam, std::shared_ptr<PhysicsManager> pm) {
+void ShadowFrustum::update() {
   static int n = 0;
   if (n == 1) { return; }
   AssertOrThrow2(_pLightSource != nullptr);
@@ -67,7 +68,7 @@ void ShadowFrustum::update(std::shared_ptr<CameraNode> cam, std::shared_ptr<Phys
   //    return;
   //}
 
-  //std::shared_ptr<LightManager> pLightMan = _pLightSource->getLightManager();
+  std::shared_ptr<LightManager> pLightMan = Gu::getLightManager();
 
   //Update the camera for each ShadowFrustum side if the light has changed position or radius.
   //See also: debugInvalidateAllLightProjections
@@ -84,7 +85,7 @@ void ShadowFrustum::update(std::shared_ptr<CameraNode> cam, std::shared_ptr<Phys
      // Collect all objects for each frustum.
      // if objects don't change don't render that frustum (bMustUpate)
 
-  collect(cam,pm);
+  collect();
 
   //If we don't need to update then return.
 //   if (bMustUpdate == false){
@@ -104,9 +105,7 @@ void ShadowFrustum::updateView() {
   _pViewport->setX(0);
   _pViewport->setWidth(_iFboWidthPixels);
   _pViewport->setHeight(_iFboHeightPixels);
-  //TODO: make sure this isn't incorrect
-  Gu::debugBreak();
-  _pViewport->bind(nullptr);
+  _pViewport->updateChanged(true);
 
   float fNear = _pFrustum->getZNear();
   float fFar = _pFrustum->getZFar();
@@ -181,15 +180,7 @@ void ShadowFrustum::updateView() {
     //if(n==3)
     //_viewProjMatrix = mat4(_viewMatrix * _projMatrix).transposed();
 }
-void ShadowFrustum::collect(std::shared_ptr<CameraNode> cam, std::shared_ptr<PhysicsManager> pm) {
-  //std::shared_ptr<Scene> ps = _pLightSource->getScene();
-  //if (ps == nullptr) {
-  //  Br2LogErrorCycle("could not get scene for shadow frustum (light source may not be added however this update shouldn't be called.)");
-  //}
-  //std::shared_ptr<PhysicsManager> pm = ps->getPhysicsManager();
-  //if (pm == nullptr) {
-  //  Br2LogErrorCycle("could not get PhysicsManager for shadow frustum (light source may not be added however this update shouldn't be called.)");
-  //}
+void ShadowFrustum::collect() {
   if (_bShadowMapEnabled == false) {
     return;
   }
@@ -197,14 +188,19 @@ void ShadowFrustum::collect(std::shared_ptr<CameraNode> cam, std::shared_ptr<Phy
   AssertOrThrow2(_pVisibleSet != nullptr);
   // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
 
-  _pVisibleSet->clear(cam);
+  _pVisibleSet->clear();
+
+  if (Gu::getPhysicsWorld() == nullptr) {
+    return;
+  }
 
   BvhCollectionParams p;
   p._fMaxDist = MathUtils::broMin(_pFrustum->getZFar(), Gu::getEngineConfig()->getMaxPointLightShadowDistance());
   p._pFrustum = _pFrustum;
   p._pRenderBucket = _pVisibleSet;
-  pm->collectVisibleNodes(&p);
+  Gu::getPhysicsWorld()->collectVisibleNodes(&p);
 
+  //////////////////////////////////////////////////////////////////////////
   //Loop through objects and find whether they have changed since last update.
   _bMustUpdate = false;
 
@@ -213,8 +209,7 @@ void ShadowFrustum::collect(std::shared_ptr<CameraNode> cam, std::shared_ptr<Phy
   }
 }
 void ShadowFrustum::debugRender() {
-
-  RenderUtils::drawFrustumShader(_pLightSource->getScene()->getActiveCamera(), getContext(), _pFrustum, Color4f(1, 0, 0, 1));
+  RenderUtils::drawFrustumShader(_pFrustum, Color4f(1, 0, 0, 1));
 }
 void ShadowFrustum::createFbo() {
   if (_bShadowMapEnabled == false) {
@@ -222,15 +217,15 @@ void ShadowFrustum::createFbo() {
   }
   deleteFbo();
 
-  RenderUtils::debugGetRenderState(getContext());
+  RenderUtils::debugGetRenderState();
   // Create the depth buffer
-  RenderUtils::createDepthTexture(getContext(), &_glDepthTextureId, _iFboWidthPixels, _iFboHeightPixels, false, 0, GL_DEPTH_COMPONENT24);
+  RenderUtils::createDepthTexture(&_glDepthTextureId, _iFboWidthPixels, _iFboHeightPixels, false, 0, GL_DEPTH_COMPONENT24);
 
   //Bind framebuffer and attach depth texture.
-  getContext()->glGenFramebuffers(1, &_glFrameBufferId);
-  getContext()->chkErrRt();
-  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _glFrameBufferId);
-  getContext()->chkErrRt();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGenFramebuffers(1, &_glFrameBufferId);
+  Gu::checkErrorsRt();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, _glFrameBufferId);
+  Gu::checkErrorsRt();
 
   // Create the cube map
   glGenTextures(1, &_glShadowMapId);
@@ -246,40 +241,40 @@ void ShadowFrustum::createFbo() {
   //    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  getContext()->chkErrRt();
+  Gu::checkErrorsRt();
 
   glTexImage2D(GL_TEXTURE_2D, 0, SHADOW_CUBE_MAP_TEX_INTERNAL_FORMAT,
     _iFboWidthPixels, _iFboHeightPixels, 0, SHADOW_CUBE_MAP_TEX_FORMAT, SHADOW_CUBE_MAP_TEX_TYPE, nullptr);
-  getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glShadowMapId, 0);
-  getContext()->chkErrRt();
-  // getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, glSide, _glShadowCubeMapId, 0);
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glShadowMapId, 0);
+  Gu::checkErrorsRt();
+  // std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, glSide, _glShadowCubeMapId, 0);
 
 
-  getContext()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _glDepthTextureId, 0);
-  getContext()->chkErrRt();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _glDepthTextureId, 0);
+  Gu::checkErrorsRt();
 
 
   glBindTexture(GL_TEXTURE_2D, 0);
-  getContext()->chkErrRt();
+  Gu::checkErrorsRt();
 
   // Disable writes to the color buffer
   glDrawBuffer(GL_NONE);
 
   // Disable reads from the color buffer
   glReadBuffer(GL_NONE);
-  getContext()->chkErrRt();
+  Gu::checkErrorsRt();
 
 
-  GLenum status = getContext()->glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  GLenum status = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    Br2ThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
-    getContext()->chkErrRt();
+    BroThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
+    Gu::checkErrorsRt();
   }
 
-  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-  getContext()->chkErrRt();
+  Gu::checkErrorsRt();
 
 }
 
@@ -288,13 +283,13 @@ void ShadowFrustum::deleteFbo() {
     return;
   }
   if (_glFrameBufferId != 0) {
-    getContext()->glDeleteFramebuffers(1, &_glFrameBufferId);
+    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteFramebuffers(1, &_glFrameBufferId);
   }
   if (_glDepthTextureId != 0) {
-    getContext()->glDeleteTextures(1, &_glDepthTextureId);
+    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteTextures(1, &_glDepthTextureId);
   }
   if (_glShadowMapId != 0) {
-    getContext()->glDeleteTextures(1, &_glShadowMapId);
+    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteTextures(1, &_glShadowMapId);
   }
 
 }
@@ -305,7 +300,7 @@ void ShadowFrustum::copyAndBlendToShadowMap(std::shared_ptr<ShadowFrustum> pBox)
   //Here we can do shadowmap operations.
 
   if (pBox->getGlTexId() != 0) {
-    getContext()->glCopyImageSubData(
+    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCopyImageSubData(
       _glShadowMapId
       , GL_TEXTURE_2D
       , 0
@@ -318,7 +313,7 @@ void ShadowFrustum::copyAndBlendToShadowMap(std::shared_ptr<ShadowFrustum> pBox)
       , _iFboHeightPixels
       , 0
     );
-    getContext()->chkErrDbg();
+    Gu::checkErrorsDbg();
   }
 }
 void ShadowFrustum::beginRenderShadowFrustum() {
@@ -326,15 +321,15 @@ void ShadowFrustum::beginRenderShadowFrustum() {
     return;
   }
   //Gd::verifyRenderThread();
-  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _glFrameBufferId);
-  getContext()->chkErrDbg();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _glFrameBufferId);
+  Gu::checkErrorsDbg();
 
-  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  getContext()->chkErrDbg();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  Gu::checkErrorsDbg();
 
   glDrawBuffer(GL_COLOR_ATTACHMENT0);
-  getContext()->chkErrDbg();
-  getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glShadowMapId, 0);
+  Gu::checkErrorsDbg();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _glShadowMapId, 0);
 
   //if (GetAsyncKeyState(VK_NUMPAD7) & 0x8000) {
   //    glClearColor(0, 0, 0, 1);//This could be moved out of here.
@@ -344,7 +339,7 @@ void ShadowFrustum::beginRenderShadowFrustum() {
 //    }
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  getContext()->chkErrDbg();
+  Gu::checkErrorsDbg();
 }
 void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumMaster) {
   if (_bShadowMapEnabled == false) {
@@ -359,7 +354,7 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
 
     _pVisibleSet->sortAndDrawMeshes(
       [](std::shared_ptr<VertexFormat> vf) {
-        return GLContext::getShaderManager()->getShadowShader(vf);
+        return Gu::getShaderMaker()->getShadowShader(vf);
       },
       [&](std::shared_ptr<ShaderBase> sb) {
         sb->bind();
@@ -369,7 +364,7 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
         sb->setUf("_ufShadowLightPos", (void*)&vFinal, 1, false);
 
       },
-        [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshComponent> bn) {
+        [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshNode> bn) {
         RenderParams rp;
         rp.setShader(sb);
         bn->drawShadow(rp);
@@ -388,8 +383,8 @@ void ShadowFrustum::endRenderShadowFrustum() {
   }
   //Gd::verifyRenderThread();
   glBindTexture(GL_TEXTURE_2D, 0);
-  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  getContext()->chkErrDbg();
+  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  Gu::checkErrorsDbg();
 }
 
 
@@ -401,4 +396,4 @@ void ShadowFrustum::endRenderShadowFrustum() {
 
 
 
-}//ns BR2
+}//ns Game

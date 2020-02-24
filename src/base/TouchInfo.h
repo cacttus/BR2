@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class TouchInfo
 *  @brief Extend this class to hold player touch info for the world.
@@ -36,7 +36,7 @@ public:
   void touchBegin(vec2& mouse, ButtonState::e b);
   void touchEnd(vec2& mouse, ButtonState::e b);
 };
-}//ns BR2
+}//ns Game
 
 
 

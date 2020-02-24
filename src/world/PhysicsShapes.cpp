@@ -2,9 +2,7 @@
 #include "../world/PhysicsShapes.h"
 
 
-namespace BR2 {
-///////////////////////////////////////////////////////////////////
-
+namespace Game {
 
 SphereShape::SphereShape(VertexBufferPointer& vbPointer, float r) : _fRadius(r) {
 
@@ -42,4 +40,4 @@ void SphereShape::serialize(std::shared_ptr<BinaryFile> fb) {
 }
 
 
-}//ns BR2
+}//ns Game

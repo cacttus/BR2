@@ -9,21 +9,21 @@
 
 #include "../model/UtilMesh.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class UtilMeshInline
-*  @brief A substitute for inline OpenGL draw calls.
+*  @brief
 */
 class UtilMeshInline : public UtilMesh {
 public:
-  UtilMeshInline(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx);
+  UtilMeshInline(std::shared_ptr<GLContext> ctx);
   virtual ~UtilMeshInline() override;
 
   void setDefaultColor(vec4& v) { _vDefaultColor = v; }
 
-  virtual void generate() override;
-  virtual void preDraw()  override {}
-  virtual void postDraw() override {}
+  OVERRIDES void generate() OVERRIDE;
+  OVERRIDES void preDraw()  OVERRIDE {}
+  OVERRIDES void postDraw() OVERRIDE {}
 
   void begin(GLenum type);
   void vt1(v_v3c4& v1);
@@ -31,9 +31,9 @@ public:
   void vt2(vec3& v1, vec3& v2, vec4* color = nullptr);
   void end();//End vertex processing and draw the primitives
 
-
   void addBox(Box3f* b, vec4* color = nullptr);
   void addBox(vec3* points, vec4* color = nullptr);
+
 private:
   //GrowBuffer<v_v3c4>* _pGrowBuffer;
   std::vector<v_v3c4> _pBuf;
@@ -43,29 +43,28 @@ private:
 };
 class UtilMeshInline2d : public UtilMesh {
 public:
-  UtilMeshInline2d(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx);
+  UtilMeshInline2d(std::shared_ptr<GLContext> ctx);
   virtual ~UtilMeshInline2d() override;
 
   void setDefaultColor(vec4& v) { _vDefaultColor = v; }
 
-  virtual void generate() override;
-  virtual void preDraw()  override {}
-  virtual void postDraw() override {}
+  OVERRIDES void generate() OVERRIDE;
+  OVERRIDES void preDraw()  OVERRIDE {}
+  OVERRIDES void postDraw() OVERRIDE {}
 
   void begin(GLenum type);
   void vt1(v_v2c4& v1);
   void vt2(vec2& v1, vec2& v2, vec4* color = nullptr);
   void end();//End vertex processing and draw the primitives
+
 private:
   //GrowBuffer<v_v2c4>* _pGrowBuffer;
   std::vector<v_v2c4> _pBuf;
   v_v2c4 _curVert;
   vec4 _vDefaultColor;
   void pushCurVert();
-
-
 };
-}//ns BR2
+}//ns Game
 
 
 

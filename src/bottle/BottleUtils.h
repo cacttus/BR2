@@ -2,7 +2,7 @@
 *
 *    @file Utils.h
 *    @date January 19, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

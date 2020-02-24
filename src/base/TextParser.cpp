@@ -1,7 +1,8 @@
 #include "../base/TextParser.h"
 #include "../base/Exception.h"
 
-namespace BR2 {
+namespace Game {
+
 TextParser::TextParser(char* data) {
   _ptr = data;
 }
@@ -51,16 +52,16 @@ bool TextParser::seekPastChar(char c) {
   return false;
 }
 /**
-*  @fn seekToChars()
-*  @brief Seeks to any of hte input chars and increments the pointer past it
+*    @fn seekToChars()
+*    @brief Seeks to any of hte input chars and increments the pointer past it
 */
 void TextParser::seekPastChars(std::vector<char> cv) {
   seekToChars(cv);
   inc();
 }
 /**
-*  @fn seekToChars()
-*  @brief Seek pointer until one of the specified characters is reached.
+*    @fn seekToChars()
+*    @brief Seek pointer until one of the specified characters is reached.
 */
 void TextParser::seekToChars(std::vector<char> cv) {
   bool exit = false;
@@ -83,8 +84,8 @@ void TextParser::seekToChars(std::vector<char> cv) {
   }
 }
 /**
-*  @fn inc()
-*  increment pointer
+*    inc()
+*    increment pointer
 */
 bool TextParser::inc() {
   if (_bEof) {
@@ -101,8 +102,8 @@ bool TextParser::inc() {
   return eof();
 }
 /**
-*  @fn dec()
-*  decrement pointer
+*    dec()
+*    decrement pointer
 */
 void TextParser::dec() {
   if (_ptrState == ptr_begin) {
@@ -121,8 +122,8 @@ void TextParser::dec() {
   _ptrState = ptr_seek;
 }
 /**
-*  @fn eof()
-*  return true if the poitner is at eof
+*    eof()
+*    return true if the poitner is at eof
 */
 bool TextParser::eof() {
   //return (*_ptr) == 0;
@@ -136,8 +137,8 @@ bool TextParser::eof() {
 }
 
 /**
-*  @fn eatws()
-*  eats white space
+*    eatws()
+*    eats white space
 */
 void TextParser::eatws() { while (charIsWs()) inc(); }
 /**
@@ -162,8 +163,8 @@ void TextParser::eatBlockComment() {
 
 }
 /**
-*  @fn eatLine()
-*  @breif Eats a line until \n
+*    @fn eatLine()
+*    @breif Eats a line until \n
 */
 void TextParser::eatLine() {
   while (1) {
@@ -178,8 +179,8 @@ void TextParser::eatLine() {
 }
 
 /**
-*  @fn eatBody
-*  @brief Eat the body of a statement/function
+*    @fn eatBody
+*    @brief Eat the body of a statement/function
 */
 void TextParser::eatBody() {
   if (charAt() == '{') {
@@ -197,6 +198,8 @@ void TextParser::eatBody() {
     throw new Exception("Unmatched Comment Encountered at line ", __LINE__, __FILE__);
   }
 }
+
+
 
 void TextParser::eatLine(int32_t& lineCountToAddTo) {
   while (1) {
@@ -219,4 +222,4 @@ void TextParser::eatLine(int32_t& lineCountToAddTo) {
 
 
 
-}//ns BR2
+}//Ns Game

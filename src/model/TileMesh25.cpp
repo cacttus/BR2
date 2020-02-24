@@ -1,20 +1,16 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
-
-#include "../gfx/GpuQuad3.h"
+#include "../base/AppBase.h"
 #include "../gfx/ShaderBase.h"
-
 #include "../model/MeshNode.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
-
 #include "../model/TileMesh25.h"
-//#include "../bottle/World25Grid.h"
-//#include "../bottle/CongaUtils.h"
 
-namespace BR2 {
+namespace Game {
 TileMesh25::TileMesh25(std::shared_ptr<GLContext> c, int32_t nQuads) : _pContext(c), _nQuads(nQuads) {
+
   _pVaoData = std::make_shared<VaoDataGeneric>(c, TileMeshVert::getVertexFormat());
 
   allocateData();
@@ -80,7 +76,7 @@ void TileMesh25::getQuad(TileMeshVert*& p0, TileMeshVert*& p1, TileMeshVert*& p2
 
 
 
-}//ns BR2
+}//ns Game
 
 
  //int TileMesh25::offBL(int x, int y) {

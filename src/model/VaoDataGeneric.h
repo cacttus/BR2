@@ -11,12 +11,10 @@
 #include "../model/ModelHeader.h"
 #include "../model/VertexFormat.h"
 
-namespace BR2 {
-/**
-*  @class VaoShader
-*  @brief Vertex Array Object for each shader program.
-*/
-class VaoShader : public GLFramework {
+namespace Game {
+//This is a VAO for each shader.  It matches the Vertex Format to the
+//given shader's inputs.
+class VaoShader : public VirtualMemory {
 public:
   VaoShader(std::shared_ptr<GLContext> ctx, std::shared_ptr<ShaderBase> pShader, std::shared_ptr<VertexFormat> fmt);
   virtual ~VaoShader() override;
@@ -26,6 +24,7 @@ public:
   std::shared_ptr<IboData> getIbo() { return _pIboData; }
   std::shared_ptr<VboData> getVbo() { return _pVboData; }
 private:
+  std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<ShaderBase> _pShader = nullptr;
   std::shared_ptr<VertexFormat> _pVertexFormat = nullptr;
   std::shared_ptr<IboData> _pIboData = nullptr;
@@ -37,11 +36,11 @@ private:
 };
 
 /**
-*  @class VaoDataGeneric
-*  @brief Stores Mesh Buffers and maps them to Vertex Arrays for each Shader that renders
+*    @class VaoDataGeneric
+*    @brief Stores Mesh Buffers and maps them to Vertex Arrays for each Shader that renders
 *    the mesh.
 */
-class VaoDataGeneric : public GLFramework {
+class VaoDataGeneric : public VirtualMemory {
 public:
   VaoDataGeneric(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> vf);
   virtual ~VaoDataGeneric() override;
@@ -56,15 +55,14 @@ public:
 
 private:
   std::map<std::shared_ptr<ShaderBase>, std::shared_ptr<VaoShader>> _mapVaoShaders;
+  std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<VertexFormat> _pVertexInfo = nullptr;
   std::shared_ptr<VboData> _pVboData = nullptr;
   std::shared_ptr<IboData> _pIboData = nullptr;
-
-
 };
 
 
-}//ns BR2
+}//ns Game
 
 
 

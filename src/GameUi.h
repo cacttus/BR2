@@ -2,7 +2,10 @@
 *
 *    @file GameUi.h
 *    @date February 22, 2018
-*    @author MetalMario971
+*    @author Derek Page
+*
+*    © 2018 
+*
 *
 */
 #pragma once

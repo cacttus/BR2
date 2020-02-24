@@ -9,15 +9,14 @@
 
 #include "../base/BaseHeader.h"
 
-namespace BR2 {
-
+namespace Game {
 /**
-* @class StringExtensions
+*   @class StringExtensions
 *   @brief This file extends std::string allowing for implicit casts to integral types (doing away with TStr).
 */
 class StringExtensions {
 public:
-    void Test();
+  void Test();
 };
 
 //
@@ -67,7 +66,7 @@ public:
 
 
 
-}//ns BR2
+}//ns Game
 
 
 

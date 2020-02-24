@@ -1,14 +1,14 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../world/PhysicsGrid.h"
-#include "../world/PhysicsManager.h"
+#include "../world/PhysicsWorld.h"
 #include "../world/Manifold.h"
 #include "../world/PhysicsNode.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 
 
-namespace BR2 {
-PhysicsGrid::PhysicsGrid(std::shared_ptr<PhysicsManager> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty) : _bEmpty(bEmpty),
+namespace Game {
+PhysicsGrid::PhysicsGrid(std::shared_ptr<PhysicsWorld> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty) : _bEmpty(bEmpty),
 _pPhysicsWorld(pw), _viPos(viPos) {
   _fNodeHeight = fNodeHeight;
   _fNodeWidth = fNodeWidth;
@@ -28,6 +28,7 @@ _pPhysicsWorld(pw), _viPos(viPos) {
 PhysicsGrid::~PhysicsGrid() {
   DEL_MEM(_pBoundBox);
   //DEL_MEM(_pManifold);
+
 }
 std::shared_ptr<PhysicsGrid> PhysicsGrid::getNeighborOffset(float off_x, float off_y, float off_z) {
   vec3 pt = getBoundBox()->center();
@@ -46,7 +47,7 @@ bool PhysicsGrid::canDelete() {
 
   //Do not unload persistent objects.
   for (std::shared_ptr<PhysicsNode> ob : *getManifold()->getAll()) {
-    if (std::dynamic_pointer_cast<PhysicsData>(ob->getNodeData())->getIsPersistent() == true) {
+    if (std::dynamic_pointer_cast<PhysicsSpec>(ob->getSpec())->getIsPersistent() == true) {
       return false;
     }
   }
@@ -143,7 +144,7 @@ PhysicsGridSide::e PhysicsGrid::getOppNeighborIndex(PhysicsGridSide::e iNeighbor
   else if (iNeighbor == PhysicsGridSide::e::gA) { return  PhysicsGridSide::e::gF; }
   else if (iNeighbor == PhysicsGridSide::e::gF) { return  PhysicsGridSide::e::gA; }
 
-  BrThrowNotImplementedException();
+  BroThrowNotImplementedException();
   //return  World25Side::e::gT;
 }
 std::shared_ptr<PhysicsGrid> PhysicsGrid::getNeighbor(int iSide) {
@@ -164,4 +165,4 @@ vec3 PhysicsGrid::getOriginR3() {
 }
 
 
-}//ns BR2
+}//ns Game

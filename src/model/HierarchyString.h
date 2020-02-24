@@ -10,23 +10,21 @@
 
 #include "../base/BaseHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class HierarchyString
-*  @brief A string "flat file" hierarchy.  Sort of like an L system string it parses
-*    data between nodes demarcated by (..) with values separated by commas
-*    and push and pop operations are demarcated by [...]
+*  @brief A string "flat file" hierarchy.  Sort of like an L system string it parses data between nodes demarcated by (..) with values separated by commas and push and pop operations are demarcated by [...]
 *   Generally, all hierarchy strings look like:
 *       (Node_Param1, Node_Param2,...,NodeParamn)[(NodeParam...n)
-*
 *   For Joints:
 *        (root,52)[(r_hip,53)[(r_upper_leg,54)[(r_lower_leg,55)[(r_foot,56)]]]][(l_hip,60)[(l_upper_leg,61)[(l_lower_leg,62)[(l_foot,63)]]]][(pelvis,72)[(chest,73)[(r_shoulder,77)[(r_upper_arm,78)[(r_lower_arm,83)[(r_hand,84)]]]][(l_shoulder,86)[(l_upper_arm,87)[(l_lower_arm,88)[(l_hand,89)]]]][(neck,74)[(head,75)]]]]
 */
 template <class Tx>
 class HierarchyString : public VirtualMemory {
 public:
+
   HierarchyString(std::string h_str) { _h_str = h_str; }
-  virtual ~HierarchyString() override {
+  OVERRIDES ~HierarchyString() OVERRIDE {
     //Not sure if we keep the joints or what.
     //DELETE_VECTOR_ELEMENTS(_vecTx);
     _vecTx.resize(0);
@@ -42,7 +40,7 @@ public:
   MUST_OVERRIDE void addNode(Tx parent, Tx child) = 0;
 
   // not implemented by default.
-  virtual bool getIsDupe(Tx j1) { BrThrowNotImplementedException(); return FALSE; }
+  virtual bool getIsDupe(Tx j1) { BroThrowNotImplementedException(); return FALSE; }
 
 protected:
   std::string _h_str;
@@ -51,7 +49,6 @@ protected:
 
 private:
   Tx _parse(int32_t& n, Tx parent, bool bThrowIfDupeFound);
-
   std::vector<std::string> _vecParms;
 };
 template < class Tx >
@@ -64,8 +61,8 @@ bool HierarchyString<Tx>::tryGetParam(int32_t parmId, std::string& __out_ parm) 
   return true;
 }
 /**
-*  @fn parse()
-*  @brief Call this to parse the hierarchy.
+*    @fn parse()
+*    @brief Call this to parse the hierarchy.
 *
 */
 template < class Tx >
@@ -90,7 +87,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
       n++;
       //push
       if (pLastNode.isNull()) {
-        Br2ThrowException("Could not parse hierarchy. Child node was null."); //error
+        BroThrowException("Could not parse hierarchy. Child node was null."); //error
       }
       _parse(n, pLastNode, bThrowIfDupeFound);
     }
@@ -101,7 +98,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
     else if (c == '(') {
       //begin node
       if (in_tok == (bool)true)
-        Br2ThrowException("Could not parse node: there was an error in the hierarchy string[1]."); //error
+        BroThrowException("Could not parse node: there was an error in the hierarchy string[1]."); //error
 
       in_tok = true;
       node_part = 0;
@@ -111,7 +108,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
     else if (c == ')') {
       //end node
       if (in_tok == false)
-        Br2ThrowException("Could not parse node: there was an error in the hierarchy string[2]."); //error
+        BroThrowException("Could not parse node: there was an error in the hierarchy string[2]."); //error
 
       in_tok = false;
 
@@ -119,7 +116,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
 
       if (bThrowIfDupeFound == TRUE) {
         if (getIsDupe(new_node) == TRUE) {
-          Br2ThrowException("[Hierarchy string] Duplicate item found in hierarchy string.");
+          BroThrowException("[Hierarchy string] Duplicate item found in hierarchy string.");
         }
       }
 
@@ -151,7 +148,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
   return _pRoot;
 }
 
-}//ns BR2
+}//ns game
 
 
 

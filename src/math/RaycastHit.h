@@ -10,7 +10,7 @@
 #include "../math/MathHeader.h"
 #include "../math/Vec3x.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @struct RaycastHit
 *  @brief Returns hit test data from a projected ray.
@@ -45,6 +45,7 @@ public:
     this->_t = bh->_t;
     this->_pPickData = bh->_pPickData;
   }
+
 public:
   bool _bHit;    // Whether the ray intersected the box.
   bool _p1Contained;
@@ -53,11 +54,9 @@ public:
   void* _pPickData; // picked object (BvhObject3*)
   vec3 _vNormal; //The normal of the plane the raycast hit.
   //Do not include ray data for optimization.
-
-
 };
 
-}//ns BR2
+}//ns Game
 
 
 

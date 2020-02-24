@@ -8,14 +8,8 @@
 #define __ShaderCache_434517993163531317228885_H__
 
 #include "../gfx/GfxHeader.h"
-//#include "../gpu/ShaderHeader.h"
-//#include "../hardware/HardwareHeader.h"
 
-namespace BR2 {
-/**
-*  @class GLProgramBinary
-*  @brief An OpenGL binary program stored (cached) on the hard disk.
-*/
+namespace Game {
 class GLProgramBinary : public VirtualMemory {
 public:
   GLProgramBinary(ShaderCache* c, size_t binLength);
@@ -30,33 +24,33 @@ public:
 
 /**
 *  @class ShaderCache
-*  @brief Caches compiled shaders as binary data.
+*  @brief Caches shader binaries.
 */
-class ShaderCache : public GLFramework {
+class ShaderCache : public VirtualMemory {
 public:
-  ShaderCache(std::shared_ptr<GLContext> ct, string_t cacheDir);
+  ShaderCache(t_string cacheDir);
   virtual ~ShaderCache() override;
 
   void saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram);
-  std::shared_ptr<ShaderBase> tryLoadCachedBinary(string_t programName, std::vector<string_t> shaderFiles);
+  std::shared_ptr<ShaderBase> tryLoadCachedBinary(t_string programName, std::vector<t_string> shaderFiles); \
 
 protected:
-  string_t getBinaryNameFromProgramName(string_t& progName);
+  t_string getBinaryNameFromProgramName(t_string& progName);
   bool isSupported() { return _bCacheIsSupported; }
   void freeLoadedBinary(GLProgramBinary* bin);
   GLProgramBinary* getBinaryFromGpu(std::shared_ptr<ShaderBase> prog);
   std::shared_ptr<ShaderBase> loadBinaryToGpu(std::string, GLProgramBinary* bin);
-  GLProgramBinary* getBinaryFromDisk(string_t& programName);
-  void saveBinaryToDisk(string_t& programName, GLProgramBinary* bin);
-  void deleteBinaryFromDisk(string_t& programName);
+  GLProgramBinary* getBinaryFromDisk(t_string& programName);
+  void saveBinaryToDisk(t_string& programName, GLProgramBinary* bin);
+  void deleteBinaryFromDisk(t_string& programName);
 
 private:
   bool _bCacheIsSupported = false;
   std::vector<GLProgramBinary*> _vecBinaries;
-  string_t _strCacheDirectory;
+  t_string _strCacheDirectory;
 };
 
-}//ns BR2
+}//ns game
 
 
 

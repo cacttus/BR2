@@ -8,7 +8,7 @@
 #define __BITHACKS_90737118105551832723055_H__
 
 #include "../base/MachineTypes.h"
-namespace BR2 {
+namespace Game {
 
 //low level bit stuff
 class BitHacks {
@@ -27,7 +27,7 @@ public:
   static uint8_t trailingzeros(int32_t x);// - Returns the position of the first bit in the little endian tbyte. Returns the LOG2 of the first bit.
 };
 
-}//ns BR2
+}//ns game
 
 
 

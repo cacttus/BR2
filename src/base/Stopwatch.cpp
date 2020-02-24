@@ -1,12 +1,12 @@
 #include "../base/Stopwatch.h"
 #include "../base/Logger.h"
-
 #include "../base/DateTime.h"
 #include "../base/Gu.h"
 
 
-namespace BR2 {
-Stopwatch::Stopwatch(string_t strName, bool bStart) :
+namespace Game {
+
+Stopwatch::Stopwatch(t_string strName, bool bStart) :
   _tA(0)
   , _tB(0) {
   _strName = strName;
@@ -16,15 +16,15 @@ Stopwatch::Stopwatch(string_t strName, bool bStart) :
 }
 Stopwatch::~Stopwatch() {
 }
-void Stopwatch::start(string_t strName) {
+void Stopwatch::start(t_string strName) {
   _strName = strName;
   _tA = Gu::getMicroSeconds();
 }
-string_t Stopwatch::stop(bool bLog, bool bFancy) {
+t_string Stopwatch::stop(bool bLog, bool bFancy) {
   _tB = Gu::getMicroSeconds();
 
   if (bLog == true) {
-    Br2LogDebug(toString(bFancy));
+    BroLogDebug(toString(bFancy));
   }
 
   return toString(bFancy);
@@ -38,7 +38,7 @@ t_timeval Stopwatch::deltaMicroseconds() {
 t_timeval Stopwatch::deltaMicrosecondsRemainder() {
   return (_tB - _tA) % 1000;
 }
-string_t Stopwatch::toString(bool bFancy) {
+t_string Stopwatch::toString(bool bFancy) {
   if (bFancy) {
     return DateTime::timeToStr(DateTime::getTime(deltaMilliseconds()));
   }
@@ -47,12 +47,12 @@ string_t Stopwatch::toString(bool bFancy) {
     return Stz "" + _strName + " " + StringUtil::format("%.2f", (float)deltaMilliseconds() + ((float)deltaMicrosecondsRemainder() / 1000.0f)) + "ms";
   }
 }
-void Stopwatch::print(string_t& st) {
-  string_t str = st + toString() + "ms";
+void Stopwatch::print(t_string& st) {
+  t_string str = st + toString() + "ms";
   Gu::print(str);
 }
-string_t Stopwatch::pulse(bool bLog, bool bFancy) {
-  string_t ret = stop(bLog, bFancy);
+t_string Stopwatch::pulse(bool bLog, bool bFancy) {
+  t_string ret = stop(bLog, bFancy);
   start();
   return ret;
 }
@@ -71,4 +71,4 @@ bool Stopwatch::pulse(t_timeval isGreaterThanMs) {
   return bRet;
 }
 
-}//ns BR2
+}//ns game

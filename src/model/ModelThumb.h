@@ -9,18 +9,17 @@
 
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class ModelThumb
-*  @brief Generates thumbnail pictures for models
+*  @brief
 */
 class ModelThumb : public VirtualMemory {
 public:
-    static std::shared_ptr<Img32> genThumb(std::shared_ptr<ModelData> mod, int32_t iThumbSize);
-    
+    static std::shared_ptr<Img32> genThumb(std::shared_ptr<ModelSpec> mod, int32_t iThumbSize);
 };
 
-}//ns BR2
+}//ns Game
 
 
 

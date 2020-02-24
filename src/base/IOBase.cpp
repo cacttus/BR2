@@ -1,7 +1,6 @@
 #include "../base/IOBase.h"
 
-
-namespace BR2 {
+namespace Game {
 void IOBase<char>::readVec3(vec3& val) {
   int32_t readSiz;
   readSiz = sizeof(vec3);
@@ -102,10 +101,10 @@ void IOBase<char>::writeUint32(uint32_t& val, size_t offset) {
 
   write((char*)&val, readSiz, offset);
 }
-void IOBase<char>::writeStr(const string_t& str) {
+void IOBase<char>::writeStr(const t_string& str) {
   write(str.c_str(), str.length(), memsize_max);
 }
-void IOBase<char>::writeTextLine(const string_t& str) {
+void IOBase<char>::writeTextLine(const t_string& str) {
   writeStr((str + "\n").c_str());
 }
 
@@ -118,4 +117,4 @@ void IOBase<char>::writeTextLine(const string_t& str) {
 
 
 
-}//ns BR2
+}//ns game

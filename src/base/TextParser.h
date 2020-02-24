@@ -9,7 +9,7 @@
 
 #include "../base/BaseHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class TextParser
 *  @brief Parse Text.  Takes a pointer to the text data to parse and increments its own internal copy of the pointer.
@@ -45,6 +45,7 @@ private:
     ptr_eof // ptr is end of file
   }t_ptr_state;
 
+private:
   bool _bEof = false;
   int _linenum = 1;
   t_ptr_state _ptrState = t_ptr_state::ptr_begin;
@@ -53,6 +54,6 @@ private:
 
 
 
-}//ns BR2
+}//ns game
 
 #endif

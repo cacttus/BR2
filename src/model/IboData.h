@@ -9,17 +9,18 @@
 
 #include "../model/ModelHeader.h"
 #include "../model/GpuBufferData.h"
-namespace BR2 {
+
+namespace Game {
 /**
 *  @class IboData
 *  @brief Represents a vertex buffer object in Opengl.
 */
 class IboData : public GpuBufferData {
 public:
-  IboData(std::shared_ptr<GLContext> ctx, size_t iElementSize);
-  virtual ~IboData() override;
+    IboData(std::shared_ptr<GLContext> ctx, size_t iElementSize);
+    virtual ~IboData() override;
 };
-}//ns BR2
+}//ns game
 
 
 

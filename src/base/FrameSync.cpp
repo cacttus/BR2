@@ -1,17 +1,25 @@
 #include "../base/FrameSync.h"
 #include "../base/Gu.h"
+#include "../base/AppBase.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
-#include "../gfx/GLContext.h"
-#include "../gfx/GLContext.h"
-#include "../gfx/GraphicsWindow.h"
+#include "../gfx/GraphicsContext.h"
 
-namespace BR2 {
-FrameSync::FrameSync(std::shared_ptr<GLContext> ct) {
-  _bVsyncDisabled = false;
-  _pContext = ct;
+namespace Game {
+
+FrameSync::FrameSync() :_bVsyncDisabled(false) {
+
 }
 FrameSync::~FrameSync() {
+
+}
+float FrameSync::getCurrentFrameCap() {
+  if (!_bVsyncDisabled) {
+    return _nFramesMax;
+  }
+  else {
+    return Gu::getFpsMeter()->getFps();
+  }
 }
 int64_t FrameSync::calculateWaitMicroseconds() {
   int64_t  d = (int64_t)(_syncEnd - _syncStart);
@@ -43,8 +51,8 @@ int FrameSync::syncEnd() {
     while (elapsedUs < waitUs) {
       // - If we have an idle processor execute some extra computations
       // while we wait for next frame to come around.
-      if (_pContext->getWindow() != nullptr) {
-        _pContext->getWindow()->idle(waitUs - elapsedUs);//**MUST BE US
+      if (Gu::getApp() != nullptr) {
+        Gu::getApp()->idle(waitUs - elapsedUs);//**MUST BE US
       }
 
       // - update elapsed
@@ -53,9 +61,7 @@ int FrameSync::syncEnd() {
   }
   else {
     //Still call the idle() method so stuff don't get missed
-    if (_pContext->getWindow() != nullptr) {
-      _pContext->getWindow()->idle(0);
-    }
+    Gu::getApp()->idle(0);
   }
   return 0;
 }
@@ -68,4 +74,4 @@ void FrameSync::enable() {
 }
 
 
-}//ns BR2
+}//ns game

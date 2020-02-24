@@ -1,21 +1,19 @@
 #include "../base/Logger.h"
-#include "../base/Hash.h"
 #include "../base/FileSystem.h"
+#include "../base/Hash.h"
 #include "../base/EngineConfig.h"
-#include "../gfx/GLContext.h"
-#include "../base/Gu.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../model/Material.h"
 #include "../model/MobFile.h"
-#include "../model/MeshData.h"
+#include "../model/MeshSpec.h"
 #include "../model/Model.h"
 #include "../model/ModelCache.h"
 #include "../model/ModelThumb.h"
 
-namespace BR2 {
-MobFile::MobFile(std::shared_ptr<GLContext> ct)  {
-  _pContext = ct;
+namespace Game {
+MobFile::MobFile() {
+
 }
 MobFile::~MobFile() {
   _setModData.clear();
@@ -24,15 +22,15 @@ MobFile::~MobFile() {
   //    DEL_MEM(ml);
   //}
 }
-void MobFile::pkp(std::vector<string_t>& tokens) {
+void MobFile::pkp(std::vector<t_string>& tokens) {
   int iind = 1;
   if (lcmp(tokens[0], "mod_beg", 3)) {
     if (_pCurModDataLoad == nullptr) {
-      _pCurModDataLoad = std::make_shared<ModDataLoad>(_pContext);
+      _pCurModDataLoad = std::make_shared<ModDataLoad>();
       _pCurModDataLoad->_strModName = getCleanToken(tokens, iind);
       _pCurModDataLoad->_fVersion = TypeConv::strToFloat(getCleanToken(tokens, iind));
       if (_fVersion != _pCurModDataLoad->_fVersion) {
-        Br2LogError("Mob file verion mismatch got " + _pCurModDataLoad->_fVersion + ", but wanted " + _fVersion + ".");
+        BroLogError("Mob file verion mismatch got " + _pCurModDataLoad->_fVersion + ", but wanted " + _fVersion + ".");
         Gu::debugBreak();
       }
     }
@@ -66,6 +64,8 @@ void MobFile::pkp(std::vector<string_t>& tokens) {
       }
     }
   }
+
+
 }
 void  MobFile::preLoad() {
 }
@@ -73,47 +73,45 @@ void  MobFile::postLoad() {
 
   cacheObjectsAndComputeBoxes();
 }
-string_t MobFile::getMobDir() {
-  string_t path = FileSystem::getPathFromPath(this->_fileLoc);
+t_string MobFile::getMobDir() {
+  t_string path = FileSystem::getPathFromPath(this->_fileLoc);
   return path;
 }
 void MobFile::cacheObjectsAndComputeBoxes() {
-  _vecModelNodes.clear();
+  _vecModelSpecs.clear();
   for (std::shared_ptr<ModDataLoad> mdd : _setModData) {
     //Create Model Spec
-    std::shared_ptr<ModelNode> ms = std::make_shared<ModelNode>(_pContext, mdd->_strModName, mdd->_iFrameRate);
-    _vecModelNodes.push_back(ms);
-    //GLContext::getModelCache()->addSpec(ms);
+    std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>(mdd->_strModName, mdd->_iFrameRate);
+    _vecModelSpecs.push_back(ms);
+    Gu::getModelCache()->addSpec(ms);
 
-    Br2LogInfo("  Caching data..");
+    BroLogInfo("  Caching data..");
     //Add specs to the Caches
-    for (std::shared_ptr<ArmatureNode> pms : mdd->_setArmDatas) {
+    for (std::shared_ptr<Armature> pms : mdd->_setArmDatas) {
       ms->getArmatures().push_back(pms);
       ms->getArmatureMapOrdered().insert(std::make_pair(pms->getArmatureId(), pms));
     }
-    for (std::shared_ptr<MeshData> pms : mdd->_setMeshSpecs) {
+    for (std::shared_ptr<MeshSpec> pms : mdd->_setMeshSpecs) {
       pms->allocSkinMobFile(ms);
-      ms->getAllMeshes().push_back(std::make_shared<MeshComponent>(pms, ms));
-
-      //Mesh node isn't really a node tbh
-       /*std::shared_ptr<MeshComponent> pMeshnode = std::make_shared<MeshComponent>(getContext(), pms, getThis<ModelNode>());
-       ms->addNodeToCache(pMeshnode);*/
-
+      ms->getMeshes().push_back(pms);
     }
     for (std::shared_ptr<ActionGroup> pa : mdd->_setActions) {
       pa->scaleKeys();
       ms->getActionGroups().push_back(pa);
     }
 
-    Br2LogInfo("  Making Thumb ..");
+    BroLogInfo("  Making Thumb ..");
     //Gen THumb
     std::shared_ptr<Img32> thumb = ModelThumb::genThumb(ms, Gu::getEngineConfig()->getModelThumbSize());
     ms->setThumb(thumb);
 
   }
 }
-ModDataLoad::ModDataLoad(std::shared_ptr<GLContext> c) {
-  _pContext = c;
+
+
+//////////////////////////////////////////////////////////////////////////
+ModDataLoad::ModDataLoad() {
+
 }
 ModDataLoad::~ModDataLoad() {
   _setMeshSpecs.clear();
@@ -121,7 +119,7 @@ ModDataLoad::~ModDataLoad() {
   _pCurMeshData = nullptr;
   //  DEL_MEM(_pCurMeshData);//Lame but this is do because objf ile uses all verts in file.
 }
-bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
+bool ModDataLoad::tkAction(MobFile* mb, std::vector<t_string>& tokens) {
   int iind = 1;
 
   if (mb->lcmp(tokens[0], "act_beg", 3)) { //I.E. the motion
@@ -129,8 +127,8 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
       mb->parseErr("Cur action keys data was not null", true, false);
     }
     else {
-      string_t actName = mb->getCleanToken(tokens, iind);
-      string_t objName = mb->getCleanToken(tokens, iind);
+      t_string actName = mb->getCleanToken(tokens, iind);
+      t_string objName = mb->getCleanToken(tokens, iind);
 
       //Try to create the gruop
       Hash32 ah = STRHASH(actName);
@@ -175,9 +173,9 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
     }
     else {
       //Parse crap
-      string_t strType = mb->getCleanToken(tokens, iind);
+      t_string strType = mb->getCleanToken(tokens, iind);
       int iTime = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
-      string_t strData = mb->getCleanToken(tokens, iind);
+      t_string strData = mb->getCleanToken(tokens, iind);
 
       KeyframeInterpolation::e eInterp;
       eInterp = KeyframeInterpolation::e::Linear;
@@ -224,7 +222,7 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
   }
   return true;
 }
-bool ModDataLoad::tkArms(MobFile* mb, std::vector<string_t>& tokens) {
+bool ModDataLoad::tkArms(MobFile* mb, std::vector<t_string>& tokens) {
   int iind = 1;
 
   if (mb->lcmp(tokens[0], "arm_beg", 5)) {
@@ -232,12 +230,12 @@ bool ModDataLoad::tkArms(MobFile* mb, std::vector<string_t>& tokens) {
       mb->parseErr("Cur ARM data was not null", true, false);
     }
     else {
-      string_t strName = mb->getCleanToken(tokens, iind);
-      string_t strParentName = mb->getCleanToken(tokens, iind);
-      string_t strParentType = mb->getCleanToken(tokens, iind);
+      t_string strName = mb->getCleanToken(tokens, iind);
+      t_string strParentName = mb->getCleanToken(tokens, iind);
+      t_string strParentType = mb->getCleanToken(tokens, iind);
       int32_t iId = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
       //t_string strParent = mb->getCleanToken(tokens, iind);
-      _pCurArmData = std::make_shared<ArmatureNode>(strName, iId);
+      _pCurArmData = std::make_shared<Armature>(strName, iId);
       _pCurArmData->setParentName(strParentName, mb->parseParentType(strParentType));
     }
   }
@@ -274,31 +272,31 @@ bool ModDataLoad::tkArms(MobFile* mb, std::vector<string_t>& tokens) {
   }
   return true;
 }
-ParentType MobFile::parseParentType(string_t strParentType) {
+ParentType::e MobFile::parseParentType(t_string strParentType) {
   if (StringUtil::equalsi(strParentType, "BONE")) {
-    return ParentType::Bone;
+    return ParentType::e::Bone;
   }
   else if (StringUtil::equalsi(strParentType, "ARMATURE")) {
-    return ParentType::Armature;
+    return ParentType::e::Armature;
   }
   else if (StringUtil::equalsi(strParentType, "OBJECT")) {
-    return ParentType::Object;
+    return ParentType::e::Object;
   }
   else if (StringUtil::equalsi(strParentType, "NONE")) {
-    return ParentType::None;
+    return ParentType::e::None;
   }
   else {
     parseErr(Stz "Invalid parent type '" + strParentType);
-    return ParentType::None;
+    return ParentType::e::None;
   }
 
 }
-bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
+bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<t_string>& tokens) {
   int iind = 1;
   if (mb->lcmp(tokens[0], "mpt_beg", 4)) {
-    string_t strName = mb->getCleanToken(tokens, iind);
-    string_t strParent = mb->getCleanToken(tokens, iind);
-    string_t strParentType = mb->getCleanToken(tokens, iind);
+    t_string strName = mb->getCleanToken(tokens, iind);
+    t_string strParent = mb->getCleanToken(tokens, iind);
+    t_string strParentType = mb->getCleanToken(tokens, iind);
 
     if (StringUtil::equalsi(strName, "mt_test.Cube.006")) {
       int ii = 0;
@@ -315,7 +313,7 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
       //Do not reset hte obj data - obj file uses all verts above..
     }
     else {
-      _pCurMeshData = std::make_shared<MeshSpecData>(_pContext);
+      _pCurMeshData = std::make_shared<MeshSpecData>();
 
     }
     _pCurMeshData->setName(strName);
@@ -333,7 +331,7 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
       mb->parseErr("Cur OBJ data was null", true, false);
     }
     else {
-      std::shared_ptr<MeshData> ms = _pCurMeshData->makeSpec(mb);
+      std::shared_ptr<MeshSpec> ms = _pCurMeshData->makeSpec(mb);
       _setMeshSpecs.insert(ms);
       _pCurMeshData->resetData();
       //   DEL_MEM(_pCurObjData);
@@ -350,7 +348,8 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-MeshSpecData::MeshSpecData(std::shared_ptr<GLContext> ctx) :GLFramework(ctx) {
+MeshSpecData::MeshSpecData() {
+
 }
 MeshSpecData::~MeshSpecData() {
   _vecVerts.resize(0);
@@ -373,13 +372,13 @@ void MeshSpecData::resetData() {
   _bHasN = _bHasX = _bHasV = false;
   _bHideRender = false;
   _bKinematicShape = false;
-  _eParentType = ParentType::None;
+  _eParentType = ParentType::e::None;
 
   clearVertexCache();
   _matBasis = mat4::identity();
   _matParentInverse = mat4::identity();
 }
-bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
+bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
   int iind = 1;
   if (tkMaterial(pMobFile, tokens))
     ;
@@ -421,7 +420,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
 
       int32_t iArmId = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
       int32_t iCount = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
-      string_t strWeights = pMobFile->getCleanToken(tokens, iind);
+      t_string strWeights = pMobFile->getCleanToken(tokens, iind);
 
       if (iCount > 0) {
         parseWeights(pMobFile, vw, iArmId, strWeights);
@@ -453,7 +452,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
     _matParentInverse = pMobFile->parseMat4(pMobFile->getCleanToken(tokens, iind));
   }
   else if (pMobFile->lcmp(tokens[0], "physics_shape", 4)) {
-    string_t strBody = pMobFile->getCleanToken(tokens, iind);
+    t_string strBody = pMobFile->getCleanToken(tokens, iind);
     _bKinematicShape = TypeConv::strToBool(pMobFile->getCleanToken(tokens, iind));
     _bDynamicShape = TypeConv::strToBool(pMobFile->getCleanToken(tokens, iind));
     if (StringUtil::equalsi(strBody, "sphere")) {
@@ -478,7 +477,7 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
 
   return true;
 }
-bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<string_t>& tokens) {
+bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<t_string>& tokens) {
   int iind = 1;
 
   if (pMobFile->lcmp(tokens[0], "mtllib", 2)) {
@@ -584,11 +583,11 @@ bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<string_t>& tokens) 
   }
   return true;
 }
-void MeshSpecData::parseFace(MobFile* pMobFile, string_t t0, string_t t1, string_t t2) {
-  std::vector <string_t> strVec;
+void MeshSpecData::parseFace(MobFile* pMobFile, t_string t0, t_string t1, t_string t2) {
+  std::vector <t_string> strVec;
   int32_t iComp;
   int32_t indices[3];
-  string_t tok;
+  t_string tok;
 
   // - Parse face groups x,y,z:  x/x/x  y/y/y  z/z/z
   for (int igroup = 0; igroup < 3; ++igroup) {
@@ -613,13 +612,13 @@ void MeshSpecData::parseFace(MobFile* pMobFile, string_t t0, string_t t1, string
     strVec.clear();
   }
 }
-int32_t MeshSpecData::parseFaceComponent(MobFile* pMobFile, string_t& tok, int32_t& strlind, int32_t iComponent) {
+int32_t MeshSpecData::parseFaceComponent(MobFile* pMobFile, t_string& tok, int32_t& strlind, int32_t iComponent) {
   size_t strind = 0;// current index of '/'
   int32_t idx; // parsed vertex face index
-  string_t rt;
+  t_string rt;
 
   strind = tok.find_first_of('/', strlind);
-  if (strind == string_t::npos) {
+  if (strind == t_string::npos) {
     //Last item in the 3 element list.
     strind = tok.length();
   }
@@ -720,8 +719,8 @@ int32_t MeshSpecData::addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni) {
 
   return newIndex;
 }
-std::shared_ptr<MeshData> MeshSpecData::makeSpec(MobFile* mb) {
-  Br2LogInfo("Adding mesh part '" + _strName + "'");
+std::shared_ptr<MeshSpec> MeshSpecData::makeSpec(MobFile* mb) {
+  BroLogInfo("Adding mesh part '" + _strName + "'");
 
   std::shared_ptr<PhysicsShape> pShape = makePhysicsShapeForSpec();
   std::shared_ptr<VertexFormat> fmt = getVertexFormatForSpec(mb);
@@ -731,16 +730,17 @@ std::shared_ptr<MeshData> MeshSpecData::makeSpec(MobFile* mb) {
     n++;
   }
 #endif
-
-  std::shared_ptr<MeshData> pSpec = std::make_shared<MeshData>(getContext(), _strName, fmt, nullptr, pShape);
+  std::shared_ptr<MeshSpec> pSpec = std::make_shared<MeshSpec>(_strName, fmt, nullptr, pShape);
   pSpec->setBind(_matBasis);
   pSpec->setParentName(_strParentName, _eParentType);
   pSpec->setParentInverse(_matParentInverse);
   pSpec->setHideRender(_bHideRender);
   makeMaterialForSpec(mb, pSpec);
 
-  // Copy spec vertexes.
+  // Copy  spec vertexes.
   copySpecFragments(pSpec);
+
+  //  _vecMeshes.push_back(pSpec);
 
   _vecMeshVerts.resize(0);
   _vecMeshIndexes.resize(0);
@@ -769,36 +769,39 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
     return v_v3::getVertexFormat();
   }
 }
-void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshData> pSpec) {
+void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pSpec) {
   if (_pMatData != nullptr) {
+    std::shared_ptr<AppBase> pRoom = Gu::getApp();
+    AssertOrThrow2(pRoom != nullptr);
+
     std::shared_ptr<Texture2DSpec> diffuse = nullptr;
     std::shared_ptr<Texture2DSpec> normal = nullptr;
-    
     //create material
-    std::shared_ptr<Material> mat = std::make_shared<Material>(getContext(), _pMatData->_strMatName);
-    string_t path;
+
+    std::shared_ptr<Material> mat = std::make_shared<Material>(_pMatData->_strMatName);
+    t_string path;
 
     if (StringUtil::isNotEmpty(_pMatData->_strDiffuseTex)) {
 
       //Texture should be placed in the same directory as the mob.
       path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strDiffuseTex);
       if (FileSystem::fileExists(path)) {
-        std::shared_ptr<Texture2DSpec> pTex = GLContext::getTexCache()->getOrLoad(path);
+        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
         mat->addTextureBinding(pTex, TextureChannel::e::Channel0, TextureType::e::Color, _pMatData->_fDiffuseTexInfluence);
       }
       else {
-        Br2LogError("Texture image file " + _pMatData->_strDiffuseTex + " not found!");
+        BroLogError("Texture image file " + _pMatData->_strDiffuseTex + " not found!");
         Gu::debugBreak();
       }
     }
     if (StringUtil::isNotEmpty(_pMatData->_strNormalTex)) {
       path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strNormalTex);
       if (FileSystem::fileExists(path)) {
-        std::shared_ptr<Texture2DSpec> pTex = GLContext::getTexCache()->getOrLoad(path);
+        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
         mat->addTextureBinding(pTex, TextureChannel::e::Channel1, TextureType::e::Normal, _pMatData->_fNormalTexInfluence);
       }
       else {
-        Br2LogError("Texture image file " + _pMatData->_strNormalTex + " not found!");
+        BroLogError("Texture image file " + _pMatData->_strNormalTex + " not found!");
         Gu::debugBreak();
       }
     }
@@ -838,23 +841,23 @@ std::shared_ptr<PhysicsShape> MeshSpecData::makePhysicsShapeForSpec() {
 
   return pRet;
 }
-void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
+void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
   t_timeval t0;
 
   if (_bFlipTris) {
     t0 = Gu::getMicroSeconds();
-    Br2LogInfo("..Flipping mesh triangles..");
+    BroLogInfo("..Flipping mesh triangles..");
     for (size_t iInd = 0; iInd < _vecMeshIndexes.size(); iInd += 3) {
       v_index32 t = _vecMeshIndexes[iInd + 1];
       _vecMeshIndexes[iInd + 1] = _vecMeshIndexes[iInd + 2];
       _vecMeshIndexes[iInd + 2] = t;
     }
-    Br2LogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
+    BroLogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
 
   }
   if (_bCalcNormals) {
     t0 = Gu::getMicroSeconds();
-    Br2LogInfo("..Calc mesh Normals..");
+    BroLogInfo("..Calc mesh Normals..");
     std::vector<float> fCountPerVert;
     for (size_t iVert = 0; iVert < _vecMeshVerts.size(); ++iVert) {
       _vecMeshVerts[iVert].n = 0;
@@ -890,20 +893,20 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
     }
 
 
-    Br2LogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
+    BroLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
   if (_bSwapUvs) {
     t0 = Gu::getMicroSeconds();
-    Br2LogInfo("..Swapping mesh UVs.");
+    BroLogInfo("..Swapping mesh UVs.");
     for (size_t iInd = 0; iInd < _vecMeshVerts.size(); iInd++) {
       float t = _vecMeshVerts[iInd].x.u();
       _vecMeshVerts[iInd].x.u() = _vecMeshVerts[iInd].x.v();
       _vecMeshVerts[iInd].x.v() = t;
     }
-    Br2LogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
+    BroLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
 
-  Br2LogInfo("Copying Vertex Format...");
+  BroLogInfo("Copying Vertex Format...");
   std::vector<v_v3n3> verts_v3n3;
   std::vector<v_v3x2> verts_v3x2;
   std::vector<v_v3> verts_v3;
@@ -939,9 +942,9 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
   }
   else {
     //Eventually we should make loading this generic and just use the FragmentBufferData or sometjhing
-    Br2ThrowNotImplementedException();
+    BroThrowNotImplementedException();
   }
-  Br2LogInfo("Allocating...");
+  BroLogInfo("Allocating...");
   //Allocate
   pSpec->allocMesh(
     vData, vDataSize,
@@ -952,10 +955,10 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
   verts_v3x2.resize(0);
   verts_v3.resize(0);
 
-  Br2LogInfo("Computing Bound Box...");
+  BroLogInfo("Computing Bound Box...");
   pSpec->computeBox();
 
-  Br2LogInfo("..done");
+  BroLogInfo("..done");
 }
 int32_t MeshSpecData::findCachedVertex(int32_t vi, int32_t xi, int32_t ni) {
   ivec3 v;
@@ -987,10 +990,10 @@ void MeshSpecData::clearVertexCache() {
   }
   _mapVertexCache.clear();
 }
-void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId, string_t strWeights) {
+void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId, t_string strWeights) {
   size_t n = 0;
   char c;
-  string_t val = "";
+  t_string val = "";
   bool joint = true;    // - True if we are parsing joint ID, false if weight.
   float fWeight;
   int32_t iJointId;
@@ -1032,4 +1035,4 @@ void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId
 
 }
 
-}//ns BR2
+}//ns Game

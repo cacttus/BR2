@@ -9,16 +9,15 @@
 
 #include "../model/UtilMesh.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class UtilMeshAxis
 *  @brief draws an axis centered in the world.
 */
 class UtilMeshAxis : public UtilMesh {
 public:
-  UtilMeshAxis(std::shared_ptr<CameraNode> cam, std::shared_ptr<GLContext> ctx,
+  UtilMeshAxis(std::shared_ptr<GLContext> ctx,
     float scale = 10.0f, float lineWidth = 1.0f, mat4& transform = mat4::identity());
-
   virtual ~UtilMeshAxis() override;
 
   virtual void generate() override;
@@ -28,10 +27,9 @@ public:
 private:
   float _scale, _lineWidth;
   mat4 _mTransform;
-
 };
 
-}//ns BR2
+}//ns game
 
 
 

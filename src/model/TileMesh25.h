@@ -11,14 +11,15 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class TileBuffer
-*  @brief This is an old system, and likely, isn't needed anymore.
+*  @brief
 */
 class TileMesh25 : public VirtualMemory {
 public:
   typedef v_v3c3x2n3 TileMeshVert;
+
 public:
   TileMesh25(std::shared_ptr<GLContext> pContext, int32_t nQuads);
   virtual ~TileMesh25() override;
@@ -53,7 +54,7 @@ protected:
 
 
 };
-}//ns BR2
+}//ns Game
 
 
 

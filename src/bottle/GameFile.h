@@ -2,7 +2,7 @@
 *
 *    @file GameSaveFile.h
 *    @date December 22, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

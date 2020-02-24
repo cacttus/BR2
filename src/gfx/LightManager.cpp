@@ -1,20 +1,22 @@
 #include "../base/Logger.h"
 #include "../base/EngineConfig.h"
-#include "../base/InputManager.h"
+#include "../base/Fingers.h"
 #include "../base/Perf.h"
+
 #include "../gfx/CameraNode.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/LightNode.h"
-#include "../gfx/GLContext.h"
-#include "../gfx/RenderBucket.h"
-#include "../model/ShaderStorageBuffer.h"
-#include "../world/PhysicsManager.h"
-#include "../world/Scene.h"
 
-namespace BR2 {
-LightManager::LightManager(std::shared_ptr<GLContext> ct, std::shared_ptr<Scene> scene) :GLFramework(ct) {
-  _pScene = scene;
+#include "../model/ShaderStorageBuffer.h"
+#include "../world/PhysicsWorld.h"
+#include "../world/RenderBucket.h"
+
+
+namespace Game {
+LightManager::LightManager(std::shared_ptr<GLContext> tc) :
+  _pContext(tc) {
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();
+
   if (Gu::getConfig()->getColorSpace() == ColorSpace::e::SRGB) {
     //If SRGB is enabled we want to nullify the exponent
     //_pGpuDeferredParams->_fHdrToneMapExp = 0.899999976;
@@ -27,11 +29,10 @@ LightManager::LightManager(std::shared_ptr<GLContext> ct, std::shared_ptr<Scene>
     _pGpuDeferredParams->_fHdrSampleExp = 1.6700005f;
   }
 
-  Br2LogDebug("Light Manager Initializing");
+  BroLogDebug("Light Manager Initializing");
   initializeDeferredFogData();
 }
 LightManager::~LightManager() {
-
 }
 void LightManager::setHdrToneMapExponent(float val) {
   if (val < 0.0f) {
@@ -60,29 +61,29 @@ void LightManager::initializeDeferredFogData() {
 
 }
 void LightManager::updateRenderData() {
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_N)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_N)) {
     _pGpuDeferredParams->_fFocalDepth -= 0.5f;
   }
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_M)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_M)) {
     _pGpuDeferredParams->_fFocalDepth += 0.5f;
   }
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_J)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_J)) {
     _pGpuDeferredParams->_fFocalRange -= 0.01f;
   }
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_K)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_K)) {
     _pGpuDeferredParams->_fFocalRange += 0.01f;
   }
 
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_I)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_I)) {
     _pGpuDeferredParams->_fHdrToneMapExp -= 0.01f;
   }
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_O)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_O)) {
     _pGpuDeferredParams->_fHdrToneMapExp += 0.01f;
   }
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_T)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_T)) {
     _pGpuDeferredParams->_fHdrSampleExp -= 0.01f;
   }
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_Y)) {
+  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_Y)) {
     _pGpuDeferredParams->_fHdrSampleExp += 0.01f;
   }
   _pGpuDeferredParams->_fFogDamp = MathUtils::broClamp(_pGpuDeferredParams->_fFogDamp, 0.0f, 1.0f);
@@ -90,8 +91,10 @@ void LightManager::updateRenderData() {
   _pGpuDeferredParams->_fFogDivisor = MathUtils::broClamp(_pGpuDeferredParams->_fFogDivisor, 0.0f, FLT_MAX);
   _pGpuDeferredParams->_fAmbientIntensity = MathUtils::broClamp(_pGpuDeferredParams->_fAmbientIntensity, 0.0f, 1.0f);
 
+
+
   //    _pGpuDeferredParams->_iPointLightCount
-  std::shared_ptr<CameraNode> pCam = _pScene->getActiveCamera();
+  std::shared_ptr<CameraNode> pCam = Gu::getCamera();
   //Set world view / proj
   if (pCam != nullptr) {
     //  _pGpuDeferredParams->_mWorldProj = pCam->getProj();
@@ -114,10 +117,11 @@ void LightManager::update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowF
 // - Main function to be called on the scene to set up all the lights.
 void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf) {
   //Physics world may not be instantiated.
-  if (_pScene->getRenderBucket() != nullptr) {
+  if (Gu::getPhysicsWorld() != nullptr && Gu::getPhysicsWorld()->getRenderBucket() != nullptr) {
+
     Perf::pushPerf();
-    int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();
-    int32_t nMaxDirLights = Gu::getConfig()->getMaxDirLights();
+    int32_t nMaxPointLights = Gu::getConfig()->getMaxPointLights();//shadowmapmaxinfluences
+    int32_t nMaxDirLights = Gu::getConfig()->getMaxDirLights();//shadowmapmaxinfluences
 
     _pGpuDeferredParams->_iPointLightCount = 0;
     _pGpuDeferredParams->_iDirLightCount = 0;
@@ -128,7 +132,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
 
     //Note: we collect all lights in the physics world collection step.
     //Update all lights that collide with the main frustum
-    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getRenderBucket()->getPointLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodePoint>> p : Gu::getPhysicsWorld()->getRenderBucket()->getPointLights()) {
       std::shared_ptr<LightNodePoint> pPointLight = p.second;
       if (_pGpuDeferredParams->_iPointLightCount < nMaxPointLights) {
         pPointLight->renderShadows(pf);
@@ -139,7 +143,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
         _vecGpuPointLights.push_back(*(pPointLight->getGpuLight().get()));
       }
     }
-    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getRenderBucket()->getDirLights()) {
+    for (std::pair<float, std::shared_ptr<LightNodeDir>> p : Gu::getPhysicsWorld()->getRenderBucket()->getDirLights()) {
       std::shared_ptr<LightNodeDir> pDirLight = p.second;
       if (_pGpuDeferredParams->_iDirLightCount < nMaxDirLights) {
         pDirLight->renderShadows(mf);
@@ -151,14 +155,14 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
       }
     }
 
-    getContext()->chkErrDbg();
+    Gu::checkErrorsDbg();
     Perf::popPerf();
   }
 
 }
 std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
   std::vector<std::shared_ptr<ShadowBox>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : _pScene->getRenderBucket()->getPointLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodePoint>> p : Gu::getPhysicsWorld()->getRenderBucket()->getPointLights()) {
     if (p.second->getShadowBox()) {
       sbs.push_back(p.second->getShadowBox());
     }
@@ -168,7 +172,7 @@ std::vector<std::shared_ptr<ShadowBox>> LightManager::getAllShadowBoxes() {
 }
 std::vector<std::shared_ptr<ShadowFrustum>> LightManager::getAllShadowFrustums() {
   std::vector<std::shared_ptr<ShadowFrustum>> sbs;
-  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : _pScene->getRenderBucket()->getDirLights()) {
+  for (std::pair<float, std::shared_ptr<LightNodeDir>> p : Gu::getPhysicsWorld()->getRenderBucket()->getDirLights()) {
     if (p.second->getShadowFrustum()) {
       sbs.push_back(p.second->getShadowFrustum());
     }
@@ -183,4 +187,4 @@ std::vector<std::shared_ptr<ShadowFrustum>> LightManager::getAllShadowFrustums()
 
 
 
-}//ns BR2
+}//ns Game

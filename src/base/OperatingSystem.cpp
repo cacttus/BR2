@@ -1,41 +1,39 @@
 
-
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
+#include "../base/Hash.h"
 #include "../base/OperatingSystem.h"
-#include "../base/WindowsIncludes.h"
 
-#include <iostream>
-
-namespace BR2 {
-
+namespace Game {
 int32_t OperatingSystem::getNumberOfProcessors() {
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   SYSTEM_INFO si;
   GetSystemInfo(&si);
   return (int32_t)si.dwNumberOfProcessors;
-#elif BR2_OS_ANDROID
+#elif BRO_OS_ANDROID
   return android_getCpuCount();
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+#error "Operating System Error"
 #endif
 }
 void OperatingSystem::showMouseCursor() {
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(CURSORINFO);
+
   int nFailover = 10000;
+
   do {
     GetCursorInfo(&ci);
     ShowCursor(true); //ShowCursor is not a boolean method - it increments/decrements a display counter
     nFailover--;
   } while ((ci.flags & CURSOR_SHOWING) == 0 && (nFailover > 0));
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+#error "Operating System Error"
 #endif
 }
 void OperatingSystem::hideMouseCursor() {
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(CURSORINFO);
   int nFailover = 10000;
@@ -45,101 +43,159 @@ void OperatingSystem::hideMouseCursor() {
     nFailover--;
   } while ((ci.flags & CURSOR_SHOWING) > 0 && (nFailover > 0));
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+#error "Operating System Error"
 #endif
 }
 bool OperatingSystem::getMouseCursorIsVisible() {
-  bool ret = false;
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   CURSORINFO ci;
   ci.cbSize = sizeof(ci);
   GetCursorInfo(&ci);
-  ret = (ci.flags & CURSOR_SHOWING) > 0;
+  return (ci.flags & CURSOR_SHOWING) > 0;
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+
+#error "Operating System Error"
 #endif
-    return ret;
 }
-string_t  OperatingSystem::getOperatingSystemName() {
-  string_t res;
-#ifdef BR2_OS_WINDOWS
-  OSVERSIONINFOEX vex;
-  vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-  GetVersionExW((OSVERSIONINFO*)&vex);
+t_string  OperatingSystem::getOperatingSystemName() {
+  t_string res;
+  //#ifdef BRO_OS_WINDOWS
+  //    OSVERSIONINFOEX vex;
+  //    vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+  //    GetVersionExA((OSVERSIONINFO*)&vex);
+  //
+  //   // CheckOsErrorsDbg();
+  //
+  //    if(vex.dwMajorVersion==6 && vex.dwMinorVersion==3)
+  //    {
+  //        res.append(" Windows 8.1");
+  //    }
+  //    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==2)
+  //    {
+  //        res.append(" Windows 8");
+  //    }
+  //    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==1)
+  //    {
+  //        res.append(" Windows 7");
+  //    }
+  //    else if(vex.dwMajorVersion==6 && vex.dwMinorVersion==0)
+  //    {
+  //        res.append(" Windows Vista");
+  //    }
+  //    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==2)
+  //    {
+  //        res.append(" Windows XP Pro 64 bit");
+  //    }
+  //    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==1)
+  //    {
+  //        res.append(" Windows XP");
+  //    }
+  //    else if(vex.dwMajorVersion==5 && vex.dwMinorVersion==0)
+  //    {
+  //        res.append(" Windows 2000");
+  //    }
+  //    else
+  //    {
+  //        res.append(" OS Unknown.  Note: Mac / Linux are not supported.");
+  //    }
+  //
+  //    if(vex.wServicePackMajor != 0)
+  //        res += TStr(", Service Pack ",vex.wServicePackMajor,".",vex.wServicePackMinor);
+  //    else
+  //        res += TStr(", No service pack");
+  //
+  //    if( vex.wProductType== VER_NT_DOMAIN_CONTROLLER )
+  //        res.append(", Domain Controller, note operating system may be incorrect as this is not supported");
+  //    else if( vex.wProductType== VER_NT_SERVER )
+  //        res.append(", Server, note operating system may be incorrect as this is not supported");
+  //    else if( vex.wProductType== VER_NT_WORKSTATION )
+  //        res.append(", Workstation");
+  //
+  //#else
+  //    #error "Operating System Error"
+  //#endif
+  //    CheckOsErrorsDbg();
+  return res;
+}
+void OperatingSystem::createDirectory(t_string& dir) {
+  /*
+      //S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+  //TODO: File Permissions and directory permissions.
+  //Should be POSIX compliant
+  //int ret;
+  //
+  //do
+  //{
+  //    ret = _mkdir(dirName.c_str());
+  //    if(ret==-1)
+  //        BroThrowException(TStr("Mkdir failed for directory ",dirName));
+  //    if(ret==EEXIST)
+  //    {
+  //    }
+  //    if(ret==ENOENT)
+  //    {
+  //        BroThrowException(TStr("Failed to make directory ",dirName," the parameters to mkdir did not create the full hierarchy before calling"));
+  //    }
+#ifdef BRO_OS_WINDOWS
+    //SECURITY_ATTRIBUTES sc;
+    //sc.nLength = sizeof(sc);
+    //sc.bInheritHandle = false;
+    //sc.lpSecurityDescriptor = NULL;
 
-  if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 3) {
-    res.append(" Windows 8.1");
-  }
-  else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 2) {
-    res.append(" Windows 8");
-  }
-  else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 1) {
-    res.append(" Windows 7");
-  }
-  else if (vex.dwMajorVersion == 6 && vex.dwMinorVersion == 0) {
-    res.append(" Windows Vista");
-  }
-  else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 2) {
-    res.append(" Windows XP Pro 64 bit");
-  }
-  else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 1) {
-    res.append(" Windows XP");
-  }
-  else if (vex.dwMajorVersion == 5 && vex.dwMinorVersion == 0) {
-    res.append(" Windows 2000");
-  }
-  else {
-    res.append(" OS Unknown.  Note: Mac / Linux are not supported.");
-  }
-
-  if (vex.wServicePackMajor != 0) {
-    res += Stz ", Service Pack ", vex.wServicePackMajor, ".", vex.wServicePackMinor;
-  }
-  else {
-    res += Stz ", No service pack";
-  }
-
-  if (vex.wProductType == VER_NT_DOMAIN_CONTROLLER) {
-    res.append(", Domain Controller, note operating system may be incorrect as this is not supported");
-  }
-  else if (vex.wProductType == VER_NT_SERVER) {
-    res.append(", Server, note operating system may be incorrect as this is not supported");
-  }
-  else if (vex.wProductType == VER_NT_WORKSTATION) {
-    res.append(", Workstation");
-  }
-
+    BOOL b = CreateDirectory(dir.c_str(),NULL);
 #else
-  res = "Operating system name not available.";
-  OS_METHOD_NOT_IMPLEMENTED
+    // - Open / Make directory
+    if(opendir(dir.c_str())==NULL)
+    {
+        if(_mkdir(dir.c_str())==-1)
+            throw new Exception("Could not make log directory.",__LINE__,__FILE__);
+    }
+    //use mkdir
 #endif
-    return res;
+    OperatingSystem::suppressError(ERROR_ALREADY_EXISTS,t_string(""),false);
+    CheckOsErrorsDbg();
 }
+t_string OperatingSystem::getUserFolderPath()
+{
+    t_string ret;
+    CheckOsErrorsDbg();
+#ifdef BRO_OS_WINDOWS
+    char lpstrPath[BRO_MAX_PATH];
+    //TODO: Vista and beyond
+    //SHGetKnownFolderPath
+    HRESULT result = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, lpstrPath);
 
-string_t OperatingSystem::getUserFolderPath() {
-  //returns "My Documents" on windows.
-  //Linux .. ?
-  string_t ret;
-#ifdef BR2_OS_WINDOWS
-  char lpstrPath[BRO_MAX_PATH];
-  //TODO: Vista and beyond
-  //SHGetKnownFolderPath
-  HRESULT result = SHGetFolderPathA(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, lpstrPath);
+    ret = t_string(lpstrPath);
 
-  ret = string_t(lpstrPath);
-  OperatingSystem::suppressError(OSErrorCode::ErrorNoToken, false);
+#elif BRO_OS_UNIX
 
-#elif BRO_OS_LINUX
-  ret = t_string("/usr/");
+    ret = t_string("/usr/");
+#endif
+    OperatingSystem::suppressError(1008,NULL,false);
+    CheckOsErrorsDbg();
+    return ret;*/
+}
+bool OperatingSystem::isVistaOrGreater() {
+  bool ret = false;
+#ifdef BRO_OS_WINDOWS
+  //if( IsWindowsVistaOrGreater(void) )
+  //    ret = true;
 #endif
   return ret;
 }
-string_t OperatingSystem::getGamesFolderPath() {
-  // * Apparently, FOLDERID_GAMES doesn't work.
-  string_t ret = "";
+/**
+*    @fn
+*    @brief This is shit.
+*    isn't used by anybody
+*        use "My Games" instaed.
+*    FOLDERID_Games doesn't work.
+*/
+t_string OperatingSystem::getGamesFolderPath() {
+
+  t_string ret;
   /*
  // CheckOsErrorsDbg();
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
     PWSTR lpwstrPath = NULL;
     HRESULT result;
 
@@ -158,42 +214,25 @@ string_t OperatingSystem::getGamesFolderPath() {
     CheckOsErrorsDbg();*/
   return ret;
 }
-void OperatingSystem::suppressError(OSErrorCode ec, bool bWriteMessage) {
-  string_t strMsg = "";
-#ifdef BR2_OS_WINDOWS
-  switch (ec) {
-  case OSErrorCode::FileNotFound:
-    strMsg = "File Not Found";
-  case OSErrorCode::PathNotFound:
-    strMsg = "Path Not Found";
-  case OSErrorCode::NoGuidTranslation:
-    strMsg = "No GUID Translation for Security Audit";
-  case OSErrorCode::ProcNotFound:
-    strMsg = "Proc Not Found";
-  default:
-    strMsg = "Failed to register operating system error code. Code was not defined in the engine.";
-  };
-#else
-  OS_METHOD_NOT_IMPLEMENTED
-#endif
-
-    if (getError() == (int)ec) {
-      clearAllErrors();
-      if (bWriteMessage) {
-        Br2LogInfo(strMsg);
-      }
-    }
-}
-void OperatingSystem::showErrorDialog(string_t& str, string_t title) {
-#ifdef BR2_OS_WINDOWS
-  string_t dialogPath =
+//void OperatingSystem::suppressError(int error, t_string& message,bool bWriteMessage)
+//{
+//    if(getError()==error)
+//    {
+//        clearAllErrors();
+//        if(bWriteMessage)
+//            BroLogInfo(message,__LINE__,__FILE__);
+//    }
+//}
+void OperatingSystem::showErrorDialog(t_string& str, t_string title) {
+#ifdef BRO_OS_WINDOWS
+  t_string dialogPath =
     FileSystem::combinePath(
-      FileSystem::getExecutableDirectory(), string_t("WindowsErrorDialog.exe")
+      FileSystem::getExecutableDirectory(), t_string("WindowsErrorDialog.exe")
     );
 
   if (FileSystem::fileExists(dialogPath)) {
-    string_t logDir = Gu::getLogger()->getLogPath();//FileSystem::getLogDirectory();
-    string_t dialogExeCommand;
+    t_string logDir = Gu::getLogger()->getLogPath();//FileSystem::getLogDirectory();
+    t_string dialogExeCommand;
     dialogExeCommand = dialogPath;
 
     title = StringUtil::replaceAll(title, "\n", "\\n");
@@ -219,27 +258,115 @@ void OperatingSystem::showErrorDialog(string_t& str, string_t title) {
     MessageBoxA(NULL, str.c_str(), title.c_str(), MB_ICONEXCLAMATION | MB_OK);
   }
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+#error "Operating System Error"
 #endif
 }
-void OperatingSystem::clearAllErrors() {
-#ifdef BR2_OS_WINDOWS
-  SetLastError(0);
-#else
-  throw new NotImplementedException();
-#endif
-}
-int32_t OperatingSystem::getError() {
-#ifdef BR2_OS_WINDOWS
-  return GetLastError();
-#else
-  throw new NotImplementedException();
-#endif
-}
+//void OperatingSystem::getScreenDims(Quad2f* ret)
+//{
+//
+//#ifdef BRO_OS_WINDOWS
+//
+//    RECT screen;
+//    HWND hwnd;
+//    hwnd = GetDesktopWindow();
+//    GetWindowRect(hwnd, &screen);
+//    CheckOsErrorsDbg();
+//    ret->_p0.x = 0.0;
+//    ret->_p0.y = 0.0;
+//    ret->_p1.x = (float)screen.right;
+//    ret->_p1.y = (float)screen.bottom;
+//#else
+//    #error "Operating System Error"
+//#endif
+//    
+//}
+//void OperatingSystem::suppressError(int error, const char* message, bool bWriteMessage)
+//{
+//    t_string msg;
+//    
+//    //Do this before we construct string so we don't have further errors
+//    if(getError()==error)
+//        clearAllErrors();
+//
+//    if(message!=NULL)
+//        msg.assign(message);
+//
+//    suppressError(error,t_string(msg),bWriteMessage);
+//}
+//void OperatingSystem::suppressError(ErrorCode ec, bool bWriteMessage)
+//{
+//    t_string strMsg="";
+//#ifdef BRO_OS_WINDOWS
+//    switch(ec)
+//    {
+//        case FileNotFound:
+//            strMsg = "File Not Found";
+//        case PathNotFound:
+//            strMsg = "Path Not Found";
+//        case NoGuidTranslation:
+//            strMsg = "No GUID Translation for Security Audit";
+//        case ProcNotFound:
+//            strMsg = "Proc Not Found";
+//    };
+//#else
+//    #error "Operating System Error"
+//#endif
+//    
+//    suppressError(ec, strMsg, bWriteMessage);
+//}
+//void OperatingSystem::clearAllErrors()
+//{
+//#ifdef BRO_OS_WINDOWS
+//    SetLastError(0);
+//#else
+//    throw new NotImplementedException();
+//#endif
+//}
+/// - Runtime version of getting errors.
+//void OperatingSystem::oser(int line, char* file, bool bThrow)
+//{
+//    int x=0;
+//#ifdef BRO_OS_WINDOWS
+//    while(x=getError()!=ErrorCode::NoError)
+//    {
+//#ifdef BRO_OS_WINDOWS
+//        if(x==1)
+//        {
+//            clearAllErrors();
+//            continue;    //Windows error 1 for some reason pollutes the window.
+//        }
+//#endif
+//        if(x==122)
+//        {
+//            int nn=0;
+//            nn++;
+//        }
+//        clearAllErrors();
+//        BroLogError(TStr("OS ERROR ",x, " Line: ", line, ", File: ", file));
+//        //throw new Exception(TStr(" [OS] Operating system error: ",x),__LINE__,__FILE__);
+//    }
+//#else
+//    #error "Operating System Error"
+//#endif
+//}
+//void OperatingSystem::osed(int line, char* file, bool bThrow)
+//{
+//#ifdef _DEBUG
+//    SystemErrHandler::oser(line, file, bThrow);
+//#endif
+//}
+//int32_t OperatingSystem::getError()
+//{
+//#ifdef BRO_OS_WINDOWS
+//    return GetLastError();
+//#else
+//    throw new NotImplementedException();
+//#endif
+//}
 
 //size_t OperatingSystem::getAvailableMemory()
 //{
-//#ifdef BR2_OS_WINDOWS
+//#ifdef BRO_OS_WINDOWS
 //    MEMORYSTATUSEX mmex;
 //    mmex.dwLength = sizeof(mmex);
 //
@@ -247,37 +374,172 @@ int32_t OperatingSystem::getError() {
 //  //  CheckOsErrorsDbg();
 //    return mmex.ullAvailPhys;
 //#else
-//   OS_METHOD_NOT_IMPLEMENTED
+//    #error "Operating System Error"
 //#endif
 //}
 //size_t OperatingSystem::getProcessMemoryUsage()
 //{
 //    
-//#ifdef BR2_OS_WINDOWS
+//#ifdef BRO_OS_WINDOWS
 //    PROCESS_MEMORY_COUNTERS pmex;
 //    GetProcessMemoryInfo( GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmex, sizeof(PROCESS_MEMORY_COUNTERS) );
 //
 //    return pmex.WorkingSetSize;
 //#else
-//  OS_METHOD_NOT_IMPLEMENTED
+//    #error "Operating System Error"
 //#endif
 //}
-
-string_t OperatingSystem::getRuntimeEnvironmentStr() {
+//void OperatingSystem::terminateThread(ThreadHandle handle)
+//{
+//#ifdef BRO_OS_WINDOWS
+//    TerminateThread(handle,0);
+//#else
+//    #error "Operating System Error"
+//#endif
+//    CheckOsErrorsDbg();
+//}
+//int64_t Gu::getMilliSeconds()
+//{
+//    int64_t ret;
+//    std::chrono::nanoseconds ns = std::chrono::high_resolution_clock::now().time_since_epoch();
+//    ret = std::chrono::duration_cast<std::chrono::milliseconds>(ns).count();
+//    return ret;
+//}
+//OsWindowMessage OperatingSystem::processThreadMessages()
+//{
+//    OsWindowMessage osmsg = OS_MSG_NONE;
+//
+//#ifdef BRO_OS_WINDOWS
+//    MSG msg;
+//    BOOL bHasMessage;
+//    bHasMessage = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
+//    CheckOsErrorsDbg();
+//    
+//    while(bHasMessage)
+//    {
+//        if(msg.message == WM_QUIT)
+//        {
+//            return OS_MSG_QUIT;
+//        } 
+//        else  
+//        {
+//            TranslateMessage( &msg );
+//            CheckOsErrorsDbg();
+//            DispatchMessage( &msg );
+//            //see http://stackoverflow.com/questions/8750899/invalid-window-handle-after-getmessage-loop
+//            //OperatingSystem::suppressError(1400,TStr("DispatchMessage Returned invalid window handle.  Suppressing the error."),true);
+//            CheckOsErrorsDbg();
+//        }
+//        bHasMessage = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
+//        CheckOsErrorsDbg();
+//    }
+//#else
+//    #error "Operating System Error"
+//#endif
+//    return osmsg;
+//}
+//OsWindowMessage OperatingSystem::processThreadMessagesIgnore()
+//{
+//    OsWindowMessage osmsg = OS_MSG_NONE;
+//
+//#ifdef BRO_OS_WINDOWS
+//    MSG msg;
+//    while( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE )  )
+//    {
+//        TranslateMessage( &msg );
+//        DispatchMessage( &msg );
+//    }
+//#else
+//    #error "Operating System Error"
+//#endif
+//    CheckOsErrorsDbg();
+//    return osmsg;
+//}
+//ThreadHandle OperatingSystem::createThread(ThreadCallbackMethod myCallback, void* parameter, uint32_t* threadId)
+//{
+//    ThreadHandle ret;
+//#ifdef BRO_OS_WINDOWS
+//     ret = CreateThread(
+//    NULL,
+//    NULL,
+//    myCallback,
+//    parameter,
+//    NULL,
+//    (LPDWORD)threadId);
+//
+//    CheckOsErrorsDbg();
+//#else
+//    #error "Operating System Error"
+//#endif
+//    return ret;
+//}
+//uint32_t OperatingSystem::getCurrentThreadId()
+//{
+//    uint32_t threadId;
+//#ifdef BRO_OS_WINDOWS
+//    //TODO: std::this_thread::get_id()
+//    threadId = (uint32_t) GetCurrentThreadId();
+//    OperatingSystem::osed(__LINE__, __FILE__);
+//#else
+//    #error "Operating System Error"
+//#endif
+//    return threadId;
+//}
+//RuntimeEnvironment OperatingSystem::getRuntimeEnvironment()
+//{
+//#ifdef _WIN32 
+//    return RuntimeEnvironment::RE_WIN32;
+//#elif _WIN64
+//    return RuntimeEnvironment::RE_WIN64;
+//#elif defined(__LP32__) || defined(_LP32)
+//    return RuntimeEnvironment::RE_LINUX32;
+//#elif defined(__LP64__) || defined(_LP64)
+//    return RuntimeEnvironment::RE_LINUX64;
+//#else
+//    throw new NotImplementedException();
+//#endif
+//}
+t_string OperatingSystem::getRuntimeEnvironmentStr() {
 #ifdef _WIN32 
-  return string_t("Windows 32 Bit");
+  return t_string("Windows 32 Bit");
 #elif _WIN64
-  return string_t("Windows 64 Bit");
+  return t_string("Windows 64 Bit");
 #elif defined(__LP32__) || defined(_LP32)
-  return string_t("Linux 32 Bit");
+  return t_string("Linux 32 Bit");
 #elif defined(__LP64__) || defined(_LP64)
-  return string_t("Linux 64 Bit");
+  return t_string("Linux 64 Bit");
 #else
   throw new NotImplementedException();
 #endif
 }
-int OperatingSystem::strCaseCmp(const string_t& str1, const string_t& str2) {
-#ifdef BR2_OS_WINDOWS
+//void OperatingSystem::suspendThread(uint32_t millis)
+//{
+//#ifdef BRO_OS_WINDOWS
+//    std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+//    CheckOsErrorsDbg();
+//#else
+//    #error "Operating System Error"
+//#endif
+//}
+//void OperatingSystem::debugBreak()
+//{
+//#ifdef BRO_OS_WINDOWS
+//#ifdef BRO_X86
+//    __asm {
+//        int 3
+//    }
+//#else
+//    __debugbreak();
+//#endif
+//    //or DebugBreak()
+//#else
+//    // I'm not sure if unix uses inline asm.  
+//    // int 3 - interrupt 3 = compiler debug interrrupt
+//    __asm { int 3 }
+//#endif
+//}
+int OperatingSystem::strCaseCmp(const t_string& str1, const t_string& str2) {
+#ifdef BRO_OS_WINDOWS
   //win32 only
   return _stricmp(str1.c_str(), str2.c_str());
 #else
@@ -285,84 +547,31 @@ int OperatingSystem::strCaseCmp(const string_t& str1, const string_t& str2) {
   return strcasecmp(str1.c_str(), str2.c_str());
 #endif
 }
+
+
 void OperatingSystem::showConsole() {
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   ShowWindow(GetConsoleWindow(), SW_SHOW);
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+#error "Operating System Error"
 #endif
 }
 void OperatingSystem::hideConsole() {
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   ShowWindow(GetConsoleWindow(), SW_HIDE);
 #else
-  OS_METHOD_NOT_IMPLEMENTED
+#error "Operating System Error"
 #endif
 }
-string_t OperatingSystem::showOpenFolderDialog(string_t saved_path) {
-#ifdef BR2_OS_WINDOWS
-  WCHAR path[MAX_PATH];
 
-  const char* path_param = saved_path.c_str();
 
-  BROWSEINFO bi = { 0 };
-  bi.lpszTitle = L"Browse for folder...";
-  bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-  bi.lpfn = [](HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData) {
-    if (uMsg == BFFM_INITIALIZED) {
-      std::string tmp = (const char*)lpData;
-      std::cout << "path: " << tmp << std::endl;
-      SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
-    }
-    return 0;
-  };
-  bi.lParam = (LPARAM)path_param;
+//bool OperatingSystem::keyDown(int code)
+//{
+//#ifdef BRO_OS_WINDOWS
+//    return GetAsyncKeyState(code) & 0x8000;
+//#else
+//    #error "Operating System Error"
+//#endif
+//}
 
-  LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-
-  if (pidl != 0) {
-    //get the name of the folder and put it in path
-    SHGetPathFromIDList(pidl, path);
-
-    //free memory used
-    IMalloc* imalloc = 0;
-    if (SUCCEEDED(SHGetMalloc(&imalloc))) {
-      imalloc->Free(pidl);
-      imalloc->Release();
-    }
-
-    return StringUtil::wStrToStr(std::wstring(path));
-  }
-#else
-  OS_METHOD_NOT_IMPLEMENTED
-#endif
-
-    return "";
-}
-string_t OperatingSystem::showOpenFileDialog(string_t title, string_t filter, string_t defaultext, string_t basePath) {
-  string_t file = "";
-#ifdef BR2_OS_WINDOWS
-  OPENFILENAMEW ofn = { 0 };
-  WCHAR openFileNameReturnString[MAX_PATH];	// the filename will go here from the openfile dialog
-  ZeroMemory(openFileNameReturnString, MAX_PATH);
-
-  ofn.lStructSize = sizeof(OPENFILENAMEA);
-  ofn.lpstrFileTitle = openFileNameReturnString;
-  ofn.nMaxFileTitle = MAX_PATH;
-  ofn.lpstrTitle = title.length() ? StringUtil::strToWStr(title).c_str() : 0;
-  ofn.lpstrFilter = filter.length() ? StringUtil::strToWStr(filter).c_str() : 0;//"COLLADA Files (*.DAE)\0*.DAE\0\0";
-  ofn.lpstrInitialDir = basePath.length() ? StringUtil::strToWStr(basePath).c_str() : 0;
-  ofn.lpstrDefExt = defaultext.length() ? StringUtil::strToWStr(defaultext).c_str() : 0;//"DAE";
-  ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
-
-  if (!GetOpenFileNameW(&ofn)) {
-    return "";
-  }
-  file = StringUtil::wStrToStr(openFileNameReturnString);
-#else
-  OS_METHOD_NOT_IMPLEMENTED
-#endif
-    return file;
-}
-
-}//ns BR2
+}//ns game

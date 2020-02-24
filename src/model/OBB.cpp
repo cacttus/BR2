@@ -1,11 +1,12 @@
 #include "../model/OBB.h"
 #include "../model/UtilMeshInline.h"
 
-
-namespace BR2 {
+namespace Game {
 OBB::OBB() {
+
 }
 OBB::~OBB() {
+
 }
 void OBB::calc(mat4& mat, const Box3f* base) {
   //calc transform.
@@ -43,4 +44,4 @@ void OBB::calc(mat4& mat, const Box3f* base) {
 
 
 
-}//ns BR2
+}//ns Game

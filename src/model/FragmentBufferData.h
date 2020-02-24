@@ -10,10 +10,10 @@
 #include "../model/ModelHeader.h"
 #include "../base/Allocator.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class FragmentBufferData
-*  @brief Allows access to interleaved fragment data. Stores vertexes (fragments) in a flexible buffer allowing multiple vertex formats.
+*  @brief Fragment Buffer Data. Stores vertexes (fragments) in a flexible buffer allowing multiple vertex formats.
 */
 class FragmentBufferData : public VirtualMemory {
 public:
@@ -61,10 +61,9 @@ private:
     return *((Tx*)getPointerToComponentAtIndex(index, pc));
   }
   void* getPointerToComponentAtIndex(size_t index, std::shared_ptr<VertexComponent> pc);
-
 };
 
-}//ns BR2
+}//ns game
 
 
 

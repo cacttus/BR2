@@ -18,17 +18,15 @@
 #include "../math/Minimax.h"
 #include "../math/Random.h"
 
-//#include <string.h>
-//This is for the ostringstream conversions below.
-#include <sstream>
-//For std::setprecision
-#include <iomanip>
+
 //////////////////////////////////////////////////////////////////////////
 //All the stuff here is the math templates which rely on other definitions.  We don't need
 //this file in MSVC because that compiler lazy evaluates template definitions but this is needed for G++.
 //////////////////////////////////////////////////////////////////////////
 
-namespace BR2 {
+
+namespace Game {
+
 
 template < class Tx >
 Vec2x<Tx>::Vec2x(const Vec3f& a) {
@@ -73,12 +71,12 @@ Vec4x<Tx> Vec4x<Tx>::operator*(const Matrix4x4& m) {
 
 
 /**
-*  @fn minor()
-*  @brief Returns the minor at the specified row and column.
-*  @details A minor is a matrix of this matrix, minus the row and column you specify in the arguments.
+*    @fn minor()
+*    @brief Returns the minor at the specified row and column.
+*    @details A minor is a matrix of this matrix, minus the row and column you specify in the arguments.
 *    Minors are used to compute cofactors (determinants of minors) and the classical adjunct (the transpose of the matrix of cofactors)
-*  @param r - Must be 0 to 3, the row value of the matrix
-*  @param c - Must be 0 to 3, the column value of the matrix.
+*    @param r - Must be 0 to 3, the row value of the matrix
+*    @param c - Must be 0 to 3, the column value of the matrix.
 */
 FORCE_INLINE Matrix3x3 Matrix4x4::minor(int r, int c) {
   Matrix3x3 m;
@@ -95,12 +93,12 @@ FORCE_INLINE Matrix3x3 Matrix4x4::minor(int r, int c) {
 }
 
 /**
-*  @fn cofactor()
-*  @brief Returns the cofactor of this matrix at the specified row and column.
-*  @remarks A cofactor is the determinant of the minor of this matrix at the specified row and column.
-*  @param r - The row to compute the cofactor.
-*  @param c - The column to compute the cofactor.
-*  @return The cofactor of this matrix at the row and column location.
+*    @fn cofactor()
+*    @brief Returns the cofactor of this matrix at the specified row and column.
+*    @remarks A cofactor is the determinant of the minor of this matrix at the specified row and column.
+*    @param r - The row to compute the cofactor.
+*    @param c - The column to compute the cofactor.
+*    @return The cofactor of this matrix at the row and column location.
 */
 FORCE_INLINE float Matrix4x4::cofactor(int r, int c) {
   // - return the determinant of the minor.
@@ -136,11 +134,11 @@ FORCE_INLINE void Quaternion::getAxisAngle(vec4& v) {
 
 }
 /**
-*  @fn rotate()
-*  @details Returns a rotation matrix, but does not alter this matrix.
-*  @param a, x,y,z the axis-angle rotation.
-*  @return A matrix witht the specified rotation.
-*  @param a - Radians.
+*    @fn rotate()
+*    @details Returns a rotation matrix, but does not alter this matrix.
+*    @param a, x,y,z the axis-angle rotation.
+*    @return A matrix witht the specified rotation.
+*    @param a - Radians.
 */
 FORCE_INLINE Matrix3x3 Matrix3x3::getRotationRad(float a, const vec3& v) {
   return getRotationRad(a, v.x, v.y, v.z);
@@ -232,8 +230,8 @@ Vec2x<Tx> Vec2x<Tx>::maxv(const Vec2x<Tx>& v_a, const Vec2x<Tx>& v_b) {
   return out;
 }
 template < class Tx >
-string_t Vec2x<Tx>::toString(int precis) const {
-  string_t tmp;
+t_string Vec2x<Tx>::toString(int precis) const {
+  t_string tmp;
   std::ostringstream out;
   std::streamsize prec;
   if (precis == -1) {
@@ -247,8 +245,8 @@ string_t Vec2x<Tx>::toString(int precis) const {
   return out.str();
 }
 template < class Tx >
-string_t Vec3x<Tx>::toString(int precis) const {
-  string_t tmp;
+t_string Vec3x<Tx>::toString(int precis) const {
+  t_string tmp;
   std::ostringstream out;
   std::streamsize prec;
   if (precis == -1) {
@@ -288,7 +286,7 @@ inline bool fuzzyEquals(float a, float b, float e) {
 typedef Vec4ub Pixel4ub;
 
 
-}//ns BR2
+}//NS Game
 
 
 #endif

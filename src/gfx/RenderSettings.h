@@ -9,11 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 
-namespace BR2 {
-/**
-*  @class RenderDebug
-*  @brief Debug rendering settings.
-*/
+namespace Game {
 class RenderDebug : public VirtualMemoryShared<RenderDebug> {
 public:
   bool& getShadowHelpVisible() { return _bShadowHelpVisible; }
@@ -42,7 +38,7 @@ private:
 };
 /**
 *  @class RenderSettings
-*  @brief Global settings for rendering.
+*  @brief Settings for the rendering component of hte engine.  Really, this should be part of EngineConfig.
 */
 class RenderSettings : public VirtualMemoryShared<RenderSettings> {
 public:
@@ -72,7 +68,7 @@ private:
 };
 
 
-}//ns BR2
+}//ns Game
 
 
 

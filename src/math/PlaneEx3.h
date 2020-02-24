@@ -2,51 +2,55 @@
 *  @file mgPlane2.h
 *  @author MetalMario971
 *  @date July 20, 2008
-*    Changed filename 10 /19 08
 */
 #pragma once
 #ifndef __MG_MATH_PLANEEX_3_H__
 #define __MG_MATH_PLANEEX_3_H__
 
-
 #include "../math/Plane3.h"
 #include "../math/Matrix3x3.h"
-namespace BR2 {
 
-
+namespace Game {
 /**
 *  @class PlaneEx3
-*  @brief Extension of the plane class to include tangent and binormal space.
-DO NOT ADD VIRTUAL METHODS
+*  @brief Extension of the plane class to include tangent and binormal space.  DO NOT ADD VIRTUAL METHODS
 */
 class PlaneEx3 : public Plane3f {
 public:
-  //LINE_HIT    intersectLine(const Vector3& p1, const Vector3& p2) const;// - todo
+
   FORCE_INLINE PlaneEx3();
   FORCE_INLINE NOT_VIRTUAL ~PlaneEx3() override;
+
   float        dist2d(Vec2f& e);    // - Return the X/Z distnace from a vector2 (where y is z)
+
   FORCE_INLINE void        calcTBN();
   FORCE_INLINE void        construct(Vector3& Normal, Vector3& Point);
   FORCE_INLINE void        construct(Vector3& tri_p1, Vector3& tri_p2, Vector3& tri_p3);
+
   FORCE_INLINE Matrix3x3 getTBNMatrix();
 
+  //virtual PlaneEx3&    operator=( const PlaneEx3& rhs ){
+  //    *this = rhs;
+  //    return *this;
+  //}
 public:
   Vector3 t, b;    // - TBN
   float u;        // - The value for texture space, this is initialized to 1.0
   Vector3 origin;        // - Point on the plane.
+
 };
 
 /**
 *  @fn construct()
 *  @brief Construct the components of the plane out of a triangle.
-*    Also calculates the TBN
+*  Also calculates the TBN
 *  @remarks
-*    The origin will be p1.
-*    the tangent vector will be p2 and the binormal will be p3
-*    The normal will point outward in the clockwise rotation of the tangent vector to the binormal vector.
+*  The origin will be p1.
+*  the tangent vector will be p2 and the binormal will be p3
+*  The normal will point outward in the clockwise rotation of the tangent vector to the binormal vector.
 *
 *
-*    assume CCW vertexes
+*  assume CCW vertexes
 */
 FORCE_INLINE void PlaneEx3::construct(Vector3& tri_p1, Vector3& tri_p2, Vector3& tri_p3) {
   u = 1.0;
@@ -89,8 +93,8 @@ FORCE_INLINE Matrix3x3 PlaneEx3::getTBNMatrix() {
 }
 
 /*
-*  @fn calcTBN()
-*  @brief Without calling this the matrix will have no TB!!!!
+*    @fn calcTBN()
+*    @brief Without calling this the matrix will have no TB!!!!
 */
 FORCE_INLINE void PlaneEx3::calcTBN() {
 }

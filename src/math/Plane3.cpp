@@ -1,7 +1,7 @@
 #include "../math/Plane3.h"
 #include "../math/ProjectedRay.h"
 
-namespace BR2 {
+namespace Game {
 
 bool Plane3f::intersectRay(Ray_t* ray) {
   AssertOrThrow2(ray != nullptr);

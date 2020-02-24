@@ -1,25 +1,26 @@
-#include "../base/BaseAll.h"
+#include "../base/Logger.h"
 #include "../base/Gu.h"
 #include "../base/BaseHeader.h"
 #include "../base/GLContext.h"
 #include "../base/EngineConfig.h"
 #include "../math/MathAll.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../model/GpuBufferData.h"
 
-namespace BR2 {
-GpuBufferData::GpuBufferData(std::shared_ptr<GLContext> ct, GLenum bufferType, size_t iElementSize) : GLFramework(ct) {
-  _glBufferType = bufferType;
-  _iElementSize = iElementSize;
-  getContext()->glGenBuffers(1, &_glId);
+namespace Game {
+GpuBufferData::GpuBufferData(std::shared_ptr<GLContext> ct, GLenum bufferType, size_t iElementSize) :
+  _glBufferType(bufferType)
+  , _iElementSize(iElementSize)
+  , _pContext(ct) {
+  ct->glGenBuffers(1, &_glId);
 }
 GpuBufferData::~GpuBufferData() {
-  getContext()->glDeleteBuffers(1, &_glId);
+  _pContext->glDeleteBuffers(1, &_glId);
 }
 void GpuBufferData::allocate(size_t iNumElements) {
   _iNumElements = iNumElements;
   bindBuffer();
-  getContext()->glBufferData(_glBufferType, _iNumElements * _iElementSize, nullptr, GL_STATIC_DRAW);
+  _pContext->glBufferData(_glBufferType, _iNumElements * _iElementSize, nullptr, GL_STATIC_DRAW);
   unbindBuffer();
   _bIsAllocated = true;
 }
@@ -40,16 +41,16 @@ void GpuBufferData::copyDataServerClient(std::shared_ptr<ByteBuffer> gb) {
   return copyDataServerClient(gb->size(), gb->data(), 1);
 }
 /**
-*  @fn
-*  @brief
+*    @fn
+*    @brief
 */
 void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t elementSize) {
   if (buf == nullptr) {
-    Br2LogError("Tried to read to NULL Buffer reading Gpu contents.");
+    BroLogError("Tried to read to NULL Buffer reading Gpu contents.");
     Gu::debugBreak();
   }
   if (_bIsAllocated == false) {
-    Br2ThrowException(" [VBO] was not allocated");
+    BroThrowException(" [VBO] was not allocated");
   }
   size_t readSize;
 
@@ -62,9 +63,9 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
 
   size_t byteSize = getByteSize();
   if (readSize > byteSize) {
-    Br2ThrowException("Tried to read " + readSize + " from Gpu Buffer with size of " + getByteSize() + ".");
+    BroThrowException("Tried to read " + readSize + " from Gpu Buffer with size of " + getByteSize() + ".");
   }
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 
   bindBuffer();
   {
@@ -75,24 +76,24 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
   }
   unbindBuffer();
 
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 
 }
 /**
-*  @fn copyDataClientServer
-*  @brief Copy data to a preallocated buffer.
+*    @fn copyDataClientServer
+*    @brief Copy data to a preallocated buffer.
 */
 void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags, int32_t iElementSize) {
   if (num_elements == 0) {
     return;
   }
   if (frags == nullptr) {
-    Br2LogError(" [VBO] Fragments to copy were null. ");
+    BroLogError(" [VBO] Fragments to copy were null. ");
     Gu::debugBreak();
     return;
   }
   if (_bIsAllocated == false) {
-    Br2LogError(" [VBO] was not allocated");
+    BroLogError(" [VBO] was not allocated");
     Gu::debugBreak();
     return;
   }
@@ -108,7 +109,7 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
       copySizeBytes = iElementSize * num_elements;
     }
     if (copySizeBytes > byteSize) {
-      Br2LogError("Copy size " + copySizeBytes + " (" + num_elements + " elements) was larger than the buffer size " + byteSize + ". Make sure the input size is not -1 or less than 0.");
+      BroLogError("Copy size " + copySizeBytes + " (" + num_elements + " elements) was larger than the buffer size " + byteSize + ". Make sure the input size is not -1 or less than 0.");
       unbindBuffer();
       return;
       Gu::debugBreak();
@@ -121,35 +122,35 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
     memcpy_s((void*)pData, getByteSize(), frags, copySizeBytes);
     unmapBuffer();
 
-    getContext()->chkErrDbg();
+    _pContext->chkErrDbg();
   }
   unbindBuffer();
 }
 /**
-*  @fn mapVbo()
+*    @fn mapVbo()
 *    Get a pointer to the vertex buffer data for a material.
 */
 void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
   void* frags;
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 
   if (_isBound == false) {
-    Br2ThrowException("GPU BUffer was not bound prior to mapping");
+    BroThrowException("GPU BUffer was not bound prior to mapping");
   }
 
   // - Can't map more than one buffer at the same time.
   // User must call unmap
   if (_isMapped == true) {
-    Br2ThrowException("GPU Buffer was already mapped prior to mapping.");
+    BroThrowException("GPU Buffer was already mapped prior to mapping.");
   }
 
   if (false) {
     GLint dat;
-    getContext()->glGetBufferParameteriv(GL_SHADER_STORAGE_BUFFER, GL_BUFFER_MAPPED, &dat);
-    getContext()->chkErrDbg();
+    _pContext->glGetBufferParameteriv(GL_SHADER_STORAGE_BUFFER, GL_BUFFER_MAPPED, &dat);
+    _pContext->chkErrDbg();
   }
-  frags = getContext()->glMapBuffer(_glBufferType, access);
-  getContext()->chkErrDbg();
+  frags = _pContext->glMapBuffer(_glBufferType, access);
+  _pContext->chkErrDbg();
 
   _isMapped = true;
 
@@ -157,8 +158,8 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
     static bool sbLogged = false;
     if (sbLogged == false) {
       sbLogged = true;
-      getContext()->chkErrDbg();
-      Br2LogError("Error - glMapBuffer returned nullptr.");
+      _pContext->chkErrDbg();
+      BroLogError("Error - glMapBuffer returned nullptr.");
       Gu::debugBreak();
     }
   }
@@ -166,53 +167,53 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
   pData = frags;
 }
 /*
-*  @fn unmap
-*  @brief Unmap all vbo's
+*    @fn unmap
+*    @brief Unmap all vbo's
 */
 void GpuBufferData::unmapBuffer() {
   verifyValidBuffer();
-  if (getContext()->glUnmapBuffer(_glBufferType) == false) {
+  if (_pContext->glUnmapBuffer(_glBufferType) == false) {
     //video memory just got trashed.
-    Br2LogError("Video Memory has been trashed by the OS. Graphics may be unstable.");
+    BroLogError("Video Memory has been trashed by the OS. Graphics may be unstable.");
   }
-  getContext()->chkErrDbg();
+  _pContext->chkErrDbg();
 
   _isMapped = false;
 }
 
 /**
-*  @fn bindVBO()
-*  @brief Bind the VBO.
+*    @fn bindVBO()
+*    @brief Bind the VBO.
 */
 void GpuBufferData::bindBuffer() {
   verifyValidBuffer();
-  getContext()->glBindBuffer(_glBufferType, _glId);
-  getContext()->chkErrDbg();
+  _pContext->glBindBuffer(_glBufferType, _glId);
+  _pContext->chkErrDbg();
   _isBound = true;
 }
 void GpuBufferData::bindBuffer(GLenum e) {
   verifyValidBuffer();
-  getContext()->glBindBuffer(e, _glId);
-  getContext()->chkErrDbg();
+  _pContext->glBindBuffer(e, _glId);
+  _pContext->chkErrDbg();
   _isBound = true;
 }
 /**
-*  @fn unbind()
-*  @brief Unbind the VBO.
+*    @fn unbind()
+*    @brief Unbind the VBO.
 */
 void GpuBufferData::unbindBuffer() {
-  getContext()->glBindBuffer(_glBufferType, 0);
-  getContext()->chkErrDbg();
+  _pContext->glBindBuffer(_glBufferType, 0);
+  _pContext->chkErrDbg();
   _isBound = false;
 }
 void GpuBufferData::verifyValidBuffer() {
   //GDebugger doesn't like this for some reason.
   if (Gu::getEngineConfig()->getEnableRuntimeErrorChecking()) {
-    if (!getContext()->glIsBuffer(_glId)) {
+    if (!_pContext->glIsBuffer(_glId)) {
       //Buffer object doesn't exist in the context.
       //Error somewhere..
-      getContext()->glBindBuffer(_glBufferType, _glId);
-      if (!getContext()->glIsBuffer(_glId)) {
+      _pContext->glBindBuffer(_glBufferType, _glId);
+      if (!_pContext->glIsBuffer(_glId)) {
         Gu::debugBreak();
       }
     }
@@ -223,4 +224,4 @@ void GpuBufferData::verifyValidBuffer() {
 
 //+-- CTOR/DTOR --+
 
-}//ns BR2
+}//ns game

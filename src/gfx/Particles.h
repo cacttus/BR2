@@ -11,24 +11,24 @@
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
-*  @class Particles
-*  @brief
+*    @class Particles
+*    @brief
 *
 */
 class Particles : public VirtualMemory {
-    std::shared_ptr<QuadBufferMesh> _pQuadBufferMesh;
+  std::shared_ptr<QuadBufferMesh> _pQuadBufferMesh;
 public:
 
-    //TODO: use textureatlascomposer for this.
-    Particles();
-    virtual ~Particles() override;
-    void update();
-    void draw();
+  //TODO: use textureatlascomposer for this.
+  Particles();
+  virtual ~Particles() override;
+  void update();
+  void draw();
 };
 
-}//ns BR2
+}//ns Game
 
 
 

@@ -20,7 +20,7 @@
 #include "../gfx/GpuQuad3.h"
 #include "../gfx/HappySky.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/ShaderManager.h"
+#include "../gfx/ShaderMaker.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBox.h"

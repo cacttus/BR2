@@ -1,10 +1,10 @@
-#include "../gfx/TexCache.h"
 #include "../base/Hash.h"
 #include "../base/Gu.h"
 #include "../base/Logger.h"
+#include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
 
-namespace BR2 {
+namespace Game {
 
 const std::string TexCache::WorldGrass = "./data/tx32-grass.png";
 const std::string TexCache::WorldDirt = "./data/tx64_dirt.png";
@@ -23,8 +23,7 @@ const std::string TexCache::GrassWd = "./data/tx-gs.png";
 const std::string TexCache::RopeWd = "./data/tx64-rope.png";
 const std::string TexCache::LadderWd = "./data/tx64-ladder.png";
 
-///////////////////////////////////////////////////////////////////
-TexCache::TexCache(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
+TexCache::TexCache(std::shared_ptr<GLContext> ct) : _pContext(ct) {
   int iWidthHeight = 1;
   vec4 v(1, 1, 1, 1);
 
@@ -56,12 +55,12 @@ TexCache::~TexCache() {
   //}
   _cache.clear();
 }
-bool TexCache::add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound) {
+bool TexCache::add(t_string name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound) {
   Hash32 ih = Hash::computeStringHash32bit(name, 0);
   TexMap::iterator it = _cache.find(ih);
   if (it != _cache.end()) {
     if (bErrorIfFound) {
-      Br2LogError("Texture cache had duplicate texure: " + name);
+      BroLogError("Texture cache had duplicate texure: " + name);
       Gu::debugBreak();
     }
     return false;
@@ -88,14 +87,14 @@ std::shared_ptr<Texture2DSpec> TexCache::getOrLoad(std::string texName, bool bIs
     ret = ite->second;
   }
   else if (bIsGenerated == false) {
-    ret = std::make_shared<Texture2DSpec>(texName, getContext(), bRepeatU, bRepeatV);
+    ret = std::make_shared<Texture2DSpec>(texName, _pContext, bRepeatU, bRepeatV);
     _cache.insert(std::make_pair(ih, ret));
   }
 
   return ret;
 }
-std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss) {
-  std::shared_ptr<Texture2DSpec> pRet = std::make_shared<Texture2DSpec>(ss, getContext());
+std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(t_string name, const std::shared_ptr<Img32> ss) {
+  std::shared_ptr<Texture2DSpec> pRet = std::make_shared<Texture2DSpec>(ss, _pContext);
   add(name, pRet);
 
   return pRet;
@@ -117,4 +116,4 @@ std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(string_t name, cons
 
 
 
-}//ns BR2
+}//ns Game

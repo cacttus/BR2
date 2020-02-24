@@ -1,11 +1,7 @@
 /**
 *  @file Material.h
 *  @date 3 25 2010
-*    Updates:
-*        12/29/2010
-*        20151126 - updated to be generic instance
 */
-
 #pragma once
 #ifndef __MATERIAL_9659280356928315689236_H__
 #define __MATERIAL_9659280356928315689236_H__
@@ -14,16 +10,15 @@
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class Material
-*  Material Lighting Parameters + Texture maps + Binding.
-*  @sa TextureManager
+*  Material Lighting Parameters + Texture maps + Binding + other stuff like sounds, bumpiness, perhaps physics
 */
 class TextureSlot : public VirtualMemory {
 public:
   Hash32 _iTexFileHashed = 0;
-  string_t _strDebugTextureFileName;
+  t_string _strDebugTextureFileName;
   TextureChannel::e _eChannel = TextureChannel::e::Channel0;
   TextureType::e _eTextureType = TextureType::e::Undefined;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
@@ -31,13 +26,12 @@ public:
   void deserialize(std::shared_ptr<BinaryFile> fb);
   void serialize(std::shared_ptr<BinaryFile> fb);
 };
-class Material : public GLFramework {
+class Material : public VirtualMemory {
 public:
-  Material(std::shared_ptr<GLContext> ct);
-  Material(std::shared_ptr<GLContext> ct, string_t name);
-  virtual ~Material() override;
-
-  string_t getName() { return _strName; }
+  Material() {}//deser
+  Material(t_string name);
+  OVERRIDES ~Material() OVERRIDE;
+  t_string getName() { return _strName; }
 
   std::map<TextureChannel::e, std::shared_ptr<TextureSlot>>& getTextureSlots() { return _mapTextureBindings; }
   std::shared_ptr<TextureSlot> getMapByType(TextureType::e texType);
@@ -74,7 +68,7 @@ public:
 
 protected:
   //Note: Make sure toupdate getCopy()
-  string_t _strName;
+  t_string _strName;
 
   //**These defaults are what are in blender**
   //**we use them for for non-material meshes**
@@ -88,8 +82,6 @@ protected:
   float _fTpAlpha = 1.0f;
   float _fTpIOR = 1.0;//index of refraction
   float _fTpFilter = 0.5f; //Filter for diffuse color
-
-
 };
 
 

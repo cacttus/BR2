@@ -11,11 +11,10 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class FrustumProjectionParameters
 *  @brief Fill this class out for the frustum to create its volume
-*
 */
 class FrustumProjectionParameters : public VirtualMemory {
 public:
@@ -24,7 +23,7 @@ public:
   vec3 _upVec; // camera up vec
   Vec3Basis _v3basis;    // basis vectors for projection with Z pointing into the viewport.
 };
-}//ns BR2
+}//ns game
 
 
 

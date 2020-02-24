@@ -1,53 +1,48 @@
 #include "../base/FileSystem.h"
-#include "../gfx/GLContext.h"
-#include "../base/ApplicationPackage.h"
+#include "../base/GLContext.h"
+#include "../base/AppBase.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 
 #include "../base/DateTime.h"
 
-#include <direct.h>
-
-#include "../base/SDLIncludes.h"
-#include "../ext/dirent.h"
-#include <fstream>
-
-namespace BR2 {
-string_t FileSystem::_strExePath = "";
+namespace Game {
+t_string FileSystem::_strExePath = "";
 FileSystem::FileSystem() {
+
 }
 FileSystem::~FileSystem() {
+
 }
-void FileSystem::init(string_t executablePath) {
-  FileSystem::setExecutablePath(executablePath);
-  string_t a = FileSystem::getCurrentDirectory();
-  FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
-  string_t b = FileSystem::getCurrentDirectory();
+t_string FileSystem::appendCachePathToFile(const t_string& strFileName) {
+  std::shared_ptr<AppBase> rb = Gu::getApp();
+  t_string ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
+  return ret;
 }
-string_t FileSystem::getExecutableFullPath() {
+t_string FileSystem::getExecutableFullPath() {
   //  t_string ret;
   //  char* p = SDL_GetBasePath();
   //  if (p == nullptr) {
   //      BroLogError("SDL Doesn't implement SDL_GetBasePath. Using program argument '"+FileSystem::_strExePath+"'  This will result in errors.");
-  string_t ret = FileSystem::_strExePath;
+  t_string ret = FileSystem::_strExePath;
   // }
  //  else {
  //      ret = t_string(p);
 //   }
   return ret;
 }
-string_t FileSystem::getExecutableName() {
-  string_t ret;
+t_string FileSystem::getExecutableName() {
+  t_string ret;
   ret = FileSystem::getFileNameFromPath(getExecutableFullPath(), true);
   return ret;
 }
-string_t FileSystem::getExecutableDirectory() {
-  string_t ret;
+t_string FileSystem::getExecutableDirectory() {
+  t_string ret;
   ret = FileSystem::getPathFromPath(getExecutableFullPath(), true);
   return ret;
 }
-string_t FileSystem::combinePath(string_t a, string_t b) {
+t_string FileSystem::combinePath(t_string a, t_string b) {
   if ((a.length() == 0) || (b.length() == 0))
     return a + b;
 
@@ -59,9 +54,9 @@ string_t FileSystem::combinePath(string_t a, string_t b) {
   a = StringUtil::trim(a, '/');
   b = StringUtil::trim(b, '/');
 
-  return a + string_t("/") + b;
+  return a + t_string("/") + b;
 }
-bool FileSystem::createFile(const string_t& filename, bool trunc, bool bLog) {
+bool FileSystem::createFile(const t_string& filename, bool trunc, bool bLog) {
   std::fstream pStream;
   bool exists = true;
 
@@ -70,9 +65,9 @@ bool FileSystem::createFile(const string_t& filename, bool trunc, bool bLog) {
 
   if (!pStream.good()) {
     exists = false;
-    string_t err = Stz " [FileSystem] Output file " + filename + " could not be created with trunc=" + (int32_t)trunc;
+    t_string err = Stz " [FileSystem] Output file " + filename + " could not be created with trunc=" + (int32_t)trunc;
     if (bLog == true) {//For logger initializtion
-      Br2LogError(err);
+      BroLogError(err);
     }
     else {
       Gu::print(err);
@@ -84,33 +79,26 @@ bool FileSystem::createFile(const string_t& filename, bool trunc, bool bLog) {
   return exists;
 }
 
-bool FileSystem::createDirectoryRecursive(string_t dirName) {
-  //returns true if successful, false if one or more directories could not be created.
-  string_t dirCpy;
+bool FileSystem::createDirectoryRecursive(t_string dirName) {
+  t_string dirCpy;
   bool bRet = true;
-  try {
+  dirCpy.assign(dirName);
+  dirCpy = formatPath(dirCpy);
 
-    dirCpy.assign(dirName);
-    dirCpy = formatPath(dirCpy);
-
-    if (directoryExists(dirName) == true) {
-      return true;
-    }
-
-    std::vector<string_t> dirs = StringUtil::split(dirCpy, '/');
-    string_t strDir = dirs[0];
-    for (size_t i = 1; i < dirs.size(); ++i) {
-      strDir = FileSystem::combinePath(strDir, dirs[i]);
-      bRet = bRet && FileSystem::createDirectorySingle(strDir);
-    }
+  if (directoryExists(dirName) == true) {
+    return true;
   }
-  catch (Exception * ex) {
-    Gu::getLogger()->logError("Failed to create directory recursive '" + dirName + "' " + ex->what());
-    bRet = false;
+
+  std::vector<t_string> dirs = StringUtil::split(dirCpy, '/');
+  t_string strDir = dirs[0];
+  for (size_t i = 1; i < dirs.size(); ++i) {
+    strDir = FileSystem::combinePath(strDir, dirs[i]);
+    bRet = bRet && FileSystem::createDirectorySingle(strDir);
   }
+
   return bRet;
 }
-bool FileSystem::directoryExists(string_t dirName) {
+bool FileSystem::directoryExists(t_string dirName) {
   bool ret;
   DIR* dir = NULL;
 
@@ -127,7 +115,7 @@ bool FileSystem::directoryExists(string_t dirName) {
 
   return ret;
 }
-bool FileSystem::createDirectorySingle(string_t& dirName) {
+bool FileSystem::createDirectorySingle(t_string& dirName) {
   int ret = mkdir(dirName.c_str());
   if (ret != 0) {
     if (ret == EEXIST) {
@@ -144,7 +132,7 @@ bool FileSystem::createDirectorySingle(string_t& dirName) {
     }
   }
   return true;
-  //#ifdef BR2_OS_WINDOWS
+  //#ifdef BRO_OS_WINDOWS
 //    //SECURITY_ATTRIBUTES sc;
 //    //sc.nLength = sizeof(sc);
 //    //sc.bInheritHandle = false;
@@ -161,11 +149,11 @@ bool FileSystem::createDirectorySingle(string_t& dirName) {
     //use mkdir
     //#endif
 }
-string_t FileSystem::getFileNameOrDirectoryFromPath(const string_t& name, bool bformatPath) {
+t_string FileSystem::getFileNameOrDirectoryFromPath(const t_string& name, bool bformatPath) {
   // - If formatPath is true then we'll convert the path to a / path.
 
   size_t x;
-  string_t fn = "";
+  t_string fn = "";
   DiskLoc l2;
 
   // Format for a / path
@@ -176,7 +164,7 @@ string_t FileSystem::getFileNameOrDirectoryFromPath(const string_t& name, bool b
     l2 = name;
   }
 
-  if ((x = l2.rfind('/')) != string_t::npos) {
+  if ((x = l2.rfind('/')) != t_string::npos) {
     fn = l2.substr(x + 1, l2.length() - x + 1);
   }
   else {
@@ -184,22 +172,22 @@ string_t FileSystem::getFileNameOrDirectoryFromPath(const string_t& name, bool b
   }
   return fn;
 }
-string_t FileSystem::getFileNameFromPath(const string_t& name, bool bformatPath) {
+t_string FileSystem::getFileNameFromPath(const t_string& name, bool bformatPath) {
   return getFileNameOrDirectoryFromPath(name, bformatPath);
 }
-string_t FileSystem::getDirectoryFromPath(const string_t& name, bool bformatPath) {
+t_string FileSystem::getDirectoryFromPath(const t_string& name, bool bformatPath) {
   return getFileNameOrDirectoryFromPath(name, bformatPath);
 }
-string_t FileSystem::getPathFromPath(const string_t& name, bool bformatPath) {
+t_string FileSystem::getPathFromPath(const t_string& name, bool bformatPath) {
   // - If formatPath is true then we'll convert the path to a / path.
   // returns the path part without the filename.
   // if the filename doesn't have an extension this method considers it a folder.
   //
   size_t x;
-  string_t ret = "";
+  t_string ret = "";
   DiskLoc l2;
   DiskLoc tmpPath = name;
-  string_t fn;
+  t_string fn;
 
   // Format for a / path
   if (bformatPath)
@@ -209,16 +197,16 @@ string_t FileSystem::getPathFromPath(const string_t& name, bool bformatPath) {
 
   fn = getFileNameFromPath(l2, false);
 
-  if (fn.rfind('.') == string_t::npos)
+  if (fn.rfind('.') == t_string::npos)
     ret = l2;
-  else if ((x = l2.rfind('/')) != string_t::npos)
+  else if ((x = l2.rfind('/')) != t_string::npos)
     ret = l2.substr(0, x);
   else
     ret = l2;
 
   return ret;
 }
-bool FileSystem::fileExists(string_t filename) {
+bool FileSystem::fileExists(t_string filename) {
   //**NOTE: a portable option would be to use this code from SDL.
   //However the code below is supposed to be "faster"
   /*
@@ -235,7 +223,7 @@ bool FileSystem::fileExists(string_t filename) {
   struct stat buffer;
   exists = (stat(filename.c_str(), &buffer) == 0);
 
-#ifdef BR2_OS_WINDOWS
+#ifdef BRO_OS_WINDOWS
   //Fuck this shit
   // we get error 2 and 6 all the time because
   // windows sets it when we call stat()
@@ -247,7 +235,7 @@ bool FileSystem::fileExists(string_t filename) {
 
   return exists;
 }
-void FileSystem::createFileIfFileDoesNotExist(string_t& filename, bool bAlsoCreateDirectoryPath) {
+void FileSystem::createFileIfFileDoesNotExist(t_string& filename, bool bAlsoCreateDirectoryPath) {
   if (bAlsoCreateDirectoryPath == TRUE) {
     createDirectoryRecursive(getPathFromPath(filename, TRUE));
   }
@@ -256,30 +244,30 @@ void FileSystem::createFileIfFileDoesNotExist(string_t& filename, bool bAlsoCrea
     createFile(filename, false);
   }
 }
-time_t FileSystem::getLastModifyTime(string_t& location) {
+time_t FileSystem::getLastModifyTime(t_string& location) {
   //Gets the last time the file was modified as a time_t
   struct stat fileInfo;
 
   if (FileSystem::fileExists(location) == false) {
-    Br2ThrowException("File '" + location + "' does not exist");
+    BroThrowException("File '" + location + "' does not exist");
   }
 
   stat(location.c_str(), &fileInfo);
   return fileInfo.st_mtime;
 }
-string_t FileSystem::getCurrentDirectory() {
+t_string FileSystem::getCurrentDirectory() {
   //DO NOT LOG HERE
   char buf[BRO_MAX_PATH];
   _getcwd(buf, BRO_MAX_PATH);
-  string_t cwd = string_t(buf);
+  t_string cwd = t_string(buf);
   return cwd;
 }
-void FileSystem::setCurrentDirectory(string_t str) {
+void FileSystem::setCurrentDirectory(t_string str) {
   //DO NOT LOG HERE
   _chdir(str.c_str());
 }
 
-bool FileSystem::isFile(string_t fileOrDirPath) {
+bool FileSystem::isFile(t_string fileOrDirPath) {
   //https://stackoverflow.com/questions/146924/how-can-i-tell-if-a-given-path-is-a-directory-or-a-file-c-c
   struct stat s;
   if (stat(fileOrDirPath.c_str(), &s) == 0) {
@@ -293,7 +281,7 @@ bool FileSystem::isFile(string_t fileOrDirPath) {
   }
   return false;
 }
-bool FileSystem::isDir(string_t fileOrDirPath) {
+bool FileSystem::isDir(t_string fileOrDirPath) {
   //https://stackoverflow.com/questions/146924/how-can-i-tell-if-a-given-path-is-a-directory-or-a-file-c-c
   struct stat s;
   if (stat(fileOrDirPath.c_str(), &s) == 0) {
@@ -307,7 +295,7 @@ bool FileSystem::isDir(string_t fileOrDirPath) {
   }
   return false;
 }
-bool FileSystem::getAllFilesOrDirs(string_t dir, std::vector<string_t>& __out_ dirs, bool bFiles) {
+bool FileSystem::getAllFilesOrDirs(t_string dir, std::vector<t_string>& __out_ dirs, bool bFiles) {
   dirs.resize(0);
 
   dirent* ep;
@@ -316,9 +304,9 @@ bool FileSystem::getAllFilesOrDirs(string_t dir, std::vector<string_t>& __out_ d
 
   if (dp != NULL) {
     while (ep = readdir(dp)) {
-      string_t name(ep->d_name);
+      t_string name(ep->d_name);
       if (StringUtil::doesNotEqual(name, "..") && StringUtil::doesNotEqual(name, ".")) {
-        string_t nameFull = FileSystem::combinePath(dir, name);
+        t_string nameFull = FileSystem::combinePath(dir, name);
         if (!bFiles && FileSystem::isDir(nameFull)) {
           dirs.push_back(nameFull);
         }
@@ -330,26 +318,24 @@ bool FileSystem::getAllFilesOrDirs(string_t dir, std::vector<string_t>& __out_ d
     closedir(dp);
   }
   else {
-    Br2LogError("Couldn't open the directory '" + dir + "'");
+    BroLogError("Couldn't open the directory '" + dir + "'");
     return false;
   }
   return true;
 
 }
-bool FileSystem::getAllDirs(string_t dir, std::vector<string_t>& __out_ dirs) {
-  //Returns rooted directories.
+bool FileSystem::getAllDirs(t_string dir, std::vector<t_string>& __out_ dirs) {
   return getAllFilesOrDirs(dir, dirs, false);
 }
-bool FileSystem::getAllFiles(string_t dir, std::vector<string_t>& __out_ files) {
-  //Returns rooted files.
+bool FileSystem::getAllFiles(t_string dir, std::vector<t_string>& __out_ files) {
   return getAllFilesOrDirs(dir, files, true);
 }
-bool FileSystem::deleteDirectoryRecursive(string_t dir, std::vector<string_t>& vecFileExts) {
-  std::vector<string_t> dirs;
+bool FileSystem::deleteDirectoryRecursive(t_string dir, std::vector<t_string>& vecFileExts) {
+  std::vector<t_string> dirs;
   if (getAllDirs(dir, dirs) == false) {
     return false;
   }
-  for (string_t dir : dirs) {
+  for (t_string dir : dirs) {
     if (deleteDirectoryRecursive(dir, vecFileExts) == false) {
       return false;
     }
@@ -361,33 +347,33 @@ bool FileSystem::deleteDirectoryRecursive(string_t dir, std::vector<string_t>& v
 
   int ret = rmdir(dir.c_str());
   if (ret != 0) {
-    Br2LogError("Failed to delete directory.");
+    BroLogError("Failed to delete directory.");
     return false;
   }
   return true;
 }
-bool FileSystem::deleteDirectory(string_t dir, std::vector<string_t>& vecFileExts) {
+bool FileSystem::deleteDirectory(t_string dir, std::vector<t_string>& vecFileExts) {
 
   int ret = rmdir(dir.c_str());
   if (ret != 0) {
-    Br2LogError("Failed to delete directory.");
+    BroLogError("Failed to delete directory.");
     return false;
   }
   return true;
 }
-bool FileSystem::deleteAllFiles(string_t dir, std::vector<string_t>& vecFileExts) {
+bool FileSystem::deleteAllFiles(t_string dir, std::vector<t_string>& vecFileExts) {
   //vecFileExts - list of file extensions with '.' like '.exe', '.dat'
 
-  std::vector<string_t> files;
+  std::vector<t_string> files;
   if (getAllFiles(dir, files) == false) {
-    Br2LogError("Failed to get files from '" + dir + "'");
+    BroLogError("Failed to get files from '" + dir + "'");
     return false;
   }
 
-  for (string_t file : files) {
+  for (t_string file : files) {
     if (FileSystem::fileExists(file)) {
       bool bMatch = false;
-      for (string_t ext : vecFileExts) {
+      for (t_string ext : vecFileExts) {
         if (StringUtil::equalsi(FileSystem::getExtensionPartOfFileName(file), ext)) {
           bMatch = true;
           break;
@@ -395,7 +381,7 @@ bool FileSystem::deleteAllFiles(string_t dir, std::vector<string_t>& vecFileExts
       }
       if (bMatch) {
         if (FileSystem::deleteFile(file) == false) {
-          Br2LogError("Failed to delte file '" + file + "'");
+          BroLogError("Failed to delte file '" + file + "'");
           return false;
         }
       }
@@ -404,54 +390,54 @@ bool FileSystem::deleteAllFiles(string_t dir, std::vector<string_t>& vecFileExts
 
   return true;
 }
-bool FileSystem::deleteFile(string_t filename) {
+bool FileSystem::deleteFile(t_string filename) {
   int32_t ret = std::remove(filename.c_str());
   //Equivalent POSIX function
   //unlink(filename.c_str())
   if (ret != 0) {
-    Br2LogError("Failed to delete file '" + filename + "'");
+    BroLogError("Failed to delete file '" + filename + "'");
     return false;
   }
   return true;
 }
 
-string_t FileSystem::getFilePartOfFileName(const string_t& fileName) {
+t_string FileSystem::getFilePartOfFileName(const t_string& fileName) {
   size_t off = fileName.rfind(".");
 
-  if (off >= fileName.size() || off == string_t::npos) {
-    Br2ThrowException("Incorrect file name, no extension given or incorrect extension.");
+  if (off >= fileName.size() || off == t_string::npos) {
+    BroThrowException("Incorrect file name, no extension given or incorrect extension.");
   }
 
   return fileName.substr(0, off);
 }
-string_t FileSystem::getExtensionPartOfFileName(const string_t& name) {
+t_string FileSystem::getExtensionPartOfFileName(const t_string& name) {
   //2017 12 22 - **Changed this to return the DOT just like .NET ( .exe, .dat etc..)
   size_t x;
-  string_t ext = "";
-  string_t fileName;
+  t_string ext = "";
+  t_string fileName;
 
   fileName = FileSystem::getFileNameFromPath(name);
 
-  if ((x = fileName.rfind('.')) != string_t::npos) {
+  if ((x = fileName.rfind('.')) != t_string::npos) {
     ext = fileName.substr(x, fileName.length() - x);
   }
 
   return ext;
 }
-string_t FileSystem::formatPath(string_t p) {
+t_string FileSystem::formatPath(t_string p) {
   return StringUtil::replaceAll(p, '\\', '/');
 }
-string_t FileSystem::getScreenshotFilename() {
-  string_t fname = DateTime::dateTimeToStr(DateTime::getDateTime()) + "_" + FileSystem::getExecutableName() + "_frame.png";
+t_string FileSystem::getScreenshotFilename() {
+  t_string fname = DateTime::dateTimeToStr(DateTime::getDateTime()) + "_" + FileSystem::getExecutableName() + "_frame.png";
   fname = FileSystem::replaceInvalidCharsFromFilename(fname);
   fname = StringUtil::replaceAll(fname, " ", "_");
-  fname = FileSystem::combinePath(ApplicationPackage::getCacheFolder(), fname);
+  fname = FileSystem::appendCachePathToFile(fname);
 
   return fname;
 }
-string_t FileSystem::replaceInvalidCharsFromFilename(const string_t& __in_ fnIn, char replaceChar, bool bIgnoreSlashes) {
+t_string FileSystem::replaceInvalidCharsFromFilename(const t_string& __in_ fnIn, char replaceChar, bool bIgnoreSlashes) {
   //Remove invalid WINDOWS characters from path
-  string_t fname = fnIn;
+  t_string fname = fnIn;
   fname = StringUtil::replaceAll(fname, "<", Stz(replaceChar));
   fname = StringUtil::replaceAll(fname, ">", Stz(replaceChar));
   fname = StringUtil::replaceAll(fname, ":", Stz(replaceChar));
@@ -471,6 +457,7 @@ void FileSystem::SDLFileFree(char*& pOutData) {
   pOutData = nullptr;
 }
 int FileSystem::SDLFileRead(std::string fname, char*& pOutData, int64_t& _iOutSizeBytes, bool addNull) {
+
   fname = getFilePath(fname);
 
   SDL_RWops* rw = SDL_RWFromFile(fname.c_str(), "rb");
@@ -598,25 +585,25 @@ FileInfo FileSystem::getFileInfo(std::string loc) {
 
   return inf;
 }
-string_t FileSystem::getRootedPath(string_t loc) {
+t_string FileSystem::getRootedPath(t_string loc) {
   //C++17 has std::filesystem::path path(loc);
   //currently not supported so we need our own.
 
   //Get root of current.
-  string_t path = "";
+  t_string path = "";
   if (!pathIsAbsolute(loc)) {
     path = combinePath(FileSystem::getCurrentDirectory(), loc);
   }
   return path;
 }
-string_t FileSystem::getRoot(string_t in_loc) {
+t_string FileSystem::getRoot(t_string in_loc) {
   //C++17 has std::filesystem::path path(loc);
   //currently not supported so we need our own.
 
   //returns the root of the path (c:, e:, or \\,// for UNC) of the current path.
   //if the path is relative, then it is assumed to be relative to the current directory set with setCurrentDirectory()
-  string_t s = "";
-  string_t path = "";
+  t_string s = "";
+  t_string path = "";
 
   if (pathIsAbsolute(in_loc)) {
     path = in_loc;
@@ -641,7 +628,7 @@ string_t FileSystem::getRoot(string_t in_loc) {
 
   return s;
 }
-bool FileSystem::isUNC(string_t path) {
+bool FileSystem::isUNC(t_string path) {
   //Returns true if the path is a valid UNC root
   if (path.length() == 0) {
     return false;
@@ -651,7 +638,7 @@ bool FileSystem::isUNC(string_t path) {
 
   return (uncFs || uncBs);
 }
-bool FileSystem::pathIsAbsolute(string_t path) {
+bool FileSystem::pathIsAbsolute(t_string path) {
   //C++17 has std::filesystem::path path(loc);
   //currently not supported so we need our own.
   if (isUNC(path)) {
@@ -665,28 +652,6 @@ bool FileSystem::pathIsAbsolute(string_t path) {
     return true;
   }
 }
-void FileSystem::findFile(string_t searchRoot, string_t filename, FileInfo& __out info) {
-  if (info._exists) {
-    return;
-  }
-
-  std::vector<string_t> files;
-  FileSystem::getAllFiles(searchRoot, files);
-  for (string_t file : files) {
-    if (StringUtil::equalsi(filename, file)) {
-      info = FileSystem::getFileInfo(file);
-      break;
-    }
-  }
-
-  if (!info._exists) {
-    std::vector<string_t> dirs;
-    FileSystem::getAllDirs(searchRoot, dirs);
-    for (string_t dir : dirs) {
-      findFile(dir, filename, info);
-    }
-  }
-}
 
 
 
@@ -700,4 +665,5 @@ void FileSystem::findFile(string_t searchRoot, string_t filename, FileInfo& __ou
 
 
 
-}//ns BR2
+
+}//ns Game

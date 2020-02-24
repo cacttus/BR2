@@ -5,21 +5,14 @@
 #include "../base/FileSystem.h"
 #include "../base/Logger.h"
 
-namespace BR2 {
-TextDataFile::TextDataFile() : _fileData(NULL) {
-}
-TextDataFile::TextDataFile(string_t& loc) :
-  _fileLoc(loc) {
-}
-TextDataFile::~TextDataFile() {
-}
-void TextDataFile::msg(string_t msg, bool error) {
+namespace Game {
+void TextDataFile::msg(t_string msg, bool error) {
   _vecMessages.push_back(Stz(error ? "ERROR:" : "") + _fileName + ": " + msg);
 }
 void TextDataFile::loadAndParse() {
   loadAndParse(_fileLoc);
 }
-void TextDataFile::loadAndParse(string_t& loc) {
+void TextDataFile::loadAndParse(t_string& loc) {
   _fileData = nullptr;
   _fileLoc = loc;
   _fileName = FileSystem::getFilePartOfFileName(loc);
@@ -32,7 +25,7 @@ void TextDataFile::loadAndParse(string_t& loc) {
   // - Load and parse
   bool success = false;
   if (FileSystem::SDLFileRead(loc, _fileData, _fileSize, true) != 0) {
-    string_t st = FileSystem::getCurrentDirectory();
+    t_string st = FileSystem::getCurrentDirectory();
 
     //File not found.
     Gu::debugBreak();
@@ -48,14 +41,24 @@ void TextDataFile::loadAndParse(string_t& loc) {
 
   //Dump messages.
   if (_vecMessages.size() > 0) {
-    string_t str = StringUtil::join("\r\n", _vecMessages);
-    Br2LogInfo("Errors:" + StringUtil::tabify(str, 2));
+    t_string str = StringUtil::join("\r\n", _vecMessages);
+    BroLogInfo("Errors:" + StringUtil::tabify(str, 2));
   }
 
   postLoad(success);
 }
-void TextDataFile::save(string_t& loc) {
-  BrThrowNotImplementedException();
+void TextDataFile::save(t_string& loc) {
+  BroThrowNotImplementedException();
 }
 
-}//ns BR2
+//+-- CTOR/DTOR --+
+TextDataFile::TextDataFile() : _fileData(NULL) {
+}
+TextDataFile::TextDataFile(t_string& loc) :
+  _fileLoc(loc) {
+}
+TextDataFile::~TextDataFile() {
+
+}
+
+}//ns game

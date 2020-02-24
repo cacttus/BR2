@@ -2,7 +2,7 @@
 *
 *    @file MotionBucket.h
 *    @date March 9, 2017
-*    @author MetalMario971  
+*    @author Derek Page
 *
 *    © 2017 
 *

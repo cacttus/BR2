@@ -2,10 +2,6 @@
 *  @file Line3.h
 *  @date December 5, 2014
 *  @author MetalMario971
-*
-*  @file Line3
-*  @date 3 20 2010
-*    20141205 Major updates for SAT
 */
 #pragma once
 #ifndef __LINE3_1391916606309252141724654_H__
@@ -13,8 +9,7 @@
 
 #include "../math/Vec3x.h"
 
-namespace BR2 {
-
+namespace Game {
 /**
 *  @class Line3f
 *  @breif Line class.  This is going to be used for SAT
@@ -60,7 +55,7 @@ FORCE_INLINE float Line3f::dist2(vec3& pt) {
   return (pt - pointOnLine(pt)).length2();
 }
 
-}//ns BR2
+}//ns game
 
 
 

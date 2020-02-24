@@ -1,7 +1,12 @@
 /**
-*  @file BlockNode.h
-*  @date May 2, 2017
-*  @author MetalMario971
+*
+*    @file BlockNode.h
+*    @date May 2, 2017
+*    @author Derek Page
+*
+*    © 2017 
+*
+*
 */
 #pragma once
 #ifndef __BLOCKNODE_14937714702398736072_H__

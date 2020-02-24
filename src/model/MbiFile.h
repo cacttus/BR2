@@ -10,31 +10,30 @@
 #include "../base/IOBase.h"
 #include "../model/ModelHeader.h"
 
-namespace BR2 {
+namespace Game {
 /**
 *  @class MbiFile
 *  @brief Mob Binary file.  The main file for all models.
 */
-class MbiFile : public GLFramework {
+class MbiFile : public VirtualMemory {
 public:
   const float c_fVersion = 0.3f;
-  
-  MbiFile(std::shared_ptr<GLContext> ct);
+public:
+  MbiFile();
   virtual ~MbiFile() override;
 
-  //std::vector<std::shared_ptr<ModelData>>& getModelSpecs() { return _vecModels; }
-  //bool loadAndParse(string_t file);
-  //void save(string_t file);
-
+  std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModels; }
+  bool loadAndParse(t_string file);
+  void save(t_string file);
 private:
-  //std::vector<std::shared_ptr<ModelData>> _vecModels;
-  //std::shared_ptr<BinaryFile> _pFile = nullptr;
-  //string_t _fileLoc;
-  //void postLoad();
-  //void parseErr(string_t str, bool bDebugBreak, bool bFatal);
+  std::vector<std::shared_ptr<ModelSpec>> _vecModels;
+  void parseErr(t_string str, bool bDebugBreak, bool bFatal);
+  std::shared_ptr<BinaryFile> _pFile = nullptr;
+  t_string _fileLoc;
+  void postLoad();
 };
 
-}//ns BR2
+}//ns Game
 
 
 

@@ -2,7 +2,7 @@
 *
 *    @file World25Grid.h
 *    @date March 2, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *

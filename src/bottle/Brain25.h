@@ -2,7 +2,7 @@
 *
 *    @file Brain25.h
 *    @date March 16, 2017
-*    @author MetalMario971
+*    @author Derek Page
 *
 *    © 2017 
 *
