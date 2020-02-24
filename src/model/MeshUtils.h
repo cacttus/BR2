@@ -18,16 +18,16 @@ public:
   static const int MaxParams = 8;
 public:
   MeshGenType::e getGenType() { return _eGenType; }
-  t_string getParam(size_t i) { return _strParams[i]; }
-  bool parse(t_string str);
+  string_t getParam(size_t i) { return _strParams[i]; }
+  bool parse(string_t str);
 private:
-  t_string _strClass; // generation class
+  string_t _strClass; // generation class
   MeshGenType::e _eGenType; // algorithm for generation
-  t_string _strParams[MaxParams]; // params to algorithm
+  string_t _strParams[MaxParams]; // params to algorithm
   uint32_t _uiParamCount = 0;
   std::vector<MeshGenParams*> _vecSubMeshParams;
-  MeshGenType::e getGenerationAlgorithmFromString(t_string str);
-  bool logAndExit(t_string);
+  MeshGenType::e getGenerationAlgorithmFromString(string_t str);
+  bool logAndExit(string_t);
 };
 
 /**
@@ -49,7 +49,7 @@ public:
   static std::shared_ptr<MeshSpec> makeBox(Box3f* pCube, vec4* color, Matrix4x4* applyMat, vec3* offset);
   static std::shared_ptr<MeshSpec> makeBox(float length, vec4* color, mat4* applyMat, vec3* offset);
   static std::shared_ptr<MeshSpec> makeBox(vec3(&extents)[8], Color4f* color, Matrix4x4* applyMat, vec3* offset);
-  static bool parseGenParams(t_string genString, MeshGenParams& __out_ params);
+  static bool parseGenParams(string_t genString, MeshGenParams& __out_ params);
   static std::shared_ptr<MeshSpec> generateFromParameters(MeshGenParams* pgp);
   static std::shared_ptr<MeshNode> createScreenQuadMesh(int w, int h);
   static vec3* getVertexElementOffset(vec3* verts, size_t iElementIndex, size_t vOffBytes, size_t vStrideBytes, size_t vCount);

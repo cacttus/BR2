@@ -59,7 +59,7 @@ public:
   FORCE_INLINE static vec3 rv301();//same as nextVec3(0,1)
   FORCE_INLINE static vec3 rv311();//same as nextVec3(-1,1)
 
-  static t_string randomNumericString(int32_t nDigits);    // - Returns a random hash code (not unique)
+  static string_t randomNumericString(int32_t nDigits);    // - Returns a random hash code (not unique)
 
 private:
   static int32_t _last;//Assume this is the seed?

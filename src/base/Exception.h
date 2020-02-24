@@ -12,12 +12,12 @@
 namespace BR2 {
 class Exception {
 public:
-  Exception(t_string c, int line, const char* file, bool bLogError = true);
-  t_string what();
+  Exception(string_t c, int line, const char* file, bool bLogError = true);
+  string_t what();
 
 private:
   int _line;
-  t_string _msg;
+  string_t _msg;
   const char* _file;
 };
 

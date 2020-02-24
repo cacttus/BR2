@@ -61,7 +61,7 @@ public:
   //bool handleSDLEvents();
 
 
-  void initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
+  void initSDL(string_t windowTitle, std::shared_ptr<AppBase> app) {
     //Nix main()
     SDL_SetMainReady();
 
@@ -107,7 +107,7 @@ public:
     api->createRenderer();
 
   }
-  void doShowError(t_string err, Exception* e) {
+  void doShowError(string_t err, Exception* e) {
     if (e != nullptr) {
       OperatingSystem::showErrorDialog(e->what() + err);
     }
@@ -364,7 +364,7 @@ public:
 
     DebugHelper::checkMemory();
   }
-  void exitApp(t_string error, int rc) {
+  void exitApp(string_t error, int rc) {
     OperatingSystem::showErrorDialog(error + SDLNet_GetError());
 
     Gu::debugBreak();
@@ -376,7 +376,7 @@ public:
 
     exit(rc);
   }
-  bool argMatch(const std::vector<t_string>& args, t_string arg1, int32_t iCount) {
+  bool argMatch(const std::vector<string_t>& args, string_t arg1, int32_t iCount) {
     if (args.size() <= 1) {
       return false;
     }
@@ -386,11 +386,11 @@ public:
     }
     return false;
   }
-  bool runCommands(const std::vector<t_string>& args) {
+  bool runCommands(const std::vector<string_t>& args) {
     if (argMatch(args, "/c", 4)) {
       //Convert Mob
-      t_string strMob = args[2];
-      t_string strFriendlyName = args[3];
+      string_t strMob = args[2];
+      string_t strFriendlyName = args[3];
       Gu::getModelCache()->convertMobToBin(strMob, false, strFriendlyName);
       return true;
     }
@@ -413,14 +413,14 @@ AppRunner::AppRunner() {
 AppRunner::~AppRunner() {
   _pint = nullptr;
 }
-void AppRunner::runApp(const std::vector<t_string>& args, t_string windowTitle, std::shared_ptr<AppBase> app) {
+void AppRunner::runApp(const std::vector<string_t>& args, string_t windowTitle, std::shared_ptr<AppBase> app) {
   _pint->_tvInitStartTime = Gu::getMicroSeconds();
 
   //Root the engine FIRST so we can find the EngineConfig.dat
   FileSystem::setExecutablePath(args[0]);
-  t_string a = FileSystem::getCurrentDirectory();
+  string_t a = FileSystem::getCurrentDirectory();
   FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
-  t_string b = FileSystem::getCurrentDirectory();
+  string_t b = FileSystem::getCurrentDirectory();
 
   //**Must come first before other logic
   Gu::initGlobals(app, args);

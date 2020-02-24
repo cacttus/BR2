@@ -25,7 +25,7 @@ public:
   VertexUserType::e getUserType() { return _eUserType; }
   int32_t getByteOffset() { return _iByteOffset; }
   int32_t getLocation() { return _iLocation; }
-  t_string getUserTypeName();
+  string_t getUserTypeName();
 
 private:
   friend class VertexFormat;
@@ -38,9 +38,9 @@ private:
 };
 class VertexFormat : public VirtualMemory {
 public:
-  VertexFormat(std::shared_ptr<GLContext> pContext, t_string strName);
+  VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName);
   virtual ~VertexFormat();
-  t_string getName() { return _strName; }
+  string_t getName() { return _strName; }
   int32_t getSizeBytes() const { return _iVertexSizeBytes; }
   // void enableAndBindAllArraysForVaoBuffer(std::shared_ptr<VboData> pVboData);
   void addComponent(VertexUserType::e eUserType);
@@ -48,14 +48,14 @@ public:
   std::shared_ptr<VertexComponent> getComponentForUserType(VertexUserType::e eUserType);
   const std::map<int, std::shared_ptr<VertexComponent>>& getComponents() { return _vecComponents; }
   static GLenum computeAttributeType(GLenum type, GLuint count);
-  static t_string getUserTypeName(VertexUserType::e t);
+  static string_t getUserTypeName(VertexUserType::e t);
   int matchTypeForShaderType(std::shared_ptr<VertexFormat> shaderType);
 
 private:
   std::shared_ptr<GLContext> _pContext = nullptr;
   std::map<int, std::shared_ptr<VertexComponent>> _vecComponents; //mapped to VertexUserType
   int32_t _iVertexSizeBytes;
-  t_string _strName;
+  string_t _strName;
 };
 
 }//NS Game

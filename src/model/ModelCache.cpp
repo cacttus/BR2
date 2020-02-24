@@ -45,7 +45,7 @@ void ModelCache::addSpec(std::shared_ptr<ModelSpec> ms) {
         BRLogError("Tried to add duplicate model name '" + ms->getName() + "'");
     }
 }
-std::shared_ptr<ModelSpec> ModelCache::getModelByName(t_string name) {
+std::shared_ptr<ModelSpec> ModelCache::getModelByName(string_t name) {
     Hash32 h = STRHASH(name);
     return getModelByName(h);
 }
@@ -94,9 +94,9 @@ std::shared_ptr<ModelSpec> ModelCache::getModelByName(Hash32 hash) {
 //    }
 //    return it->second;
 //}
-t_string ModelCache::getFilePathForMobName(t_string mobName, bool bUseBinary) {
-    t_string fileExt;
-    t_string modelsDir;
+string_t ModelCache::getFilePathForMobName(string_t mobName, bool bUseBinary) {
+    string_t fileExt;
+    string_t modelsDir;
     if (bUseBinary) {
         modelsDir = Gu::getApp()->getModelsBinDir();
         fileExt = ".mbi";
@@ -106,17 +106,17 @@ t_string ModelCache::getFilePathForMobName(t_string mobName, bool bUseBinary) {
         fileExt = ".mob";
     }
 
-    t_string folderPath = Gu::getApp()->makeAssetPath(modelsDir, mobName);
-    t_string filename = FileSystem::combinePath(folderPath, mobName);
+    string_t folderPath = Gu::getApp()->makeAssetPath(modelsDir, mobName);
+    string_t filename = FileSystem::combinePath(folderPath, mobName);
     filename += fileExt;
 
     return filename;
 }
-std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(t_string mobName, bool bUseBinary) {
+std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(string_t mobName, bool bUseBinary) {
 
     std::shared_ptr<ModelSpec> ms = getModelByName(STRHASH(mobName));
     if (ms == nullptr) {
-        t_string filename = getFilePathForMobName(mobName, bUseBinary);
+        string_t filename = getFilePathForMobName(mobName, bUseBinary);
         if (FileSystem::fileExists(filename) == false) {
             BRLogError("Model File does not exist: '" + filename + "'");
             if (false) {
@@ -147,34 +147,34 @@ std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(t_string mobName, bool bUs
     }
     return ms;
 }
-t_string ModelCache::debugPrintAllModelNames() {
-    t_string strOut = ("Loaded:\n");
+string_t ModelCache::debugPrintAllModelNames() {
+    string_t strOut = ("Loaded:\n");
 
     for (std::pair<Hash32, std::shared_ptr<ModelSpec>> p : _mapModels) {
         strOut += Stz "   " + p.second->getName()+ "\n";
     }
     strOut += ("In Dir:\n");
-    std::vector<t_string> vecFiles;
-    t_string mods = Gu::getApp()->getModelsTextDir();
+    std::vector<string_t> vecFiles;
+    string_t mods = Gu::getApp()->getModelsTextDir();
     mods = Gu::getApp()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
-    for (t_string file : vecFiles) {
+    for (string_t file : vecFiles) {
         strOut += Stz "  " +file+ "\n";
     }
 
     mods = Gu::getApp()->getModelsBinDir();
     mods = Gu::getApp()->makeAssetPath(mods);
     FileSystem::getAllDirs(mods, vecFiles);
-    for (t_string file : vecFiles) {
+    for (string_t file : vecFiles) {
         strOut += Stz "  " +file +"\n";
     }
 
     return strOut;
 }
-void ModelCache::convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::string strFriendlyName) {
+void ModelCache::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::string strFriendlyName) {
 
-    t_string filepathText = getFilePathForMobName(strMobName, false);
-    t_string filepathBin = getFilePathForMobName(strMobName, true);
+    string_t filepathText = getFilePathForMobName(strMobName, false);
+    string_t filepathBin = getFilePathForMobName(strMobName, true);
 
     if (FileSystem::fileExists(filepathText) == false) {
         BRLogError("Convert: Could not find mob file " + strMobName);
@@ -213,7 +213,7 @@ void ModelCache::convertMobToBin(t_string strMobName, bool bOnlyIfNewer, std::st
         unloadModel(strMobName);
     }
 }
-void ModelCache::unloadModel(t_string strMobName, bool bErrorIfFailed) {
+void ModelCache::unloadModel(string_t strMobName, bool bErrorIfFailed) {
     std::map<Hash32, std::shared_ptr<ModelSpec>>::iterator it = _mapModels.find(STRHASH(strMobName));
 
     if (it == _mapModels.end()) {

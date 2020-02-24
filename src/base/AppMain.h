@@ -38,16 +38,16 @@ public:
   virtual void updateTouch(std::shared_ptr<Fingers>, float dt) override {}
   virtual void userZoom(int amount) override {}
 
-  virtual t_string getIconFullPath() { return makeAssetPath("tex", "icon.png"); }
-  virtual t_string getConfigPath() override { return makeAssetPath("", "config.xml"); }
-  virtual t_string getAssetsDir() override { return "./data/"; }
+  virtual string_t getIconFullPath() { return makeAssetPath("tex", "icon.png"); }
+  virtual string_t getConfigPath() override { return makeAssetPath("", "config.xml"); }
+  virtual string_t getAssetsDir() override { return "./data/"; }
 
-  virtual t_string getShadersDir() override { return "shr"; }
-  virtual t_string getModelsTextDir() override { return "mob"; }
-  virtual t_string getModelsBinDir() override { return "mbi"; }
-  virtual t_string getCacheDir() override { return "cache"; }
+  virtual string_t getShadersDir() override { return "shr"; }
+  virtual string_t getModelsTextDir() override { return "mob"; }
+  virtual string_t getModelsBinDir() override { return "mbi"; }
+  virtual string_t getCacheDir() override { return "cache"; }
 
-  virtual t_string getEnvTexturePath() override { return "tex/env1_huge.png"; }
+  virtual string_t getEnvTexturePath() override { return "tex/env1_huge.png"; }
 
   virtual void serverPacketReceived(std::shared_ptr<Packet> temp) override {}
   virtual void drawDeferred(RenderParams& rp) override;

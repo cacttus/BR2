@@ -6,7 +6,7 @@
 //This is needed, since SDL defines main.
 #ifdef main
 #  undef main
-#endif /* main */
+#endif
 
 using namespace BR2;
 

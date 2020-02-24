@@ -8,13 +8,13 @@
 
 namespace BR2 {
 #pragma region SoundSpec
-SoundSpec::SoundSpec(t_string sFIle) : _sFilePath(sFIle) {
+SoundSpec::SoundSpec(string_t sFIle) : _sFilePath(sFIle) {
   load(sFIle);
 }
 SoundSpec::~SoundSpec() {
   free(_pSoundData);
 }
-void SoundSpec::load(t_string file) {
+void SoundSpec::load(string_t file) {
   if (_eLoadState == LoadState::e::NotLoaded) {
 
     if (!FileSystem::fileExists(file)) {

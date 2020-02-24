@@ -461,8 +461,8 @@ void Gu::checkMemory() {
 #endif
 }
 
-t_string Gu::getOperatingSystemName() {
-  t_string res;
+string_t Gu::getOperatingSystemName() {
+  string_t res;
 #ifdef BR2_OS_WINDOWS
   OSVERSIONINFOEX vex;
   vex.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
@@ -534,14 +534,14 @@ bool Gu::isDebug() {
   return false;
 #endif
 }
-std::vector<t_string> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
+std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delimiter) {
   int squot = 0, dquot = 0;
 
   //todo - fix the delimiter thing
-  std::vector<t_string> ret;
+  std::vector<string_t> ret;
   for (int i = 0; i < argc; ++i) {
 
-    t_string str(argv[i]);
+    string_t str(argv[i]);
 
 
     ret.push_back(str);
@@ -576,7 +576,7 @@ void Gu::print(char msg) {
   c[1] = 0;
   print((char*)c);
 }
-void Gu::print(const t_string& msg) {
+void Gu::print(const string_t& msg) {
   print(msg.c_str());
 }
 void Gu::print(const char* msg) {

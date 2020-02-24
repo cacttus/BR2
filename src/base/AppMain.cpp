@@ -21,7 +21,7 @@
 namespace BR2 {
 AppUi::AppUi() {
 
-  t_string DEBUG_FONT = "Lato-Regular.ttf";
+  string_t DEBUG_FONT = "Lato-Regular.ttf";
 
   //skins first
   std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");

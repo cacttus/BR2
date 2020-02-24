@@ -25,7 +25,7 @@ GLProgramBinary::~GLProgramBinary() {
   _binaryData = NULL;
 }
 
-ShaderCache::ShaderCache(t_string cacheDir) {
+ShaderCache::ShaderCache(string_t cacheDir) {
   _strCacheDirectory = cacheDir;
   GLint n;
   glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &n);
@@ -42,8 +42,8 @@ ShaderCache::~ShaderCache() {
   _vecBinaries.resize(0);
 }
 
-t_string ShaderCache::getBinaryNameFromProgramName(t_string& progName) {
-  t_string fb = progName + ".sb";
+string_t ShaderCache::getBinaryNameFromProgramName(string_t& progName) {
+  string_t fb = progName + ".sb";
   return FileSystem::combinePath(_strCacheDirectory, fb);//::appendCacheDirectory(fb);
 }
 
@@ -93,12 +93,12 @@ Extension: .sb
     binary (char*)
 
 */
-GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName) {
+GLProgramBinary* ShaderCache::getBinaryFromDisk(string_t& programName) {
   DiskFile df;
   GLProgramBinary* pbin = nullptr;
   GLenum glenum;
   size_t binSz;
-  t_string binaryName = getBinaryNameFromProgramName(programName);
+  string_t binaryName = getBinaryNameFromProgramName(programName);
 
   time_t compTime;
   //doesn't matter
@@ -106,12 +106,12 @@ GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName) {
   //    throw new Game::Exception("Could not save bin.  Time was not 64 bits.");
 
   if (!FileSystem::fileExists(binaryName)) {
-    BRLogDebug(t_string("Program binary not found: ") + binaryName);
+    BRLogDebug(string_t("Program binary not found: ") + binaryName);
 
     return nullptr;
   }
 
-  BRLogDebug(t_string("Loading program binary ") + binaryName);
+  BRLogDebug(string_t("Loading program binary ") + binaryName);
   try {
     df.openForRead(DiskLoc(binaryName));
     df.read((char*)&(compTime), sizeof(time_t));
@@ -151,15 +151,15 @@ GLProgramBinary* ShaderCache::getBinaryFromDisk(t_string& programName) {
   return pbin;
 
 }
-void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin) {
+void ShaderCache::saveBinaryToDisk(string_t& programName, GLProgramBinary* bin) {
   DiskFile df;
-  t_string binaryName = getBinaryNameFromProgramName(programName);
-  t_string binPath = FileSystem::getPathFromPath(binaryName);
+  string_t binaryName = getBinaryNameFromProgramName(programName);
+  string_t binPath = FileSystem::getPathFromPath(binaryName);
 
   BRLogInfo(" Shader program Bin path = " + binPath);
 
   try {
-    BRLogDebug(t_string("[ShaderCache] Caching program binary ") + binaryName);
+    BRLogDebug(string_t("[ShaderCache] Caching program binary ") + binaryName);
     FileSystem::createDirectoryRecursive(binPath);
     df.openForWrite(DiskLoc(binaryName), FileWriteMode::Truncate);
     df.write((char*)&(bin->_compileTime), sizeof(bin->_compileTime));
@@ -177,11 +177,11 @@ void ShaderCache::saveBinaryToDisk(t_string& programName, GLProgramBinary* bin) 
 *    @fn deleteBinaryFromDisk
 *    @brief
 */
-void ShaderCache::deleteBinaryFromDisk(t_string& programName) {
-  t_string binaryName = getBinaryNameFromProgramName(programName);
+void ShaderCache::deleteBinaryFromDisk(string_t& programName) {
+  string_t binaryName = getBinaryNameFromProgramName(programName);
 
   if (!FileSystem::fileExists(binaryName)) {
-    BRLogError(t_string("Failed to delete file ") + binaryName);
+    BRLogError(string_t("Failed to delete file ") + binaryName);
   }
 
   FileSystem::deleteFile(binaryName);
@@ -208,7 +208,7 @@ void ShaderCache::saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram)
 *    @return false if the load failed or file was not found.
 *    @return true if the program loaded successfully
 */
-std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string programName, std::vector<t_string> shaderFiles) {
+std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string programName, std::vector<string_t> shaderFiles) {
   bool bSuccess = false;
   GLProgramBinary* binary;
   std::shared_ptr<ShaderBase> ret = nullptr;
@@ -217,7 +217,7 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
 
   if (binary != NULL) {
     time_t maxTime = 0;
-    for (t_string file : shaderFiles) {
+    for (string_t file : shaderFiles) {
       FileInfo inf = FileSystem::getFileInfo(file);
       if (!inf._exists) {
         BRLogError("Shader source file '" + file + "' does not exist.");
@@ -280,7 +280,7 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
   }
 
   //Print Log
-  std::vector<t_string> inf;
+  std::vector<string_t> inf;
   pProgram->getProgramErrorLog(inf);
   for (size_t i = 0; i < inf.size(); ++i) {
     BRLogWarn("   " + inf[i]);

@@ -28,26 +28,26 @@ public:
 */
 class ShaderCache : public VirtualMemory {
 public:
-  ShaderCache(t_string cacheDir);
+  ShaderCache(string_t cacheDir);
   virtual ~ShaderCache() override;
 
   void saveCompiledBinaryToDisk(std::shared_ptr<ShaderBase> pProgram);
-  std::shared_ptr<ShaderBase> tryLoadCachedBinary(t_string programName, std::vector<t_string> shaderFiles); \
+  std::shared_ptr<ShaderBase> tryLoadCachedBinary(string_t programName, std::vector<string_t> shaderFiles); \
 
 protected:
-  t_string getBinaryNameFromProgramName(t_string& progName);
+  string_t getBinaryNameFromProgramName(string_t& progName);
   bool isSupported() { return _bCacheIsSupported; }
   void freeLoadedBinary(GLProgramBinary* bin);
   GLProgramBinary* getBinaryFromGpu(std::shared_ptr<ShaderBase> prog);
   std::shared_ptr<ShaderBase> loadBinaryToGpu(std::string, GLProgramBinary* bin);
-  GLProgramBinary* getBinaryFromDisk(t_string& programName);
-  void saveBinaryToDisk(t_string& programName, GLProgramBinary* bin);
-  void deleteBinaryFromDisk(t_string& programName);
+  GLProgramBinary* getBinaryFromDisk(string_t& programName);
+  void saveBinaryToDisk(string_t& programName, GLProgramBinary* bin);
+  void deleteBinaryFromDisk(string_t& programName);
 
 private:
   bool _bCacheIsSupported = false;
   std::vector<GLProgramBinary*> _vecBinaries;
-  t_string _strCacheDirectory;
+  string_t _strCacheDirectory;
 };
 
 }//ns game

@@ -19,7 +19,7 @@ public:
   Crc32(uint32_t polynomial = 0xedb88320, uint32_t seed = 0xffffffff);
   virtual ~Crc32() override;
 
-  uint32_t compute(const t_string& buffer);
+  uint32_t compute(const string_t& buffer);
 private:
   enum { UiTableLen = 256 };
   uint32_t _uiTable[UiTableLen];

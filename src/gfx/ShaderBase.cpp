@@ -31,7 +31,7 @@
 #include "../world/RenderBucket.h"
 
 namespace BR2 {
-ShaderBase::ShaderBase(t_string strName) {
+ShaderBase::ShaderBase(string_t strName) {
     setProgramName(strName);
 }
 ShaderBase::~ShaderBase() {
@@ -59,7 +59,7 @@ void ShaderBase::deleteAttributes() {
     }
     _setAttributes.clear();
 }
-std::shared_ptr<ShaderUniform> ShaderBase::getUniformByName(t_string name) {
+std::shared_ptr<ShaderUniform> ShaderBase::getUniformByName(string_t name) {
     Hash32 h = STRHASH(name);
     std::map<Hash32, std::shared_ptr<ShaderUniform>>::iterator ite = _vecUniforms.find(h);
     if (ite != _vecUniforms.end()) {
@@ -113,7 +113,7 @@ void ShaderBase::recreateProgram() {
     _vecSubPrograms.clear();
 }
 
-void ShaderBase::getProgramErrorLog(std::vector<t_string>& __out_ errs) {
+void ShaderBase::getProgramErrorLog(std::vector<string_t>& __out_ errs) {
     //GLShaderProgram* psp = (GLShaderProgram*)sp;
 
 
@@ -126,7 +126,7 @@ void ShaderBase::getProgramErrorLog(std::vector<t_string>& __out_ errs) {
     std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramInfoLog(getGlId(), buf_size, &length_out, log_out);
 
     errs.clear();
-    t_string tempStr;
+    string_t tempStr;
     char* c = log_out;
 
     for (int i = 0; i < length_out; ++i) {
@@ -193,7 +193,7 @@ void ShaderBase::setAtlasUf(std::shared_ptr<Atlas> pa) {
     setUf("_ufSprW", &_fSprW);
     setUf("_ufSprH", &_fSprH);
 }
-void ShaderBase::setUf(t_string name, void* value, GLint count, bool bIgnore) {
+void ShaderBase::setUf(string_t name, void* value, GLint count, bool bIgnore) {
     AssertOrThrow2(value != nullptr);
     std::shared_ptr<ShaderUniform> uf = getUniformByName(name);
     if (uf == nullptr) {
@@ -214,7 +214,7 @@ void ShaderBase::verifyBound() {
         GLint prog = 0;
         glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
         if (prog > 0 && getGlId() != prog) {
-            t_string na, nb;
+            string_t na, nb;
             na = Gu::getShaderMaker()->getShaderNameForId(prog);
             nb = Gu::getShaderMaker()->getShaderNameForId(getGlId());
 
@@ -244,13 +244,13 @@ void ShaderBase::verifyBound() {
         }
     }
 }
-void ShaderBase::setProgramName(t_string name) {
+void ShaderBase::setProgramName(string_t name) {
     _strProgramName = name;
     _iNameHashed = STRHASH(name);
 }
 void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
     //Uniform should be "_ufTexturen"
-    t_string ufName = Stz "_ufTexture" + iChannel;
+    string_t ufName = Stz "_ufTexture" + iChannel;
 
     //TODDO: add some error checking ehre to make sure we're not trying
    //to bind too many textures more than GL_MAX_TEXTURE_UNITS
@@ -307,8 +307,8 @@ void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDr
     // unbind();
      //Do not unbind so we keep the uniforms.
 }
-t_string ShaderBase::debugGetUniformValues() {
-    t_string str = "\r\n";
+string_t ShaderBase::debugGetUniformValues() {
+    string_t str = "\r\n";
 
     for (std::pair<Hash32, std::shared_ptr<ShaderUniform>> uf : _vecUniforms) {
         str += "Uniform '" + uf.second->getName() + "':\r\n";

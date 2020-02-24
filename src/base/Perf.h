@@ -22,7 +22,7 @@ public:
   static void pushPerf();
   static void popPerf();
 private:
-  static t_string _strCachedProf;
+  static string_t _strCachedProf;
   static std::stack<Stopwatch> _stopw;
   static void pulsePerf();
 };

@@ -101,10 +101,10 @@ void IOBase<char>::writeUint32(uint32_t& val, size_t offset) {
 
   write((char*)&val, readSiz, offset);
 }
-void IOBase<char>::writeStr(const t_string& str) {
+void IOBase<char>::writeStr(const string_t& str) {
   write(str.c_str(), str.length(), memsize_max);
 }
-void IOBase<char>::writeTextLine(const t_string& str) {
+void IOBase<char>::writeTextLine(const string_t& str) {
   writeStr((str + "\n").c_str());
 }
 

@@ -31,17 +31,17 @@ public:
   virtual ~_HashMap() override;
   iterator begin() { return _map.begin(); }
   iterator end() { return _map.end(); }
-  void add(t_string key, Tx& x);//Can't be const
-  bool remove(t_string key);
-  RefItem<Tx> find(t_string key);
+  void add(string_t key, Tx& x);//Can't be const
+  bool remove(string_t key);
+  RefItem<Tx> find(string_t key);
   size_t size() { return _map.size(); }
   void erase(const_iterator _Where) { _map.erase(_Where); }
   void clear() { _map.clear(); }
-  bool contains(t_string key);
+  bool contains(string_t key);
 protected:
   HashMapType _map;
   virtual int32_t getNumAlgorithms() = 0;
-  virtual TKey computeHash(t_string str, int32_t iAlgorithm) = 0;
+  virtual TKey computeHash(string_t str, int32_t iAlgorithm) = 0;
 };
 template < class Tx, class TKey >
 _HashMap<Tx, TKey>::_HashMap() {
@@ -51,7 +51,7 @@ _HashMap<Tx, TKey>::~_HashMap() {
   _map.clear();
 }
 template < class Tx, class TKey >
-void _HashMap<Tx, TKey>::add(t_string str, Tx& x) {
+void _HashMap<Tx, TKey>::add(string_t str, Tx& x) {
   TKey nHashVal;
   int i;
   for (i = 0; i < getNumAlgorithms(); ++i) {
@@ -76,7 +76,7 @@ void _HashMap<Tx, TKey>::add(t_string str, Tx& x) {
 }
 // - Returns false if remove failed.
 template < class Tx, class TKey >
-bool _HashMap<Tx, TKey>::remove(t_string key) {
+bool _HashMap<Tx, TKey>::remove(string_t key) {
   TKey n = computeHash(key, key.getHashAlgorithmIndex());
   bool b = _map.remove(n, true);
 
@@ -91,7 +91,7 @@ bool _HashMap<Tx, TKey>::remove(t_string key) {
 *   @brief finds a string.  Returns a nullptr RefItem if not found.
 */
 template < class Tx, class TKey >
-_HashMap<Tx, TKey>::RefItem<Tx> _HashMap<Tx, TKey>::find(t_string key) {
+_HashMap<Tx, TKey>::RefItem<Tx> _HashMap<Tx, TKey>::find(string_t key) {
   TKey n = computeHash(key, key.getHashAlgorithmIndex());
 
   typename HashMapType::iterator ite = _map.find(n);
@@ -102,7 +102,7 @@ _HashMap<Tx, TKey>::RefItem<Tx> _HashMap<Tx, TKey>::find(t_string key) {
   return RefItem<Tx>(&(ite->second));
 }
 template < class Tx, class TKey >
-bool _HashMap<Tx, TKey>::contains(t_string key) {
+bool _HashMap<Tx, TKey>::contains(string_t key) {
   RefItem<Tx> ri = find(str);
   if (ri._val == nullptr) {
     return false;
@@ -123,7 +123,7 @@ public:
   int32_t getNumAlgorithms() override {
     return FNV_MAX_ALGORITHMS_32;
   }
-  uint32_t computeHash(t_string str, int32_t iAlgorithm) override {
+  uint32_t computeHash(string_t str, int32_t iAlgorithm) override {
     return Hash::computeStringHash32bit(str, iAlgorithm);
   }
 
@@ -141,7 +141,7 @@ public:
   int32_t getNumAlgorithms() override {
     return FNV_MAX_ALGORITHMS_64;
   }
-  uint64_t computeHash(t_string str, int32_t iAlgorithm) override {
+  uint64_t computeHash(string_t str, int32_t iAlgorithm) override {
     return Hash::computeStringHash64bit(str, iAlgorithm);
   }
 

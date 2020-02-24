@@ -6,7 +6,7 @@
 #include "../base/BinaryFile.h"
 
 namespace BR2 {
-Img32::Img32(t_string path, bool bLoad) {
+Img32::Img32(string_t path, bool bLoad) {
   _strNameOrFilePath = path;
   if (bLoad) {
     //TODO: this

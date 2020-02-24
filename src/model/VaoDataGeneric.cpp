@@ -79,7 +79,7 @@ void VaoShader::enableAttributesForShader(std::shared_ptr<ShaderBase> pShader, s
   //Fill the components dummy
   AssertOrThrow2(_pVertexFormat->getComponents().size() > 0);
 
-  t_string errStr = "";
+  string_t errStr = "";
 
   for (ShaderAttribute* attr : pShader->getAttributes()) {
     if (attr->isGLSLBuiltInAttrib()) {

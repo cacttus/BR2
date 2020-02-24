@@ -10,7 +10,7 @@
 #include "../gfx/RenderSettings.h"  
 
 namespace BR2 {
-Material::Material(t_string name) {
+Material::Material(string_t name) {
   _strName = name;
   _v4Spec.construct(1, 1, 1, 1);
   _v4Diffuse.construct(1, 1, 1, 1);
@@ -206,7 +206,7 @@ void TextureSlot::deserialize(std::shared_ptr<BinaryFile> fb) {
 }
 void TextureSlot::serialize(std::shared_ptr<BinaryFile> fb) {
   if (_pTex != nullptr) {
-    t_string fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
+    string_t fn = FileSystem::getFileNameFromPath(_pTex->getLocation());
     if (StringUtil::isNotEmpty(_pTex->getLocation())) {
       Hash32 h = STRHASH(fn);
       _strDebugTextureFileName = fn;

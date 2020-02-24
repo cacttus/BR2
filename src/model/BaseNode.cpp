@@ -17,7 +17,7 @@
 #include "../world/RenderBucket.h"
 
 namespace BR2 {
-BaseSpec::BaseSpec(t_string strName) {
+BaseSpec::BaseSpec(string_t strName) {
   _strName = strName;
   _iNameHashed = STRHASH(_strName);
   _mBind = mat4::identity();
@@ -76,7 +76,7 @@ BaseNode::~BaseNode() {
   DEL_MEM(_pOBB);
 }
 ///////////////////////////////////////////////////////////////////
-t_string BaseNode::getSpecName() {
+string_t BaseNode::getSpecName() {
   if (getSpec()) {
     return getSpec()->getName();
   }

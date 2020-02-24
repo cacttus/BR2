@@ -87,7 +87,7 @@ public:
   FORCE_INLINE float getDepth() { return (_max.z - _min.z); }
   FORCE_INLINE float outerRadius(); // Computes a spherical radius that contains this box
   FORCE_INLINE float innerRadius(); // Computes a spherical radius that is contained within this box
-  FORCE_INLINE t_string toString();
+  FORCE_INLINE string_t toString();
   FORCE_INLINE void operator=(const Tx& rhs);
   FORCE_INLINE bool operator!=(const Box3x<Tx>& rhs) const;
   FORCE_INLINE bool limitSizeForEachAxis(const vec3& vBasePos, const float& fSize);
@@ -818,7 +818,7 @@ FORCE_INLINE float Box3x<Tx>::innerRadius() {
   return fMin;
 }
 template < class Tx >
-FORCE_INLINE t_string Box3x<Tx>::toString() {
+FORCE_INLINE string_t Box3x<Tx>::toString() {
   return TStr("{", _min.toString(), "},{", _max.toString(), "}");
 }
 template < class Tx >

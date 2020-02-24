@@ -20,8 +20,8 @@ public:
   ProjectFile();
   virtual ~ProjectFile() override;
 
-  t_string _name;
-  t_string _path;
+  string_t _name;
+  string_t _path;
 
 };
 

@@ -19,7 +19,7 @@ public:
   OpenGLWindow(bool is_main = false);
   virtual ~OpenGLWindow() override;
 
-  virtual void create(t_string title) override;
+  virtual void create(string_t title) override;
   virtual void createRenderer();
 
 protected:

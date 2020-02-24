@@ -27,24 +27,24 @@ public:
   void enableLogToConsole(bool bLogToConsole);
   void enableLogToFile(bool bLogToFile);
 
-  void logError(t_string msg, BR2::Exception* e = NULL);    // - Log an error with exception contents.
-  void logWarn(t_string msg, BR2::Exception* e = NULL);    // - Log an error with exception contents.
-  void logDebug(t_string msg);
-  void logInfo(t_string msg);
+  void logError(string_t msg, BR2::Exception* e = NULL);    // - Log an error with exception contents.
+  void logWarn(string_t msg, BR2::Exception* e = NULL);    // - Log an error with exception contents.
+  void logDebug(string_t msg);
+  void logInfo(string_t msg);
 
-  void logError(t_string msg, int line, char* file, BR2::Exception* e = NULL, bool hideStackTrace = false);    // - Log an error with exception contents.
-  void logWarn(t_string msg, int line, char* file, BR2::Exception* e = NULL);    // - Log an error with exception contents.
-  void logWarnCycle(t_string msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-  void logErrorCycle(t_string msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-  void logDebug(t_string msg, int line, char* file);
-  void logInfo(t_string msg, int line, char* file);
+  void logError(string_t msg, int line, char* file, BR2::Exception* e = NULL, bool hideStackTrace = false);    // - Log an error with exception contents.
+  void logWarn(string_t msg, int line, char* file, BR2::Exception* e = NULL);    // - Log an error with exception contents.
+  void logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+  void logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+  void logDebug(string_t msg, int line, char* file);
+  void logInfo(string_t msg, int line, char* file);
 
   void logInfo(const char* msg);
   void logDebug(const char* msg);
   void logError(const char* msg, BR2::Exception* e = NULL);
   void logWarn(const char* msg, BR2::Exception* e = NULL);
 
-  t_string getLogPath();
+  string_t getLogPath();
 private:
   std::unique_ptr<Logger_Internal> _pint = nullptr;
 };

@@ -77,7 +77,7 @@ public:
   FORCE_INLINE Vector4 col(int col);
   FORCE_INLINE Matrix4x4& projection(float n, float f, float l, float r, float t, float b); // set up a projection matrix.
 
-  FORCE_INLINE t_string toString() const;
+  FORCE_INLINE string_t toString() const;
 
   FORCE_INLINE Vec3f getTranslation() const;
   FORCE_INLINE void setTranslation(const Vec3f& vec);
@@ -121,7 +121,7 @@ public:
   FORCE_INLINE STATIC Matrix4x4 getOrientToVector(vec3 v, vec3 up);
   FORCE_INLINE STATIC Matrix4x4 getLookAt(const vec3& eye, const vec3& center, const vec3& up);
   FORCE_INLINE STATIC Matrix4x4 getOrtho(float left, float right, float top, float bottom, float neard, float fard);
-  FORCE_INLINE STATIC bool parse(t_string, Matrix4x4& mOut);
+  FORCE_INLINE STATIC bool parse(string_t, Matrix4x4& mOut);
 #pragma endregion
 
 
@@ -854,7 +854,7 @@ FORCE_INLINE const Matrix4x4 Matrix4x4::operator*(const Matrix4x4& m) const {
   tmp *= m;
   return tmp;
 }
-FORCE_INLINE t_string Matrix4x4::toString() const {
+FORCE_INLINE string_t Matrix4x4::toString() const {
   return
     TypeConv::floatToStr(_m11) + "," +
     TypeConv::floatToStr(_m12) + "," +
@@ -968,13 +968,13 @@ FORCE_INLINE void Matrix4x4::decompose(vec4& pos, vec4& rot, vec4& scale, bool b
   }
 
 }
-FORCE_INLINE bool Matrix4x4::parse(t_string tok, Matrix4x4& mOut) {
+FORCE_INLINE bool Matrix4x4::parse(string_t tok, Matrix4x4& mOut) {
   // - Parse csv matrix string.
 
   size_t n = 0;
   char c;
   float mat[16];
-  t_string val = "";
+  string_t val = "";
   int mat_ind = 0;
 
   while (n < tok.length()) {
@@ -1021,7 +1021,7 @@ FORCE_INLINE bool Matrix4x4::parse(t_string tok, Matrix4x4& mOut) {
     31  32  33  34
     41  42  43  44
 */
-STATIC FORCE_INLINE t_string tstr(const mat4& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const mat4& x) { return x.toString(); }
 
 
 

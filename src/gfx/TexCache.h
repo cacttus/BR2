@@ -38,8 +38,8 @@ public:
   std::shared_ptr<Texture2DSpec> getOrLoad(std::string texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
   std::vector<std::shared_ptr<Texture2DSpec>> getOrLoad(std::vector<std::string> texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
   //void bindIfDifferent(std::shared_ptr<Texture2DSpec> tex);
-  bool add(t_string name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
-  std::shared_ptr<Texture2DSpec> addAsGeneratedImage(t_string name, const std::shared_ptr<Img32> ss);
+  bool add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
+  std::shared_ptr<Texture2DSpec> addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss);
   GLuint getDummy1x1TextureCube() { return _i1x1DummyCubeTexture; }
   GLuint getDummy1x1Texture2D() { return _i1x2Dummy2DTexture; }
   GLuint getDummy1x1NormalTexture2D() { return _i1x1DummyBump2DTexture; }

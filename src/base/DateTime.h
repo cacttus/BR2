@@ -45,32 +45,32 @@ public:
   static t_date getDate(int32_t mm, int32_t dd, int32_t y1, int32_t y2);
   static t_time getTime(int32_t hb, int32_t mm, int32_t ss, int32_t ms);
   static t_datetime fromUTime(time_t t);
-  static t_date strToDate(const t_string& szDate, char separator = '/');
-  static t_datetime strToDateTime(const t_string& szDateTime);
-  static t_time strToTime(t_string& time, char separator = ':');
-  static t_string dateTimeToStr(t_datetime d);    // - Convert DateTime to string.
-  static t_string timeToStr(
+  static t_date strToDate(const string_t& szDate, char separator = '/');
+  static t_datetime strToDateTime(const string_t& szDateTime);
+  static t_time strToTime(string_t& time, char separator = ':');
+  static string_t dateTimeToStr(t_datetime d);    // - Convert DateTime to string.
+  static string_t timeToStr(
     t_time t
-    , t_string delim = t_string(":")
+    , string_t delim = string_t(":")
     , bool hour = true
     , bool minute = true
     , bool second = true
     , bool millisecond = true
   );
-  static t_string dateTimeToStrNoDelim(t_datetime d);    // - Convert DateTime to string.
-  static t_string timeToStrNoDelim(t_time t);
+  static string_t dateTimeToStrNoDelim(t_datetime d);    // - Convert DateTime to string.
+  static string_t timeToStrNoDelim(t_time t);
 
-  static t_string dateGetYearStr(const t_date date);// Get the year as a string
-  static t_string dateGetDayStr(const t_date date);// Get the day as a string
-  static t_string dateGetMonthStr(const t_date date);//Get the month as a string.
-  static t_string dateGetMonthName(t_date date);// Get the name of the month.
-  static t_string dateGetMonthNameAbbr(t_date date);    // Get the name of the month abbreviated.
-  static t_string dateToStrNoSlash(const t_date date);// Same as above but outputs the date as mmddyyyy
+  static string_t dateGetYearStr(const t_date date);// Get the year as a string
+  static string_t dateGetDayStr(const t_date date);// Get the day as a string
+  static string_t dateGetMonthStr(const t_date date);//Get the month as a string.
+  static string_t dateGetMonthName(t_date date);// Get the name of the month.
+  static string_t dateGetMonthNameAbbr(t_date date);    // Get the name of the month abbreviated.
+  static string_t dateToStrNoSlash(const t_date date);// Same as above but outputs the date as mmddyyyy
 
   static bool dtLessThan(t_datetime d1, t_datetime d2);
   static bool dateLessThan(t_date d1, t_date d2);
   static bool timeLessThan(t_time t1, t_time t2);
-  static t_string dateToStr(const t_date date);// Get the date as a string,  as mm/dd/yyyy
+  static string_t dateToStr(const t_date date);// Get the date as a string,  as mm/dd/yyyy
 
   static int32_t dateGetDay(t_date d);// Return the integer number of the day
   static int32_t dateGetMonth(t_date d);// Return the integer number of the month
@@ -88,7 +88,7 @@ public:
   static int minute();            // - Get the current minute.
   static int second();            // - Get the current second.
   static int ms();                // - Get the current millisecond. ( out of 1000 )
-  static t_string getTimeString();//time as string. hh:mm:ss:uuuu
+  static string_t getTimeString();//time as string. hh:mm:ss:uuuu
 };
 
 }//ns game

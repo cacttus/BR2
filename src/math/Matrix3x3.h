@@ -58,7 +58,7 @@ public:
   FORCE_INLINE STATIC Matrix3x3 getRotation(t_degrees a, float x, float y, float z);    // - Returns a rotation matrix from degrees.
   FORCE_INLINE STATIC Matrix3x3 getRotationRad(t_radians a, float x, float y, float z);    // - Returns a rotation matrix in radians.
   FORCE_INLINE STATIC Matrix3x3 getRotationRad(float a, const vec3& v);    // - Returns a rotation matrix in radians.
-  FORCE_INLINE t_string toString() const;
+  FORCE_INLINE string_t toString() const;
 
 };
 FORCE_INLINE Matrix3x3::Matrix3x3() {
@@ -280,7 +280,7 @@ FORCE_INLINE Matrix3x3& Matrix3x3::operator=(const Matrix3x3& rhs) {
 
   return *this;
 }
-FORCE_INLINE t_string Matrix3x3::toString() const {
+FORCE_INLINE string_t Matrix3x3::toString() const {
   return
     TypeConv::floatToStr(_m11) + "," +
     TypeConv::floatToStr(_m12) + "," +
@@ -301,7 +301,7 @@ FORCE_INLINE t_string Matrix3x3::toString() const {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-STATIC FORCE_INLINE t_string tstr(const mat3& x) { return x.toString(); }
+STATIC FORCE_INLINE string_t tstr(const mat3& x) { return x.toString(); }
 
 
 }

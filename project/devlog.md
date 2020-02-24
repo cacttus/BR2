@@ -14,6 +14,12 @@
 * Recoded all file headers.
 * Removed /base and /baseAll
 * Compile, Tested.
+* Removed Global Include Headers
+* Reduced Compile time by about 3 minutes.
+* Replaced t_stirng with string_t
+* Replace OPeratingSystem with the broken build OperatingSystem
+* Replaced BuildConfig
+* Compile, Tested.
 
 *2/21/2020*
 

@@ -19,7 +19,7 @@ public:
 
   std::shared_ptr<EngineConfig> getConfig() { return _pConfig; }
 protected:
-  virtual void pkp(std::vector<t_string>& tokens) override;
+  virtual void pkp(std::vector<string_t>& tokens) override;
   virtual void preLoad() override;
   virtual void postLoad(bool success) override;
 

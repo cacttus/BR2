@@ -1019,6 +1019,9 @@
     <ClInclude Include="src\base\StringWrapper.h">
       <Filter>base</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\OperatingSystemHeader.h">
+      <Filter>base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="project\devlog.md" />

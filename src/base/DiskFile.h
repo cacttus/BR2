@@ -19,11 +19,11 @@ public:
   DiskFile();
   virtual ~DiskFile();
 
-  STATIC RetCode readAllBytes(t_string loc, Allocator<char>& __out_ outBuf);
-  STATIC RetCode writeAllBytes(t_string loc, Allocator<char>& __out_ outBuf);
+  STATIC RetCode readAllBytes(string_t loc, Allocator<char>& __out_ outBuf);
+  STATIC RetCode writeAllBytes(string_t loc, Allocator<char>& __out_ outBuf);
 
   size_t getFileSize() const;
-  RetCode create(t_string szloc, size_t offset = 0);// - only create a file.
+  RetCode create(string_t szloc, size_t offset = 0);// - only create a file.
   bool checkEOF();
 
   virtual RetCode read(char* buf, size_t len, size_t buflen = memsize_max, size_t offset = memsize_max) override; // read into a buffer
@@ -31,11 +31,11 @@ public:
 
   RetCode openForRead(DiskLoc& szloc);
   //  RetCode read( char* buf, size_t len, size_t offset, size_t buflen=-1 ); // read from an offset into a buffer
-  RetCode readTo(char* buf, const t_string& delims, size_t buflen); // - read to a delimiter
+  RetCode readTo(char* buf, const string_t& delims, size_t buflen); // - read to a delimiter
   RetCode openForWrite(DiskLoc& szloc, FileWriteMode::e mode = FileWriteMode::e::Truncate);
 
-  RetCode writeStrWithLen(const t_string& str);    // - Write a string with [len][str..]
-  RetCode writeStrText(const t_string& str);    // - Write a string with [len][str..]
+  RetCode writeStrWithLen(const string_t& str);    // - Write a string with [len][str..]
+  RetCode writeStrText(const string_t& str);    // - Write a string with [len][str..]
   RetCode readStr(char* buf, size_t bufLen);    // - Read a string with [len][str..]
 
   void close();

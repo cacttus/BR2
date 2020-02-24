@@ -31,7 +31,7 @@ public:
   int getDefaultScreenWidth() { return      _iDefaultScreenWidth; }
   int getDefaultScreenHeight() { return      _iDefaultScreenHeight; }
   bool getForceAspectRatio() { return       _bForceAspectRatio; }
-  t_string getGpuDeviceName() { return      _strGpuDeviceName; }
+  string_t getGpuDeviceName() { return      _strGpuDeviceName; }
   float getDefaultFieldOfView() { return       _fDefaultFieldOfView; }
   float getMaxPickDistance() { return       _fMaxPickDistance; }
   ColorSpace::e getColorSpace() { return       _eColorSpace; }
@@ -80,7 +80,7 @@ private:
   int _iDefaultScreenWidth = 800;
   int _iDefaultScreenHeight = 600;
   bool _bForceAspectRatio = true;
-  t_string _strGpuDeviceName;
+  string_t _strGpuDeviceName;
   float _fDefaultFieldOfView = 64.734;
   float _fMaxPickDistance = 2000;
   ColorSpace::e _eColorSpace = ColorSpace::e::SRGB;

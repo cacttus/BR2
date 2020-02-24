@@ -41,9 +41,9 @@ public:
   bool isPackage() { return _bIsPackage; }
   bool getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull = false);
   void build(std::string exeLoc);
-  t_string debugPrint();
-  bool fileExists(t_string file);
-  time_t getLastModifyTime(t_string str);
+  string_t debugPrint();
+  bool fileExists(string_t file);
+  time_t getLastModifyTime(string_t str);
 
 private:
   std::vector<FileEntry*> _vecEntries;

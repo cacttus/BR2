@@ -53,7 +53,7 @@ private:
   std::shared_ptr<GLContext> _pContext = nullptr;
   std::unique_ptr<QuadBufferMesh> _pQuadBufferMesh = nullptr;
   // PartyShader* _pPartyShader = nullptr;
-  t_string _sAtlasName;
+  string_t _sAtlasName;
   void reset();
 
 };

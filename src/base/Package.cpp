@@ -135,8 +135,8 @@ Package::FileEntry* Package::getEntry(std::string fileLoc) {
 bool Package::loadExe(std::shared_ptr<BinaryFile> fb) {
   return fb->loadFromDisk(_strExeLoc);
 }
-t_string Package::debugPrint() {
-  t_string ret;
+string_t Package::debugPrint() {
+  string_t ret;
   ret += "Files:\r\n";
   for (FileEntry* fe : _vecEntries) {
     ret += "  Loc:" + fe->_strLoc;
@@ -153,7 +153,7 @@ t_string Package::debugPrint() {
   }
   return ret;
 }
-bool Package::fileExists(t_string file) {
+bool Package::fileExists(string_t file) {
   if (isPackage() == false) {
     return FileSystem::fileExists(file);
   }
@@ -162,7 +162,7 @@ bool Package::fileExists(t_string file) {
   }
 }
 
-time_t Package::getLastModifyTime(t_string str) {
+time_t Package::getLastModifyTime(string_t str) {
   if (isPackage() == false) {
     return FileSystem::getLastModifyTime(str);
   }

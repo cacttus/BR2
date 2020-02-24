@@ -9,7 +9,7 @@
 namespace BR2 {
 class OglErr_Internal {
 public:
-  static t_string glErrToStr(GLenum err) {
+  static string_t glErrToStr(GLenum err) {
     switch (err) {
     case 0: return  "GL_NO_ERROR         ";
     case 0x0500: return  "GL_INVALID_ENUM     ";
@@ -107,7 +107,7 @@ public:
       ids.resize(numFound);
       lengths.resize(numFound);
 
-      std::vector<t_string> messages;
+      std::vector<string_t> messages;
       messages.reserve(numFound);
 
       std::vector<GLchar>::iterator currPos = msgData.begin();
@@ -127,10 +127,10 @@ public:
         else if (id == 0x07) { return; }// glLineWidth Deprecated (other driver)
 
 
-        t_string strMsg = std::string(currPos, currPos + lengths[iMsg] - 1);
-        t_string strSrc = glDebugGetErrorSource(sources[iMsg]);
-        t_string strType = glDebugGetMessageType(types[iMsg]);
-        t_string strSev = glDebugGetMessageSeverity(severities[iMsg]);
+        string_t strMsg = std::string(currPos, currPos + lengths[iMsg] - 1);
+        string_t strSrc = glDebugGetErrorSource(sources[iMsg]);
+        string_t strType = glDebugGetMessageType(types[iMsg]);
+        string_t strSev = glDebugGetMessageSeverity(severities[iMsg]);
 
         if (doNotLog == false) {
           strMsg = "GPU LOG\r\n ID: " + StringUtil::toHex(id, true) + "\r\n Msg: " + strMsg;
@@ -138,15 +138,15 @@ public:
           GLenum severity = severities[iMsg];
           GLenum type = types[iMsg];
           if (type == GL_DEBUG_TYPE_ERROR) {
-            t_string _strStackInfo = DebugHelper::getStackTrace();
+            string_t _strStackInfo = DebugHelper::getStackTrace();
             BRLogError(strMsg + "\r\n" + _strStackInfo);
           }
           else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
-            t_string _strStackInfo = DebugHelper::getStackTrace();
+            string_t _strStackInfo = DebugHelper::getStackTrace();
             BRLogInfo(strMsg + "\r\n" + _strStackInfo);
           }
           else {
-            t_string _strStackInfo = DebugHelper::getStackTrace();
+            string_t _strStackInfo = DebugHelper::getStackTrace();
             BRLogWarn(strMsg + "\r\n" + _strStackInfo);
           }
         }
@@ -155,7 +155,7 @@ public:
       }
     } while (numFound > 0);
   }
-  static t_string glDebugGetErrorSource(int eCode) {
+  static string_t glDebugGetErrorSource(int eCode) {
     switch (eCode) {
     case GL_DEBUG_SOURCE_API: return " SOURCE API"; break;
     case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return (" WINDOW SYSTEM"); break;
@@ -166,7 +166,7 @@ public:
     }
     return ("*No Enum*");
   }
-  static t_string glDebugGetMessageType(int eCode) {
+  static string_t glDebugGetMessageType(int eCode) {
     switch (eCode) {
     case GL_DEBUG_TYPE_ERROR: return (" ERROR"); break;
     case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return (" DEPRECATED"); break;
@@ -180,7 +180,7 @@ public:
     }
     return ("*No Enum*");
   }
-  static t_string glDebugGetMessageSeverity(int eCode) {
+  static string_t glDebugGetMessageSeverity(int eCode) {
     switch (eCode) {
     case GL_DEBUG_SEVERITY_HIGH: return (" HIGH"); break;
     case GL_DEBUG_SEVERITY_MEDIUM: return (" MEDIUM"); break;

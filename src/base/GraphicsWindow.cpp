@@ -97,8 +97,8 @@ std::shared_ptr<WindowViewport> GraphicsWindow::getWindowViewport() { return _pi
 std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
 std::shared_ptr<Gui2d> GraphicsWindow::getGui() { return _pint->_pGui; }
 
-void GraphicsWindow::makeSDLWindow(t_string windowTitle, int render_system) {
-  t_string title;
+void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
+  string_t title;
   bool bFullscreen = false;
 
   int x=0, y=0, w=800, h=600, flags=0;

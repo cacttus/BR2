@@ -109,7 +109,7 @@ void KeyFrame::serialize( std::shared_ptr<BinaryFile> fb) {
     fb->writeVec3(std::move(_scl));
 }
 //////////////////////////////////////////////////////////////////////////
-ActionKeys::ActionKeys(t_string objName) {
+ActionKeys::ActionKeys(string_t objName) {
     _iNameHashed = STRHASH(objName);
     // _strName = actName;
     _strObjectName = objName;
@@ -201,7 +201,7 @@ void ActionKeys::serialize( std::shared_ptr<BinaryFile> fb) {
 
 }
 //////////////////////////////////////////////////////////////////////////
-ActionGroup::ActionGroup(t_string strName, int32_t iBaseFps) {
+ActionGroup::ActionGroup(string_t strName, int32_t iBaseFps) {
     _strName = strName;
     _iBaseFps = iBaseFps;
     _iNameHashed = STRHASH(_strName);
@@ -261,7 +261,7 @@ void ActionGroup::serialize( std::shared_ptr<BinaryFile> fb) {
 
 }
 //////////////////////////////////////////////////////////////////////////
-BoneSpec::BoneSpec(t_string name, int32_t id) : BaseSpec(name) {
+BoneSpec::BoneSpec(string_t name, int32_t id) : BaseSpec(name) {
     _iBoneId = id;
 }
 BoneSpec::~BoneSpec() {
@@ -365,7 +365,7 @@ void Animator::update(float delta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-Armature::Armature(t_string strName, int32_t iId) : BaseSpec(strName), _iArmatureId(iId) {
+Armature::Armature(string_t strName, int32_t iId) : BaseSpec(strName), _iArmatureId(iId) {
 }
 Armature::~Armature() {
     //for (BoneCache::iterator it = _mapBoneCacheOrdered.begin();
@@ -401,7 +401,7 @@ void Armature::serialize( std::shared_ptr<BinaryFile> fb) {
     }
 
 }
-bool Armature::tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
+bool Armature::tkArmFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
     int iind = 1;
 
     if (pMobFile->lcmp(tokens[0], "bones_beg", 1)) {
@@ -414,9 +414,9 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
             pMobFile->parseErr("Current bone already defined");
         }
         else {
-            t_string name = pMobFile->getCleanToken(tokens, iind);
+            string_t name = pMobFile->getCleanToken(tokens, iind);
             int32_t id = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
-            t_string parent = pMobFile->getCleanToken(tokens, iind);
+            string_t parent = pMobFile->getCleanToken(tokens, iind);
             ParentType::e ep = pMobFile->parseParentType(pMobFile->getCleanToken(tokens, iind));
             _pCurBone = std::make_shared<BoneSpec>(name, id);
 
@@ -467,7 +467,7 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
             pMobFile->parseErr("Cur bone was not defined");
         }
         else {
-            t_string mType = pMobFile->getCleanToken(tokens, iind);
+            string_t mType = pMobFile->getCleanToken(tokens, iind);
             if (pMobFile->lcmp(mType, "m44")) {
                 mat4 mat = pMobFile->parseMat4(pMobFile->getCleanToken(tokens, iind)); //= bufferedFile.getTok();
 
@@ -507,7 +507,7 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
 
     return true;
 }
-std::shared_ptr<BoneSpec> Armature::getBoneSpec(t_string boneName) {
+std::shared_ptr<BoneSpec> Armature::getBoneSpec(string_t boneName) {
     Hash32 hash = Hash::computeStringHash32bit(boneName);
     BoneCache::iterator it = _mapBoneCacheOrdered.find(hash);
 
@@ -516,7 +516,7 @@ std::shared_ptr<BoneSpec> Armature::getBoneSpec(t_string boneName) {
     }
     return nullptr;
 }
-std::shared_ptr<BoneSpec> Armature::getCachedBoneByName(t_string name) {
+std::shared_ptr<BoneSpec> Armature::getCachedBoneByName(string_t name) {
     Hash32 par = STRHASH(name);
     for (std::pair<int32_t, std::shared_ptr<BoneSpec>> p : _mapBoneCacheOrdered) {
         if (p.second->getNameHashed() == par) {
@@ -660,7 +660,7 @@ void ArmatureNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
     BaseNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
-ModelSpec::ModelSpec(t_string name, int32_t frameRate) : PhysicsSpec(name), _iFrameRate(frameRate) {
+ModelSpec::ModelSpec(string_t name, int32_t frameRate) : PhysicsSpec(name), _iFrameRate(frameRate) {
     //_iNameHash = STRHASH(name);
 }
 ModelSpec::~ModelSpec() {
@@ -725,7 +725,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
         _pThumb = std::make_shared<Img32>();
         _pThumb->deserialize(fb);
         if(false) {
-            t_string cached = Gu::getApp()->makeAssetPath("cache", getName() + "-thumb-loaded.png");
+            string_t cached = Gu::getApp()->makeAssetPath("cache", getName() + "-thumb-loaded.png");
             Gu::saveImage(cached, _pThumb);
         }
     }
@@ -760,7 +760,7 @@ void ModelSpec::serialize( std::shared_ptr<BinaryFile> fb) {
         fb->writeBool(true);
 
         if (false) {
-            t_string cached = Gu::getApp()->makeAssetPath("cache", getName() + "-thumb-saved.png");
+            string_t cached = Gu::getApp()->makeAssetPath("cache", getName() + "-thumb-saved.png");
             Gu::saveImage(cached, _pThumb);
         }
 
@@ -864,8 +864,8 @@ void ModelNode::buildNodeParents() {
     //Parent Armatures And Meshes And Bones (if they have parents, if no, they are parented by the modelnode
     for (std::pair <Hash32, std::shared_ptr<BaseNode>> p : _mapNodes) {
         std::shared_ptr<BaseNode> pNode = p.second;
-        t_string strChild = pNode->getSpec()->getName();
-        t_string strParent = pNode->getSpec()->getParentName();
+        string_t strChild = pNode->getSpec()->getName();
+        string_t strParent = pNode->getSpec()->getParentName();
         if (pNode->getSpec()->getParentType() == ParentType::e::Bone) {
             //Bone parents - we may end up not even using bone aprents.
             bool bFound = false;
@@ -937,7 +937,7 @@ void ModelNode::addNodeToCache(std::shared_ptr<BaseNode> bn) {
         _mapNodes.insert(std::make_pair(bnName, bn));
     }
 }
-std::shared_ptr<BaseNode> ModelNode::getNodeByName(t_string name) {
+std::shared_ptr<BaseNode> ModelNode::getNodeByName(string_t name) {
     Hash32 h = STRHASH(name);
     std::map<Hash32, std::shared_ptr<BaseNode>>::iterator it = _mapNodes.find(h);
     if (it == _mapNodes.end()) {
@@ -1033,7 +1033,7 @@ void ModelNode::drawForward(RenderParams& rp) {
 }
 
 
-void ModelNode::playAction(t_string actName) {
+void ModelNode::playAction(string_t actName) {
     Hash32 anh = STRHASH(actName);
     std::map<Hash32,  std::shared_ptr<Animator>>::iterator it = _mapAnimators.find(anh);
     if (it != _mapAnimators.end()) {
@@ -1061,7 +1061,7 @@ void ModelNode::playAction(t_string actName) {
         }
     }
 }
- std::shared_ptr<Animator> ModelNode::getAnimator(t_string actName) {
+ std::shared_ptr<Animator> ModelNode::getAnimator(string_t actName) {
     Hash32 anh = STRHASH(actName);
     std::map<Hash32,  std::shared_ptr<Animator>>::iterator it = _mapAnimators.find(anh);
     if (it != _mapAnimators.end()) {
@@ -1069,7 +1069,7 @@ void ModelNode::playAction(t_string actName) {
     }
     return nullptr;
 }
-bool ModelNode::isPlaying(t_string actName) {
+bool ModelNode::isPlaying(string_t actName) {
      std::shared_ptr<Animator> pa = getAnimator(actName);
     return pa && pa->getState() == PlayState::e::Playing;
 }
@@ -1088,7 +1088,7 @@ void ModelNode::stopAllActions() {
     }
     _mapAnimators.clear();
 }
-void ModelNode::stopAction(t_string actName) {
+void ModelNode::stopAction(string_t actName) {
     Hash32 anh = STRHASH(actName);
     std::map<Hash32,  std::shared_ptr<Animator>>::iterator it = _mapAnimators.find(anh);
     if (it != _mapAnimators.end()) {

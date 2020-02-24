@@ -51,34 +51,34 @@ t_date DateTime::getDatePart(t_datetime dt) {
 t_time DateTime::getTimePart(t_datetime dt) {
   return (t_time)(((dt << 32) >> 32) & 0xFFFFFFFF);
 }
-t_string DateTime::dateTimeToStr(t_datetime d) {
-  t_string dt = dateToStr(getDatePart(d));
-  t_string tm = timeToStr(getTimePart(d));
-  t_string ret = Stz dt + " " + tm;
+string_t DateTime::dateTimeToStr(t_datetime d) {
+  string_t dt = dateToStr(getDatePart(d));
+  string_t tm = timeToStr(getTimePart(d));
+  string_t ret = Stz dt + " " + tm;
 
   return ret;
 }
-t_string DateTime::dateTimeToStrNoDelim(t_datetime d) {
-  t_string dt = dateToStrNoSlash(getDatePart(d));
-  t_string tm = timeToStrNoDelim(getTimePart(d));
-  t_string ret = Stz dt + tm;
+string_t DateTime::dateTimeToStrNoDelim(t_datetime d) {
+  string_t dt = dateToStrNoSlash(getDatePart(d));
+  string_t tm = timeToStrNoDelim(getTimePart(d));
+  string_t ret = Stz dt + tm;
 
   return ret;
 }
-t_string DateTime::timeToStrNoDelim(t_time t) {
+string_t DateTime::timeToStrNoDelim(t_time t) {
   return timeToStr(t, "");
 }
-t_string DateTime::timeToStr(
+string_t DateTime::timeToStr(
   t_time t
-  , t_string delim
+  , string_t delim
   , bool hour
   , bool minute
   , bool second
   , bool millisecond
 ) {
-  t_string ret = "";
+  string_t ret = "";
 
-  t_string h, m, s, ms, del;
+  string_t h, m, s, ms, del;
 
   h = m = s = ms = del = "";
 
@@ -105,9 +105,9 @@ t_string DateTime::timeToStr(
   return ret;
 
 }
-t_time DateTime::strToTime(t_string& time, char separator) {
-  t_string ret;
-  std::vector<t_string> vals = StringUtil::split(time, separator);
+t_time DateTime::strToTime(string_t& time, char separator) {
+  string_t ret;
+  std::vector<string_t> vals = StringUtil::split(time, separator);
 
   int32_t hb, mm, ss, ms;
 
@@ -121,31 +121,31 @@ t_time DateTime::strToTime(t_string& time, char separator) {
 
   return getTime(hb, mm, ss, ms);
 }
-t_date DateTime::strToDate(const t_string& szDate, char separator) {
+t_date DateTime::strToDate(const string_t& szDate, char separator) {
   if (szDate.length() < 10)
     return 0;
-  t_string copy(szDate);
+  string_t copy(szDate);
   int m, d, y1, y2;
   char buf[3];
   buf[2] = '\0';
   buf[0] = szDate[0];
   buf[1] = szDate[1];
-  m = TypeConv::strToInt(t_string((char*)buf));
+  m = TypeConv::strToInt(string_t((char*)buf));
   buf[0] = szDate[3];
   buf[1] = szDate[4];
-  d = TypeConv::strToInt(t_string((char*)buf));
+  d = TypeConv::strToInt(string_t((char*)buf));
   buf[0] = szDate[6];
   buf[1] = szDate[7];
-  y1 = TypeConv::strToInt(t_string((char*)buf));
+  y1 = TypeConv::strToInt(string_t((char*)buf));
   buf[0] = szDate[8];
   buf[1] = szDate[9];
-  y2 = TypeConv::strToInt(t_string((char*)buf));
+  y2 = TypeConv::strToInt(string_t((char*)buf));
   t_date dt = (t_date)((m << (24)) | (d << (16)) | (y1 << (8)) | (y2));
 
   return dt;
 }
-t_datetime DateTime::strToDateTime(const t_string& szDateTime) {
-  std::vector<t_string> str = StringUtil::split(szDateTime, ' ');
+t_datetime DateTime::strToDateTime(const string_t& szDateTime) {
+  std::vector<string_t> str = StringUtil::split(szDateTime, ' ');
 
   if (str.size() == 0 || str.size() == 1) {
     BRLogWarn("Date time could not be converted, value: " + szDateTime);
@@ -190,8 +190,8 @@ t_time DateTime::getTime(int32_t hh, int32_t mm, int32_t ss, int32_t ms) {
 t_date DateTime::getDate() {
   char buf[12];
   _strdate_s((char*)buf, 12);
-  t_string s = t_string((char*)buf);
-  s.insert(6, t_string((char*)"20"));
+  string_t s = string_t((char*)buf);
+  s.insert(6, string_t((char*)"20"));
   return strToDate(s);
 }
 /**
@@ -220,26 +220,26 @@ int32_t DateTime::dateGetYear(t_date d) {
 
 */
 
-t_string DateTime::dateGetYearStr(const t_date date) {
+string_t DateTime::dateGetYearStr(const t_date date) {
   t_date d = date;
-  t_string ret;
+  string_t ret;
   ret += TypeConv::intToStr((d >> 8) & 0xFF);
   ret += TypeConv::intToStr(d & 0xFF);
   return ret;
 }
-t_string DateTime::dateGetDayStr(const t_date date) {
+string_t DateTime::dateGetDayStr(const t_date date) {
   t_date d = date;
-  t_string ret;
+  string_t ret;
   ret += TypeConv::intToStr((d >> 16) & 0xFF);
   return ret;
 }
-t_string DateTime::dateGetMonthStr(const t_date date) {
+string_t DateTime::dateGetMonthStr(const t_date date) {
   t_date d = date;
-  t_string ret;
+  string_t ret;
   ret += TypeConv::intToStr((d >> 24) & 0xFF);
   return ret;
 }
-t_string DateTime::dateGetMonthName(t_date date) {
+string_t DateTime::dateGetMonthName(t_date date) {
   int month = dateGetMonth(date);
   switch (month) {
   case 1: return "January"; break;
@@ -257,7 +257,7 @@ t_string DateTime::dateGetMonthName(t_date date) {
   default: return "Invalid Month Number"; break;
   };
 }
-t_string DateTime::dateGetMonthNameAbbr(t_date date) {
+string_t DateTime::dateGetMonthNameAbbr(t_date date) {
   int month = dateGetMonth(date);
   switch (month) {
   case 1: return "Jan."; break;
@@ -275,9 +275,9 @@ t_string DateTime::dateGetMonthNameAbbr(t_date date) {
   default: return "Inv."; break;
   };
 }
-t_string DateTime::dateToStr(const t_date date) {
+string_t DateTime::dateToStr(const t_date date) {
   t_date d = date;
-  t_string ret;
+  string_t ret;
 
   ret += TypeConv::intToStr((d >> 24) & 0xFF);
   ret += "/";
@@ -287,9 +287,9 @@ t_string DateTime::dateToStr(const t_date date) {
   ret += TypeConv::intToStr(d & 0xFF);
   return ret;
 }
-t_string DateTime::dateToStrNoSlash(const t_date date) {
+string_t DateTime::dateToStrNoSlash(const t_date date) {
   t_date d = date;
-  t_string ret;
+  string_t ret;
 
   ret += TypeConv::intToStr((d >> 8) & 0xFF, "%02i");//year1
   ret += TypeConv::intToStr(d & 0xFF, "%02i");//year2

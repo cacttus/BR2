@@ -55,8 +55,8 @@ public:
 
   std::shared_ptr<ModelNode> makeObj(std::shared_ptr<ModelSpec> ms);
   std::shared_ptr<ModelNode> makeObj(std::shared_ptr<ModelSpec> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
-  std::shared_ptr<LightNodePoint> makePointLight(vec3&& pos, float radius, vec4&& color, t_string action, bool bShadowsEnabled);
-  std::shared_ptr<LightNodeDir> makeDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const t_string action, bool bShadowsEnabled);
+  std::shared_ptr<LightNodePoint> makePointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);
+  std::shared_ptr<LightNodeDir> makeDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled);
 
   void addObj(std::shared_ptr<PhysicsNode> ob, bool bActivate, bool bRefreshCache);
   bool tryRemoveObj(std::shared_ptr<PhysicsNode> ob);
@@ -74,7 +74,7 @@ public:
   std::shared_ptr<PhysicsGrid> getNodeForPoint(vec3& pt);
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
 
-  std::shared_ptr<PhysicsNode> findNode(t_string specName);
+  std::shared_ptr<PhysicsNode> findNode(string_t specName);
   template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node) {
     for (auto a : _mapObjects) {
       if (a.second->findNode(node)) {

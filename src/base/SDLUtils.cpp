@@ -8,7 +8,7 @@
 
 namespace BR2 {
 
-void SDLUtils::trySetWindowIcon(SDL_Window* w, t_string iconPath) {
+void SDLUtils::trySetWindowIcon(SDL_Window* w, string_t iconPath) {
   if (iconPath.length()) {
     std::shared_ptr<Img32> img = nullptr;
     SDL_Surface* ss = nullptr;
@@ -25,7 +25,7 @@ void SDLUtils::trySetWindowIcon(SDL_Window* w, t_string iconPath) {
     }
   }
 }
-void SDLUtils::createSurfaceFromImage(const t_string strImage,
+void SDLUtils::createSurfaceFromImage(const string_t strImage,
   std::shared_ptr<Img32>& __out_ pImage, SDL_Surface*& __out_ pSurface) {
   pImage = nullptr;
   pSurface = nullptr;

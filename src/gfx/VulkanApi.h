@@ -21,7 +21,7 @@ public:
   VulkanApi();
   virtual ~VulkanApi() override;
 
-  virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) override;
+  virtual std::shared_ptr<GraphicsWindow> createWindow(string_t title, bool isMain = false) override;
   virtual void cleanup() override;
   virtual void createRenderer() {}
 

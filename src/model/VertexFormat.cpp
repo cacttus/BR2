@@ -9,7 +9,7 @@ namespace BR2 {
 GLenum VertexComponent::getAttributeType() {
   return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
 }
-VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, t_string strName) :
+VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName) :
   _pContext(pContext), _strName(strName) {
 }
 VertexFormat::~VertexFormat() {
@@ -240,7 +240,7 @@ GLenum VertexFormat::computeAttributeType(GLenum type, GLuint count) {
     BRThrowNotImplementedException();
   }
 }
-t_string VertexFormat::getUserTypeName(VertexUserType::e eUserType) {
+string_t VertexFormat::getUserTypeName(VertexUserType::e eUserType) {
   switch (eUserType) {
   case VertexUserType::e::c4_01: return ("Color4f"); break;
   case VertexUserType::e::v2_01: return ("Position2f"); break;

@@ -94,7 +94,7 @@ void FramebufferBase::setDrawAllTargets(){
 //    }
 //    Gu::getGraphicsContext()->chkErrRt();
 //}
-void FramebufferBase::addTarget(t_string strName, GLenum internalFormat, GLenum texFormat,
+void FramebufferBase::addTarget(string_t strName, GLenum internalFormat, GLenum texFormat,
     GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType) {
     int iIndex = (int)_vecTargets.size();
 
@@ -117,7 +117,7 @@ void FramebufferBase::addTarget(std::shared_ptr<RenderTarget> other) {
 
     _vecTargets.push_back(inf);
 }
-std::shared_ptr<RenderTarget> FramebufferBase::createTarget(t_string strName, GLenum internalFormat, GLenum texFormat,
+std::shared_ptr<RenderTarget> FramebufferBase::createTarget(string_t strName, GLenum internalFormat, GLenum texFormat,
     GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType, int32_t iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
 
     std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(false);
@@ -141,7 +141,7 @@ std::shared_ptr<RenderTarget> FramebufferBase::createTarget(t_string strName, GL
 
     return inf;
 }
-std::shared_ptr<RenderTarget> FramebufferBase::createDepthTarget(t_string strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
+std::shared_ptr<RenderTarget> FramebufferBase::createDepthTarget(string_t strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
     std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(true);
     inf->_strName = strName;
     //**Note: index doesn't matter for depth target since we simply bind it to GL_Depth_attachment.  It confused the fuck out of me. 2/9/18

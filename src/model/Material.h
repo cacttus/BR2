@@ -18,7 +18,7 @@ namespace BR2 {
 class TextureSlot : public VirtualMemory {
 public:
   Hash32 _iTexFileHashed = 0;
-  t_string _strDebugTextureFileName;
+  string_t _strDebugTextureFileName;
   TextureChannel::e _eChannel = TextureChannel::e::Channel0;
   TextureType::e _eTextureType = TextureType::e::Undefined;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
@@ -29,9 +29,9 @@ public:
 class Material : public VirtualMemory {
 public:
   Material() {}//deser
-  Material(t_string name);
+  Material(string_t name);
   virtual ~Material() override;
-  t_string getName() { return _strName; }
+  string_t getName() { return _strName; }
 
   std::map<TextureChannel::e, std::shared_ptr<TextureSlot>>& getTextureSlots() { return _mapTextureBindings; }
   std::shared_ptr<TextureSlot> getMapByType(TextureType::e texType);
@@ -68,7 +68,7 @@ public:
 
 protected:
   //Note: Make sure toupdate getCopy()
-  t_string _strName;
+  string_t _strName;
 
   //**These defaults are what are in blender**
   //**we use them for for non-material meshes**

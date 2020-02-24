@@ -11,7 +11,7 @@ OpenGLWindow::OpenGLWindow(bool is_main) : GraphicsWindow(is_main) {
 }
 OpenGLWindow::~OpenGLWindow() {
 }
-void OpenGLWindow::create(t_string windowTitle) {
+void OpenGLWindow::create(string_t windowTitle) {
 
   int minGLVersion;
   int minGLSubversion;

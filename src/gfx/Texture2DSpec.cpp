@@ -11,7 +11,7 @@
 #include "../gfx/RenderUtils.h"
 
 namespace BR2 {
-Texture2DSpec::Texture2DSpec(t_string loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : _pContext(ctx) {
+Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : _pContext(ctx) {
   load(loc, bRepeatU, bRepeatV);
 }
 Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : _pContext(ctx) {
@@ -25,7 +25,7 @@ Texture2DSpec::~Texture2DSpec() {
   dispose();
 }
 
-void Texture2DSpec::load(t_string imgLoc, bool bRepeatU, bool bRepeatV) {
+void Texture2DSpec::load(string_t imgLoc, bool bRepeatU, bool bRepeatV) {
   _strLocation = imgLoc;
   std::shared_ptr<Img32> sp = Gu::loadImage(imgLoc);
   if (sp != nullptr) {

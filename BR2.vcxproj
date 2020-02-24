@@ -204,6 +204,7 @@
     <ClInclude Include="src\base\oglErr.h" />
     <ClInclude Include="src\base\OpenGLWindow.h" />
     <ClInclude Include="src\base\OperatingSystem.h" />
+    <ClInclude Include="src\base\OperatingSystemHeader.h" />
     <ClInclude Include="src\base\Package.h" />
     <ClInclude Include="src\base\Perf.h" />
     <ClInclude Include="src\base\PoundFile.h" />

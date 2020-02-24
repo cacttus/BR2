@@ -393,8 +393,8 @@ void GLContext::enableDepthTest(bool enable) {
 
 void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver) {
   char* tmp;
-  t_string glver;
-  t_string glslver;
+  string_t glver;
+  string_t glslver;
   ver = subver = shad_ver = shad_subver = -1;
 
   tmp = (char*)glGetString(GL_VERSION);
@@ -412,7 +412,7 @@ void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
     glslver = "";
   }
 
-  std::vector<t_string> sv;
+  std::vector<string_t> sv;
 
   if (glver.length() > 0) {
     sv = StringUtil::split(glver, '.');
@@ -438,7 +438,7 @@ void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
   }
 }
 void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_subversion) {
-  t_string rver = Stz "" + required_version + "." + required_subversion;
+  string_t rver = Stz "" + required_version + "." + required_subversion;
 
   //GLint iMajor, iMinor;
   //glGetIntegerv(GL_MAJOR_VERSION, &iMajor);
@@ -447,8 +447,8 @@ void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_
   int ver, subver, shad_ver, shad_subver;
   getOpenGLVersion(ver, subver, shad_ver, shad_subver);
 
-  t_string vendor = t_string((char*)glGetString(GL_VENDOR));
-  t_string renderer = t_string((char*)glGetString(GL_RENDERER));
+  string_t vendor = string_t((char*)glGetString(GL_VENDOR));
+  string_t renderer = string_t((char*)glGetString(GL_RENDERER));
 
   BRLogInfo("\n"
     + "   OpenGL version " + ver + "." + subver + ".\n"
@@ -479,7 +479,7 @@ void GLContext::loadCheckProc() {
   //Check that OpenGL initialized successfully by checking a library pointer.
   PFNGLUSEPROGRAMPROC proc = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
   if (proc == nullptr) {
-    t_string exep;
+    string_t exep;
     exep += "glUseProgram was not found in your graphics driver.  There can be a few reasons for this:\n";
     exep += ("  1. Your primary graphics card is not correct.  You can set your primary graphics card in Windows.\n");
     exep += ("  2. Your graphics card is outdated.  Consider upgrading.\n");

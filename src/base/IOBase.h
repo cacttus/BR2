@@ -48,8 +48,8 @@ public:
   void writeInt32(int32_t& val, size_t offset = memsize_max);
   void writeInt64(int64_t& val);
   void writeUint32(uint32_t& val, size_t offset = memsize_max);
-  void writeStr(const t_string& str);
-  void writeTextLine(const t_string& str); //Writes a /n
+  void writeStr(const string_t& str);
+  void writeTextLine(const string_t& str); //Writes a /n
 };
 template <class Tx>
 IOBase<Tx>::IOBase() {

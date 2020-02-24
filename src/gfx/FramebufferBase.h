@@ -23,11 +23,11 @@ public:
   virtual void beginRender() = 0;
   virtual void endRender() = 0;
 
-  static std::shared_ptr<RenderTarget> createTarget(t_string strName, GLenum texFormat, GLenum internalFormat,
+  static std::shared_ptr<RenderTarget> createTarget(string_t strName, GLenum texFormat, GLenum internalFormat,
     GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType,
     int32_t iIndex, bool bMsaaEnabled, int32_t nMsaaSamples);
   GLuint getGlId() { return _uiGlFramebufferId; }
-  static std::shared_ptr<RenderTarget> createDepthTarget(t_string strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples);
+  static std::shared_ptr<RenderTarget> createDepthTarget(string_t strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples);
   std::vector<std::shared_ptr<RenderTarget>>& getTargets() { return _vecTargets; }
   GLuint getFramebufferId() { return _uiGlFramebufferId; }
 
@@ -46,7 +46,7 @@ protected:
     void attachAllTargets();
     void setDrawAllTargets();
     void checkFramebufferComplete();
-    void addTarget(t_string strName, GLenum internalFormat, GLenum texFormat, GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType);
+    void addTarget(string_t strName, GLenum internalFormat, GLenum texFormat, GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType);
     void addTarget(std::shared_ptr<RenderTarget> other);//Copy target from other framebuffer
    // void attachDepthTarget(std::shared_ptr<RenderTarget> pSharedDepth);
     void deleteTargets();

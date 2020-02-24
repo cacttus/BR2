@@ -63,7 +63,7 @@ public:
   FORCE_INLINE void genExpandByPoint(const VecType& pt);
   FORCE_INLINE void expand(Box2x<Tx>& rhs);
   FORCE_INLINE void validate();
-  FORCE_INLINE t_string toString();
+  FORCE_INLINE string_t toString();
   FORCE_INLINE void genReset();
 };
 template < class Tx >
@@ -175,7 +175,7 @@ FORCE_INLINE void Box2x<Tx>::validate() {
   }
 }
 template < class Tx >
-FORCE_INLINE t_string Box2x<Tx>::toString() {
+FORCE_INLINE string_t Box2x<Tx>::toString() {
   return TStr("{", p0().toString(), "},{", p1().toString(), "}");
 }
 

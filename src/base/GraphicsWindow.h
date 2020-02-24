@@ -25,7 +25,7 @@ public:
   GraphicsWindow(bool ismain);
   virtual ~GraphicsWindow() override;
 
-  virtual void create(t_string title) = 0;
+  virtual void create(string_t title) = 0;
   void step();
   
   void* getSDLWindow();
@@ -37,7 +37,7 @@ public:
   void printHelpfulDebug();
 
 protected:
-  void makeSDLWindow(t_string title, int rendersystem);
+  void makeSDLWindow(string_t title, int rendersystem);
   void initRenderSystem();
 
   virtual void getDrawableSize(int* w, int* h) = 0;

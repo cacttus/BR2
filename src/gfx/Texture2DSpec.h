@@ -18,12 +18,12 @@ namespace BR2 {
 class Texture2DSpec : public VirtualMemoryShared<Texture2DSpec> {
 public:
   Texture2DSpec(std::shared_ptr<GLContext> ct) : _pContext(ct) {}
-  Texture2DSpec(t_string loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV);
+  Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV);
   Texture2DSpec(const std::shared_ptr<Img32>, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter = TexFilter::e::Nearest);
   Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned  char* texData, int iWidth, int iHeight, bool mipmaps);
   virtual ~Texture2DSpec() override;
 
-  t_string getLocation() { return _strLocation; }
+  string_t getLocation() { return _strLocation; }
   GLuint getGlId() { return _glId; }
   bool getIsTransparent() { return _bTransparent; }
   void setIsTransparent(bool b) { _bTransparent = b; }
@@ -58,13 +58,13 @@ private:
   uint32_t _iWidth = 0;
   uint32_t _iHeight = 0;
   float _fSizeRatio = 0.0f;
-  t_string _strLocation;
+  string_t _strLocation;
   bool _bHasMipmaps = false;
   bool _bRepeatU = false;
   bool _bRepeatV = false;
   bool _bLoadFailed = false;
 
-  void load(t_string loc, bool bRepeatU, bool bRepeatV);
+  void load(string_t loc, bool bRepeatU, bool bRepeatV);
   void load(std::shared_ptr<Img32> s);
   void flipImage(unsigned char* image, int w, int h);
   int32_t generateMipmapLevels();

@@ -26,14 +26,14 @@ void AppBase::drawDebug() {
   }
 }
 
-t_string AppBase::makeAssetPath(t_string file) {
-  t_string ret = FileSystem::combinePath(getAssetsDir(), file);
+string_t AppBase::makeAssetPath(string_t file) {
+  string_t ret = FileSystem::combinePath(getAssetsDir(), file);
   return ret;
 }
 
-t_string AppBase::makeAssetPath(t_string folder, t_string file) {
-  t_string fold = FileSystem::combinePath(getAssetsDir(), folder);
-  t_string ret = FileSystem::combinePath(fold, file);
+string_t AppBase::makeAssetPath(string_t folder, string_t file) {
+  string_t fold = FileSystem::combinePath(getAssetsDir(), folder);
+  string_t ret = FileSystem::combinePath(fold, file);
   return ret;
 }
 

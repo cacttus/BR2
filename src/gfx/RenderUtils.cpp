@@ -304,24 +304,24 @@ void RenderUtils::drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avCol
 #pragma region Debug Output
 
 
-void appendLine(t_string& st, char* c) {
+void appendLine(string_t& st, char* c) {
   st += c;
   st += "\r\n";
 }
-void appendLine(t_string& st, t_string& c) {
+void appendLine(string_t& st, string_t& c) {
   st += c;
   st += "\r\n";
 }
 
 
-t_string RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, bool bSaveFramebufferTexture) {
+string_t RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, bool bSaveFramebufferTexture) {
   //This method is called in frames to drag down the debug arrow
   // and we skip it unless we force it to run.
   //Do not comment
   if (!bForceRun) {
     return "";//Do not comment
   }
-  t_string strState = "";
+  string_t strState = "";
 
   // Gd::verifyRenderThread();//We must be in render thread
 
@@ -361,13 +361,13 @@ t_string RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, b
     Gu::print(strState);
   }
   if (bSaveFramebufferTexture) {
-    t_string fname = FileSystem::getScreenshotFilename();
+    string_t fname = FileSystem::getScreenshotFilename();
     saveFramebufferAsPng(std::move(fname));
   }
 
   return strState;
 }
-void RenderUtils::debugGetLegacyViewAndMatrixStack(t_string& strState) {
+void RenderUtils::debugGetLegacyViewAndMatrixStack(string_t& strState) {
   GLint iScissorBox[4];
   GLint iViewportBox[4];
   appendLine(strState, "**Scissor and Legcay info**");
@@ -379,7 +379,7 @@ void RenderUtils::debugGetLegacyViewAndMatrixStack(t_string& strState) {
   //TODO: legacy matrix array state.
   std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->chkErrRt();
 }
-void RenderUtils::debugGetBufferState(t_string& strState) {
+void RenderUtils::debugGetBufferState(string_t& strState) {
   appendLine(strState, "--------------------------------------");
   appendLine(strState, "--SHADER STATE");
 
@@ -418,9 +418,9 @@ void RenderUtils::debugGetBufferState(t_string& strState) {
 
 
 }
-void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState) {
+void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, string_t& strState) {
   GLint nUniforms;
-  t_string uniformName;
+  string_t uniformName;
   char name[256];
   GLint name_len = -1;
   GLint iArraySize = -1;
@@ -455,7 +455,7 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
     //Get name an d type
     std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetActiveUniform(iGlProgramId, (GLuint)i, 256, &name_len, &iArraySize, &uniformType, (char*)name);
     name[name_len] = 0;
-    uniformName = t_string(name);
+    uniformName = string_t(name);
 
     //get location
     GLint glLocation = std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glGetUniformLocation((GLuint)iGlProgramId, (GLchar*)uniformName.c_str());
@@ -518,7 +518,7 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, t_string& strState)
     appendLine(strState, (""));
   }
 }
-t_string RenderUtils::openGlTypeToString(GLenum type) {
+string_t RenderUtils::openGlTypeToString(GLenum type) {
   switch (type) {
   case GL_UNSIGNED_INT: return ("GL_UNSIGNED_INT        "); break;
   case GL_UNSIGNED_INT_VEC2: return ("GL_UNSIGNED_INT_VEC2 "); break;
@@ -554,7 +554,7 @@ t_string RenderUtils::openGlTypeToString(GLenum type) {
   }
   return Stz "Undefined " + (int)type;
 }
-void RenderUtils::debugGetAttribState(t_string& strState) {
+void RenderUtils::debugGetAttribState(string_t& strState) {
   //// - print bound attributes
   //int iMaxAttribs;
   //int iBoundAttrib;
@@ -566,7 +566,7 @@ void RenderUtils::debugGetAttribState(t_string& strState) {
   //    std::cout<<"attrib "<<xx<<": "<<iBoundAttrib<<std::endl;
   //}
 }
-void RenderUtils::debugGetTextureState(t_string& strState) {
+void RenderUtils::debugGetTextureState(string_t& strState) {
   appendLine(strState, ("----------------------------------"));
   appendLine(strState, ("--TEXTURE STATE"));
   GLint iActiveTexture;
@@ -616,7 +616,7 @@ void RenderUtils::debugGetTextureState(t_string& strState) {
     glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &iTextureBinding); if (iTextureBinding > 0) appendLine(strState, Stz"     RECTANGLE: " + (int)iTextureBinding);
   }
 }
-void RenderUtils::debugGetFramebufferAttachmentState(t_string& strState) {
+void RenderUtils::debugGetFramebufferAttachmentState(string_t& strState) {
   appendLine(strState, "-----------------------------------");
   appendLine(strState, "--FRAMEBUFFERS");
   GLenum eDrawBuffer;
@@ -666,13 +666,13 @@ void RenderUtils::debugGetFramebufferAttachmentState(t_string& strState) {
   RenderUtils::debugPrintFBOAttachment(strState, GL_STENCIL_ATTACHMENT);
 
 }
-void RenderUtils::debugPrintFBOAttachment(t_string& strState, GLenum attachment) {
+void RenderUtils::debugPrintFBOAttachment(string_t& strState, GLenum attachment) {
 
   GLint attachmentName = 0;
   GLint attachmentType = 0;
   GLint mipmapLevel = 0;
 
-  t_string strAttachment;
+  string_t strAttachment;
   if (attachment == GL_DEPTH_ATTACHMENT) {
     strAttachment = ("GL_DEPTH_ATTACHMENT");
   }
@@ -707,7 +707,7 @@ void RenderUtils::debugPrintFBOAttachment(t_string& strState, GLenum attachment)
     appendLine(strState, Stz "    Mipmap Level: " + mipmapLevel);
   }
 }
-void RenderUtils::debugGetVertexArrayState(t_string& strState) {
+void RenderUtils::debugGetVertexArrayState(string_t& strState) {
   appendLine(strState, ("----------------------------------------"));
   appendLine(strState, ("--VERTEX ARRAY STATE"));
   int nMaxAttribs;
@@ -804,7 +804,7 @@ void RenderUtils::debugGetVertexArrayState(t_string& strState) {
 #pragma endregion
 
 
-void RenderUtils::saveTexture(t_string&& strLoc, GLuint iGLTexId, GLenum eTexTarget, int iCubeMapSide) {
+void RenderUtils::saveTexture(string_t&& strLoc, GLuint iGLTexId, GLenum eTexTarget, int iCubeMapSide) {
   std::shared_ptr<Img32> bi = std::make_shared<Img32>();
   if (RenderUtils::getTextureDataFromGpu(bi, iGLTexId, eTexTarget, iCubeMapSide) == true) {
     //the GL tex image must be flipped to show upriht/
@@ -813,7 +813,7 @@ void RenderUtils::saveTexture(t_string&& strLoc, GLuint iGLTexId, GLenum eTexTar
     Gu::checkErrorsRt();
   }
 }
-void RenderUtils::saveFramebufferAsPng(t_string&& strLoc, GLuint iFBOId) {
+void RenderUtils::saveFramebufferAsPng(string_t&& strLoc, GLuint iFBOId) {
   GLint iFbBindingLast;
   GLint iFbWidth;
   GLint iFbHeight;

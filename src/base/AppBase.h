@@ -21,8 +21,8 @@ public:
   virtual ~AppBase() override;
   virtual void init() = 0; //*Note this is not called right after inst
 
-  t_string makeAssetPath(t_string file);
-  t_string makeAssetPath(t_string folder, t_string file);
+  string_t makeAssetPath(string_t file);
+  string_t makeAssetPath(string_t folder, string_t file);
 
   virtual void drawDebug();
 
@@ -33,14 +33,14 @@ public:
  //  virtual void teardown() = 0;
   virtual void updateTouch(std::shared_ptr<Fingers>, float dt) = 0;
   virtual void userZoom(int amount) = 0;
-  virtual t_string getIconFullPath() { return ""; }
-  virtual t_string getConfigPath() = 0;
-  virtual t_string getAssetsDir() = 0;
-  virtual t_string getShadersDir() = 0; //This is relative to the getAssetsDir.  E.g. "/shr/"
-  virtual t_string getCacheDir() = 0; // the place where we store cached shaders, and generated images
-  virtual t_string getModelsTextDir() = 0; // MOB dir 
-  virtual t_string getModelsBinDir() = 0; // MBI DIr
-  virtual t_string getEnvTexturePath() = 0;
+  virtual string_t getIconFullPath() { return ""; }
+  virtual string_t getConfigPath() = 0;
+  virtual string_t getAssetsDir() = 0;
+  virtual string_t getShadersDir() = 0; //This is relative to the getAssetsDir.  E.g. "/shr/"
+  virtual string_t getCacheDir() = 0; // the place where we store cached shaders, and generated images
+  virtual string_t getModelsTextDir() = 0; // MOB dir 
+  virtual string_t getModelsBinDir() = 0; // MBI DIr
+  virtual string_t getEnvTexturePath() = 0;
 
   virtual void serverPacketReceived(std::shared_ptr<Packet> temp) = 0;
 };

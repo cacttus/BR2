@@ -15,11 +15,11 @@ namespace BR2 {
 
 class MatData : public VirtualMemory {
 public:
-  t_string _strMatName = "";
-  t_string _strDiffuseTex = "";
+  string_t _strMatName = "";
+  string_t _strDiffuseTex = "";
   float _fDiffuseTexInfluence = 0;
   float _fDiffuseTexAlpha = 1.0;
-  t_string _strNormalTex = "";
+  string_t _strNormalTex = "";
   float _fNormalTexInfluence = 0;
   vec4 _v4DiffuseColor = vec4(1, 1, 1, 1); //Only if diffuse tex is not present.
   vec4 _v4SpecColor = vec4(1, 1, 1, 1);//color(3), intensity, hardness
@@ -41,16 +41,16 @@ public:
 
   void setParentType(ParentType::e pt) { _eParentType = pt; }
 
-  bool tkObjFile(MobFile* pMobFile, std::vector<t_string>& tokens);
+  bool tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens);
   std::shared_ptr<MeshSpec> makeSpec(MobFile* mb);
 
   void resetData();
-  void setName(t_string name) { _strName = name; }
-  void setParentName(t_string name) { _strParentName = name; }
+  void setName(string_t name) { _strName = name; }
+  void setParentName(string_t name) { _strParentName = name; }
 
 private:
-  t_string _strName;
-  t_string _strParentName;
+  string_t _strName;
+  string_t _strParentName;
   mat4 _matBasis;
   mat4 _matParentInverse;
   PhysicsShapeType::e _ePhysicsShapeType = PhysicsShapeType::e::None;
@@ -91,16 +91,16 @@ private:
   //vec2 readVec2(t_string tok);
   //void loadObjFileContents(BinaryFile& pBufferedFile);
  // void parseGeom(t_string& tok);
-  void parseFace(MobFile* pMobFile, t_string t0, t_string t1, t_string t2);
-  int32_t parseFaceComponent(MobFile* pMobFile, t_string& tok, int32_t& strlind, int32_t iComponent);
+  void parseFace(MobFile* pMobFile, string_t t0, string_t t1, string_t t2);
+  int32_t parseFaceComponent(MobFile* pMobFile, string_t& tok, int32_t& strlind, int32_t iComponent);
   void addFaceVertex(MobFile* pMobFile, int32_t iVertex, int32_t iTCoord, int32_t iNormal);
   // void addCurrentSpec();
   void copySpecFragments(std::shared_ptr<MeshSpec> pSpec);
   int32_t addNewMeshVertex(int32_t vi, int32_t xi, int32_t ni);
-  void parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmName, t_string strWeights);
+  void parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmName, string_t strWeights);
   // mat4 parseMat4(t_string tok);
   void makeMaterialForSpec(MobFile*, std::shared_ptr<MeshSpec> ms);
-  bool tkMaterial(MobFile* pMobFile, std::vector<t_string>& tokens);
+  bool tkMaterial(MobFile* pMobFile, std::vector<string_t>& tokens);
   std::shared_ptr<PhysicsShape> makePhysicsShapeForSpec();
   std::shared_ptr<VertexFormat> getVertexFormatForSpec(MobFile* mb);
 
@@ -113,11 +113,11 @@ public:
   ModDataLoad();
   virtual ~ModDataLoad();
 
-  bool tkAction(MobFile* mb, std::vector<t_string>& tokens);
-  bool tkArms(MobFile* mb, std::vector<t_string>& tokens);
-  bool tkMeshes(MobFile* mb, std::vector<t_string>& tokens);
+  bool tkAction(MobFile* mb, std::vector<string_t>& tokens);
+  bool tkArms(MobFile* mb, std::vector<string_t>& tokens);
+  bool tkMeshes(MobFile* mb, std::vector<string_t>& tokens);
 
-  t_string _strModName;
+  string_t _strModName;
   int32_t _iFrameRate = 24;
   float _fVersion = 0.0f;
   std::set<std::shared_ptr<MeshSpec>> _setMeshSpecs;
@@ -139,7 +139,7 @@ public:
   MobFile();
   virtual ~MobFile() override;
 
-  t_string getMobDir();
+  string_t getMobDir();
   std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModelSpecs; }
 private:
   float _fVersion = 0.02f;
@@ -152,7 +152,7 @@ private:
   std::shared_ptr<ModDataLoad> _pCurModDataLoad = nullptr;
 
   //Inherited
-  virtual void pkp(std::vector<t_string>& tokens);
+  virtual void pkp(std::vector<string_t>& tokens);
   virtual void preLoad();
   virtual void postLoad();
   void cacheObjectsAndComputeBoxes();
@@ -160,7 +160,7 @@ private:
 public:
   // void load(t_string& strFilePath, bool flipWinding);
    //std::vector<std::shared_ptr<MeshSpec>>& getMeshSpecs() { return _vecMeshes; }
-  ParentType::e parseParentType(t_string pt);
+  ParentType::e parseParentType(string_t pt);
 };
 
 }//ns Game

@@ -18,8 +18,8 @@
 - [ ] File Additions, and Replacements (from broken version)	
 	- [x] Remove most of Globalincludes.
 		- [x] Add SDLIncludes
-	- [ ] Compile, run.
-	- [ ] Rename t_string to string_t and remove string_t
+	- [x] Compile, run.
+	- [x] Rename t_string to string_t and remove string_t
 	- [ ] Replace OperatingSystem file
 	- [x] Replace BuildConfig
 	- [ ] Rename Fingers -> InputManager

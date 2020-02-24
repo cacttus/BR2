@@ -24,7 +24,7 @@ protected:
 public:
     std::shared_ptr<GraphicsWindow> getMainWindow() { return _pMainWindow; }
 
-    virtual std::shared_ptr<GraphicsWindow> createWindow(t_string title, bool isMain = false) = 0;
+    virtual std::shared_ptr<GraphicsWindow> createWindow(string_t title, bool isMain = false) = 0;
 
     void destroyWindow(std::shared_ptr<GraphicsWindow> w);
     virtual void cleanup() ;

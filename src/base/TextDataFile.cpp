@@ -6,13 +6,13 @@
 #include "../base/Logger.h"
 
 namespace BR2 {
-void TextDataFile::msg(t_string msg, bool error) {
+void TextDataFile::msg(string_t msg, bool error) {
   _vecMessages.push_back(Stz(error ? "ERROR:" : "") + _fileName + ": " + msg);
 }
 void TextDataFile::loadAndParse() {
   loadAndParse(_fileLoc);
 }
-void TextDataFile::loadAndParse(t_string& loc) {
+void TextDataFile::loadAndParse(string_t& loc) {
   _fileData = nullptr;
   _fileLoc = loc;
   _fileName = FileSystem::getFilePartOfFileName(loc);
@@ -25,7 +25,7 @@ void TextDataFile::loadAndParse(t_string& loc) {
   // - Load and parse
   bool success = false;
   if (FileSystem::SDLFileRead(loc, _fileData, _fileSize, true) != 0) {
-    t_string st = FileSystem::getCurrentDirectory();
+    string_t st = FileSystem::getCurrentDirectory();
 
     //File not found.
     Gu::debugBreak();
@@ -41,20 +41,20 @@ void TextDataFile::loadAndParse(t_string& loc) {
 
   //Dump messages.
   if (_vecMessages.size() > 0) {
-    t_string str = StringUtil::join("\r\n", _vecMessages);
+    string_t str = StringUtil::join("\r\n", _vecMessages);
     BRLogInfo("Errors:" + StringUtil::tabify(str, 2));
   }
 
   postLoad(success);
 }
-void TextDataFile::save(t_string& loc) {
+void TextDataFile::save(string_t& loc) {
   BRThrowNotImplementedException();
 }
 
 //+-- CTOR/DTOR --+
 TextDataFile::TextDataFile() : _fileData(NULL) {
 }
-TextDataFile::TextDataFile(t_string& loc) :
+TextDataFile::TextDataFile(string_t& loc) :
   _fileLoc(loc) {
 }
 TextDataFile::~TextDataFile() {

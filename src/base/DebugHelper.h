@@ -30,7 +30,7 @@ namespace BR2 {
 //};
 class StackMod {
 public:
-  t_string name;
+  string_t name;
   size_t addr;
 };
 /**
@@ -46,9 +46,9 @@ public:
   DebugHelper();
   virtual ~DebugHelper() override;
 
-  static t_string getStackTrace();
+  static string_t getStackTrace();
   static std::vector<std::string> getCallStack(bool bIncludeFrameId = false);
-  static t_string getCallingMethod();
+  static string_t getCallingMethod();
   static void debugHeapBegin(bool bDoDebug);
   static void debugHeapEnd();
   static void setBreakAlloc(int allocNum);
@@ -59,7 +59,7 @@ public:
   static void setCheckAlways();
   static void setCheck16();
 private:
-  static t_string modList();
+  static string_t modList();
 };
 
 }//ns game

@@ -20,7 +20,7 @@ public:
   ShaderSubProgram();
   virtual ~ShaderSubProgram() override;
 
-  void init(std::shared_ptr<GLContext> ctx, t_string loc, ShaderType::e type);
+  void init(std::shared_ptr<GLContext> ctx, string_t loc, ShaderType::e type);
 
   void setCompileTime(time_t tt) { _compileTime = tt; }
   void setStatus(ShaderStatus::e ls) { _eStatus = ls; }
@@ -28,29 +28,29 @@ public:
   time_t getSourceLastGreatestModificationTime() { return _sourceLastGreatestIncludeModificationTime; }
   void setSourceLastGreatestModificationTime(time_t t) { _sourceLastGreatestIncludeModificationTime = t; }
   GLuint getGlId() const { return _glId; }
-  t_string getSourceLocation() { return _sourceLocation; }
-  t_string getHumanReadableErrorString() const;
+  string_t getSourceLocation() { return _sourceLocation; }
+  string_t getHumanReadableErrorString() const;
   void debugPrintShaderSource() const;
 
   ShaderType::e getShaderType() { return _eType; }
 
-  std::vector<t_string>& getCompileErrors() { return _compileErrors; }
-  std::vector<t_string>& getGeneralErrors() { return _generalErrors; }
-  std::vector<t_string>& getSourceLines() { return _sourceLines; }
+  std::vector<string_t>& getCompileErrors() { return _compileErrors; }
+  std::vector<string_t>& getGeneralErrors() { return _generalErrors; }
+  std::vector<string_t>& getSourceLines() { return _sourceLines; }
   
 private:
   GLuint _glId = 0;
   time_t _compileTime = 0;
   ShaderType::e _eType;
   ShaderStatus::e _eStatus = ShaderStatus::e::Uninitialized;
-  t_string _sourceLocation;
+  string_t _sourceLocation;
   time_t _sourceLastGreatestIncludeModificationTime = 0;
-  std::vector<t_string> _sourceLines;
-  std::vector<t_string> _compileErrors;
-  std::vector<t_string> _generalErrors;
+  std::vector<string_t> _sourceLines;
+  std::vector<string_t> _compileErrors;
+  std::vector<string_t> _generalErrors;
 
   ShaderType::e getShaderTypeByFileLocation(DiskLoc& loc);
-  void setSourceLocation(t_string st) { _sourceLocation = st; }
+  void setSourceLocation(string_t st) { _sourceLocation = st; }
   GLenum getGLShaderEnum(ShaderType::e type);
 };
 

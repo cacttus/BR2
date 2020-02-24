@@ -38,8 +38,8 @@ public:
 
     //Fnv Algorithm and an awesome website
     //http://isthe.com/chongo/tech/comp/fnv/#FNV-1a
-    static Hash32 computeStringHash32bit(const t_string& str, uint32_t iAlgorithmIndex=0);
-    static uint64_t computeStringHash64bit(const t_string& str, uint64_t iAlgorithmIndex=0);
+    static Hash32 computeStringHash32bit(const string_t& str, uint32_t iAlgorithmIndex=0);
+    static uint64_t computeStringHash64bit(const string_t& str, uint64_t iAlgorithmIndex=0);
 };
 
 #define STRHASH(x) Hash::computeStringHash32bit(x , 0)

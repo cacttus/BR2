@@ -23,13 +23,13 @@ public:
   virtual ~MbiFile() override;
 
   std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModels; }
-  bool loadAndParse(t_string file);
-  void save(t_string file);
+  bool loadAndParse(string_t file);
+  void save(string_t file);
 private:
   std::vector<std::shared_ptr<ModelSpec>> _vecModels;
-  void parseErr(t_string str, bool bDebugBreak, bool bFatal);
+  void parseErr(string_t str, bool bDebugBreak, bool bFatal);
   std::shared_ptr<BinaryFile> _pFile = nullptr;
-  t_string _fileLoc;
+  string_t _fileLoc;
   void postLoad();
 };
 

@@ -29,7 +29,7 @@ public:
   ObjFile(std::shared_ptr<GLContext> ctx);
   virtual ~ObjFile() override;
 
-  void load(t_string& strFilePath, bool flipWinding);
+  void load(string_t& strFilePath, bool flipWinding);
   std::vector<std::shared_ptr<MeshSpec>>& getMeshSpecs() { return _vecMeshes; }
 
 private:
@@ -49,7 +49,7 @@ private:
   int32_t _iCurrentLine = 0;
 
   bool _bDebugDisableVertexCompression;
-  t_string _sFileName;
+  string_t _sFileName;
   std::map<ivec3*, int32_t, ivec3::Vec3xCompLess> _mapVertexCache;
 
   //Box3f _boundBoxObject;
@@ -64,9 +64,9 @@ private:
   vec3 readVec3(BinaryFile& pBufFile);
   vec2 readVec2(BinaryFile& pBufFile);
   void loadObjFileContents(BinaryFile& pBufferedFile);
-  void parseGeom(BinaryFile& pBufferedFile, t_string& tok);
-  void parseFace(BinaryFile& pBufferedFile, t_string& tok);
-  int32_t parseFaceComponent(t_string& tok, int32_t& strlind, int32_t iComponent);
+  void parseGeom(BinaryFile& pBufferedFile, string_t& tok);
+  void parseFace(BinaryFile& pBufferedFile, string_t& tok);
+  int32_t parseFaceComponent(string_t& tok, int32_t& strlind, int32_t iComponent);
   void addFaceVertex(int32_t iVertex, int32_t iTCoord, int32_t iNormal);
   void addCurrentSpec();
   void copySpecFragments(std::shared_ptr<MeshSpec> pSpec);

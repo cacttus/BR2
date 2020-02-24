@@ -22,7 +22,7 @@ ObjFile::~ObjFile() {
 
   clearVertexCache();
 }
-void ObjFile::load(t_string& strFilePath, bool flipWinding) {
+void ObjFile::load(string_t& strFilePath, bool flipWinding) {
   BinaryFile bufferedFile;
   uint32_t iLastGroupOffset;    // - For NON relative vertexes (ones with no '-' in front of their indexes we have
 
@@ -56,7 +56,7 @@ vec2 ObjFile::readVec2(BinaryFile& pBufferedFile) {
   return ret;
 }
 void ObjFile::loadObjFileContents(BinaryFile& pBufferedFile) {
-  t_string    tok;
+  string_t    tok;
   vec3 temp_v3;
   vec2 temp_v2;
 
@@ -95,7 +95,7 @@ void ObjFile::loadObjFileContents(BinaryFile& pBufferedFile) {
   }
 
 }
-void ObjFile::parseGeom(BinaryFile& pBufferedFile, t_string& tok) {
+void ObjFile::parseGeom(BinaryFile& pBufferedFile, string_t& tok) {
   tok = pBufferedFile.getTokSameLineOrReturnEmpty();
 
   if (tok.length() > 0) {
@@ -104,8 +104,8 @@ void ObjFile::parseGeom(BinaryFile& pBufferedFile, t_string& tok) {
     //        _pCurrentSpec->setFileName(_sFileName);
   }
 }
-void ObjFile::parseFace(BinaryFile& pBufferedFile, t_string& tok) {
-  std::vector <t_string> strVec;
+void ObjFile::parseFace(BinaryFile& pBufferedFile, string_t& tok) {
+  std::vector <string_t> strVec;
   int32_t iComp;
   int32_t indices[3];
 
@@ -128,13 +128,13 @@ void ObjFile::parseFace(BinaryFile& pBufferedFile, t_string& tok) {
     strVec.clear();
   }
 }
-int32_t ObjFile::parseFaceComponent(t_string& tok, int32_t& strlind, int32_t iComponent) {
+int32_t ObjFile::parseFaceComponent(string_t& tok, int32_t& strlind, int32_t iComponent) {
   size_t strind = 0;// current index of '/'
   int32_t idx; // parsed vertex face index
-  t_string rt;
+  string_t rt;
 
   strind = tok.find_first_of('/', strlind);
-  if (strind == t_string::npos) {
+  if (strind == string_t::npos) {
     //Last item in the 3 element list.
     strind = tok.length();
   }
@@ -267,7 +267,7 @@ void ObjFile::clearVertexCache() {
 }
 mat4 ObjFile::parseMat4(BinaryFile& bf) {
   // - Parse csv matrix string.
-  t_string mat_str = bf.getTok();
+  string_t mat_str = bf.getTok();
   mat4 mOut;
   mat4::parse(mat_str, mOut);
   return mOut;

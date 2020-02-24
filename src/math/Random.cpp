@@ -14,8 +14,8 @@ Random::Random() {
 }
 Random::~Random() {
 }
-t_string Random::randomNumericString(int nDigits) {
-  t_string ret;
+string_t Random::randomNumericString(int nDigits) {
+  string_t ret;
   for (int i = 0; i < nDigits; ++i) {
     ret += TypeConv::intToStr(nextInt32(0, 9));
   }

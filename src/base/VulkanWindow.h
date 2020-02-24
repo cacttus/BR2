@@ -18,7 +18,7 @@ class VulkanWindow : public GraphicsWindow {
 public:
   VulkanWindow(bool ismain);
   virtual ~VulkanWindow() override;
-  virtual void create(t_string) override {}
+  virtual void create(string_t) override {}
 };
 
 }//ns Game
