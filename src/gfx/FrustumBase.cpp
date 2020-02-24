@@ -119,7 +119,7 @@ void FrustumBase::update(const Vector3& NormalizedView, const Vector3& CamPos, c
     setupOrthographic(&params);
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
 
   //    updateBoundBox();
@@ -336,7 +336,7 @@ bool FrustumBase::hasTri(Vector3& p1, Vector3& p2, Vector3& p3) {
   //if(p.hitTest(Points[fpt_ntl],Points[fpt_nbl]).point.contained ) return true;
   //if(p.hitTest(Points[fpt_ntr],Points[fpt_nbr]).point.contained ) return true;
 
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
   return false;
 }
 /**
@@ -379,7 +379,7 @@ bool FrustumBase::hasQuad(Vector3& p1, Vector3& p2, Vector3& p3, Vector3& p4) {
   //if(p.hitTest(Points[fpt_ntl],Points[fpt_nbl]).point.contained ) return true;
   //if(p.hitTest(Points[fpt_ntr],Points[fpt_nbr]).point.contained ) return true;
 
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
   return false;
 }
 /**
@@ -555,13 +555,13 @@ mat4 FrustumBase::getProjectionMatrix() {
     return mm;
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
 
 }
 void FrustumBase::setFov(float fov) {
   if (fov > 179 || fov < 1) {
-    BroLogWarn("Frustum FOV " + fov + " was invalid, setting to valid number");
+    BRLogWarn("Frustum FOV " + fov + " was invalid, setting to valid number");
     fov = 45;
   }
   tan_fov_2 = tanf(MathUtils::degToRad(fov / 2.0f));

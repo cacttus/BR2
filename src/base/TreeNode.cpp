@@ -158,7 +158,7 @@ std::shared_ptr<TreeNode> TreeNode::find(std::shared_ptr<TreeNode> bt) {
   std::shared_ptr<TreeNode> found = NULL;
 
   if (bt == nullptr) {
-    BroThrowException("[ItemTree] Inserting, Child was null");
+    BRThrowException("[ItemTree] Inserting, Child was null");
   }
   if (bt == getThis<TreeNode>()) {
     return getThis<TreeNode>();

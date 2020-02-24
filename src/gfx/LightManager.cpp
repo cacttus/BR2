@@ -29,7 +29,7 @@ LightManager::LightManager(std::shared_ptr<GLContext> tc) :
     _pGpuDeferredParams->_fHdrSampleExp = 1.6700005f;
   }
 
-  BroLogDebug("Light Manager Initializing");
+  BRLogDebug("Light Manager Initializing");
   initializeDeferredFogData();
 }
 LightManager::~LightManager() {
@@ -86,10 +86,10 @@ void LightManager::updateRenderData() {
   if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_Y)) {
     _pGpuDeferredParams->_fHdrSampleExp += 0.01f;
   }
-  _pGpuDeferredParams->_fFogDamp = MathUtils::broClamp(_pGpuDeferredParams->_fFogDamp, 0.0f, 1.0f);
-  _pGpuDeferredParams->_fFogBlend = MathUtils::broClamp(_pGpuDeferredParams->_fFogBlend, 0.0f, 1.0f);
-  _pGpuDeferredParams->_fFogDivisor = MathUtils::broClamp(_pGpuDeferredParams->_fFogDivisor, 0.0f, FLT_MAX);
-  _pGpuDeferredParams->_fAmbientIntensity = MathUtils::broClamp(_pGpuDeferredParams->_fAmbientIntensity, 0.0f, 1.0f);
+  _pGpuDeferredParams->_fFogDamp = MathUtils::brClamp(_pGpuDeferredParams->_fFogDamp, 0.0f, 1.0f);
+  _pGpuDeferredParams->_fFogBlend = MathUtils::brClamp(_pGpuDeferredParams->_fFogBlend, 0.0f, 1.0f);
+  _pGpuDeferredParams->_fFogDivisor = MathUtils::brClamp(_pGpuDeferredParams->_fFogDivisor, 0.0f, FLT_MAX);
+  _pGpuDeferredParams->_fAmbientIntensity = MathUtils::brClamp(_pGpuDeferredParams->_fAmbientIntensity, 0.0f, 1.0f);
 
 
 

@@ -11,7 +11,7 @@
 
 namespace Game {
 FlyCam::FlyCam(std::shared_ptr<WindowViewport> pv) : _pViewport(pv) {
-    BroLogInfo("Creating Camera.");
+    BRLogInfo("Creating Camera.");
     _pCamera = CameraNode::create(pv);
     _pCamera->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
     updateCameraPosition();
@@ -84,7 +84,7 @@ void FlyCam::update(std::shared_ptr<Fingers> pFingers, float dt) {
     float v_len;
     _vMoveVel.len_and_norm(v_n, v_len);
     float v_new_len = v_len - v_len * _fMoveDamp *dt; 
-    v_new_len = MathUtils::broClamp(v_new_len, 0.0f, _fMaxMoveVel);
+    v_new_len = MathUtils::brClamp(v_new_len, 0.0f, _fMaxMoveVel);
     _vMoveVel = v_n * v_new_len;
 
     //Finalluy update camera

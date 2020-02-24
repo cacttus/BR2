@@ -198,7 +198,7 @@ void ShaderBase::setUf(t_string name, void* value, GLint count, bool bIgnore) {
     std::shared_ptr<ShaderUniform> uf = getUniformByName(name);
     if (uf == nullptr) {
         if (bIgnore == false) {
-            BroLogWarnCycle("Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
+            BRLogWarnCycle("Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
         }
     }
     else {
@@ -218,7 +218,7 @@ void ShaderBase::verifyBound() {
             na = Gu::getShaderMaker()->getShaderNameForId(prog);
             nb = Gu::getShaderMaker()->getShaderNameForId(getGlId());
 
-            BroLogError("Invalid shader was bound. '" + na + "' was bound, but we expected '" + nb + "'.");
+            BRLogError("Invalid shader was bound. '" + na + "' was bound, but we expected '" + nb + "'.");
         }
     }
 
@@ -234,13 +234,13 @@ void ShaderBase::verifyBound() {
             //    setUf("_ufTexture0", (void*)&iNullPickId);
             //}
             else {
-                BroLogWarnCycle("Uniform " + uf.second->getName() + " was not set for shader " + getProgramName());
+                BRLogWarnCycle("Uniform " + uf.second->getName() + " was not set for shader " + getProgramName());
             }
         }
     }
     for (std::pair<Hash32, std::shared_ptr<ShaderUniformBlock>> uf : _vecUniformBlocks) {
         if (uf.second->hasBeenSet() == false) {
-            BroLogWarnCycle("Uniform Block " + uf.second->getName() + " was not set for shader " + getProgramName());
+            BRLogWarnCycle("Uniform Block " + uf.second->getName() + " was not set for shader " + getProgramName());
         }
     }
 }
@@ -274,7 +274,7 @@ void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenu
 void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDrawMode) {
     //Removing the loopstate
     if (Gu::getGraphicsContext()->getLoopState() != EngineLoopState::e::Render) {
-        BroLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
+        BRLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
     }
     AssertOrThrow2(vao != nullptr);
     Gu::getGraphicsContext()->chkErrDbg();
@@ -426,7 +426,7 @@ void ShaderBase::dispatchCompute(int32_t elementCount) {
                 break;
             }
             else {
-                BroThrowException("Compute shader distribution was out of range.");
+                BRThrowException("Compute shader distribution was out of range.");
             }
         }
         nf = (int)f;
@@ -453,17 +453,17 @@ void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync
 void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z) {
 
     if (x > Gu::getShaderMaker()->getMaxWorkGroupDims()[0]) {
-        BroThrowException("[Compute] X group greater than max work group GPU can handle which is " + Gu::getShaderMaker()->getMaxWorkGroupDims()[0]);
+        BRThrowException("[Compute] X group greater than max work group GPU can handle which is " + Gu::getShaderMaker()->getMaxWorkGroupDims()[0]);
     }
     if (y > Gu::getShaderMaker()->getMaxWorkGroupDims()[1]) {
-        BroThrowException("[Compute] Y group greater than max work group GPU can handle which is " + Gu::getShaderMaker()->getMaxWorkGroupDims()[1]);
+        BRThrowException("[Compute] Y group greater than max work group GPU can handle which is " + Gu::getShaderMaker()->getMaxWorkGroupDims()[1]);
     }
     if (z > Gu::getShaderMaker()->getMaxWorkGroupDims()[2]) {
-        BroThrowException("[Compute] Z group greater than max work group GPU can handle which is " + Gu::getShaderMaker()->getMaxWorkGroupDims()[2]);
+        BRThrowException("[Compute] Z group greater than max work group GPU can handle which is " + Gu::getShaderMaker()->getMaxWorkGroupDims()[2]);
     }
 
     if ((x == 0) || (y == 0) || (z == 0)) {
-        BroThrowException("[Compute] Can't dispatch a compute with a zero dimension brosaurus. if need be use glDisbatchCompute(x,1,1)");
+        BRThrowException("[Compute] Can't dispatch a compute with a zero dimension brosaurus. if need be use glDisbatchCompute(x,1,1)");
     }
 
     std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDispatchCompute(x, y, z);
@@ -481,7 +481,7 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
     blockIndex = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramResourceIndex(getGlId(), GL_SHADER_STORAGE_BLOCK, shaderBufferName);
 
     if (blockIndex < 0) {
-        BroLogError(
+        BRLogError(
             "BIND FAILED: uniform buffer name: " + shaderBufferName
             + " .Binding Block Shader Id " + getGlId()
             + " shader name (may be invalid) " + getProgramName()

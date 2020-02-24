@@ -279,7 +279,7 @@ static FORCE_INLINE double sdevf(std::vector<double>& vin)
         sum2 += sub*sub; // (a-b)^2
     }
     mean = sum2 / (double)vin.size();
-    return (double)MathUtils::broSqrt((float)mean);
+    return (double)MathUtils::brSqrt((float)mean);
 }
 // - Sampled standard deviation
 static FORCE_INLINE double ssdevf(std::vector<double>& vin)
@@ -293,7 +293,7 @@ static FORCE_INLINE double ssdevf(std::vector<double>& vin)
         sum2 += sub*sub; // (a-b)^2
     }
     mean = sum2 / ((double)vin.size()-1);
-    return (double)MathUtils::broSqrt((float)mean);
+    return (double)MathUtils::brSqrt((float)mean);
 }
 
 /**
@@ -566,7 +566,7 @@ FORCE_INLINE static Vec3f bezier3v( std::vector<Vec3f>& controlPoints, float t )
 FORCE_INLINE STATIC float calcCubeDiagonal(float cubeSide)
 {
     //  sqrt( 3(x^2) )
-    return MathUtils::broSqrt( (cubeSide*cubeSide)*3 );
+    return MathUtils::brSqrt( (cubeSide*cubeSide)*3 );
 }
 
 };

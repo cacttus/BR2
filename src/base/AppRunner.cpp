@@ -70,7 +70,7 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
     api = std::make_shared<VulkanApi>();
   }
   else {
-    BroThrowException("Invalid render engine.");
+    BRThrowException("Invalid render engine.");
   }
   Gu::setGraphicsApi(api);
   api->createWindow(windowTitle, true);
@@ -86,11 +86,11 @@ void AppRunner::initSDL(t_string windowTitle, std::shared_ptr<AppBase> app) {
     attachToGameHost();
   }
 
-  BroLogInfo("Creating Managers.");
+  BRLogInfo("Creating Managers.");
   Gu::createManagers();
 
 
-  BroLogInfo("Creating Rendere.");
+  BRLogInfo("Creating Rendere.");
 
   api->createRenderer();
 
@@ -154,30 +154,30 @@ void AppRunner::printVideoDiagnostics() {
   //Drivers (useless in sdl2)
   const char* driver = SDL_GetCurrentVideoDriver();
   if (driver) {
-    BroLogInfo("Default Video Driver: " + driver);
+    BRLogInfo("Default Video Driver: " + driver);
   }
-  BroLogInfo("Installed Video Drivers: ");
+  BRLogInfo("Installed Video Drivers: ");
   int idrivers = SDL_GetNumVideoDrivers();
   for (int idriver = 0; idriver < idrivers; ++idriver) {
     driver = SDL_GetVideoDriver(idriver);
-    BroLogInfo(" " + driver);
+    BRLogInfo(" " + driver);
   }
 
   // Get current display mode of all displays.
   int nDisplays = SDL_GetNumVideoDisplays();
-  BroLogInfo(nDisplays + " Displays:");
+  BRLogInfo(nDisplays + " Displays:");
   for (int idisplay = 0; idisplay < nDisplays; ++idisplay) {
     SDL_DisplayMode current;
     int should_be_zero = SDL_GetCurrentDisplayMode(idisplay, &current);
 
     if (should_be_zero != 0) {
       // In case of error...
-      BroLogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
+      BRLogInfo("  Could not get display mode for video display #%d: %s" + idisplay);
       SDLUtils::checkSDLErr();
     }
     else {
       // On success, print the current display mode.
-      BroLogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
+      BRLogInfo("  Display " + idisplay + ": " + current.w + "x" + current.h + ", " + current.refresh_rate + "hz");
       SDLUtils::checkSDLErr();
     }
   }
@@ -203,14 +203,14 @@ SDL_bool AppRunner::initAudio() {
   return SDL_TRUE;
 }
 void AppRunner::initNet() {
-  BroLogInfo("Initializing SDL Net");
+  BRLogInfo("Initializing SDL Net");
   if (SDLNet_Init() == -1) {
     exitApp(Stz "SDL Net could not be initialized: " + SDL_GetError(), -1);
   }
 }
 
 void SignalHandler(int signal) {
-  BroThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
+  BRThrowException(Stz "VC Access Violation. signal=" + signal + "  This shouldn't work in release build.");
 }
 void AppRunner::runGameLoopTryCatch(std::shared_ptr<AppBase> rb) {
   typedef void(*SignalHandlerPointer)(int);
@@ -220,7 +220,7 @@ void AppRunner::runGameLoopTryCatch(std::shared_ptr<AppBase> rb) {
   SignalHandlerPointer previousHandler;
   previousHandler = signal(SIGSEGV, SignalHandler);
 
-  BroLogInfo("Entering Game Loop");
+  BRLogInfo("Entering Game Loop");
   try {
     runGameLoop(rb);
   }
@@ -287,7 +287,7 @@ bool AppRunner::handleEvents(SDL_Event* event) {
   case SDL_MOUSEWHEEL:
     if (event->wheel.y != 0) {
 
-      int n = MathUtils::broMin(10, MathUtils::broMax(-10, event->wheel.y));
+      int n = MathUtils::brMin(10, MathUtils::brMax(-10, event->wheel.y));
 
       Gu::getApp()->userZoom(n);
       n++;
@@ -319,7 +319,7 @@ void AppRunner::runGameLoop(std::shared_ptr<AppBase> rb) {
 #endif
 
   //Print the setup time.
-  BroLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
+  BRLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
 
   //test the globals before starting the game loop
   Gu::updateGlobals();

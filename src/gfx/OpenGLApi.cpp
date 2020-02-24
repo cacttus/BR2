@@ -22,7 +22,7 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title, bool 
   std::shared_ptr<OpenGLWindow> w = std::make_shared<OpenGLWindow>(isMain);
   if (isMain) {
     if (_pMainWindow != nullptr) {
-      BroThrowException("Main window already set.");
+      BRThrowException("Main window already set.");
     }
     _pMainWindow = w;
   }

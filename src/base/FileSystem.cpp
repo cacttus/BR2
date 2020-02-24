@@ -67,7 +67,7 @@ bool FileSystem::createFile(const t_string& filename, bool trunc, bool bLog) {
     exists = false;
     t_string err = Stz " [FileSystem] Output file " + filename + " could not be created with trunc=" + (int32_t)trunc;
     if (bLog == true) {//For logger initializtion
-      BroLogError(err);
+      BRLogError(err);
     }
     else {
       Gu::print(err);
@@ -249,7 +249,7 @@ time_t FileSystem::getLastModifyTime(t_string& location) {
   struct stat fileInfo;
 
   if (FileSystem::fileExists(location) == false) {
-    BroThrowException("File '" + location + "' does not exist");
+    BRThrowException("File '" + location + "' does not exist");
   }
 
   stat(location.c_str(), &fileInfo);
@@ -318,7 +318,7 @@ bool FileSystem::getAllFilesOrDirs(t_string dir, std::vector<t_string>& __out_ d
     closedir(dp);
   }
   else {
-    BroLogError("Couldn't open the directory '" + dir + "'");
+    BRLogError("Couldn't open the directory '" + dir + "'");
     return false;
   }
   return true;
@@ -347,7 +347,7 @@ bool FileSystem::deleteDirectoryRecursive(t_string dir, std::vector<t_string>& v
 
   int ret = rmdir(dir.c_str());
   if (ret != 0) {
-    BroLogError("Failed to delete directory.");
+    BRLogError("Failed to delete directory.");
     return false;
   }
   return true;
@@ -356,7 +356,7 @@ bool FileSystem::deleteDirectory(t_string dir, std::vector<t_string>& vecFileExt
 
   int ret = rmdir(dir.c_str());
   if (ret != 0) {
-    BroLogError("Failed to delete directory.");
+    BRLogError("Failed to delete directory.");
     return false;
   }
   return true;
@@ -366,7 +366,7 @@ bool FileSystem::deleteAllFiles(t_string dir, std::vector<t_string>& vecFileExts
 
   std::vector<t_string> files;
   if (getAllFiles(dir, files) == false) {
-    BroLogError("Failed to get files from '" + dir + "'");
+    BRLogError("Failed to get files from '" + dir + "'");
     return false;
   }
 
@@ -381,7 +381,7 @@ bool FileSystem::deleteAllFiles(t_string dir, std::vector<t_string>& vecFileExts
       }
       if (bMatch) {
         if (FileSystem::deleteFile(file) == false) {
-          BroLogError("Failed to delte file '" + file + "'");
+          BRLogError("Failed to delte file '" + file + "'");
           return false;
         }
       }
@@ -395,7 +395,7 @@ bool FileSystem::deleteFile(t_string filename) {
   //Equivalent POSIX function
   //unlink(filename.c_str())
   if (ret != 0) {
-    BroLogError("Failed to delete file '" + filename + "'");
+    BRLogError("Failed to delete file '" + filename + "'");
     return false;
   }
   return true;
@@ -405,7 +405,7 @@ t_string FileSystem::getFilePartOfFileName(const t_string& fileName) {
   size_t off = fileName.rfind(".");
 
   if (off >= fileName.size() || off == t_string::npos) {
-    BroThrowException("Incorrect file name, no extension given or incorrect extension.");
+    BRThrowException("Incorrect file name, no extension given or incorrect extension.");
   }
 
   return fileName.substr(0, off);

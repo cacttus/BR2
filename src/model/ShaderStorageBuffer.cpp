@@ -18,7 +18,7 @@ void ShaderStorageBuffer::allocFill(size_t num_elements, const void* frags) {
 void ShaderStorageBuffer::syncRead(void* out_data, size_t num_bytes, size_t byte_offset, bool useMemoryBarrier) {
 
   if (getByteSize() == 0) {
-    BroThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
+    BRThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
   }
   if (useMemoryBarrier) {
     _pContext->glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -36,7 +36,7 @@ void ShaderStorageBuffer::syncRead(void* out_data, size_t num_bytes, size_t byte
 void ShaderStorageBuffer::syncWrite(void* data, size_t num_bytes, size_t byte_offset, bool useMemoryBarrier) {
 
   if (getByteSize() == 0) {
-    BroThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
+    BRThrowException("OGL Buffer will not bind, and throw an exception, the given buffer object has no data");
   }
 
   //Segfault

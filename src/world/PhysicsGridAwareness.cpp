@@ -39,7 +39,7 @@ void PhysicsGridAwareness::updateAwarenessSpheroidAxis(float& fAwareness, float 
 
   // float aMax = CongaUtils::getBvhAwarenessMaxRadius();
   // float aMin = CongaUtils::getBvhAwarenessMinRadius();
-  fAwareness = MathUtils::broClamp(fAwareness, minR, maxR);
+  fAwareness = MathUtils::brClamp(fAwareness, minR, maxR);
 
   //TODO: fix this
   //if (_setGenStage1.size() == 0 && _setGenStage2.size() == 0) {

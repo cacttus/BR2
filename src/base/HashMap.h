@@ -57,7 +57,7 @@ void _HashMap<Tx, TKey>::add(t_string str, Tx& x) {
   for (i = 0; i < getNumAlgorithms(); ++i) {
     nHashVal = computeHash(str, i);
     if (_map.find(nHashVal) != _map.end()) {
-      BroLogWarn("Hash Map collision using algorithm " + i);
+      BRLogWarn("Hash Map collision using algorithm " + i);
       str.setHashAlgorithmIndex(i + 1);
     }
     else {
@@ -81,7 +81,7 @@ bool _HashMap<Tx, TKey>::remove(t_string key) {
   bool b = _map.remove(n, true);
 
   if (b == false) {
-    BroLogWarn(" [Hm] Failed to remove hashed string");
+    BRLogWarn(" [Hm] Failed to remove hashed string");
   }
 
   return b;

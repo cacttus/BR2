@@ -16,11 +16,11 @@ HANDLE hCrtLog;
 bool _bDoDebug = false;
 
 void staticDebugBreak(t_string str) {
-  BroLogError(str);
+  BRLogError(str);
   Gu::debugBreak();
 }
 void runtimeAssertion(t_string str) {
-  BroThrowException(str);
+  BRThrowException(str);
 }
 
 DebugHelper::DebugHelper() {

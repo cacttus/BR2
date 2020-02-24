@@ -153,7 +153,7 @@ void ShadowBoxSide::collect() {
 
   BvhCollectionParams p;
   //fmaxdist is SQUARED
-  p._fMaxDist = powf(MathUtils::broMin(_pLightSource->getLightRadius(), Gu::getEngineConfig()->getMaxPointLightShadowDistance()), 2);
+  p._fMaxDist = powf(MathUtils::brMin(_pLightSource->getLightRadius(), Gu::getEngineConfig()->getMaxPointLightShadowDistance()), 2);
   p._pFrustum = _pFrustum;
   p._pRenderBucket = _pVisibleSet;
   Gu::getPhysicsWorld()->collectVisibleNodes(&p);

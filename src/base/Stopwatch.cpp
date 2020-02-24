@@ -24,7 +24,7 @@ t_string Stopwatch::stop(bool bLog, bool bFancy) {
   _tB = Gu::getMicroSeconds();
 
   if (bLog == true) {
-    BroLogDebug(toString(bFancy));
+    BRLogDebug(toString(bFancy));
   }
 
   return toString(bFancy);

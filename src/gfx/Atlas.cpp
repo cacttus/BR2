@@ -38,7 +38,7 @@ std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
     return nullptr;
   }
   t_timeval t0 = Gu::getMicroSeconds();
-  BroLogInfo("Loading cached image '" + getCachedImageFilePath() + "'...");
+  BRLogInfo("Loading cached image '" + getCachedImageFilePath() + "'...");
   {
 
     greatestDependencyModifyTime = cacheGetGreatestModifyTimeForAllDependencies();
@@ -49,7 +49,7 @@ std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
       bi = Gu::loadImage(cachedImageLoc);
     }
   }
-  BroLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
+  BRLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
 
   return bi;
 }
@@ -76,12 +76,12 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies() {
     if (ite->second->getIsGenerated() == false) {
       //  spriteFileLoc = getAtlasSpriteFullpath(ite->second);
       if (FileSystem::fileExists(strPath) == false) {
-        BroLogError(_strName + " atlas file '" + strPath + "' does not exist.");
+        BRLogError(_strName + " atlas file '" + strPath + "' does not exist.");
         Gu::debugBreak();
         return 0;
       }
       currentModifyTime = FileSystem::getLastModifyTime(strPath);
-      greatestModifyTime = MathUtils::broMax(greatestModifyTime, currentModifyTime);
+      greatestModifyTime = MathUtils::brMax(greatestModifyTime, currentModifyTime);
     }
   }
 
@@ -93,10 +93,10 @@ void Atlas::compilePrecompiled(bool bMipmaps) {
 
   //Assert that the atlas is evenly spaced.
   if (bi->getWidth() % _vSpriteSize.x != 0) {
-    BroLogWarn("Atlas sprites are not evenly spaced along the x axis.");
+    BRLogWarn("Atlas sprites are not evenly spaced along the x axis.");
   }
   if (bi->getHeight() % _vSpriteSize.y != 0) {
-    BroLogWarn("Atlas sprites are not evenly spaced along the y axis.");
+    BRLogWarn("Atlas sprites are not evenly spaced along the y axis.");
   }
 
   _vGridSize.x = bi->getWidth() / _vSpriteSize.x;
@@ -144,12 +144,12 @@ void Atlas::compileFiles(bool bMipmaps, bool saveAndLoad) {
 
   if (sp == nullptr) {
     t_timeval t0 = Gu::getMicroSeconds();
-    BroLogInfo("Composing image '" + getCachedImageFilePath() + "'...");
+    BRLogInfo("Composing image '" + getCachedImageFilePath() + "'...");
     {
       sp = composeImage(saveAndLoad);
 
     }
-    BroLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
+    BRLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
 
   printInfoAndErrors(sp);
@@ -233,7 +233,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
       copyLoc.y = (iImage / _vGridSize.y) * _vSpriteSize.y;
     }
     catch (Exception * ex) {
-      BroLogError("Failed to Open image.:\r\n" + ex->what());
+      BRLogError("Failed to Open image.:\r\n" + ex->what());
     }
 
     try {
@@ -245,7 +245,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
       }
     }
     catch (Game::Exception * ex) {
-      BroLogError("Failed to Copy Sub-Image during texture composition.:\r\n" + ex->what());
+      BRLogError("Failed to Copy Sub-Image during texture composition.:\r\n" + ex->what());
     }
 
     pCopy = nullptr;
@@ -258,7 +258,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
   // masterImage->flipH();
 
   if (bCache) {
-    BroLogInfo("Saving atlas '" + getName() + "' to '" + getCachedImageFilePath() + "'.");
+    BRLogInfo("Saving atlas '" + getName() + "' to '" + getCachedImageFilePath() + "'.");
     t_string strFileName = getCachedImageFilePath();
     Gu::saveImage(strFileName, masterImage);
   }
@@ -324,7 +324,7 @@ void Atlas::printInfoAndErrors(std::shared_ptr<Img32> sp) {
   GLint iMaxTextureSiz;//, maxColorAttachments;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &iMaxTextureSiz);
   //Some atlas infor.
-  BroLogInfo("Atlas size is " + sp->getWidth() + " x " + sp->getHeight()
+  BRLogInfo("Atlas size is " + sp->getWidth() + " x " + sp->getHeight()
     + "+ with sprite size " + getSpriteSize().x + " x " + getSpriteSize().y + " and has " + _mapImages.size() + " textures.\r\n"
     + " The Graphics card supports textures up to " + iMaxTextureSiz + " x " + iMaxTextureSiz + " units.\r\n"
     "Maximum Number of Textures for each texture size follows:" +
@@ -341,7 +341,7 @@ void Atlas::printInfoAndErrors(std::shared_ptr<Img32> sp) {
   );
 
   if (sp->getWidth() > iMaxTextureSiz) {
-    BroThrowException("Atlas: " + getName() + "The generated texture size is " + sp->getWidth() + ". Your graphics card can't handle texture sizes above " + iMaxTextureSiz + ".  TODO: Implement shrinkage.");
+    BRThrowException("Atlas: " + getName() + "The generated texture size is " + sp->getWidth() + ". Your graphics card can't handle texture sizes above " + iMaxTextureSiz + ".  TODO: Implement shrinkage.");
   }
 
 }

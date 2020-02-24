@@ -90,10 +90,10 @@ void KeyFrame::animate(float ct, std::shared_ptr<KeyFrame> pNext, mat4& mOut) {
 
     }
     else if (pNext->_eInterpolation == KeyframeInterpolation::e::Bezier) {
-        BroThrowNotImplementedException();
+        BRThrowNotImplementedException();
     }
     else {
-        BroThrowNotImplementedException();
+        BRThrowNotImplementedException();
     }
 }
 void KeyFrame::deserialize( std::shared_ptr<BinaryFile> fb) {
@@ -163,7 +163,7 @@ std::shared_ptr<KeyFrame> ActionKeys::getBFrame( std::shared_ptr<Animator> tl) {
 }
 void ActionKeys::scaleKeys(int32_t iBasFps, float& fMaxEndTime) {
     if (_vecKeys.size() == 0) {
-        BroLogError("ActionKeys is invalid, no keys present");
+        BRLogError("ActionKeys is invalid, no keys present");
         Gu::debugBreak();
     }
     for (std::shared_ptr<KeyFrame> kf : _vecKeys) {
@@ -209,7 +209,7 @@ ActionGroup::ActionGroup(t_string strName, int32_t iBaseFps) {
 void ActionGroup::addActionKeys(std::shared_ptr<ActionKeys> a) {
     Hash32 ah = a->getObjectNameHash();
     if (_mapActions.find(ah) != _mapActions.end()) {
-        BroLogWarn("Tried to add action keys for '" + a->getObjectName() + "' multiple times to action group '" + getName() + "'");
+        BRLogWarn("Tried to add action keys for '" + a->getObjectName() + "' multiple times to action group '" + getName() + "'");
         Gu::debugBreak();
     }
     else {
@@ -226,7 +226,7 @@ std::shared_ptr<ActionKeys> ActionGroup::getActionKeys(Hash32 iObjectNameHashed)
 void ActionGroup::scaleKeys() {
     _fEndTime = -FLT_MAX;
     if (_mapActions.size() == 0) {
-        BroLogError("Action group is invalid, no actions present");
+        BRLogError("Action group is invalid, no actions present");
         Gu::debugBreak();
     }
     for (std::pair<Hash32, std::shared_ptr<ActionKeys>> p : _mapActions) {
@@ -269,7 +269,7 @@ BoneSpec::~BoneSpec() {
 
 void BoneSpec::setParent(std::shared_ptr<BoneSpec> bs) {
     if (_pParent != nullptr) {
-        BroLogError("Bone '" + getName() + "' Parent was already set!");
+        BRLogError("Bone '" + getName() + "' Parent was already set!");
     }
     else {
         _pParent = bs;
@@ -279,7 +279,7 @@ void BoneSpec::addChild(std::shared_ptr<BoneSpec> bs) {
     bool berr = false;
     for (std::shared_ptr<BoneSpec> bs1 : _vecChildren) {
         if (bs1 == bs) {
-            BroLogError("Bone Spec '" + bs->getName() + "' was already added to bone '" + getName() + "'");
+            BRLogError("Bone Spec '" + bs->getName() + "' was already added to bone '" + getName() + "'");
             berr = true;
         }
     }
@@ -387,7 +387,7 @@ void Armature::deserialize( std::shared_ptr<BinaryFile> fb) {
         _mapBoneCacheOrdered.insert(std::make_pair(bs->getBoneId(), bs));
     }
 
-    BroLogInfo("  Compiling armature hierarchy.");
+    BRLogInfo("  Compiling armature hierarchy.");
     compileHierarchy();
 
 }
@@ -429,7 +429,7 @@ bool Armature::tkArmFile(MobFile* pMobFile, std::vector<t_string>& tokens) {
         }
         else {
             if (_mapBoneCacheOrdered.find(_pCurBone->getBoneId()) != _mapBoneCacheOrdered.end()) {
-                BroLogError("Bone '" + _pCurBone->getName() + "' ID:" + _pCurBone->getBoneId() + " already found in bone cache.  Animation will look weird.");
+                BRLogError("Bone '" + _pCurBone->getName() + "' ID:" + _pCurBone->getBoneId() + " already found in bone cache.  Animation will look weird.");
                 Gu::debugBreak();
             }
             else {
@@ -533,7 +533,7 @@ void Armature::compileHierarchy() {
 
         if (StringUtil::isEmpty(pBone->getParentName())){
             if (_pArmRoot != nullptr) {
-                BroLogError("Arm root was not null when trying to add root!");
+                BRLogError("Arm root was not null when trying to add root!");
             }
             else {
                 _pArmRoot = pBone;
@@ -542,7 +542,7 @@ void Armature::compileHierarchy() {
         else {
             std::shared_ptr<BoneSpec> pParent = getCachedBoneByName(pBone->getParentName());
             if (pParent == nullptr) {
-                BroLogError("Hierarchy could not find parent bone '" + pBone->getParentName());
+                BRLogError("Hierarchy could not find parent bone '" + pBone->getParentName());
             }
             else {
                 pBone->setParent(pParent);
@@ -681,7 +681,7 @@ ModelSpec::~ModelSpec() {
     //_vecArmatures.clear();
 }
 void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
-    BroLogInfo("Reading Model..");
+    BRLogInfo("Reading Model..");
     PhysicsSpec::deserialize(fb);
     //fb->readString(std::move(_strName));
     //_iNameHashed = STRHASH(_strName);
@@ -693,7 +693,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
     int32_t nArms;
     fb->readInt32(nArms);
     for (int32_t iArm = 0; iArm < nArms; ++iArm) {
-        BroLogInfo("  Arm " + iArm + " ..");
+        BRLogInfo("  Arm " + iArm + " ..");
         std::shared_ptr<Armature> pArm = std::make_shared<Armature>();
         pArm->deserialize(fb);
         getArmatures().push_back(pArm);
@@ -703,7 +703,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
     int32_t nActionGroups;
     fb->readInt32(nActionGroups);
     for (int32_t iAction = 0; iAction < nActionGroups; ++iAction) {
-        BroLogInfo("  Action " + iAction + "..");
+        BRLogInfo("  Action " + iAction + "..");
         std::shared_ptr<ActionGroup> pg = std::make_shared<ActionGroup>();
         pg->setFps(_iFrameRate);
         pg->deserialize(fb);
@@ -713,7 +713,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
     int32_t nMeshes;
     fb->readInt32(nMeshes);
     for (int32_t iMesh = 0; iMesh < nMeshes; ++iMesh) {
-        BroLogInfo("  Mesh " + iMesh + "..");
+        BRLogInfo("  Mesh " + iMesh + "..");
         std::shared_ptr<MeshSpec> pMesh = std::make_shared<MeshSpec>();
         pMesh->deserialize(fb);
         getMeshes().push_back(pMesh);
@@ -730,7 +730,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
         }
     }
 
-    BroLogInfo("..Done");
+    BRLogInfo("..Done");
 }
 void ModelSpec::serialize( std::shared_ptr<BinaryFile> fb) {
     PhysicsSpec::serialize(fb);
@@ -874,7 +874,7 @@ void ModelNode::buildNodeParents() {
 
                     if (StringUtil::equals(strParent, bn->getSpecName())) {
                         if (pNode->getParent() != nullptr) {
-                            BroLogError("Bone parent node already set for node " + pNode->getSpecName());
+                            BRLogError("Bone parent node already set for node " + pNode->getSpecName());
                             Gu::debugBreak();
                         }
                         else {
@@ -887,7 +887,7 @@ void ModelNode::buildNodeParents() {
                 }
             }
             if (bFound == false) {
-                BroLogError("Bone parent node not found for node " + pNode->getSpecName());
+                BRLogError("Bone parent node not found for node " + pNode->getSpecName());
                 Gu::debugBreak();
             }
         }
@@ -899,11 +899,11 @@ void ModelNode::buildNodeParents() {
             if (pNode->getParent() != nullptr) {
                 std::shared_ptr<BaseNode> pParentAttached = std::dynamic_pointer_cast<BaseNode>(pNode->getParent());
                 if (pParentAttached == nullptr) {
-                    BroLogError("Parent already attached, but Tried to cast a base node - failed.");
+                    BRLogError("Parent already attached, but Tried to cast a base node - failed.");
                     Gu::debugBreak();
                 }
                 else {
-                    BroLogError("Parent '" + pParentAttached->getSpec()->getName() +
+                    BRLogError("Parent '" + pParentAttached->getSpec()->getName() +
                         "' already set for node '" + strChild + "' who wants to be parented by '" + strParent + "' ");
                     Gu::debugBreak();
                 }
@@ -911,7 +911,7 @@ void ModelNode::buildNodeParents() {
             else {
                 std::shared_ptr<BaseNode> pParentNode = getNodeByName(strParent);
                 if (pParentNode == nullptr) {
-                    BroLogError("Could not find parent '" + strParent + "' for node '" + strChild + "'");
+                    BRLogError("Could not find parent '" + strParent + "' for node '" + strChild + "'");
                     Gu::debugBreak();
                 }
                 else {
@@ -931,7 +931,7 @@ void ModelNode::addNodeToCache(std::shared_ptr<BaseNode> bn) {
     AssertOrThrow2(bn != nullptr);
     Hash32 bnName = STRHASH(bn->getSpec()->getName());
     if (_mapNodes.find(bnName) != _mapNodes.end()) {
-        BroLogError("ModelNode: Failed to add base node '" + bn->getSpec()->getName() + "' as it already exists in node cache.");
+        BRLogError("ModelNode: Failed to add base node '" + bn->getSpec()->getName() + "' as it already exists in node cache.");
     }
     else {
         _mapNodes.insert(std::make_pair(bnName, bn));
@@ -1044,7 +1044,7 @@ void ModelNode::playAction(t_string actName) {
     else {
         std::shared_ptr<ActionGroup> ag = getModelSpec()->getAction(anh);
         if (ag == nullptr) {
-            BroLogError("Model '" + getSpec()->getName() + "', could not find action '" + actName + "'");
+            BRLogError("Model '" + getSpec()->getName() + "', could not find action '" + actName + "'");
             Gu::debugBreak();
         }
         else if (ag->isValid()) {
@@ -1056,7 +1056,7 @@ void ModelNode::playAction(t_string actName) {
             pa->setLoop(true);
         }
         else {
-            BroLogError("Action wasn't valid for playing.");
+            BRLogError("Action wasn't valid for playing.");
             Gu::debugBreak();
         }
     }

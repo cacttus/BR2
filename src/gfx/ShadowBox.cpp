@@ -206,7 +206,7 @@ void ShadowBox::createFbo() {
   GLenum status = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    BroThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
+    BRThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
     Gu::checkErrorsRt();
   }
 

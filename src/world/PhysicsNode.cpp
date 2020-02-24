@@ -89,7 +89,7 @@ void PhysicsNode::validateSanePhysics() {
     pos = 0;
   }
 
-#define pos_msg(aa) BroLogWarn("Object has reached the edge of the world!! p=("+ aa.x+ " "+ aa.y+ " "+ aa.z + ") resetting position.")
+#define pos_msg(aa) BRLogWarn("Object has reached the edge of the world!! p=("+ aa.x+ " "+ aa.y+ " "+ aa.z + ") resetting position.")
 
   // if the object is out of bounds throw it up to the sky
   if (pos.x < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.x = PHY_MAX_OBJECT_DISTANCE - getBoundBoxObject()->getWidth(); }

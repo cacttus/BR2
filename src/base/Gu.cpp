@@ -153,19 +153,19 @@ bool Gu::is64Bit() {
   if (sizeof(size_t) == 4)
     return false;
   //WTF
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
     Gu::getEngineConfig()->setShowConsole(Game::TypeConv::strToBool(value));
-    BroLogInfo("Overriding show console window: " + value);
+    BRLogInfo("Overriding show console window: " + value);
   }
   else if (key == "--game-host") {
     Gu::getEngineConfig()->setGameHostAttached(Game::TypeConv::strToBool(value));
-    BroLogInfo("Overriding game host: " + value);
+    BRLogInfo("Overriding game host: " + value);
   }
   else {
-    BroLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
+    BRLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
   }
 }
 //**TODO Move this crap to AppRunner
@@ -218,8 +218,8 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>
 
 
   //Print some environment Diagnostics
-  BroLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
-  BroLogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
+  BRLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
+  BRLogInfo(Stz  "C++ Version: " + Gu::getCPPVersion());
 
   if (Gu::getEngineConfig()->getShowConsole() == false) {
     OperatingSystem::hideConsole();
@@ -283,7 +283,7 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
     if (err != 0) {
       //FB should free itself.
     //  Gu::SDLFileFree(imgData);
-      BroThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
+      BRThrowException(Stz "Could not load image " + imgLoc + " err code = " + err);
     }
     else {
       Img32::flipImage20161206(image, width, height);
@@ -320,12 +320,12 @@ bool Gu::saveImage(std::string path, std::shared_ptr<Img32> spec) {
 
     RetCode rc = DiskFile::writeAllBytes(path, allocr);
     if (rc != GR_OK) {
-      BroLogError("Error'" + (int)rc + "' occurred while saving image.");
+      BRLogError("Error'" + (int)rc + "' occurred while saving image.");
     }
     allocr.dealloc();
   }
   else {
-    BroLogError("LodePng - Error encoding image '" + path + "'.");
+    BRLogError("LodePng - Error encoding image '" + path + "'.");
     bRet = false;
   }
   free(buffer);//lodepng_free
@@ -607,50 +607,50 @@ void Gu::createManagers() {
   std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext());
 
   _pRenderSettings = RenderSettings::create();
-  BroLogInfo("GLContext - Building Package");
+  BRLogInfo("GLContext - Building Package");
   _pPackage = std::make_shared<Package>();
   _pPackage->build(FileSystem::getExecutableFullPath());
-  BroLogInfo("GLContext - Creating TexCache");
+  BRLogInfo("GLContext - Creating TexCache");
   _pTexCache = std::make_shared<TexCache>(Gu::getGraphicsContext());
 
-  BroLogInfo("GLContext - Creating TextBoss");
+  BRLogInfo("GLContext - Creating TextBoss");
   //    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
-  BroLogInfo("GLContext - Creating Party");
+  BRLogInfo("GLContext - Creating Party");
   _pParty = std::make_shared<Party>(Gu::getGraphicsContext());
-  BroLogInfo("GLContext - Creating Sequencer");
+  BRLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
-  BroLogInfo("GLContext - Creating Fingers");
+  BRLogInfo("GLContext - Creating Fingers");
   _pFingers = std::make_shared<Fingers>();
   _pFingers->init();
-  BroLogInfo("GLContext - Creating FpsMeter");
+  BRLogInfo("GLContext - Creating FpsMeter");
   _pFpsMeter = std::make_shared<FpsMeter>();
-  BroLogInfo("GLContext - Creating FrameSync");
+  BRLogInfo("GLContext - Creating FrameSync");
   _pFrameSync = std::make_shared<FrameSync>();
   //This was commented out.  Why? 11/6
-  BroLogInfo("GLContext - Creating SoundCache");
+  BRLogInfo("GLContext - Creating SoundCache");
   _pSoundCache = std::make_shared<SoundCache>();
-  BroLogInfo("GLContext - Creating ShaderMaker & base shaders");
+  BRLogInfo("GLContext - Creating ShaderMaker & base shaders");
   _pShaderMaker = std::make_shared<ShaderMaker>();
   _pShaderMaker->initialize(Gu::getApp());
-  BroLogInfo("GLContext -  Lights");
+  BRLogInfo("GLContext -  Lights");
   _pLightManager = std::make_shared<LightManager>(Gu::getGraphicsContext());
-  BroLogInfo("GLContext - Model Cache");
+  BRLogInfo("GLContext - Model Cache");
   _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
 
-  BroLogInfo("GLContext - Picker");
+  BRLogInfo("GLContext - Picker");
   _pPicker = std::make_shared<Picker>(Gu::getGraphicsContext());
 
   //BroLogInfo("GLContext - Gui");
 //   _pGui2d = std::make_shared<Gui2d>();
 
-  BroLogInfo("GLContext - Physics World");
+  BRLogInfo("GLContext - Physics World");
   //Either A) subclass or B) remove genericy thing
  // _pPhysicsWorld = std::make_shared<PhysicsWorld>();
 
-  BroLogInfo("Network");
+  BRLogInfo("Network");
   _pNet = std::make_shared<Net>();
 
-  BroLogInfo("Delta");
+  BRLogInfo("Delta");
   _pDelta = std::make_shared<Delta>();
 }
 void Gu::updateGlobals() {

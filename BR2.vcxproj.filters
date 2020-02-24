@@ -93,9 +93,6 @@
     <ClCompile Include="src\base\Net.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\ObjectFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\oglErr.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -453,6 +450,9 @@
     <ClCompile Include="src\world\PhysicsGrid.cpp">
       <Filter>world</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\ObjFile.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppMain.h">
@@ -546,9 +546,6 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\Net.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\ObjectFile.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\oglErr.h">
@@ -1001,5 +998,13 @@
     <ClInclude Include="src\world\Manifold.h">
       <Filter>world</Filter>
     </ClInclude>
+    <ClInclude Include="src\base\ObjFile.h">
+      <Filter>base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project\devlog.md" />
+    <None Include="project\design.md" />
+    <None Include="project\tasks.md" />
   </ItemGroup>
 </Project>

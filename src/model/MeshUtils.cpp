@@ -17,7 +17,7 @@ namespace Game {
 *  @brief Parse a string defining generation params for a mesh into a class structure.
 */
 bool MeshGenParams::logAndExit(t_string str) {
-  BroLogError(str);
+  BRLogError(str);
   return false;
 }
 bool MeshGenParams::parse(t_string genString) {
@@ -105,7 +105,7 @@ MeshGenType::e MeshGenParams::getGenerationAlgorithmFromString(t_string str) {
   else if (str == "plane2x")
     return MeshGenType::e::MGA_CROSS_2_SIDE;
 
-  BroThrowException(" [MESH GEN] Failed to get generation algorithm from string ");
+  BRThrowException(" [MESH GEN] Failed to get generation algorithm from string ");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ std::shared_ptr<MeshSpec> MeshUtils::makeArcSegment(float radius, float radius2,
   bool cw_winding = false;
 
   float res = (aRadius) * (aRadius)-(pRadius) * (pRadius);
-  float sqrtres = MathUtils::broSqrt(res);
+  float sqrtres = MathUtils::brSqrt(res);
   float PlaneSize = 2.0f * sqrtres;
 
   float PlaneDelta = PlaneSize / (float)slices;

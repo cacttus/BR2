@@ -136,7 +136,7 @@ void PhysicsWorld::debugMakeSureNoDupes(const ivec3& vv) {
   for (GridMap::iterator it = _gridMap.begin(); it != _gridMap.end(); it++) {
     ivec3* v = it->first;
     if (v->x == vv.x && v->y == vv.y && v->z == vv.z) {
-      BroThrowException("Duplicate node found.");
+      BRThrowException("Duplicate node found.");
     }
   }
 
@@ -285,7 +285,7 @@ void PhysicsWorld::refreshCache() {
 }
 bool PhysicsWorld::tryRemoveObj(std::shared_ptr<PhysicsNode> ob) {
   if (ob == nullptr) {
-    BroLogError("Tried to remove a null object.");
+    BRLogError("Tried to remove a null object.");
     return false;
   }
   ObjMap::iterator it = _mapObjects.find(ob->getId());
@@ -304,7 +304,7 @@ bool PhysicsWorld::tryRemoveObj(std::shared_ptr<PhysicsNode> ob) {
 }
 void PhysicsWorld::addObj(std::shared_ptr<PhysicsNode> ob, bool bActivate, bool bRefreshCache) {
   if (ob->detachFromParent() == true) {
-    BroLogWarn(ob->getSpecName() + "Added a parented OBJ - you may get invaid results.");
+    BRLogWarn(ob->getSpecName() + "Added a parented OBJ - you may get invaid results.");
     Gu::debugBreak();
   }
   calc_obj_manifold(ob);
@@ -317,7 +317,7 @@ void PhysicsWorld::addObj(std::shared_ptr<PhysicsNode> ob, bool bActivate, bool 
   //Add to ?
   ObjMap::iterator it = _mapObjects.find(ob->getId());
   if (it != _mapObjects.end()) {
-    BroLogError("ERROR - Found duplicate grid object in world.");
+    BRLogError("ERROR - Found duplicate grid object in world.");
     Gu::debugBreak();
   }
   else {
@@ -544,7 +544,7 @@ void PhysicsWorld::calc_obj_manifold(std::shared_ptr<PhysicsNode> ob) {
   if (ob->getBoundBoxObject()->limitSizeForEachAxis(ob->getPos(), 20000.0f)) {
     //Restrict bound box size, this will prevent us from trying to reparent an object
     //that has an invalid bound box
-    BroLogWarnCycle("Bound Box Of Object " + ob->getSpecName() + " was too large, >20000, check meshes to ensure box is accurate.");
+    BRLogWarnCycle("Bound Box Of Object " + ob->getSpecName() + " was too large, >20000, check meshes to ensure box is accurate.");
   }
 
   //Update Speedbox
@@ -765,9 +765,9 @@ void PhysicsWorld::unstick_ob_v2(vec3& ob_in_p, vec3& ob_in_v, Box3f* boxA, Box3
   vec3 cv_lat_n = cv_lat.normalized();
 
   float friction = plane_n.dot(cv_n); // "slide factor."
-  friction = MathUtils::broMax(-friction, 0.0f);
+  friction = MathUtils::brMax(-friction, 0.0f);
   friction -= ob_friction;
-  friction = MathUtils::broClamp(friction, 0.0f, 1.0f);
+  friction = MathUtils::brClamp(friction, 0.0f, 1.0f);
 
   if (friction > 0) {
     //lateral velocity old velocity length times friction amount.
@@ -1072,10 +1072,10 @@ void PhysicsWorld::bb_move_and_slide(const vec3& ob_last_p, const vec3& ob_last_
 
   float friction = 1;
   friction = plane_n.dot(cv_n); // "slide factor."
-  friction = 1.0f + (MathUtils::broMin(friction * 0.8f, 0.0f));// we remove some friction to make the char slide more.
-  friction = MathUtils::broClamp(friction, 0.0f, 1.0f);
+  friction = 1.0f + (MathUtils::brMin(friction * 0.8f, 0.0f));// we remove some friction to make the char slide more.
+  friction = MathUtils::brClamp(friction, 0.0f, 1.0f);
   friction *= ob_friction;
-  friction = MathUtils::broClamp(friction, 0.0f, 1.0f);
+  friction = MathUtils::brClamp(friction, 0.0f, 1.0f);
 
   if (friction > 0) {
     //lateral velocity old velocity length times friction amount.
@@ -1121,7 +1121,7 @@ void PhysicsWorld::refreshObjectManifold(std::shared_ptr<PhysicsNode> ob) {
   if (ob->getManifold()->getGrids()->size() == 0) {
     std::shared_ptr<PhysicsSpec> ps = std::dynamic_pointer_cast<PhysicsSpec>(ob->getSpec());
 
-    BroLogWarn("Object is outside of grid, wes hould probably destroy it");
+    BRLogWarn("Object is outside of grid, wes hould probably destroy it");
     //if (ps && ps->getIsPersistent() == false) {
     //    _pWorld25->delObj(ob->getId());
     //}
@@ -1171,7 +1171,7 @@ void PhysicsWorld::sweepGridBox(std::function<void(ivec3&)> func, ivec3& viMin, 
 
   int dbg_nGrids = abs(viMax.x - viMin.x + 1) * abs(viMax.z - viMin.z + 1);
   if (dbg_nGrids > 5000) {
-    BroLogWarnCycle("sweepGridBox, too many grids, looping over: " + dbg_nGrids);
+    BRLogWarnCycle("sweepGridBox, too many grids, looping over: " + dbg_nGrids);
     static int n = 0;
     if (n == 0) {
       Gu::debugBreak();

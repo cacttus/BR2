@@ -14,7 +14,7 @@ bool RenderTarget::getMsaaEnabled() {
     return false;
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
 }
 

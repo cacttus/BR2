@@ -22,10 +22,10 @@ inline Tx bro_safe_cast(Ty pb) {
   //    AssertOrThrow2(ret!=NULL);
   return ret;
 }
-#define BroSafeCast bro_safe_cast
+#define BRSafeCast bro_safe_cast
 #define DirectCast(pObj, pType) dynamic_cast<pType>(pObj)
 #define StaticCast(pObj, pType) static_cast<pType>(pObj)
-#define SafeCast(pObj, pType) BroSafeCast<pType>(pObj)
+#define SafeCast(pObj, pType) BRSafeCast<pType>(pObj)
 #define UnsafeCast(pObj, pType) reinterpret_cast<pType>(pObj)
 
 

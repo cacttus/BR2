@@ -95,10 +95,10 @@ void runtimeAssertion(t_string str);
 //GCC NOTE: GCC says allowing the use of an undeclared name is deprecated which would make us have to move TStr up 
 //above BaseHeader.
 //if you use '-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated
-#define BroThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
-#define BroThrowNotImplementedException() throw new NotImplementedException()
-#define BroThrowDeprecatedException() throw new DeprecatedException()
-#define VerifyOrThrow(expr,x) do { if(!(expr)) BroThrowException(x); } while(0)
+#define BRThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
+#define BRThrowNotImplementedException() throw new NotImplementedException()
+#define BRThrowDeprecatedException() throw new DeprecatedException()
+#define VerifyOrThrow(expr,x) do { if(!(expr)) BRThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()
 
 //Note: this must remain a uint32_t, we serialize it as a uint32_t

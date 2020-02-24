@@ -463,7 +463,7 @@ FORCE_INLINE void Box3x<Tx>::getCubeIntersectionVolume(Box3f* a, Box3f* b, Box3f
 
 #ifdef _DEBUG
   if (!a->cubeIntersect_EasyOut_Exclusive(b))
-    BroThrowException("Debug, cube a did not intersect b");
+    BRThrowException("Debug, cube a did not intersect b");
 #endif
 
   out->_max = Vec3x<Tx>::minv(a->_max, b->_max);
@@ -805,7 +805,7 @@ FORCE_INLINE float Box3x<Tx>::outerRadius() {
   Vec3x<Tx> dMin = _min - c;
   Vec3x<Tx> dMax = _max - c;
   Vec3x<Tx> vMax = Vec3x<Tx>::maxv(dMin.abs(), dMax.abs());
-  Tx fMax = MathUtils::broMax(vMax.x, MathUtils::broMax(vMax.y, vMax.z));
+  Tx fMax = MathUtils::brMax(vMax.x, MathUtils::brMax(vMax.y, vMax.z));
   return fMax;
 }
 template < class Tx >
@@ -814,7 +814,7 @@ FORCE_INLINE float Box3x<Tx>::innerRadius() {
   Vec3x<Tx> dMin = _min - c;
   Vec3x<Tx> dMax = _max - c;
   Vec3x<Tx> vMin = Vec3x<Tx>::minv(dMin.abs(), dMax.abs());
-  Tx fMin = MathUtils::broMin(vMin.x, MathUtils::broMin(vMin.y, vMin.z));
+  Tx fMin = MathUtils::brMin(vMin.x, MathUtils::brMin(vMin.y, vMin.z));
   return fMin;
 }
 template < class Tx >

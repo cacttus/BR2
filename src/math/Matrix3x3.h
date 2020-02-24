@@ -143,7 +143,7 @@ FORCE_INLINE Quaternion Matrix3x3::getQuaternion() {
     s2 = 1.0f;
   }
   float t = s0 * _m11 + s1 * _m22 + s2 * _m33 + 1.0f;
-  float s = MathUtils::broRsqrt(t) * 0.5f;//reciprocalSqrt(t)*0.5f;
+  float s = MathUtils::brRsqrt(t) * 0.5f;//reciprocalSqrt(t)*0.5f;
 
   q[k0] = s * t;
   q[k1] = (_m12 - s2 * _m21) * s;

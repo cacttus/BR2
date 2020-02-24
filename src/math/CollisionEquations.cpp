@@ -89,7 +89,7 @@ bool CollisionEquations::sat_box_axis_t(float c1, float c2, float r1, float r2, 
   AssertOrThrow2(r2 > 0.0f);
 #else 
   if (r1 < 0.0f || r2 < 0.0f) {
-    BroLogWarn("Error 922508- box radius was zero for object.");
+    BRLogWarn("Error 922508- box radius was zero for object.");
   }
 #endif
   countXYZ = true;
@@ -471,7 +471,7 @@ CollisionResult::e CollisionEquations::sphere_collide_sphere(
     }
   }
 
-  float sqrtD = MathUtils::broSqrt(d);
+  float sqrtD = MathUtils::brSqrt(d);
 
   root_1 = (-b + sqrtD) / (2 * a);
   root_2 = (-b - sqrtD) / (2 * a);
@@ -503,14 +503,14 @@ bool Ceq::triangleAabbTest(const vec3* vertices, const vec3& aabbMin, const vec3
   const vec3& p2 = vertices[1];
   const vec3& p3 = vertices[2];
 
-  if (MathUtils::broMin(MathUtils::broMin(p1.x, p2.x), p3.x) > aabbMax.x) return false;
-  if (MathUtils::broMax(MathUtils::broMax(p1.x, p2.x), p3.x) < aabbMin.x) return false;
+  if (MathUtils::brMin(MathUtils::brMin(p1.x, p2.x), p3.x) > aabbMax.x) return false;
+  if (MathUtils::brMax(MathUtils::brMax(p1.x, p2.x), p3.x) < aabbMin.x) return false;
 
-  if (MathUtils::broMin(MathUtils::broMin(p1.z, p2.z), p3.z) > aabbMax.z) return false;
-  if (MathUtils::broMax(MathUtils::broMax(p1.z, p2.z), p3.z) < aabbMin.z) return false;
+  if (MathUtils::brMin(MathUtils::brMin(p1.z, p2.z), p3.z) > aabbMax.z) return false;
+  if (MathUtils::brMax(MathUtils::brMax(p1.z, p2.z), p3.z) < aabbMin.z) return false;
 
-  if (MathUtils::broMin(MathUtils::broMin(p1.y, p2.y), p3.y) > aabbMax.y) return false;
-  if (MathUtils::broMax(MathUtils::broMax(p1.y, p2.y), p3.y) < aabbMin.y) return false;
+  if (MathUtils::brMin(MathUtils::brMin(p1.y, p2.y), p3.y) > aabbMax.y) return false;
+  if (MathUtils::brMax(MathUtils::brMax(p1.y, p2.y), p3.y) < aabbMin.y) return false;
 
   return true;
 }

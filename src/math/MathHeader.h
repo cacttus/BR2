@@ -269,16 +269,16 @@ public:
   FORCE_INLINE static bool isOdd(int32_t i) {
     return ((i % 2) != 0);
   }
-  FORCE_INLINE static double broSqrt(double x) {
+  FORCE_INLINE static double brSqrt(double x) {
     return std::sqrt(x);
   }
-  FORCE_INLINE static float broSqrt(float x) {
+  FORCE_INLINE static float brSqrt(float x) {
     return std::sqrtf(x);
   }
-  FORCE_INLINE static float broRsqrt(float x) {
+  FORCE_INLINE static float brRsqrt(float x) {
     return 1.0f / std::sqrtf(x);
   }
-  FORCE_INLINE static double broRsqrt(double x) {
+  FORCE_INLINE static double brRsqrt(double x) {
     return 1.0 / std::sqrt(x);
   }
   FORCE_INLINE static float sqrf(float x) {
@@ -318,30 +318,30 @@ public:
   }
   //btMin/max copied from bullet.
   template <class T>
-  FORCE_INLINE static const T& broMin(const T& a, const T& b) {
+  FORCE_INLINE static const T& brMin(const T& a, const T& b) {
     return a < b ? a : b;
   }
   template <class T>
-  FORCE_INLINE static const T& broMax(const T& a, const T& b) {
+  FORCE_INLINE static const T& brMax(const T& a, const T& b) {
     return  a > b ? a : b;
   }
   template <class T>
-  FORCE_INLINE static T& broMin(T& a, T& b) {
+  FORCE_INLINE static T& brMin(T& a, T& b) {
     return a < b ? a : b;
   }
   template <class T>
-  FORCE_INLINE static T& broMax(T& a, T& b) {
+  FORCE_INLINE static T& brMax(T& a, T& b) {
     return  a > b ? a : b;
   }
   template <class T>
-  FORCE_INLINE static T& broClamp(T& x, T& a, T& b) {
-    return broMin(b, broMax(x, a));
+  FORCE_INLINE static T& brClamp(T& x, T& a, T& b) {
+    return brMin(b, brMax(x, a));
   }
   template <class T>
-  FORCE_INLINE static const T& broClamp(const T& x, const T& a, const T& b) {
-    return broMin(b, broMax(x, a));
+  FORCE_INLINE static const T& brClamp(const T& x, const T& a, const T& b) {
+    return brMin(b, brMax(x, a));
   }
-  FORCE_INLINE static float broSign(const float& val) {
+  FORCE_INLINE static float brSign(const float& val) {
     return (float)((float)(0.0f < val) - (float)(val < 0.0f));
   }
   //#define clamp(x,_min,_max) (broMin((_max),broMax((x),(_min))))
@@ -351,12 +351,12 @@ public:
     return (fa > bm) && (fa < bp);
   }
   template <class T>
-  FORCE_INLINE static const bool broInRangeInclusive(const T& x, const T& a, const T& b) {
+  FORCE_INLINE static const bool brInRangeInclusive(const T& x, const T& a, const T& b) {
     return ((x >= a) && (x <= b));
   }
   template <class T>
-  FORCE_INLINE static const bool broInRangeInclusive(const T& x, const T& a) {
-    return broInRangeInclusive(x, -a, a);
+  FORCE_INLINE static const bool brInRangeInclusive(const T& x, const T& a) {
+    return brInRangeInclusive(x, -a, a);
   }
   FORCE_INLINE static float modulateGridValue(float f_value, float f_grid_unit, float f_1_grid_unit) {
     // - Modulate the given value.

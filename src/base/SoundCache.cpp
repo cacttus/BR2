@@ -15,7 +15,7 @@ void SoundSpec::load(t_string file) {
   if (_eLoadState == LoadState::e::NotLoaded) {
 
     if (!FileSystem::fileExists(file)) {
-      BroLogError("File " + file + " does not exist.");
+      BRLogError("File " + file + " does not exist.");
       _eLoadState = LoadState::e::LoadFailed;
     }
     else {
@@ -24,7 +24,7 @@ void SoundSpec::load(t_string file) {
         _eLoadState = LoadState::e::Loaded;
       }
       else {
-        BroLogError("STB load audio failed with code: " + ret);
+        BRLogError("STB load audio failed with code: " + ret);
       }
     }
   }
@@ -156,7 +156,7 @@ void SoundCache::init() {
   if (SDL_OpenAudio(&_desired, &_have) < 0) {
     //SDL_OpenAudioDevice(NULL, 0, &_desired, &_have, SDL_AUDIO_ALLOW_ANY_CHANGE);
     // if (_iSDLAudioDevice <= 0) {
-    BroLogError("SDL Couldn't open audio: " + SDL_GetError());
+    BRLogError("SDL Couldn't open audio: " + SDL_GetError());
 
     _bError = true;
   }

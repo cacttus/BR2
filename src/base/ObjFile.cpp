@@ -5,11 +5,13 @@
 #include "../base/BinaryFile.h"
 #include "../model/MeshNode.h"
 #include "../model/VertexFormat.h"
-#include "../model/MeshData.h"
+#include "../model/MeshSpec.h"
 
-namespace BR2 {
-ObjFile::ObjFile(std::shared_ptr<GLContext> ct) : GLFramework(ct) {
-  _bDebugDisableVertexCompression = false; //**Set this to false to disable compressed vertexes (optimized meshes)
+namespace Game {
+ObjFile::ObjFile(std::shared_ptr<GLContext> c) :
+  _pContext(c)
+  , _bDebugDisableVertexCompression(false) //**Set this to false to disable compressed vertexes (optimized meshes)
+{
   _iCurrentLine = 0;
 }
 ObjFile::~ObjFile() {
@@ -20,7 +22,7 @@ ObjFile::~ObjFile() {
 
   clearVertexCache();
 }
-void ObjFile::load(string_t& strFilePath, bool flipWinding) {
+void ObjFile::load(t_string& strFilePath, bool flipWinding) {
   BinaryFile bufferedFile;
   uint32_t iLastGroupOffset;    // - For NON relative vertexes (ones with no '-' in front of their indexes we have
 
@@ -33,7 +35,7 @@ void ObjFile::load(string_t& strFilePath, bool flipWinding) {
   bool ret = bufferedFile.loadFromDisk(strFilePath);
 
   if (ret != true)
-    Br2ThrowException("Failed to open Object File.");
+    BRThrowException("Failed to open Object File.");
 
   loadObjFileContents(bufferedFile);
 
@@ -54,7 +56,7 @@ vec2 ObjFile::readVec2(BinaryFile& pBufferedFile) {
   return ret;
 }
 void ObjFile::loadObjFileContents(BinaryFile& pBufferedFile) {
-  string_t    tok;
+  t_string    tok;
   vec3 temp_v3;
   vec2 temp_v2;
 
@@ -83,7 +85,7 @@ void ObjFile::loadObjFileContents(BinaryFile& pBufferedFile) {
       parseFace(pBufferedFile, tok);
     }
     else if (!tok.compare("mat")) {
-      Br2LogWarn("Mesh Spec Local Matrix is deprectaed. Freeze all matrices before exporting meshes.");
+      BRLogWarn("Mesh Spec Local Matrix is deprectaed. Freeze all matrices before exporting meshes.");
       _matLocalMatrix = parseMat4(pBufferedFile);
     }
     _iCurrentLine++;
@@ -93,17 +95,17 @@ void ObjFile::loadObjFileContents(BinaryFile& pBufferedFile) {
   }
 
 }
-void ObjFile::parseGeom(BinaryFile& pBufferedFile, string_t& tok) {
+void ObjFile::parseGeom(BinaryFile& pBufferedFile, t_string& tok) {
   tok = pBufferedFile.getTokSameLineOrReturnEmpty();
 
   if (tok.length() > 0) {
     addCurrentSpec();
-    _pCurrentSpec = std::make_shared<MeshData>(getContext(), tok, ModelVertexType::getVertexFormat(), getThis<ObjFile>());
+    _pCurrentSpec = std::make_shared<MeshSpec>(tok, ModelVertexType::getVertexFormat(), shared_from_this());
     //        _pCurrentSpec->setFileName(_sFileName);
   }
 }
-void ObjFile::parseFace(BinaryFile& pBufferedFile, string_t& tok) {
-  std::vector <string_t> strVec;
+void ObjFile::parseFace(BinaryFile& pBufferedFile, t_string& tok) {
+  std::vector <t_string> strVec;
   int32_t iComp;
   int32_t indices[3];
 
@@ -126,13 +128,13 @@ void ObjFile::parseFace(BinaryFile& pBufferedFile, string_t& tok) {
     strVec.clear();
   }
 }
-int32_t ObjFile::parseFaceComponent(string_t& tok, int32_t& strlind, int32_t iComponent) {
+int32_t ObjFile::parseFaceComponent(t_string& tok, int32_t& strlind, int32_t iComponent) {
   size_t strind = 0;// current index of '/'
   int32_t idx; // parsed vertex face index
-  string_t rt;
+  t_string rt;
 
   strind = tok.find_first_of('/', strlind);
-  if (strind == string_t::npos) {
+  if (strind == t_string::npos) {
     //Last item in the 3 element list.
     strind = tok.length();
   }
@@ -144,7 +146,7 @@ int32_t ObjFile::parseFaceComponent(string_t& tok, int32_t& strlind, int32_t iCo
 
     //20160509 we don't allow varied formats.
     //You're missing Tex Coords, Or Normals
-    Br2ThrowException(Stz "Invalid object file format.  Missing face index." + iComponent + " at line " + _iCurrentLine);
+    BRThrowException(Stz "Invalid object file format.  Missing face index." + iComponent + " at line " + _iCurrentLine);
   }
   else {
     rt = tok.substr(strlind, strind - strlind);
@@ -161,17 +163,17 @@ void ObjFile::addFaceVertex(int32_t iVertex, int32_t iTCoord, int32_t iNormal) {
   int32_t xi = iTCoord - 1;
 
   if (vi < 0)
-    Br2ThrowException("Vertex buffer underflow at line " + _iCurrentLine);
+    BRThrowException("Vertex buffer underflow at line " + _iCurrentLine);
   if (ni < 0)
-    Br2ThrowException("Normal buffer underflow at line " + _iCurrentLine);
+    BRThrowException("Normal buffer underflow at line " + _iCurrentLine);
   if (xi < 0)
-    Br2ThrowException("TCoord buffer underflow at line " + _iCurrentLine);
+    BRThrowException("TCoord buffer underflow at line " + _iCurrentLine);
   if (vi >= (int32_t)_vecVerts.size())
-    Br2ThrowException("Vertex buffer overflow at line " + _iCurrentLine);
+    BRThrowException("Vertex buffer overflow at line " + _iCurrentLine);
   if (ni >= (int32_t)_vecNormals.size())
-    Br2ThrowException("Normal buffer overflow at line " + _iCurrentLine);
+    BRThrowException("Normal buffer overflow at line " + _iCurrentLine);
   if (xi >= (int32_t)_vecTCoords.size())
-    Br2ThrowException("TCoord buffer overflow at line " + _iCurrentLine);
+    BRThrowException("TCoord buffer overflow at line " + _iCurrentLine);
 
   int32_t newIndex = 0;
 
@@ -221,7 +223,7 @@ void ObjFile::addCurrentSpec() {
 
 }
 
-void ObjFile::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
+void ObjFile::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
   if (_bFlipWinding) {
     for (size_t iInd = 0; iInd < _vecMeshIndexes.size(); iInd += 3) {
       v_index32 t = _vecMeshIndexes[iInd + 1];
@@ -230,7 +232,7 @@ void ObjFile::copySpecFragments(std::shared_ptr<MeshData> pSpec) {
     }
   }
   pSpec->allocMesh((const void*)_vecMeshVerts.data(), _vecMeshVerts.size(), _vecMeshIndexes.data(), _vecMeshIndexes.size());
-  //pSpec->computeBox();
+  pSpec->computeBox();
 }
 
 int32_t ObjFile::findCachedVertex(int32_t vi, int32_t xi, int32_t ni) {
@@ -265,11 +267,11 @@ void ObjFile::clearVertexCache() {
 }
 mat4 ObjFile::parseMat4(BinaryFile& bf) {
   // - Parse csv matrix string.
-  string_t mat_str = bf.getTok();
+  t_string mat_str = bf.getTok();
   mat4 mOut;
   mat4::parse(mat_str, mOut);
   return mOut;
 
 }
 
-}//ns BR2
+}//ns Game

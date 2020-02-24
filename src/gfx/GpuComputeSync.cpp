@@ -8,7 +8,7 @@ GpuComputeSync::~GpuComputeSync() {
 }
 void GpuComputeSync::createCpuFence() {
   if (_bGpuDispatched) {
-    BroThrowException("Signal object tried to create fence on cpu when gpu was signaled.");
+    BRThrowException("Signal object tried to create fence on cpu when gpu was signaled.");
   }
   _bGpuDispatched = false;
   _bCpuDispatched = true;
@@ -27,7 +27,7 @@ void GpuComputeSync::signalCpu() {
 */
 void GpuComputeSync::createFence() {
   if (_bCpuDispatched) {
-    BroThrowException("Signal object tried to create fence on gpu when cpu was signaled.");
+    BRThrowException("Signal object tried to create fence on gpu when cpu was signaled.");
   }
   _bGpuDispatched = true;
   _bCpuDispatched = false;

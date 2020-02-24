@@ -48,7 +48,7 @@ bool OglErr::checkOglErr(std::shared_ptr<GLContext> ctx, bool bShowNote, bool bD
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
     if (doNotLog == false) {
-      BroLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
+      BRLogError("GL Error: " + glErrToStr(err) + " (" + (int)err + ")");
     }
 
     if (Gu::getEngineConfig()->getBreakOnOpenGLError() == true) {
@@ -66,11 +66,11 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
   //Enable this in engine.cpp
 //   glEnable(GL_DEBUG_OUTPUT);
   if (ctx == nullptr) {
-    BroLogWarn("Context not initialized (context isseu");
+    BRLogWarn("Context not initialized (context isseu");
     return;
   }
   if (!ctx->glGetDebugMessageLog) {
-    BroLogWarn("Opengl log not initialized (context isseu");
+    BRLogWarn("Opengl log not initialized (context isseu");
     return;
   }
 
@@ -84,7 +84,7 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
   }
 
   if (maxMsgLen <= 0) {
-    BroLogError("GL_MAX_DEBUG_MESSAGE_LENGTH returned 0.");
+    BRLogError("GL_MAX_DEBUG_MESSAGE_LENGTH returned 0.");
     maxMsgLen = -2;
     return;
   }
@@ -150,15 +150,15 @@ void OglErr::printAndFlushGpuLog(std::shared_ptr<GLContext> ctx, bool bShowNote,
         GLenum type = types[iMsg];
         if (type == GL_DEBUG_TYPE_ERROR) {
           t_string _strStackInfo = DebugHelper::getStackTrace();
-          BroLogError(strMsg + "\r\n" + _strStackInfo);
+          BRLogError(strMsg + "\r\n" + _strStackInfo);
         }
         else if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
           t_string _strStackInfo = DebugHelper::getStackTrace();
-          BroLogInfo(strMsg + "\r\n" + _strStackInfo);
+          BRLogInfo(strMsg + "\r\n" + _strStackInfo);
         }
         else {
           t_string _strStackInfo = DebugHelper::getStackTrace();
-          BroLogWarn(strMsg + "\r\n" + _strStackInfo);
+          BRLogWarn(strMsg + "\r\n" + _strStackInfo);
         }
       }
 

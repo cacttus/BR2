@@ -22,7 +22,7 @@ public:
   MeshSpec() {}//Serialize Version
   MeshSpec(const void* cVerts, size_t vCount, const void* cIndexes, size_t iCount,
     std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm);
-  MeshSpec(t_string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile = nullptr,
+  MeshSpec(t_string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile = nullptr,
     std::shared_ptr<PhysicsShape> ps = nullptr);
 
   //Edit funcs.
@@ -81,7 +81,7 @@ protected:
   std::shared_ptr<Material> _pMaterial = nullptr;
 
   //OBJ file stuff
-  std::shared_ptr<ObjectFile> _pObjectFile = nullptr;
+  std::shared_ptr<ObjFile> _pObjectFile = nullptr;
   mat4 _matLocalMatrix;   //The world matrix loaded from the mesh file. **UNUSED 2016 - freeze all meshes before export. Oterwise we'd have problems with this.
   //bool _bIsBoundBoxCalculated;
 

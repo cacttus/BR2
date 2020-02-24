@@ -43,7 +43,7 @@ class ModFile;
 class VboData;
 class VaoDataGeneric;
 class IboData;
-class ObjectFile;
+class ObjFile;
 class MeshCache;
 class KeyFrame;
 class BoneSpec;

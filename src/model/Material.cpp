@@ -53,7 +53,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
     TextureChannel::e channel = b.first;
 
     if (channelsBound.find(channel) != channelsBound.end()) {
-      BroLogWarn("[Material] Multiple textures bound to channel " + channel);
+      BRLogWarn("[Material] Multiple textures bound to channel " + channel);
     }
     else {
       //TODO: set tex influence
@@ -63,7 +63,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
         channelsBound.insert(channel);
       }
       else {
-        BroLogError("Texture was null for material.");
+        BRLogError("Texture was null for material.");
       }
     }
   }
@@ -121,7 +121,7 @@ void Material::addTextureBinding(std::shared_ptr<Texture2DSpec> ptm, TextureChan
   AssertOrThrow2(ptm != NULL);
 
   if (_mapTextureBindings.find(channel) != _mapTextureBindings.end()) {
-    BroLogWarn("Texture channel " + (int)channel + " already used in material " + getName());
+    BRLogWarn("Texture channel " + (int)channel + " already used in material " + getName());
   }
 
   if (ptm->getIsTransparent()) {
@@ -163,7 +163,7 @@ void Material::deserialize(std::shared_ptr<BinaryFile> fb) {
     std::shared_ptr<TextureSlot> ts = std::make_shared<TextureSlot>();
     ts->deserialize(fb);
     if (_mapTextureBindings.find(ts->_eChannel) != _mapTextureBindings.end()) {
-      BroLogWarn("Duplicate Texture binding for material." + (int)ts->_eChannel);
+      BRLogWarn("Duplicate Texture binding for material." + (int)ts->_eChannel);
       Gu::debugBreak();
     }
     _mapTextureBindings.insert(std::make_pair(ts->_eChannel, ts));

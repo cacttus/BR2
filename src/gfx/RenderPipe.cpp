@@ -41,9 +41,9 @@ void RenderPipe::setClear(vec4& v) {
   _pBlittedDeferred->setClear(_vClear);
 }
 void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePath) {
-  BroLogInfo("[RenderPipe] Initializing.");
+  BRLogInfo("[RenderPipe] Initializing.");
   if (iWidth <= 0 || iHeight <= 0) {
-    BroLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
+    BRLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
   }
 
 
@@ -65,7 +65,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
   _iLastWidth = iWidth;
   _iLastHeight = iHeight;
 
-  BroLogInfo("[RenderPipe] Checking Caps");
+  BRLogInfo("[RenderPipe] Checking Caps");
   checkDeviceCaps(iWidth, iHeight);
 
   if (_bMsaaEnabled) {
@@ -74,7 +74,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
   }
 
   //Mesh
-  BroLogInfo("[RenderPipe] Creating Quad Mesh");
+  BRLogInfo("[RenderPipe] Creating Quad Mesh");
   createQuadMesh(iWidth, iHeight);
 
   //Shaders
@@ -124,7 +124,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
 
   //Multisample
   if (_bMsaaEnabled == true) {
-    BroLogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
+    BRLogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
     _pMsaaDepth = FramebufferBase::createDepthTarget("depth msaa", iWidth, iHeight, 0, _bMsaaEnabled, _nMsaaSamples);
     _pMsaaDeferred = std::make_shared<DeferredFramebuffer>(Gu::getGraphicsContext(), iWidth, iHeight, _bMsaaEnabled, _nMsaaSamples, _vClear);
     _pMsaaDeferred->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
@@ -132,7 +132,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
     _pMsaaForward->init(iWidth, iHeight, _pMsaaDepth, _pPick);// Yeah I don't know if the "pick" here will work
   }
   else {
-    BroLogInfo("[RenderPipe] Multisample not enabled.");
+    BRLogInfo("[RenderPipe] Multisample not enabled.");
     _pMsaaDeferred = _pBlittedDeferred;
     _pMsaaForward = _pBlittedForward;
     _pMsaaDepth = _pBlittedDepth;
@@ -154,7 +154,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, t_string strEnvTexturePat
 void RenderPipe::saveScreenshot() {
   if (Gu::getFingers()->keyPress(SDL_SCANCODE_F9)) {
     if (Gu::getFingers()->shiftHeld()) {
-      BroLogInfo("[RenderPipe] Saving all MRTs.");
+      BRLogInfo("[RenderPipe] Saving all MRTs.");
       //Save all deferred textures
       int iTarget;
 
@@ -170,7 +170,7 @@ void RenderPipe::saveScreenshot() {
         t_string fname = FileSystem::getScreenshotFilename();
         fname = fname + "_shadow_frustum_" + iTarget + "_.png";
         RenderUtils::saveTexture(std::move(fname), sf->getGlTexId(), GL_TEXTURE_2D);
-        BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+        BRLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         iTarget++;
       }
       iTarget = 0;
@@ -188,7 +188,7 @@ void RenderPipe::saveScreenshot() {
 
           fname = fname + "_shadowbox_" + iTarget + "_side_" + side + "_.png";
           RenderUtils::saveTexture(std::move(fname), sb->getGlTexId(), GL_TEXTURE_CUBE_MAP, i);
-          BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+          BRLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
         }
         iTarget++;
       }
@@ -198,14 +198,14 @@ void RenderPipe::saveScreenshot() {
         t_string fname = FileSystem::getScreenshotFilename();
         fname = fname + "_deferred_" + pTarget->getName() + "_" + iTarget++ + "_.png";
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
-        BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+        BRLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
       }
       iTarget = 0;
       for (std::shared_ptr<RenderTarget> pTarget : _pBlittedForward->getTargets()) {
         t_string fname = FileSystem::getScreenshotFilename();
         fname = fname + "_forward_" + pTarget->getName() + "_" + iTarget++ + "_.png";
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
-        BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+        BRLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
       }
 
     }
@@ -213,7 +213,7 @@ void RenderPipe::saveScreenshot() {
       //Basic Forward Screenshot
       t_string fname = FileSystem::getScreenshotFilename();
       RenderUtils::saveTexture(std::move(fname), _pBlittedForward->getGlId(), GL_TEXTURE_2D);
-      BroLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
+      BRLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
     }
   }
 }
@@ -373,7 +373,7 @@ void RenderPipe::setShadowUf() {
 
   //We loop this way because we MUST fill all texture units in the GPU
   if (Gu::getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowBoxes) {
-    BroLogWarnCycle("More than " + iNumGpuShadowBoxes + " boxes - some shadows will not show.");
+    BRLogWarnCycle("More than " + iNumGpuShadowBoxes + " boxes - some shadows will not show.");
   }
   for (int iShadowBox = 0; iShadowBox < iNumGpuShadowBoxes; ++iShadowBox) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
@@ -393,7 +393,7 @@ void RenderPipe::setShadowUf() {
       iIndex++;
     }
     else {
-      BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
+      BRLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
     }
   }
   _pDeferredShader->setUf("_ufShadowBoxSamples", boxSamples.data(), (GLint)boxSamples.size());
@@ -401,7 +401,7 @@ void RenderPipe::setShadowUf() {
 
   //We loop this way because we MUST fill all texture units in the GPU
   if (Gu::getLightManager()->getGpuShadowBoxes().size() > iNumGpuShadowFrustums) {
-    BroLogWarnCycle("More than " + iNumGpuShadowFrustums + " frustum - some shadows will not show.");
+    BRLogWarnCycle("More than " + iNumGpuShadowFrustums + " frustum - some shadows will not show.");
   }
   for (int iShadowFrustum = 0; iShadowFrustum < iNumGpuShadowFrustums; ++iShadowFrustum) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
@@ -421,7 +421,7 @@ void RenderPipe::setShadowUf() {
       iIndex++;
     }
     else {
-      BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
+      BRLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
     }
   }
   _pDeferredShader->setUf("_ufShadowFrustumSamples", frustSamples.data(), (GLint)frustSamples.size());
@@ -437,11 +437,11 @@ void RenderPipe::setShadowUf() {
       iIndex++;
     }
     else {
-      BroLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
+      BRLogWarn("Deferred Step: Too many textures bound: " + iTextureIndex);
     }
   }
   else {
-    BroLogWarn("You didn't set the enviro texture.");
+    BRLogWarn("You didn't set the enviro texture.");
     Gu::debugBreak();
   }
 }
@@ -484,7 +484,7 @@ void RenderPipe::postProcessDOF() {
     std::shared_ptr<ShaderBase> pDofShader = Gu::getShaderMaker()->getDepthOfFieldShader();
     std::shared_ptr<CameraNode> pCam = Gu::getCamera();
     if (pDofShader == nullptr || pCam == nullptr) {
-      BroLogErrorCycle("Error: nullptrs 348957");
+      BRLogErrorCycle("Error: nullptrs 348957");
       return;
     }
     vec3 pos = pCam->getFinalPos();
@@ -605,7 +605,7 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight) {
   glGetIntegerv(GL_MAX_DRAW_BUFFERS, (GLint*)&iMaxDrawBuffers);
 
   if (iMaxDrawBuffers < 1) {
-    BroThrowException(Stz "[RenderPipe] Your GPU only supports " + iMaxDrawBuffers +
+    BRThrowException(Stz "[RenderPipe] Your GPU only supports " + iMaxDrawBuffers +
       " MRTs, the system requires at least " + 1 +
       " MRTs. Consider upgrading graphics card.");
   }
@@ -614,7 +614,7 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight) {
   glGetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT, (GLint*)&iMaxFbHeight);
 
   if (iMaxFbHeight < iHeight || iMaxFbWidth < iWidth) {
-    BroThrowException(Stz "[RenderPipe] Your GPU only supports MRTs at " +
+    BRThrowException(Stz "[RenderPipe] Your GPU only supports MRTs at " +
       iMaxFbWidth + "x" + iMaxFbHeight +
       " pixels. The system requested " + iWidth + "x" + iHeight + ".");
   }
@@ -624,17 +624,17 @@ void RenderPipe::checkDeviceCaps(int iWidth, int iHeight) {
 void RenderPipe::checkMultisampleParams() {
   GLint iMaxSamples;
   glGetIntegerv(GL_MAX_SAMPLES, &iMaxSamples);
-  BroLogInfo(Stz "Max OpenGL MSAA Samples " + iMaxSamples);
+  BRLogInfo(Stz "Max OpenGL MSAA Samples " + iMaxSamples);
 
   if (_bMsaaEnabled) {
     if ((int)_nMsaaSamples > iMaxSamples) {
-      BroLogWarn(Stz "[RenderPipe] MSAA sample count of '" + _nMsaaSamples +
+      BRLogWarn(Stz "[RenderPipe] MSAA sample count of '" + _nMsaaSamples +
         "' was larger than the card's maximum: '" + iMaxSamples + "'. Truncating.");
       _nMsaaSamples = iMaxSamples;
       Gu::debugBreak();
     }
     if (BitHacks::bitcount(_nMsaaSamples) != 1) {
-      BroLogWarn(Stz "[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
+      BRLogWarn(Stz "[RenderPipe] Error, multisampling: The number of samples must be 2, 4, or 8.  Setting to 2.");
       _nMsaaSamples = iMaxSamples > 2 ? 2 : iMaxSamples;
       Gu::debugBreak();
     }
@@ -668,11 +668,11 @@ void RenderPipe::releaseFbosAndMesh() {
 void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw) {
   //Re-Init
   if (Gu::getCamera() == nullptr) {
-    BroLogErrorOnce("Camera was not set for renderScene");
+    BRLogErrorOnce("Camera was not set for renderScene");
     return;
   }
   if (Gu::getCamera()->getViewport() == nullptr) {
-    BroLogErrorOnce("Camera Viewport was not set for renderScene");
+    BRLogErrorOnce("Camera Viewport was not set for renderScene");
     return;
   }
   std::shared_ptr<WindowViewport> pv = Gu::getCamera()->getViewport();
@@ -683,7 +683,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw) {
 
   //Only render one thing at a tiem to prevent corrupting the pipe
   if (_bRenderInProgress == true) {
-    BroLogError("Tried to render something while another render was currently in progress.");
+    BRLogError("Tried to render something while another render was currently in progress.");
     return;
   }
 

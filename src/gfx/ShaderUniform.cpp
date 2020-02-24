@@ -40,7 +40,7 @@ void ShaderUniform::copyUniformData(void* pData, GLint count) {
   if (count == -1) {
     static bool bAlreadyLogged = false;
     if (_iArraySize > 1 && bAlreadyLogged == false) {
-      BroLogWarn(getName() +
+      BRLogWarn(getName() +
         " NOTE: There are " + _iArraySize + " elements in the uniform array '" + getName() +
         "', and you did not explicitly set the count. Setting count to 1");
       bAlreadyLogged = true;
@@ -108,7 +108,7 @@ size_t ShaderUniform::getByteSizeForType(OpenGLShaderVarType::e etype) {
     // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
   case OpenGLShaderVarType::e::GpuMat3:   return sizeof(mat3); break;
   case OpenGLShaderVarType::e::GpuMat4:   return sizeof(mat4); break;
-  default: BroThrowNotImplementedException();
+  default: BRThrowNotImplementedException();
 
   }
 }
@@ -129,7 +129,7 @@ size_t ShaderUniform::getCountForType(OpenGLShaderVarType::e etype) {
     // case OpenGLShaderVarType::e::GpuMat2:   return sizeof(mat2) * 1; break;
   case OpenGLShaderVarType::e::GpuMat3:   return 1; break;
   case OpenGLShaderVarType::e::GpuMat4:   return 1; break;
-  default: BroThrowNotImplementedException();
+  default: BRThrowNotImplementedException();
 
   }
 }
@@ -174,7 +174,7 @@ OpenGLShaderVarType::e ShaderUniform::openglTypeToSystemType(GLenum eType) {
   case GL_SAMPLER_2D_ARRAY_SHADOW: return OpenGLShaderVarType::GpuInt1; break;
   case GL_SAMPLER_CUBE_SHADOW: return OpenGLShaderVarType::GpuInt1; break;
   }
-  BroThrowException("OpenGL shader variable type not yet supported.");
+  BRThrowException("OpenGL shader variable type not yet supported.");
 }
 void ShaderUniform::validateSystemTypeEqualsOpenGlType(OpenGLShaderVarType::e systemNameType, GLenum shaderDefinedUniformType) {
   //Samplers must be INT as per the GL spec.
@@ -204,7 +204,7 @@ void ShaderUniform::validateSystemTypeEqualsOpenGlType(OpenGLShaderVarType::e sy
   else if (systemNameType == OpenGLShaderVarType::e::GpuDouble3)      AssertOrThrow2(shaderDefinedUniformType == GL_DOUBLE_VEC3);
   else if (systemNameType == OpenGLShaderVarType::e::GpuDouble4)      AssertOrThrow2(shaderDefinedUniformType == GL_DOUBLE_VEC4);
   else
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
 
 }
 
@@ -219,7 +219,7 @@ void ShaderUniform::bindUniformFast() {
   //Not ven un ivorm arrays can be null..
   if (value == nullptr) {
     if (getIgnore() == false) {
-      BroLogWarn("Shader Uniform variable " + getName() + " value was not set");
+      BRLogWarn("Shader Uniform variable " + getName() + " value was not set");
     }
     else {
       return;
@@ -247,7 +247,7 @@ void ShaderUniform::bindUniformFast() {
   case OpenGLShaderVarType::e::GpuMat4:   _pContext->glUniformMatrix4fv(_glLocation, count, GL_FALSE, (GLfloat*)value); break;
 
   default:
-    BroLogError("Uniform type binding method has not been implemented for uniform " + getName() +
+    BRLogError("Uniform type binding method has not been implemented for uniform " + getName() +
       " of type " + ShaderMaker::systemTypeToSTring(_systemType) + " (" + _systemType + ") ");
     Gu::debugBreak();
     break;
@@ -301,7 +301,7 @@ void ShaderUniformBlock::copyUniformData(void* pData, size_t copySizeBytes) {
 }
 void ShaderUniformBlock::bindUniformFast() {
   if (_pValue == nullptr) {
-    BroLogWarn("Shader Uniform Block '" + getName() + "' value was not set ");
+    BRLogWarn("Shader Uniform Block '" + getName() + "' value was not set ");
   }
   _pContext->glBindBufferBase(GL_UNIFORM_BUFFER, _iBindingIndex, _iUboId);
   _pContext->glBindBuffer(GL_UNIFORM_BUFFER, _iUboId);

@@ -81,7 +81,7 @@ t_string BaseNode::getSpecName() {
     return getSpec()->getName();
   }
   else {
-    BroLogError("Treid to return a name of a model without a spec");
+    BRLogError("Treid to return a name of a model without a spec");
     Gu::debugBreak();
     return std::string("no spec");
   }
@@ -91,7 +91,7 @@ Hash32 BaseNode::getSpecNameHashed() {
     return getSpec()->getNameHashed();
   }
   else {
-    BroLogError("Treid to return a hash of a model without a spec");
+    BRLogError("Treid to return a hash of a model without a spec");
     Gu::debugBreak();
     return 0;
   }
@@ -99,13 +99,13 @@ Hash32 BaseNode::getSpecNameHashed() {
 void BaseNode::init() {
   //Nodes now need to be initialized due to shared_ptr constructors not having this ptr
   if (_bInitialized == true) {
-    BroLogWarnCycle(getSpecName() + "..Node already initializd..errors will result");
+    BRLogWarnCycle(getSpecName() + "..Node already initializd..errors will result");
   }
   _bInitialized = true;
 }
 void BaseNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (_bInitialized == false) {
-    BroLogWarnCycle("Node was not initialized (init())");
+    BRLogWarnCycle("Node was not initialized (init())");
     Gu::debugBreak();
     return;
   }
@@ -279,12 +279,12 @@ void BaseNode::applyParent() {
       }
     }
     else {
-      BroThrowNotImplementedException();
+      BRThrowNotImplementedException();
     }
 
   }
   else {
-    BroLogWarnCycle("Unrecognized node type when updating parent.");
+    BRLogWarnCycle("Unrecognized node type when updating parent.");
   }
 
   if (false) {

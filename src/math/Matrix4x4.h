@@ -228,7 +228,7 @@ FORCE_INLINE Quaternion Matrix4x4::getQuaternion() {
   float t = (float)(s0 * _m11 + s1 * _m22 + s2 * _m33 + 1.0f);
   //assert(t>=0.0);
   //if( t==0.0 ) t=1e-10f;
-  float s = (float)(MathUtils::broRsqrt(t) * 0.5f);/*reciprocalSqrt(t)*0.5f;*/
+  float s = (float)(MathUtils::brRsqrt(t) * 0.5f);/*reciprocalSqrt(t)*0.5f;*/
 
   q[k0] = s * t;
 

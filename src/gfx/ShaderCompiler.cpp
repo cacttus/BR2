@@ -28,7 +28,7 @@ void ShaderCompiler::loadSource(std::shared_ptr<ShaderSubProgram> pSubProg) {
 
   // - First try to load the srouce
   try {
-    BroLogDebug("Loading source for Shader " + pSubProg->getSourceLocation());
+    BRLogDebug("Loading source for Shader " + pSubProg->getSourceLocation());
     loadSource_r(pSubProg, pSubProg->getSourceLocation(), pSubProg->getSourceLines(), greatestModifyTime);
   }
   catch (Exception * e) {
@@ -61,11 +61,11 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, t_
   if (!Gu::getPackage()->fileExists((t_string)location)) {
     pSubProg->setStatus(ShaderStatus::e::CompileError);
     Gu::debugBreak();
-    BroThrowException("Could not find shader file or #include file, " + location);
+    BRThrowException("Could not find shader file or #include file, " + location);
   }
   // - Store the greater modify time for shader cache.
   modTime = Gu::getPackage()->getLastModifyTime((t_string)location);
-  greatestModifyTime = MathUtils::broMax(modTime, greatestModifyTime);
+  greatestModifyTime = MathUtils::brMax(modTime, greatestModifyTime);
 
   // - Load all source bytes
   std::shared_ptr<BinaryFile> bf = std::make_shared<BinaryFile>();
@@ -172,7 +172,7 @@ ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<t_string>& li
       IncludeVec::iterator ite = _includes.begin();
       for (; ite != _includes.end(); ite++)
         delete ite->str;
-      BroThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
+      BRThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
     }
 
     if (vs[0].compare("#include") != 0) {
@@ -182,7 +182,7 @@ ShaderCompiler::IncludeVec ShaderCompiler::getIncludes(std::vector<t_string>& li
       IncludeVec::iterator ite = _includes.begin();
       for (; ite != _includes.end(); ite++)
         delete ite->str;
-      BroThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
+      BRThrowException("Compile Error -->\"Not enough arguments for include directive. \"");
 
     }
 
@@ -202,8 +202,8 @@ void ShaderCompiler::loadSourceData(t_string& location, std::shared_ptr<BinaryFi
   if (!Gu::getPackage()->fileExists(location)) {
     sourceData = NULL;
     _loadStatus = ShaderStatus::e::FileNotFound;
-    BroLogError("Shader Source File not found : " + location);
-    BroLogError(" CWD: " + FileSystem::getCurrentDirectory());
+    BRLogError("Shader Source File not found : " + location);
+    BRLogError(" CWD: " + FileSystem::getCurrentDirectory());
     return;
   }
 
@@ -271,14 +271,14 @@ void ShaderCompiler::parseSourceIntoLines(std::shared_ptr<BinaryFile> data, std:
 *    @remarks Compiles a shader.
 */
 void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg) {
-  BroLogInfo("Compiling shader " + pSubProg->getSourceLocation());
+  BRLogInfo("Compiling shader " + pSubProg->getSourceLocation());
 
   //DOWNCAST:
  // GLstd::shared_ptr<ShaderSubProgram> shader = dynamic_cast<GLstd::shared_ptr<ShaderSubProgram>>(pSubProg);
   GLint b;
 
   if (pSubProg->getStatus() != ShaderStatus::e::Loaded) {
-    BroThrowException("Shader was in an invalid state when trying to compile.");
+    BRThrowException("Shader was in an invalid state when trying to compile.");
   }
 
   GLchar** arg = new char* [pSubProg->getSourceLines().size()];
@@ -302,11 +302,11 @@ void ShaderCompiler::compile(std::shared_ptr<ShaderSubProgram> pSubProg) {
       t_string str = pSubProg->getHumanReadableErrorString();
       if (StringUtil::lowercase(str).find("error") != t_string::npos) {
         pSubProg->debugPrintShaderSource();
-        BroLogErrorNoStack(str);
+        BRLogErrorNoStack(str);
         Gu::debugBreak();
       }
       else {
-        BroLogWarn(str);
+        BRLogWarn(str);
       }
     }
   }

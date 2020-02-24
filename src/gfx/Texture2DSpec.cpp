@@ -67,7 +67,7 @@ void Texture2DSpec::unbind() {
 int32_t Texture2DSpec::generateMipmapLevels() {
   // - Create log2 mipmaps
   int numMipMaps = 0;
-  int x = MathUtils::broMax(getWidth(), getHeight());
+  int x = MathUtils::brMax(getWidth(), getHeight());
   for (; x; x = x >> 1)
     numMipMaps++;
   return numMipMaps;
@@ -185,7 +185,7 @@ void Texture2DSpec::setWrapU(TexWrap::e wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
   unbind();
 }
@@ -198,7 +198,7 @@ void Texture2DSpec::setWrapV(TexWrap::e wrap) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
   unbind();
 }
@@ -235,7 +235,7 @@ void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
     }
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
 
   unbind();

@@ -164,7 +164,7 @@ void MeshNode::orderBoneNodesForGpu() {
         iMaxBoneId = bn->getBoneSpec()->getBoneId();
       }
       else {
-        BroLogError("'" + getMeshSpec()->getName() + "' : Node, Bone Cache is not ordered properly.");
+        BRLogError("'" + getMeshSpec()->getName() + "' : Node, Bone Cache is not ordered properly.");
         Gu::debugBreak();
       }
     }
@@ -347,7 +347,7 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     pShader = Gu::getShaderMaker()->getDiffuseShader(meshFmt);
   }
   if (pShader == nullptr) {
-    BroLogWarnCycle("Could not find shader for mesh '" + (getSpec() ? getSpec()->getName() : "") + "'");
+    BRLogWarnCycle("Could not find shader for mesh '" + (getSpec() ? getSpec()->getName() : "") + "'");
   }
   else {
     pShader->bind();

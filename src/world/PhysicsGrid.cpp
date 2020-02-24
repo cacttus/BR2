@@ -144,7 +144,7 @@ PhysicsGridSide::e PhysicsGrid::getOppNeighborIndex(PhysicsGridSide::e iNeighbor
   else if (iNeighbor == PhysicsGridSide::e::gA) { return  PhysicsGridSide::e::gF; }
   else if (iNeighbor == PhysicsGridSide::e::gF) { return  PhysicsGridSide::e::gA; }
 
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
   //return  World25Side::e::gT;
 }
 std::shared_ptr<PhysicsGrid> PhysicsGrid::getNeighbor(int iSide) {

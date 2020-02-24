@@ -215,8 +215,8 @@ template < class Tx >
 Vec2x<Tx> Vec2x<Tx>::minv(const Vec2x<Tx>& v_a, const Vec2x<Tx>& v_b) {
   Vec2x<Tx> out;
 
-  out.x = MathUtils::broMin(v_a.x, v_b.x);
-  out.y = MathUtils::broMin(v_a.y, v_b.y);
+  out.x = MathUtils::brMin(v_a.x, v_b.x);
+  out.y = MathUtils::brMin(v_a.y, v_b.y);
 
   return out;
 }
@@ -224,8 +224,8 @@ template < class Tx >
 Vec2x<Tx> Vec2x<Tx>::maxv(const Vec2x<Tx>& v_a, const Vec2x<Tx>& v_b) {
   Vec2x<Tx> out;
 
-  out.x = MathUtils::broMax(v_a.x, v_b.x);
-  out.y = MathUtils::broMax(v_a.y, v_b.y);
+  out.x = MathUtils::brMax(v_a.x, v_b.x);
+  out.y = MathUtils::brMax(v_a.y, v_b.y);
 
   return out;
 }

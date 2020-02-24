@@ -37,11 +37,11 @@ GraphicsContext::~GraphicsContext(){
 bool GraphicsContext::init() {
     _bValid = true;
 
-    BroLogInfo("GraphicsContext - Making Vtx Formats.");
+    BRLogInfo("GraphicsContext - Making Vtx Formats.");
     makeVertexFormats();
 
     //In the future we will replace this witht he active object.
-    BroLogInfo("GraphicsContext - Creating Render View");
+    BRLogInfo("GraphicsContext - Creating Render View");
     _pFlyCam = std::make_shared<FlyCam>(Gu::getViewport());
 
     _pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));

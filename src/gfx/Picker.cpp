@@ -57,7 +57,7 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
 #ifdef _DEBUG
   if (_uiLastSelectedPixelId > 0) {
     if (Gu::getFpsMeter()->frameMod(20)) {
-      BroLogDebug("(" + x + "," + y + "), picked " + _uiLastSelectedPixelId);
+      BRLogDebug("(" + x + "," + y + "), picked " + _uiLastSelectedPixelId);
     }
   }
 

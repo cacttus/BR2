@@ -9,7 +9,7 @@ Exception::Exception(t_string c, int line, const char* file, bool bLogError) {
   _file = file;
   if (bLogError) {
     t_string err = c + " " + file + ":" + line;
-    BroLogError(err);
+    BRLogError(err);
   }
 
   Gu::debugBreak();

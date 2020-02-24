@@ -40,7 +40,7 @@ public:
   MUST_OVERRIDE void addNode(Tx parent, Tx child) = 0;
 
   // not implemented by default.
-  virtual bool getIsDupe(Tx j1) { BroThrowNotImplementedException(); return FALSE; }
+  virtual bool getIsDupe(Tx j1) { BRThrowNotImplementedException(); return FALSE; }
 
 protected:
   std::string _h_str;
@@ -87,7 +87,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
       n++;
       //push
       if (pLastNode.isNull()) {
-        BroThrowException("Could not parse hierarchy. Child node was null."); //error
+        BRThrowException("Could not parse hierarchy. Child node was null."); //error
       }
       _parse(n, pLastNode, bThrowIfDupeFound);
     }
@@ -98,7 +98,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
     else if (c == '(') {
       //begin node
       if (in_tok == (bool)true)
-        BroThrowException("Could not parse node: there was an error in the hierarchy string[1]."); //error
+        BRThrowException("Could not parse node: there was an error in the hierarchy string[1]."); //error
 
       in_tok = true;
       node_part = 0;
@@ -108,7 +108,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
     else if (c == ')') {
       //end node
       if (in_tok == false)
-        BroThrowException("Could not parse node: there was an error in the hierarchy string[2]."); //error
+        BRThrowException("Could not parse node: there was an error in the hierarchy string[2]."); //error
 
       in_tok = false;
 
@@ -116,7 +116,7 @@ Tx HierarchyString<Tx>::_parse(int32_t& n, Tx parent, bool bThrowIfDupeFound) {
 
       if (bThrowIfDupeFound == TRUE) {
         if (getIsDupe(new_node) == TRUE) {
-          BroThrowException("[Hierarchy string] Duplicate item found in hierarchy string.");
+          BRThrowException("[Hierarchy string] Duplicate item found in hierarchy string.");
         }
       }
 

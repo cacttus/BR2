@@ -43,7 +43,7 @@
     <ClCompile Include="src\base\Logger.cpp" />
     <ClCompile Include="src\base\Main.cpp" />
     <ClCompile Include="src\base\Net.cpp" />
-    <ClCompile Include="src\base\ObjectFile.cpp" />
+    <ClCompile Include="src\base\ObjFile.cpp" />
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OpenGLWindow.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />
@@ -198,7 +198,7 @@
     <ClInclude Include="src\base\Logger.h" />
     <ClInclude Include="src\base\MachineTypes.h" />
     <ClInclude Include="src\base\Net.h" />
-    <ClInclude Include="src\base\ObjectFile.h" />
+    <ClInclude Include="src\base\ObjFile.h" />
     <ClInclude Include="src\base\oglErr.h" />
     <ClInclude Include="src\base\OpenGLWindow.h" />
     <ClInclude Include="src\base\OperatingSystem.h" />
@@ -346,6 +346,11 @@
     <ClInclude Include="src\world\PhysicsWorld.h" />
     <ClInclude Include="src\world\RenderBucket.h" />
     <ClInclude Include="src\world\WorldHeader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project\design.md" />
+    <None Include="project\devlog.md" />
+    <None Include="project\tasks.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D38EE0E-3375-49FF-84EA-9CC4488BA6ED}</ProjectGuid>

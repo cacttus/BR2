@@ -26,12 +26,12 @@ void RenderParams::draw() {
         nd++;
     }
     if (nd != 1) {
-        BroLogWarnCycle("RenderParams] Invalid number of render items set on RenderParams.");
+        BRLogWarnCycle("RenderParams] Invalid number of render items set on RenderParams.");
         return;
     }
 
     if (_pShader == nullptr) {
-        BroLogWarnCycle("[RenderParams] Couldn't render - shader was not set.");
+        BRLogWarnCycle("[RenderParams] Couldn't render - shader was not set.");
         return;
     }
 
@@ -71,7 +71,7 @@ void RenderParams::draw() {
         _pShader->draw(_pVaoShader, _iCount, _eDrawMode);
     }
     else {
-        BroLogWarnCycle("Drawable Item was not set on RenderParams.");
+        BRLogWarnCycle("Drawable Item was not set on RenderParams.");
     }
 
 

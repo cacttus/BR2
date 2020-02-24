@@ -66,7 +66,7 @@ void ForwardFramebuffer::clearFb() {
 }
 void ForwardFramebuffer::beginRender() {
   if (_eState != FramebufferState::Initialized) {
-    BroThrowException("Framebuffer was not initialized.");
+    BRThrowException("Framebuffer was not initialized.");
   }
 
   //Clear all buffers

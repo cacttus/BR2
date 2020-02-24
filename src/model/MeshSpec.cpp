@@ -24,7 +24,7 @@
 #include "../world/PhysicsShapes.h"
 
 namespace Game {
-MeshSpec::MeshSpec(t_string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjectFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName) {
+MeshSpec::MeshSpec(t_string strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile, std::shared_ptr<PhysicsShape> ps) : BaseSpec(strName) {
   _pVertexFormat = vf;
   _pObjectFile = objFile;
   _pPhysicsShape = ps;
@@ -193,7 +193,7 @@ void MeshSpec::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
   }
   //Create skin on GPU
   t_timeval t0 = Gu::getMicroSeconds();
-  BroLogInfo("Creating GPU skin '" + getName() + "'..");
+  BRLogInfo("Creating GPU skin '" + getName() + "'..");
   {
     if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
       //2018/1/15 so we made all armatures be global in ModelSpec
@@ -210,13 +210,13 @@ void MeshSpec::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
       _eSkinStatus = MeshSkinStatus::e::Allocated;
     }
   }
-  BroLogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
+  BRLogInfo("..Done." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
 }
 std::shared_ptr<MeshSpec> MeshSpec::createCopy() {
   std::shared_ptr<MeshSpec> ms = nullptr;
 
   ms = std::make_shared<MeshSpec>(getName(), ms->getVertexFormat(), nullptr);
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
 
   //if (ms->_pFaceNormals != nullptr) {
   //    ms->_pFaceNormals->copyFrom(_pFaceNormals);
@@ -235,7 +235,7 @@ std::shared_ptr<MeshSpec> MeshSpec::createCopy() {
   return ms;
 }
 std::shared_ptr<MeshSpec> MeshSpec::mergeWith(std::shared_ptr<MeshSpec> other, bool automaticallyRecalculateIndexOffsets) {
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
   //AssertOrThrow2(_pVaoData!=nullptr);
   //char* c = _pVaoData->getVbo()->copyDataServerClient()
 
@@ -392,13 +392,13 @@ void MeshSpec::computeBox() {
 void MeshSpec::beginEdit() {
   //Copies the mesh data from the GPU to a temporary buffer for editing.
   if (_pFrags != nullptr) {
-    BroLogError("Tried to begin a mesh edit when an edit was already in progress.");
+    BRLogError("Tried to begin a mesh edit when an edit was already in progress.");
   }
   else {
     _pFrags = copyFragsFromGpu();
   }
   if (_pIndexes != nullptr) {
-    BroLogError("Tried to begin a mesh edit when an edit was already in progress.");
+    BRLogError("Tried to begin a mesh edit when an edit was already in progress.");
   }
   else {
     _pIndexes = copyIndexesFromGpu();
@@ -407,14 +407,14 @@ void MeshSpec::beginEdit() {
 void MeshSpec::endEdit() {
   //ends editing copying data back to the GPU
   if (_pFrags == nullptr) {
-    BroLogError("Tried to end a mesh edit when no edit in progress.");
+    BRLogError("Tried to end a mesh edit when no edit in progress.");
   }
   else {
     copyFragsToGpu(_pFrags);
     _pFrags = nullptr;
   }
   if (_pIndexes == nullptr) {
-    BroLogError("Tried to end a mesh edit when no edit in progress");
+    BRLogError("Tried to end a mesh edit when no edit in progress");
   }
   else {
     copyIndexesToGpu(_pIndexes);
@@ -423,44 +423,44 @@ void MeshSpec::endEdit() {
 }
 v_index32& MeshSpec::i32(size_t index) {
   if (_pIndexes == nullptr) {
-    BroThrowException("Tried to edit mesh without beginEdit()");
+    BRThrowException("Tried to edit mesh without beginEdit()");
   }
   return _pIndexes->i32(index);
 }
 vec3& MeshSpec::v3f(size_t index) {
   if (_pFrags == nullptr) {
-    BroThrowException("Tried to edit mesh without beginEdit()");
+    BRThrowException("Tried to edit mesh without beginEdit()");
   }
   return _pFrags->v3f(index);
 }
 vec2& MeshSpec::x2f(size_t index) {
   if (_pFrags == nullptr) {
-    BroThrowException("Tried to edit mesh without beginEdit()");
+    BRThrowException("Tried to edit mesh without beginEdit()");
   }
   return _pFrags->x2f(index);
 }
 vec4& MeshSpec::c4f(size_t index) {
   if (_pFrags == nullptr) {
-    BroThrowException("Tried to edit mesh without beginEdit()");
+    BRThrowException("Tried to edit mesh without beginEdit()");
   }
   return _pFrags->c4f(index);
 }
 vec3& MeshSpec::n3f(size_t index) {
   if (_pFrags == nullptr) {
-    BroThrowException("Tried to edit mesh without beginEdit()");
+    BRThrowException("Tried to edit mesh without beginEdit()");
   }
   return _pFrags->n3f(index);
 }
 std::shared_ptr<FragmentBufferData> MeshSpec::getFrags() {
   if (_pFrags == nullptr) {
-    BroLogError("Verts: Tried to end a mesh edit when no edit in progress.");
+    BRLogError("Verts: Tried to end a mesh edit when no edit in progress.");
     Gu::debugBreak();
   }
   return _pFrags;
 }
 std::shared_ptr<IndexBufferData> MeshSpec::getIndexes() {
   if (_pIndexes == nullptr) {
-    BroLogError("Indexes: Tried to end a mesh edit when no edit in progress.");
+    BRLogError("Indexes: Tried to end a mesh edit when no edit in progress.");
     Gu::debugBreak();
   }
   return _pIndexes;
@@ -688,31 +688,31 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
 
   ////Skin Data Logging
   if (nFragInvalid > 0) {
-    BroLogError(nJointInvalid + " invalid Joint IDs Encountered making "
+    BRLogError(nJointInvalid + " invalid Joint IDs Encountered making "
       + nFragInvalid + " skin vertexes invalid, default Joint ID "
       + " - no joint. Check that SKN file has valid Joint IDs for vertexes.");
   }
 
   if (maxOrd > 200000) {
-    BroLogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
+    BRLogWarn("Max joint index was HUGE, possibly invalid: " + maxOrd);
   }
   if (minOrd < 0) {
-    BroLogWarn("Min joint index was invalid: " + minOrd);
+    BRLogWarn("Min joint index was invalid: " + minOrd);
   }
 
-  BroLogDebug("Skin Stats:");
-  BroLogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
-  BroLogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
-  BroLogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
-  BroLogDebug(">  nTotalWeights: " + nTotalWeights);
-  BroLogDebug(">  nFragCount: " + nFragCount);
-  BroLogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
+  BRLogDebug("Skin Stats:");
+  BRLogDebug(">  min/max joint ord: " + minOrd + "/" + maxOrd);
+  BRLogDebug(">  min/max weight off: " + minOff + "/" + maxOff);
+  BRLogDebug(">  min/max weight cnt: " + minCount + "/" + maxCount);
+  BRLogDebug(">  nTotalWeights: " + nTotalWeights);
+  BRLogDebug(">  nFragCount: " + nFragCount);
+  BRLogDebug(">  nJoints: " + setUniqueJointOrdinals.size());
 
   if (maxOrd >= (int32_t)setUniqueJointOrdinals.size()) {
-    BroLogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
+    BRLogWarn(">  one or more ordinals exceeds joint matrix array size. Definite Gpu buffer overrun.");
   }
   if (maxOff >= (int32_t)nTotalWeights) {
-    BroLogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
+    BRLogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
   }
 
   Gu::getGraphicsContext()->chkErrRt();
@@ -748,14 +748,14 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
     return;
   }
 
-  BroLogDebug("Testing Skin Access..");
+  BRLogDebug("Testing Skin Access..");
 
   //Armature Existence
   for (size_t iweight = 0; iweight < vecWeights->size(); ++iweight) {
     VertexWeightMob& vw = vecWeights->at(iweight);
     for (std::pair<Hash32, std::map<int32_t, float>> parms : vw._mapWeights) {
       if (ms->getArmatureById(parms.first) == nullptr) {
-        BroLogError("Skin test failed.  Armature does not exist for one or more weights.");
+        BRLogError("Skin test failed.  Armature does not exist for one or more weights.");
         _eSkinStatus = MeshSkinStatus::e::Error;
         Gu::debugBreak();
         //break;
@@ -767,7 +767,7 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
     int32_t off = weightOffsetsGpu[iWeightOff]._offset;
     int32_t count = weightOffsetsGpu[iWeightOff]._count;
     if (off + count > (int32_t)weightsGpuSize) {
-      BroLogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
+      BRLogError("Skin test failed.  Weight offset " + (off + count) + " was outside bounds of " + weightsGpuSize);
       _eSkinStatus = MeshSkinStatus::e::Error;
       Gu::debugBreak();
     }
@@ -775,12 +775,12 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
       for (int iWeight = 0; iWeight < count; ++iWeight) {
         GpuAnimatedMeshWeight& gpuWeight = weightsGpu[off + iWeight];
         if (gpuWeight._iArmJointOffset < 0 || gpuWeight._iArmJointOffset > 10000) {
-          BroLogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
+          BRLogError("Skin test failed.  Joint " + gpuWeight._iArmJointOffset + " invalid (or greater than 1000) ");
           _eSkinStatus = MeshSkinStatus::e::Error;
           Gu::debugBreak();
         }
         if (gpuWeight._weight < 0.0f) {
-          BroLogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
+          BRLogError("Skin test failed.  Weight was invalid: " + gpuWeight._weight);
           _eSkinStatus = MeshSkinStatus::e::Error;
           Gu::debugBreak();
         }
@@ -791,7 +791,7 @@ void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightDa
   }
   //}
 
-  BroLogDebug("..Skin test complete.");
+  BRLogDebug("..Skin test complete.");
 }
 void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   BaseSpec::deserialize(fb);
@@ -860,7 +860,7 @@ void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
       _eSkinStatus = MeshSkinStatus::e::Allocated;
     }
     else if ((nWeights > 0 && nWeightOffsets == 0) || (nWeights == 0 && nWeightOffsets > 0)) {
-      BroLogError(" Weights were invalid for mesh.");
+      BRLogError(" Weights were invalid for mesh.");
       Gu::debugBreak();
     }
   }
@@ -877,7 +877,7 @@ void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
     setMaterial(mat);
   }
   else {
-    BroLogWarn("Mesh didn't have a material..");
+    BRLogWarn("Mesh didn't have a material..");
   }
 }
 
@@ -886,14 +886,14 @@ int32_t MeshSpec::vertexFormatToInt32() {
   else if (_pVertexFormat == v_v3x2::getVertexFormat()) { return 2; }
   else if (_pVertexFormat == v_v3n3::getVertexFormat()) { return 3; }
   else if (_pVertexFormat == v_v3::getVertexFormat()) { return 4; }
-  else BroThrowException("Unsupported vertex format while serializing");
+  else BRThrowException("Unsupported vertex format while serializing");
 }
 void MeshSpec::int32ToVertexFormat(int32_t i) {
   if (i == 1) { _pVertexFormat = v_v3n3x2::getVertexFormat(); }
   else if (i == 2) { _pVertexFormat = v_v3x2::getVertexFormat(); }
   else if (i == 3) { _pVertexFormat = v_v3n3::getVertexFormat(); }
   else if (i == 4) { _pVertexFormat = v_v3::getVertexFormat(); }
-  else BroThrowException("Unsupported vertex format while deserializing");
+  else BRThrowException("Unsupported vertex format while deserializing");
 }
 void MeshSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   BaseSpec::serialize(fb);
@@ -909,7 +909,7 @@ void MeshSpec::serialize(std::shared_ptr<BinaryFile> fb) {
       fb->writeInt32(PhysicsShapeType::e::Sphere);
     }
     else {
-      BroThrowException("failed to write physcis shape, invalid shape type");
+      BRThrowException("failed to write physcis shape, invalid shape type");
     }
     _pPhysicsShape->serialize(fb);
   }

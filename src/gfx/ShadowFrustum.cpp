@@ -195,7 +195,7 @@ void ShadowFrustum::collect() {
   }
 
   BvhCollectionParams p;
-  p._fMaxDist = MathUtils::broMin(_pFrustum->getZFar(), Gu::getEngineConfig()->getMaxPointLightShadowDistance());
+  p._fMaxDist = MathUtils::brMin(_pFrustum->getZFar(), Gu::getEngineConfig()->getMaxPointLightShadowDistance());
   p._pFrustum = _pFrustum;
   p._pRenderBucket = _pVisibleSet;
   Gu::getPhysicsWorld()->collectVisibleNodes(&p);
@@ -268,7 +268,7 @@ void ShadowFrustum::createFbo() {
   GLenum status = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    BroThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
+    BRThrowException("Point Light Shadow Map Framebuffer encountered an error during setup: " + status);
     Gu::checkErrorsRt();
   }
 

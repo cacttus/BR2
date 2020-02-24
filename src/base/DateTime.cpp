@@ -112,7 +112,7 @@ t_time DateTime::strToTime(t_string& time, char separator) {
   int32_t hb, mm, ss, ms;
 
   if (vals.size() < 4) {
-    BroLogWarn("Time had not 4 components: " + time);
+    BRLogWarn("Time had not 4 components: " + time);
   }
   hb = TypeConv::strToInt(vals[0]);
   mm = TypeConv::strToInt(vals[1]);
@@ -148,7 +148,7 @@ t_datetime DateTime::strToDateTime(const t_string& szDateTime) {
   std::vector<t_string> str = StringUtil::split(szDateTime, ' ');
 
   if (str.size() == 0 || str.size() == 1) {
-    BroLogWarn("Date time could not be converted, value: " + szDateTime);
+    BRLogWarn("Date time could not be converted, value: " + szDateTime);
     return getDateTime();
   }
 

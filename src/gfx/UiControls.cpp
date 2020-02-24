@@ -467,8 +467,8 @@ void UiElement::computeContentQuad() {
       effR -= 1;
       effT -= 1;
 
-      fright = MathUtils::broMax(fright, left().px() + effR);
-      fbottom = MathUtils::broMax(fbottom, top().px() + effT);
+      fright = MathUtils::brMax(fright, left().px() + effR);
+      fbottom = MathUtils::brMax(fbottom, top().px() + effT);
 
 
       //expand contenet quad
@@ -555,14 +555,14 @@ void UiElement::layoutLayer(std::vector<std::shared_ptr<UiElement>> stats) {
     float auto_height = 0;
     if (nAutoWsLine > 0) {
       float myWidth = right().px() - left().px();//Container width
-      auto_width = MathUtils::broMax(myWidth - line._width, 0.0f) / (float)nAutoWsLine;
+      auto_width = MathUtils::brMax(myWidth - line._width, 0.0f) / (float)nAutoWsLine;
       //So we're going to "sprinkle the width" across other autos
       // for each element whose min width > the computed auto
       //subtract from the computed_auto the remaining width minus the auto  (min_width - computed_auto) / remaining_autos4
     }
     if (nAutoHLines > 0) {
       float myHeight = bottom().px() - top().px();//Container height
-      auto_height = MathUtils::broMax(myHeight - fTotalHeight, 0.0f) / (float)nAutoHLines;
+      auto_height = MathUtils::brMax(myHeight - fTotalHeight, 0.0f) / (float)nAutoHLines;
     }
 
     //run calculation again, this time with autos
@@ -588,7 +588,7 @@ void UiElement::computePositionalElement(std::shared_ptr<UiElement> ele) {
 }
 void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiElement::UiLine>& vecLines, float fAutoWidth, float fAutoHeight) {
   if (vecLines.size() == 0) {
-    BroThrowException("GUI error - tried to run calc algorithm without any UILines created");
+    BRThrowException("GUI error - tried to run calc algorithm without any UILines created");
   }
   float myWidth = right().px() - left().px();
   UiLine* line = &vecLines[vecLines.size() - 1];
@@ -651,7 +651,7 @@ void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<Ui
   ele->validateQuad();
 
   //Increse line height WITH PAD
-  line->_height = MathUtils::broMax(line->_height, hpx_pad);
+  line->_height = MathUtils::brMax(line->_height, hpx_pad);
 
   line->_eles.push_back(ele);
 }
@@ -1228,7 +1228,7 @@ void UiElement::bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLa
   removeChild(child);
   if (bCreateNewLayer == true) {
     for (auto p : getChildren()) {
-      iMaxLayer = MathUtils::broMax(iMaxLayer, p.first);
+      iMaxLayer = MathUtils::brMax(iMaxLayer, p.first);
     }
     iMaxLayer++;
   }
@@ -1643,7 +1643,7 @@ void UiLabel::createGlyphs() {
       //I think the only method to make this work is to encapsulate Words within UiElements (simply)
       g->display() = UiDisplayMode::e::InlineNoWrap;
       if (bNextWrap) {
-        labelWidth = MathUtils::broMax(labelWidth, labelWidthCur);
+        labelWidth = MathUtils::brMax(labelWidth, labelWidthCur);
         labelWidthCur = 0;
         g->display() = (UiDisplayMode::e::Block);
         bNextWrap = false;
@@ -2285,7 +2285,7 @@ void UiScrubGenThumb::update(std::shared_ptr<Fingers> pFingers) {
 }
 void UiScrubGenThumb::setBarSizePct(float pos01) {
   if (pos01 < 0.0f || pos01 > 1.0f) {
-    pos01 = MathUtils::broClamp(pos01, 0.0f, 1.0f);
+    pos01 = MathUtils::brClamp(pos01, 0.0f, 1.0f);
     Gui2d::error("invalid scroll position sent to scrollbar, clamping");
   }
   _fBarSizePct = pos01;
@@ -2865,7 +2865,7 @@ void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
       //Calculate the width/hight of the thumb bar relative to the scroll percentage. (Zero for trackbar)
       if (b2wh > 0) {
         fBarSize = b1wh / (b2wh);
-        fBarSize = MathUtils::broClamp(fBarSize, 0.0f, 1.0f);
+        fBarSize = MathUtils::brClamp(fBarSize, 0.0f, 1.0f);
       }
     }
     return fBarSize;
@@ -3245,7 +3245,7 @@ void Gui2d::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   UiElement::drawDebug();
 }
 void Gui2d::error(std::string errMsg) {
-  BroLogError(errMsg);
+  BRLogError(errMsg);
   Gu::debugBreak();
 }
 void Gui2d::hideCursor() {

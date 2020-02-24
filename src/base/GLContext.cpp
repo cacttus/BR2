@@ -48,7 +48,7 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
   _profile = profile;
   _context = SDL_GL_CreateContext(pMainWindow->getSDLWindow());
   if (!_context) {
-    BroThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
+    BRThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
   }
 
   int ver, subver, shad_ver, shad_subver;
@@ -62,7 +62,7 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
     //We're good
   }
   else {
-    BroLogInfo("OpenGL config profile didn't work. Trying next profile.");
+    BRLogInfo("OpenGL config profile didn't work. Trying next profile.");
     SDL_GL_DeleteContext(_context);
     return false;
   }
@@ -77,13 +77,13 @@ bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& p
   printHelpfulDebug();
 
   if (!GraphicsContext::init()) {
-    BroLogError("Failed to init context.");
+    BRLogError("Failed to init context.");
     SDL_GL_DeleteContext(_context);
     return false;
   }
 
   if (!loadOpenGLFunctions()) {
-    BroLogError("Failed to load context.");
+    BRLogError("Failed to load context.");
     SDL_GL_DeleteContext(_context);
     return false;
   }
@@ -111,7 +111,7 @@ bool GLContext::loadOpenGLFunctions() {
 #define SDLGLP(x, y, z) do{ \
 if( !(x = (y)SDL_GL_GetProcAddress(z))) \
 { \
-BroLogError("GL Method "+ z+" not supported by your GPU, or there was another error somewhere.."); \
+BRLogError("GL Method "+ z+" not supported by your GPU, or there was another error somewhere.."); \
 bValid = false; \
 Gu::debugBreak(); \
 } \
@@ -120,7 +120,7 @@ Gu::debugBreak(); \
 #define SDLGLP2(x, y) do{ \
 if( !(y = (x)SDL_GL_GetProcAddress(#y))) \
 { \
-BroLogError("GL Method "+ #y+ " not supported by your GPU, or there was another error somewhere.."); \
+BRLogError("GL Method "+ #y+ " not supported by your GPU, or there was another error somewhere.."); \
 bValid = false; \
 Gu::debugBreak(); \
 } \
@@ -265,7 +265,7 @@ void GLContext::setLineWidth(float w) {
 #ifdef COMPATIBILITY_PROFILE_ENABLED
   glLineWidth(w);
 #else
-  BroLogErrorOnce("glLineWidth not supported");
+  BRLogErrorOnce("glLineWidth not supported");
 #endif
 }
 
@@ -274,7 +274,7 @@ void GLContext::pushCullFace() {
   glGetIntegerv(GL_CULL_FACE, &cull);
 
   if (_eLastCullFaceStack.size() > MaxStackSize) {
-    BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
+    BRLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
   }
   else {
     _eLastCullFaceStack.push(cull);
@@ -302,7 +302,7 @@ void GLContext::pushBlend() {
   glGetIntegerv(GL_BLEND, &cull);
 
   if (_eLastBlendStack.size() > MaxStackSize) {
-    BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
+    BRLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
   }
   else {
     _eLastBlendStack.push(cull);
@@ -330,7 +330,7 @@ void GLContext::pushDepthTest() {
   glGetIntegerv(GL_DEPTH_TEST, &cull);
 
   if (_eLastDepthTestStack.size() > MaxStackSize) {
-    BroLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
+    BRLogWarn("Stack count has been exceeded.  Stack invalid somewhere");
   }
   else {
     _eLastDepthTestStack.push(cull);
@@ -417,24 +417,24 @@ void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
   if (glver.length() > 0) {
     sv = StringUtil::split(glver, '.');
     if (sv.size() < 2) {
-      BroThrowException("Failed to get OpenGL version. Got '" + glver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
+      BRThrowException("Failed to get OpenGL version. Got '" + glver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
     }
     ver = TypeConv::strToInt(sv[0]);
     subver = TypeConv::strToInt(sv[1]);
   }
   else {
-    BroLogError("Failed to get OpenGL version.");
+    BRLogError("Failed to get OpenGL version.");
   }
   if (glslver.length() > 0) {
     sv = StringUtil::split(glslver, '.');
     if (sv.size() < 2) {
-      BroThrowException("Failed to get OpenGL Shade version. Got '" + glslver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
+      BRThrowException("Failed to get OpenGL Shade version. Got '" + glslver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
     }
     shad_ver = TypeConv::strToInt(sv[0]);
     shad_subver = TypeConv::strToInt(sv[1]);
   }
   else {
-    BroLogError("Failed to get OpenGL Shade version.");
+    BRLogError("Failed to get OpenGL Shade version.");
   }
 }
 void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_subversion) {
@@ -450,7 +450,7 @@ void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_
   t_string vendor = t_string((char*)glGetString(GL_VENDOR));
   t_string renderer = t_string((char*)glGetString(GL_RENDERER));
 
-  BroLogInfo("\n"
+  BRLogInfo("\n"
     + "   OpenGL version " + ver + "." + subver + ".\n"
     + "   GLSL version:          " + shad_ver + "." + shad_subver + "\n"
     + "   GPU:         " + renderer + "\n"
@@ -458,7 +458,7 @@ void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_
   );
 
   if (ver < required_version || (ver >= required_subversion && subver < required_subversion)) {
-    BroThrowException(Stz "\n"
+    BRThrowException(Stz "\n"
       + "The game could not find the latest version of OpenGL Shading Language.\n\n"
       + "Possible Problems could be:\n\n"
       + "   1) The primary graphics card is incorrect,\n\n"
@@ -484,7 +484,7 @@ void GLContext::loadCheckProc() {
     exep += ("  1. Your primary graphics card is not correct.  You can set your primary graphics card in Windows.\n");
     exep += ("  2. Your graphics card is outdated.  Consider upgrading.\n");
     exep += ("  3. Your Operating System isn't Windows 7 or above.\n");
-    BroThrowException(exep);
+    BRThrowException(exep);
   }
 }
 void GLContext::printHelpfulDebug() {
@@ -492,25 +492,25 @@ void GLContext::printHelpfulDebug() {
 
   int tmp = 0;
   SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &tmp);
-  BroLogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
+  BRLogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &tmp);
-  BroLogInfo("SDL_GL_BUFFER_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_BUFFER_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
 
-  BroLogInfo("SDL_GL_DEPTH_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_DEPTH_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &tmp);
-  BroLogInfo("SDL_GL_STENCIL_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_STENCIL_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &tmp);
-  BroLogInfo("SDL_GL_ACCELERATED_VISUAL: " + tmp);
+  BRLogInfo("SDL_GL_ACCELERATED_VISUAL: " + tmp);
 
   SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &tmp);
-  BroLogInfo("SDL_GL_RED_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_RED_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &tmp);
-  BroLogInfo("SDL_GL_GREEN_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_GREEN_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &tmp);
-  BroLogInfo("SDL_GL_BLUE_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_BLUE_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &tmp);
-  BroLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
+  BRLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
 }
 
 void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {

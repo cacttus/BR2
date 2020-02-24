@@ -42,13 +42,13 @@ void TextDataFile::loadAndParse(t_string& loc) {
   //Dump messages.
   if (_vecMessages.size() > 0) {
     t_string str = StringUtil::join("\r\n", _vecMessages);
-    BroLogInfo("Errors:" + StringUtil::tabify(str, 2));
+    BRLogInfo("Errors:" + StringUtil::tabify(str, 2));
   }
 
   postLoad(success);
 }
 void TextDataFile::save(t_string& loc) {
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
 }
 
 //+-- CTOR/DTOR --+

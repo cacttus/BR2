@@ -68,7 +68,7 @@ RetCode DiskFile::openForRead(DiskLoc& szloc) {
   t_string l;
 
   if ((state != file_closed) && (state != file_created) && (state != file_empty)) {
-    BroThrowException("File was in a bad state.");
+    BRThrowException("File was in a bad state.");
   }
 
   if (!szloc.length())
@@ -88,7 +88,7 @@ RetCode DiskFile::openForRead(DiskLoc& szloc) {
   //Globals::getLogger()->logInfo(t_string("Loading ")+l);
   if (!pStream.good()) {
     pStream.close();
-    BroLogError("Could not open file '" + szloc + "' for read.");
+    BRLogError("Could not open file '" + szloc + "' for read.");
     return GR_FILE_NOT_FOUND_ON_DISK;
     //BroThrowException("File does not exist at the location \'", szloc, "\'");
   }
@@ -116,7 +116,7 @@ RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
   t_string l;
 
   if ((state != file_closed) && (state != file_created) && (state != file_empty)) {
-    BroThrowException("File " + szloc + " was in a bad state.");
+    BRThrowException("File " + szloc + " was in a bad state.");
   }
 
   if (!szloc.length()) {
@@ -148,7 +148,7 @@ RetCode DiskFile::openForWrite(DiskLoc& szloc, FileWriteMode::e mode) {
 
   if (!pStream.good()) {
     pStream.close();
-    BroLogError("File " + szloc + " does not exist.");
+    BRLogError("File " + szloc + " does not exist.");
     return GR_FILE_NOT_FOUND_ON_DISK;
     //BroThrowException();
   }
@@ -173,7 +173,7 @@ RetCode DiskFile::write(const char* bytes, size_t len, size_t offset) {
   AssertOrThrow2(state == file_opened_write);
 
   if (offset != (size_t)-1) {
-    BroThrowException("Offset is an invalid parameter in DiskFile - and is not implemented.");
+    BRThrowException("Offset is an invalid parameter in DiskFile - and is not implemented.");
   }
 
   pStream.write(bytes, (std::streamsize)len);
@@ -234,7 +234,7 @@ RetCode DiskFile::read(char* buf, size_t len, size_t buflen, size_t offset) {
   AssertOrThrow2(state == file_opened_read);
 
   if (offset != (size_t)-1) {
-    BroThrowException("Offset is an invalid parameter in DiskFile - and is not implemented.");
+    BRThrowException("Offset is an invalid parameter in DiskFile - and is not implemented.");
   }
 
   if (buflen != -1) {
@@ -372,21 +372,21 @@ RetCode DiskFile::getReadStream(std::fstream& newStream) {
 }
 RetCode DiskFile::readAllBytes(t_string loc, Allocator<char>& __out_ outBuf) {
   if (!FileSystem::fileExists(loc)) {
-    BroLogError("File " + loc + " did not exist.");
+    BRLogError("File " + loc + " did not exist.");
     return GR_FILE_NOT_FOUND_ON_DISK;
   }
   DiskFile df;
   RetCode rc;
   rc = df.openForRead(loc);
   if (rc != GR_OK) {
-    BroLogWarn("Failed to read file " + loc);
+    BRLogWarn("Failed to read file " + loc);
     return rc;
   }
   size_t sz = df.getFileSize();
   outBuf.realloca(sz + 1); // +1 to put the /0 at the end
   rc = df.read(outBuf.ptr(), sz);
   if (rc != GR_OK) {
-    BroLogWarn("Failed to read file (2) " + loc);
+    BRLogWarn("Failed to read file (2) " + loc);
     return rc;
   }
   outBuf.at(sz - 1) = '\0';
@@ -405,12 +405,12 @@ RetCode DiskFile::writeAllBytes(t_string loc, Allocator<char>& __out_ outBuf) {
   DiskFile df;
   ret = df.openForWrite(loc);
   if (ret != GR_OK) {
-    BroLogWarn("Failed to write file " + loc);
+    BRLogWarn("Failed to write file " + loc);
     return ret;
   }
   ret = df.write(outBuf.ptr(), outBuf.byteSize());
   if (ret != GR_OK) {
-    BroLogWarn("Failed to write file (2) " + loc);
+    BRLogWarn("Failed to write file (2) " + loc);
     return ret;
   }
   df.close();

@@ -60,14 +60,14 @@ void GraphicsWindow::makeSDLWindow(t_string windowTitle, int render_system) {
   _pWindowViewport = std::make_shared<WindowViewport>(_iLastWidth, _iLastHeight);
 
 #ifdef BRO_OS_WINDOWS
-  BroLogError("We are not making the window icon because there's an error somewhere in SDL here.");
+  BRLogError("We are not making the window icon because there's an error somewhere in SDL here.");
   //**There is an error here
 //  Gu::SDLTrySetWindowIcon(_pWindow, "./data-dc/tex/tx64-icon.png");//_pApp->getIconFullPath());
 #endif
 }
 void GraphicsWindow::initRenderSystem() {
   if (_pSDLWindow == nullptr) {
-    BroThrowException("You need to make the SDL window before initializing render system.");
+    BRThrowException("You need to make the SDL window before initializing render system.");
   }
 
   SDLUtils::trySetWindowIcon(_pSDLWindow, Gu::getApp()->getIconFullPath());
@@ -75,24 +75,24 @@ void GraphicsWindow::initRenderSystem() {
   if (Gu::getConfig()->getForceAspectRatio()) {
     SDL_DisplayMode dm;
     if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
-      BroLogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
+      BRLogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
     }
     else {
       float ar = (float)dm.h / (float)dm.w;
       int newHeight = (int)((float)_iLastWidth * ar);
       if (newHeight != _iLastHeight) {
-        BroLogInfo("Adjusting window dims from " + _iLastWidth + " x " + _iLastHeight + " to " + _iLastWidth + " x " + newHeight);
+        BRLogInfo("Adjusting window dims from " + _iLastWidth + " x " + _iLastHeight + " to " + _iLastWidth + " x " + newHeight);
         _iLastHeight = newHeight;
       }
     }
   }
 
-  BroLogInfo("Setting window size to, " + _iLastWidth + " x " + _iLastHeight);
+  BRLogInfo("Setting window size to, " + _iLastWidth + " x " + _iLastHeight);
   SDL_SetWindowSize(_pSDLWindow, _iLastWidth, _iLastHeight);
   updateWidthHeight(_iLastWidth, _iLastHeight, true);
 
   if (Gu::getConfig()->getStartFullscreen() == true) {
-    BroLogInfo("Setting window fullscreen.");
+    BRLogInfo("Setting window fullscreen.");
     toggleFullscreen();
   }
 
@@ -146,7 +146,7 @@ void GraphicsWindow::toggleFullscreen() {
     SDL_SetWindowSize(_pSDLWindow, iFsW, iFsH);
 
     if (SDL_SetWindowFullscreen(_pSDLWindow, SDL_WINDOW_FULLSCREEN) != 0) {
-      BroLogError("Failed to go fullscreen.");
+      BRLogError("Failed to go fullscreen.");
     }
     else {
       _bFullscreen = true;
@@ -159,7 +159,7 @@ void GraphicsWindow::toggleFullscreen() {
       SDL_SetWindowSize(_pSDLWindow, _iFullscreenToggleWidth, _iFullscreenToggleHeight);
     }
     if (SDL_SetWindowFullscreen(_pSDLWindow, 0) != 0) {
-      BroLogError("Failed to exit fullscreen.");
+      BRLogError("Failed to exit fullscreen.");
     }
     else {
       _bFullscreen = false;
@@ -175,12 +175,12 @@ void GraphicsWindow::printHelpfulDebug() {
   SDL_Window* win = _pSDLWindow;
 
   SDL_GetCurrentDisplayMode(0, &mode);
-  BroLogInfo("Screen BPP    : " + SDL_BITSPERPIXEL(mode.format));
-  BroLogInfo("Swap Interval : " + SDL_GL_GetSwapInterval());
+  BRLogInfo("Screen BPP    : " + SDL_BITSPERPIXEL(mode.format));
+  BRLogInfo("Swap Interval : " + SDL_GL_GetSwapInterval());
   SDL_GetWindowSize(win, &dw, &dh);
-  BroLogInfo("Initial Window Size   : " + dw + "x" + dh);
+  BRLogInfo("Initial Window Size   : " + dw + "x" + dh);
   SDL_GL_GetDrawableSize(win, &dw, &dh);
-  BroLogInfo("Draw Size     : " + dw + "x" + dh);
+  BRLogInfo("Draw Size     : " + dw + "x" + dh);
 
 
   SDLUtils::checkSDLErr();

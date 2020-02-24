@@ -30,16 +30,16 @@ void Package::build(std::string exeLoc) {
 
     _bIsPackage = (sig0 == 'a' && sig1 == 's' && sig2 == 'd' && sig3 == 'f');
 	if (_bIsPackage) {
-        BroLogInfo("Exe is packed.");
+        BRLogInfo("Exe is packed.");
 	}
     else {
-        BroLogInfo("Exe is not packed.");
+        BRLogInfo("Exe is not packed.");
         return;
     }
 
     tmp = (int32_t)fb->getData().count() - 8;
 	_iExeLenBytes = parseInt32(fb, tmp);
-	BroLogInfo("ExeLen: " + _iExeLenBytes );
+	BRLogInfo("ExeLen: " + _iExeLenBytes );
 
 	//Start parsing at the end fo the exe
 	int32_t iByteIdx = _iExeLenBytes;
@@ -47,7 +47,7 @@ void Package::build(std::string exeLoc) {
 	// 8 bytes, table length (total) and num entries
 	_iTableLenBytes = parseInt32(fb, iByteIdx);
 	int32_t iNumEntries = parseInt32(fb, iByteIdx);
-    BroLogInfo("Num Entries: " + iNumEntries);
+    BRLogInfo("Num Entries: " + iNumEntries);
 
 	for (int32_t iEntry = 0; iEntry < iNumEntries; ++iEntry) {
 		FileEntry* fe = new FileEntry();
@@ -60,7 +60,7 @@ void Package::build(std::string exeLoc) {
 }
 bool Package::getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull) {
 	if(fb==nullptr){
-        BroLogError("Buffered file was nullptr, no file was read.  Make sur to initialize fb.");
+        BRLogError("Buffered file was nullptr, no file was read.  Make sur to initialize fb.");
         Gu::debugBreak();
         return false;
     }
@@ -77,7 +77,7 @@ bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb
     FileEntry* fe = getEntry(fileLoc);
     if (fe == nullptr) {
 
-        BroThrowException("Failed to get file entry for " + fileLoc);
+        BRThrowException("Failed to get file entry for " + fileLoc);
     }
     std::fstream fs;
     fs.open(_strExeLoc.c_str(), std::ios::in | std::ios::binary);
@@ -91,7 +91,7 @@ bool Package::loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb
     size_t iExePackSize = (size_t)fs.tellg();
 
     if (iFileOff + fe->_iSize > iExePackSize) {
-        BroThrowException("ERROR File overrun: size of file is greater than the packed exe size.");
+        BRThrowException("ERROR File overrun: size of file is greater than the packed exe size.");
     }
 
     fs.seekg(iFileOff, std::ios::beg);
@@ -157,7 +157,7 @@ bool Package::fileExists(t_string file){
         return FileSystem::fileExists(file);
     }
     else{
-        BroThrowNotImplementedException();
+        BRThrowNotImplementedException();
     }
 }
 

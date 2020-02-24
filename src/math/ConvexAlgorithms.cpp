@@ -201,7 +201,7 @@ int32_t ConvexUtils::convexConvexTest(
   return 0;
 }
 Vec3f ConvexUtils::closestPointOnHull(Vec3f& point, Vec3f* hullPoints, int32_t nPoints) {
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
   return Vec3f(0, 0, 0);
   // Abandoned
   // we need either normals or indexes in order to verify topology -- just points alone doesn't work.

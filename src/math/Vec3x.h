@@ -227,9 +227,9 @@ template < class Tx >
 Vec3x<Tx> Vec3x<Tx>::minv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b) {
   Vec3x<Tx> out;
 
-  out.x = MathUtils::broMin(v_a.x, v_b.x);
-  out.y = MathUtils::broMin(v_a.y, v_b.y);
-  out.z = MathUtils::broMin(v_a.z, v_b.z);
+  out.x = MathUtils::brMin(v_a.x, v_b.x);
+  out.y = MathUtils::brMin(v_a.y, v_b.y);
+  out.z = MathUtils::brMin(v_a.z, v_b.z);
 
   return out;
 }
@@ -237,9 +237,9 @@ template < class Tx >
 Vec3x<Tx> Vec3x<Tx>::maxv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b) {
   Vec3x<Tx> out;
 
-  out.x = MathUtils::broMax(v_a.x, v_b.x);
-  out.y = MathUtils::broMax(v_a.y, v_b.y);
-  out.z = MathUtils::broMax(v_a.z, v_b.z);
+  out.x = MathUtils::brMax(v_a.x, v_b.x);
+  out.y = MathUtils::brMax(v_a.y, v_b.y);
+  out.z = MathUtils::brMax(v_a.z, v_b.z);
 
   return out;
 }
@@ -280,7 +280,7 @@ Vec3x<Tx> Vec3x<Tx>::VEC3X_MAX() {
 
 template < class Tx >
 Tx    Vec3x<Tx>::length() const {
-  return MathUtils::broSqrt(x * x + y * y + z * z);
+  return MathUtils::brSqrt(x * x + y * y + z * z);
 }
 template < class Tx >
 Tx    Vec3x<Tx>::length2() const {
@@ -752,7 +752,7 @@ void Vec3x<Tx>::checkNormalOrZeroAndLimitVector(float fMaxLength, bool bShowWarn
   // Make sure the vector length isn't too big.
   if (squaredLength() >= (fMaxLength * fMaxLength)) {
     if (bShowWarningMessage == true)
-      BroLogWarn("Object has launched into orbit: v=("
+      BRLogWarn("Object has launched into orbit: v=("
         , x, " "
         , y, " "
         , z, ")");

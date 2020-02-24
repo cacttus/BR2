@@ -152,7 +152,7 @@ Vec2x<Tx> Vec2x<Tx>::Vec2x_MAX() {
 
 template < class Tx >
 Tx    Vec2x<Tx>::length() const {
-  return MathUtils::broSqrt(x * x + y * y);
+  return MathUtils::brSqrt(x * x + y * y);
 }
 template < class Tx >
 Tx    Vec2x<Tx>::length2() const {

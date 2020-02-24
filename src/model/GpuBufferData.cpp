@@ -46,11 +46,11 @@ void GpuBufferData::copyDataServerClient(std::shared_ptr<ByteBuffer> gb) {
 */
 void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t elementSize) {
   if (buf == nullptr) {
-    BroLogError("Tried to read to NULL Buffer reading Gpu contents.");
+    BRLogError("Tried to read to NULL Buffer reading Gpu contents.");
     Gu::debugBreak();
   }
   if (_bIsAllocated == false) {
-    BroThrowException(" [VBO] was not allocated");
+    BRThrowException(" [VBO] was not allocated");
   }
   size_t readSize;
 
@@ -63,7 +63,7 @@ void GpuBufferData::readbytes(size_t num_elements, void* __out_ buf, int32_t ele
 
   size_t byteSize = getByteSize();
   if (readSize > byteSize) {
-    BroThrowException("Tried to read " + readSize + " from Gpu Buffer with size of " + getByteSize() + ".");
+    BRThrowException("Tried to read " + readSize + " from Gpu Buffer with size of " + getByteSize() + ".");
   }
   _pContext->chkErrDbg();
 
@@ -88,12 +88,12 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
     return;
   }
   if (frags == nullptr) {
-    BroLogError(" [VBO] Fragments to copy were null. ");
+    BRLogError(" [VBO] Fragments to copy were null. ");
     Gu::debugBreak();
     return;
   }
   if (_bIsAllocated == false) {
-    BroLogError(" [VBO] was not allocated");
+    BRLogError(" [VBO] was not allocated");
     Gu::debugBreak();
     return;
   }
@@ -109,7 +109,7 @@ void GpuBufferData::copyDataClientServer(size_t num_elements, const void* frags,
       copySizeBytes = iElementSize * num_elements;
     }
     if (copySizeBytes > byteSize) {
-      BroLogError("Copy size " + copySizeBytes + " (" + num_elements + " elements) was larger than the buffer size " + byteSize + ". Make sure the input size is not -1 or less than 0.");
+      BRLogError("Copy size " + copySizeBytes + " (" + num_elements + " elements) was larger than the buffer size " + byteSize + ". Make sure the input size is not -1 or less than 0.");
       unbindBuffer();
       return;
       Gu::debugBreak();
@@ -135,13 +135,13 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
   _pContext->chkErrDbg();
 
   if (_isBound == false) {
-    BroThrowException("GPU BUffer was not bound prior to mapping");
+    BRThrowException("GPU BUffer was not bound prior to mapping");
   }
 
   // - Can't map more than one buffer at the same time.
   // User must call unmap
   if (_isMapped == true) {
-    BroThrowException("GPU Buffer was already mapped prior to mapping.");
+    BRThrowException("GPU Buffer was already mapped prior to mapping.");
   }
 
   if (false) {
@@ -159,7 +159,7 @@ void GpuBufferData::mapBuffer(GLenum access, void*& pData) {
     if (sbLogged == false) {
       sbLogged = true;
       _pContext->chkErrDbg();
-      BroLogError("Error - glMapBuffer returned nullptr.");
+      BRLogError("Error - glMapBuffer returned nullptr.");
       Gu::debugBreak();
     }
   }
@@ -174,7 +174,7 @@ void GpuBufferData::unmapBuffer() {
   verifyValidBuffer();
   if (_pContext->glUnmapBuffer(_glBufferType) == false) {
     //video memory just got trashed.
-    BroLogError("Video Memory has been trashed by the OS. Graphics may be unstable.");
+    BRLogError("Video Memory has been trashed by the OS. Graphics may be unstable.");
   }
   _pContext->chkErrDbg();
 

@@ -19,7 +19,7 @@ void XmlFile::parse(char* buf, int64_t size) {
   //https://stackoverflow.com/questions/14329738/pugixml-number-of-child-nodes
   size_t n = std::distance(_doc.children().begin(), _doc.children().end());
   if (n > 2) {
-    BroLogWarn("Too many children in configuration file.  File must have a schema tag and 1 root child");
+    BRLogWarn("Too many children in configuration file.  File must have a schema tag and 1 root child");
   }
 
   _vecTokens.clear();

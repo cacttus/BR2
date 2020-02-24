@@ -30,10 +30,10 @@ void MbiFile::parseErr(t_string str, bool bDebugBreak, bool bFatal) {
   str = strhead + str;
   //Throw this if you wnt to have an error in your file.
   if (bFatal) {
-    BroThrowException(str);
+    BRThrowException(str);
   }
   else {
-    BroLogError(str);
+    BRLogError(str);
     if (bDebugBreak) {
       Gu::debugBreak();
     }
@@ -43,7 +43,7 @@ void MbiFile::postLoad() {
 
   //Compute Bone Boxes
   //Debug: we'll do this every time becasue FUCK!s
-  BroLogInfo("  Making Bone Boxes..");
+  BRLogInfo("  Making Bone Boxes..");
   for (std::shared_ptr<ModelSpec> ms : _vecModels) {
     ms->cacheMeshBones();
   }
@@ -66,7 +66,7 @@ bool MbiFile::loadAndParse(t_string file) {
   fb->readByte(h3);
 
   if (h0 != 'M' || h1 != 'B' || h2 != 'I' || h3 != 'H') {
-    BroLogError("Invalid file header for MBI1 file.");
+    BRLogError("Invalid file header for MBI1 file.");
     Gu::debugBreak();
     return false;
   }
@@ -92,7 +92,7 @@ bool MbiFile::loadAndParse(t_string file) {
 
 
   //Read textures
-  BroLogInfo("  Loading textures..");
+  BRLogInfo("  Loading textures..");
   std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs;
   int32_t nTexs;
   fb->readInt32(nTexs);
@@ -112,7 +112,7 @@ bool MbiFile::loadAndParse(t_string file) {
     texs.insert(std::make_pair(hTex, pTex));
   }
   //Resolve textures.
-  BroLogInfo("  Resolving textures..");
+  BRLogInfo("  Resolving textures..");
   for (std::shared_ptr<ModelSpec> ms : _vecModels) {
     for (std::shared_ptr<MeshSpec> mesh : ms->getMeshes()) {
       if (mesh->getMaterial() != nullptr) {
@@ -122,7 +122,7 @@ bool MbiFile::loadAndParse(t_string file) {
             p.second->_pTex = it->second;
           }
           else {
-            BroLogError("Failed to find packed texture map for MBI mesh material.");
+            BRLogError("Failed to find packed texture map for MBI mesh material.");
           }
 
 

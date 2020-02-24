@@ -68,7 +68,7 @@ void ShaderSubProgram::debugPrintShaderSource() const {
     }
     str += t_string("\n");
   }
-  BroLogDebug(str);
+  BRLogDebug(str);
 }
 ShaderType::e ShaderSubProgram::getShaderTypeByFileLocation(DiskLoc& loc) {
   ShaderType::e type = ShaderType::e::st_vertex;
