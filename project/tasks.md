@@ -85,7 +85,7 @@
 
 - [ ] **Story**: Create a new Peon.	
 		
-- [ ] **Story**: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
+- [ ] ### **Story**: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
 	- [ ] Tab Bar
 		- [ ] TabItem
 		- [ ] Temporary Tab vs Permanent Tab
