@@ -92,6 +92,8 @@ public:
   virtual void drawTransparent(RenderParams& rp) override;
   virtual void drawForwardDebug(RenderParams& rp) override {}
   virtual void drawUI(RenderParams& rp) override {}
+  
+  void addComponent(std::shared_ptr<Component> comp);
 
   template < typename Tx > std::shared_ptr<Tx> getData() {
     return std::dynamic_pointer_cast<Tx>(_pSpec);
@@ -144,30 +146,12 @@ public:
   void drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi);
   //void addShadowInfluence(std::shared_ptr<ShadowBox> psb);
   //void clearShadowInfluences();
-
   vec3 getFinalPos();
-
   void collect(std::shared_ptr<RenderBucket> rb);
-  template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node) {
-    //Find a node (starting at this node) which matches the given node type: Tx
-    std::shared_ptr<Tx> pc = std::dynamic_pointer_cast<Tx>(shared_from_this());
-    if (pc != nullptr) {
-      node = pc;
-      return true;
-    }
+  template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node);
 
-    if (getChildren()) {
-      for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-        std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
-        if (pc != nullptr) {
-          if (pc->findNode<Tx>(node) == true) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
+  vec3 getVelocity() { return _velocity; }
+  void setVelocity(vec3& vel) { _velocity = vel; }
 protected:
   void setLocalBind();
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
@@ -175,6 +159,8 @@ protected:
   void applyParent();
   virtual void init();
 protected:
+  std::vector<std::shared_ptr<Component>> _vecComponents;
+
   std::shared_ptr<BaseSpec> _pSpec = nullptr;
   Box3f* _pBox = nullptr;
   OBB* _pOBB = nullptr;
@@ -190,6 +176,8 @@ protected:
   //  std::set<std::shared_ptr<ShadowBox>> _setShadowInfluences;
   bool _bHidden = false;
 
+  vec3 _velocity;
+
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
   vec3 _vPos;
@@ -198,6 +186,28 @@ private:
   bool _bInitialized = false;
 };
 
+
+template < typename Tx > 
+bool SceneNode::findNode(std::shared_ptr<Tx>& __out_ node) {
+  //Find a node (starting at this node) which matches the given node type: Tx
+  std::shared_ptr<Tx> pc = std::dynamic_pointer_cast<Tx>(shared_from_this());
+  if (pc != nullptr) {
+    node = pc;
+    return true;
+  }
+
+  if (getChildren()) {
+    for (std::shared_ptr<TreeNode> tn : *getChildren()) {
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
+      if (pc != nullptr) {
+        if (pc->findNode<Tx>(node) == true) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
 
 }//ns Game
 

@@ -11,7 +11,7 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
-#include "../world/SceneNode.h"
+#include "../model/SceneNode.h"
 
 namespace BR2 {
 /**
@@ -27,8 +27,8 @@ public:
   void update(float delta);
   void updateWidthHeight(int32_t w, int32_t h, bool bForce);
 
-  std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
-  std::shared_ptr<PhysicsManager> getPhysicsManager() { return _pPhysicsWorld; }
+  //std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
+  std::shared_ptr<PhysicsWorld> getPhysicsManager() { return _pPhysicsWorld; }
 
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
   //**TODO: we need to differentiate the different cameras by keeping exactly one camera defined as the "main player camera"
@@ -40,7 +40,7 @@ public:
   std::shared_ptr<GLContext> getContext();
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
   std::vector<std::shared_ptr<CameraNode>> getAllCameras();
-  void setPhysicsWorld(std::shared_ptr<PhysicsManager> p) { _pPhysicsWorld = p; }
+  void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow = x; }
 
   virtual void drawDeferred(RenderParams& rp) override;
@@ -69,12 +69,11 @@ private:
   bool _bDebugDisableDepthTest = false;
 
   std::shared_ptr<LightManager> _pLightManager;
-  std::shared_ptr<UiScreen> _pScreen = nullptr;
-  std::shared_ptr<MeshComponent> _pQuadMeshBackground = nullptr;
+  std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
   std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
-  std::shared_ptr<PhysicsManager> _pPhysicsWorld = nullptr;
-  std::shared_ptr<UiScreen> _pUiScreen = nullptr;
+  std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
+  //std::shared_ptr<UiScreen> _pUiScreen = nullptr;
   std::shared_ptr<CameraNode> _pActiveCamera = nullptr;
   //The default fly camera must always be available.
   //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;

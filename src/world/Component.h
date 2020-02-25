@@ -17,12 +17,12 @@ namespace BR2 {
 */
 class Component : public VirtualMemoryShared<Component> {
 public:
-    Component(std::shared_ptr<SceneNode> ob);
-    virtual ~Component() override;
-    //void setNode(std::shared_ptr<SceneNode> ob) { _pWorldObject = ob;  }
-    
-    template < class Tx = SceneNode >
-    std::shared_ptr<Tx> getNode() { return std::dynamic_pointer_cast<Tx>(_pWorldObject); }
+  Component(std::shared_ptr<SceneNode> ob);
+  virtual ~Component() override;
+  void setNode(std::shared_ptr<SceneNode> ob) { _pWorldObject = ob;  }
+
+  template < class Tx = SceneNode >
+  std::shared_ptr<Tx> getNode() { return std::dynamic_pointer_cast<Tx>(_pWorldObject); }
 private:
   std::shared_ptr<SceneNode> _pWorldObject = nullptr;
 };

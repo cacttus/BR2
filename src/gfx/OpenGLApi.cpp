@@ -36,7 +36,7 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title, bool 
 void OpenGLApi::createRenderer() {
   std::dynamic_pointer_cast<OpenGLWindow>(_pMainWindow)->createRenderer();
 }
-std::shared_ptr<GLContext> OpenGLApi::makeContext(std::shared_ptr<GraphicsWindow> w, GLContext::GLProfile& p) {
+std::shared_ptr<GLContext> OpenGLApi::makeContext(std::shared_ptr<GraphicsWindow> w, GLProfile& p) {
   std::shared_ptr<GLContext> ctx = std::make_shared<GLContext>();
   if (ctx->create(w, p) == false) {
     ctx = nullptr;

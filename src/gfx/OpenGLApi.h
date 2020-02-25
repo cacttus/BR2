@@ -23,7 +23,7 @@ public:
   virtual std::shared_ptr<GraphicsWindow> createWindow(std::string title, bool isMain = false) override;
   virtual void cleanup() override;
   std::shared_ptr<GLContext> getContext() { return _pContext; }
-  std::shared_ptr<GLContext> makeContext(std::shared_ptr<GraphicsWindow> w, GLContext::GLProfile& p);
+  std::shared_ptr<GLContext> makeContext(std::shared_ptr<GraphicsWindow> w, GLProfile& p);
 
   virtual void createRenderer();
 

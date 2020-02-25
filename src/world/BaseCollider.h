@@ -1,19 +1,19 @@
 /**
-*  @file PhysicsNode.h
+*  @file BaseCollider.h
 *  @date March 31, 2017- Phy25
 *  @date Jan 4, 2018
 *  @author MetalMario971
 */
 #pragma once
-#ifndef __PHYSICS_NODE_14910105823111128827_H__
-#define __PHYSICS_NODE_14910105823111128827_H__
+#ifndef __BASE_COLLIDER_14910105823111128827_H__
+#define __BASE_COLLIDER_14910105823111128827_H__
 
 #include "../world/WorldHeader.h"
 #include "../world/Component.h"
 
 namespace BR2 {
 /**
-*  @class PhysicsNode
+*  @class BaseCollider
 *  @brief Movement and physics properties for node objects.
 */
 class BaseCollider : public Component {

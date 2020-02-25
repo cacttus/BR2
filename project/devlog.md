@@ -20,6 +20,13 @@
 * Replace OPeratingSystem with the broken build OperatingSystem
 * Replaced BuildConfig
 * Compile, Tested.
+* Renamed Particle Manager, Input Manager.  Refactored Gu.
+
+* Note: We are not using WorldObject per design, we're using SceneNode - which will be the main "WQorldObject" for the game.
+
+* Added BaseCollider - for the collider components 
+* Added Component
+* Added Scene
 
 *2/21/2020*
 

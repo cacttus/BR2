@@ -10,9 +10,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../model/MeshComponent.h"
-#include "../model/MeshUtils.h"
-#include "../model/Model.h"
+
 #include "../gfx/ShaderManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
@@ -26,32 +24,38 @@
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/FlyingCameraControls.h"
 #include "../gfx/MegaTex.h"
+#include "../model/MeshUtils.h"
+#include "../model/Model.h"
+#include "../model/MeshNode.h"
 #include "../world/RenderBucket.h"
-#include "../world/PhysicsManager.h"
+#include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
-#include "../model/MeshComponent.h"
+
 
 namespace BR2 {
-Scene::Scene() {
+Scene::Scene() : SceneNode(nullptr) {
   //_pFlyCam = std::make_shared<FlyingCameraControls>(Gu::getViewport());
 
   //_pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
   //_pFlyCam->getCam()->setPos(vec3(0, 0, -10));
 
-  Br2LogInfo("Creating Window UI");
-  _pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
 
-  Br2LogInfo("GLContext -  Lights");
+  BRThrowNotImplementedException();
+  //BRLogInfo("Creating Window UI");
+  //_pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
+
+  BRLogInfo("GLContext -  Lights");
   _pLightManager = std::make_shared<LightManager>();
 
-  Br2LogInfo("GLContext -  ScriptManager");
+  BRLogInfo("GLContext -  ScriptManager");
   _pScriptManager = std::make_shared<ScriptManager>();
 
   createFlyingCamera();
   _pRenderBucket = std::make_shared<RenderBucket>();
 }
 Scene::~Scene() {
-  _pScreen = nullptr;
+  BRThrowNotImplementedException();
+  //_pScreen = nullptr;
   _pLightManager = nullptr;
   _pScriptManager = nullptr;
 }
@@ -73,12 +77,12 @@ std::vector<std::shared_ptr<CameraNode>> Scene::getAllCameras() {
 }
 void Scene::createFlyingCamera() {
   //In the future we will replace this witht he active object.
-  Br2LogInfo("Creating Flying Camera");
+  BRLogInfo("Creating Flying Camera");
 
 #define NOSCRIPT
 
 #ifdef NOSCRIPT
-  Br2LogInfo("Creating Fly Camera.");
+  BRLogInfo("Creating Fly Camera.");
   std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>();
   std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
   cn->addComponent(css);
@@ -256,23 +260,24 @@ void Scene::drawDeferred(RenderParams& rp) {
   Perf::popPerf();
 }
 void Scene::drawForward(RenderParams& rp) {
-  debugChangeRenderState();
+  BRThrowNotImplementedException();
+  //debugChangeRenderState();
 
-  if (_pQuadMeshBackground == nullptr) {
-    _pQuadMeshBackground = std::make_shared<MeshComponent>(getContext(), 
-      MeshUtils::createScreenQuadMesh(getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
+  //if (_pQuadMeshBackground == nullptr) {
+  //  _pQuadMeshBackground = std::make_shared<MeshNode>(
+  //    MeshUtils::createScreenQuadMesh(getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
 
-    _pTex = getContext()->getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
-  }
+  //  _pTex = Gu::getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
+  //}
 
-  //Meshes
-  RenderParams rp;
-  for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
-    std::shared_ptr<SceneNode> pm = p.second;
-    pm->drawForward(rp);
-  }
+  ////Meshes
+  //RenderParams rp;
+  //for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
+  //  std::shared_ptr<SceneNode> pm = p.second;
+  //  pm->drawForward(rp);
+  //}
 
-  RenderUtils::drawAxisShader(getContext());
+  //RenderUtils::drawAxisShader();
 }
 void Scene::drawShadow(RenderParams& rp) {
 }
@@ -305,15 +310,14 @@ void Scene::drawTransparent(RenderParams& rp) {
   Perf::popPerf();
 }
 void Scene::drawUI(RenderParams& rp) {
-  _pUiScreen->update(Gu::getInputManager());
-  _pUiScreen->drawForward();
+  BRThrowNotImplementedException();
+  //_pUiScreen->update(Gu::getInputManager());
+  //_pUiScreen->drawForward();
 }
 void Scene::draw2d() {
   drawDebugText();
 }
-void Scene::draw2d() {
-  drawDebugText();
-}
+
 void Scene::setDebugMode() {
   //set some debug vars to make ikte easier
   _bShowDebugText = true;
@@ -356,7 +360,8 @@ void Scene::drawDebugText() {
   //  _pAppUi->endDebugText();
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
-  _pScreen->screenChanged(w, h);
+  BRThrowNotImplementedException();
+  //_pUiScreen->screenChanged(w, h);
 }
 //std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
 //  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);

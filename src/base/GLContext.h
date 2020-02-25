@@ -12,27 +12,30 @@
 #include "../base/SDLGLIncludes.h"
 namespace BR2 {
 /**
+*  @class GLProfile
+*  @brief OpenGL pixel format, profile.
+*/
+struct GLProfile : public VirtualMemory {
+public:
+  int _iDepthBits = 0;
+  int _iMinVersion = 0;
+  int _iMinSubVersion = 0;
+  int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
+  bool _bVsync = true; //Automatic on IOS
+  void make(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
+    _iDepthBits = iDepthBits;
+    _iMinSubVersion = iMinSubver;
+    _iMinVersion = iMinVer;
+    _iProfile = iProfile;
+    _bVsync = bVsync;
+  }
+};
+
+/**
 *  @class GLContext
-*  @brief OpenGL render context
+*  @brief OpenGL rendering context.
 */
 class GLContext : public GraphicsContext {
-public:
-  struct GLProfile : public VirtualMemory {
-  public:
-    int _iDepthBits = 0;
-    int _iMinVersion = 0;
-    int _iMinSubVersion = 0;
-    int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
-    bool _bVsync = true; //Automatic on IOS
-    void make(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
-      _iDepthBits = iDepthBits;
-      _iMinSubVersion = iMinSubver;
-      _iMinVersion = iMinVer;
-      _iProfile = iProfile;
-      _bVsync = bVsync;
-    }
-  };
-
 public:
   GLContext();
   virtual ~GLContext() override;
@@ -83,7 +86,6 @@ private:
   GLProfile _profile;
 
   int _iSupportedDepthSize;
-
 
 public:
 

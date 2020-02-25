@@ -456,6 +456,15 @@
     <ClCompile Include="src\gfx\ParticleManager.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Scene.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\Component.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\BaseCollider.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppMain.h">
@@ -1021,6 +1030,15 @@
     </ClInclude>
     <ClInclude Include="src\gfx\ParticleManager.h">
       <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Scene.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Component.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\BaseCollider.h">
+      <Filter>world</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

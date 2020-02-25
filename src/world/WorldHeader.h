@@ -32,6 +32,8 @@ class HullShape;
 class RenderBucket;
 class BvhCollectionParams;
 class RenderBucket;
+class Scene;
+class Component;
 
 class BoxCollision : public VirtualMemory {
 public:

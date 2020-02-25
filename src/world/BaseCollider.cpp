@@ -1,12 +1,12 @@
 #include "../base/Gu.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../world/BaseCollider.h"
 #include "../world/Manifold.h"
-#include "../world/PhysicsManager.h"
+#include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
-#include "../world/SceneNode.h" 
+#include "../model/SceneNode.h" 
 
 namespace BR2 {
 BaseCollider::BaseCollider(std::shared_ptr<SceneNode> pnode): Component(pnode) {
@@ -26,8 +26,8 @@ BaseCollider::~BaseCollider() {
   DEL_MEM(_pBoundBox);
 }
 //TODO: manage this, somehow.
-void BaseCollider::setNodeVelocity(vec3& nodeVel){ BrThrowNotImplementedException(); }
-void BaseCollider::setNodePosition(vec3& nodePos){ BrThrowNotImplementedException(); }
+void BaseCollider::setNodeVelocity(vec3& nodeVel) { BRThrowNotImplementedException(); }
+void BaseCollider::setNodePosition(vec3& nodePos) { BRThrowNotImplementedException(); }
 //void BaseCollider::setVelocity(vec3& v) {
 //  _vVelocity = v;
 //  //Don't update anything here. we set this often.
@@ -70,7 +70,7 @@ void BaseCollider::validateSanePhysics() {
     pos = 0;
   }
 
-#define pos_msg(aa) Br2LogWarn("Object has reached the edge of the world!! p=("+ aa.x+ " "+ aa.y+ " "+ aa.z + ") resetting position.")
+#define pos_msg(aa) BRLogWarn("Object has reached the edge of the world!! p=("+ aa.x+ " "+ aa.y+ " "+ aa.z + ") resetting position.")
 
   // if the object is out of bounds throw it up to the sky
   if (pos.x < -PHY_MAX_OBJECT_DISTANCE) { pos_msg(pos); pos.x = PHY_MAX_OBJECT_DISTANCE - getBoundBox()->getWidth(); }
@@ -137,7 +137,7 @@ void BaseCollider::setTemps(vec3& vVel, uint64_t frameId) {
 
 //   _vTempAcc = vAccel;
 
-  PhysicsManager::limitVelocity(_vTempVel);
+  PhysicsWorld::limitVelocity(_vTempVel);
 
   validateSanePhysics();
 }

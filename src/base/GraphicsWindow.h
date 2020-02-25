@@ -36,6 +36,8 @@ public:
   void updateWidthHeight(uint32_t w, uint32_t h, bool force);
   void printHelpfulDebug();
 
+  std::shared_ptr<GLContext> getContext();
+
 protected:
   void makeSDLWindow(string_t title, int rendersystem);
   void initRenderSystem();

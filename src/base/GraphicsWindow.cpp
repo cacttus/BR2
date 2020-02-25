@@ -278,6 +278,9 @@ void GraphicsWindow::endRender() {
 
   Perf::popPerf();
 }
+std::shared_ptr<GLContext> GraphicsWindow::getContext() {
+  return Gu::getGraphicsContext();
+}
 
 
 }//ns Game

@@ -37,7 +37,7 @@ public:
   void flattenBreadthFirst(NodeList& outVec);
   std::shared_ptr<TreeNode> find(std::shared_ptr<TreeNode> bt);
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
-  bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
+  virtual bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
   bool detachFromParent();  //calls remove()
 
   size_t getNodeCountHierarchy();

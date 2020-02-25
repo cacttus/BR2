@@ -16,7 +16,7 @@ void OpenGLWindow::create(string_t windowTitle) {
   int minGLVersion;
   int minGLSubversion;
   const int c_iMax_Profs = 2;
-  GLContext::GLProfile profs[c_iMax_Profs];
+  GLProfile profs[c_iMax_Profs];
   int iProfile = SDL_GL_CONTEXT_PROFILE_CORE;
   bool bVsync = false;
 

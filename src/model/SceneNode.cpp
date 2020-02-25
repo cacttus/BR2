@@ -1,20 +1,21 @@
-#include "../model/SceneNode.h"
 #include "../base/Hash.h"
 #include "../base/BinaryFile.h"
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/EngineConfig.h"
+#include "../math/MathAll.h"
 #include "../gfx/CameraNode.h"
+#include "../gfx/LightNode.h"
 #include "../gfx/ShadowBoxSide.h"
+#include "../model/SceneNode.h"
 #include "../model/MeshNode.h"
 #include "../model/Model.h"
 #include "../model/OBB.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/MeshSpec.h"
-#include "../gfx/LightNode.h"
-#include "../math/MathAll.h"
 #include "../world/RenderBucket.h"
+#include "../world/Component.h"
 
 namespace BR2 {
 BaseSpec::BaseSpec(string_t strName) {
@@ -472,6 +473,9 @@ void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
     }
   }
 }
-
+void SceneNode::addComponent(std::shared_ptr<Component> comp) {
+  comp->setNode(getThis<SceneNode>());
+  _vecComponents.push_back(comp); 
+}
 
 }//ns Game
