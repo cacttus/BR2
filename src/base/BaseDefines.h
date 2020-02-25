@@ -123,7 +123,7 @@ class Exception;
 class SoundSpec;
 class SoundCache;
 class TouchInfo;
-class Fingers; // Renamed InputManager;
+class InputManager; // Renamed InputManager;
 class GameMemory;
 class AppRunner;
 class Delta;

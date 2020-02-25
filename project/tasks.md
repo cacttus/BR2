@@ -100,12 +100,18 @@ The system will be rewritten in 3 areas:
 - [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
 
 ## Mine City, Enhancements, Phase I
-- [ ] Simplify the UI to work with the UI design for this game.  (Which should update UI performance)\
-- [ ] Implement hard coded x/y locations.  
-- [ ] Remove percentages.
-- [ ] Asynchronous UI layout routine.
+- [ ] UI System tasks
+	- [ ] Simplify the UI to work with the UI design for this game.  (Which should update UI performance)\
+	- [ ] Implement hard coded x/y locations.  
+	- [ ] Remove percentages.
+	- [ ] Asynchronous UI layout routine.
 
-- [ ] **Story**: Create a new Peon.	
+- [ ] **Story**: Create a Peon.	
+	- [ ] Create a Peon Model in Blender, with at least 1 Animation
+	- [ ] Load the Peon model from a GLTF file, created in Blender.
+	- [ ] Associate at least one animation with the Peon Model
+	- [ ] Have the Peon wander around the tiles in the game.
+	- [ ] Make sure rendering is not slowed down by Peon.
 		
 - [ ] **Story**: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
 	- [ ] Tab Bar
@@ -133,6 +139,8 @@ The system will be rewritten in 3 areas:
 - [ ] CMake integration. Test on iOS, Linux, Android.
 - [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
+- [ ] Remove SDLGLIncludes from headers.  (It includes Windows.h)
+- [ ] Further optimize engine building by implementing PIMPL in headers with big include files (such as SDL).
 
 ## Delayed / Shelved 
 - [ ] ~~Multiple Window Rendering~~

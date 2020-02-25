@@ -26,7 +26,7 @@ public:
   static std::shared_ptr<Package> getPackage();
   static std::shared_ptr<ModelCache> getModelCache();
   static std::shared_ptr<Sequencer> getSequencer();
-  static std::shared_ptr<Fingers> getFingers();
+  static std::shared_ptr<InputManager> getInputManager();
   static std::shared_ptr<FpsMeter> getFpsMeter();
   static std::shared_ptr<FrameSync> getFrameSync();
   static std::shared_ptr<SoundCache> getSoundCache();
@@ -129,7 +129,7 @@ private:
   static std::shared_ptr<Party> _pParty;
   static std::shared_ptr<Sequencer> _pSequencer;
   static std::shared_ptr<AppBase> _pAppBase;
-  static std::shared_ptr<Fingers> _pFingers;
+  static std::shared_ptr<InputManager> _pInputManager;
   static std::shared_ptr<FpsMeter> _pFpsMeter;
   static std::shared_ptr<FrameSync> _pFrameSync;
   static std::shared_ptr<SoundCache> _pSoundCache;

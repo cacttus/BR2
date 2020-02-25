@@ -31,7 +31,7 @@
     <ClCompile Include="src\base\EngineConfigFile.cpp" />
     <ClCompile Include="src\base\Exception.cpp" />
     <ClCompile Include="src\base\FileSystem.cpp" />
-    <ClCompile Include="src\base\Fingers.cpp" />
+    <ClCompile Include="src\base\InputManager.cpp" />
     <ClCompile Include="src\base\FpsMeter.cpp" />
     <ClCompile Include="src\base\FrameSync.cpp" />
     <ClCompile Include="src\base\GLContext.cpp" />
@@ -185,7 +185,7 @@
     <ClInclude Include="src\base\EngineConfigFile.h" />
     <ClInclude Include="src\base\Exception.h" />
     <ClInclude Include="src\base\FileSystem.h" />
-    <ClInclude Include="src\base\Fingers.h" />
+    <ClInclude Include="src\base\InputManager.h" />
     <ClInclude Include="src\base\FpsMeter.h" />
     <ClInclude Include="src\base\FrameSync.h" />
     <ClInclude Include="src\base\GLContext.h" />

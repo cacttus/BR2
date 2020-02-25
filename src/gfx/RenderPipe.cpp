@@ -3,7 +3,7 @@
 #include "../base/DateTime.h"
 #include "../base/Img32.h"
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/FileSystem.h"
 #include "../gfx/WindowViewport.h"
 #include "../gfx/Texture2DSpec.h"
@@ -152,8 +152,8 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePat
 }
 
 void RenderPipe::saveScreenshot() {
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F9)) {
-    if (Gu::getFingers()->shiftHeld()) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F9)) {
+    if (Gu::getInputManager()->shiftHeld()) {
       BRLogInfo("[RenderPipe] Saving all MRTs.");
       //Save all deferred textures
       int iTarget;

@@ -31,7 +31,7 @@ public:
 
   // virtual void step(float dt) = 0;
  //  virtual void teardown() = 0;
-  virtual void updateTouch(std::shared_ptr<Fingers>, float dt) = 0;
+  virtual void updateTouch(std::shared_ptr<InputManager>, float dt) = 0;
   virtual void userZoom(int amount) = 0;
   virtual string_t getIconFullPath() { return ""; }
   virtual string_t getConfigPath() = 0;

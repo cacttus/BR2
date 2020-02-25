@@ -35,7 +35,7 @@ public:
 
   // virtual void step(float dt) override {}
  //  virtual void teardown() override {}
-  virtual void updateTouch(std::shared_ptr<Fingers>, float dt) override {}
+  virtual void updateTouch(std::shared_ptr<InputManager>, float dt) override {}
   virtual void userZoom(int amount) override {}
 
   virtual string_t getIconFullPath() { return makeAssetPath("tex", "icon.png"); }

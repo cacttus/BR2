@@ -14,7 +14,7 @@
 #include "../base/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Package.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
@@ -82,7 +82,7 @@ std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
 std::shared_ptr<Party> Gu::_pParty = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
 std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
-std::shared_ptr<Fingers> Gu::_pFingers = nullptr;
+std::shared_ptr<InputManager> Gu::_pInputManager = nullptr;
 std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
 std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
 std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
@@ -109,7 +109,7 @@ _STPROP(RenderSettings);
 _STPROP(Package);
 _STPROP(ModelCache);
 _STPROP(Sequencer);
-_STPROP(Fingers);
+_STPROP(InputManager);
 _STPROP(FpsMeter);
 _STPROP(FrameSync);
 _STPROP(SoundCache);
@@ -257,7 +257,7 @@ void Gu::deleteGlobals() {
   _pEngineConfig = nullptr;
 
   //System Level
-  _pFingers = nullptr;
+  _pInputManager = nullptr;
   _pPackage = nullptr;
   _pLogger = nullptr;
   _pNet = nullptr;
@@ -627,8 +627,8 @@ void Gu::createManagers() {
   BRLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
   BRLogInfo("GLContext - Creating Fingers");
-  _pFingers = std::make_shared<Fingers>();
-  _pFingers->init();
+  _pInputManager = std::make_shared<InputManager>();
+  _pInputManager->init();
   BRLogInfo("GLContext - Creating FpsMeter");
   _pFpsMeter = std::make_shared<FpsMeter>();
   BRLogInfo("GLContext - Creating FrameSync");
@@ -676,7 +676,7 @@ void Gu::updateGlobals() {
     _pSoundCache->update();
   }
   if (_pPicker != nullptr) {
-    _pPicker->update(_pFingers);
+    _pPicker->update(_pInputManager);
   }
   if (_pNet != nullptr) {
     _pNet->update();

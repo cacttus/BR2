@@ -37,7 +37,7 @@ public:
     //vec2 _vPosStartPx;
     // Box2f _b2StartBox;//Computed box (design space) of starting position
     DragFunc _func;
-    void update(std::shared_ptr<Fingers> pFingers);
+    void update(std::shared_ptr<InputManager> pFingers);
 };
 class UiParser {
 public:

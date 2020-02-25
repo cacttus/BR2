@@ -1,6 +1,6 @@
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Img32.h"
 #include "../base/FpsMeter.h"
 #include "../base/GLContext.h"
@@ -85,7 +85,7 @@ void UiElement::addEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f) {
   }
   e->second.push_back(f);
 }
-void UiElement::doMouseEvents(std::shared_ptr<Fingers> pFingers) {
+void UiElement::doMouseEvents(std::shared_ptr<InputManager> pFingers) {
   //This seems like the moste fficient way to do this.
   ButtonState::e eLmb = pFingers->getLmbState();
   ButtonState::e eRmb = pFingers->getRmbState();
@@ -192,7 +192,7 @@ void UiElement::doMouseEvents(std::shared_ptr<Fingers> pFingers) {
      //}
 
 }
-void UiElement::update(std::shared_ptr<Fingers> pFingers) {
+void UiElement::update(std::shared_ptr<InputManager> pFingers) {
   if (getLayoutVisible() == false || getRenderVisible() == false) {
     return;
   }
@@ -216,7 +216,7 @@ std::shared_ptr<UiElement> UiElement::cloneSelfOnly() {
   ret->_mapChildren.clear();// do not clone children
   return ret;
 }
-bool UiElement::pick(std::shared_ptr<Fingers> fingers) {
+bool UiElement::pick(std::shared_ptr<InputManager> fingers) {
   bool bPicked = false;
   const Box2f& q = getLayoutQuad();
   if (getLayoutVisible() == true) {
@@ -1073,7 +1073,7 @@ void UiElement::enableDrag(UiDragInfo::DragFunc func) {
     [winw](UiEventId::e ev, void* pv) {
       if (std::shared_ptr<UiElement> w = winw.lock()) {
         w->_pDragInfo->_bDragStart = true;
-        w->_pDragInfo->_vDragStart = Gu::getFingers()->getMousePos();
+        w->_pDragInfo->_vDragStart = Gu::getInputManager()->getMousePos();
         // w->_pDragInfo->_b2StartBox = w->getComputedQuad();
       }
     }));
@@ -1415,7 +1415,7 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
   verts.push_back(v);
 
 }
-bool UiImage::pick(std::shared_ptr<Fingers> fingers) {
+bool UiImage::pick(std::shared_ptr<InputManager> fingers) {
   if (getLayoutVisible()) {
     if (getRenderVisible()) {
       if (_iPickId > 0) {
@@ -1548,7 +1548,7 @@ void UiLabel::performLayout(bool bForce) {
   int nn = 0;
   nn++;
 }
-void UiLabel::update(std::shared_ptr<Fingers> pFingers) {
+void UiLabel::update(std::shared_ptr<InputManager> pFingers) {
 
   if (StringUtil::equals(_strTextLast, _strText) == false) {
     _strTextLast = _strText;
@@ -1708,7 +1708,7 @@ void UiButtonBase::init() {
     }
     });
 }
-void UiButtonBase::update(std::shared_ptr<Fingers> pFingers) {
+void UiButtonBase::update(std::shared_ptr<InputManager> pFingers) {
 
   if (getPickedLastFrame() == false) {
     showUp();
@@ -1773,7 +1773,7 @@ void UiImageButton::showDown() {
     if (_pDown != nullptr)  _pDown->showRender();
   }
 }
-void UiImageButton::update(std::shared_ptr<Fingers> pFingers) {
+void UiImageButton::update(std::shared_ptr<InputManager> pFingers) {
   UiButtonBase::update(pFingers);
 }
 #pragma endregion
@@ -2095,7 +2095,7 @@ void Ui9Grid::setBorderWidth(std::shared_ptr<UiBorderDim> dims) {
   minWidth().px(dims->get(GridBorder::e::Left).px() + dims->get(GridBorder::e::Right).px());
   minHeight().px(dims->get(GridBorder::e::Top).px() + dims->get(GridBorder::e::Bot).px());
 }
-void Ui9Grid::update(std::shared_ptr<Fingers> pFingers) {
+void Ui9Grid::update(std::shared_ptr<InputManager> pFingers) {
   UiGrid::update(pFingers);
 }
 
@@ -2224,7 +2224,7 @@ void UiScrubGenThumb::init() {
   };
   enableDrag(scrubFunc);
 }
-void UiScrubGenThumb::update(std::shared_ptr<Fingers> pFingers) {
+void UiScrubGenThumb::update(std::shared_ptr<InputManager> pFingers) {
   //Generic UPdate
   UiElement::update(pFingers);
 
@@ -2319,7 +2319,7 @@ void UiScrubGen::init() {
     _pThumb->setScrubChanged();
   }
 }
-void UiScrubGen::update(std::shared_ptr<Fingers> pFingers) {
+void UiScrubGen::update(std::shared_ptr<InputManager> pFingers) {
   UiElement::update(pFingers);
 
   //Call the registered scroll, and barSize events
@@ -2376,7 +2376,7 @@ std::shared_ptr<UiScrollbarThumb> UiScrollbarThumb::create(std::shared_ptr<UiScr
 void UiScrollbarThumb::init() {
   UiScrubGenThumb::init();
 }
-void UiScrollbarThumb::update(std::shared_ptr<Fingers> pFingers) {
+void UiScrollbarThumb::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGenThumb::update(pFingers);
 }
 void UiScrollbarThumb::performLayout(bool bForce) {
@@ -2420,7 +2420,7 @@ std::shared_ptr<UiScrollbar> UiScrollbar::create(std::shared_ptr<UiScrollbarSkin
 void UiScrollbar::init() {
   UiScrubGen::init();
 }
-void UiScrollbar::update(std::shared_ptr<Fingers> pFingers) {
+void UiScrollbar::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGen::update(pFingers);
 }
 void UiScrollbar::performLayout(bool bForce) {
@@ -2481,7 +2481,7 @@ void UiCheckbox::doCheck() {
 void UiCheckbox::init() {
   UiElement::init();
 }
-void UiCheckbox::update(std::shared_ptr<Fingers> pFingers) {
+void UiCheckbox::update(std::shared_ptr<InputManager> pFingers) {
   UiElement::update(pFingers);
 }
 void UiCheckbox::performLayout(bool bForce) {
@@ -2518,7 +2518,7 @@ std::shared_ptr<UiSliderThumb> UiSliderThumb::create(std::shared_ptr<UiSliderSki
 void UiSliderThumb::init() {
   UiScrubGenThumb::init();
 }
-void UiSliderThumb::update(std::shared_ptr<Fingers> pFingers) {
+void UiSliderThumb::update(std::shared_ptr<InputManager> pFingers) {
 
   //Update height of TB thumb to match parent height.
   if (_eOrientation == Orientation::e::Horizontal) {
@@ -2575,7 +2575,7 @@ std::shared_ptr<UiSlider> UiSlider::create(std::shared_ptr<UiSliderSkin> pSkin, 
 void UiSlider::init() {
   UiScrubGen::init();
 }
-void UiSlider::update(std::shared_ptr<Fingers> pFingers) {
+void UiSlider::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGen::update(pFingers);
 
   //Update height of TB thumb to match parent height.
@@ -3024,7 +3024,7 @@ void UiWindow::init() {
 void UiWindow::setTitleLabel(std::string lbl) {
   _lblTitle->setText(lbl);
 }
-void UiWindow::update(std::shared_ptr<Fingers> pFingers) {
+void UiWindow::update(std::shared_ptr<InputManager> pFingers) {
   //Update Childs including VScrollbar
   UiElement::update(pFingers);
 
@@ -3058,7 +3058,7 @@ void UiWindow::enableDrag() {
   _pTitleBar->enableDrag(moveFunc);
   setLayoutChanged();
 }
-bool UiWindow::pick(std::shared_ptr<Fingers> fingers) {
+bool UiWindow::pick(std::shared_ptr<InputManager> fingers) {
   bool b = UiElement::pick(fingers);
 
   return b;
@@ -3100,7 +3100,7 @@ void UiToolbar::init() {
   height() = "auto";//uDim(Gu::getGui()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
 
 }
-void UiToolbar::update(std::shared_ptr<Fingers> pFingers) {
+void UiToolbar::update(std::shared_ptr<InputManager> pFingers) {
   UiWindow::update(pFingers);
 }
 void UiToolbar::performLayout(bool bForce) {
@@ -3159,7 +3159,7 @@ void Gui2d::init() {
   );
 }
 
-void Gui2d::update(std::shared_ptr<Fingers> pFingers) {
+void Gui2d::update(std::shared_ptr<InputManager> pFingers) {
   UiElement::update(pFingers);//Note: due to buttons resetting themselves update() must come before pick()
 
  // if (Gu::getFpsMeter()->frameMod(2)) {
@@ -3169,7 +3169,7 @@ void Gui2d::update(std::shared_ptr<Fingers> pFingers) {
    //Updating this per frame to indicate if the GUI is picked.
   _bIsPicked = pick(pFingers);
 }
-void Gui2d::updateLayout(std::shared_ptr<Fingers> pFingers) {
+void Gui2d::updateLayout(std::shared_ptr<InputManager> pFingers) {
   _pCursor->left() = pFingers->getMousePos().x;
   _pCursor->top() = pFingers->getMousePos().y;
 

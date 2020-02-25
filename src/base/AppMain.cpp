@@ -15,7 +15,7 @@
 #include "../base/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../gfx/MegaTex.h"
 
 namespace BR2 {
@@ -97,30 +97,30 @@ void AppMain::drawBackgroundImage() {
 
 }
 void AppMain::debugChangeRenderState() {
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F1)) {
-    if (Gu::getFingers()->shiftHeld()) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F1)) {
+    if (Gu::getInputManager()->shiftHeld()) {
       _bDebugDisableShadows = !_bDebugDisableShadows;
     }
     else {
       _bShowDebugText = !_bShowDebugText;
     }
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F2)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F2)) {
     _bDrawDebug = !_bDrawDebug;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F3)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F3)) {
     _bDebugDisableCull = !_bDebugDisableCull;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F4)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F4)) {
     _bDebugShowWireframe = !_bDebugShowWireframe;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F5)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F5)) {
     _bDebugClearWhite = !_bDebugClearWhite;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F6)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F6)) {
     _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
   }
-  if (Gu::getFingers()->keyPress(SDL_SCANCODE_F7)) {
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F7)) {
     if (Gu::getFrameSync()->isEnabled()) {
       Gu::getFrameSync()->disable();
     }
@@ -211,7 +211,7 @@ void AppMain::draw2d() {
   drawDebugText();
 
   //  Gu::getGui()->debugForceLayoutChanged();
-  Gu::getGui()->update(Gu::getFingers());
+  Gu::getGui()->update(Gu::getInputManager());
   Gu::getGui()->drawForward();
 }
 void AppMain::setDebugMode() {

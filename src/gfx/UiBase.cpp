@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Gu.h"
 
 #include "../math/Box2x.h"
@@ -44,7 +44,7 @@ std::string Orientation::toString(Orientation::e eOr) {
   return "Invalid Enum!";
 }
 //////////////////////////////////////////////////////////////////////////
-void UiDragInfo::update(std::shared_ptr<Fingers> pFingers) {
+void UiDragInfo::update(std::shared_ptr<InputManager> pFingers) {
   float mw = 1.0f / Gui2d::getDesignMultiplierW();
   float mh = 1.0f / Gui2d::getDesignMultiplierH();
 

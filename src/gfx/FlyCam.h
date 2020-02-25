@@ -19,9 +19,9 @@ public:
   FlyCam(std::shared_ptr<WindowViewport> pv);
   virtual ~FlyCam() override;
 
-  void moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta);
+  void moveCameraWSAD(std::shared_ptr<InputManager> pFingers, float delta);
   void userZoom(float amt);
-  void update(std::shared_ptr<Fingers> pFingers, float dt);
+  void update(std::shared_ptr<InputManager> pFingers, float dt);
   void setActive();
 
   void setPosAndLookAt(vec3&& pos, vec3&& lookat);
@@ -46,7 +46,7 @@ private:
 
   void rotateCameraNormal(float rotX, float rotY);
   void updateCameraPosition();
-  void updateRotate(std::shared_ptr<Fingers> pFingers);
+  void updateRotate(std::shared_ptr<InputManager> pFingers);
 
 };
 

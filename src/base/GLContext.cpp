@@ -6,7 +6,7 @@
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Sequencer.h"
 
 #include "../base/FrameSync.h"

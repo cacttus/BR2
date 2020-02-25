@@ -4,7 +4,7 @@
 #include "../base/DebugHelper.h"
 #include "../base/SoundCache.h"
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Logger.h"
 #include "../base/GraphicsWindow.h"
 #include "../base/SDLUtils.h"
@@ -244,7 +244,7 @@ public:
     int n = 0;
     vec2 delta;
     SDL_Scancode keyCode;
-    std::shared_ptr<Fingers> pFingers = Gu::getFingers();
+    std::shared_ptr<InputManager> pFingers = Gu::getInputManager();
 
     if (event == nullptr)
       return true;
@@ -342,7 +342,7 @@ public:
           break;//SDL_QUIT
         }
 
-        Gu::getFingers()->preUpdate();
+        Gu::getInputManager()->preUpdate();
 
         Gu::updateGlobals();
 
@@ -351,7 +351,7 @@ public:
         }
 
         //Update all button states.
-        Gu::getFingers()->postUpdate();
+        Gu::getInputManager()->postUpdate();
       }
       Perf::popPerf();
       Perf::endPerf();

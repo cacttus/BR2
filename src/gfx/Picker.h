@@ -22,7 +22,7 @@ public:
   Picker(std::shared_ptr<GLContext> pc);
   virtual ~Picker() override;
   uint32_t getSelectedPixelId() { return _uiLastSelectedPixelId; }
-  void update(std::shared_ptr<Fingers> pFingers);
+  void update(std::shared_ptr<InputManager> pFingers);
   uint32_t genPickId();
 
 private:

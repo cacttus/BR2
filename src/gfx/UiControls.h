@@ -138,7 +138,7 @@ public:
   virtual ~UiElement() override;
 
   std::string getName() { return _strName; }
-  virtual void update(std::shared_ptr<Fingers> pFingers);
+  virtual void update(std::shared_ptr<InputManager> pFingers);
   virtual void performLayout(bool bForce);
 
   virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect);
@@ -186,11 +186,11 @@ public:
   bool removeChild(std::shared_ptr<UiElement> ele, bool bUpdateLayout = true);
   bool hasChild(std::shared_ptr<UiElement> ele);
 
-  virtual bool pick(std::shared_ptr<Fingers> fingers);
+  virtual bool pick(std::shared_ptr<InputManager> fingers);
   void addEvent(UiEventId::e ev, std::shared_ptr<UiEventFunc> f);
   bool removeEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f);
 
-  void doMouseEvents(std::shared_ptr<Fingers> pFingers);
+  void doMouseEvents(std::shared_ptr<InputManager> pFingers);
   void getTreeAsList(std::vector<std::shared_ptr<UiElement>>& __out_ children);
   void setSort(uint32_t uisort);
   bool getLayoutVisible() { return _bVisible; };//Remove elem from layout + hide it
@@ -253,7 +253,7 @@ public:
   virtual bool getPickable() override { return true; }
   void setSizeMode(UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY);
   void setWrapMode(TexWrap::e u, TexWrap::e v);
-  virtual bool pick(std::shared_ptr<Fingers> fingers) override;
+  virtual bool pick(std::shared_ptr<InputManager> fingers) override;
   Box2f& getTexs() { return  _q2Tex; }
   void regenMeshExposed(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) { regenMesh(verts, inds, b2ClipRect); }
 
@@ -287,7 +287,7 @@ public:
   void setText(std::string s);
   virtual void performLayout(bool bForce) override;
   void enableWordWrap() { _bWordWrap = true; }
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
 };
 namespace ImageState { typedef enum { Up, Down, Hover } e; }
 class UiButtonBase : public UiElement {
@@ -304,7 +304,7 @@ protected:
 
 public:
   void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void showHover() = 0;
   virtual void showUp() = 0;
   virtual void showDown() = 0;
@@ -322,7 +322,7 @@ public:
   //create the same 9 grid
   static std::shared_ptr<UiImageButton> create(std::shared_ptr<UiButtonSkin> pSkin);
   void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void showHover() override;
   virtual void showUp() override;
   virtual void showDown() override;
@@ -366,7 +366,7 @@ public:
   Ui9Grid() {}
   virtual ~Ui9Grid() override {}
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   void set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer = UiElement::c_uiBaseLayer0SortId);
   void setBorderWidth(std::shared_ptr<UiBorderDim> dims);
   static size_t cellOff(int i, int j) { return (size_t)(j * 3 + i); }
@@ -414,7 +414,7 @@ public:
   void resetScrubChanged() { _bPlayerDrag = false; }
   void setScrubChanged() { _bPlayerDrag = true; }
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   Orientation::e getOrientation() { return _eOrientation; }
   virtual void performLayout(bool bForce) override;
   void setBarSizePct(float pos01);
@@ -445,7 +445,7 @@ protected:
   void setBarWidthFunc(BarWidthFunc b) { _barWidthFunc = b; }
   virtual void setScrollFunc(ScrollFunc b) { _scrollFunc = b; }
 public:
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void init() override;
   static uint32_t getThumbSortLayer();
   static uint32_t getBackgroundSortLayer();
@@ -464,7 +464,7 @@ public:
   virtual ~UiScrollbarThumb() override {}
   virtual void init() override;
   virtual void performLayout(bool bForce) override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
 };
 class UiScrollbar : public UiScrubGen {
   std::shared_ptr<UiGrid> _pImage = nullptr;
@@ -476,7 +476,7 @@ public:
   virtual ~UiScrollbar() override {}
   static std::shared_ptr<UiScrollbar> create(std::shared_ptr<UiScrollbarSkin> pSkin, UiScrubGen::BarWidthFunc bwf, UiScrubGen::ScrollFunc sf);
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void performLayout(bool bForce) override;
 };
 class UiCheckbox : public UiElement {
@@ -492,7 +492,7 @@ public:
   virtual ~UiCheckbox() override {}
   static std::shared_ptr<UiCheckbox> create(std::shared_ptr<UiCheckboxSkin> pSkin, std::string label);
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void performLayout(bool bForce) override;
   void setCheckFunc(std::function<void(bool bNewValue)> func) { _checkFunc = func; }
   void setChecked(bool b);
@@ -505,7 +505,7 @@ public:
   virtual ~UiSliderThumb() override {}
   virtual void init() override;
   virtual void performLayout(bool bForce) override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
 };
 class UiSlider : public UiScrubGen {
   std::shared_ptr<UiGrid> _pImage = nullptr;
@@ -519,7 +519,7 @@ public:
   virtual ~UiSlider() override {}
   static std::shared_ptr<UiSlider> create(std::shared_ptr<UiSliderSkin> pSkin, UiScrubGen::ScrollFunc sf);
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void performLayout(bool bForce) override;
   std::shared_ptr<UiLabel> getValueLabel() { return _pValueLabel; }
   void setValueLabel(std::shared_ptr<UiLabel> v) { _pValueLabel = v; }
@@ -572,9 +572,9 @@ public:
   virtual ~UiWindow() override {}
   static std::shared_ptr<UiWindow> create(std::shared_ptr<UiWindowSkin> pSkin);
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers);
+  virtual void update(std::shared_ptr<InputManager> pFingers);
   virtual void performLayout(bool bForce) override;
-  virtual bool pick(std::shared_ptr<Fingers> fingers) override;
+  virtual bool pick(std::shared_ptr<InputManager> fingers) override;
   void enableVScrollbar();//Call this to scroll contents
   void enableHScrollbar();//Call this to scroll contents
   void enableResize();
@@ -588,7 +588,7 @@ class UiToolbar : public UiWindow {
 public:
   static std::shared_ptr<UiToolbar> create(std::shared_ptr<UiToolbarSkin> skin);
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void performLayout(bool bForce) override;
 };
 class UiCursor : public UiImage {
@@ -619,7 +619,7 @@ class Gui2d : public UiElement {
   std::shared_ptr<MeshNode> _pMesh = nullptr;
   //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;
   void updateMesh();
-  void updateLayout(std::shared_ptr<Fingers> pFingers);
+  void updateLayout(std::shared_ptr<InputManager> pFingers);
 protected:
   std::shared_ptr<UiCursor> getCursor() { return _pCursor; }
 public:
@@ -628,7 +628,7 @@ public:
   bool getIsPicked() { return _bIsPicked; }
   const UiDesignSize& getDesignSize() { return _designSize; }
   virtual void init() override;
-  virtual void update(std::shared_ptr<Fingers> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pFingers) override;
   void drawForward();
   virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect) override;
   void setCursor(std::shared_ptr<UiCursor> c);

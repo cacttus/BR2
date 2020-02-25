@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Gu.h"
 #include "../base/Img32.h"
 

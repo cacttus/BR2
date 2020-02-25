@@ -1,5 +1,5 @@
 #include "../base/GLContext.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 
@@ -36,7 +36,7 @@ void FlyCam::updateCameraPosition(){
     _pCamera->setPos(std::move(_vCamPos));
     _pCamera->setLookAt(std::move(vLookat));
 }
-void FlyCam::moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta){
+void FlyCam::moveCameraWSAD(std::shared_ptr<InputManager> pFingers, float delta){
     //Damp Slows us a bit when we zoom out.
    // float damp = fabsf(_fCamDist)*0.001f;
     float strafeAmt = 1.05; //fabsf(_fCamDist) / (CongaUtils::getNodeWidth() + damp) * factor;
@@ -66,7 +66,7 @@ void FlyCam::moveCameraWSAD(std::shared_ptr<Fingers> pFingers, float delta){
 }
 void FlyCam::userZoom(float amt){
 }
-void FlyCam::update(std::shared_ptr<Fingers> pFingers, float dt) {
+void FlyCam::update(std::shared_ptr<InputManager> pFingers, float dt) {
     //Capture & u8pdate input
     ButtonState::e eLmb = pFingers->getLmbState();
     vec2 vLast = pFingers->getLastMousePos();
@@ -90,7 +90,7 @@ void FlyCam::update(std::shared_ptr<Fingers> pFingers, float dt) {
     //Finalluy update camera
     _pCamera->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
 }    
-void FlyCam::updateRotate(std::shared_ptr<Fingers> pFingers) {
+void FlyCam::updateRotate(std::shared_ptr<InputManager> pFingers) {
     vec2 vMouse = pFingers->getMousePos();
     ButtonState::e eRmb = pFingers->getRmbState();
     vec2 vDelta(0, 0);

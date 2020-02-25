@@ -57,9 +57,6 @@
     <ClCompile Include="src\base\FileSystem.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\Fingers.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\FpsMeter.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -456,6 +453,9 @@
     <ClCompile Include="src\model\SceneNode.cpp">
       <Filter>model</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\InputManager.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppMain.h">
@@ -504,9 +504,6 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\FileSystem.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\Fingers.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\FpsMeter.h">
@@ -1021,6 +1018,9 @@
     </ClInclude>
     <ClInclude Include="src\model\SceneNode.h">
       <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\InputManager.h">
+      <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

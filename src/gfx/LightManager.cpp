@@ -1,6 +1,6 @@
 #include "../base/Logger.h"
 #include "../base/EngineConfig.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../base/Perf.h"
 
 #include "../gfx/CameraNode.h"
@@ -61,29 +61,29 @@ void LightManager::initializeDeferredFogData() {
 
 }
 void LightManager::updateRenderData() {
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_N)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_N)) {
     _pGpuDeferredParams->_fFocalDepth -= 0.5f;
   }
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_M)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_M)) {
     _pGpuDeferredParams->_fFocalDepth += 0.5f;
   }
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_J)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_J)) {
     _pGpuDeferredParams->_fFocalRange -= 0.01f;
   }
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_K)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_K)) {
     _pGpuDeferredParams->_fFocalRange += 0.01f;
   }
 
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_I)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_I)) {
     _pGpuDeferredParams->_fHdrToneMapExp -= 0.01f;
   }
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_O)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_O)) {
     _pGpuDeferredParams->_fHdrToneMapExp += 0.01f;
   }
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_T)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_T)) {
     _pGpuDeferredParams->_fHdrSampleExp -= 0.01f;
   }
-  if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_Y)) {
+  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_Y)) {
     _pGpuDeferredParams->_fHdrSampleExp += 0.01f;
   }
   _pGpuDeferredParams->_fFogDamp = MathUtils::brClamp(_pGpuDeferredParams->_fFogDamp, 0.0f, 1.0f);

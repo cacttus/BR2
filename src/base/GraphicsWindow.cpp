@@ -9,7 +9,7 @@
 #include "../base/Delta.h"
 #include "../base/FrameSync.h"
 #include "../base/Perf.h"
-#include "../base/Fingers.h"
+#include "../base/InputManager.h"
 #include "../gfx/WindowViewport.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/RenderPipe.h"
@@ -226,7 +226,7 @@ void GraphicsWindow::printHelpfulDebug() {
 void GraphicsWindow::step() {
   beginRender();
   {
-    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F11)) {
+    if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F11)) {
       _pint->toggleFullscreen();
     }
 
