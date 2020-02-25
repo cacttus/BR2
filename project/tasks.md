@@ -107,14 +107,10 @@
 - [ ] Story: Be able to build paths for the peons to navigate.
 	- [ ] Path Builder Tab & Path Builder Toolbar item
 
-
-
-
-## Future
+## Engine Enhancements, Unrelated to Game
 - [ ] CMake integration. Test on iOS, Linux, Android.
 - [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
-
 
 ## Delayed / Shelved 
 - [ ] ~~Multiple Window Rendering~~
