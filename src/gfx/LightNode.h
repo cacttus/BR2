@@ -32,6 +32,7 @@ public:
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   vec3* getFinalPosPtr();
   bool shadowsEnabled();
+  std::shared_ptr<LightManager> getLightManager();
 protected:
   Color4f _color;
   //float _fSpecExp = 2.0f;

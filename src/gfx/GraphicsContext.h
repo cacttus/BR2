@@ -53,8 +53,6 @@ private:
   float _fClearA = 1.0f;
   bool _bValid = false;
 
-  std::shared_ptr<FlyCam> _pFlyCam = nullptr;
-
   void makeVertexFormats();
 
 protected:

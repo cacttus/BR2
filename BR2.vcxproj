@@ -24,6 +24,8 @@
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
+    <ClCompile Include="src\base\CSharpCompiler.cpp" />
+    <ClCompile Include="src\base\CSharpScript.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
     <ClCompile Include="src\base\Delta.cpp" />
@@ -73,9 +75,10 @@
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
     <ClCompile Include="src\gfx\Atlas.cpp" />
+    <ClCompile Include="src\gfx\BufferRenderTarget.cpp" />
     <ClCompile Include="src\gfx\CameraNode.cpp" />
     <ClCompile Include="src\gfx\DeferredFramebuffer.cpp" />
-    <ClCompile Include="src\gfx\FlyCam.cpp" />
+    <ClCompile Include="src\gfx\FlyingCameraControls.cpp" />
     <ClCompile Include="src\gfx\FontTextBuffer.cpp" />
     <ClCompile Include="src\gfx\ForwardFramebuffer.cpp" />
     <ClCompile Include="src\gfx\FramebufferBase.cpp" />
@@ -98,6 +101,7 @@
     <ClCompile Include="src\gfx\RenderSettings.cpp" />
     <ClCompile Include="src\gfx\RenderTarget.cpp" />
     <ClCompile Include="src\gfx\RenderUtils.cpp" />
+    <ClCompile Include="src\gfx\RenderViewport.cpp" />
     <ClCompile Include="src\gfx\ShaderAttribute.cpp" />
     <ClCompile Include="src\gfx\ShaderBase.cpp" />
     <ClCompile Include="src\gfx\ShaderCache.cpp" />
@@ -115,7 +119,6 @@
     <ClCompile Include="src\gfx\UiSkin.cpp" />
     <ClCompile Include="src\gfx\VulkanApi.cpp" />
     <ClCompile Include="src\gfx\VulkanContext.cpp" />
-    <ClCompile Include="src\gfx\WindowViewport.cpp" />
     <ClCompile Include="src\math\BitHacks.cpp" />
     <ClCompile Include="src\math\BoxUtils.cpp" />
     <ClCompile Include="src\math\CollisionEquations.cpp" />
@@ -179,6 +182,8 @@
     <ClInclude Include="src\base\BuildConfig.h" />
     <ClInclude Include="src\base\ConsoleColors.h" />
     <ClInclude Include="src\base\Crc32.h" />
+    <ClInclude Include="src\base\CSharpCompiler.h" />
+    <ClInclude Include="src\base\CSharpScript.h" />
     <ClInclude Include="src\base\DateTime.h" />
     <ClInclude Include="src\base\DebugHelper.h" />
     <ClInclude Include="src\base\Delta.h" />
@@ -242,9 +247,10 @@
     <ClInclude Include="src\ext\pugixml\pugixml.hpp" />
     <ClInclude Include="src\ext\stb_truetype.h" />
     <ClInclude Include="src\gfx\Atlas.h" />
+    <ClInclude Include="src\gfx\BufferRenderTarget.h" />
     <ClInclude Include="src\gfx\CameraNode.h" />
     <ClInclude Include="src\gfx\DeferredFramebuffer.h" />
-    <ClInclude Include="src\gfx\FlyCam.h" />
+    <ClInclude Include="src\gfx\FlyingCameraControls.h" />
     <ClInclude Include="src\gfx\FontTextBuffer.h" />
     <ClInclude Include="src\gfx\ForwardFramebuffer.h" />
     <ClInclude Include="src\gfx\FramebufferBase.h" />
@@ -270,6 +276,7 @@
     <ClInclude Include="src\gfx\RenderSettings.h" />
     <ClInclude Include="src\gfx\RenderTarget.h" />
     <ClInclude Include="src\gfx\RenderUtils.h" />
+    <ClInclude Include="src\gfx\RenderViewport.h" />
     <ClInclude Include="src\gfx\ScreenProps.h" />
     <ClInclude Include="src\gfx\ShaderAttribute.h" />
     <ClInclude Include="src\gfx\ShaderBase.h" />
@@ -288,7 +295,6 @@
     <ClInclude Include="src\gfx\UiSkin.h" />
     <ClInclude Include="src\gfx\VulkanApi.h" />
     <ClInclude Include="src\gfx\VulkanContext.h" />
-    <ClInclude Include="src\gfx\WindowViewport.h" />
     <ClInclude Include="src\math\Algorithm.h" />
     <ClInclude Include="src\math\BitHacks.h" />
     <ClInclude Include="src\math\Box2x.h" />

@@ -18,7 +18,7 @@ class ForwardFramebuffer : public FramebufferBase {
 public:
   ForwardFramebuffer(std::shared_ptr<GLContext> pc, int32_t w, int32_t h, bool bMsaa, int nMsaa, vec4& vClear);
   virtual ~ForwardFramebuffer() override;
-  virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<RenderTarget> sharedDepth, std::shared_ptr<RenderTarget> sharedPick) override;
+  virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) override;
   virtual void beginRender() override;
   virtual void endRender() override;
 

@@ -1,11 +1,11 @@
 #include "../base/Logger.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FrustumProjectionParameters.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 
 namespace BR2 {
 // - CONSTRUCTOR/ DESTRUCTOR
-FrustumBase::FrustumBase(std::shared_ptr<WindowViewport> pv, float fov) : _pViewportRef(pv) {
+FrustumBase::FrustumBase(std::shared_ptr<RenderViewport> pv, float fov) : _pViewportRef(pv) {
   //_satLine = new Line3f();
   _minimax = new Box3f();
 
@@ -443,8 +443,8 @@ void FrustumBase::projectScreenPointToWorldPoint(
 ) {
   AssertOrThrow2(_pViewportRef != NULL);
 
-  float wratio = screenPoint.x * _pViewportRef->getWidth_1(); // x / width = % of x
-  float hratio = screenPoint.y * _pViewportRef->getHeight_1(); // y / height
+  float wratio = screenPoint.x * (1.0 / _pViewportRef->getWidth()); // x / width = % of x
+  float hratio = screenPoint.y * (1.0 / _pViewportRef->getHeight()); // y / height
   vec3 pTl, pTr, pBl;
   if (!bTest) {
     pTl = PointAt(tl);
@@ -502,18 +502,15 @@ mat4 FrustumBase::getProjectionMatrix() {
   if (_eProjectionMode == ProjectionMode::e::Perspective) {
     //calc proj matrix
     float vpWidth_2 = tan_fov_2 * z_near;
-    float arat_1 = _pViewportRef->getAspectRatio_1();
+    float arat_1 = 1.0 / _pViewportRef->getAspectRatio();
     float vw = vpWidth_2;
     float vh = vpWidth_2 * arat_1;
-
 
     return mat4::getProjection(
       z_near, z_far,
       vw, -vw,
       vh, -vh
     );
-
-
   }
   else if (_eProjectionMode == ProjectionMode::e::Orthographic) {
     float fNear = getZNear();
@@ -537,7 +534,6 @@ mat4 FrustumBase::getProjectionMatrix() {
     float t1 = (right + left) / (right - left) * -1.0f;
     float t2 = (top + bottom) / (top - bottom) * -1.0f;
     float t3 = (fard + neard) / (fard - neard) * -1.0f;
-
 
     //Row major order version
     //mm._m11 =a1, mm._m12 = 0, mm._m13 = 0, mm._m14 =t1,

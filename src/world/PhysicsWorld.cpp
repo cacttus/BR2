@@ -1542,61 +1542,6 @@ void PhysicsWorld::drawTransparent() {
   Perf::popPerf();
 
 }
-std::shared_ptr<ModelNode> PhysicsWorld::makeObj(std::shared_ptr<ModelSpec> ms) {
-  std::shared_ptr<ModelNode> mn = ModelNode::create(ms);
-  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-  Gu::getPhysicsWorld()->addObj(mn, true, true);
 
-  return mn;
-}
-std::shared_ptr<ModelNode> PhysicsWorld::makeObj(std::shared_ptr<ModelSpec> ms, vec3& pos, vec4& rot, vec3& scale, std::string action) {
-  std::shared_ptr<ModelNode> mn = makeObj(ms);
-
-  mn->stopAllActions();
-  if (StringUtil::isNotEmpty(action)) {
-    mn->playAction(action);
-  }
-
-  mn->setScale(std::move(scale));
-  mn->setRot(std::move(rot));
-  mn->setPos(std::move(pos));
-
-  return mn;
-}
-std::shared_ptr<LightNodePoint> PhysicsWorld::makePointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled) {
-  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create(bShadowsEnabled);
-  lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
-  lp->setPos(std::move(pos));
-  lp->setLightRadius(radius);
-  lp->setLightColor(std::move(color));
-
-  lp->getShadowBox()->getSmallBoxSize() = 0.6f;
-  Gu::getPhysicsWorld()->addObj(lp, false, false);
-
-  return lp;
-}
-
-std::shared_ptr<LightNodeDir> PhysicsWorld::makeDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled) {
-  std::shared_ptr<LightNodeDir> dir = LightNodeDir::create(bShadowsEnabled);
-  dir->setMaxDistance(fDist);
-  dir->setPos(std::move(pos));
-  dir->setLookAt(std::move(lookAt));
-  dir->setLightColor(std::move(color));
-  //dir->getSpecExp() = 50.109f;
-  dir->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
-  addObj(dir, false, false);
-  return dir;
-}
-//std::shared_ptr<LightNodePoint> World25::makePointLight(vec3&& pos, float radius, vec4&& color, t_string action, bool bShadowsEnabled) {
-//    std::shared_ptr<LightNodePoint> lp = LightNodePoint::create(bShadowsEnabled);
-//    lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
-//    lp->setPos(std::move(pos));
-//    lp->setLightRadius(radius);
-//    lp->setLightColor(std::move(color));
-//    // lp->getSpecExp() = 50.109f;
-//    lp->getShadowBox()->getSmallBoxSize() = 0.6f;
-//    addObj(lp, false, false);
-//    return lp;
-//}
 
 }//ns Game

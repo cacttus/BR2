@@ -13,14 +13,16 @@
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowFrustum.h"
 #include "../model/OBB.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
 LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNode(nullptr) {
   _color = vec4(1, 1, 1, 1);
-  //    _vSpecColor = vec3(1, 1, 1);
 }
 LightNodeBase::~LightNodeBase() {
-
+}
+std::shared_ptr<LightManager> LightNodeBase::getLightManager() {
+  return getScene()->getLightManager();
 }
 void LightNodeBase::init() {
   PhysicsNode::init();

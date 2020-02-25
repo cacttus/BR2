@@ -33,7 +33,6 @@ public:
   static std::shared_ptr<ShaderMaker> getShaderMaker();
   static std::shared_ptr<AppBase> getApp();
   static std::shared_ptr<TexCache> getTexCache();
-  static std::shared_ptr<LightManager> getLightManager();
   static std::shared_ptr<Picker> getPicker();
   // static std::shared_ptr<Gui2d> getGui();
   static std::shared_ptr<PhysicsWorld> getPhysicsWorld();
@@ -45,7 +44,7 @@ public:
   static std::shared_ptr<EngineConfig> getEngineConfig();
   static std::shared_ptr<Delta> getDelta();
   static std::shared_ptr<GraphicsApi> getGraphicsApi();
-  static std::shared_ptr<WindowViewport> getViewport();
+  //static std::shared_ptr<WindowViewport> getViewport();
   static std::shared_ptr<Net> getNet();
   static std::shared_ptr<GraphicsWindow> getMainWindow();
   static std::shared_ptr<GLContext> getGraphicsContext();
@@ -104,7 +103,7 @@ public:
   static void print(const string_t& msg);
   static uint64_t getFrameNumber();
 
-  static void guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp);//Transforms a quad for the matrix-less 
+  static void guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp);//Transforms a quad for the matrix-less 
 
   template < typename Tx >
   static bool addIfDoesNotContain(std::vector<Tx>& vec, Tx& rhs) {
@@ -134,7 +133,6 @@ private:
   static std::shared_ptr<FrameSync> _pFrameSync;
   static std::shared_ptr<SoundCache> _pSoundCache;
   static std::shared_ptr<ShaderMaker> _pShaderMaker;
-  static std::shared_ptr<LightManager> _pLightManager;
   static std::shared_ptr<ModelCache> _pModelCache;
   static std::shared_ptr<Picker> _pPicker;
   static std::shared_ptr<PhysicsWorld> _pPhysicsWorld;

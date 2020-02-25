@@ -17,7 +17,7 @@ namespace BR2 {
 */
 class LightManager : public VirtualMemory {
 public:
-  LightManager(std::shared_ptr<GLContext> tc);
+  LightManager(std::shared_ptr<GLContext> tc, std::shared_ptr<Scene> pScene);
   virtual ~LightManager() override;
 
   void update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf);
@@ -46,6 +46,7 @@ private:
   std::vector<std::shared_ptr<ShadowFrustum>> _vecGpuShadowFrustums;
   bool _bFogDisabled = false;
   float _fLastFogBlend;
+  std::shared_ptr<Scene> _pScene = nullptr;
 
   void updateRenderData();
   void initializeDeferredFogData();

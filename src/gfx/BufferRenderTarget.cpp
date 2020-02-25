@@ -1,15 +1,18 @@
 #include "../base/Gu.h"
-#include "../gfx/GLContext.h"
+#include "../base/GLContext.h"
 #include "../gfx/BufferRenderTarget.h"
 
-
 namespace BR2 {
-BufferRenderTarget::BufferRenderTarget(std::shared_ptr<GLContext> ctx, bool bShared) :GLFramework(ctx) {
+BufferRenderTarget::BufferRenderTarget(std::shared_ptr<GLContext> ctx, bool bShared) : RenderTarget(ctx) {
   _bShared = bShared;
 }
 BufferRenderTarget::~BufferRenderTarget() {
   glDeleteTextures(1, &_iGlTexId);
 }
+
+int32_t BufferRenderTarget::getWidth() { return _iWidth; }
+int32_t BufferRenderTarget::getHeight() { return _iHeight; }
+
 bool BufferRenderTarget::getMsaaEnabled() {
   if (_eTextureTarget == GL_TEXTURE_2D_MULTISAMPLE) {
     return true;
@@ -18,7 +21,7 @@ bool BufferRenderTarget::getMsaaEnabled() {
     return false;
   }
   else {
-    BrThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
 }
 
@@ -42,7 +45,7 @@ void BufferRenderTarget::bind(GLenum eAttachment) {
       getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, eAttachment, GL_TEXTURE_2D, _iGlTexId, 0);
     }
   }
-  getContext()->chkErrDbg();
+  Gu::checkErrorsDbg();
 }
 
 
@@ -50,4 +53,4 @@ void BufferRenderTarget::bind(GLenum eAttachment) {
 
 
 
-}//ns BR2
+}//ns Game

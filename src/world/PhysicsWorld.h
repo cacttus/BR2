@@ -53,11 +53,6 @@ public:
   size_t numObjects() { return _mapObjects.size(); }
   size_t numActiveObjects() { return _vecActiveFrame.size(); }
 
-  std::shared_ptr<ModelNode> makeObj(std::shared_ptr<ModelSpec> ms);
-  std::shared_ptr<ModelNode> makeObj(std::shared_ptr<ModelSpec> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
-  std::shared_ptr<LightNodePoint> makePointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);
-  std::shared_ptr<LightNodeDir> makeDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled);
-
   void addObj(std::shared_ptr<PhysicsNode> ob, bool bActivate, bool bRefreshCache);
   bool tryRemoveObj(std::shared_ptr<PhysicsNode> ob);
   std::shared_ptr<PhysicsNode> getObj(NodeId obid);

@@ -146,7 +146,6 @@ class VulkanWindow;
 class WindowManager;
 class CSharpScript;
 class CSharpCompiler;
-class ScriptManager;
 class Packet;
 
 //Classes that will be removed

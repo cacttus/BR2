@@ -7,7 +7,7 @@
 #include "../gfx/RenderParams.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShadowBoxSide.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
@@ -19,12 +19,7 @@
 #include "../world/PhysicsGrid.h"
 
 namespace BR2 {
-ShadowBoxSide::ShadowBoxSide(
-  std::shared_ptr<ShadowBox> pParentBox
-  , std::shared_ptr<LightNodePoint> pLightSource
-  , BoxSide::e eSide
-  , bool bShadowMapEnabled
-) {
+ShadowBoxSide::ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_ptr<LightNodePoint> pLightSource, BoxSide::e eSide, bool bShadowMapEnabled) {
   _bShadowMapEnabled = bShadowMapEnabled;
   _eSide = eSide;
   _pFrustum = nullptr;
@@ -34,11 +29,7 @@ ShadowBoxSide::ShadowBoxSide(
   _bMustUpdate = true;
   _pLightSource = pLightSource;
 
-  _pViewport = std::make_shared<WindowViewport>(_pParentBox->getFboWidth()
-    , _pParentBox->getFboHeight()
-    , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
-    , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
-    );
+  _pViewport = std::make_shared<RenderViewport>(_pParentBox->getFboWidth(), _pParentBox->getFboHeight(), ViewportConstraint::Fixed);
 
   _pVisibleSet = std::make_shared<RenderBucket>();
   _pFrustum = std::make_unique<FrustumBase>(_pViewport, 90.0f);
@@ -119,7 +110,7 @@ void ShadowBoxSide::updateView() {
 
   // _projMatrix = _pFrustum->getProjectionMatrix();
   float vpWidth_2 = _pFrustum->getTanFov2() * fNear;
-  float arat_1 = _pViewport->getAspectRatio_1();
+  float arat_1 = 1.0 / _pViewport->getAspectRatio();
   float vw = vpWidth_2;
   float vh = vpWidth_2 * arat_1;
   _projMatrix = mat4::getProjection(

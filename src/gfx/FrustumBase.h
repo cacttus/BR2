@@ -31,7 +31,7 @@ public:
   static const int NumPlanes = 6;
   static const int NumPoints = 8;
 public:
-  FrustumBase(std::shared_ptr<WindowViewport> pv, float fov);
+  FrustumBase(std::shared_ptr<RenderViewport> pv, float fov);
   virtual ~FrustumBase() override;
 
   mat4 getProjectionMatrix();
@@ -78,7 +78,7 @@ protected:
   float z_near = 1.0f;
   float z_far = 1000.0f;
   ProjectionMode::e _eProjectionMode;
-  std::shared_ptr<WindowViewport> _pViewportRef;    // - Reference to camera viewport.
+  std::shared_ptr<RenderViewport> _pViewportRef;    // - Reference to camera viewport.
   //Line3f* _satLine;
   Box3f* _minimax;
   //

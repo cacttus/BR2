@@ -76,7 +76,10 @@ Gu::showMessageBox(msg, "Error"); \
 __show=true; \
 }
 
-
+/**
+*  @class GLFramework
+*  @brief Inherit to be part of the OpenGL rendering system.
+*/
 class GLFramework : public VirtualMemoryShared<GLFramework> {
 public:
   GLFramework(std::shared_ptr<GLContext> ct) {

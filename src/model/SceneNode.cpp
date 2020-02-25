@@ -16,6 +16,7 @@
 #include "../model/MeshSpec.h"
 #include "../world/RenderBucket.h"
 #include "../world/Component.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
 BaseSpec::BaseSpec(string_t strName) {
@@ -476,6 +477,10 @@ void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
 void SceneNode::addComponent(std::shared_ptr<Component> comp) {
   comp->setNode(getThis<SceneNode>());
   _vecComponents.push_back(comp); 
+}
+std::shared_ptr<Scene> SceneNode::getScene() {
+  std::shared_ptr<Scene> x = findParent<Scene>();
+  return x;
 }
 
 }//ns Game

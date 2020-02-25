@@ -1,7 +1,7 @@
+#include "../base/OperatingSystemHeader.h"
 #include "../base/Logger.h"
 #include "../base/EngineConfig.h"
 #include "../base/GLContext.h"
-#include "../gfx/UiControls.h"
 #include "../base/AppBase.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
@@ -10,33 +10,28 @@
 #include "../base/FrameSync.h"
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/UiControls.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/RenderPipe.h"
-#include "../base/OperatingSystemHeader.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
 class GraphicsWindow_Internal {
 public:
   std::unique_ptr<GraphicsWindow> _cont = nullptr;
-
-  std::shared_ptr<WindowViewport> _pWindowViewport = nullptr;
+  std::shared_ptr<RenderViewport> _pViewport = nullptr;
+  std::shared_ptr<Scene> _pScene = nullptr;
   SDL_Window* _pSDLWindow = nullptr;
   bool _bFullscreen = false;
   uint32_t _iLastWidth = 0;
   uint32_t _iLastHeight = 0;
   uint32_t _iFullscreenToggleWidth = 0;
   uint32_t _iFullscreenToggleHeight = 0;
-
+  std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
   bool _bIsMainWindow = false;
-
   std::shared_ptr<Gui2d> _pGui = nullptr;
 
-  //GraphicsWindow_Internal(std::unique_ptr<GraphicsWindow> cont) {
-  //  _cont = cont;
-  //}
-
-  std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
   void toggleFullscreen() {
     if (_bFullscreen == false) {
       //get the fullscreen resolution
@@ -76,13 +71,16 @@ public:
     }
 
   }
-
-
 };
+
+//////////////////////////////////////////////////////////////////////////
+
 //Called exclusively by the graphics API
-GraphicsWindow::GraphicsWindow(bool ismain) {
+GraphicsWindow::GraphicsWindow(bool ismain) : RenderTarget(nullptr) {
   _pint = std::make_unique<GraphicsWindow_Internal>();
   _pint->_bIsMainWindow = ismain;
+
+  //TODO: set the GL context.
 }
 GraphicsWindow::~GraphicsWindow() {
   if (_pint->_pSDLWindow != nullptr) {
@@ -91,17 +89,20 @@ GraphicsWindow::~GraphicsWindow() {
   }
   _pint = nullptr;
 }
-
+int32_t GraphicsWindow::getWidth() { return _pint->_iLastWidth; }
+int32_t GraphicsWindow::getHeight() { return _pint->_iLastHeight; }
 void* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
-std::shared_ptr<WindowViewport> GraphicsWindow::getWindowViewport() { return _pint->_pWindowViewport; }
+std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
 std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
+std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
+void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) { _pint->_pScene = scene; }
 std::shared_ptr<Gui2d> GraphicsWindow::getGui() { return _pint->_pGui; }
 
 void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
   string_t title;
   bool bFullscreen = false;
 
-  int x=0, y=0, w=800, h=600, flags=0;
+  int x = 0, y = 0, w = 800, h = 600, flags = 0;
 #ifdef BR2_OS_IPHONE
   x = 0, y = 0, w = 320, h = 480, flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
   title = "";
@@ -124,8 +125,8 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
 #endif
 #endif
 
-  //No0te: This calls SDL_GL_LOADLIBRARY if SDL_WINDOW_OPENGL is set.
-  _pint->_pSDLWindow = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
+    //No0te: This calls SDL_GL_LOADLIBRARY if SDL_WINDOW_OPENGL is set.
+    _pint->_pSDLWindow = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
   SDLUtils::checkSDLErr();
 
   //Fullscreen nonsense
@@ -138,7 +139,7 @@ void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
   //*Set room width / height
   _pint->_iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
   _pint->_iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pint->_pWindowViewport = std::make_shared<WindowViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
+  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
 
 #ifdef BR2_OS_WINDOWS
   BRLogError("We are not making the window icon because there's an error somewhere in SDL here.");
@@ -186,9 +187,9 @@ void GraphicsWindow::initRenderSystem() {
 void GraphicsWindow::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
   if (_pint->_iLastWidth != w || bForce) {
-    _pint->_pWindowViewport->setWidth(w);
+    _pint->_pViewport->setWidth(w);
     if (_pint->_iLastHeight != h || bForce) {
-      _pint->_pWindowViewport->setHeight(h);
+      _pint->_pViewport->setHeight(h);
     }
     if (_pint->_iLastHeight != h || _pint->_iLastWidth != w || bForce) {
       if (_pint->_pRenderPipe != nullptr) {
@@ -243,7 +244,9 @@ void GraphicsWindow::step() {
       Gu::getGraphicsContext()->setLoopState(EngineLoopState::Render);
 
       //Main Render
-      _pint->_pRenderPipe->renderScene(Gu::getApp());
+      PipeBits pbs;
+      pbs.set();
+      _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), pbs);
     }
     Gu::getGraphicsContext()->setLoopState(EngineLoopState::SyncEnd);
     Gu::getFrameSync()->syncEnd();
@@ -254,11 +257,11 @@ void GraphicsWindow::step() {
 
 void GraphicsWindow::createRenderPipe() {
   //Deferred Renderer
-  _pint->_pRenderPipe = std::make_shared<RenderPipe>(getThis<GraphicsWindow>());
-  _pint->_pRenderPipe->init(Gu::getViewport()->getWidth(), Gu::getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
+  _pint->_pRenderPipe = std::make_shared<RenderPipe>(getContext(), getThis<GraphicsWindow>());
+  _pint->_pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
   // Gu::setRenderPipe(_pRenderPipe);
 
-  _pint->_pRenderPipe->getPipeBits().set();
+  //_pint->_pRenderPipe->getPipeBits().set();
 }
 void GraphicsWindow::beginRender() {
 
@@ -278,9 +281,7 @@ void GraphicsWindow::endRender() {
 
   Perf::popPerf();
 }
-std::shared_ptr<GLContext> GraphicsWindow::getContext() {
-  return Gu::getGraphicsContext();
-}
+
 
 
 }//ns Game

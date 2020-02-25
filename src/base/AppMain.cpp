@@ -4,7 +4,7 @@
 #include "../base/GLContext.h"
 #include "../model/MeshUtils.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
@@ -85,7 +85,7 @@ void AppMain::drawBackgroundImage() {
   }
   std::shared_ptr<CameraNode> bc = Gu::getCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-  Gu::getShaderMaker()->getImageShader_F()->beginRaster();
+  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport()->getWidth(), bc->getViewport()->getHeight());
   {
     //We want depth test so we can see what's in front.
     //glEnable(GL_DEPTH_TEST);
@@ -222,7 +222,6 @@ void AppMain::setDebugMode() {
     _bShowDebugText = true;
     _bDrawDebug = false;
     //Keep this legit so we can test x , y
- //   _pFlyCam->setPosAndLookAt(vec3(0, 5, -20), vec3(0, 0, 0));
   }
 }
 void AppMain::drawDebugText() {

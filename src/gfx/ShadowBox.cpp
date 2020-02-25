@@ -8,7 +8,7 @@
 #include "../gfx/ShadowBox.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBoxSide.h"
 #include "../gfx/RenderUtils.h"
@@ -45,7 +45,9 @@ ShadowBox::~ShadowBox() {
     _pShadowBoxSide[i] = nullptr;
   }
 }
+
 ///////////////////////////////////////////////////////////////////
+
 void ShadowBox::init() {
   for (int i = 0; i < 6; ++i) {
     _pShadowBoxSide[i] = std::make_shared<ShadowBoxSide>(shared_from_this(), _pLightSource, (BoxSide::e)i, _bShadowMapEnabled);
@@ -73,7 +75,7 @@ void ShadowBox::update() {
     return;
   }
 
-  std::shared_ptr<LightManager> pLightMan = Gu::getLightManager();
+  std::shared_ptr<LightManager> pLightMan = _pLightSource->getLightManager();
 
   //Update the camera for each shadowbox side if the light has changed position or radius.
   //See also: debugInvalidateAllLightProjections
@@ -97,7 +99,7 @@ void ShadowBox::update() {
   }
 
   // Tell the viewport we've changed
-  _pShadowBoxSide[0]->getViewport()->updateChanged(true);
+  _pShadowBoxSide[0]->getViewport()->bind(nullptr);
 
 }
 void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
@@ -244,7 +246,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
       std::shared_ptr<MeshNode> pQuadMesh = MeshUtils::createScreenQuadMesh(_iFboWidthPixels, _iFboHeightPixels);
 
       //Blend color + position and store it in the color.
-      pDofShader->beginRaster();
+      pDofShader->beginRaster(_iFboWidthPixels, _iFboHeightPixels);
       {
         pBox->beginRenderShadowBox();
         for (int iSide = 0; iSide < 6; ++iSide) {

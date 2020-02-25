@@ -30,14 +30,12 @@
 #include "../base/ProjectFile.h"
 
 #include "../gfx/TexCache.h"
-#include "../gfx/LightManager.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/FlyCam.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/ParticleManager.h"   
@@ -86,7 +84,6 @@ std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
 std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
 std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
 std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
-std::shared_ptr<LightManager> Gu::_pLightManager = nullptr;
 std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
 std::shared_ptr<Picker> Gu::_pPicker = nullptr;
 std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
@@ -107,7 +104,6 @@ std::shared_ptr<FpsMeter> Gu::getFpsMeter() { return _pFpsMeter; }
 std::shared_ptr<FrameSync> Gu::getFrameSync() { return _pFrameSync; }
 std::shared_ptr<SoundCache> Gu::getSoundCache() { return _pSoundCache; }
 std::shared_ptr<TexCache> Gu::getTexCache() { return _pTexCache; }
-std::shared_ptr<LightManager> Gu::getLightManager() { return _pLightManager; }
 std::shared_ptr<Picker> Gu::getPicker() { return _pPicker; }
 std::shared_ptr<PhysicsWorld> Gu::getPhysicsWorld() { return _pPhysicsWorld; }
 std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
@@ -119,7 +115,7 @@ std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
 std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
 std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
-std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
+//std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
 std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
 std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
@@ -240,7 +236,6 @@ void Gu::deleteGlobals() {
 
   _pSoundCache = nullptr;
   _pShaderMaker = nullptr;
-  _pLightManager = nullptr;
   _pModelCache = nullptr;
   _pPicker = nullptr;
   _pPhysicsWorld = nullptr;
@@ -540,7 +535,7 @@ std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delim
   return ret;
 }
 
-void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<WindowViewport> vp) {
+void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp) {
   //Transforms a quad for the matrix-less gui projection.
 
   //The resulting coordinates for the GPU are -0.5 +0.5 in both axes with the center being in the center of the screen
@@ -630,8 +625,7 @@ void Gu::createManagers() {
   BRLogInfo("GLContext - Creating ShaderMaker & base shaders");
   _pShaderMaker = std::make_shared<ShaderMaker>();
   _pShaderMaker->initialize(Gu::getApp());
-  BRLogInfo("GLContext -  Lights");
-  _pLightManager = std::make_shared<LightManager>(Gu::getGraphicsContext());
+
   BRLogInfo("GLContext - Model Cache");
   _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
 

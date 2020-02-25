@@ -19,8 +19,8 @@ namespace BR2 {
 */
 class CameraNode : public PhysicsNode {
 public:
-  CameraNode(std::shared_ptr<WindowViewport> ppViewport);
-  static std::shared_ptr<CameraNode> create(std::shared_ptr<WindowViewport> ppViewport);
+  CameraNode(std::shared_ptr<RenderViewport> ppViewport);
+  static std::shared_ptr<CameraNode> create(std::shared_ptr<RenderViewport> ppViewport);
   virtual ~CameraNode() override;
 
   void zoom(float amt);
@@ -39,13 +39,13 @@ public:
   Ray_t projectPoint2(vec2& mouse);
   void setFOV(t_radians fov);        // - Set Field of View
   float getFOV() const { return _f_hfov; }
-  std::shared_ptr<WindowViewport> getViewport() { return _pViewport; }
+  std::shared_ptr<RenderViewport> getViewport() { return _pViewport; }
   const vec3& getRightNormal() { return _vRight; }
   const vec3& getUpNormal() { return _vUp; }
   std::shared_ptr<FrustumBase> getFrustum() { return _pMainFrustum; }
 
 protected:
-  std::shared_ptr<WindowViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
+  std::shared_ptr<RenderViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
   float _f_hfov = 60;            // - Field of view.
 
   std::shared_ptr<FrustumBase> _pMainFrustum = nullptr;

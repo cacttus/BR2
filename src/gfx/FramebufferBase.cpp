@@ -6,10 +6,9 @@
 #include "../math/MathAll.h"
 #include "../gfx/FramebufferBase.h"
 #include "../gfx/CameraNode.h"
-#include "../gfx/WindowViewport.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/RenderTarget.h"
+#include "../gfx/BufferRenderTarget.h"
 #include "../model/ModelHeader.h"
 #include "../model/VertexFormat.h"
 #include "../model/MeshNode.h"
@@ -17,72 +16,70 @@
 #include "../model/VaoDataGeneric.h"
 
 namespace BR2 {
-FramebufferBase::FramebufferBase(std::shared_ptr<GLContext> pc, bool bMsaa, int nMsaa, vec4& vClear) :
-    _pContext(pc), _bMsaaEnabled(bMsaa), _nMsaaSamples(nMsaa){
-    _vClear = vClear;
+FramebufferBase::FramebufferBase(std::shared_ptr<GLContext> pc, bool bMsaa, int nMsaa, vec4& vClear) : GLFramework(pc) {
+  _vClear = vClear;
+  _bMsaaEnabled = bMsaa;
+  _nMsaaSamples = nMsaa;
 }
-FramebufferBase::~FramebufferBase(){ 
-    deleteTargets();
-
+FramebufferBase::~FramebufferBase() {
+  deleteTargets();
 }
-std::shared_ptr<RenderTarget> FramebufferBase::getTargetByName(std::string name){
-    for(std::shared_ptr<RenderTarget> rt : _vecTargets){
-        if(rt->getName() == name){
-            return rt;
-        }
+std::shared_ptr<BufferRenderTarget> FramebufferBase::getTargetByName(std::string name) {
+  for (std::shared_ptr<BufferRenderTarget> rt : _vecTargets) {
+    if (rt->getName() == name) {
+      return rt;
     }
-    return nullptr;
+  }
+  return nullptr;
 }
 void FramebufferBase::checkFramebufferComplete() {
-    _pContext->chkErrRt();
-    _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-    _pContext->chkErrRt();
+  getContext()->chkErrRt();
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->chkErrRt();
 
-    attachAllTargets();
-    setDrawAllTargets();
+  attachAllTargets();
+  setDrawAllTargets();
 
-    GLenum Status = _pContext->glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    _pContext->chkErrRt();
+  GLenum Status = getContext()->glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  getContext()->chkErrRt();
 
-    if (Status != GL_FRAMEBUFFER_COMPLETE)
-    {
-        if (Status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
-        {
-            BRLogError("Framebuffer is not complete.  Multisampling error.  Make sure that you enable " +
-                "multisampling on ALL textures, additionally make sure all textures have the same setting for FIXED_SAMPLE_LOCATIONS");
-        }
-        _pContext->chkErrRt();
-        BRThrowException("Failed to create framebuffer.");
+  if (Status != GL_FRAMEBUFFER_COMPLETE) {
+    if (Status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE) {
+      BRLogError("Framebuffer is not complete.  Multisampling error.  Make sure that you enable " +
+        "multisampling on ALL textures, additionally make sure all textures have the same setting for FIXED_SAMPLE_LOCATIONS");
     }
+    getContext()->chkErrRt();
+    BRThrowException("Failed to create framebuffer.");
+  }
 }
 void FramebufferBase::attachAllTargets() {
-    for (std::shared_ptr<RenderTarget> inf : _vecTargets) {
-        inf->bind();
-        //_pContext->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, inf->getAttachment(), inf->getTextureTarget(), inf->getTexId(), 0);
-        //_pContext->chkErrRt();
-    }
+  for (std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
+    inf->bind();
+    //getContext()->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, inf->getAttachment(), inf->getTextureTarget(), inf->getTexId(), 0);
+    //getContext()->chkErrRt();
+  }
 }
-void FramebufferBase::setDrawAllTargets(){
-    const int c_iMaxAttachments = 64;
-    GLenum attachments[c_iMaxAttachments];
-    int iCount = 0;
-    for(int i=0; i<c_iMaxAttachments; ++i) {
-        if(i<(int)_vecTargets.size()){
-            if(_vecTargets[i]->getTargetType() == RenderTargetType::e::Color ||
-                _vecTargets[i]->getTargetType() == RenderTargetType::e::Pick ||
-                _vecTargets[i]->getTargetType() == RenderTargetType::e::Shadow 
-                ) {
-                attachments[i] = _vecTargets[i]->getAttachment();
-                iCount++;
-            }
-        }
-        else {
-            attachments[i] = 0;
-        }
+void FramebufferBase::setDrawAllTargets() {
+  const int c_iMaxAttachments = 64;
+  GLenum attachments[c_iMaxAttachments];
+  int iCount = 0;
+  for (int i = 0; i < c_iMaxAttachments; ++i) {
+    if (i < (int)_vecTargets.size()) {
+      if (_vecTargets[i]->getTargetType() == RenderTargetType::e::Color ||
+        _vecTargets[i]->getTargetType() == RenderTargetType::e::Pick ||
+        _vecTargets[i]->getTargetType() == RenderTargetType::e::Shadow
+        ) {
+        attachments[i] = _vecTargets[i]->getAttachment();
+        iCount++;
+      }
     }
+    else {
+      attachments[i] = 0;
+    }
+  }
 
-    _pContext->glDrawBuffers(iCount, attachments);
-    _pContext->chkErrDbg();
+  getContext()->glDrawBuffers(iCount, attachments);
+  getContext()->chkErrDbg();
 
 }
 //void FramebufferBase::attachDepthTarget(std::shared_ptr<RenderTarget> pSharedDepth){
@@ -95,85 +92,90 @@ void FramebufferBase::setDrawAllTargets(){
 //    Gu::getGraphicsContext()->chkErrRt();
 //}
 void FramebufferBase::addTarget(string_t strName, GLenum internalFormat, GLenum texFormat,
-    GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType) {
-    int iIndex = (int)_vecTargets.size();
+  GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType) {
+  int iIndex = (int)_vecTargets.size();
 
-    std::shared_ptr<RenderTarget> inf = createTarget(strName, internalFormat, texFormat, dataType, w, h, 
-        eTargetType, iIndex, _bMsaaEnabled, _nMsaaSamples);
-    _vecTargets.push_back(inf);
+  std::shared_ptr<BufferRenderTarget> inf = createTarget(getContext(), strName, internalFormat, texFormat, dataType, w, h,
+    eTargetType, iIndex, _bMsaaEnabled, _nMsaaSamples);
+  _vecTargets.push_back(inf);
 }
-void FramebufferBase::addTarget(std::shared_ptr<RenderTarget> other) {
-    int iIndex = (int)_vecTargets.size();
+void FramebufferBase::addTarget(std::shared_ptr<BufferRenderTarget> other) {
+  int iIndex = (int)_vecTargets.size();
 
-    std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(true);
-    inf->_strName = other->_strName;
-    inf->_iLayoutIndex = iIndex;
-    inf->_eTextureTarget = other->_eTextureTarget;
-    inf->_eAttachment = GL_COLOR_ATTACHMENT0 + iIndex;
-    inf->_eTextureChannel = GL_TEXTURE0 + iIndex;
-    inf->_eBlitBit = GL_COLOR_BUFFER_BIT;
-    inf->_eTargetType = other->_eTargetType;
-    inf->_iGlTexId = other->_iGlTexId;
+  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(getContext(), true);
+  inf->_strName = other->_strName;
+  inf->_iLayoutIndex = iIndex;
+  inf->_eTextureTarget = other->_eTextureTarget;
+  inf->_eAttachment = GL_COLOR_ATTACHMENT0 + iIndex;
+  inf->_eTextureChannel = GL_TEXTURE0 + iIndex;
+  inf->_eBlitBit = GL_COLOR_BUFFER_BIT;
+  inf->_eTargetType = other->_eTargetType;
+  inf->_iGlTexId = other->_iGlTexId;
+  inf->_iWidth = other->_iWidth;
+  inf->_iHeight = other->_iHeight;
 
-    _vecTargets.push_back(inf);
+  _vecTargets.push_back(inf);
 }
-std::shared_ptr<RenderTarget> FramebufferBase::createTarget(string_t strName, GLenum internalFormat, GLenum texFormat,
-    GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType, int32_t iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
+std::shared_ptr<BufferRenderTarget> FramebufferBase::createTarget(std::shared_ptr<GLContext> ctx, string_t strName, GLenum internalFormat, GLenum texFormat,
+  GLenum dataType, int32_t w, int32_t h, RenderTargetType::e eTargetType, int32_t iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
 
-    std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(false);
-    inf->_strName = strName;
-    inf->_iLayoutIndex = iIndex;
+  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(ctx, false);
+  inf->_strName = strName;
+  inf->_iLayoutIndex = iIndex;
+  inf->_eTextureTarget = GL_TEXTURE_2D;
+  inf->_eAttachment = GL_COLOR_ATTACHMENT0 + iIndex;
+  inf->_eTextureChannel = GL_TEXTURE0 + iIndex;
+  inf->_eBlitBit = GL_COLOR_BUFFER_BIT;
+  inf->_eTargetType = eTargetType;
+  inf->_iWidth = w;
+  inf->_iHeight = h;
+
+  GLint maxAttach = 0;
+  glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxAttach);
+  if (iIndex > maxAttach) {
+    BRThrowException("GPU Does not support enough color attachments, wanted: " + iIndex + " max supported: " + maxAttach);
+  }
+
+  makeRenderTexture(&inf->_iGlTexId,
+    inf->_eAttachment, internalFormat, texFormat, dataType, w, h,
+    &inf->_eTextureTarget, bMsaaEnabled, nMsaaSamples);
+
+  return inf;
+}
+std::shared_ptr<BufferRenderTarget> FramebufferBase::createDepthTarget(std::shared_ptr<GLContext> ctx, string_t strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
+  std::shared_ptr<BufferRenderTarget> inf = std::make_shared<BufferRenderTarget>(ctx, true);
+  inf->_strName = strName;
+  //**Note: index doesn't matter for depth target since we simply bind it to GL_Depth_attachment.  It confused the fuck out of me. 2/9/18
+  inf->_iLayoutIndex = iIndex;
+  if (bMsaaEnabled) {
+    inf->_eTextureTarget = GL_TEXTURE_2D_MULTISAMPLE;
+  }
+  else {
     inf->_eTextureTarget = GL_TEXTURE_2D;
-    inf->_eAttachment = GL_COLOR_ATTACHMENT0 + iIndex;
-    inf->_eTextureChannel = GL_TEXTURE0 + iIndex;
-    inf->_eBlitBit = GL_COLOR_BUFFER_BIT;
-    inf->_eTargetType = eTargetType;
+  }
+  inf->_eAttachment = GL_DEPTH_ATTACHMENT; //GL_COLOR_ATTACHMENT0 + iLayoutIndex;
+  inf->_eTextureChannel = GL_TEXTURE0 + iIndex;
+  inf->_eBlitBit = GL_DEPTH_BUFFER_BIT;
+  inf->_eTargetType = RenderTargetType::e::Depth;
+  inf->_iWidth = w;
+  inf->_iHeight = h;
 
-    GLint maxAttach = 0;
-    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxAttach);
-    if(iIndex > maxAttach) {
-        BRThrowException("GPU Does not support enough color attachments, wanted: " + iIndex + " max supported: " + maxAttach);
-    }
+  //This will cycle through depth formats and choose the most precise.
+  RenderUtils::createDepthTexture(&inf->_iGlTexId, w, h, bMsaaEnabled, nMsaaSamples, GL_DEPTH_COMPONENT32F);
 
-    makeRenderTexture(&inf->_iGlTexId,
-        inf->_eAttachment, internalFormat, texFormat, dataType, w, h,
-        &inf->_eTextureTarget, bMsaaEnabled, nMsaaSamples);
-
-    return inf;
+  return inf;
 }
-std::shared_ptr<RenderTarget> FramebufferBase::createDepthTarget(string_t strName, int32_t w, int32_t h, int iIndex, bool bMsaaEnabled, int32_t nMsaaSamples) {
-    std::shared_ptr<RenderTarget> inf = std::make_shared<RenderTarget>(true);
-    inf->_strName = strName;
-    //**Note: index doesn't matter for depth target since we simply bind it to GL_Depth_attachment.  It confused the fuck out of me. 2/9/18
-    inf->_iLayoutIndex = iIndex;
-    if (bMsaaEnabled) {
-        inf->_eTextureTarget = GL_TEXTURE_2D_MULTISAMPLE;
-    }
-    else {
-        inf->_eTextureTarget = GL_TEXTURE_2D;
-    }
-    inf->_eAttachment = GL_DEPTH_ATTACHMENT; //GL_COLOR_ATTACHMENT0 + iLayoutIndex;
-    inf->_eTextureChannel = GL_TEXTURE0 + iIndex;
-    inf->_eBlitBit = GL_DEPTH_BUFFER_BIT;
-    inf->_eTargetType = RenderTargetType::e::Depth;
+void FramebufferBase::deleteTargets() {
+  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, NULL);
 
-    //This will cycle through depth formats and choose the most precise.
-    RenderUtils::createDepthTexture(&inf->_iGlTexId, w, h, bMsaaEnabled, nMsaaSamples, GL_DEPTH_COMPONENT32F);
+  if (_uiGlFramebufferId > 0) {
+    getContext()->glDeleteFramebuffers(1, &_uiGlFramebufferId);
+  }
 
-    return inf;
-}
-void FramebufferBase::deleteTargets()
-{
-    _pContext->glBindFramebuffer(GL_FRAMEBUFFER, NULL);
-    
-    if(_uiGlFramebufferId >0) {
-        _pContext->glDeleteFramebuffers(1, &_uiGlFramebufferId);
-    }
-
-    for (size_t i = 0; i<_vecTargets.size(); ++i) {
-        _vecTargets[i] = nullptr;
-    }
-    _vecTargets.resize(0);
+  for (size_t i = 0; i < _vecTargets.size(); ++i) {
+    _vecTargets[i] = nullptr;
+  }
+  _vecTargets.resize(0);
 }
 //void FramebufferBase::resizeScreenBuffers(int32_t w, int32_t h, std::shared_ptr<RenderTarget> pSharedDepthTarget)
 //{
@@ -181,53 +183,51 @@ void FramebufferBase::deleteTargets()
 //    init(w, h, pSharedDepthTarget);
 //}
 void FramebufferBase::makeRenderTexture(GLuint* iTexId, GLenum eAttachment, GLenum eInternalFormat
-    , GLenum eTextureFormat, GLenum eDataType, int32_t iWidth, int32_t iHeight,
-    GLenum* eOutTarget, bool bMultisample, int32_t nSamples) {
+  , GLenum eTextureFormat, GLenum eDataType, int32_t iWidth, int32_t iHeight,
+  GLenum* eOutTarget, bool bMultisample, int32_t nSamples) {
 
-    glGenTextures(1, iTexId);
+  glGenTextures(1, iTexId);
+  Gu::getGraphicsContext()->chkErrRt();
+
+  if (bMultisample) {
+
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *iTexId);
     Gu::getGraphicsContext()->chkErrRt();
 
-    if (bMultisample)
-    {
-
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *iTexId);
-        Gu::getGraphicsContext()->chkErrRt();
-
-        //if (Gu::GetEngineDisplayParams()->getEnableAnisotropicFiltering())
-        //{
-        //    //CHANGED FROM GL_TEXTURE_2D **MIGHT BE WRONG
-        //    glTexParameterf(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAX_ANISOTROPY_EXT, Gu::GetEngineDisplayParams()->getTextureAnisotropyLevel());
-        //    CheckGpuErrorsDbg();
-        //}
-        std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nSamples, eInternalFormat, iWidth, iHeight, GL_TRUE);
-        Gu::getGraphicsContext()->chkErrRt();
-
-        if (eOutTarget != NULL)
-            *eOutTarget = GL_TEXTURE_2D_MULTISAMPLE;
-    }
-    else
-    {
-        glBindTexture(GL_TEXTURE_2D, *iTexId);
-        Gu::getGraphicsContext()->chkErrRt();
-        //if (Gu::GetEngineDisplayParams()->getEnableAnisotropicFiltering())
-        //{
-        //    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Gu::GetEngineDisplayParams()->getTextureAnisotropyLevel());
-        //    Gu::getGraphicsContext()->chkErrRt();
-        //}
-        glTexImage2D(GL_TEXTURE_2D, 0, eInternalFormat, iWidth, iHeight, 0, eTextureFormat, eDataType, nullptr);
-        Gu::getGraphicsContext()->chkErrRt();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        Gu::getGraphicsContext()->chkErrRt();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        Gu::getGraphicsContext()->chkErrRt();
-
-        if (eOutTarget != nullptr) {
-            *eOutTarget = GL_TEXTURE_2D;
-        }
-    }
-    glDisable(GL_DITHER);//Dithering gets enabled for some reason
-
+    //if (Gu::GetEngineDisplayParams()->getEnableAnisotropicFiltering())
+    //{
+    //    //CHANGED FROM GL_TEXTURE_2D **MIGHT BE WRONG
+    //    glTexParameterf(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAX_ANISOTROPY_EXT, Gu::GetEngineDisplayParams()->getTextureAnisotropyLevel());
+    //    CheckGpuErrorsDbg();
+    //}
+    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nSamples, eInternalFormat, iWidth, iHeight, GL_TRUE);
     Gu::getGraphicsContext()->chkErrRt();
+
+    if (eOutTarget != NULL)
+      *eOutTarget = GL_TEXTURE_2D_MULTISAMPLE;
+  }
+  else {
+    glBindTexture(GL_TEXTURE_2D, *iTexId);
+    Gu::getGraphicsContext()->chkErrRt();
+    //if (Gu::GetEngineDisplayParams()->getEnableAnisotropicFiltering())
+    //{
+    //    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Gu::GetEngineDisplayParams()->getTextureAnisotropyLevel());
+    //    Gu::getGraphicsContext()->chkErrRt();
+    //}
+    glTexImage2D(GL_TEXTURE_2D, 0, eInternalFormat, iWidth, iHeight, 0, eTextureFormat, eDataType, nullptr);
+    Gu::getGraphicsContext()->chkErrRt();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    Gu::getGraphicsContext()->chkErrRt();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    Gu::getGraphicsContext()->chkErrRt();
+
+    if (eOutTarget != nullptr) {
+      *eOutTarget = GL_TEXTURE_2D;
+    }
+  }
+  glDisable(GL_DITHER);//Dithering gets enabled for some reason
+
+  Gu::getGraphicsContext()->chkErrRt();
 
 }
 

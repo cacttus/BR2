@@ -1,52 +1,30 @@
 /**
 *  @file RenderTarget.h
-*  @date May 27, 2017
+*  @date 20200225
 *  @author MetalMario971
 */
 #pragma once
-#ifndef __RENDERTARGET_149586780355650870_H__
-#define __RENDERTARGET_149586780355650870_H__
+#ifndef __RENDERTARGET_158266575555650870_H__
+#define __RENDERTARGET_158266575555650870_H__
 
 #include "../gfx/GfxHeader.h"
+
 namespace BR2 {
 /**
-*    @class RenderTarget
-*    @brief The output of a rendering operation.
+*  @class RenderTarget
+*  @brief Interface for rendering targets: GL buffer, or window surface.
 */
-//Storage class for OpenGL render target data.
-class RenderTarget : public VirtualMemory {
-  friend class FramebufferBase;
+class RenderTarget : public GLFramework {
 public:
-  RenderTarget(bool bShared) : _bShared(bShared) {}
+  RenderTarget(std::shared_ptr<GLContext> ct);
   virtual ~RenderTarget() override;
 
-  bool getShared() { return _bShared; }
-  GLuint getGlTexId() { return _iGlTexId; }
-  string_t getName() { return _strName; }
-  GLenum getTextureChannel() { return _eTextureChannel; }
-  GLenum getAttachment() { return _eAttachment; }
-  GLenum getTextureTarget() { return _eTextureTarget; }
-  GLuint getTexId() { return _iGlTexId; }
-  GLint getLayoutIndex() { return _iLayoutIndex; }
-  RenderTargetType::e getTargetType() { return _eTargetType; }
-  GLenum getBlitBit() { return _eBlitBit; }
-  bool getMsaaEnabled();
-
-  void bind(GLenum eAttachment = 0);
-
-private:
-  string_t _strName;
-  GLuint _iGlTexId;    // Texture Id
-  GLenum _eTextureTarget; //GL_TEXTURE_2D, or other
-  GLenum _eAttachment;//GL_COLORATTACHMENT_0 + n
-  GLint _iLayoutIndex;// The (layout = 0).. in the shader
-  GLenum _eTextureChannel;//GL_TEXTURE0 +..
-  GLenum _eBlitBit; // GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT
-  RenderTargetType::e _eTargetType;
-  bool _bShared = false;
-
+  virtual int32_t getWidth() = 0;
+  virtual int32_t getHeight() = 0;
+  std::shared_ptr<GLContext> getContext() { return _pContext; }
+protected:
+  std::shared_ptr<GLContext> _pContext = nullptr;
 };
-
 
 }//ns Game
 

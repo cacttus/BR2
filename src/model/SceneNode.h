@@ -125,6 +125,7 @@ public:
     _vRotationNormal = axis_angle_radians.xyz();
     _fRotation = axis_angle_radians.w;
   }
+  std::shared_ptr<Scene> getScene();
   std::shared_ptr<BaseSpec> getSpec() { return _pSpec; }
   mat4& getLocal() { return _mLocal; }
   mat4& getWorld() { return _mWorld; }
@@ -152,6 +153,7 @@ public:
 
   vec3 getVelocity() { return _velocity; }
   void setVelocity(vec3& vel) { _velocity = vel; }
+
 protected:
   void setLocalBind();
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);

@@ -5,8 +5,8 @@
 #include "../gfx/DeferredFramebuffer.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/RenderUtils.h"
-#include "../gfx/WindowViewport.h"
-#include "../gfx/RenderTarget.h"
+#include "../gfx/RenderViewport.h"
+#include "../gfx/BufferRenderTarget.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderBase.h"
 
@@ -22,23 +22,23 @@ DeferredFramebuffer::DeferredFramebuffer(std::shared_ptr<GLContext> pc, uint32_t
 }
 DeferredFramebuffer::~DeferredFramebuffer() {
 }
-void DeferredFramebuffer::init(int32_t w, int32_t h, std::shared_ptr<RenderTarget> pSharedDepthTarget, std::shared_ptr<RenderTarget> sharedPick) {
+void DeferredFramebuffer::init(int32_t w, int32_t h, std::shared_ptr<BufferRenderTarget> pSharedDepthTarget, std::shared_ptr<BufferRenderTarget> sharedPick) {
   deleteTargets();
 
   bool _bUseRenderBuffer = false;
 
   //TODO: later we'll create this async.
   //Gd::verifyRenderThread();
-  _pContext->glGenFramebuffers(1, &_uiGlFramebufferId);
-  _pContext->chkErrRt();
-  _pContext->glBindFramebuffer(GL_FRAMEBUFFER, _uiGlFramebufferId);
-  _pContext->chkErrRt();
-  _pContext->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, w);
-  _pContext->chkErrRt();
-  _pContext->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, h);
-  _pContext->chkErrRt();
-  _pContext->glActiveTexture(GL_TEXTURE0);
-  _pContext->chkErrRt();
+  getContext()->glGenFramebuffers(1, &_uiGlFramebufferId);
+  getContext()->chkErrRt();
+  getContext()->glBindFramebuffer(GL_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->chkErrRt();
+  getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, w);
+  getContext()->chkErrRt();
+  getContext()->glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, h);
+  getContext()->chkErrRt();
+  getContext()->glActiveTexture(GL_TEXTURE0);
+  getContext()->chkErrRt();
 
   // - Textures
   //Don't change the names here, we reference them elsewhere *yikes*
@@ -55,11 +55,11 @@ void DeferredFramebuffer::init(int32_t w, int32_t h, std::shared_ptr<RenderTarge
 
   checkFramebufferComplete();
 
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-  _pContext->chkErrRt();
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  getContext()->chkErrRt();
 
-  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  _pContext->chkErrRt();
+  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  getContext()->chkErrRt();
 
   _eState = FramebufferState::e::Initialized;
 }
@@ -68,7 +68,7 @@ bool DeferredFramebuffer::getIsBloomEnabled() {
 }
 int DeferredFramebuffer::getNumNonDepthTargets() {
   int ret = 0;
-  for (std::shared_ptr<RenderTarget> inf : _vecTargets) {
+  for (std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
     if (inf->getTargetType() != RenderTargetType::e::Depth) {
       ret++;
     }
@@ -84,8 +84,8 @@ int DeferredFramebuffer::getNumTargets() {
   //}
   //return ret;
 }
-std::shared_ptr<RenderTarget> DeferredFramebuffer::getTarget(RenderTargetType::e eType) {
-  for (std::shared_ptr<RenderTarget> inf : _vecTargets) {
+std::shared_ptr<BufferRenderTarget> DeferredFramebuffer::getTarget(RenderTargetType::e eType) {
+  for (std::shared_ptr<BufferRenderTarget> inf : _vecTargets) {
     if (inf->getTargetType() == eType) {
       return inf;
     }
@@ -99,8 +99,8 @@ void DeferredFramebuffer::beginRender() {
   }
 
   //GLenum attachments[32];
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
-  _pContext->glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _uiGlFramebufferId);
+  getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
   setDrawAllTargets();
 
   //NOTE:
@@ -109,11 +109,11 @@ void DeferredFramebuffer::beginRender() {
   // blended with other colors..
   glClearColor(getClear().x, getClear().y, getClear().z, getClear().w);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  _pContext->chkErrDbg();
+  getContext()->chkErrDbg();
 
 }
 void DeferredFramebuffer::endRender() {
-  _pContext->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 

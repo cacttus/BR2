@@ -56,15 +56,14 @@ public:
   void setAtlasUf(std::shared_ptr<Atlas> pa);
   void verifyBound();
   void setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound = false);
-  void setLightUf();//Deferred BLIT only (called once)
- // void setFreebieDirLightUf(bool bEnable=true); //for any deferred draw
+  void setLightUf(std::shared_ptr<LightManager> pLightManager);//Deferred BLIT only (called once)
 
   void draw(std::shared_ptr<MeshNode> mesh, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   void draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   string_t debugGetUniformValues();
 
-  void beginRaster();
+  void beginRaster(int iOrthoWidth, int iOrthoHeight);
   void endRaster();
 
   void dispatchCompute();//Compute Shader Only

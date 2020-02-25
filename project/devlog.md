@@ -1,19 +1,33 @@
 
 # Mine City Devlog
 
+*2/25/19*
+
+* WindowViewport (old) -> RenderViewport
+	* Note many places we changed the viewport updateChanged to bind() which may impact rendering.
+* removed flycam from graphicscontext (in place of scripted cameracontrols in Scene)
+* Officially moving lightmanager to Scene
+* Added RenderTarget class, Renamed RenderTarget to BufferRenderTarget, GraphicsWindow and BufferRenderTarget now share RenderTarget base class.
+* Reimplemented RenderPipe to use the owning window context.
+	* Added scene & camera passed in (no hard code scene). 
+	* **We're going to need to update the Context & Window initialization code to set the window context**
+		* **DONT FORGET TO SET WINDOW CONTEXT**
+	* All Framebuffers, including RenderPipe, share the same context.  This is good for multiple context rendering, as framebuffers are the only things we use
+		that can't share context.
+
+* Removed ScriptManager
+	* We do not need a script 'manager' since all scripts are executed when we update the objects. Scripts are components on objects.
+* Script Usage & Design
+	* `std::shared_ptr<CSharpScript> sc = CSharpCompiler::loadAndCompile(Gu::getPackage()->getScript("MyScript.cs"));`
+	* `myNode->addComponent(sc);`
+
+
 *2/24/2020*
 
 * Task list getting too large, so moved to new file /project/tasks.md.
 * The "new" BR2
 	* I don't see a reason to forcibly remove Vulkan like we did last time.
 	* Refactoring the whole engine for multiple GL contexts isn't necessary right now.  We don't need it. In the future, we might.
-
-*2/23/2020*
-
-* Reset BR2 to the LKG.  We lost a lot of work... but sometimes this happens.
-* Recoded all file headers.
-* Removed /base and /baseAll
-* Compile, Tested.
 * Removed Global Include Headers
 * Reduced Compile time by about 3 minutes.
 * Replaced t_stirng with string_t
@@ -21,12 +35,17 @@
 * Replaced BuildConfig
 * Compile, Tested.
 * Renamed Particle Manager, Input Manager.  Refactored Gu.
-
 * Note: We are not using WorldObject per design, we're using SceneNode - which will be the main "WQorldObject" for the game.
-
 * Added BaseCollider - for the collider components 
 * Added Component
 * Added Scene
+
+*2/23/2020*
+
+* Reset BR2 to the LKG.  We lost a lot of work... but sometimes this happens.
+* Recoded all file headers.
+* Removed /base and /baseAll
+* Compile, Tested.
 
 *2/21/2020*
 

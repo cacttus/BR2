@@ -8,6 +8,12 @@
 #define __CSHARPCOMPILER_1581653445241884949_H__
 
 #include "../base/BaseHeader.h"
+
+//This entire class should be static.
+//Usage:
+//  std::shared_ptr<CSharpScript> sc = CSharpCompiler::loadAndCompile(Gu::getPackage()->getScript("MyScript.cs"));
+//  myNode->addComponent(sc);
+
 namespace BR2 {
 class CSharpExpression : public VirtualMemoryShared<CSharpExpression> {
 public:

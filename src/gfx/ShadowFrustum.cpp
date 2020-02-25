@@ -7,7 +7,7 @@
 #include "../math/BoxUtils.h"
 #include "../gfx/ShadowFrustum.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShadowBox.h"
@@ -36,17 +36,12 @@ ShadowFrustum::~ShadowFrustum() {
   deleteFbo();
 }
 void ShadowFrustum::init() {
-
-  _pViewport = std::make_shared<WindowViewport>(60, 60
-    , VIEWPORT_LOCATION::VIEWPORT_CENTER_NONE
-    , ViewportConstraint::VP_FILL_WINDOW //VP_DONOTCHANGE
-    );
-
+  //**TODO: updated viewport, make sure it works with this.
+  _pViewport = std::make_shared<RenderViewport>(60, 60, ViewportConstraint::Fixed);
   _pVisibleSet = std::make_shared<RenderBucket>();
   _pFrustum = std::make_shared<FrustumBase>(_pViewport, 90.0f);
 
   createFbo();
-
 
   Gu::checkErrorsRt(); //Rt error check - this is called only once.
 }
@@ -68,7 +63,7 @@ void ShadowFrustum::update() {
   //    return;
   //}
 
-  std::shared_ptr<LightManager> pLightMan = Gu::getLightManager();
+  std::shared_ptr<LightManager> pLightMan = _pLightSource->getLightManager();
 
   //Update the camera for each ShadowFrustum side if the light has changed position or radius.
   //See also: debugInvalidateAllLightProjections
@@ -105,7 +100,7 @@ void ShadowFrustum::updateView() {
   _pViewport->setX(0);
   _pViewport->setWidth(_iFboWidthPixels);
   _pViewport->setHeight(_iFboHeightPixels);
-  _pViewport->updateChanged(true);
+  _pViewport->bind(nullptr);
 
   float fNear = _pFrustum->getZNear();
   float fFar = _pFrustum->getZFar();

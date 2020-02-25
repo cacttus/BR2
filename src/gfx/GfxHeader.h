@@ -41,6 +41,8 @@ typedef enum {
     ,Pick
 } RenderMode;
 
+typedef std::bitset<8> PipeBits;
+
 
 namespace ShaderClass { typedef enum { Shadow, Diffuse } e; }
 
@@ -199,7 +201,7 @@ typedef enum {
  //FWDDCL
  class ShaderSubProgram;
  class CameraNode;
- class WindowViewport;
+ class RenderViewport;
  class FrustumBase;
  class ShaderBase;
  class FboShader;
@@ -216,7 +218,6 @@ typedef enum {
  class FontTextBuffer;
  class FontSpec;
  class IScreenText;
-// class TextBoss;
  class GpuQuad3;
  class QuadBufferMesh;
  class FontSpec;
@@ -256,9 +257,9 @@ typedef enum {
  class GpuPointLight;
  class RenderParams;
  class ForwardFramebuffer;
- class FlyCam;
  class GpuComputeSync;
  class RenderTarget;
+ class BufferRenderTarget;
  class Picker;
  class ShadowFrustum;
  class ShadowBox;//1/22/18

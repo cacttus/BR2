@@ -4,13 +4,12 @@
 #include "../base/Logger.h"
 #include "../base/GraphicsWindow.h"
 #include "../base/WindowManager.h"
-#include "../base/ApplicationPackage.h"
 #include "../base/FileSystem.h"
-#include "../base/ScriptManager.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
 
+#include "../gfx/LightManager.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
@@ -34,30 +33,19 @@
 
 namespace BR2 {
 Scene::Scene() : SceneNode(nullptr) {
-  //_pFlyCam = std::make_shared<FlyingCameraControls>(Gu::getViewport());
-
-  //_pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
-  //_pFlyCam->getCam()->setPos(vec3(0, 0, -10));
-
-
   BRThrowNotImplementedException();
   //BRLogInfo("Creating Window UI");
   //_pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
 
   BRLogInfo("GLContext -  Lights");
-  _pLightManager = std::make_shared<LightManager>();
-
-  BRLogInfo("GLContext -  ScriptManager");
-  _pScriptManager = std::make_shared<ScriptManager>();
+  _pLightManager = std::make_shared<LightManager>(getContext(), getThis<Scene>());
 
   createFlyingCamera();
   _pRenderBucket = std::make_shared<RenderBucket>();
 }
 Scene::~Scene() {
-  BRThrowNotImplementedException();
   //_pScreen = nullptr;
   _pLightManager = nullptr;
-  _pScriptManager = nullptr;
 }
 void Scene::update(float delta) {
 
@@ -83,8 +71,8 @@ void Scene::createFlyingCamera() {
 
 #ifdef NOSCRIPT
   BRLogInfo("Creating Fly Camera.");
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>();
-  std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(_pGraphicsWindow->getViewport());
+  std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>(_pGraphicsWindow->getViewport(), getThis<Scene>());
   cn->addComponent(css);
   attachChild(cn);
   // cn->init();
@@ -99,6 +87,7 @@ void Scene::createFlyingCamera() {
 #else
   //Sort of also a scripting test.
   std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
+  //TODO: dont use scriptmanager, just use like ScriptCompilkr and make it a static method.
   std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
   cam->addComponent(script);
 #endif
@@ -326,7 +315,6 @@ void Scene::setDebugMode() {
     _bShowDebugText = true;
     _bDrawDebug = false;
     //Keep this legit so we can test x , y
- //   _pFlyCam->setPosAndLookAt(vec3(0, 5, -20), vec3(0, 0, 0));
   }
 }
 void Scene::drawDebugText() {

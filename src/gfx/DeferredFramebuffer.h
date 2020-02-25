@@ -21,8 +21,8 @@ public:
   DeferredFramebuffer(std::shared_ptr<GLContext> pContext, uint32_t iWidth, uint32_t iHeight, bool bMultisample, uint32_t nSamples, vec4& vClear);
   virtual ~DeferredFramebuffer() override;
 
-  virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<RenderTarget> sharedDepth, std::shared_ptr<RenderTarget> sharedPick) override;
-  std::shared_ptr<RenderTarget> getTarget(RenderTargetType::e eType);
+  virtual void init(int32_t iWidth, int32_t iHeight, std::shared_ptr<BufferRenderTarget> sharedDepth, std::shared_ptr<BufferRenderTarget> sharedPick) override;
+  std::shared_ptr<BufferRenderTarget> getTarget(RenderTargetType::e eType);
   virtual void beginRender();
   virtual void endRender();
   int getNumNonDepthTargets();

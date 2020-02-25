@@ -1,11 +1,11 @@
 #include "../base/GLContext.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/WindowViewport.h"
+#include "../gfx/RenderViewport.h"
 #include "../base/Gu.h"
 
 namespace BR2 {
-CameraNode::CameraNode(std::shared_ptr<WindowViewport> ppViewport) : PhysicsNode(nullptr),
+CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(nullptr),
 _pViewport(ppViewport) {
   _vWorldUp.construct(0, 1, 0);
 
@@ -15,7 +15,7 @@ _pViewport(ppViewport) {
   setPos(vec3(-100, -100, -100));
 
 }
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<WindowViewport> ppViewport) {
+std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport) {
   std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
   cn->init();
   return cn;
@@ -55,7 +55,7 @@ ProjectedRay CameraNode::projectPoint(vec2& mouse) {
 
 void CameraNode::setFOV(t_radians fov) {
   _f_hfov = fov;
-  _pViewport->updateChanged(true);
+  //_pViewport->updateChanged(true);
   _pMainFrustum->setFov(_f_hfov);
 }
 void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
@@ -80,7 +80,7 @@ void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& m
   //We force true here every frame because of shadow boxes changing viewport.
   //TODO: have an "isUpdated" or some other so we can spread shadowbox viewport update over time and not update this.
   //**NOTE: 1/23/18 we changed this to refresh viewport after shadow box step in render pipe
-  _pViewport->updateChanged(true);
+  //_pViewport->updateChanged(true);
 
   //**Note: This is important: sets up the projection matrix for the camera
   // either 2D 3D ortho 2point ...

@@ -10,11 +10,13 @@
 #include "../model/ShaderStorageBuffer.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
+#include "../world/Scene.h"
 
 
 namespace BR2 {
-LightManager::LightManager(std::shared_ptr<GLContext> tc) :
-  _pContext(tc) {
+LightManager::LightManager(std::shared_ptr<GLContext> tc, std::shared_ptr<Scene> pScene) {
+  _pContext = tc;
+  _pScene = pScene;
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();
 
   if (Gu::getConfig()->getColorSpace() == ColorSpace::e::SRGB) {

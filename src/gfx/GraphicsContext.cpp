@@ -9,7 +9,6 @@
 #include "../base/SoundCache.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../gfx/FlyCam.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/ParticleManager.h"   
@@ -32,20 +31,12 @@ GraphicsContext::GraphicsContext(){
     _fClearA = 1.0f;
 }
 GraphicsContext::~GraphicsContext(){
-
 }
 bool GraphicsContext::init() {
     _bValid = true;
 
     BRLogInfo("GraphicsContext - Making Vtx Formats.");
     makeVertexFormats();
-
-    //In the future we will replace this witht he active object.
-    BRLogInfo("GraphicsContext - Creating Render View");
-    _pFlyCam = std::make_shared<FlyCam>(Gu::getViewport());
-
-    _pFlyCam->getCam()->setLookAt(vec3(0, 0, 0));
-    _pFlyCam->getCam()->setPos(vec3(0, 0, -10));
 
     return isValid();
 }

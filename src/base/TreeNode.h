@@ -7,24 +7,22 @@
 #ifndef __TREENODE_2292922995327663144523481_H__
 #define __TREENODE_2292922995327663144523481_H__
 
+#include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
 /**
 *  @class TreeNode
-*  @brief Tree structure serves as the base class for nodes.  Directed Acyclic Graph.
+*  @brief Represents generic node of a DAG tree. *Not sorted
 */
 class TreeNode : public Drawable {
-  template < class Tx >
-  friend class VirtualReference;
 public:
   //DOn't change this to MAP because the vecotr must be ordered by index
   typedef std::vector<std::shared_ptr<TreeNode>> NodeList;
   typedef std::function<bool(std::shared_ptr<TreeNode>)> NodeLambda;
-
 public:
   TreeNode();
-  virtual ~TreeNode() override;
+  virtual ~TreeNode()  override;
 
   template < class Tx >
   bool iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
@@ -32,27 +30,27 @@ public:
   bool iterateDepthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
   template < class TBase, class TCopy >
   std::shared_ptr<TCopy> duplicateBreadthFirst(std::function<std::shared_ptr<TCopy>(std::shared_ptr<TBase>)> fn);
-
-  //void unlinkAllChildren(bool bRecursive = true);
   void flattenBreadthFirst(NodeList& outVec);
   std::shared_ptr<TreeNode> find(std::shared_ptr<TreeNode> bt);
+  template < class Tx >
+  std::shared_ptr<Tx> findParent();
+
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
   virtual bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
-  bool detachFromParent();  //calls remove()
 
+  bool detachFromParent();  //calls remove()
   size_t getNodeCountHierarchy();
   size_t getNodeCountParentOnly();
   bool getHasParent() { return _pParent != nullptr; }
   std::shared_ptr<TreeNode> getParent() { return _pParent; }
   std::unique_ptr<NodeList>& getChildren() { return _mapChildren; }
   virtual bool getIsLeaf() const;
-
   virtual bool canDelete() { return true; }    //override to check whether the node can be deleted.
 
 protected:
   void addNullChildren(int32_t count);
-  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override thsi - Called after a node is appended.
-  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
+  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
+  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is removed.
   void attachToParent(std::shared_ptr<TreeNode> pParent);  // calls insert()
 
 private:
@@ -71,13 +69,37 @@ private:
   std::shared_ptr<TreeNode> insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent = NULL);
   bool remove(std::shared_ptr<TreeNode> node = NULL, bool blnSplice = false, bool bImmediateNodeOnly = true);// Return true if the node was removed
 };
+template < class Tx >
+std::shared_ptr<Tx> TreeNode::findParent() {
+  //Finds the first parent, from the given node of type Tx
+  //Need to test this
+  std::shared_ptr<Tx> found = nullptr;
+  std::function<void(std::shared_ptr<TreeNode>)> fp;
 
+
+  fp = [&found, &fp](std::shared_ptr<TreeNode> cur) {
+    if (found != nullptr) {
+      return;
+    }
+    std::shared_ptr<Tx> casted = std::dynamic_pointer_cast<Tx>(cur);
+    if (casted != nullptr) {
+      found = casted;
+    }
+    else if (cur->getParent() != nullptr) {
+      fp(cur->getParent());
+    }
+  };
+
+  fp(getThis<TreeNode>());
+
+  return found;
+}
 template < class Tx >
 bool TreeNode::iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn) {
   //**Return FALSE to stop iterating**
   //Same as other lambda, but instead we use a temp1late and try to cast it
   // when iterating so we don't have to repeat that code.
-  std::shared_ptr<TreeNode> pTreeNode = shared_from_this();
+  std::shared_ptr<TreeNode> pTreeNode = getThis<TreeNode>();
   std::shared_ptr<Tx> pt = std::dynamic_pointer_cast<Tx>(pTreeNode);
   //We need the other type here.
 
@@ -126,9 +148,9 @@ bool TreeNode::iterateDepthFirst(std::function<bool(std::shared_ptr<Tx>)> fn) {
   return true;
 }
 /**
-*    @fn duplicateBreadthFirst()
-*    @brief Duplicate a tree structure.
-*    @details This is a bit confusing:
+*  @fn duplicateBreadthFirst()
+*  @brief Duplicate a tree structure.
+*  @details This is a bit confusing:
 *    TBase is the type of node we're copying.
 *    TCopy is the type of node being copied to.
 *    This basically only copies the Parent/Child structure.  Your lambda
@@ -162,7 +184,7 @@ std::shared_ptr<TCopy> TreeNode::duplicateBreadthFirst(std::function<std::shared
 }
 
 
-}//ns game
+}//ns BR2
 
 
 

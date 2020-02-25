@@ -231,9 +231,6 @@
     <ClCompile Include="src\gfx\RenderSettings.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\RenderTarget.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\RenderUtils.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
@@ -288,9 +285,6 @@
     <ClCompile Include="src\gfx\VulkanContext.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\WindowViewport.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\Atlas.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
@@ -298,9 +292,6 @@
       <Filter>gfx</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\DeferredFramebuffer.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gfx\FlyCam.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
     <ClCompile Include="src\math\CollisionEquations.cpp">
@@ -464,6 +455,24 @@
     </ClCompile>
     <ClCompile Include="src\world\BaseCollider.cpp">
       <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderViewport.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\BufferRenderTarget.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\RenderTarget.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FlyingCameraControls.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\CSharpCompiler.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\CSharpScript.cpp">
+      <Filter>base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -662,9 +671,6 @@
     <ClInclude Include="src\ext\pugixml\pugiconfig.hpp">
       <Filter>ext\pugixml</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\FlyCam.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\FontTextBuffer.h">
       <Filter>gfx</Filter>
     </ClInclude>
@@ -731,9 +737,6 @@
     <ClInclude Include="src\gfx\RenderSettings.h">
       <Filter>gfx</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\RenderTarget.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
     <ClInclude Include="src\gfx\RenderUtils.h">
       <Filter>gfx</Filter>
     </ClInclude>
@@ -789,9 +792,6 @@
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\VulkanContext.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\WindowViewport.h">
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Atlas.h">
@@ -1039,6 +1039,24 @@
     </ClInclude>
     <ClInclude Include="src\world\BaseCollider.h">
       <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderViewport.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\BufferRenderTarget.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\RenderTarget.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FlyingCameraControls.h">
+      <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\CSharpCompiler.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\CSharpScript.h">
+      <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,13 +2,12 @@
 #include "../base/InputManager.h"
 #include "../base/Gu.h"
 #include "../base/Logger.h"
-
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/FlyingCameraControls.h"
-#include "../world/WorldObject.h"
+#include "../model/SceneNode.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
@@ -18,10 +17,10 @@ FlyingCameraControls::~FlyingCameraControls() {
 }
 
 void FlyingCameraControls::start(){
-  std::shared_ptr<CameraNode> cam = getWorldObject<CameraNode>();
 
-  Br2LogInfo("Creating Fly Camera.");
-  cam = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
+  BRLogInfo("Creating Fly Camera.");
+  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
+  // cam = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
   cam->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
   updateCameraPosition();
   _vMoveVel.construct(0, 0, 0);
@@ -91,7 +90,7 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
   float v_len;
   _vMoveVel.len_and_norm(v_n, v_len);
   float v_new_len = v_len - v_len * _fMoveDamp * dt;
-  v_new_len = MathUtils::broClamp(v_new_len, 0.0f, _fMaxMoveVel);
+  v_new_len = MathUtils::brClamp(v_new_len, 0.0f, _fMaxMoveVel);
   _vMoveVel = v_n * v_new_len;
 
   //Finalluy update camera
@@ -137,7 +136,7 @@ void FlyingCameraControls::updateRotate(std::shared_ptr<InputManager> pInput) {
 }
 void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
   // mat4 rot = mat4::getRotationRad(dRot, vec3(0, 1, 0));
-  vec3 camPos = getWorldObject()->getScene()->getActiveCamera()->getPos();
+  vec3 camPos = getNode()->getScene()->getActiveCamera()->getPos();
 
   // _vCamNormal = _pCamera->getViewNormal();
 

@@ -8,8 +8,6 @@
 #define __UNPACK_15154667791053603878_H__
 
 #include "../base/BaseHeader.h"
-#include "../base/HashMap.h"
-#include "../base/XmlFile.h"
 
 namespace BR2 {
 class ProjectPackageFileEntry {
@@ -28,7 +26,6 @@ class ApplicationPackage : public VirtualMemory {
 public:
   ApplicationPackage();
   virtual ~ApplicationPackage() override;
-
 
   bool isPackage() { return _bIsPacked; }
   bool getFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull = false);
@@ -83,6 +80,7 @@ private:
   string_t _strEnvTexturePath = "";
   string_t _strTextureDir = "";
   string_t _strScriptsFolder = "";
+
   void makeDefaultPaths();
   bool loadPackedFile(std::string fileLoc, std::shared_ptr<BinaryFile> fb, bool bAddNull);
   int32_t parseInt32(std::shared_ptr<BinaryFile> fb, int32_t& off);

@@ -13,7 +13,7 @@
 namespace BR2 {
 /**
 *  @class ShadowFrustum
-*  @brief
+*  @brief Frustum for rendering shadows.
 */
 class ShadowFrustum : public VirtualMemoryShared<ShadowFrustum> {
 public:
@@ -49,7 +49,7 @@ private:
 
   int32_t _iShadowFrustumId;
   std::shared_ptr<FrustumBase> _pFrustum = nullptr;
-  std::shared_ptr<WindowViewport> _pViewport = nullptr;
+  std::shared_ptr<RenderViewport> _pViewport = nullptr;
   mat4 _projMatrix;    // Frustum, Proj, View - basic camera parameters
   mat4 _viewMatrix;    //
   mat4 _PVB;

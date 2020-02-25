@@ -29,13 +29,10 @@ public:
 
   //std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
   std::shared_ptr<PhysicsWorld> getPhysicsManager() { return _pPhysicsWorld; }
-
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
   //**TODO: we need to differentiate the different cameras by keeping exactly one camera defined as the "main player camera"
   std::shared_ptr<CameraNode> getPlayerCamera() { return _pActiveCamera; }
-
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
-  std::shared_ptr<ScriptManager> getScriptManager() { return _pScriptManager; }
   std::shared_ptr<GraphicsWindow> getWindow() { return _pGraphicsWindow; }
   std::shared_ptr<GLContext> getContext();
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
@@ -77,7 +74,6 @@ private:
   std::shared_ptr<CameraNode> _pActiveCamera = nullptr;
   //The default fly camera must always be available.
   //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
-  std::shared_ptr<ScriptManager> _pScriptManager = nullptr;
   std::shared_ptr<GraphicsWindow> _pGraphicsWindow = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
 

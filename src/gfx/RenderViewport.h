@@ -1,5 +1,5 @@
 /**
-*  @file Viewport.h
+*  @file RenderViewport.h
 *  @date September 24, 2011
 *  @author MetalMario971
 */
@@ -8,7 +8,6 @@
 #define __VIEWPORT_1483030407219963222425227_H__
 
 #include "../base/BaseHeader.h"
-#include "../math/MathAll.h"
 #include "../gfx/GfxHeader.h"
 namespace BR2 {
 enum class ViewportConstraint {
@@ -17,9 +16,10 @@ enum class ViewportConstraint {
   Fullscreen,   //Fixes to window width, and height.
 };
 /**
-*  @class WindowViewport
+*  @class RenderViewport
 *  @brief Viewport for rendering to a window.
 */
+class RenderViewport_Internal;
 class RenderViewport : public VirtualMemoryShared<RenderViewport> {
 public:
   RenderViewport(
@@ -43,9 +43,7 @@ public:
   void updateBox(std::shared_ptr<RenderTarget> target);
 
 private:
-  Box3i _rect;
-  Box3i _lastRect;
-  ViewportConstraint _constraint;
+  std::unique_ptr<RenderViewport_Internal> _pint = nullptr;
 };
 
 }//ns BR2
