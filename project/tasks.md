@@ -86,13 +86,13 @@
 - [ ] Story: Create a new Peon.	
 		
 - [ ] Story: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
-		- [ ] Tab Bar
-			- [ ] TabItem
-			- [ ] Temporary Tab vs Permanent Tab
-		- [ ] Inventory Window.
-			- [ ] Scrollbars, for more info
-			- [ ] Organize Inventory Items.
-		- [ ] ToolBelt Slots
+	- [ ] Tab Bar
+		- [ ] TabItem
+		- [ ] Temporary Tab vs Permanent Tab
+	- [ ] Inventory Window.
+		- [ ] Scrollbars, for more info
+		- [ ] Organize Inventory Items.
+	- [ ] ToolBelt Slots
 
 - [ ] Story: Be able to exit the game.
 	- [ ] Hamburger Menu (top right): 
