@@ -127,7 +127,7 @@
     <ClCompile Include="src\math\Quaternion.cpp" />
     <ClCompile Include="src\math\Random.cpp" />
     <ClCompile Include="src\model\Animation.cpp" />
-    <ClCompile Include="src\model\BaseNode.cpp" />
+    <ClCompile Include="src\model\SceneNode.cpp" />
     <ClCompile Include="src\model\FragmentBufferData.cpp" />
     <ClCompile Include="src\model\GpuBufferData.cpp" />
     <ClCompile Include="src\model\IboData.cpp" />
@@ -314,7 +314,7 @@
     <ClInclude Include="src\math\Vec3x.h" />
     <ClInclude Include="src\math\Vec4x.h" />
     <ClInclude Include="src\model\Animation.h" />
-    <ClInclude Include="src\model\BaseNode.h" />
+    <ClInclude Include="src\model\SceneNode.h" />
     <ClInclude Include="src\model\FragmentBufferData.h" />
     <ClInclude Include="src\model\GpuBufferData.h" />
     <ClInclude Include="src\model\HierarchyString.h" />

@@ -119,7 +119,7 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
   pBox = *_pShadowFrustum->getFrustum()->getBoundBox();
   getOBB()->setInvalid();
 
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
 LightNodePoint::LightNodePoint(bool bShadowBox) : LightNodeBase(bShadowBox) {
@@ -214,7 +214,7 @@ void LightNodePoint::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float e
   pBox._max += getLightRadius();
   getOBB()->setInvalid();
 
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 
 

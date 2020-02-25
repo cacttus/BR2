@@ -30,7 +30,7 @@ float RenderBucket::distToCam(Box3f* bn) {
   float dist = _vCachedCamPos.distance2(bn->center());
   return dist;
 }
-void RenderBucket::addObj(std::shared_ptr<BaseNode> bn) {
+void RenderBucket::addObj(std::shared_ptr<SceneNode> bn) {
 
   //float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - pGrid->getNodeCenterR3()).length2();
   float dist = distToCam(bn->getBoundBoxObject());
@@ -43,7 +43,7 @@ void RenderBucket::addGrid(std::shared_ptr<PhysicsGrid> bn) {
   float dist = distToCam(bn->getBoundBox());
   _mapGrids.insert(std::make_pair(dist, bn));
 }
-void RenderBucket::collect(std::shared_ptr<BaseNode> bn) {
+void RenderBucket::collect(std::shared_ptr<SceneNode> bn) {
   //collects renderable items into specific buffers
   if (bn->getHidden() == false) {
     float fDist = distToCam(bn->getBoundBoxObject());

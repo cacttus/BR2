@@ -39,7 +39,7 @@ public:
   void collectVisibleNodes(BvhCollectionParams* collectionParams);
 
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();
-  std::multimap<float, std::shared_ptr<BaseNode>>& getVisibleNodes();
+  std::multimap<float, std::shared_ptr<SceneNode>>& getVisibleNodes();
   float getNodeWidth()const { return _fNodeWidth; }
   float getNodeHeight()const { return _fNodeHeight; }
   ivec3 v3Toi3Node(vec3& v);

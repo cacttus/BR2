@@ -7,7 +7,7 @@
 #ifndef __PHYSICS_NODE_14910105823111128827_H__
 #define __PHYSICS_NODE_14910105823111128827_H__
 
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
@@ -25,7 +25,7 @@ public:
 };
 //The physics data is independent of the PixObj only because we need to
 //collide with the World Node plane so we need a separate box that isn't an object.
-class PhysicsNode : public BaseNode {
+class PhysicsNode : public SceneNode {
 public:
   PhysicsNode(std::shared_ptr<PhysicsSpec>);
   virtual ~PhysicsNode();

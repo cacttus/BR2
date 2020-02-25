@@ -19,7 +19,7 @@
 #include "../base/BaseHeader.h"
 #include "../math/MathAll.h"
 #include "../gfx/GfxHeader.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 namespace BR2 {
 /**
 *  @class Frustum

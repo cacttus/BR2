@@ -9,7 +9,7 @@
 
 #include "../model/ModelHeader.h"
 #include "../math/MathAll.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../world/WorldHeader.h"
 
 namespace BR2 {

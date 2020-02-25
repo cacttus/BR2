@@ -10,7 +10,7 @@
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../world/PhysicsNode.h"
 
 namespace BR2 {
@@ -215,7 +215,7 @@ private:
 
 //. BoneSpec or  BoneSpec, or et..
 //**This was BoneRef
-class BoneNode : public BaseNode {
+class BoneNode : public SceneNode {
 public:
   BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
   static std::shared_ptr<BoneNode> create(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
@@ -231,7 +231,7 @@ public:
     _bAdded = true;
   }
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
-  virtual void calcBoundBox() override { BaseNode::calcBoundBox(); }
+  virtual void calcBoundBox() override { SceneNode::calcBoundBox(); }
 protected:
   virtual void init() override;
 
@@ -280,7 +280,7 @@ private:
   std::shared_ptr<BoneSpec> getCachedBoneByName(string_t name);
 };
 
-class ArmatureNode : public BaseNode {
+class ArmatureNode : public SceneNode {
 public:
   ArmatureNode(std::shared_ptr<Armature> ps);
   static std::shared_ptr<ArmatureNode> create(std::shared_ptr<Armature> ps);
@@ -349,7 +349,7 @@ public:
   void stopAction(string_t actName);
   void stopAllActions();
   std::shared_ptr<ModelSpec> getModelSpec();
-  void attachToNode(std::shared_ptr<BaseNode> pNode) { _pWorldNode = pNode; }
+  void attachToNode(std::shared_ptr<SceneNode> pNode) { _pWorldNode = pNode; }
   //This is the physics update.  It's the main update.  modelNode drops animation on subsequent nodes.
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
 
@@ -363,12 +363,12 @@ protected:
 private:
   std::vector<std::shared_ptr<MeshNode>> _vecMeshes;
   std::vector<std::shared_ptr<ArmatureNode>> _vecArmatures;
-  std::shared_ptr<BaseNode> _pWorldNode = nullptr; // Reference to the world node *not owned
+  std::shared_ptr<SceneNode> _pWorldNode = nullptr; // Reference to the world node *not owned
   // std::shared_ptr<Animator> _pAnimator = nullptr;
   std::map<Hash32, std::shared_ptr<Animator>> _mapAnimators;
-  std::map<Hash32, std::shared_ptr<BaseNode>> _mapNodes;//Cache of all nodes appended including bones.  
-  std::shared_ptr<BaseNode> getNodeByName(string_t name);
-  void addNodeToCache(std::shared_ptr<BaseNode> bn);
+  std::map<Hash32, std::shared_ptr<SceneNode>> _mapNodes;//Cache of all nodes appended including bones.  
+  std::shared_ptr<SceneNode> getNodeByName(string_t name);
+  void addNodeToCache(std::shared_ptr<SceneNode> bn);
   std::shared_ptr<Animator> getAnimator(string_t actName);
   void buildNodeParents();
 };

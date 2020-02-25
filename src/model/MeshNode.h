@@ -9,14 +9,14 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 
 namespace BR2 {
 /**
 *  @class MeshNode
 *  @brief Basically this is MeshNode*. We carete this from tnhse meshspec class..
 */
-class MeshNode : public BaseNode {
+class MeshNode : public SceneNode {
 public:
   static std::shared_ptr<MeshNode> create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
   static std::shared_ptr<MeshNode> create(std::shared_ptr<MeshSpec> pd);

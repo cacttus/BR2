@@ -11,7 +11,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderSettings.h"
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../model/ShaderStorageBuffer.h"
 #include "../model/Model.h"
 #include "../model/Material.h"
@@ -311,7 +311,7 @@ void BoneSpec::serialize( std::shared_ptr<BinaryFile> fb) {
     fb->writeVec3(std::move(_vTail));
 }
 //////////////////////////////////////////////////////////////////////////
-BoneNode::BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) : BaseNode(b) {
+BoneNode::BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) : SceneNode(b) {
     _pBone = b;
     _pArmatureNode = pa;
     _mLocal.setIdentity();
@@ -325,7 +325,7 @@ std::shared_ptr<BoneNode> BoneNode::create(std::shared_ptr<BoneSpec> b, std::sha
 BoneNode::~BoneNode() {
 }
 void BoneNode::init() {
-    BaseNode::init();
+    SceneNode::init();
 }
 void BoneNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad){
     pBox.genResetLimits();
@@ -339,7 +339,7 @@ void BoneNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_p
             pBox.genExpandByPoint(getOBB()->getVerts()[i]);
         }
     }
-    BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+    SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
 Animator::Animator()
@@ -555,7 +555,7 @@ void Armature::compileHierarchy() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ArmatureNode::ArmatureNode(std::shared_ptr<Armature> ps) : BaseNode(ps) {
+ArmatureNode::ArmatureNode(std::shared_ptr<Armature> ps) : SceneNode(ps) {
 }
 std::shared_ptr<ArmatureNode> ArmatureNode::create(std::shared_ptr<Armature> ps){
     std::shared_ptr<ArmatureNode> a = std::make_shared<ArmatureNode>(ps);
@@ -572,7 +572,7 @@ ArmatureNode::~ArmatureNode() {
   //  _vecMeshes.resize(0);
 }
 void ArmatureNode::init(){
-    BaseNode::init();
+    SceneNode::init();
 
     std::vector<std::shared_ptr<BoneNode>> vecBonesUnordered;
     build(getData<Armature>()->getRootBone(), nullptr, vecBonesUnordered);
@@ -612,7 +612,7 @@ void ArmatureNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator
         //This is intentional.  We would end up with 2 transforms on mesh.
         _pBoneRoot->update(delta, mapAnimators);
     }
-    BaseNode::update(delta, mapAnimators);
+    SceneNode::update(delta, mapAnimators);
 }
 void ArmatureNode::drawBones(std::shared_ptr<UtilMeshInline> mi, std::shared_ptr<BoneNode> bn, Color4f& c4) {
     ///mat4 mBind = bn->getSpec()->getBind();
@@ -657,7 +657,7 @@ void ArmatureNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
             return true;
         });
     }
-    BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+    SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 //////////////////////////////////////////////////////////////////////////
 ModelSpec::ModelSpec(string_t name, int32_t frameRate) : PhysicsSpec(name), _iFrameRate(frameRate) {
@@ -862,8 +862,8 @@ void ModelNode::init(){
 }
 void ModelNode::buildNodeParents() {
     //Parent Armatures And Meshes And Bones (if they have parents, if no, they are parented by the modelnode
-    for (std::pair <Hash32, std::shared_ptr<BaseNode>> p : _mapNodes) {
-        std::shared_ptr<BaseNode> pNode = p.second;
+    for (std::pair <Hash32, std::shared_ptr<SceneNode>> p : _mapNodes) {
+        std::shared_ptr<SceneNode> pNode = p.second;
         string_t strChild = pNode->getSpec()->getName();
         string_t strParent = pNode->getSpec()->getParentName();
         if (pNode->getSpec()->getParentType() == ParentType::e::Bone) {
@@ -897,7 +897,7 @@ void ModelNode::buildNodeParents() {
         }
         else {
             if (pNode->getParent() != nullptr) {
-                std::shared_ptr<BaseNode> pParentAttached = std::dynamic_pointer_cast<BaseNode>(pNode->getParent());
+                std::shared_ptr<SceneNode> pParentAttached = std::dynamic_pointer_cast<SceneNode>(pNode->getParent());
                 if (pParentAttached == nullptr) {
                     BRLogError("Parent already attached, but Tried to cast a base node - failed.");
                     Gu::debugBreak();
@@ -909,7 +909,7 @@ void ModelNode::buildNodeParents() {
                 }
             }
             else {
-                std::shared_ptr<BaseNode> pParentNode = getNodeByName(strParent);
+                std::shared_ptr<SceneNode> pParentNode = getNodeByName(strParent);
                 if (pParentNode == nullptr) {
                     BRLogError("Could not find parent '" + strParent + "' for node '" + strChild + "'");
                     Gu::debugBreak();
@@ -927,7 +927,7 @@ void ModelNode::buildNodeParents() {
         }
     }
 }
-void ModelNode::addNodeToCache(std::shared_ptr<BaseNode> bn) {
+void ModelNode::addNodeToCache(std::shared_ptr<SceneNode> bn) {
     AssertOrThrow2(bn != nullptr);
     Hash32 bnName = STRHASH(bn->getSpec()->getName());
     if (_mapNodes.find(bnName) != _mapNodes.end()) {
@@ -937,9 +937,9 @@ void ModelNode::addNodeToCache(std::shared_ptr<BaseNode> bn) {
         _mapNodes.insert(std::make_pair(bnName, bn));
     }
 }
-std::shared_ptr<BaseNode> ModelNode::getNodeByName(string_t name) {
+std::shared_ptr<SceneNode> ModelNode::getNodeByName(string_t name) {
     Hash32 h = STRHASH(name);
-    std::map<Hash32, std::shared_ptr<BaseNode>>::iterator it = _mapNodes.find(h);
+    std::map<Hash32, std::shared_ptr<SceneNode>>::iterator it = _mapNodes.find(h);
     if (it == _mapNodes.end()) {
         return nullptr;
     }
@@ -947,7 +947,7 @@ std::shared_ptr<BaseNode> ModelNode::getNodeByName(string_t name) {
 }
 
 std::shared_ptr<ModelSpec> ModelNode::getModelSpec() {
-    return std::dynamic_pointer_cast<ModelSpec>(BaseNode::getSpec());
+    return std::dynamic_pointer_cast<ModelSpec>(SceneNode::getSpec());
 }
 void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
     Perf::pushPerf();
@@ -959,7 +959,7 @@ void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
     }
 
     //Update all nodes ONCE
-    BaseNode::update(delta, _mapAnimators);
+    SceneNode::update(delta, _mapAnimators);
 
     //*Dispatch final skin for all meshes
     for (std::shared_ptr<MeshNode> mn : _vecMeshes) {
@@ -969,7 +969,7 @@ void ModelNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
 }
 
 void ModelNode::drawForward(RenderParams& rp) {
-    BaseNode::drawForward(rp);
+    SceneNode::drawForward(rp);
 
     //Debug Boxes and Soforth
     if (Gu::getRenderSettings()->getDebug()->getShowArmatures()) {
@@ -1166,7 +1166,7 @@ void ModelSpec::cacheMeshBones() {
 void ModelNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
     pBox.genResetLimits();
 
-    BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+    SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
 
 

@@ -83,7 +83,7 @@ class ActionKeys; //Action was ambiguous
 class ActionGroup;
 class BaseSpec;
 //class BaseNode;
-class BaseNode;
+class SceneNode;
 class PhysicsNode;
 class MbiFile;
 class OBB;

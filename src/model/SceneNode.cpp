@@ -1,4 +1,4 @@
-#include "../model/BaseNode.h"
+#include "../model/SceneNode.h"
 #include "../base/Hash.h"
 #include "../base/BinaryFile.h"
 #include "../base/Logger.h"
@@ -56,7 +56,7 @@ void BaseSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
 }
 
 ///////////////////////////////////////////////////////////////////
-BaseNode::BaseNode(std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
+SceneNode::SceneNode(std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
   _pBox = new Box3f();
   _pOBB = new OBB();
   _vPos = vec3(0, 0, 0);
@@ -70,13 +70,13 @@ BaseNode::BaseNode(std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
   static NodeId id = 1;
   _iNodeId = id++;
 }
-BaseNode::~BaseNode() {
+SceneNode::~SceneNode() {
   //    _setShadowInfluences.clear();
   DEL_MEM(_pBox);
   DEL_MEM(_pOBB);
 }
 ///////////////////////////////////////////////////////////////////
-string_t BaseNode::getSpecName() {
+string_t SceneNode::getSpecName() {
   if (getSpec()) {
     return getSpec()->getName();
   }
@@ -86,7 +86,7 @@ string_t BaseNode::getSpecName() {
     return std::string("no spec");
   }
 }
-Hash32 BaseNode::getSpecNameHashed() {
+Hash32 SceneNode::getSpecNameHashed() {
   if (getSpec()) {
     return getSpec()->getNameHashed();
   }
@@ -96,14 +96,14 @@ Hash32 BaseNode::getSpecNameHashed() {
     return 0;
   }
 }
-void BaseNode::init() {
+void SceneNode::init() {
   //Nodes now need to be initialized due to shared_ptr constructors not having this ptr
   if (_bInitialized == true) {
     BRLogWarnCycle(getSpecName() + "..Node already initializd..errors will result");
   }
   _bInitialized = true;
 }
-void BaseNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   if (_bInitialized == false) {
     BRLogWarnCycle("Node was not initialized (init())");
     Gu::debugBreak();
@@ -133,14 +133,14 @@ void BaseNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& 
 
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->update(delta, mapAnimators);
     }
   }
 
   calcBoundBox();//Must come after matrix calc
 }
-void BaseNode::compileWorldMatrix() {
+void SceneNode::compileWorldMatrix() {
   //So this is technically only ever going to 
   //be used by ModelNode, however it allows us to
   //modify ALL nodes if we need to.
@@ -159,28 +159,28 @@ void BaseNode::compileWorldMatrix() {
 
 
 }
-bool BaseNode::isCameraNode() {
+bool SceneNode::isCameraNode() {
   return getThis<CameraNode>() != nullptr;
 }
-bool BaseNode::isMeshNode() {
+bool SceneNode::isMeshNode() {
   return getThis<MeshNode>() != nullptr;
 }
-bool BaseNode::isSkinnedMesh() {
+bool SceneNode::isSkinnedMesh() {
   return isMeshNode() && getThis<MeshNode>()->getMeshSpec()->hasSkin();
 }
-bool BaseNode::isBoneNode() {
+bool SceneNode::isBoneNode() {
   return getThis<BoneNode>() != nullptr;
 }
-bool BaseNode::isArmatureNode() {
+bool SceneNode::isArmatureNode() {
   return getThis<ArmatureNode>() != nullptr;
 }
-bool BaseNode::isLightNode() {
+bool SceneNode::isLightNode() {
   return getThis<LightNodeBase>() != nullptr;
 }
-bool BaseNode::isModelNode() {
+bool SceneNode::isModelNode() {
   return getThis<ModelNode>() != nullptr;
 }
-void BaseNode::setLocalBind() {
+void SceneNode::setLocalBind() {
   //Node3base* pParent = SafeCast(getParent(), Node3base*);
 
   if (isBoneNode()) {
@@ -201,14 +201,14 @@ void BaseNode::setLocalBind() {
     _mLocal = mat4::identity();
   }
 }
-void BaseNode::animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
+void SceneNode::animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
 
   for (std::pair<Hash32, std::shared_ptr<Animator>> p : mapAnimators) {
     applyLocalAnimation(p.second);
   }
 }
-void BaseNode::applyParent() {
-  std::shared_ptr<BaseNode> pParent = std::dynamic_pointer_cast<BaseNode>(getParent());
+void SceneNode::applyParent() {
+  std::shared_ptr<SceneNode> pParent = std::dynamic_pointer_cast<SceneNode>(getParent());
   //Apply the parent transform.
   if (isBoneNode()) {
     _mLocal = getSpec()->getInvBind() * _mLocal * getSpec()->getBind();
@@ -267,7 +267,7 @@ void BaseNode::applyParent() {
         if (n == 1) {
           _mLocal = getBoneParent()->getSpec()->getInvBind() * getBoneParent()->getAnimated() * _mLocal * getBoneParent()->getSpec()->getBind();
           if (getBoneParent()->getParent() != nullptr) {
-            _mLocal = _mLocal * std::dynamic_pointer_cast<BaseNode>(getBoneParent()->getParent())->getLocal();
+            _mLocal = _mLocal * std::dynamic_pointer_cast<SceneNode>(getBoneParent()->getParent())->getLocal();
           }
           _mLocal = _mLocal * pParent->getLocal();//Armature
         }
@@ -292,15 +292,15 @@ void BaseNode::applyParent() {
     _mLocal.decompose(p, r, s, true);
   }
 }
-void BaseNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
-  std::shared_ptr<BaseNode> pParent = std::dynamic_pointer_cast<BaseNode>(getParent());
+void SceneNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
+  std::shared_ptr<SceneNode> pParent = std::dynamic_pointer_cast<SceneNode>(getParent());
   if (anm != nullptr) {
     std::shared_ptr<ActionGroup> aa = anm->getAction();
     if (aa != nullptr) {
-      if (getThis<BaseNode>()->getSpec() != nullptr) {
+      if (getThis<SceneNode>()->getSpec() != nullptr) {
         //*Since we can have multiple animations for a model, this will silently fail on nodes
         // who don't have this particular animation name.
-        std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getThis<BaseNode>()->getSpec()->getNameHashed());
+        std::shared_ptr<ActionKeys> ak = aa->getActionKeys(getThis<SceneNode>()->getSpec()->getNameHashed());
         if (ak != nullptr) {
 
           ak->animate(anm, _mAnimated);
@@ -317,17 +317,17 @@ void BaseNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
   }
 }
 
-void BaseNode::calcBoundBox() {
+void SceneNode::calcBoundBox() {
   Box3f* pBox = getBoundBoxObject();
   calcBoundBox(*pBox, getPos(), 0.0f);
 }
-void BaseNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
+void SceneNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   _pOBB->setInvalid();
 
   if (!isBoneNode()) {
     //aggregate all boxes, don'd do that for bone nodes we need them to have local boxes
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> bn = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> bn = std::dynamic_pointer_cast<SceneNode>(tn);
       if (bn != nullptr) {
         pBox.genExpandByBox(bn->getBoundBoxObject());
       }
@@ -345,9 +345,9 @@ void BaseNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_p
   }
 
 }
-void BaseNode::drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_ptr<UtilMeshInline> mi) {
-  std::shared_ptr<BaseNode> that = getThis<BaseNode>();
-  iterateDepthFirst<BaseNode>([&](std::shared_ptr<BaseNode> tx) {
+void SceneNode::drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_ptr<UtilMeshInline> mi) {
+  std::shared_ptr<SceneNode> that = getThis<SceneNode>();
+  iterateDepthFirst<SceneNode>([&](std::shared_ptr<SceneNode> tx) {
     if (tx != that) {
       tx->drawBoneBindBoxes(an, mi);
     }
@@ -360,10 +360,10 @@ void BaseNode::drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_p
     mi->addBox(ob.getVerts(), &cOBB);
   }
 }
-void BaseNode::drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi) {
-  std::shared_ptr<BaseNode> that = getThis<BaseNode>();
+void SceneNode::drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi) {
+  std::shared_ptr<SceneNode> that = getThis<SceneNode>();
 
-  iterateDepthFirst<BaseNode>([&](std::shared_ptr<BaseNode> tx) {
+  iterateDepthFirst<SceneNode>([&](std::shared_ptr<SceneNode> tx) {
     if (tx != that) {
       tx->drawBoneBoxes(mi);
     }
@@ -374,10 +374,10 @@ void BaseNode::drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi) {
     mi->addBox(getOBB()->getVerts(), &cOBB);
   }
 }
-void BaseNode::drawMeshBoxes(std::shared_ptr<UtilMeshInline> mi) {
-  std::shared_ptr<BaseNode> that = getThis<BaseNode>();
+void SceneNode::drawMeshBoxes(std::shared_ptr<UtilMeshInline> mi) {
+  std::shared_ptr<SceneNode> that = getThis<SceneNode>();
 
-  iterateDepthFirst<BaseNode>([&](std::shared_ptr<BaseNode> tx) {
+  iterateDepthFirst<SceneNode>([&](std::shared_ptr<SceneNode> tx) {
     if (tx != that) {
       tx->drawMeshBoxes(mi);
     }
@@ -388,10 +388,10 @@ void BaseNode::drawMeshBoxes(std::shared_ptr<UtilMeshInline> mi) {
     mi->addBox(getOBB()->getVerts(), &cOBB);
   }
 }
-void BaseNode::drawBoxes(std::shared_ptr<UtilMeshInline> mi) {
-  std::shared_ptr<BaseNode> that = getThis<BaseNode>();
+void SceneNode::drawBoxes(std::shared_ptr<UtilMeshInline> mi) {
+  std::shared_ptr<SceneNode> that = getThis<SceneNode>();
 
-  iterateDepthFirst<BaseNode>([&](std::shared_ptr<BaseNode> tx) {
+  iterateDepthFirst<SceneNode>([&](std::shared_ptr<SceneNode> tx) {
     if (tx != that) {
       tx->drawBoxes(mi);
     }
@@ -400,7 +400,7 @@ void BaseNode::drawBoxes(std::shared_ptr<UtilMeshInline> mi) {
   drawBox(mi);
 
 }
-void BaseNode::drawBox(std::shared_ptr<UtilMeshInline> mi) {
+void SceneNode::drawBox(std::shared_ptr<UtilMeshInline> mi) {
   vec4 cBB(1, 1, 0, 1);
   vec4 cOBB(0, 1, 1, 1);
   mi->addBox(getBoundBoxObject(), &cBB);
@@ -408,64 +408,64 @@ void BaseNode::drawBox(std::shared_ptr<UtilMeshInline> mi) {
     mi->addBox(getOBB()->getVerts(), &cOBB);
   }
 }
-void BaseNode::drawDeferred(RenderParams& rp) {
+void SceneNode::drawDeferred(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawDeferred(rp);
     }
   }
 }
-void BaseNode::drawForward(RenderParams& rp) {
+void SceneNode::drawForward(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawForward(rp);
     }
   }
 }
-void BaseNode::drawShadow(RenderParams& rp) {
+void SceneNode::drawShadow(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawShadow(rp);
     }
   }
 }
-void BaseNode::drawDebug(RenderParams& rp) {
+void SceneNode::drawDebug(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawDebug(rp);
     }
   }
 }
-void BaseNode::drawNonDepth(RenderParams& rp) {
+void SceneNode::drawNonDepth(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawNonDepth(rp);
     }
   }
 }
-void BaseNode::drawTransparent(RenderParams& rp) {
+void SceneNode::drawTransparent(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawTransparent(rp);
     }
   }
 }
-vec3 BaseNode::getFinalPos() {
+vec3 SceneNode::getFinalPos() {
   vec3 v;
   v = getLocal().getTranslation();
   return v;
 }
-void BaseNode::collect(std::shared_ptr<RenderBucket> rb) {
-  rb->collect(getThis<BaseNode>());
+void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
+  rb->collect(getThis<SceneNode>());
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-      std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+      std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       if (pc) {
         pc->collect(rb);
       }

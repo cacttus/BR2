@@ -54,17 +54,23 @@
 	- [ ] Compile, Run.
 
 ## Model & Scene Updates
-* The goal here is to create a more 'common' game engine architecture, similar to what Blender and Unity use.  We want to be able to quickly add nodes
-to scenes.  Our current "Spec" system for creating node clones is sloppy, and doesn't make sense as a lot of the "spec" data are not resource intensive
-and don not need to be shared.  Secondly, we want to have a component-based system, where we may have multiple 'nodes' per WorldObject (GameObject in Unity).
+* The goal here is to create a more 'common' game engine architecture, similar to Blender and Unity design.  We want to be able to quickly add nodes
+to scenes and reference their shared `data` components via instancing.  Our current "Spec" system for creating node clones is sloppy, and doesn't make sense as a lot of the "spec" data are not resource intensive
+and don not need to be shared.  Secondly, we want to have a component-based system, where we may have multiple 'nodes' per WorldObject (GameObject in Unity). We
+will have only 4 kinds of nodes then:
+	* SceneNode (base, inherits TreeNode)
+	* CameraNode
+	* LightNode (Point and Directional)
+	* WorldNode (A Glob in the game world)
 The system will be rewritten in 3 areas:
 	1. Remove all Data classes, besides MeshData.  MeshData will be referred to as a "slot" in the "MeshComponent"
 		* Add NodeData to SceneNode, not copying it.
 	2. Implement `clone()` and `copy()` on SceneNode
-	3. Add a generic component class, which is subclassed by
+	3. Remove `serialize()` and `deserialize()` from all *Data's and place them on SceneNode and all Sub-Nodes.
+	4. Add a generic component class, which is subclassed by
 		* CSharpScript (ScriptComponent)
 		* Mesh (MeshComponent)
-	4. Integration of "PhysicsNode" with the nodes themselves. (it makes no sense do deprive a node of velocity).
+	5. Integration of "PhysicsNode" with the nodes themselves. (it makes no sense do deprive a node of velocity).
 		* Remove Velocity from "PhysicsNode" and place the Velocity on SceneNode.
 		* Create a ColliderComponent
 		* Place Mass, Shape, and all other PhysicsNode properties on the ColliderComponent
@@ -73,26 +79,25 @@ The system will be rewritten in 3 areas:
 
 - [ ] Implement GLTF file loader. (Replace MBI files with GLTF binary)
 	- [ ] Test, by using a GLTF model from Blender.
-- [ ] Data Class Separation. Replace Node/Spec with a clone() and copy() system.
-	- [ ] Remove WorldObject inheritence, and use Component model.
-	- [ ] Rename BaseNode -> SceneNode
-	- [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
-	- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
-	- [ ] Implement `clone()` and `copy()` on nodes.
-	- [ ] Move complex methods from all *data* classes to their respective Node classes.
-	- [ ] Remove inheritence from data classes.
-	- [ ] Implement some kind of management system that prevents NodeData name collisions. (they must be unique as name and hashedname are the GUIDs for the nodedata).
-	- [ ] Update Scene File
-		- [ ] Create a data model that holds all nodes in the game.  Currently, there's no 'scene' file, but we have the glob/world files.
-			- [ ] *Recursive Serialization* of nodes, instead of the linear Serialization.  
-			- [ ] Control this serialization through a new type of manager file.
-	- [ ] Completely remove "Model" and either, 
-		* use some kind of Component interface for models, or just place Model's information on WorldObject.
-		* or just place Model's information on WorldObject.
-		* or just place Model's information on WorldObject
-		* or Subclass MeshNode with SkinnedMeshNode
-	- [ ] Componentize "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
-	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
+- [ ] Remove WorldObject inheritence, and use Component model.
+- [x] Rename BaseNode -> SceneNode
+- [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
+- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
+- [ ] Implement `clone()` and `copy()` on nodes.
+- [ ] Move complex methods from all *data* classes to their respective Node classes.
+- [ ] Remove inheritence from data classes.
+- [ ] Implement some kind of management system that prevents NodeData name collisions. (they must be unique as name and hashedname are the GUIDs for the nodedata).
+- [ ] Update Scene File
+	- [ ] Create a data model that holds all nodes in the game.  Currently, there's no 'scene' file, but we have the glob/world files.
+		- [ ] *Recursive Serialization* of nodes, instead of the linear Serialization.  
+		- [ ] Control this serialization through a new type of manager file.
+- [ ] Completely remove "Model" and either, 
+	* use some kind of Component interface for models, or just place Model's information on WorldObject.
+	* or just place Model's information on WorldObject.
+	* or just place Model's information on WorldObject
+	* or Subclass MeshNode with SkinnedMeshNode
+- [ ] Componentize "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
+- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
 
 ## Mine City, Enhancements, Phase I
 - [ ] Simplify the UI to work with the UI design for this game.  (Which should update UI performance)\

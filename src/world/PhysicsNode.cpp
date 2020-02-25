@@ -7,7 +7,7 @@
 #include "../world/PhysicsWorld.h"
 
 namespace BR2 {
-PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps) : BaseNode(ps) {
+PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps) : SceneNode(ps) {
   _fMass = ps->getMass();
   _bHollow = ps->getHollow();
   _pSpeedbox = new Box3f();
@@ -25,7 +25,7 @@ PhysicsNode::~PhysicsNode() {
   DEL_MEM(_pSpeedbox);
 }
 void PhysicsNode::init() {
-  BaseNode::init();
+  SceneNode::init();
 }
 void PhysicsNode::setVelocity(vec3& v) {
   _vVelocity = v;

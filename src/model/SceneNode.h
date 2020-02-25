@@ -65,10 +65,10 @@ protected:
 *    @class BaseNode
 *    @brief The base of the node system.
 */
-class BaseNode : public TreeNode {
+class SceneNode : public TreeNode {
 public:
-  BaseNode(std::shared_ptr<BaseSpec>);
-  virtual ~BaseNode() override;
+  SceneNode(std::shared_ptr<BaseSpec>);
+  virtual ~SceneNode() override;
 
   void setHidden(bool bHidden) {
     _bHidden = bHidden;
@@ -158,7 +158,7 @@ public:
 
     if (getChildren()) {
       for (std::shared_ptr<TreeNode> tn : *getChildren()) {
-        std::shared_ptr<BaseNode> pc = std::dynamic_pointer_cast<BaseNode>(tn);
+        std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
         if (pc != nullptr) {
           if (pc->findNode<Tx>(node) == true) {
             return true;

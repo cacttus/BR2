@@ -33,7 +33,7 @@
 
 namespace BR2 {
 std::multimap<float, std::shared_ptr<PhysicsGrid>>& PhysicsWorld::getVisibleGrids() { return _pRenderBucket->getGrids(); }
-std::multimap<float, std::shared_ptr<BaseNode>>& PhysicsWorld::getVisibleNodes() { return _pRenderBucket->getObjs(); }
+std::multimap<float, std::shared_ptr<SceneNode>>& PhysicsWorld::getVisibleNodes() { return _pRenderBucket->getObjs(); }
 PhysicsWorld::PhysicsWorld() {
 }
 PhysicsWorld::~PhysicsWorld() {
@@ -1450,8 +1450,8 @@ void PhysicsWorld::drawShadows() {
 }
 void PhysicsWorld::drawForward() {
   RenderParams rp;
-  for (std::pair<float, std::shared_ptr<BaseNode>> p : getVisibleNodes()) {
-    std::shared_ptr<BaseNode> pm = p.second;
+  for (std::pair<float, std::shared_ptr<SceneNode>> p : getVisibleNodes()) {
+    std::shared_ptr<SceneNode> pm = p.second;
     pm->drawForward(rp);
   }
 }

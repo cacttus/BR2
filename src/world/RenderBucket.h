@@ -32,7 +32,7 @@ public:
 */
 class RenderBucket : public VirtualMemoryShared<RenderBucket> {
   typedef std::map<std::shared_ptr<ShaderBase>, std::vector<std::shared_ptr<MeshNode>>> RenderMap;
-  std::multimap<float, std::shared_ptr<BaseNode>> _mapObjs;
+  std::multimap<float, std::shared_ptr<SceneNode>> _mapObjs;
   std::multimap<float, std::shared_ptr<PhysicsGrid>> _mapGrids;
   std::multimap<float, std::shared_ptr<LightNodePoint>> _mapPointLights;
   std::multimap<float, std::shared_ptr<LightNodeDir>> _mapDirLights;
@@ -45,16 +45,16 @@ class RenderBucket : public VirtualMemoryShared<RenderBucket> {
   vec3 _vCachedCamPos;
   //  void addToRenderMap(std::shared_ptr<MeshNode> bn);
 public:
-  void collect(std::shared_ptr<BaseNode> bn);
+  void collect(std::shared_ptr<SceneNode> bn);
 
   std::multimap<float, std::shared_ptr<LightNodePoint>>& getPointLights() { return _mapPointLights; }
   std::multimap<float, std::shared_ptr<LightNodeDir>>& getDirLights() { return _mapDirLights; }
   std::multimap<float, std::shared_ptr<MeshNode>>& getMeshes() { return _mapMeshes; }
   std::multimap<float, std::shared_ptr<MeshNode>>& getMeshesTransparent() { return _mapMeshesTransparent; }
   void clear();
-  void addObj(std::shared_ptr<BaseNode> bn);
+  void addObj(std::shared_ptr<SceneNode> bn);
   void addGrid(std::shared_ptr<PhysicsGrid> bn);
-  std::multimap<float, std::shared_ptr<BaseNode>>& getObjs() { return _mapObjs; }
+  std::multimap<float, std::shared_ptr<SceneNode>>& getObjs() { return _mapObjs; }
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getGrids() { return _mapGrids; }
   RenderBucket();
   virtual ~RenderBucket() override;

@@ -37,7 +37,7 @@ namespace BR2 {
 MeshNode::MeshNode(std::shared_ptr<MeshSpec> ms) : MeshNode(ms, nullptr) {
   // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
 }
-MeshNode::MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : BaseNode(ps) {
+MeshNode::MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(ps) {
   _pModelNode = mn;
 }
 MeshNode::~MeshNode() {
@@ -58,7 +58,7 @@ std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> pd) {
   return m;
 }
 void MeshNode::init() {
-  BaseNode::init();
+  SceneNode::init();
 
   //    _pVaoData = std::make_shared<VaoDataGeneric>(pContext, ps->getVertexFormat());
   setHidden(getMeshSpec()->getHideRender());
@@ -78,7 +78,7 @@ void MeshNode::init() {
   _iPickId = Gu::getPicker()->genPickId();
 }
 
-std::shared_ptr<MeshSpec> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshSpec>(BaseNode::getSpec()); }
+std::shared_ptr<MeshSpec> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshSpec>(SceneNode::getSpec()); }
 
 void MeshNode::printDataToStdout() {
   GpuAnimatedMeshWeightData* wdat = new GpuAnimatedMeshWeightData[getMeshSpec()->getWeightOffsetsGpu()->getNumElements()];
@@ -187,7 +187,7 @@ void MeshNode::computeAndDispatchSkin() {
 
 }
 void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) {
-  BaseNode::update(delta, pAnimator);
+  SceneNode::update(delta, pAnimator);
 }
 
 void MeshNode::computeSkinFrame() {
@@ -212,7 +212,7 @@ void MeshNode::copyJointsToGpu() {
     //  MESH_LOCAL * BONE * (ARMATURE * MODEL)
     mtmp = getSpec()->getBind() * bn->getLocal();
     if (getParent()) {
-      mtmp = mtmp * (std::dynamic_pointer_cast<BaseNode>(getParent()))->getLocal();
+      mtmp = mtmp * (std::dynamic_pointer_cast<SceneNode>(getParent()))->getLocal();
     }
 
     mats.push_back(mtmp);
@@ -318,11 +318,11 @@ void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
 
 void MeshNode::drawDeferred(RenderParams& rp) {
   //Children.
-  BaseNode::drawDeferred(rp);
+  SceneNode::drawDeferred(rp);
   draw(rp, false);
 }
 void MeshNode::drawTransparent(RenderParams& rp) {
-  BaseNode::drawTransparent(rp);
+  SceneNode::drawTransparent(rp);
   draw(rp, true);
 }
 void MeshNode::draw(RenderParams& rp, bool bTransparent) {
@@ -392,7 +392,7 @@ void MeshNode::bindSkin(std::shared_ptr<ShaderBase> shader) {
   shader->setUf("_ufWeightCount", (void*)&wc);
 }
 void MeshNode::drawForward(RenderParams& rp) {
-  BaseNode::drawForward(rp);
+  SceneNode::drawForward(rp);
   if (Gu::getRenderSettings()->getDebug()->getShowNormals()) {
 
     //Draw Normals
@@ -453,7 +453,7 @@ void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_p
       }
     }
   }
-  BaseNode::calcBoundBox(pBox, obPos, extra_pad);
+  SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 
 }
 void MeshNode::showNoMaterialError() {
