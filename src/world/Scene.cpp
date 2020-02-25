@@ -37,9 +37,13 @@ Scene::Scene() : SceneNode(nullptr) {
   //BRLogInfo("Creating Window UI");
   //_pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
 
-  BRLogInfo("GLContext -  Lights");
+  BRLogInfo("Making PhysicsWorld");
+  _pPhysicsWorld = std::make_shared < PhysicsWorld>(getThis<Scene>());
+
+  BRLogInfo("Making LightManager");
   _pLightManager = std::make_shared<LightManager>(getContext(), getThis<Scene>());
 
+  BRLogInfo("Making Flying Camera");
   createFlyingCamera();
   _pRenderBucket = std::make_shared<RenderBucket>();
 }

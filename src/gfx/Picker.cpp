@@ -12,7 +12,7 @@
 #include "../gfx/CameraNode.h"
 
 namespace BR2 {
-Picker::Picker(std::shared_ptr<GLContext> pc) : _pContext(pc), _uiLastSelectedPixelId(0) {
+Picker::Picker(std::shared_ptr<GLContext> pc) : GLFramework(pc) {
 }
 Picker::~Picker() {
 }
@@ -40,7 +40,7 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
 
   RenderUtils::debugGetRenderState();
 
-  _pContext->glBindFramebuffer(GL_READ_FRAMEBUFFER, Gu::getRenderPipe()->getBlittedDeferred()->getFramebufferId());
+  getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, Gu::getRenderPipe()->getBlittedDeferred()->getFramebufferId());
   Gu::checkErrorsDbg();
 
   glReadBuffer(GL_COLOR_ATTACHMENT4);
@@ -75,7 +75,7 @@ void Picker::samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId) {
   // are read from the color image attached to the GL_COLOR_ATTACHMENT0 attachment point.
   RenderUtils::debugGetRenderState();
 
-  int32_t iHeight = Gu::getCamera()->getViewport()->getHeight();
+  int32_t iHeight = getContext()->getActiveCamera()->getViewport()->getHeight();
 
   glReadPixels(x - 1,
     iHeight - y + 1,

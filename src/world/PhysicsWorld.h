@@ -24,9 +24,8 @@ public:
   static float getGravityAmount() { return -0.98f; }
   static ivec3 v3Toi3Any(vec3& v, float w1, float h1);
 
-
 public:
-  PhysicsWorld();
+  PhysicsWorld(std::shared_ptr<Scene> pscene);
   virtual ~PhysicsWorld() override;
 
   virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
@@ -82,6 +81,7 @@ public:
   virtual void drawForward();
   virtual void drawDeferred();
   virtual void drawTransparent();
+  std::shared_ptr<Scene> getScene() { return _pScene; }
 
 private:
   float _fNodeWidth = 0;
@@ -102,6 +102,7 @@ private:
   uint32_t _iGridCountLimit = 100;
   std::unique_ptr<Box3f> _pWorldBox = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
+  std::shared_ptr<Scene> _pScene = nullptr;
   void updateWorldBox();
   void sortObjects_CalculateSpeedboxes_And_CollectManifolds();
   void collisionLoopDual(float delta);

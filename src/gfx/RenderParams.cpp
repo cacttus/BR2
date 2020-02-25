@@ -18,6 +18,7 @@ public:
   std::shared_ptr<MeshNode> _pMeshNode = nullptr;
   std::shared_ptr<VaoDataGeneric> _pVaoDataGeneric = nullptr;
   std::shared_ptr<VaoShader> _pVaoShader = nullptr;
+  std::shared_ptr<CameraNode> _pCamera = nullptr;
 };
 //////////////////////////////////////////////////////////////////////////
 RenderParams::RenderParams(){
@@ -29,6 +30,7 @@ RenderParams::RenderParams(std::shared_ptr<ShaderBase> pShader) : RenderParams()
 RenderParams::~RenderParams() {
   _pint = nullptr;
 }
+std::shared_ptr<CameraNode> RenderParams::getCamera() { return _pint->_pCamera; }
 int32_t RenderParams::getCount() { return _pint->_iCount; }
 void RenderParams::setCount(int32_t i) { _pint->_iCount = i; }
 void RenderParams::setDrawMode(GLenum e) { _pint->_eDrawMode = e; }

@@ -37,7 +37,6 @@ public:
   // static std::shared_ptr<Gui2d> getGui();
   static std::shared_ptr<PhysicsWorld> getPhysicsWorld();
   static std::shared_ptr<ParticleManager> getParty();
-  static std::shared_ptr<CameraNode> getCamera();
   static std::shared_ptr<EngineConfig> getConfig();
   //static std::shared_ptr<RenderPipe> getRenderPipe(); //Per window
   static std::shared_ptr<Logger> getLogger();
@@ -55,7 +54,6 @@ public:
   //  static void setContext(std::shared_ptr<GraphicsContext> rb);
     //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
   static void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p);
-  static void setCamera(std::shared_ptr<CameraNode> pc);
   static void setApp(std::shared_ptr<AppBase> b);
   // static void setEngine(std::shared_ptr<Engine> engine);
   static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
@@ -124,7 +122,6 @@ public:
   }
 private:
   static std::shared_ptr<TexCache> _pTexCache;
-  static std::shared_ptr<CameraNode> _pCamera;
   static std::shared_ptr<ParticleManager> _pParty;
   static std::shared_ptr<Sequencer> _pSequencer;
   static std::shared_ptr<AppBase> _pAppBase;

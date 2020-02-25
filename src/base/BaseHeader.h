@@ -87,6 +87,8 @@ public:
   }
   virtual ~GLFramework() override { _pContext = nullptr; }
   std::shared_ptr<GLContext> getContext() { return _pContext; }
+protected:
+  void setContext(std::shared_ptr<GLContext> ct) { _pContext = ct; }
 private:
   std::shared_ptr<GLContext> _pContext = nullptr;
 };

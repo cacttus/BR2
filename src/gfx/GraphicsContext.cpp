@@ -9,6 +9,7 @@
 #include "../base/SoundCache.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
+#include "../base/GraphicsWindow.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/ParticleManager.h"   
@@ -21,7 +22,7 @@
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
 #include "../world/PhysicsWorld.h"
-
+#include "../world/Scene.h"
 
 namespace BR2 {
 GraphicsContext::GraphicsContext(){
@@ -39,6 +40,9 @@ bool GraphicsContext::init() {
     makeVertexFormats();
 
     return isValid();
+}
+std::shared_ptr<CameraNode> GLContext::getActiveCamera() {
+  return getGraphicsWindow()->setScene()->getActiveCamera();
 }
 void GraphicsContext::makeVertexFormats() {
 

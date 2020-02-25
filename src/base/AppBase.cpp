@@ -16,7 +16,7 @@ AppBase::~AppBase() {
 }
 void AppBase::drawDebug() {
 
-  if (Gu::getGraphicsContext() != nullptr && Gu::getCamera() != nullptr) {
+  if (Gu::getGraphicsContext() != nullptr /*&& Gu::getCamera() != nullptr*/) {
     RenderUtils::drawGridShader(1, 1, 1, 20, 5.0f);
     //RenderUtils::drawAxisShader(8.0f, 4.0f);
     //RenderUtils::drawWireSphereShader(4.0f, vec4(1, 1, 1, 1), 8, 8);

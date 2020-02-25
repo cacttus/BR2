@@ -34,12 +34,10 @@
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
-#include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
 #include "../gfx/ParticleManager.h"   
-#include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/OpenGLApi.h"
 #include "../base/GLContext.h"
@@ -75,7 +73,6 @@ extern "C" {
 
 namespace BR2 {
 std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
-std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
 std::shared_ptr<ParticleManager> Gu::_pParty = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
 std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
@@ -112,10 +109,8 @@ std::shared_ptr<ParticleManager> Gu::getParty() { return _pParty; }
 std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
 std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
 std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
-std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
 std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
-//std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
 std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
 std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
@@ -130,7 +125,6 @@ std::shared_ptr<Gui2d> Gu::getGui() {
 }
 
 void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
-void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
 void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
 
@@ -230,7 +224,6 @@ void Gu::deleteGlobals() {
   //This must be called in order to delete these in order.
   //Teh GL context needs to come at the end.
   _pTexCache = nullptr;
-  _pCamera = nullptr;
   _pParty = nullptr;
   _pSequencer = nullptr;
 

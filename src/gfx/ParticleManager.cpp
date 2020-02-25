@@ -85,7 +85,6 @@ void ParticleManager::make(vec3& pos, int count, Hash32 mat,
 void ParticleManager::update(float delta) {
   Quad3f worldQuad;
   Box2f tex;
-  std::shared_ptr<CameraNode> bc = Gu::getCamera();
   vec3 normal;// = bc->getViewNormal() *-1;
   GpuQuad3 pQuad;
   // std::shared_ptr<FrustumBase> pFrustum = bc->getFrustum();

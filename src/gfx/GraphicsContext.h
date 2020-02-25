@@ -35,16 +35,22 @@ public:
   virtual void enableBlend(bool enable) = 0;
   virtual void enableDepthTest(bool enable) = 0;
 
-
   bool isValid() { return _bValid; }
 
+  std::shared_ptr<GraphicsWindow> getGraphicsWindow() { return _pWindow; }
   EngineLoopState::e getLoopState() { return _eLoopState; }
   void setLoopState(EngineLoopState::e ee) { _eLoopState = ee; }
+  std::shared_ptr<CameraNode> getActiveCamera();
 
   float& getClearR() { return _fClearR; }
   float& getClearG() { return _fClearG; }
   float& getClearB() { return _fClearB; }
   float& getClearA() { return _fClearA; }
+
+protected:
+  virtual bool init();
+  std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+
 private:
   EngineLoopState::e _eLoopState = EngineLoopState::Update;
   float _fClearR = 1.0f;
@@ -54,11 +60,6 @@ private:
   bool _bValid = false;
 
   void makeVertexFormats();
-
-protected:
-  virtual bool init();
-
-
 };
 
 }//ns Game

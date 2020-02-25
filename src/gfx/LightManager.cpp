@@ -2,16 +2,13 @@
 #include "../base/EngineConfig.h"
 #include "../base/InputManager.h"
 #include "../base/Perf.h"
-
 #include "../gfx/CameraNode.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/LightNode.h"
-
 #include "../model/ShaderStorageBuffer.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
 #include "../world/Scene.h"
-
 
 namespace BR2 {
 LightManager::LightManager(std::shared_ptr<GLContext> tc, std::shared_ptr<Scene> pScene) {
@@ -93,10 +90,8 @@ void LightManager::updateRenderData() {
   _pGpuDeferredParams->_fFogDivisor = MathUtils::brClamp(_pGpuDeferredParams->_fFogDivisor, 0.0f, FLT_MAX);
   _pGpuDeferredParams->_fAmbientIntensity = MathUtils::brClamp(_pGpuDeferredParams->_fAmbientIntensity, 0.0f, 1.0f);
 
-
-
   //    _pGpuDeferredParams->_iPointLightCount
-  std::shared_ptr<CameraNode> pCam = Gu::getCamera();
+  std::shared_ptr<CameraNode> pCam = this->_pScene->getActiveCamera();
   //Set world view / proj
   if (pCam != nullptr) {
     //  _pGpuDeferredParams->_mWorldProj = pCam->getProj();

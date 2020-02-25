@@ -1,12 +1,19 @@
 # Mine City Task Log
 
+- [ ] Remove AppMain, and AppBase
+	- [ ] Merge Appbase & Scene
+	- [ ] Remove AppBase
+	- [ ] Add ApplicationPackage back.
+
+	- [ ] Create new Scene() 
+	- [ ] Attach Scene to GraphicsWindow.
+
 ## Scene -> PhysicsWorld integration
 	- [ ] Move all object creation to Scene
 	- [ ] Move ALL PhysicsWorld Drawing to Scene
 	- [ ] Link PhysicsWorld and Scene objs (somehow)
 	- [ ] Do the same with LightManager.
 		** Actually, Pass Scene, into PhysicsWorld and LightManager to manage the objectgs.
-
 
 ## BR0 to BR2 Upgrade
 - [x] Remove /base/ - place in /base/

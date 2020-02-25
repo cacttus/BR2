@@ -355,7 +355,7 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     rp.setShader(pShader);
 
     //Camera
-    std::shared_ptr<CameraNode> bc = Gu::getCamera();
+    std::shared_ptr<CameraNode> bc = rp->getCamera();
     rp.getShader()->setCameraUf(bc, &mat_mesh);
 
     //Pick ID
@@ -402,7 +402,7 @@ void MeshNode::drawForward(RenderParams& rp) {
     std::shared_ptr<ShaderBase> pShader = Gu::getShaderMaker()->getNormalsShader_v3n3();
     pShader->bind();
     rp.setShader(pShader);
-    std::shared_ptr<CameraNode> bc = Gu::getCamera();
+    std::shared_ptr<CameraNode> bc = rp->getCamera();
     rp.getShader()->setCameraUf(bc, &mat_mesh);
     vec4 vColor(1, 0, 1, 1);
     float fLen = 0.3f;

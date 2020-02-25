@@ -44,8 +44,10 @@ void OpenGLWindow::create(string_t windowTitle) {
 
     //Unfortunately because SDL needs a window, we need to wait to create the context.
     if (Gu::getGraphicsContext() == nullptr) {
-      if (std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi())->makeContext(getThis<GraphicsWindow>(), profs[iProf]) != nullptr) {
-        //Couldn't make context, try again.
+      std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi())->makeContext(getThis<GraphicsWindow>(), profs[iProf]);
+      if (ct != nullptr) {
+        //Context created successfully
+        setContext(ct);
         break;
       }
     }

@@ -13,12 +13,15 @@
 namespace BR2 {
 /**
 *  @class UtilMesh
-*  @brief
+*  @brief Quick utility mesh for debug drawing.
 */
-class UtilMesh : public VirtualMemory {
+class UtilMesh : public GLFramework {
 public:
   UtilMesh(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat>, std::shared_ptr<ShaderBase> pShader, GLenum drawMode = GL_LINES);
   virtual ~UtilMesh() override;
+
+  void init();
+  void draw(std::shared_ptr<CameraNode> cam);
 
   void setModelMatrix(mat4& m) { _m4ModelMatrix = m; }
 
@@ -27,23 +30,16 @@ public:
   virtual void postDraw() = 0;
   virtual std::shared_ptr<ShaderBase> getShader();
 
-  void init();
-  void draw();
-
 protected:
   void copyBuffersToVao();
   void copyFromSpec(std::shared_ptr<MeshSpec> sp);
   std::shared_ptr<IndexBufferData> getIndexes() { return _pIndexes; }
   std::shared_ptr<FragmentBufferData> getVerts() { return _pVerts; }
   void setDrawMode(GLenum e) { _eDrawMode = e; }
-  //void allocVerts(int count, std::shared_ptr<VertexFormat> fmt);
-  //void allocIndexes(int count);
   void allocData(int nVerts, int nIndexes, std::shared_ptr<VertexFormat> fmt);
   void cleanup();
-  std::shared_ptr<GLContext> getContext() { return _pContext; }
 
 private:
-  std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<VertexFormat> _pVertexFormat = nullptr;
   GLuint bdVerts, bdIndexes, vaoIndexes;
   bool _bInitialized = false;

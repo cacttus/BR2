@@ -1,23 +1,22 @@
 #include "../base/GlobalIncludes.h"
 #include "../base/BaseHeader.h"
 #include "../base/TypeConv.h"
-
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Gu.h"
 #include "../base/InputManager.h"
 #include "../base/Sequencer.h"
-
+#include "../base/GraphicsWindow.h"
+#include "../base/Logger.h" 
 #include "../base/FrameSync.h"
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
 #include "../base/oglErr.h"
 #include "../base/AppBase.h"
 #include "../base/Package.h"
-
+#include "../base/GraphicsWindow.h"
 #include "../math/MathAll.h"
-
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ParticleManager.h"
 #include "../gfx/TexCache.h"
@@ -28,11 +27,9 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/GraphicsContext.h"
-#include "../base/GraphicsWindow.h"
-#include "../base/Logger.h" 
-
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
 
@@ -44,8 +41,10 @@ GLContext::~GLContext() {
     SDL_GL_DeleteContext(_context);
   }
 }
+
 bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile) {
   _profile = profile;
+  _pWindow = pMainWindow;
   _context = SDL_GL_CreateContext((SDL_Window*)pMainWindow->getSDLWindow());
   if (!_context) {
     BRThrowException("SDL_GL_CreateContext() error" + SDL_GetError());

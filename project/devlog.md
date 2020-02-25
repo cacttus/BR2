@@ -20,7 +20,12 @@
 * Script Usage & Design
 	* `std::shared_ptr<CSharpScript> sc = CSharpCompiler::loadAndCompile(Gu::getPackage()->getScript("MyScript.cs"));`
 	* `myNode->addComponent(sc);`
-
+* Removed Gu::getCamera() - Camera is located relative to Scene and must use Scene itself.
+* Added getActiveCamera to GLContext. 
+	* This works because A Window is associated with ONE context.  A window is associated with ONE scene. A scene has ONE active camera.
+* Added getCamera to RenderParams()
+* Adding camera to UtilMesh and All UtilMesh's'
+* Subclassed UtilMesh with GLFramework.
 
 *2/24/2020*
 

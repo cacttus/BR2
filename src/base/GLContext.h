@@ -64,7 +64,6 @@ public:
   static void setWindowAndOpenGLFlags(GLProfile& prof);
 
   void setLineWidth(float w);
-  // void beginWin32InlineDebug();
 
 private:
   bool _bValid = false;

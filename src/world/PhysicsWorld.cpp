@@ -32,9 +32,8 @@
 
 
 namespace BR2 {
-std::multimap<float, std::shared_ptr<PhysicsGrid>>& PhysicsWorld::getVisibleGrids() { return _pRenderBucket->getGrids(); }
-std::multimap<float, std::shared_ptr<SceneNode>>& PhysicsWorld::getVisibleNodes() { return _pRenderBucket->getObjs(); }
-PhysicsWorld::PhysicsWorld() {
+PhysicsWorld::PhysicsWorld(std::shared_ptr<Scene> pscene) {
+  _pScene = pscene;
 }
 PhysicsWorld::~PhysicsWorld() {
   //DEL_MEM(_pWorldBox);
@@ -42,6 +41,8 @@ PhysicsWorld::~PhysicsWorld() {
   //DEL_MEM(_pRenderBucket);
   //DEL_MEM(_pRenderBucket);
 }
+std::multimap<float, std::shared_ptr<PhysicsGrid>>& PhysicsWorld::getVisibleGrids() { return _pRenderBucket->getGrids(); }
+std::multimap<float, std::shared_ptr<SceneNode>>& PhysicsWorld::getVisibleNodes() { return _pRenderBucket->getObjs(); }
 void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
   MpInt mpNodesY, uint32_t iGridCountLimit) {

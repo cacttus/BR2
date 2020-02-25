@@ -21,9 +21,6 @@ public:
 
   virtual int32_t getWidth() = 0;
   virtual int32_t getHeight() = 0;
-  std::shared_ptr<GLContext> getContext() { return _pContext; }
-protected:
-  std::shared_ptr<GLContext> _pContext = nullptr;
 };
 
 }//ns Game
