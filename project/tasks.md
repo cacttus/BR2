@@ -1,6 +1,6 @@
 # Mine City Task Log
 
-## BR0 to BR2 Milestone
+## BR0 to BR2 Upgrade
 - [x] Remove /base/ - place in /base/
 	- [x] Compile, Run.
 - [x] Code Cleanup
@@ -20,7 +20,7 @@
 		- [x] Add SDLIncludes
 	- [x] Compile, run.
 	- [x] Rename t_string to string_t and remove string_t
-	- [ ] Replace OperatingSystem file
+	- [x] Replace OperatingSystem file
 	- [x] Replace BuildConfig
 	- [ ] Rename Fingers -> InputManager
 	- [ ] Rename Party -> ParticleManager
@@ -43,24 +43,23 @@
 - [ ] Squashed viewport Bug
 	- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
-## Bottle World Integration
+## Bottle World
+- [ ] CSharp inline *minimal* scripts.
+	* This should fix the camera, so we can easily add the bottle topologizer.
+	- [ ] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
 - [ ] Add Bottle World
 	- [ ] Add the foundation (globs, awareness)
 	- [ ] Test and render the Bottle Globs.
 - [ ] Move object creation in PhysicsManager to Scene.
 	- [ ] Compile, Run.
 
-## Mine City, Enhancements, Phase I
-- [ ] CSharp inline *minimal* scripts.
-	- [ ] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
-- [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
-
-- [ ] GLTF file loader.
-	* Purpose of GLTF binary loader is to replace the MBI file.
+## Model & Scene Updates
+- [ ] Implement GLTF file loader. (Replace MBI files with GLTF binary)
+	- [ ] Test, by using a GLTF model from Blender.
 - [ ] Data Class Separation. Replace Node/Spec with a clone() and copy() system.
 	- [ ] Remove WorldObject inheritence, and use Component model.
 	- [ ] Rename BaseNode -> SceneNode
-    - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
+	- [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
 	- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
 	- [ ] Implement `clone()` and `copy()` on nodes.
 	- [ ] Move complex methods from all *data* classes to their respective Node classes.
@@ -78,6 +77,38 @@
 	- [ ] Componentize "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
 	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
 
+## Mine City, Enhancements, Phase I
+- [ ] Simplify the UI to work with the UI design for this game.  (Which should update UI performance)\
+- [ ] Implement hard coded x/y locations.  
+- [ ] Remove percentages.
+- [ ] Asynchronous UI layout routine.
+
+- [ ] Story: Create a new Peon.	
+		
+- [ ] Story: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
+		- [ ] Tab Bar
+			- [ ] TabItem
+			- [ ] Temporary Tab vs Permanent Tab
+		- [ ] Inventory Window.
+			- [ ] Scrollbars, for more info
+			- [ ] Organize Inventory Items.
+		- [ ] ToolBelt Slots
+
+- [ ] Story: Be able to exit the game.
+	- [ ] Hamburger Menu (top right): 
+		- [ ] Settings
+			- [ ] Fullscreen toggle button
+		- [ ] Exit Game
+
+- [ ] Story: Be able to dig the ground, and place items on the ground.
+	- [ ] Mine Tool.
+		- [ ] Move mine tool from inventory to toolbelt
+
+- [ ] Story: Be able to build paths for the peons to navigate.
+	- [ ] Path Builder Tab & Path Builder Toolbar item
+
+
+
 
 ## Future
 - [ ] CMake integration. Test on iOS, Linux, Android.
@@ -85,7 +116,7 @@
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 
 
-## Delayed / Shelved
+## Delayed / Shelved 
 - [ ] ~~Multiple Window Rendering~~
 	* This isn't necessary for the purpose of completing the game.
 	- [ ] ~~Remove Vulkan~~
@@ -93,10 +124,11 @@
 	- [ ] ~~Add GL Context to all required Classes~~
 	- [ ] ~~Compile, Run.~~
 - [x] ~~Unlink the Window viewport with the Camera Viewport.~~
-	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
+	* Although 'logical' this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 - [ ] Combine RenderSettings with EngineConfig.  Puts all engine settings in one place.
 
-### Wishlist (TODO tasks)
+### Wishlist (TODO tasks, not directly relevant to project)
+- [ ] Integrate SDL_Touch with the engine, making 
 - [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..) for each component
 - [ ] Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
 - [ ] detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
