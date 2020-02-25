@@ -1,7 +1,7 @@
 #include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../math/Random.h"
-#include "../gfx/Party.h"
+#include "../gfx/ParticleManager.h"
 #include "../gfx/Atlas.h"
 #include "../gfx/QuadBufferMesh.h"
 #include "../gfx/GpuQuad3.h"
@@ -11,15 +11,15 @@
 #include "../model/VertexFormat.h"
 
 namespace BR2 {
-Party::Party(std::shared_ptr<GLContext> pContext) : _pContext(pContext) {
+ParticleManager::ParticleManager(std::shared_ptr<GLContext> pContext) : _pContext(pContext) {
 }
-Party::~Party() {
+ParticleManager::~ParticleManager() {
   //  DEL_MEM(_pQuadBufferMesh);
 //    DEL_MEM(_pParticleAtlas);
    // delete [] _pParticles;
    // DEL_MEM(_pPartyShader);
 }
-void Party::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles) {
+void ParticleManager::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles) {
   _iMaxParticles = iMaxParticles;
   _pParticles = std::make_unique<Particle[]>(_iMaxParticles);
 
@@ -31,13 +31,13 @@ void Party::init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles) {
   // _pPartyShader>load("./data/party.vs", "./data/party.ps");
   reset();
 }
-void Party::reset() {
+void ParticleManager::reset() {
   t_timeval tv = Gu::getMicroSeconds();
   for (int i = 0; i < _iMaxParticles; ++i) {
     _pParticles[i]._bUsed = false;
   }
 }
-void Party::make(vec3& pos, int count, Hash32 mat,
+void ParticleManager::make(vec3& pos, int count, Hash32 mat,
   float minSpeed, float maxSpeed,
   float minLife, float maxLife,
   float minScl, float maxScl,
@@ -82,7 +82,7 @@ void Party::make(vec3& pos, int count, Hash32 mat,
     }
   }
 }
-void Party::update(float delta) {
+void ParticleManager::update(float delta) {
   Quad3f worldQuad;
   Box2f tex;
   std::shared_ptr<CameraNode> bc = Gu::getCamera();
@@ -151,7 +151,7 @@ void Party::update(float delta) {
     }
   }
 }
-void Party::draw(std::shared_ptr<ShaderBase> pShader) {
+void ParticleManager::draw(std::shared_ptr<ShaderBase> pShader) {
 
   _pQuadBufferMesh->copyToGpu(_pQuadBufferMesh->getQuadCount());
   Graphics->pushCullFace();

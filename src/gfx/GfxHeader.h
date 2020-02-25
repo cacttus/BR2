@@ -205,12 +205,12 @@ typedef enum {
  class FboShader;
  class FramebufferForward;
  class ScreenQuadMesh;
- class Party;
+ class ParticleManager;
  class Atlas;
  class AtlasSprite;
  class FrustumProjectionParameters;
  class PointLight;
- class Party;
+ class ParticleManager;
  class Particle;
  class DeferredFramebuffer;
  class FontTextBuffer;

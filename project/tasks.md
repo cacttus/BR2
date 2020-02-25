@@ -22,9 +22,8 @@
 	- [x] Rename t_string to string_t and remove string_t
 	- [x] Replace OperatingSystem file
 	- [x] Replace BuildConfig
-	- [ ] Rename Fingers -> InputManager
+	- [x] Rename Fingers -> InputManager
 	- [ ] Rename Party -> ParticleManager
-	- [ ] Rename ObjectFile to ObjFile
 	- [ ] Compile, Run.
 - [ ] "App" Removal for Scene
 	- [x] Move /app into /base/
@@ -53,7 +52,7 @@
 - [ ] Move object creation in PhysicsManager to Scene.
 	- [ ] Compile, Run.
 
-## Model & Scene Updates
+## Scene System
 * The goal here is to create a more 'common' game engine architecture, similar to Blender and Unity design.  We want to be able to quickly add nodes
 to scenes and reference their shared `data` components via instancing.  Our current "Spec" system for creating node clones is sloppy, and doesn't make sense as a lot of the "spec" data are not resource intensive
 and don not need to be shared.  Secondly, we want to have a component-based system, where we may have multiple 'nodes' per WorldObject (GameObject in Unity). We
@@ -63,6 +62,7 @@ will have only 4 kinds of nodes then:
 	* LightNode (Point and Directional)
 	* WorldNode (A Glob in the game world)
 The system will be rewritten in 3 areas:
+	1. Remove Global Camera (Gu::getCamera())  Pass it around to rendering functions.
 	1. Remove all Data classes, besides MeshData.  MeshData will be referred to as a "slot" in the "MeshComponent"
 		* Add NodeData to SceneNode, not copying it.
 	2. Implement `clone()` and `copy()` on SceneNode

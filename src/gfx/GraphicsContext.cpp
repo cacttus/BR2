@@ -12,7 +12,7 @@
 #include "../gfx/FlyCam.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
-#include "../gfx/Party.h"   
+#include "../gfx/ParticleManager.h"   
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"

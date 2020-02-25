@@ -216,9 +216,6 @@
     <ClCompile Include="src\gfx\Particles.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Party.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\Picker.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
@@ -455,6 +452,9 @@
     </ClCompile>
     <ClCompile Include="src\base\InputManager.cpp">
       <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ParticleManager.cpp">
+      <Filter>gfx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -702,9 +702,6 @@
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Particles.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\Party.h">
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Picker.h">
@@ -1021,6 +1018,9 @@
     </ClInclude>
     <ClInclude Include="src\base\InputManager.h">
       <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ParticleManager.h">
+      <Filter>gfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

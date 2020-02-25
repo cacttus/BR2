@@ -90,7 +90,7 @@
     <ClCompile Include="src\gfx\MegaTex.cpp" />
     <ClCompile Include="src\gfx\OpenGLApi.cpp" />
     <ClCompile Include="src\gfx\Particles.cpp" />
-    <ClCompile Include="src\gfx\Party.cpp" />
+    <ClCompile Include="src\gfx\ParticleManager.cpp" />
     <ClCompile Include="src\gfx\Picker.cpp" />
     <ClCompile Include="src\gfx\QuadBufferMesh.cpp" />
     <ClCompile Include="src\gfx\RenderParams.cpp" />
@@ -258,7 +258,7 @@
     <ClInclude Include="src\gfx\MegaTex.h" />
     <ClInclude Include="src\gfx\OpenGLApi.h" />
     <ClInclude Include="src\gfx\Particles.h" />
-    <ClInclude Include="src\gfx\Party.h" />
+    <ClInclude Include="src\gfx\ParticleManager.h" />
     <ClInclude Include="src\gfx\Picker.h" />
     <ClInclude Include="src\gfx\QuadBufferMesh.h" />
     <ClInclude Include="src\gfx\RenderIncludes.h" />

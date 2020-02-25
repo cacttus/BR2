@@ -40,7 +40,7 @@
 #include "../gfx/FlyCam.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
-#include "../gfx/Party.h"   
+#include "../gfx/ParticleManager.h"   
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/OpenGLApi.h"
@@ -76,10 +76,9 @@ extern "C" {
 #endif
 
 namespace BR2 {
-//std::shared_ptr<GraphicsContext> Gu::_pContext = nullptr;
 std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
 std::shared_ptr<CameraNode> Gu::_pCamera = nullptr;
-std::shared_ptr<Party> Gu::_pParty = nullptr;
+std::shared_ptr<ParticleManager> Gu::_pParty = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
 std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
 std::shared_ptr<InputManager> Gu::_pInputManager = nullptr;
@@ -93,43 +92,37 @@ std::shared_ptr<Picker> Gu::_pPicker = nullptr;
 std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
 std::shared_ptr<Package> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
-//std::shared_ptr<Engine> Gu::_pEngine = nullptr;
 std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
 std::shared_ptr<Delta> Gu::_pDelta = nullptr;
 
-//std::shared_ptr<GLContext> Gu::getGraphicsContext() {
-//    std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(_pContext);
-//    return ct;
-//}
-#define _STPROP(x) std::shared_ptr<##x> Gu::get##x() { return _p##x; }
-_STPROP(RenderSettings);
-_STPROP(Package);
-_STPROP(ModelCache);
-_STPROP(Sequencer);
-_STPROP(InputManager);
-_STPROP(FpsMeter);
-_STPROP(FrameSync);
-_STPROP(SoundCache);
+std::shared_ptr<RenderSettings> Gu::getRenderSettings() { return _pRenderSettings; }
+std::shared_ptr<Package> Gu::getPackage() { return _pPackage; }
+std::shared_ptr<ModelCache> Gu::getModelCache() { return _pModelCache; }
+std::shared_ptr<Sequencer> Gu::getSequencer() { return _pSequencer; }
+std::shared_ptr<InputManager> Gu::getInputManager() { return _pInputManager; }
+std::shared_ptr<FpsMeter> Gu::getFpsMeter() { return _pFpsMeter; }
+std::shared_ptr<FrameSync> Gu::getFrameSync() { return _pFrameSync; }
+std::shared_ptr<SoundCache> Gu::getSoundCache() { return _pSoundCache; }
+std::shared_ptr<TexCache> Gu::getTexCache() { return _pTexCache; }
+std::shared_ptr<LightManager> Gu::getLightManager() { return _pLightManager; }
+std::shared_ptr<Picker> Gu::getPicker() { return _pPicker; }
+std::shared_ptr<PhysicsWorld> Gu::getPhysicsWorld() { return _pPhysicsWorld; }
 std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
 std::shared_ptr<AppBase> Gu::getApp() { return _pAppBase; }
-_STPROP(TexCache);
-_STPROP(LightManager);
-_STPROP(Picker);
-//std::shared_ptr<Gui2d> Gu::getGui() { return _pGui2d; }
-_STPROP(PhysicsWorld);
-_STPROP(Party);
+std::shared_ptr<ParticleManager> Gu::getParty() { return _pParty; }
+std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
+std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
+std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
 std::shared_ptr<CameraNode> Gu::getCamera() { AssertOrThrow2(_pCamera != nullptr); return _pCamera; }
-_STPROP(EngineConfig);
-//_STPROP(RenderPipe);
-_STPROP(Logger);
-_STPROP(GraphicsApi);
 std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<WindowViewport> Gu::getViewport() { return Gu::getGraphicsApi()->getMainWindow()->getWindowViewport(); }
-_STPROP(Net);
+std::shared_ptr<Net> Gu::getNet() { return _pNet; }
+std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
+std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<GLContext> Gu::getGraphicsContext() {
   std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
   std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
@@ -139,8 +132,6 @@ std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return Gu::getActiveWindow()->
 std::shared_ptr<Gui2d> Gu::getGui() {
   return Gu::getActiveWindow()->getGui();
 }
-_STPROP(Delta);
-std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 
 void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
 void Gu::setCamera(std::shared_ptr<CameraNode> pc) { AssertOrThrow2(pc != nullptr); _pCamera = pc; }
@@ -623,7 +614,7 @@ void Gu::createManagers() {
   BRLogInfo("GLContext - Creating TextBoss");
   //    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
   BRLogInfo("GLContext - Creating Party");
-  _pParty = std::make_shared<Party>(Gu::getGraphicsContext());
+  _pParty = std::make_shared<ParticleManager>(Gu::getGraphicsContext());
   BRLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
   BRLogInfo("GLContext - Creating Fingers");

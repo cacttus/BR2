@@ -31,11 +31,11 @@ public:
 *  @class ParticleManager
 *  @brief Manages particle system.
 */
-class Party : public VirtualMemory {
+class ParticleManager : public VirtualMemory {
 public:
 
-  Party(std::shared_ptr<GLContext> pContext);
-  virtual ~Party() override;
+  ParticleManager(std::shared_ptr<GLContext> pContext);
+  virtual ~ParticleManager() override;
   void init(std::shared_ptr<Atlas> pAtlas, int iMaxParticles);
   void make(vec3& pos, int count, Hash32 mat,
     float minSpeed, float maxSpeed,

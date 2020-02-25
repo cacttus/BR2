@@ -19,7 +19,7 @@
 #include "../math/MathAll.h"
 
 #include "../gfx/RenderUtils.h"
-#include "../gfx/Party.h"
+#include "../gfx/ParticleManager.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/LightManager.h"
