@@ -1,6 +1,6 @@
-# Mine City Devlog
+# Mine City Task Log
 
-## Tasks
+## BRO to BR2 Milestone
 - [x] Remove /base/ - place in /base/
 	- [x] Compile, Run.
 - [x] Code Cleanup
@@ -26,7 +26,7 @@
 	- [ ] Rename Party -> ParticleManager
 	- [ ] Rename ObjectFile to ObjFile
 	- [ ] Compile, Run.
-- [ ] "App" Removal
+- [ ] "App" Removal for Scene
 	- [x] Move /app into /base/
 	- [ ] Add Scene (from broken version)
 	* For some reason our old files got mixed in with the new...ugh.
@@ -38,22 +38,27 @@
 		- [x] Exceptions
 		- [x] math
 		- [x] Compile, Run.
-	- [ ] Rename ObjectFile to ObjFile
-	- [ ] Compile, Run.
-- [ ] Move object creation in PhysicsManager to Scene.
-	- [ ] Compile, Run.
-- [ ] ~~Multiple Window Rendering~~
-	* This isn't necessary for the purpose of completing the game.
-	- [ ] ~~Remove Vulkan~~
-	- [ ] ~~Hard code GL context. Remove GraphicsContext~~
-	- [ ] ~~Add GL Context to all required Classes~~
-	- [ ] ~~Compile, Run.~~
+	- [x] Rename ObjectFile to ObjFile
+	- [x] Compile, Run.
 - [ ] Squashed viewport Bug
 	- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
+
+## Bottle World Integration
+- [ ] Add Bottle World
+	- [ ] Add the foundation (globs, awareness)
+	- [ ] Test and render the Bottle Globs.
+- [ ] Move object creation in PhysicsManager to Scene.
+	- [ ] Compile, Run.
+
+## Mine City, Enhancements, Phase I
 - [ ] CSharp inline *minimal* scripts.
 	- [ ] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
 - [ ] Simplifying the UI to work with the UI design for this game.  Updating UI performance.
+
+- [ ] GLTF file loader.
+	* Purpose of GLTF binary loader is to replace the MBI file.
 - [ ] Data Class Separation. Replace Node/Spec with a clone() and copy() system.
+	- [ ] Remove WorldObject inheritence, and use Component model.
 	- [ ] Rename BaseNode -> SceneNode
     - [ ] Remove NodeData - place on the SceneNode.  It's not shared data, so ther's no point.
 	- [ ] Move Serialize/Deserialize from _Data_ to _Node_ classes.
@@ -70,20 +75,29 @@
 		* or just place Model's information on WorldObject.
 		* or just place Model's information on WorldObject
 		* or Subclass MeshNode with SkinnedMeshNode
-- [ ] Remove WorldObject inheritence, and use Component model.
+	- [ ] Componentize "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
+	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
+
+
+## Future
 - [ ] CMake integration. Test on iOS, Linux, Android.
 - [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
-- [ ] Componentize these:
-    - [ ] Remove "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
-	- [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
 
-- [ ] Combine RenderSettings with EngineConfig.  Puts all engine settings in one place.
 
+## Delayed / Shelved
+- [ ] ~~Multiple Window Rendering~~
+	* This isn't necessary for the purpose of completing the game.
+	- [ ] ~~Remove Vulkan~~
+	- [ ] ~~Hard code GL context. Remove GraphicsContext~~
+	- [ ] ~~Add GL Context to all required Classes~~
+	- [ ] ~~Compile, Run.~~
 - [x] ~~Unlink the Window viewport with the Camera Viewport.~~
 	* Although this is 'logical', this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
-#### Wishlist (TODO future tasks)
-- [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..)
+- [ ] Combine RenderSettings with EngineConfig.  Puts all engine settings in one place.
+
+### Wishlist (TODO tasks)
+- [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..) for each component
 - [ ] Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
 - [ ] detach Camera viewport from Window viewport so the camera can render independently (offscreen) of whichever window it's rendering to.  This would mean creating a CameraViewport class, and passing w/h into the camera.
 - [ ] All strings use the same hash function which may cause collisions.  Integrate collision handling function in HashMap and in all places where STRHASH is used.
