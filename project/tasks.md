@@ -54,6 +54,23 @@
 	- [ ] Compile, Run.
 
 ## Model & Scene Updates
+* The goal here is to create a more 'common' game engine architecture, similar to what Blender and Unity use.  We want to be able to quickly add nodes
+to scenes.  Our current "Spec" system for creating node clones is sloppy, and doesn't make sense as a lot of the "spec" data are not resource intensive
+and don not need to be shared.  Secondly, we want to have a component-based system, where we may have multiple 'nodes' per WorldObject (GameObject in Unity).
+The system will be rewritten in 3 areas:
+	1. Remove all Data classes, besides MeshData.  MeshData will be referred to as a "slot" in the "MeshComponent"
+		* Add NodeData to SceneNode, not copying it.
+	2. Implement `clone()` and `copy()` on SceneNode
+	3. Add a generic component class, which is subclassed by
+		* CSharpScript (ScriptComponent)
+		* Mesh (MeshComponent)
+	4. Integration of "PhysicsNode" with the nodes themselves. (it makes no sense do deprive a node of velocity).
+		* Remove Velocity from "PhysicsNode" and place the Velocity on SceneNode.
+		* Create a ColliderComponent
+		* Place Mass, Shape, and all other PhysicsNode properties on the ColliderComponent
+		* Subclass ColliderComponent into SphereComponent, and HullComponent.
+			* We will only have 2 colliders for this game, there doesn't need to be more (yet).
+
 - [ ] Implement GLTF file loader. (Replace MBI files with GLTF binary)
 	- [ ] Test, by using a GLTF model from Blender.
 - [ ] Data Class Separation. Replace Node/Spec with a clone() and copy() system.
@@ -85,7 +102,7 @@
 
 - [ ] **Story**: Create a new Peon.	
 		
-- [ ] ### **Story**: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
+- [ ] **Story**: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
 	- [ ] Tab Bar
 		- [ ] TabItem
 		- [ ] Temporary Tab vs Permanent Tab
