@@ -1,6 +1,6 @@
 # Mine City Task Log
 
-## BRO to BR2 Milestone
+## BR0 to BR2 Milestone
 - [x] Remove /base/ - place in /base/
 	- [x] Compile, Run.
 - [x] Code Cleanup
