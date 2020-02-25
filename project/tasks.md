@@ -83,9 +83,9 @@
 - [ ] Remove percentages.
 - [ ] Asynchronous UI layout routine.
 
-- [ ] *Story*: Create a new Peon.	
+- [ ] **Story**: Create a new Peon.	
 		
-- [ ] *Story*: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
+- [ ] **Story**: Be able to click on a toolbelt item and drag it from your inventory to your toolbelt.
 	- [ ] Tab Bar
 		- [ ] TabItem
 		- [ ] Temporary Tab vs Permanent Tab
@@ -94,17 +94,17 @@
 		- [ ] Organize Inventory Items.
 	- [ ] ToolBelt Slots
 
-- [ ] *Story*: Be able to exit the game.
+- [ ] **Story**: Be able to exit the game.
 	- [ ] Hamburger Menu (top right): 
 		- [ ] Settings
 			- [ ] Fullscreen toggle button
 		- [ ] Exit Game
 
-- [ ] *Story*: Be able to dig the ground, and place items on the ground.
+- [ ] **Story**: Be able to dig the ground, and place items on the ground.
 	- [ ] Mine Tool.
 		- [ ] Move mine tool from inventory to toolbelt
 
-- [ ] *Story*: Be able to build paths for the peons to navigate.
+- [ ] **Story**: Be able to build paths for the peons to navigate.
 	- [ ] Path Builder Tab & Path Builder Toolbar item
 
 ## Engine Enhancements, Unrelated to Game
