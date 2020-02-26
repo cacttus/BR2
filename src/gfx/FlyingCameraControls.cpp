@@ -25,6 +25,7 @@ void FlyingCameraControls::start(){
   updateCameraPosition();
   _vMoveVel.construct(0, 0, 0);
   cam->setPos(vec3(30, 30, 30));
+  
   cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
   _vCamNormal = cam->getViewNormal();
   _vCamPos = cam->getPos();
@@ -93,6 +94,8 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
   v_new_len = MathUtils::brClamp(v_new_len, 0.0f, _fMaxMoveVel);
   _vMoveVel = v_n * v_new_len;
 
+  RenderParams rp;
+  rp.setCamera(_pCamera);
   //Finalluy update camera
   _pCamera->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
 }

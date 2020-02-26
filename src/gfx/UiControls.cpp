@@ -794,7 +794,7 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Raster Quad (for drawing)
   _b2RasterQuad = _b2LayoutQuad;
-  Gu::guiQuad2d(_b2RasterQuad, Gu::getCamera()->getViewport());
+  Gu::guiQuad2d(_b2RasterQuad, getWindowCamera()->getViewport());
 }
 
 void UiElement::applyMinMax(float& wpx, float& hpx) {
@@ -1183,7 +1183,7 @@ void UiElement::setHover(MouseFunc cc) {
   }
   _hoverFunc = cc;
 }
-void UiElement::drawDebug() {
+void UiElement::drawDebug(RenderParams& rp) {
   //ONLY CALL ON Gui2d!!
   //Debug Rendering
   if (Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping()) {
@@ -1196,7 +1196,7 @@ void UiElement::drawDebug() {
       vec4 c4(1, 0, 0, 1);
       drawBoundBox(mi, c4, false);
     }
-    mi->end();
+    mi->end(rp.getCamera());
   }
 
   if (Gu::getRenderSettings()->getDebug()->getPickGui()) {
@@ -1209,7 +1209,7 @@ void UiElement::drawDebug() {
       vec4 c4(1, 0, 1, 1);
       drawBoundBox(mi, c4, true);
     }
-    mi->end();
+    mi->end(rp.getCamera());
   }
 }
 void UiElement::bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLayer) {
@@ -1250,8 +1250,7 @@ std::shared_ptr<UiImage> UiImage::create(std::shared_ptr<UiTex> tex, UiImageSize
   pImg->_fTileWidthPx = fWidthPx;
   pImg->_fTileHeightPx = fHeightPx;
   pImg->setSizeMode(eSizeX, eSizeY);
-
-  pImg->_iPickId = Gu::getPicker()->genPickId();
+  pImg->_iPickId = pImg->getPicker()->genPickId();
   return pImg;
 }
 UiImage::UiImage() {
@@ -1419,7 +1418,7 @@ bool UiImage::pick(std::shared_ptr<InputManager> fingers) {
   if (getLayoutVisible()) {
     if (getRenderVisible()) {
       if (_iPickId > 0) {
-        uint32_t pixid = Gu::getPicker()->getSelectedPixelId();
+        uint32_t pixid = getPicker()->getSelectedPixelId();
         if (pixid != 0) {
           if (pixid == _iPickId) {
 
@@ -3242,7 +3241,7 @@ void Gui2d::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   rp.draw();
 
   //*Debug
-  UiElement::drawDebug();
+  UiElement::drawDebug(rp);
 }
 void Gui2d::error(std::string errMsg) {
   BRLogError(errMsg);
@@ -3262,13 +3261,13 @@ void Gui2d::setCursor(std::shared_ptr<UiCursor> c) {
 }
 float Gui2d::getDesignMultiplierW() {
   float dw = Gu::getGui()->getDesignSize().getWidth();
-  float vw = (float)Gu::getCamera()->getViewport()->getWidth();
+  float vw = (float)Gu::getGui()->getWindowCamera()->getViewport()->getWidth();
   float w1 = vw / dw;
   return w1;
 }
 float Gui2d::getDesignMultiplierH() {
   float dh = Gu::getGui()->getDesignSize().getHeight();
-  float vh = (float)Gu::getCamera()->getViewport()->getHeight();
+  float vh = (float)Gu::getGui()->getWindowCamera()->getViewport()->getHeight();
   float h1 = vh / dh;
   return h1;
 }

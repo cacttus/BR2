@@ -613,12 +613,11 @@ void RenderPipe::postProcessDOF(std::shared_ptr<LightManager> lightman, std::sha
   if (Gu::getRenderSettings()->getDOF()) {
 
     std::shared_ptr<ShaderBase> pDofShader = Gu::getShaderMaker()->getDepthOfFieldShader();
-    std::shared_ptr<CameraNode> pCam = Gu::getCamera();
-    if (pDofShader == nullptr || pCam == nullptr) {
+    if (pDofShader == nullptr || cam == nullptr) {
       BRLogErrorCycle("Error: nullptrs 348957");
       return;
     }
-    vec3 pos = pCam->getFinalPos();
+    vec3 pos = cam->getFinalPos();
     std::shared_ptr<BufferRenderTarget> rtPos = _pMsaaDeferred->getTargetByName("Position");
     std::shared_ptr<BufferRenderTarget> rtColor = _pMsaaForward->getTargetByName("Color");//**Note** Forward
 

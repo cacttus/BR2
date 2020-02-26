@@ -4,9 +4,10 @@
 	- [ ] Merge Appbase & Scene
 	- [ ] Remove AppBase
 	- [ ] Add ApplicationPackage back.
-
 	- [ ] Create new Scene() 
 	- [ ] Attach Scene to GraphicsWindow.
+
+- [ ] Pass camera into UiScreen and reference in all UiElements
 
 ## Scene -> PhysicsWorld integration
 	- [ ] Move all object creation to Scene

@@ -33,9 +33,7 @@ public:
   static std::shared_ptr<ShaderMaker> getShaderMaker();
   static std::shared_ptr<AppBase> getApp();
   static std::shared_ptr<TexCache> getTexCache();
-  static std::shared_ptr<Picker> getPicker();
   // static std::shared_ptr<Gui2d> getGui();
-  static std::shared_ptr<PhysicsWorld> getPhysicsWorld();
   static std::shared_ptr<ParticleManager> getParty();
   static std::shared_ptr<EngineConfig> getConfig();
   //static std::shared_ptr<RenderPipe> getRenderPipe(); //Per window
@@ -53,7 +51,6 @@ public:
   static std::shared_ptr<Gui2d> getGui();
   //  static void setContext(std::shared_ptr<GraphicsContext> rb);
     //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
-  static void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p);
   static void setApp(std::shared_ptr<AppBase> b);
   // static void setEngine(std::shared_ptr<Engine> engine);
   static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
@@ -131,8 +128,6 @@ private:
   static std::shared_ptr<SoundCache> _pSoundCache;
   static std::shared_ptr<ShaderMaker> _pShaderMaker;
   static std::shared_ptr<ModelCache> _pModelCache;
-  static std::shared_ptr<Picker> _pPicker;
-  static std::shared_ptr<PhysicsWorld> _pPhysicsWorld;
   static std::shared_ptr<Package> _pPackage;
   static std::shared_ptr<RenderSettings> _pRenderSettings;
   static std::shared_ptr<EngineConfig> _pEngineConfig;

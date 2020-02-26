@@ -17,6 +17,7 @@
 #include "../gfx/TexCache.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/Picker.h"
+#include "../gfx/RenderParams.h"
 #include "../model/Material.h"
 #include "../model/ModelCache.h"
 #include "../model/ShaderStorageBuffer.h"
@@ -31,6 +32,7 @@
 #include "../model/MeshNode.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/RenderBucket.h"
+#include "../world/NodeUtils.h"
 #include <iostream>
 
 namespace BR2 {
@@ -75,7 +77,6 @@ void MeshNode::init() {
     createSkin();
   }
 
-  _iPickId = Gu::getPicker()->genPickId();
 }
 
 std::shared_ptr<MeshSpec> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshSpec>(SceneNode::getSpec()); }
@@ -355,11 +356,14 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     rp.setShader(pShader);
 
     //Camera
-    std::shared_ptr<CameraNode> bc = rp->getCamera();
+    std::shared_ptr<CameraNode> bc = rp.getCamera();
     rp.getShader()->setCameraUf(bc, &mat_mesh);
 
     //Pick ID
     uint32_t pickid = getPickId();
+    if (pickid == PICK_ID_NOT_SET) {
+      BRLogErrorCycle("Pick ID not set for model.");
+    }
     rp.getShader()->setUf("_ufPickId", (void*)&pickid);
 
     //Skin
@@ -402,7 +406,7 @@ void MeshNode::drawForward(RenderParams& rp) {
     std::shared_ptr<ShaderBase> pShader = Gu::getShaderMaker()->getNormalsShader_v3n3();
     pShader->bind();
     rp.setShader(pShader);
-    std::shared_ptr<CameraNode> bc = rp->getCamera();
+    std::shared_ptr<CameraNode> bc = rp.getCamera();
     rp.getShader()->setCameraUf(bc, &mat_mesh);
     vec4 vColor(1, 0, 1, 1);
     float fLen = 0.3f;
@@ -430,6 +434,17 @@ void MeshNode::drawShadow(RenderParams& rp) {
 
   _pMaterial->bind(rp.getShader(), true, false);
   rp.getShader()->draw(getThis<MeshNode>());
+}
+void MeshNode::afterAddedToScene(std::shared_ptr<Scene> scene) {
+   //We can't access picker here right now, just set this to "Not Set"
+  //Set pick ID after we've been added to the scene.
+  std::shared_ptr<Picker> picker = NodeUtils::getPicker(getThis<SceneNode>());
+  if (picker) {
+    _iPickId = picker->genPickId();
+  }
+  else {
+    BRLogError("Could not set pick ID for node... afterAddedToScene SHOULD be called on all child nodes attached to the root added..");
+  }
 }
 
 void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {

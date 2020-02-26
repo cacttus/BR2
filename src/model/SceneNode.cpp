@@ -112,18 +112,15 @@ void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
     return;
   }
   //    clearShadowInfluences();
-      //We shouldn't need this
-      //if (pParent == nullptr) {
-      //    pParent = dynamic_cast<Node3base*>(getParent());
-      //}
-      //static int b = 0;
+  //We shouldn't need this
+  //if (pParent == nullptr) {
+  //    pParent = dynamic_cast<Node3base*>(getParent());
+  //}
+  //static int b = 0;
 
-      //Force bind in case we don't have animations.
+  //Force bind in case we don't have animations.
   setLocalBind();
-
-
   animate(mapAnimators);
-
   compileWorldMatrix();
 
   //So this is technically only ever going to 
@@ -204,7 +201,6 @@ void SceneNode::setLocalBind() {
   }
 }
 void SceneNode::animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
-
   for (std::pair<Hash32, std::shared_ptr<Animator>> p : mapAnimators) {
     applyLocalAnimation(p.second);
   }

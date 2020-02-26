@@ -108,9 +108,6 @@
     <ClCompile Include="src\base\PoundFile.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\ProjectFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\Script.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -474,6 +471,9 @@
     <ClCompile Include="src\base\CSharpScript.cpp">
       <Filter>base</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\NodeUtils.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppMain.h">
@@ -582,9 +582,6 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\PoundFile.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\ProjectFile.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\RetCode.h">
@@ -723,9 +720,6 @@
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\QuadBufferMesh.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\RenderIncludes.h">
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\RenderParams.h">
@@ -1057,6 +1051,9 @@
     </ClInclude>
     <ClInclude Include="src\base\CSharpScript.h">
       <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\NodeUtils.h">
+      <Filter>world</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

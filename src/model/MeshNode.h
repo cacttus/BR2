@@ -43,12 +43,14 @@ public:
   uint32_t getPickId() { return _iPickId; }
 
 protected:
-  uint32_t _iPickId = 0; //Pick Id must be separate from NodeId because non-node things can be picked.
+  uint32_t _iPickId = PICK_ID_NOT_SET; //Pick Id must be separate from NodeId because non-node things can be picked.
   std::shared_ptr<ModelNode> _pModelNode = nullptr;
   std::shared_ptr<Material> _pMaterial = nullptr;
   std::shared_ptr<ShaderStorageBuffer> _pArmJoints = nullptr; //Skin 12/9/2017
   std::vector<std::shared_ptr<BoneNode>> _vecBoneNodesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
   std::vector<std::shared_ptr<ArmatureNode>> _vecArmaturesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
+
+  virtual void afterAddedToScene(std::shared_ptr<Scene> scene) override;
 
   //If we wanted to be picky we could make a "modifier" class to mimic 3D editors
   void createSkin();

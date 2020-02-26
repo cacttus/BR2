@@ -13,7 +13,7 @@ using namespace BR2;
 int main(int argc, char** argv) {
   DebugHelper::debugHeapBegin(false);
   {
-    //Game::DebugHelper::setBreakAlloc(221975);
+    //BR2::DebugHelper::setBreakAlloc(221975);
     std::shared_ptr<AppMain> cwr = std::make_shared<AppMain>();
     Gu::setApp(cwr);
 

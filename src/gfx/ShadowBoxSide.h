@@ -17,7 +17,7 @@ namespace BR2 {
 *  @class ShadowFrustumSide
 *  @brief Side of a shadow cube frustum.  This is basically a camera with a view frustum. Analogous to BaseCamera3D - without the extra node system overhead.
 */
-class ShadowBoxSide : public VirtualMemory { 
+class ShadowBoxSide : public VirtualMemory {
 public:
   ShadowBoxSide(
     std::shared_ptr<ShadowBox> pParentBox
@@ -35,24 +35,22 @@ public:
   mat4* getViewMatrix() { return &_viewMatrix; }
 
   void updateView();
-  void collect();
+  void cullObjectsAsync(CullParams& rp);
   void renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool);
   bool computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum);
 
 private:
-    std::shared_ptr<RenderViewport> _pViewport = nullptr;
-    BoxSide::e _eSide;
-    std::shared_ptr<FrustumBase> _pFrustum = nullptr;
-    std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
-    mat4 _projMatrix;    // Frustum, Proj, View - basic camera parameters
-    mat4 _viewMatrix;    //
-    std::shared_ptr<RenderBucket> _pVisibleSet;
-    std::shared_ptr<RenderBucket> _pLastSet;//TODO: check vs current set _bShadowDirty in BvhNOde
-    std::shared_ptr<ShadowBox> _pParentBox = nullptr;
-    bool _bMustUpdate;
-    bool _bShadowMapEnabled = false;
-
-
+  std::shared_ptr<RenderViewport> _pViewport = nullptr;
+  BoxSide::e _eSide;
+  std::shared_ptr<FrustumBase> _pFrustum = nullptr;
+  std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
+  mat4 _projMatrix;    // Frustum, Proj, View - basic camera parameters
+  mat4 _viewMatrix;    //
+  std::shared_ptr<RenderBucket> _pVisibleSet;
+  std::shared_ptr<RenderBucket> _pLastSet;//TODO: check vs current set _bShadowDirty in BvhNOde
+  std::shared_ptr<ShadowBox> _pParentBox = nullptr;
+  bool _bMustUpdate;
+  bool _bShadowMapEnabled = false;
 };
 }//ns Game
 

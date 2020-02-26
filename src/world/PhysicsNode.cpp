@@ -5,6 +5,7 @@
 #include "../world/PhysicsNode.h"
 #include "../world/Manifold.h"
 #include "../world/PhysicsWorld.h"
+#include "../world/NodeUtils.h"
 
 namespace BR2 {
 PhysicsNode::PhysicsNode(std::shared_ptr<PhysicsSpec> ps) : SceneNode(ps) {
@@ -32,9 +33,11 @@ void PhysicsNode::setVelocity(vec3& v) {
   //Don't update anything here. we set this often.
 }
 std::shared_ptr<TreeNode> PhysicsNode::attachChild(std::shared_ptr<TreeNode> pChild) {
+  //Should move this to "afterChildInserted
   if (std::dynamic_pointer_cast<PhysicsNode>(pChild) != nullptr) {
+    std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(getThis<SceneNode>());
     //*Make sure the node is not in the scene.
-    Gu::getPhysicsWorld()->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
+    physics->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
   }
   else {
     //This is not an error - like ArmatureNode will come here it's not a physicsnode.

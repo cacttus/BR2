@@ -28,7 +28,7 @@
 #include "../world/PhysicsGrid.h"
 #include "../world/PhysicsGridAwareness.h"
 #include "../world/RenderBucket.h"
-#include "../world/RenderBucket.h"
+#include "../world/Scene.h"
 
 
 namespace BR2 {
@@ -52,7 +52,7 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   _pAwareness = nullptr;
   _iGridCountLimit = iGridCountLimit;
   _mpNodesY = mpNodesY;
-  _pAwareness = std::make_shared<PhysicsGridAwareness>(awXZ, awXZInc, awY, awYInc);
+  _pAwareness = std::make_shared<PhysicsGridAwareness>(getThis<PhysicsWorld>(), awXZ, awXZInc, awY, awYInc);
   _pWorldBox = std::make_unique<Box3f>();
   _pWorldBox->_min = _pWorldBox->_max = vec3(0, 0, 0);
   _pRenderBucket = std::make_shared<RenderBucket>();
@@ -350,14 +350,12 @@ void PhysicsWorld::update(float delta) {
   }
 
   _pAwareness->update(delta);
-  // if (Gu::getFpsMeter()->frameMod(3)) {
   makeGrid();
-  // }
   collisionLoopDual(delta);
 
   //Collect all nodes
   BvhCollectionParams bcp;
-  bcp._pFrustum = Gu::getCamera()->getFrustum();
+  bcp._pFrustum = _pScene->getActiveCamera()->getFrustum();
   bcp._pRenderBucket = _pRenderBucket;
   float nw = getNodeWidth();
   float nh = getNodeHeight();
@@ -1214,6 +1212,11 @@ void PhysicsWorld::makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_pt
 
 
 }
+std::shared_ptr<PhysicsGrid> PhysicsWorld::loadGrid(const ivec3& pos) {
+  std::shared_ptr<PhysicsGrid> p = nullptr;
+  BRThrowNotImplementedException();
+  return p;
+}
 std::shared_ptr<PhysicsGrid> PhysicsWorld::getNodeForPoint(vec3& pt) {
   ivec3 iv;
   std::shared_ptr<PhysicsGrid> gn = nullptr;
@@ -1237,18 +1240,23 @@ vec3 PhysicsWorld::i3tov3Node(const ivec3& iNode) {
 }
 
 void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
-
   AssertOrThrow2(parms->_pFrustum != nullptr);
   AssertOrThrow2(parms->_pRenderBucket != nullptr);
+  AssertOrThrow2(parms->_pVisibleCamera != nullptr);
 
-  parms->_pRenderBucket->clear();
+  
+  if (parms->_pRenderBucket->hasItems()) {
+    BRLogWarn("Render bucket had items while collecting nodes.");
+  }
+
+  parms->_pRenderBucket->clear(parms->_pVisibleCamera);
   std::set<ivec3*, ivec3::Vec3xCompLess> grids;
 
   //Get All Grids
   sweepGridFrustum([&](ivec3& cv) {
     std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
     if (pGrid != nullptr) {
-      std::shared_ptr<FrustumBase> frust = Gu::getCamera()->getFrustum();
+      std::shared_ptr<FrustumBase> frust = parms->_pVisibleCamera->getFrustum();
       Box3f* box = pGrid->getBoundBox();
       if (frust->hasBox(box)) {
         parms->_pRenderBucket->addGrid(pGrid);
@@ -1269,6 +1277,7 @@ void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
       }
     }
   }
+
 }
 void PhysicsWorld::sweepGridFrustum(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2) {
   vec3 cp = pf->getNearPlaneCenterPoint();

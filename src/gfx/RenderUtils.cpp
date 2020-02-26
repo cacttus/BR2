@@ -62,7 +62,7 @@ void RenderUtils::resetRenderState() {
 
 #pragma region Debug Draw
 //UNSAFE
-void RenderUtils::renderTexturedQuadAttrib(float size) {
+void RenderUtils::renderTexturedQuadAttrib(std::shared_ptr<CameraNode> cam, float size) {
   int attr_v = 0;
   int attr_c = 1;
   int attr_n = 2;
@@ -211,10 +211,10 @@ void RenderUtils::renderTexturedQuadAttrib(float size) {
   std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteBuffers(1, (GLuint*)&bdIndexes);
   std::dynamic_pointer_cast<GLContext>(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()))->glDeleteVertexArrays(1, (GLuint*)&vaoIndexes);
 }
-void RenderUtils::drawAxisShader(float scale, float lineWidth, mat4& transform) {
+void RenderUtils::drawAxisShader(std::shared_ptr<CameraNode> cam, float scale, float lineWidth, mat4& transform) {
   UtilMeshAxis* ax = new UtilMeshAxis(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), scale, lineWidth, transform);
   ax->init();
-  ax->draw();
+  ax->draw(cam);
   delete ax;
 }
 //void RenderUtils::drawWireSphereShader(float fRadius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks)
@@ -224,26 +224,26 @@ void RenderUtils::drawAxisShader(float scale, float lineWidth, mat4& transform) 
 //    ax->draw();
 //    delete ax;
 //}
-void RenderUtils::drawWireSphereShader(float fRadius, vec4& vColor, int32_t nSlices, int32_t nStacks, mat4* pMatrix) {
+void RenderUtils::drawWireSphereShader(std::shared_ptr<CameraNode> cam, float fRadius, vec4& vColor, int32_t nSlices, int32_t nStacks, mat4* pMatrix) {
   UtilMeshSphere* ax = new UtilMeshSphere(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
   ax->init();
   if (pMatrix != nullptr) {
     ax->setModelMatrix(*pMatrix);
   }
-  ax->draw();
+  ax->draw(cam);
   delete ax;
 }
-void RenderUtils::drawWireBoxShader(Box3f* box, vec3& vOffset, vec4& vColor) {
+void RenderUtils::drawWireBoxShader(std::shared_ptr<CameraNode> cam, Box3f* box, vec3& vOffset, vec4& vColor) {
   UtilMeshBox* ax = new UtilMeshBox(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), box, vOffset, vColor);
   ax->init();
-  ax->draw();
+  ax->draw(cam);
   delete ax;
 }
-void RenderUtils::drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor) {
+void RenderUtils::drawSolidBoxShaded(std::shared_ptr<CameraNode> cam, Box3f* box, vec3& vOffset, vec4& vColor) {
   UtilMeshBox* ax = new UtilMeshBox(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), box, vOffset, vColor);
   ax->setWireFrame(false);
   ax->init();
-  ax->draw();
+  ax->draw(cam);
   delete ax;
 }
 //void RenderUtils::drawPickBox(Box3f* box, uint32_t uiColorId)
@@ -266,13 +266,13 @@ void RenderUtils::drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor) {
 //{
 //    mesh.end();
 //}
-void RenderUtils::drawGridShader(float r, float g, float b, int32_t nSlices, float fSliceWidth, vec3& center, std::shared_ptr<ShaderBase> pShader) {
+void RenderUtils::drawGridShader(std::shared_ptr<CameraNode> cam, float r, float g, float b, int32_t nSlices, float fSliceWidth, vec3& center, std::shared_ptr<ShaderBase> pShader) {
   UtilMeshGrid* pGrid = new UtilMeshGrid(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()), r, g, b, nSlices, fSliceWidth, center);
   pGrid->init();
-  pGrid->draw();
+  pGrid->draw(cam);
   delete pGrid;
 }
-void RenderUtils::drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avColor) {
+void RenderUtils::drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<FrustumBase> pf, vec4& avColor) {
   setLineWidth(3.0f);
 
   UtilMeshInline mi(std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext()));
@@ -292,7 +292,7 @@ void RenderUtils::drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avCol
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntl), c4), v_v3c4(pf->PointAt(fpt_nbl), c4));
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntr), c4), v_v3c4(pf->PointAt(fpt_nbr), c4));
   }
-  mi.end();
+  mi.end(cam);
   setLineWidth(1.0f);
 
 }

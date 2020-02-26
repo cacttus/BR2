@@ -27,6 +27,46 @@
 * Adding camera to UtilMesh and All UtilMesh's'
 * Subclassed UtilMesh with GLFramework.
 
+* Replaced ShadowFrustum::update with ::cull
+* Created CullParams
+
+LightNode updates frustum
+	We need a camera with the update function in order to correctly cull all objects from the frustum.
+	Another option, would be to NOT perform culling during update() phase.
+	LightManager->updateShadows():
+
+shadow frustums require the camera to cull, but we don't pass that in during node update()
+
+We should probably cull shadow frustums asynchronously.
+
+Cull camera nodes first.
+camera->cullNodes
+	Of course if the shadow casts over the camera, the node may not be in it, so we would still need them.
+	We could have a max_shadow_distance where the node is a certain distance from the camera and we won't cast shadows if it is'
+foreach light
+	light_frustum->cullNodes(PhysicsWorld w) -> std::future<shard_ptr<RenderBucket>>
+
+
+The idea is to do this stuff asynchronously.
+Scene
+	node->update()
+	node->updateAnimation
+PhysicsManager
+	node->updatePhysics
+LightManager
+	node->updateLight()
+		shadowFrustum->collect
+			Physics->collectVisibleNodes **Slow
+
+Desired Shadow Culling
+bool future [light]
+For each light
+	std::async{
+		collectnodes(light->frustum)
+		future.set[light]
+	}
+	fence(future.lights = set)
+
 *2/24/2020*
 
 * Task list getting too large, so moved to new file /project/tasks.md.

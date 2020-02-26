@@ -38,7 +38,7 @@ Scene::Scene() : SceneNode(nullptr) {
   //_pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
 
   BRLogInfo("Making PhysicsWorld");
-  _pPhysicsWorld = std::make_shared < PhysicsWorld>(getThis<Scene>());
+  _pPhysicsWorld = std::make_shared <PhysicsWorld>(getThis<Scene>());
 
   BRLogInfo("Making LightManager");
   _pLightManager = std::make_shared<LightManager>(getContext(), getThis<Scene>());
@@ -56,15 +56,15 @@ void Scene::update(float delta) {
 }
 void Scene::idle(int64_t us) {
 }
-std::shared_ptr<GLContext> Scene::getContext() { 
-  return getWindow()->getContext(); 
+std::shared_ptr<GLContext> Scene::getContext() {
+  return getWindow()->getContext();
 }
 std::vector<std::shared_ptr<CameraNode>> Scene::getAllCameras() {
   std::vector<std::shared_ptr<CameraNode>> ret;
   iterateBreadthFirst<CameraNode>([&ret](std::shared_ptr<CameraNode> cam) {
     ret.push_back(cam);
     return true;
-  });
+    });
   return ret;
 }
 void Scene::createFlyingCamera() {
@@ -397,24 +397,41 @@ std::shared_ptr<LightNodeDir> Scene::createDirLight(const vec3&& pos, const vec3
   dir->setLightColor(std::move(color));
   //dir->getSpecExp() = 50.109f;
   dir->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
-  
+
   attachChild(dir);
 
   return dir;
 }
-std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild){
+std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild) {
   std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
-  if (casted!=nullptr) {
+  if (casted != nullptr) {
     _pPhysicsWorld->addObj(casted, false, false);
   }
-  return TreeNode::attachChild(pChild);
+
+  std::shared_ptr<TreeNode> ret = TreeNode::attachChild(pChild);
+
+  std::shared_ptr<Scene> scene = getThis<Scene>();
+  pChild->iterateBreadthFirst<SceneNode>([scene](std::shared_ptr<SceneNode> node) {
+    node->afterAddedToScene(scene);
+    return true;
+    });
+
+  return ret;
 }
-bool Scene::detachChild(std::shared_ptr<TreeNode> pChild){
+bool Scene::detachChild(std::shared_ptr<TreeNode> pChild) {
   std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
   if (casted != nullptr) {
     _pPhysicsWorld->tryRemoveObj(casted);
   }
-  return TreeNode::detachChild(pChild);
+  bool ret = TreeNode::detachChild(pChild);
+
+  std::shared_ptr<Scene> scene = getThis<Scene>();
+  pChild->iterateBreadthFirst<SceneNode>([scene](std::shared_ptr<SceneNode> node) {
+    node->afterRemovedFromScene(scene);
+    return true;
+    });
+
+  return ret;
 }
 
 }//ns BR2

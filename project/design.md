@@ -72,20 +72,27 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
         * RenderPipeline (1) 
 	* Window Manager (1)
         * GraphicsWindow (1+)
+			* RenderPipe (1)
+				* Picker (1)
+            * UiScreen (1)
+			* PhysicsWorld (1)
 		    * GLContext (1, ref)
             * Scene (1)
-                * <GameObject> (1*)
-					*  WorldObject 
-						* <Component>
-							* CollisionShape
-							* CSharpScript
-						* :PhysicsNode (inherited)
-							* :BaseNode (inherited)
-								* :TreeNode (inherited)
-									* :Drawable (inherited)
-										* :VMS (inherited)
-                * UiScreen (1)
-                * PhysicsWorld (1)
+				* LightNode (1*)
+					* :PointLight
+					* :DirLight
+				* CameraNode (1*, only 1 active at a time)
+				* PhysicsNode (1*) 
+				* MeshNode (1*)
+				* ModelNode (1*)
+                * SceneNode (1*)
+					* Component (1*)
+						* CollisionShape
+						* CSharpScript
+						* :BaseNode (inherited)
+							* :TreeNode (inherited)
+								* :Drawable (inherited)
+									* :VMS (inherited)
          * `step(delta) \\Steps the graphics context, engine, and simulation`
 
 ## Notes

@@ -12,53 +12,32 @@
 namespace BR2 {
 /**
 *  @class PointLightShadowBox
-*  @brief Shadow map box for a point light.
+*  @brief Shadow map box for a point light.  A collection of 6 @cShadowFrustum.
 */
+class ShadowBox_Internal;
 class ShadowBox : public VirtualMemoryShared<ShadowBox> {
 public:
   ShadowBox(std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight, bool bShadowMapEnabled);
   virtual ~ShadowBox() override;
   void init();
-  void update();
+  void updateAndCullAsync(CullParams& rp);
   void renderShadows(std::shared_ptr<ShadowBox> pMaster);
-  void debugRender();
-  std::shared_ptr<LightNodePoint> getLightSource() { return _pLightSource; }
-
-  float& getSmallBoxSize() { return _fSmallBoxSize; }
+  void debugRender(RenderParams& rp);
   void copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox);
   void beginRenderShadowBox();
   void beginRenderSide(BoxSide::e side);
   void endRenderSide();
   void endRenderShadowBox();
-  uint32_t getFboWidth() { return _iFboWidthPixels; }
-  uint32_t getFboHeight() { return _iFboHeightPixels; }
-  GLuint getGlTexId() { return _glShadowCubeMapId; }
-  //  void getTexturePixels(t_string& __out_ pixels, CubeSide eCubeSide);
   void updateScreenQuad();
 
-private:
-  int64_t _iShadowBoxId;
-  std::shared_ptr<ShadowBoxSide> _pShadowBoxSide[6] = { nullptr,nullptr,nullptr,nullptr,nullptr,nullptr };
-  std::shared_ptr<LightNodePoint> _pLightSource = nullptr;
-  vec3 _vCachedLastPos;
-  float _fCachedLastRadius;
+  std::shared_ptr<LightNodePoint> getLightSource();
+  float& getSmallBoxSize();
+  uint32_t getFboWidth();
+  uint32_t getFboHeight();
+  GLuint getGlTexId();
 
-  float _fSmallBoxSize = 0.2f;
-  GLuint _glFrameBufferId = 0;
-  GLuint _glDepthTextureId;
-  GLuint _glShadowCubeMapId = 0;
-  uint32_t _iFboWidthPixels;
-  uint32_t _iFboHeightPixels;
-  Box2f _screenQuadPos;
-  Box2f _screenQuadTCoords;
-  std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
-  bool _bMustUpdate = false;
-  bool _bForceUpdate = false;
-  bool _bShadowMapEnabled = false;
-  void deleteFbo();
-  void createFbo();
-  void updateLightMatrix();
-  void smoothShadows();
+private:
+  std::unique_ptr<ShadowBox_Internal> _pint = nullptr;
 };
 
 }//ns Game

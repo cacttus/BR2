@@ -41,8 +41,8 @@ bool GraphicsContext::init() {
 
     return isValid();
 }
-std::shared_ptr<CameraNode> GLContext::getActiveCamera() {
-  return getGraphicsWindow()->setScene()->getActiveCamera();
+std::shared_ptr<CameraNode> GraphicsContext::getActiveCamera() {
+  return getGraphicsWindow()->getScene()->getActiveCamera();
 }
 void GraphicsContext::makeVertexFormats() {
 

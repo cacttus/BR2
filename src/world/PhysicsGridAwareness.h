@@ -16,7 +16,7 @@ namespace BR2 {
 */
 class PhysicsGridAwareness : public VirtualMemory {
 public:
-  PhysicsGridAwareness(MpFloat rxz, float incXZ, MpFloat ry, float incY);
+  PhysicsGridAwareness(std::shared_ptr<PhysicsWorld> pw, MpFloat rxz, float incXZ, MpFloat ry, float incY);
   virtual ~PhysicsGridAwareness() override;
   void getAwarenessBox(Box3f& c);
   void getAwarenessBox(Box3f& c, float rxz, float ry);
@@ -26,12 +26,11 @@ private:
   float _fAwarenessRadiusXZ;
   float _fAwarenessRadiusY;
   vec3 _vLastAwarenessPos;
-
   float _incXz;
   MpFloat _mpXz;
   MpFloat _mpY;
   float _incY;
-
+  std::shared_ptr<PhysicsWorld> _pPhysics = nullptr;
   void updateAwarenessSpheroidAxis(float& fAwareness, float minR, float maxR, float increment);
 };
 

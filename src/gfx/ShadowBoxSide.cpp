@@ -11,12 +11,14 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
+#include "../gfx/LightManager.h"
 #include "../gfx/RenderSettings.h"
 #include "../model/MeshSpec.h"
 #include "../model/MeshNode.h"
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/PhysicsGrid.h"
+#include "../world/NodeUtils.h"
 
 namespace BR2 {
 ShadowBoxSide::ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_ptr<LightNodePoint> pLightSource, BoxSide::e eSide, bool bShadowMapEnabled) {
@@ -69,7 +71,8 @@ void ShadowBoxSide::updateView() {
 
   // make sure frustum isn't **d uip
   if (_pLightSource->getLightRadius() < fNear) {
-    fFar = Gu::getCamera()->getFrustum()->getZFar();
+      std::shared_ptr<CameraNode> cam = NodeUtils::getActiveCamera(_pLightSource->getLightManager());
+      fFar = cam->getFrustum()->getZFar();
   }
   else {
     fFar = _pLightSource->getLightRadius();
@@ -128,7 +131,7 @@ bool ShadowBoxSide::computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum) {
 
   return pCamFrustum->hasFrustum(_pFrustum);
 }
-void ShadowBoxSide::collect() {
+void ShadowBoxSide::cullObjectsAsync(CullParams& rp) {
   if (_bShadowMapEnabled == false) {
     return;
   }
@@ -136,18 +139,17 @@ void ShadowBoxSide::collect() {
   AssertOrThrow2(_pVisibleSet != nullptr);
   // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
 
-  _pVisibleSet->clear();
+  std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(_pLightSource);
 
-  if (Gu::getPhysicsWorld() == nullptr) {
-    return;
-  }
+  _pVisibleSet->clear(rp.getCamera());
 
   BvhCollectionParams p;
   //fmaxdist is SQUARED
   p._fMaxDist = powf(MathUtils::brMin(_pLightSource->getLightRadius(), Gu::getEngineConfig()->getMaxPointLightShadowDistance()), 2);
   p._pFrustum = _pFrustum;
   p._pRenderBucket = _pVisibleSet;
-  Gu::getPhysicsWorld()->collectVisibleNodes(&p);
+  p._pVisibleCamera = rp.getCamera();
+  physics->collectVisibleNodes(&p);
 
   //////////////////////////////////////////////////////////////////////////
   //Loop through objects and find whether they have changed since last update.

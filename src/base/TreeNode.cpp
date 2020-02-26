@@ -110,7 +110,8 @@ std::shared_ptr<TreeNode> TreeNode::insert(std::shared_ptr<TreeNode> txChild, st
   txChild->_pParent = txParent;
   txParent->internalAddChildNode(txChild);
 
-  afterChildInserted(txChild);
+  txParent->afterChildAttached(txChild);
+  txChild->afterAttached(txParent);
 
   return txChild;
 }
@@ -150,7 +151,8 @@ bool TreeNode::remove(std::shared_ptr<TreeNode> node, bool blnSplice, bool bImme
   }
 
   //Callback for subclasses.
-  afterChildRemoved(node);
+  pParent->afterChildDetached(node);
+  node->afterDetached(pParent);
 
   return true;
 }

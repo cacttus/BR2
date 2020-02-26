@@ -34,6 +34,7 @@ public:
   void setVaoShader(std::shared_ptr<VaoShader> x);
   void draw();
   std::shared_ptr<CameraNode> getCamera();
+  void setCamera(std::shared_ptr<CameraNode> c);
 
 private:
   std::unique_ptr<RenderParams_Internal> _pint = nullptr;

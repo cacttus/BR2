@@ -1,12 +1,7 @@
 /**
-*
-*    @file RenderHeader.h
-*    @date September 1, 2019
-*    @author Derek Page
-*
-*    © 2019 
-*
-*
+*  @file RenderHeader.h
+*  @date September 1, 2019
+*  @author Derek Page
 */
 #pragma once
 #ifndef __RENDERINCLUDES_15673689883087018270_H__

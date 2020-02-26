@@ -84,6 +84,9 @@ public:
   void setBoneParent(std::shared_ptr<BoneNode> bn) { _pBoneParent = bn; }
   std::shared_ptr<BoneNode> getBoneParent() { return _pBoneParent; }
 
+  virtual void afterAddedToScene(std::shared_ptr<Scene> scene) {} // Override to perform logic after node added to scene. ** this is recursive on all children
+  virtual void afterRemovedFromScene(std::shared_ptr<Scene> scene) {} // Override to perform logic after node added to scene. ** this is recursive on all children
+
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp) override;
   virtual void drawShadow(RenderParams& rp) override;

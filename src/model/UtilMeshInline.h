@@ -29,7 +29,7 @@ public:
   void vt1(v_v3c4& v1);
   void vt2(v_v3c4& v1, v_v3c4& v2);
   void vt2(vec3& v1, vec3& v2, vec4* color = nullptr);
-  void end();//End vertex processing and draw the primitives
+  void end(std::shared_ptr<CameraNode> cam);//End vertex processing and draw the primitives
 
   void addBox(Box3f* b, vec4* color = nullptr);
   void addBox(vec3* points, vec4* color = nullptr);
@@ -55,7 +55,7 @@ public:
   void begin(GLenum type);
   void vt1(v_v2c4& v1);
   void vt2(vec2& v1, vec2& v2, vec4* color = nullptr);
-  void end();//End vertex processing and draw the primitives
+  void end(std::shared_ptr<CameraNode> cam);//End vertex processing and draw the primitives
 
 private:
   //GrowBuffer<v_v2c4>* _pGrowBuffer;

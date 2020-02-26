@@ -7,7 +7,6 @@
 #ifndef __APPMAIN_1565368851810156743_H__
 #define __APPMAIN_1565368851810156743_H__
 
-#include "../gfx/RenderIncludes.h"
 #include "../base/AppBase.h"
 
 namespace BR2 {
@@ -79,6 +78,7 @@ private:
   void draw2d();
 
   std::shared_ptr<AppUi> _pAppUi = nullptr;
+  std::shared_ptr<CameraNode> _pCamera = nullptr;
   void setDebugMode();
 
 

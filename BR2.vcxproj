@@ -52,7 +52,6 @@
     <ClCompile Include="src\base\Package.cpp" />
     <ClCompile Include="src\base\Perf.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
-    <ClCompile Include="src\base\ProjectFile.cpp" />
     <ClCompile Include="src\base\Script.cpp" />
     <ClCompile Include="src\base\SDLUtils.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
@@ -162,6 +161,7 @@
     <ClCompile Include="src\world\BaseCollider.cpp" />
     <ClCompile Include="src\world\Component.cpp" />
     <ClCompile Include="src\world\Manifold.cpp" />
+    <ClCompile Include="src\world\NodeUtils.cpp" />
     <ClCompile Include="src\world\PhysicsGrid.cpp" />
     <ClCompile Include="src\world\PhysicsGridAwareness.cpp" />
     <ClCompile Include="src\world\PhysicsNode.cpp" />
@@ -216,7 +216,6 @@
     <ClInclude Include="src\base\Package.h" />
     <ClInclude Include="src\base\Perf.h" />
     <ClInclude Include="src\base\PoundFile.h" />
-    <ClInclude Include="src\base\ProjectFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
     <ClInclude Include="src\base\Script.h" />
     <ClInclude Include="src\base\SDLGLIncludes.h" />
@@ -270,7 +269,6 @@
     <ClInclude Include="src\gfx\ParticleManager.h" />
     <ClInclude Include="src\gfx\Picker.h" />
     <ClInclude Include="src\gfx\QuadBufferMesh.h" />
-    <ClInclude Include="src\gfx\RenderIncludes.h" />
     <ClInclude Include="src\gfx\RenderParams.h" />
     <ClInclude Include="src\gfx\RenderPipe.h" />
     <ClInclude Include="src\gfx\RenderSettings.h" />
@@ -357,6 +355,7 @@
     <ClInclude Include="src\world\BaseCollider.h" />
     <ClInclude Include="src\world\Component.h" />
     <ClInclude Include="src\world\Manifold.h" />
+    <ClInclude Include="src\world\NodeUtils.h" />
     <ClInclude Include="src\world\PhysicsGrid.h" />
     <ClInclude Include="src\world\PhysicsGridAwareness.h" />
     <ClInclude Include="src\world\PhysicsNode.h" />

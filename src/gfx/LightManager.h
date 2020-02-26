@@ -9,13 +9,14 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../model/ModelHeader.h"
+#include "../world/WorldHeader.h"
 
 namespace BR2 {
 /**
 *  @class LightManager
 *  @brief Manages both lights, and shadow maps, for all objects which emit.
 */
-class LightManager : public VirtualMemory {
+class LightManager : public GLFramework {
 public:
   LightManager(std::shared_ptr<GLContext> tc, std::shared_ptr<Scene> pScene);
   virtual ~LightManager() override;
@@ -23,7 +24,6 @@ public:
   void update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf);
 
   std::shared_ptr<GpuDeferredParams> getDeferredParams() { return _pGpuDeferredParams; }
-  //std::vector<LightSourcePoint*>& getActiveLights() { return _vecActivePointLights; }
   void* getGpuPointLightBuffer() { return _vecGpuPointLights.data(); }
   void* getGpuDirLightBuffer() { return _vecGpuDirLights.data(); }
   void setFogDisabled(bool b) { _bFogDisabled = b; }
@@ -35,10 +35,10 @@ public:
   std::vector<std::shared_ptr<ShadowFrustum>>& getGpuShadowFrustums() { return  _vecGpuShadowFrustums; }
   std::vector<std::shared_ptr<ShadowBox>> getAllShadowBoxes();
   std::vector<std::shared_ptr<ShadowFrustum>> getAllShadowFrustums();
+  std::shared_ptr<Scene> getScene();
 
 private:
   static const int c_iMaxLights = 64;
-  std::shared_ptr<GLContext> _pContext = nullptr;
   std::shared_ptr<GpuDeferredParams> _pGpuDeferredParams = nullptr;
   std::vector<GpuPointLight> _vecGpuPointLights;
   std::vector<GpuDirLight> _vecGpuDirLights;

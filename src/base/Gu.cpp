@@ -36,7 +36,6 @@
 #include "../gfx/RenderSettings.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/UiControls.h"   
-#include "../gfx/Picker.h"   
 #include "../gfx/ParticleManager.h"   
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/OpenGLApi.h"
@@ -46,7 +45,6 @@
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 
-#include "../world/PhysicsWorld.h"
 
 #include "../base/SDLIncludes.h"
 #include "../base/SDLGLIncludes.h"
@@ -82,8 +80,6 @@ std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
 std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
 std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
 std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
-std::shared_ptr<Picker> Gu::_pPicker = nullptr;
-std::shared_ptr<PhysicsWorld> Gu::_pPhysicsWorld = nullptr;
 std::shared_ptr<Package> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
 std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
@@ -101,8 +97,6 @@ std::shared_ptr<FpsMeter> Gu::getFpsMeter() { return _pFpsMeter; }
 std::shared_ptr<FrameSync> Gu::getFrameSync() { return _pFrameSync; }
 std::shared_ptr<SoundCache> Gu::getSoundCache() { return _pSoundCache; }
 std::shared_ptr<TexCache> Gu::getTexCache() { return _pTexCache; }
-std::shared_ptr<Picker> Gu::getPicker() { return _pPicker; }
-std::shared_ptr<PhysicsWorld> Gu::getPhysicsWorld() { return _pPhysicsWorld; }
 std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
 std::shared_ptr<AppBase> Gu::getApp() { return _pAppBase; }
 std::shared_ptr<ParticleManager> Gu::getParty() { return _pParty; }
@@ -124,7 +118,6 @@ std::shared_ptr<Gui2d> Gu::getGui() {
   return Gu::getActiveWindow()->getGui();
 }
 
-void Gu::setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { AssertOrThrow2(_pPhysicsWorld == nullptr); _pPhysicsWorld = p; }
 void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
 
@@ -230,8 +223,6 @@ void Gu::deleteGlobals() {
   _pSoundCache = nullptr;
   _pShaderMaker = nullptr;
   _pModelCache = nullptr;
-  _pPicker = nullptr;
-  _pPhysicsWorld = nullptr;
   _pRenderSettings = nullptr;
   _pEngineConfig = nullptr;
 
@@ -622,15 +613,12 @@ void Gu::createManagers() {
   BRLogInfo("GLContext - Model Cache");
   _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
 
-  BRLogInfo("GLContext - Picker");
-  _pPicker = std::make_shared<Picker>(Gu::getGraphicsContext());
-
+  
   //BroLogInfo("GLContext - Gui");
 //   _pGui2d = std::make_shared<Gui2d>();
 
   BRLogInfo("GLContext - Physics World");
   //Either A) subclass or B) remove genericy thing
- // _pPhysicsWorld = std::make_shared<PhysicsWorld>();
 
   BRLogInfo("Network");
   _pNet = std::make_shared<Net>();
@@ -652,9 +640,6 @@ void Gu::updateGlobals() {
   }
   if (_pSoundCache != nullptr) {
     _pSoundCache->update();
-  }
-  if (_pPicker != nullptr) {
-    _pPicker->update(_pInputManager);
   }
   if (_pNet != nullptr) {
     _pNet->update();

@@ -31,6 +31,7 @@ RenderParams::~RenderParams() {
   _pint = nullptr;
 }
 std::shared_ptr<CameraNode> RenderParams::getCamera() { return _pint->_pCamera; }
+void  RenderParams::setCamera(std::shared_ptr<CameraNode> c) { _pint->_pCamera=c; }
 int32_t RenderParams::getCount() { return _pint->_iCount; }
 void RenderParams::setCount(int32_t i) { _pint->_iCount = i; }
 void RenderParams::setDrawMode(GLenum e) { _pint->_eDrawMode = e; }

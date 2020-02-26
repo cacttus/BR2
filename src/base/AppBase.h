@@ -24,7 +24,7 @@ public:
   string_t makeAssetPath(string_t file);
   string_t makeAssetPath(string_t folder, string_t file);
 
-  virtual void drawDebug();
+  virtual void drawDebug(RenderParams& rp) override;
 
   //virtual void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) { };
   virtual void idle(t_timeval us) {}

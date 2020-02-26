@@ -83,6 +83,13 @@ public:
   virtual void drawTransparent();
   std::shared_ptr<Scene> getScene() { return _pScene; }
 
+protected:
+  GridMap& getGrids() { return _gridMap; }
+
+  virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos);
+  std::shared_ptr<PhysicsGridAwareness> getAwareness() { return _pAwareness; }
+  // virtual std::shared_ptr<PhysicsGrid> makeGrid(ivec3& cv)=0;
+
 private:
   float _fNodeWidth = 0;
   float _fNodeHeight = 0;
@@ -147,12 +154,7 @@ private:
   void sweepGridFrustum(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2);
   void sweepGridFrustum_r(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2, vec3& pt,
     std::set<ivec3*, ivec3::Vec3xCompLess>& grids, int32_t& iDebugSweepCount);
-protected:
-  GridMap& getGrids() { return _gridMap; }
 
-  virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos) = 0;
-  std::shared_ptr<PhysicsGridAwareness> getAwareness() { return _pAwareness; }
-  // virtual std::shared_ptr<PhysicsGrid> makeGrid(ivec3& cv)=0;
 
 
 };

@@ -24,6 +24,10 @@ public:
   TreeNode();
   virtual ~TreeNode()  override;
 
+  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
+  virtual bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
+  bool detachFromParent();  //calls remove()
+
   template < class Tx >
   bool iterateBreadthFirst(std::function<bool(std::shared_ptr<Tx>)> fn);
   template < class Tx >
@@ -35,10 +39,6 @@ public:
   template < class Tx >
   std::shared_ptr<Tx> findParent();
 
-  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
-  virtual bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
-
-  bool detachFromParent();  //calls remove()
   size_t getNodeCountHierarchy();
   size_t getNodeCountParentOnly();
   bool getHasParent() { return _pParent != nullptr; }
@@ -49,8 +49,10 @@ public:
 
 protected:
   void addNullChildren(int32_t count);
-  virtual void afterChildInserted(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is appended.
-  virtual void afterChildRemoved(std::shared_ptr<TreeNode>) {}    //Override this - Called after a node is removed.
+  virtual void afterAttached(std::shared_ptr<TreeNode> parent) {}    //Override this - Called after THIS is appended.
+  virtual void afterDetached(std::shared_ptr<TreeNode> parent) {}    //Override this - Called after THIS is removed.
+  virtual void afterChildAttached(std::shared_ptr<TreeNode> child) {}    //Override this - Called after a child node is appended.
+  virtual void afterChildDetached(std::shared_ptr<TreeNode> child) {}    //Override this - Called after a child node is removed.
   void attachToParent(std::shared_ptr<TreeNode> pParent);  // calls insert()
 
 private:
@@ -59,15 +61,14 @@ private:
   std::unique_ptr<NodeList> _mapChildren = nullptr;
   bool _bUnloading = false;
 
+  std::shared_ptr<TreeNode> insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent = nullptr);
+  bool remove(std::shared_ptr<TreeNode> node = NULL, bool blnSplice = false, bool bImmediateNodeOnly = true);// Return true if the node was removed
+
   void getNodeCount_r(std::unique_ptr<NodeList>& vecNodes, size_t& count);
   void getBreadthFirstList_r(std::shared_ptr<TreeNode> parent, NodeList& outList);
   void find_r(std::shared_ptr<TreeNode> bt, std::shared_ptr<TreeNode> parent, std::shared_ptr<TreeNode>& found);
   void internalAddChildNode(std::shared_ptr<TreeNode> pTreeNode);
   void internalRemoveChildNode(std::shared_ptr<TreeNode> pTreeNode);
-
-  //protected in favor of attach()  etach()
-  std::shared_ptr<TreeNode> insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent = NULL);
-  bool remove(std::shared_ptr<TreeNode> node = NULL, bool blnSplice = false, bool bImmediateNodeOnly = true);// Return true if the node was removed
 };
 template < class Tx >
 std::shared_ptr<Tx> TreeNode::findParent() {

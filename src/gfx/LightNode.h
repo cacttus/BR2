@@ -1,12 +1,7 @@
 /**
-*
-*    @file LightNode.h
-*    @date October 4, 2014
-*    @author MetalMario971
-*
-*    © 2014
-*
-*
+*  @file LightNode.h
+*  @date October 4, 2014
+*  @author MetalMario971
 */
 #pragma once
 #pragma once
@@ -18,49 +13,61 @@
 #include "../math/MathAll.h"
 
 namespace BR2 {
-
+/**
+*  @class LightNodeBase
+*  @brief Base class for lights.
+*/
 class LightNodeBase : public PhysicsNode {
 public:
   LightNodeBase(bool bShadow);
   virtual ~LightNodeBase() override;
 
+
+  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void cullShadowVolumesAsync(CullParams& cp) = 0;
+
   Color4f* getColorPtr() { return &_color; }
   Color4f& getColor() { return _color; }
   void setLightColor(const Color4f&& c) { _color = c; _color.clampValues(); }
-  // vec3& getSpecColor() { return _vSpecColor; }
-  // float& getSpecExp() { return _fSpecExp; }
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   vec3* getFinalPosPtr();
-  bool shadowsEnabled();
+  bool getIsShadowsEnabled();
   std::shared_ptr<LightManager> getLightManager();
+
 protected:
   Color4f _color;
-  //float _fSpecExp = 2.0f;
-  //vec3 _vSpecColor;
   vec3 _vGpuBufferedPosition; // Temporary storage for the GPU - DO NOT CHANGE
   virtual void init() override;
 
 private:
   bool _bEnableShadows = false;
 };
-
+/**
+*  @class LightNodeDir
+*  @brief Directional light.
+*/
 class LightNodeDir : public LightNodeBase {
 public:
   LightNodeDir(bool bShadow);
   static std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow);
   virtual ~LightNodeDir() override;
+
+  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+  virtual void cullShadowVolumesAsync(CullParams& cp) override;
+
+  bool renderShadows(std::shared_ptr<ShadowFrustum> pf);
+
   const vec3& getLookAt() { return _vLookAt; }
   const vec3& getDir() { return _vDir; }
   const vec3& getUp() { return _vUp; }
   void setLookAt(const vec3& v);
-  bool renderShadows(std::shared_ptr<ShadowFrustum> pf);
-  virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
-  virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
   std::shared_ptr<ShadowFrustum> getShadowFrustum() { return _pShadowFrustum; }
   std::shared_ptr<GpuDirLight> getGpuLight() { return _pGpuLight; }
   void setMaxDistance(float f);
+
 protected:
   virtual void init() override;
+
 private:
   vec3 _vLookAt;
   vec3 _vDir;
@@ -69,25 +76,33 @@ private:
   std::shared_ptr<GpuDirLight> _pGpuLight = nullptr;
   std::shared_ptr<ShadowFrustum> _pShadowFrustum = nullptr;
 };
+/**
+*  @class LightNodePoint
+*  @brief Point light.
+*/
 class LightNodePoint : public LightNodeBase {
 public:
   LightNodePoint(bool bhasShadowBox);
   static std::shared_ptr<LightNodePoint> create(bool bhasShadowBox);
   virtual ~LightNodePoint() override;
+
   std::shared_ptr<ShadowBox> getShadowBox() { return _pShadowBox; }
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
+  virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+  virtual void cullShadowVolumesAsync(CullParams& cp) override;
 
-  std::shared_ptr<GpuPointLight> LightNodePoint::getGpuLight() { return _pGpuLight; }
   bool renderShadows(std::shared_ptr<ShadowBox> pf); // - Called by lightmanager to set up the light
+  
+  std::shared_ptr<GpuPointLight> LightNodePoint::getGpuLight() { return _pGpuLight; }
   void setEnableFlicker(bool b) { _bFlickerEnabled = b; if (_bFlickerEnabled == FALSE) _fFlickerAddRadius = 0.0f; }
   float getLightAttenuation() { return _attenuation; }
   void setLightAttenuation(float f) { _attenuation = f; }
-
   float getLightRadius1_2() { return _f_1_Radius_2; }
   float getLightRadius();
   void setLightRadius(float r);
-  virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
+
+
 protected:
   virtual void init() override;
 

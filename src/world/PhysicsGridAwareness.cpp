@@ -2,10 +2,12 @@
 #include "../gfx/CameraNode.h"
 #include "../base/GLContext.h"
 #include "../world/PhysicsGridAwareness.h"
+#include "../world/NodeUtils.h"
 
 
 namespace BR2 {
-PhysicsGridAwareness::PhysicsGridAwareness(MpFloat rxz, float incXZ, MpFloat ry, float incY) {
+PhysicsGridAwareness::PhysicsGridAwareness(std::shared_ptr<PhysicsWorld> pw, MpFloat rxz, float incXZ, MpFloat ry, float incY) {
+  _pPhysics = pw;
   _vLastAwarenessPos = getAwarenessPos();
   _mpXz = rxz;
   _mpY = ry;
@@ -15,7 +17,6 @@ PhysicsGridAwareness::PhysicsGridAwareness(MpFloat rxz, float incXZ, MpFloat ry,
   _fAwarenessRadiusY = ry.getMin();
 }
 PhysicsGridAwareness::~PhysicsGridAwareness() {
-
 }
 void PhysicsGridAwareness::update(float dt) {
   updateAwarenessSpheroidAxis(_fAwarenessRadiusY,
@@ -27,14 +28,15 @@ void PhysicsGridAwareness::update(float dt) {
     _mpXz.getMax(),
     _incXz
   );
-
 }
 void PhysicsGridAwareness::updateAwarenessSpheroidAxis(float& fAwareness, float minR, float maxR, float increment) {
-  float fLen = (_vLastAwarenessPos - Gu::getCamera()->getPos()).squaredLength();
+  std::shared_ptr<CameraNode> cam = NodeUtils::getActiveCamera(_pPhysics);
+
+  float fLen = (_vLastAwarenessPos - cam->getPos()).squaredLength();
   //Reset awareness when we move some small value.
   if (fLen > 0.05) {
     fAwareness = minR;
-    _vLastAwarenessPos = Gu::getCamera()->getPos();
+    _vLastAwarenessPos = cam->getPos();
   }
 
   // float aMax = CongaUtils::getBvhAwarenessMaxRadius();
@@ -63,7 +65,8 @@ vec3 PhysicsGridAwareness::getAwarenessPos() {
   // all nodes now contain positions.
   //This is a debatable position.  If we use the "raycast" version we end up
   //creating / deleting tons of cells. 
-  vec3 vp = Gu::getCamera()->getPos();//getRaycastViewCenter(); //->getCamera()->getPos();//getProjectedViewCenter();
+  std::shared_ptr<CameraNode> cam = NodeUtils::getActiveCamera(_pPhysics);
+  vec3 vp = cam->getPos();//getRaycastViewCenter(); //->getCamera()->getPos();//getProjectedViewCenter();
                                                     // vp.y = 0;
 
   return vp;

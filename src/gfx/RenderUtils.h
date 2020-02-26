@@ -26,15 +26,15 @@ public:
   static string_t debugGetRenderState(bool bForceRun = false, bool bPrintToStdout = true, bool bSaveFramebufferTexture = true);//breakpoint it
 
   // - Utility
-  static void renderTexturedQuadAttrib(float size);//UNSAFE
+  static void renderTexturedQuadAttrib(std::shared_ptr<CameraNode> cam, float size);//UNSAFE
   //static void drawWireSphereShader(float fRadius, vec3& vOffset, vec4& vColor, int32_t nSlices=5, int32_t nStacks=5);
-  static void drawWireSphereShader(float fRadius, vec4& vColor, int32_t nSlices = 5, int32_t nStacks = 5, mat4* pMatrix = nullptr);
-  static void drawWireBoxShader(Box3f* box, vec3& vOffset, vec4& vColor);
-  static void drawSolidBoxShaded(Box3f* box, vec3& vOffset, vec4& vColor);
+  static void drawWireSphereShader(std::shared_ptr<CameraNode> cam, float fRadius, vec4& vColor, int32_t nSlices = 5, int32_t nStacks = 5, mat4* pMatrix = nullptr);
+  static void drawWireBoxShader(std::shared_ptr<CameraNode> cam, Box3f* box, vec3& vOffset, vec4& vColor);
+  static void drawSolidBoxShaded(std::shared_ptr<CameraNode> cam, Box3f* box, vec3& vOffset, vec4& vColor);
   //static void drawPickBox(Box3f* box, uint32_t uiColorId);
-  static void drawAxisShader(float scale = 10.0f, float lineWidth = 2.0f, mat4& transform = mat4::identity()); // Renders an Axis at the origin.
-  static void drawFrustumShader(std::shared_ptr<FrustumBase> pf, vec4& avColor);//idk why there are 2
-  static void drawGridShader(float r = 1.0f, float g = 1.0f, float b = 1.0f, int32_t nSlices = 60,
+  static void drawAxisShader(std::shared_ptr<CameraNode> cam, float scale = 10.0f, float lineWidth = 2.0f, mat4& transform = mat4::identity()); // Renders an Axis at the origin.
+  static void drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<FrustumBase> pf, vec4& avColor);//idk why there are 2
+  static void drawGridShader(std::shared_ptr<CameraNode> cam, float r = 1.0f, float g = 1.0f, float b = 1.0f, int32_t nSlices = 60,
     float fSliceWidth = 20.0f, vec3& center = vec3(0, 0, 0), std::shared_ptr<ShaderBase> pShader = NULL); // Renders a grid.
 
   static void saveTexture(string_t&& strLoc, GLuint iGLTexId, GLenum eTexTarget, int iCubeMapSide = -1); // Saves a GL texture by ID to the file path.

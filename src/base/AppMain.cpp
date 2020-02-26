@@ -18,6 +18,26 @@
 #include "../base/InputManager.h"
 #include "../gfx/MegaTex.h"
 
+#include "../base/SDLIncludes.h"
+#include "../base/SDLGLIncludes.h"
+
+////SDL
+//#include <SDL.h>
+//
+////Including both APIs.  In the future we abstract the API calls to interface and move the headers.
+//#include <SDL_opengl.h>
+//#include <SDL_opengl_glext.h>
+//#include <SDL_vulkan.h>
+//
+////Needed to get the main window handle so we can set the main window handle.
+//#include <SDL_syswm.h>
+//
+////Networking
+//#include <SDL_net.h>
+//
+////Vulkan
+//#include <vulkan/vulkan.h>
+
 namespace BR2 {
 AppUi::AppUi() {
 
@@ -80,10 +100,10 @@ void AppMain::init() {
 void AppMain::drawBackgroundImage() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
+      _pCamera->getViewport()->getWidth(), _pCamera->getViewport()->getHeight());
     _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
   }
-  std::shared_ptr<CameraNode> bc = Gu::getCamera();
+  std::shared_ptr<CameraNode> bc = _pCamera;
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
   Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport()->getWidth(), bc->getViewport()->getHeight());
   {
@@ -192,11 +212,11 @@ void AppMain::drawForward(RenderParams& rp) {
 
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      Gu::getCamera()->getViewport()->getWidth(), Gu::getCamera()->getViewport()->getHeight());
+      _pCamera->getViewport()->getWidth(), _pCamera->getViewport()->getHeight());
     _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
   }
 
-  RenderUtils::drawAxisShader();
+  RenderUtils::drawAxisShader(rp.getCamera());
 }
 void AppMain::drawShadow(RenderParams& rp) {
 }
@@ -249,7 +269,7 @@ void AppMain::drawDebugText() {
     DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
     DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
 
-    DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+    DBGL("  Camera: %s", _pCamera->getPos().toString(5).c_str());
 
   }
   _pAppUi->endDebugText();

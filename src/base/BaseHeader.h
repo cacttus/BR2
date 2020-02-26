@@ -59,6 +59,7 @@ void runtimeAssertion(string_t str);
 //if you use '-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated
 #define BRThrowException(x) throw new Exception(Stz x,__LINE__,__FILE__)
 #define BRThrowNotImplementedException() throw new NotImplementedException()
+#define BRThrowNotImplementedExceptionMsg(sz) do { BRLogError(sz); BRThrowNotImplementedException(); } while(0);
 #define BRThrowDeprecatedException() throw new DeprecatedException()
 #define VerifyOrThrow(expr,x) do { if(!(expr)) BRThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()

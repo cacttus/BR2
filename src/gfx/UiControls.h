@@ -37,6 +37,122 @@ private:
     float _width = 0;
     std::vector<std::shared_ptr<UiElement>> _eles;
   };
+public:
+  static std::shared_ptr<UiElement> create();
+  UiElement();
+  virtual ~UiElement() override;
+
+  std::string getName() { return _strName; }
+  virtual void update(std::shared_ptr<InputManager> pFingers);
+  virtual void performLayout(bool bForce);
+
+  virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect);
+  void drawDebug(RenderParams& rp);//ONLY CALL ON Gui2d!!
+  virtual std::shared_ptr<UiElement> addChild(std::shared_ptr<UiElement> c, uint32_t uiSort = UiElement::c_uiBaseLayer0SortId, bool bUpdateLayout = true, bool bCheckDupes = true);
+  std::shared_ptr<UiElement> getParent() { return _pParent; }
+  virtual void setLayoutChanged(bool bChildren = false);//Don't use bChildren unless we're Gui2D
+
+  void enableDrag(UiDragInfo::DragFunc func);
+
+  /// TODO: set this 
+  //    Pass a Camera into UiScreen and all UiElements reference it..
+  std::shared_ptr<CameraNode> _pCamera = nullptr;
+  std::shared_ptr<CameraNode> getWindowCamera() { return _pCamera; }
+  
+  std::shared_ptr<Picker> getPicker() { 
+    BRThrowNotImplementedException();
+    return nullptr; 
+  }
+
+
+  void setName(std::string n) { _strName = n; }
+  virtual void init();
+  uDim& top() { return _top; }          //**These are only ever pixels
+  uDim& right() { return _right; }      //**These are only ever pixels
+  uDim& bottom() { return _bottom; }    //**These are only ever pixels
+  uDim& left() { return _left; }        //**These are only ever pixels
+  uDim& width() { return _width; }
+  uDim& height() { return _height; }
+  uDim& minWidth() { return _minWidth; }
+  uDim& minHeight() { return _minHeight; }
+  uDim& maxWidth() { return _maxWidth; }
+  uDim& maxHeight() { return _maxHeight; }
+  vec4& getColor() { return _vColor; }
+
+  std::shared_ptr<UiElement> cloneSelfOnly();
+  const Box2f& getComputedQuad() { return _b2ComputedQuad; }//In design space
+  const Box2f& getLayoutQuad() { return _b2LayoutQuad; }//In sceen space
+  const Box2f& getGLRasterQuad() { return _b2RasterQuad; }//Finally, in OpenGL space
+  const Box2f& getContentQuad() { return _b2ContentQuad; }//Finally, in OpenGL space
+
+  virtual bool getPickable() { return false; }
+
+  UiPositionMode::e& position() { return _ePosition; }
+  UiOverflowMode::e& overflow() { return _eOverflowMode; }
+  UiDisplayMode::e& display() { return _eDisplayMode; }
+  ///void setOverflowMode(UiOverflowMode::e ee) { _eOverflowMode = ee; }
+  ///::e getDisplayMode() { return _eDisplayMode; }
+  ///void setDisplayMode(UiDisplayMode::e ee) { _eDisplayMode = ee; }
+  //UiAutoSizeMode::e getAutoSizeModeX() { return _eAutoSizeModeX; }
+  //void setAutoSizeModeX(UiAutoSizeMode::e m) { _eAutoSizeModeX = m; }
+  //UiAutoSizeMode::e getAutoSizeModeY() { return _eAutoSizeModeY; }
+  //void setAutoSizeModeY(UiAutoSizeMode::e m) { _eAutoSizeModeY = m; }
+  std::multimap<uint32_t, std::shared_ptr<UiElement>>& getChildren() { return _mapChildren; }
+  void clearChildren();
+  bool removeChild(std::shared_ptr<UiElement> ele, bool bUpdateLayout = true);
+  bool hasChild(std::shared_ptr<UiElement> ele);
+
+  virtual bool pick(std::shared_ptr<InputManager> fingers);
+  void addEvent(UiEventId::e ev, std::shared_ptr<UiEventFunc> f);
+  bool removeEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f);
+
+  void doMouseEvents(std::shared_ptr<InputManager> pFingers);
+  void getTreeAsList(std::vector<std::shared_ptr<UiElement>>& __out_ children);
+  void setSort(uint32_t uisort);
+  bool getLayoutVisible() { return _bVisible; };//Remove elem from layout + hide it
+  virtual bool setLayoutVisible(bool b, bool bLayoutChanged = true);                //Remove elem from layout + hide it
+  bool hide();//Removes element from the parent layout, and also hides it.
+  bool show();//Removes element from the parent layout, and also hides it.
+  bool getRenderVisible() { return _bRenderVisible; };   //Simply hide element, but still compute it in the layout (take up space)
+  virtual void setRenderVisible(bool b) { _bRenderVisible = b; }//Simply hide element, but still compute it in the layout (take up space)
+  void hideRender() { setRenderVisible(false); }//Simply doesn't draw element, but it still computes the layout
+  void showRender() { setRenderVisible(true); } //Simply doesn't draw element, but it still computes the layout
+  void hideLayerRender(uint32_t iLayer);
+  void showLayerRender(uint32_t iLayer);
+  void disablePick() { _bPickEnabled = false; }
+
+  void setClick(MouseFunc cc);//release
+  void setPress(MouseFunc cc);
+  void setDown(MouseFunc cc);
+  void setHover(MouseFunc cc);//mouse hover
+
+  ButtonState::e getMouseState() { return _eMouseState; }
+
+  void setPickRoot() { _bPickRoot = true; }
+  bool getPickRoot() { return _bPickRoot; }
+  void bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLayer);
+  uDim& padBottom() { return _padBottom; }
+  uDim& padTop() { return _padTop; }
+  uDim& padRight() { return _padRight; }
+  uDim& padLeft() { return _padLeft; }
+
+protected:
+  uint64_t _iPickedFrameId = 0; //DEBUG ONLY - this is used for debug only.
+
+  void computePositionalElement(std::shared_ptr<UiElement> ele);
+  void layoutEleQuad(std::shared_ptr<UiElement> ele);
+  void computeQuads(float final_r, float final_l, float final_t, float final_b);
+  virtual float getAutoWidth();
+  virtual float getAutoHeight();
+  virtual bool getShouldScalePositionToDesign() { return true; }
+  virtual bool getIsPickEnabled() { return _bPickEnabled; }
+  vec4 makeClipRectForRender(const Box2f& b2ClipRect);
+
+  bool getLayoutChanged() { return _bLayoutChanged; }
+  virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect);
+  //virtual void setQuad() { }
+  bool getPickedLastFrame() { return _bPickedLastFrame; }
+
 private:
   std::string _strName = "";
   std::shared_ptr<UiElement> _pParent = nullptr;
@@ -116,109 +232,6 @@ private:
   void performLayoutChildren(bool bForce);
   void positionChildren(bool bForce);
   void computeContentQuad();
-protected:
-  uint64_t _iPickedFrameId = 0; //DEBUG ONLY - this is used for debug only.
-
-  void computePositionalElement(std::shared_ptr<UiElement> ele);
-  void layoutEleQuad(std::shared_ptr<UiElement> ele);
-  void computeQuads(float final_r, float final_l, float final_t, float final_b);
-  virtual float getAutoWidth();
-  virtual float getAutoHeight();
-  virtual bool getShouldScalePositionToDesign() { return true; }
-  virtual bool getIsPickEnabled() { return _bPickEnabled; }
-  vec4 makeClipRectForRender(const Box2f& b2ClipRect);
-
-  bool getLayoutChanged() { return _bLayoutChanged; }
-  virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect);
-  //virtual void setQuad() { }
-  bool getPickedLastFrame() { return _bPickedLastFrame; }
-public:
-  static std::shared_ptr<UiElement> create();
-  UiElement();
-  virtual ~UiElement() override;
-
-  std::string getName() { return _strName; }
-  virtual void update(std::shared_ptr<InputManager> pFingers);
-  virtual void performLayout(bool bForce);
-
-  virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect);
-  void drawDebug();//ONLY CALL ON Gui2d!!
-  virtual std::shared_ptr<UiElement> addChild(std::shared_ptr<UiElement> c, uint32_t uiSort = UiElement::c_uiBaseLayer0SortId, bool bUpdateLayout = true, bool bCheckDupes = true);
-  std::shared_ptr<UiElement> getParent() { return _pParent; }
-  virtual void setLayoutChanged(bool bChildren = false);//Don't use bChildren unless we're Gui2D
-
-  void enableDrag(UiDragInfo::DragFunc func);
-
-  void setName(std::string n) { _strName = n; }
-  virtual void init();
-  uDim& top() { return _top; }          //**These are only ever pixels
-  uDim& right() { return _right; }      //**These are only ever pixels
-  uDim& bottom() { return _bottom; }    //**These are only ever pixels
-  uDim& left() { return _left; }        //**These are only ever pixels
-  uDim& width() { return _width; }
-  uDim& height() { return _height; }
-  uDim& minWidth() { return _minWidth; }
-  uDim& minHeight() { return _minHeight; }
-  uDim& maxWidth() { return _maxWidth; }
-  uDim& maxHeight() { return _maxHeight; }
-  vec4& getColor() { return _vColor; }
-
-  std::shared_ptr<UiElement> cloneSelfOnly();
-  const Box2f& getComputedQuad() { return _b2ComputedQuad; }//In design space
-  const Box2f& getLayoutQuad() { return _b2LayoutQuad; }//In sceen space
-  const Box2f& getGLRasterQuad() { return _b2RasterQuad; }//Finally, in OpenGL space
-  const Box2f& getContentQuad() { return _b2ContentQuad; }//Finally, in OpenGL space
-
-  virtual bool getPickable() { return false; }
-
-  UiPositionMode::e& position() { return _ePosition; }
-  UiOverflowMode::e& overflow() { return _eOverflowMode; }
-  UiDisplayMode::e& display() { return _eDisplayMode; }
-  ///void setOverflowMode(UiOverflowMode::e ee) { _eOverflowMode = ee; }
-  ///::e getDisplayMode() { return _eDisplayMode; }
-  ///void setDisplayMode(UiDisplayMode::e ee) { _eDisplayMode = ee; }
-  //UiAutoSizeMode::e getAutoSizeModeX() { return _eAutoSizeModeX; }
-  //void setAutoSizeModeX(UiAutoSizeMode::e m) { _eAutoSizeModeX = m; }
-  //UiAutoSizeMode::e getAutoSizeModeY() { return _eAutoSizeModeY; }
-  //void setAutoSizeModeY(UiAutoSizeMode::e m) { _eAutoSizeModeY = m; }
-  std::multimap<uint32_t, std::shared_ptr<UiElement>>& getChildren() { return _mapChildren; }
-  void clearChildren();
-  bool removeChild(std::shared_ptr<UiElement> ele, bool bUpdateLayout = true);
-  bool hasChild(std::shared_ptr<UiElement> ele);
-
-  virtual bool pick(std::shared_ptr<InputManager> fingers);
-  void addEvent(UiEventId::e ev, std::shared_ptr<UiEventFunc> f);
-  bool removeEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f);
-
-  void doMouseEvents(std::shared_ptr<InputManager> pFingers);
-  void getTreeAsList(std::vector<std::shared_ptr<UiElement>>& __out_ children);
-  void setSort(uint32_t uisort);
-  bool getLayoutVisible() { return _bVisible; };//Remove elem from layout + hide it
-  virtual bool setLayoutVisible(bool b, bool bLayoutChanged = true);                //Remove elem from layout + hide it
-  bool hide();//Removes element from the parent layout, and also hides it.
-  bool show();//Removes element from the parent layout, and also hides it.
-  bool getRenderVisible() { return _bRenderVisible; };   //Simply hide element, but still compute it in the layout (take up space)
-  virtual void setRenderVisible(bool b) { _bRenderVisible = b; }//Simply hide element, but still compute it in the layout (take up space)
-  void hideRender() { setRenderVisible(false); }//Simply doesn't draw element, but it still computes the layout
-  void showRender() { setRenderVisible(true); } //Simply doesn't draw element, but it still computes the layout
-  void hideLayerRender(uint32_t iLayer);
-  void showLayerRender(uint32_t iLayer);
-  void disablePick() { _bPickEnabled = false; }
-
-  void setClick(MouseFunc cc);//release
-  void setPress(MouseFunc cc);
-  void setDown(MouseFunc cc);
-  void setHover(MouseFunc cc);//mouse hover
-
-  ButtonState::e getMouseState() { return _eMouseState; }
-
-  void setPickRoot() { _bPickRoot = true; }
-  bool getPickRoot() { return _bPickRoot; }
-  void bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLayer);
-  uDim& padBottom() { return _padBottom; }
-  uDim& padTop() { return _padTop; }
-  uDim& padRight() { return _padRight; }
-  uDim& padLeft() { return _padLeft; }
 
 
 };

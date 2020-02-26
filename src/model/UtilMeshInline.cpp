@@ -51,9 +51,9 @@ void UtilMeshInline::generate() {
 
   copyBuffersToVao();
 }
-void UtilMeshInline::end() {
+void UtilMeshInline::end(std::shared_ptr<CameraNode> cam) {
   init();
-  draw();
+  draw(cam);
 }
 void UtilMeshInline::addBox(Box3f* b, vec4* color) {
   vec3 p[8];
@@ -124,9 +124,9 @@ void UtilMeshInline2d::generate() {
 
   copyBuffersToVao();
 }
-void UtilMeshInline2d::end() {
+void UtilMeshInline2d::end(std::shared_ptr<CameraNode> cam) {
   init();
-  draw();
+  draw(cam);
 }
 
 

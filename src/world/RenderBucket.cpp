@@ -16,15 +16,23 @@ RenderBucket::RenderBucket() {
 }
 RenderBucket::~RenderBucket() {
 }
-void RenderBucket::clear() {
+bool RenderBucket::hasItems() {
+  return
+    (_mapObjs.size() > 0) ||
+    (_mapGrids.size() > 0) ||
+    (_mapDirLights.size() > 0) ||
+    (_mapPointLights.size() > 0) ||
+    (_mapMeshes.size() > 0)
+    ;
+}
+void RenderBucket::clear(std::shared_ptr<CameraNode> visible_camera) {
   _mapObjs.clear();
   _mapGrids.clear();
 
   _mapDirLights.clear();
   _mapPointLights.clear();
   _mapMeshes.clear();
-  std::shared_ptr<CameraNode> cam = Gu::getCamera();
-  _vCachedCamPos = cam->getFinalPos();
+  _vCachedCamPos = visible_camera->getFinalPos();
 }
 float RenderBucket::distToCam(Box3f* bn) {
   float dist = _vCachedCamPos.distance2(bn->center());
