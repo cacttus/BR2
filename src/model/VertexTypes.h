@@ -24,7 +24,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 
 private:
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 };
 
@@ -41,7 +41,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 
 private:
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 };
 
@@ -59,11 +59,11 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 
 private:
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 };
 class v_v3x2 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -74,7 +74,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v3n3 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -84,7 +84,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v3 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -92,7 +92,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v2x2 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec2 v;
@@ -100,7 +100,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v2c4 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec2 v;
@@ -120,7 +120,7 @@ public:
 //    static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 //};
 class v_v3c3x2n3 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -135,7 +135,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v3i2n3 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -146,7 +146,7 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v3c4 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -158,7 +158,7 @@ public:
   v_v3c4(vec3& v3, vec4& c4) { v = v3; c = c4; }
 };
 class v_v3c4x2n3 {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec3 v;
@@ -174,7 +174,7 @@ public:
 };
 
 class v_GuiVert {
-  friend class GraphicsContext;
+  friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
 public:
   vec4 _rect;

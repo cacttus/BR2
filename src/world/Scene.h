@@ -51,6 +51,8 @@ public:
   virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;
   virtual bool detachChild(std::shared_ptr<TreeNode> pChild) override;
 
+  void mouseWheel(int amount);
+
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
   std::shared_ptr<LightNodePoint> createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);

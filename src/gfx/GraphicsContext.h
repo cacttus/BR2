@@ -18,7 +18,7 @@ namespace BR2 {
 */
 class GraphicsContext : public VirtualMemoryShared<GLContext> {
 public:
-  GraphicsContext();
+  GraphicsContext(std::shared_ptr<GraphicsApi> api);
   virtual ~GraphicsContext() override;
 
   virtual bool chkErrRt(bool bDoNotBreak = false, bool doNotLog = false) = 0;
@@ -35,12 +35,11 @@ public:
   virtual void enableBlend(bool enable) = 0;
   virtual void enableDepthTest(bool enable) = 0;
 
-  bool isValid() { return _bValid; }
-
-  std::shared_ptr<GraphicsWindow> getGraphicsWindow() { return _pWindow; }
+  std::shared_ptr<GraphicsWindow> getGraphicsWindow();
   EngineLoopState::e getLoopState() { return _eLoopState; }
   void setLoopState(EngineLoopState::e ee) { _eLoopState = ee; }
   std::shared_ptr<CameraNode> getActiveCamera();
+  std::shared_ptr<GraphicsApi> getGraphicsApi() { return _pGraphicsApi; }
 
   float& getClearR() { return _fClearR; }
   float& getClearG() { return _fClearG; }
@@ -48,18 +47,16 @@ public:
   float& getClearA() { return _fClearA; }
 
 protected:
-  virtual bool init();
-  std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+  SDL_Window* _pSDLWindow = nullptr;
 
 private:
+  std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+  std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
   EngineLoopState::e _eLoopState = EngineLoopState::Update;
   float _fClearR = 1.0f;
   float _fClearG = 1.0f;
   float _fClearB = 1.0f;
   float _fClearA = 1.0f;
-  bool _bValid = false;
-
-  void makeVertexFormats();
 };
 
 }//ns Game

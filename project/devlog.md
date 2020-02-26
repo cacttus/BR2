@@ -1,6 +1,13 @@
 
 # Mine City Devlog
 
+*2/26/19*
+
+* Refactored graphics api to "make more sense" giving us the ability to create multiple windows.
+* Also fixed the Opengl Context creation issue.  Contexts now create OpenGL Windows
+* Updated and fixed some Vulkan window creation routines
+* Moved application update logic to GraphicsContext.
+
 *2/25/19*
 
 * WindowViewport (old) -> RenderViewport

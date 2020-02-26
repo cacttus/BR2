@@ -18,6 +18,7 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/GraphicsApi.h"
+#include "../base/GLContext.h"
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
 #include "../model/ModelCache.h"
@@ -25,98 +26,31 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-GraphicsContext::GraphicsContext(){
-    _fClearR = 0.02f;
-    _fClearG = 0.02f;
-    _fClearB = 0.021f;
-    _fClearA = 1.0f;
+GraphicsContext::GraphicsContext(std::shared_ptr<GraphicsApi> api) {
+  _pGraphicsApi = api;
+  _fClearR = 0.02f;
+  _fClearG = 0.02f;
+  _fClearB = 0.021f;
+  _fClearA = 1.0f;
 }
-GraphicsContext::~GraphicsContext(){
-}
-bool GraphicsContext::init() {
-    _bValid = true;
-
-    BRLogInfo("GraphicsContext - Making Vtx Formats.");
-    makeVertexFormats();
-
-    return isValid();
+GraphicsContext::~GraphicsContext() {
 }
 std::shared_ptr<CameraNode> GraphicsContext::getActiveCamera() {
   return getGraphicsWindow()->getScene()->getActiveCamera();
 }
-void GraphicsContext::makeVertexFormats() {
 
-    v_v3c4x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4x2");
-    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+std::shared_ptr<GraphicsWindow> GraphicsContext::getGraphicsWindow() {
+  //Set this last, since this being null is our 'error code'
+  try {
+    _pWindow = std::make_shared<GraphicsWindow>(_pGraphicsApi, getThis<GLContext>(), _pSDLWindow);
+  }
+  catch (Exception * ex) {
+    _pWindow = nullptr;
+    BRLogError("Error creating graphics window from graphics context.");
+  }
 
-    v_v2c4x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v2c4x2");
-    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v3n3x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3n3x2");
-    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v3x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3x2");
-    v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v3n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3n3");
-    v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_v3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3");
-    v_v3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-
-    v_v2x2::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v2x2");
-    v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-
-    v_v2c4::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v2c4");
-    v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-
-    //v_v3c3i4i4::_pVertexFormat = new VertexFormat(this, "v_v3c3i4i4");
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_FLOAT, 3, sizeof(vec3), VertexUserType::e::v3_01);
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_FLOAT, 3, sizeof(vec3), VertexUserType::e::c3_01);
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_INT, 4, sizeof(ivec4));
-    //v_v3c3i4i4::_pVertexFormat->addComponent(GL_INT, 4, sizeof(ivec4));
-
-    v_v3c3x2n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c3x2n3");
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::c3_01);
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_v3i2n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3i2n3");
-    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::i2_01);
-    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_v3c4::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4");
-    v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-
-    v_v3c4x2n3::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_v3c4x2n3");
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
-    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
-
-    v_GuiVert::_pVertexFormat = std::make_shared<VertexFormat>(shared_from_this(), "v_GuiVert");
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_01);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_02);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_03);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
-    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::u2_01);
-
-
+  return _pWindow;
 }
-
 
 
 

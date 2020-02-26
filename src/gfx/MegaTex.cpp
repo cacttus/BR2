@@ -268,7 +268,8 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
 
   //Debug - Save texture
   if (false) {
-    RenderUtils::saveTexture("./data/cache/saved_TEST.png", Gu::getActiveWindow()->getGui()->getTex()->getGlId(), GL_TEXTURE_2D);
+    //TODO: this is just some debug, but we can fix this in the future.
+    //RenderUtils::saveTexture("./data/cache/saved_TEST.png", Gu::getActiveWindow()->getGui()->getTex()->getGlId(), GL_TEXTURE_2D);
   }
 
   //**Pos

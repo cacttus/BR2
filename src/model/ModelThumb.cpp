@@ -60,7 +60,8 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
   //bits.set(PipeBit::e::Deferred);
   //bits.set(PipeBit::e::Shadow);//I think we need this in order to update lights
   //Gu::getRenderPipe()->renderScene(wo, pThumbCam, lightman, bits);
-  std::shared_ptr<Img32> thumb = Gu::getRenderPipe()->getResultAsImage();
+  //We might create our own render pipe here, just for thumb creation
+  //std::shared_ptr<Img32> thumb = Gu::getRenderPipe()->getResultAsImage();
 
   ////save to disk (debug)
   //string_t cached = Gu::getApp()->makeAssetPath("cache", Stz "test-thumb-" + name + "-vflip-0.png");
@@ -74,7 +75,7 @@ std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int3
   //Gu::getRenderPipe()->setClear(savedClear);
   //Gu::setCamera(pOrigCam);
 
-
+  std::shared_ptr<Img32> thumb = nullptr;
   return thumb;
 }
 

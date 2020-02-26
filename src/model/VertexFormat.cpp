@@ -9,8 +9,8 @@ namespace BR2 {
 GLenum VertexComponent::getAttributeType() {
   return VertexFormat::computeAttributeType(_eDataType, _iComponentCount);
 }
-VertexFormat::VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName) :
-  _pContext(pContext), _strName(strName) {
+VertexFormat::VertexFormat(string_t strName) {
+  _strName = strName;
 }
 VertexFormat::~VertexFormat() {
   _vecComponents.clear();

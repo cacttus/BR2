@@ -11,30 +11,31 @@
 
 namespace BR2 {
 /**
-*    @class GraphicsApi
-*    @brief 
+*  @class GraphicsApi
+*  @brief Base class for rendering system.
 */
-class GraphicsApi : public VirtualMemory {
-protected:
-    std::shared_ptr<GraphicsWindow> _pMainWindow = nullptr;
-    std::vector<std::shared_ptr<GraphicsWindow>> _pvecWindows;
-
-    void destroyMainWindow();
-    void addWindow(std::shared_ptr<GraphicsWindow> w);
+class GraphicsApi : public VirtualMemoryShared<GraphicsApi> {
 public:
-    std::shared_ptr<GraphicsWindow> getMainWindow() { return _pMainWindow; }
+  GraphicsApi();
+  virtual ~GraphicsApi() override;
 
-    virtual std::shared_ptr<GraphicsWindow> createWindow(string_t title, bool isMain = false) = 0;
+  void updateLoop();
 
-    void destroyWindow(std::shared_ptr<GraphicsWindow> w);
-    virtual void cleanup() ;
+  virtual std::shared_ptr<GraphicsWindow> createWindow(string_t title) = 0;
+  virtual void makeCurrent(SDL_Window* win) = 0;
+  virtual void getDrawableSize(SDL_Window* win, int* w, int* h) = 0;
+  virtual void swapBuffers(SDL_Window* win) = 0;
 
-    std::vector<std::shared_ptr<GraphicsWindow>> getGraphicsWindows() { return _pvecWindows; }
+  void destroyWindow(std::shared_ptr<GraphicsWindow> w);
+  virtual void cleanup();
 
-    virtual void createRenderer() = 0;
-
-    GraphicsApi();
-    virtual ~GraphicsApi() override;
+protected:
+  std::vector<std::shared_ptr<GraphicsContext>> _contexts;
+  std::shared_ptr<GraphicsContext> _pMainContext = nullptr;
+  SDL_Window* makeSDLWindow(string_t windowTitle, int render_system);
+private:
+  bool handleSDLEvents();
+  bool handleEvents(SDL_Event* event);
 };
 
 }//ns Game

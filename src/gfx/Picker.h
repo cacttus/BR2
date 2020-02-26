@@ -12,37 +12,24 @@
 namespace BR2 {
 /**
 *  @class Picker
-*  @brief  Manages pixel-perfect picking.
+*  @brief Manages pixel-perfect picking.
 */
 class Picker : public GLFramework {
 public:
   //**Note do not set this to be anything but full alpha, if blending is enabled teh blend will screw up this value.
   static const uint32_t c_iInvalidPickId = 0;//0xFFFFFFFF;
 public:
-  Picker(std::shared_ptr<GLContext> pc);
+  Picker(std::shared_ptr<GLContext> pc, std::shared_ptr<RenderPipe> rp);
   virtual ~Picker() override;
   uint32_t getSelectedPixelId() { return _uiLastSelectedPixelId; }
   void update(std::shared_ptr<InputManager> pFingers);
   uint32_t genPickId();
 
 private:
-  //static const VertexFormatType _cVertexFormat = VertexFormatType::V_V2X2;
   uint32_t _iid = 0;
-  //SelectionManager* _pSelectionManager;
-  //BvhManager* _pBvhManager;
-  //GLRenderSystem* _pRenderSystem; z
-  //GLShaderManager* _pShaderManager;
-  //TRef(GlslShaderBase) _pShader;
-  //GLFramebufferManager* _pFramebufferManager;
-
-  //GLuint _glFramebufferId;
-  //GLuint _glRenderTextureId;
-  //GLuint _glDepthRenderBufferId;
-
-  //int32_t _iCachedHeight;
-
-  //ProjectedRay _projectedRay;
+  std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
   uint32_t _uiLastSelectedPixelId = 0;//Note: This is relative to the last UserSelectionSet - the Id here is not fixed.
+
   void updatePickedPixel(int32_t x, int32_t y);
   void samplePixelId(int32_t x, int32_t y, uint32_t& __out_ selectedId);
 };

@@ -20,15 +20,16 @@ public:
   OpenGLApi();
   virtual ~OpenGLApi() override;
 
-  virtual std::shared_ptr<GraphicsWindow> createWindow(std::string title, bool isMain = false) override;
+  virtual std::shared_ptr<GraphicsWindow> createWindow(std::string title) override;
   virtual void cleanup() override;
-  std::shared_ptr<GLContext> getContext() { return _pContext; }
-  std::shared_ptr<GLContext> makeContext(std::shared_ptr<GraphicsWindow> w, GLProfile& p);
+  std::shared_ptr<GLContext> getContext() { return _mainContext; }
 
-  virtual void createRenderer();
+  virtual void makeCurrent(SDL_Window* win) override;
+  virtual void getDrawableSize(SDL_Window* win, int* w, int* h) override;
+  virtual void swapBuffers(SDL_Window* win)  override;
 
 private:
-  std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<GLContext> _mainContext = nullptr;
 };
 
 

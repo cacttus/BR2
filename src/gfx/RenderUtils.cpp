@@ -8,6 +8,8 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderUniform.h"
+#include "../model/VertexTypes.h"
+#include "../model/VertexFormat.h"
 #include "../model/UtilMeshGrid.h"
 #include "../model/UtilMeshAxis.h"
 #include "../model/UtilMeshSphere.h"
@@ -1133,9 +1135,83 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image, GLu
 
   return true;
 }
-
-
-
+void RenderUtils::makeVertexFormats() {
+  if (v_v3c4x2::_pVertexFormat == nullptr) {
+    v_v3c4x2::_pVertexFormat = std::make_shared<VertexFormat>("v_v3c4x2");
+    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+    v_v3c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  }
+  if (v_v2c4x2::_pVertexFormat == nullptr) {
+    v_v2c4x2::_pVertexFormat = std::make_shared<VertexFormat>("v_v2c4x2");
+    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+    v_v2c4x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  }
+  if (v_v3n3x2::_pVertexFormat == nullptr) {
+    v_v3n3x2::_pVertexFormat = std::make_shared<VertexFormat>("v_v3n3x2");
+    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+    v_v3n3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  }
+  if (v_v3x2::_pVertexFormat == nullptr) {
+    v_v3x2::_pVertexFormat = std::make_shared<VertexFormat>("v_v3x2");
+    v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  }
+  if (v_v3n3::_pVertexFormat == nullptr) {
+    v_v3n3::_pVertexFormat = std::make_shared<VertexFormat>("v_v3n3");
+    v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+  }
+  if (v_v3::_pVertexFormat == nullptr) {
+    v_v3::_pVertexFormat = std::make_shared<VertexFormat>("v_v3");
+    v_v3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+  }
+  if (v_v2x2::_pVertexFormat == nullptr) {
+    v_v2x2::_pVertexFormat = std::make_shared<VertexFormat>("v_v2x2");
+    v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+    v_v2x2::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+  }
+  if (v_v2c4::_pVertexFormat == nullptr) {
+    v_v2c4::_pVertexFormat = std::make_shared<VertexFormat>("v_v2c4");
+    v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+    v_v2c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+  }
+  if (v_v3c3x2n3::_pVertexFormat == nullptr) {
+    v_v3c3x2n3::_pVertexFormat = std::make_shared<VertexFormat>("v_v3c3x2n3");
+    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::c3_01);
+    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+    v_v3c3x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+  }
+  if (v_v3i2n3::_pVertexFormat == nullptr) {
+    v_v3i2n3::_pVertexFormat = std::make_shared<VertexFormat>("v_v3i2n3");
+    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::i2_01);
+    v_v3i2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+  }
+  if (v_v3c4::_pVertexFormat == nullptr) {
+    v_v3c4::_pVertexFormat = std::make_shared<VertexFormat>("v_v3c4");
+    v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3c4::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+  }
+  if (v_v3c4x2n3::_pVertexFormat == nullptr) {
+    v_v3c4x2n3::_pVertexFormat = std::make_shared<VertexFormat>("v_v3c4x2n3");
+    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::v3_01);
+    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::c4_01);
+    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::x2_01);
+    v_v3c4x2n3::_pVertexFormat->addComponent(VertexUserType::e::n3_01);
+  }
+  if (v_GuiVert::_pVertexFormat == nullptr) {
+    v_GuiVert::_pVertexFormat = std::make_shared<VertexFormat>("v_GuiVert");
+    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_01);
+    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_02);
+    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v4_03);
+    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::v2_01);
+    v_GuiVert::_pVertexFormat->addComponent(VertexUserType::e::u2_01);
+  }
+}
 
 
 }//ns game

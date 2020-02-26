@@ -48,6 +48,8 @@ public:
   static bool getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image, GLuint iGLTexId, GLenum eTarget, int iCubeMapSide = -1);
   static GLenum getTexBindingForTexTarget(GLenum eTarget);
 
+  static void makeVertexFormats();
+
 private:
   static void debugGetVertexArrayState(string_t& strOut);//breakpoint it
   static void debugGetFramebufferAttachmentState(string_t& strOut);

@@ -103,19 +103,18 @@ std::shared_ptr<ParticleManager> Gu::getParty() { return _pParty; }
 std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
 std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
 std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
-std::shared_ptr<GraphicsWindow> Gu::getMainWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
 std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
-std::shared_ptr<GraphicsWindow> Gu::getActiveWindow() { return Gu::getGraphicsApi()->getMainWindow(); }
 std::shared_ptr<GLContext> Gu::getGraphicsContext() {
   std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
   std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
   return oglapi->getContext();
 }
-std::shared_ptr<RenderPipe> Gu::getRenderPipe() { return Gu::getActiveWindow()->getRenderPipe(); }
 std::shared_ptr<Gui2d> Gu::getGui() {
-  return Gu::getActiveWindow()->getGui();
+  //This function is not possible.  Pass in the active GraphicsWindow to get the gui
+  //TODO: remove this
+  return nullptr;
 }
 
 void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }

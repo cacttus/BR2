@@ -141,8 +141,8 @@ class FrameSync;
 class ProjectFile;
 class CSharpScript;
 class GraphicsWindow;
-class OpenGLWindow;
-class VulkanWindow;
+
+
 class WindowManager;
 class CSharpScript;
 class CSharpCompiler;

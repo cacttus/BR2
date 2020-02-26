@@ -50,22 +50,22 @@ public:
     }
     return layerNames;
   }
-  std::vector<const char*> getExtensionNames() {
+  std::vector<const char*> getExtensionNames(SDL_Window* win) {
     std::vector<const char*> extensionNames{ };
     //Get initial data.
     uint32_t extensionCount;
-    SDL_Vulkan_GetInstanceExtensions((SDL_Window*)Gu::getMainWindow()->getSDLWindow(), &extensionCount, nullptr);
+    SDL_Vulkan_GetInstanceExtensions(win, &extensionCount, nullptr);
     extensionNames = std::vector<const char*>(extensionCount);
-    SDL_Vulkan_GetInstanceExtensions((SDL_Window*)Gu::getMainWindow()->getSDLWindow(), &extensionCount, extensionNames.data());
+    SDL_Vulkan_GetInstanceExtensions(win, &extensionCount, extensionNames.data());
 
     if (_bEnableValidationLayers) {
       extensionNames.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
     return extensionNames;
   }
-  void createVulkanInstance(string_t title) {
+  void createVulkanInstance(string_t title, SDL_Window* win) {
     std::vector<const char*> layerNames = getValidationLayers();
-    std::vector<const char*> extensionNames = getExtensionNames();
+    std::vector<const char*> extensionNames = getExtensionNames(win);
 
     //Debug print the extension names.
     std::string exts = "";
@@ -106,7 +106,7 @@ public:
       BRThrowException("Failed to create vulkan instance: " + (int)res);
     }
 
-    if (!SDL_Vulkan_CreateSurface((SDL_Window*)Gu::getMainWindow()->getSDLWindow(), instance, &surface)) {
+    if (!SDL_Vulkan_CreateSurface(win, instance, &surface)) {
       SDLUtils::checkSDLErr();
       BRThrowException("SDL failed to create vulkan window.");
     }
@@ -413,11 +413,11 @@ VulkanApi::VulkanApi() {
 VulkanApi::~VulkanApi() {
   _pint = nullptr;
 }
-std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(string_t title, bool isMain) {
-  // makeWindow(title, SDL_WINDOW_VULKAN);
+std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(string_t title) {
+  SDL_Window* win = makeSDLWindow(title, SDL_WINDOW_VULKAN);
 
    //loadCaps();
-  _pint->createVulkanInstance(title);
+  _pint->createVulkanInstance(title, win);
   _pint->loadExtensions();
   _pint->setupDebug();
   _pint->pickPhysicalDevice();
@@ -443,6 +443,11 @@ void VulkanApi::cleanup() {
   GraphicsApi::cleanup();
 }
 
-
+void VulkanApi::makeCurrent(SDL_Window* win) {
+}
+void VulkanApi::getDrawableSize(SDL_Window* win, int* w, int* h) {
+}
+void VulkanApi::swapBuffers(SDL_Window* win) {
+}
 
 }//ns Game

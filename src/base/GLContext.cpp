@@ -12,6 +12,7 @@
 #include "../base/FrameSync.h"
 #include "../base/SoundCache.h"
 #include "../base/Logger.h"
+#include "../base/SDLUtils.h"
 #include "../base/oglErr.h"
 #include "../base/AppBase.h"
 #include "../base/Package.h"
@@ -33,7 +34,44 @@
 
 namespace BR2 {
 
-GLContext::GLContext() {
+GLContext::GLContext(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLProfile> profile, SDL_Window* sdl_win) : GraphicsContext(api) {
+  _profile = profile;
+  _pSDLWindow = sdl_win;
+
+  _context = SDL_GL_CreateContext(sdl_win);
+  if (!_context) {
+    BRThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
+  }
+
+  int ver, subver, shad_ver, shad_subver;
+  getOpenGLVersion(ver, subver, shad_ver, shad_subver);
+
+  //Make sure we have a good depth value.
+  int iDepth = 0;
+  SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &iDepth);
+  if (!(iDepth >= 24 && ver >= profile->_iMinVersion && ver >= profile->_iMinSubVersion)) {
+    BRLogInfo("OpenGL config profile didn't work. Trying next profile.");
+    SDL_GL_DeleteContext(_context);
+  }
+  else {
+    int tmp = 24;
+    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
+    _iSupportedDepthSize = tmp;
+
+    checkForOpenGlMinimumVersion(profile->_iMinVersion, profile->_iMinSubVersion);
+
+    if (!loadOpenGLFunctions()) {
+      BRLogError("Failed to load context.");
+      SDL_GL_DeleteContext(_context);
+    }
+    else {
+      //Quick GL test.
+      glUseProgram(0);
+
+      //Check that OpenGL initialized successfully
+      loadCheckProc();
+    }
+  }
 }
 GLContext::~GLContext() {
   if (_context) {
@@ -42,60 +80,11 @@ GLContext::~GLContext() {
   }
 }
 
-bool GLContext::create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile) {
-  _profile = profile;
-  _pWindow = pMainWindow;
-  _context = SDL_GL_CreateContext((SDL_Window*)pMainWindow->getSDLWindow());
-  if (!_context) {
-    BRThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
-  }
-
-  int ver, subver, shad_ver, shad_subver;
-  getOpenGLVersion(ver, subver, shad_ver, shad_subver);
-
-  //Validate Context
-  //Make sure we have a good depth value.
-  int iDepth = 0;
-  SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &iDepth);
-  if (iDepth >= 24 && ver >= profile._iMinVersion && ver >= profile._iMinSubVersion) {
-    //We're good
-  }
-  else {
-    BRLogInfo("OpenGL config profile didn't work. Trying next profile.");
-    SDL_GL_DeleteContext(_context);
-    return false;
-  }
-
-  //Run a secondary check to make sure we didn't **F up 
-  checkForOpenGlMinimumVersion(profile._iMinVersion, profile._iMinSubVersion);
-
-  int tmp = 24;
-  SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
-  _iSupportedDepthSize = tmp;
-
-  printHelpfulDebug();
-
-  if (!GraphicsContext::init()) {
-    BRLogError("Failed to init context.");
-    SDL_GL_DeleteContext(_context);
-    return false;
-  }
-
-  if (!loadOpenGLFunctions()) {
-    BRLogError("Failed to load context.");
-    SDL_GL_DeleteContext(_context);
-    return false;
-  }
-
-  //Quick GL test.
-  glUseProgram(0);
-
-  //Check that OpenGL initialized successfully
-  loadCheckProc();
-
-  return true;
-}
-
+//std::shared_ptr<GraphicsWindow> GLContext::create(std::shared_ptr<GraphicsApi> api, GLProfile& profile) {
+//
+//  return true;
+//}
+//
 
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
   //Enable runtime errors.
@@ -487,8 +476,6 @@ void GLContext::loadCheckProc() {
   }
 }
 void GLContext::printHelpfulDebug() {
-
-
   int tmp = 0;
   SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &tmp);
   BRLogInfo("SDL_GL_DOUBLEBUFFER: " + tmp);
@@ -512,12 +499,15 @@ void GLContext::printHelpfulDebug() {
   BRLogInfo("SDL_GL_ALPHA_SIZE: " + tmp);
 }
 
-void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
+void GLContext::setWindowAndOpenGLFlags(std::shared_ptr<GLProfile> prof) {
   //Attribs
   SDL_GL_ResetAttributes();
+  SDLUtils::checkSDLErr();
 
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
   //SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, _pGlState->gl_accum_red_size);
   //SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, _pGlState->gl_accum_green_size);
@@ -528,25 +518,33 @@ void GLContext::setWindowAndOpenGLFlags(GLProfile& prof) {
 
   //SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 0);//deprecated
 
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, prof._iMinVersion);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, prof._iMinSubVersion);
-  SDL_GL_SetSwapInterval(prof._bVsync ? 1 : 0);  //Vsync is automatic on IOS
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, prof._iProfile);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, prof->_iMinVersion);
+  SDLUtils::checkSDLErr();
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, prof->_iMinSubVersion);
+  SDLUtils::checkSDLErr();
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, prof->_iProfile);
+  SDLUtils::checkSDLErr();
 
   //only on GL 3.0 - disables all deprecates tudff - slight performance gain?
   //SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 
 #ifdef _DEBUG
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+  SDLUtils::checkSDLErr();
 #endif
 
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, prof._iDepthBits);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, prof->_iDepthBits);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-
+  SDLUtils::checkSDLErr();
   // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, _pGlState->gl_multisamplebuffers);
   // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
 }

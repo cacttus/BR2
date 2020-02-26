@@ -317,6 +317,8 @@ class VaoDataGeneric;
 //Classes to remove
 class MeshNode;
 
+
+
 namespace UiEventId {
 typedef enum {
   Mouse_Lmb_Up
@@ -434,9 +436,10 @@ private:
 
 }//ns game
 
-
 #include "../gfx/RenderParams.h"
 
+//////////////////////////////////////////////////////////////////////////
+// STB Defines
 extern "C" {
 
   //DereK: note if you are updating stb_truetype, make sure to comment these structs out 2/7/18

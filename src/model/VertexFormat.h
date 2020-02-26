@@ -38,8 +38,9 @@ private:
 };
 class VertexFormat : public VirtualMemory {
 public:
-  VertexFormat(std::shared_ptr<GLContext> pContext, string_t strName);
+  VertexFormat( string_t strName);
   virtual ~VertexFormat();
+
   string_t getName() { return _strName; }
   int32_t getSizeBytes() const { return _iVertexSizeBytes; }
   // void enableAndBindAllArraysForVaoBuffer(std::shared_ptr<VboData> pVboData);
@@ -52,7 +53,7 @@ public:
   int matchTypeForShaderType(std::shared_ptr<VertexFormat> shaderType);
 
 private:
-  std::shared_ptr<GLContext> _pContext = nullptr;
+  //std::shared_ptr<GLContext> _pContext = nullptr;
   std::map<int, std::shared_ptr<VertexComponent>> _vecComponents; //mapped to VertexUserType
   int32_t _iVertexSizeBytes;
   string_t _strName;

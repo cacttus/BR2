@@ -433,5 +433,11 @@ bool Scene::detachChild(std::shared_ptr<TreeNode> pChild) {
 
   return ret;
 }
+void Scene::mouseWheel(int amount) {
+  //We can send this to a script, and also use custom commands if needed.
+  //Likely, this is going to switch items on the toolbelt if hovered, AND
+  // if not hovered over toolbelt, this will zoom the camera in the game world.
+
+}
 
 }//ns BR2

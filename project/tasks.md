@@ -1,5 +1,7 @@
 # Mine City Task Log
 
+move window create down to initRenderSystem (window creation coherenc)
+
 - [ ] Remove AppMain, and AppBase
 	- [ ] Merge Appbase & Scene
 	- [ ] Remove AppBase

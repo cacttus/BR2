@@ -11,206 +11,104 @@
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
 #include "../gfx/UiControls.h"
+#include "../gfx/RenderUtils.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/RenderPipe.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
+#pragma region GraphicsWindow_Internal
 class GraphicsWindow_Internal {
 public:
   std::unique_ptr<GraphicsWindow> _cont = nullptr;
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
+  std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
+  std::shared_ptr<Gui2d> _pGui = nullptr;
+  std::shared_ptr<GraphicsApi> _pApi = nullptr;
+
   SDL_Window* _pSDLWindow = nullptr;
   bool _bFullscreen = false;
   uint32_t _iLastWidth = 0;
   uint32_t _iLastHeight = 0;
   uint32_t _iFullscreenToggleWidth = 0;
   uint32_t _iFullscreenToggleHeight = 0;
-  std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
-  bool _bIsMainWindow = false;
-  std::shared_ptr<Gui2d> _pGui = nullptr;
 
-  void toggleFullscreen() {
-    if (_bFullscreen == false) {
-      //get the fullscreen resolution
-      int32_t iFsW = Gu::getEngineConfig()->getFullscreenWidth();
-      int32_t iFsH = Gu::getEngineConfig()->getFullscreenHeight();
-      if (iFsW <= 0 || iFsH <= 0) {
-        SDL_DisplayMode DM;
-        SDL_GetCurrentDisplayMode(0, &DM);
-        iFsW = DM.w;
-        iFsH = DM.h;
-      }
-      //Save pre-fullscreen width/height
-      _iFullscreenToggleWidth = _iLastWidth;
-      _iFullscreenToggleHeight = _iLastHeight;
-      SDL_SetWindowSize(_pSDLWindow, iFsW, iFsH);
+  void printHelpfulDebug();
+  void beginRender();
+  void endRender();
+  void updateWidthHeight(uint32_t w, uint32_t h, bool force);
+  void toggleFullscreen();
 
-      if (SDL_SetWindowFullscreen(_pSDLWindow, SDL_WINDOW_FULLSCREEN) != 0) {
-        BRLogError("Failed to go fullscreen.");
-      }
-      else {
-        _bFullscreen = true;
-        //_pApp->screenChanged(iFsW, iFsH, _bFullscreen);
-      }
+};
+void GraphicsWindow_Internal::toggleFullscreen() {
+  if (_bFullscreen == false) {
+    //get the fullscreen resolution
+    int32_t iFsW = Gu::getEngineConfig()->getFullscreenWidth();
+    int32_t iFsH = Gu::getEngineConfig()->getFullscreenHeight();
+    if (iFsW <= 0 || iFsH <= 0) {
+      SDL_DisplayMode DM;
+      SDL_GetCurrentDisplayMode(0, &DM);
+      iFsW = DM.w;
+      iFsH = DM.h;
+    }
+    //Save pre-fullscreen width/height
+    _iFullscreenToggleWidth = _iLastWidth;
+    _iFullscreenToggleHeight = _iLastHeight;
+    SDL_SetWindowSize(_pSDLWindow, iFsW, iFsH);
+
+    if (SDL_SetWindowFullscreen(_pSDLWindow, SDL_WINDOW_FULLSCREEN) != 0) {
+      BRLogError("Failed to go fullscreen.");
     }
     else {
-      if (_iFullscreenToggleWidth > 0 && _iFullscreenToggleHeight > 0) {
-        //Restore pre-fullscreen width/height
-        SDL_SetWindowSize(_pSDLWindow, _iFullscreenToggleWidth, _iFullscreenToggleHeight);
-      }
-      if (SDL_SetWindowFullscreen(_pSDLWindow, 0) != 0) {
-        BRLogError("Failed to exit fullscreen.");
-      }
-      else {
-        _bFullscreen = false;
-        //_pApp->screenChanged(_iLastWidth, _iLastHeight, _bFullscreen);
-      }
+      _bFullscreen = true;
+      //_pApp->screenChanged(iFsW, iFsH, _bFullscreen);
     }
-
-  }
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-//Called exclusively by the graphics API
-GraphicsWindow::GraphicsWindow(bool ismain) : RenderTarget(nullptr) {
-  _pint = std::make_unique<GraphicsWindow_Internal>();
-  _pint->_bIsMainWindow = ismain;
-
-  //TODO: set the GL context.
-}
-GraphicsWindow::~GraphicsWindow() {
-  if (_pint->_pSDLWindow != nullptr) {
-    SDL_DestroyWindow(_pint->_pSDLWindow);
-    _pint->_pSDLWindow = nullptr;
-  }
-  _pint = nullptr;
-}
-int32_t GraphicsWindow::getWidth() { return _pint->_iLastWidth; }
-int32_t GraphicsWindow::getHeight() { return _pint->_iLastHeight; }
-void* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
-std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
-std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
-std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
-void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) { _pint->_pScene = scene; }
-std::shared_ptr<Gui2d> GraphicsWindow::getGui() { return _pint->_pGui; }
-
-void GraphicsWindow::makeSDLWindow(string_t windowTitle, int render_system) {
-  string_t title;
-  bool bFullscreen = false;
-
-  int x = 0, y = 0, w = 800, h = 600, flags = 0;
-#ifdef BR2_OS_IPHONE
-  x = 0, y = 0, w = 320, h = 480, flags = SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
-  title = "";
-#else
-#ifdef BR2_OS_WINDOWS
-
-  //SDL_WINDOW_OPENGL | SDL_WINDOW_VULKAN;
-
-  if (bFullscreen) {
-    x = 0; y = 0;
-    w = 1920; h = 1080;
-    flags = render_system;
   }
   else {
-    x = 100, y = 100, w = 800, h = 600, flags = SDL_WINDOW_SHOWN | render_system | SDL_WINDOW_RESIZABLE;
-  }
-  title = windowTitle;
-#else
-  OS_NOT_SUPPORTED_ERROR
-#endif
-#endif
-
-    //No0te: This calls SDL_GL_LOADLIBRARY if SDL_WINDOW_OPENGL is set.
-    _pint->_pSDLWindow = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
-  SDLUtils::checkSDLErr();
-
-  //Fullscreen nonsense
-  if (bFullscreen) {
-    SDL_SetWindowFullscreen(_pint->_pSDLWindow, SDL_WINDOW_FULLSCREEN);
-  }
-  SDLUtils::checkSDLErr();
-
-  //Note we may need to adjust for actual start width/height if start width is too large , etc.
-  //*Set room width / height
-  _pint->_iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
-  _pint->_iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
-
-#ifdef BR2_OS_WINDOWS
-  BRLogError("We are not making the window icon because there's an error somewhere in SDL here.");
-  //**There is an error here
-//  Gu::SDLTrySetWindowIcon(_pWindow, "./data-dc/tex/tx64-icon.png");//_pApp->getIconFullPath());
-#endif
-}
-void GraphicsWindow::initRenderSystem() {
-  if (_pint->_pSDLWindow == nullptr) {
-    BRThrowException("You need to make the SDL window before initializing render system.");
-  }
-
-  SDLUtils::trySetWindowIcon(_pint->_pSDLWindow, Gu::getApp()->getIconFullPath());
-
-  if (Gu::getConfig()->getForceAspectRatio()) {
-    SDL_DisplayMode dm;
-    if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
-      BRLogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
+    if (_iFullscreenToggleWidth > 0 && _iFullscreenToggleHeight > 0) {
+      //Restore pre-fullscreen width/height
+      SDL_SetWindowSize(_pSDLWindow, _iFullscreenToggleWidth, _iFullscreenToggleHeight);
+    }
+    if (SDL_SetWindowFullscreen(_pSDLWindow, 0) != 0) {
+      BRLogError("Failed to exit fullscreen.");
     }
     else {
-      float ar = (float)dm.h / (float)dm.w;
-      int newHeight = (int)((float)_pint->_iLastWidth * ar);
-      if (newHeight != _pint->_iLastHeight) {
-        BRLogInfo("Adjusting window dims from " + _pint->_iLastWidth + " x " + _pint->_iLastHeight + " to " + _pint->_iLastWidth + " x " + newHeight);
-        _pint->_iLastHeight = newHeight;
-      }
+      _bFullscreen = false;
+      //_pApp->screenChanged(_iLastWidth, _iLastHeight, _bFullscreen);
     }
   }
 
-  BRLogInfo("Setting window size to, " + _pint->_iLastWidth + " x " + _pint->_iLastHeight);
-  SDL_SetWindowSize(_pint->_pSDLWindow, _pint->_iLastWidth, _pint->_iLastHeight);
-  updateWidthHeight(_pint->_iLastWidth, _pint->_iLastHeight, true);
-
-  if (Gu::getConfig()->getStartFullscreen() == true) {
-    BRLogInfo("Setting window fullscreen.");
-    _pint->toggleFullscreen();
-  }
-
-  createRenderPipe();
-
-  _pint->_pGui = std::make_shared<Gui2d>();
-  _pint->_pGui->init();
 }
 
-void GraphicsWindow::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
+
+void GraphicsWindow_Internal::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
-  if (_pint->_iLastWidth != w || bForce) {
-    _pint->_pViewport->setWidth(w);
-    if (_pint->_iLastHeight != h || bForce) {
-      _pint->_pViewport->setHeight(h);
+  if (_iLastWidth != w || bForce) {
+    _pViewport->setWidth(w);
+    if (_iLastHeight != h || bForce) {
+      _pViewport->setHeight(h);
     }
-    if (_pint->_iLastHeight != h || _pint->_iLastWidth != w || bForce) {
-      if (_pint->_pRenderPipe != nullptr) {
-        _pint->_pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
+    if (_iLastHeight != h || _iLastWidth != w || bForce) {
+      if (_pRenderPipe != nullptr) {
+        _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
       }
       //   _pApp->screenChanged(w, h, _bFullscreen);
 
       //TODO: one Gui per window.
-      if (_pint->_pGui != nullptr) {
-        _pint->_pGui->screenChanged(w, h, _pint->_bFullscreen);
+      if (_pGui != nullptr) {
+        _pGui->screenChanged(w, h, _bFullscreen);
       }
     }
-    _pint->_iLastWidth = w;
-    _pint->_iLastHeight = h;
+    _iLastWidth = w;
+    _iLastHeight = h;
   }
 }
-
-void GraphicsWindow::printHelpfulDebug() {
+void GraphicsWindow_Internal::printHelpfulDebug() {
   int dw, dh;
   SDL_DisplayMode mode;
-  SDL_Window* win = _pint->_pSDLWindow;
+  SDL_Window* win = _pSDLWindow;
 
   SDL_GetCurrentDisplayMode(0, &mode);
   BRLogInfo("Screen BPP    : " + SDL_BITSPERPIXEL(mode.format));
@@ -220,12 +118,58 @@ void GraphicsWindow::printHelpfulDebug() {
   SDL_GL_GetDrawableSize(win, &dw, &dh);
   BRLogInfo("Draw Size     : " + dw + "x" + dh);
 
-
   SDLUtils::checkSDLErr();
 }
 
+void GraphicsWindow_Internal::beginRender() {
+
+  //Make this window current *critical*
+  //OPTIMIZE:TODO:NOTE: if there is only 1 window we don't have to call this.
+  _pApi->makeCurrent(_pSDLWindow);
+
+  //Update the widnow size
+  int w, h;
+  _pApi->getDrawableSize(_pSDLWindow, &w, &h);
+  updateWidthHeight(w, h, false);
+
+  Perf::pushPerf();//**BEGIN PERF 
+}
+void GraphicsWindow_Internal::endRender() {
+  _pApi->swapBuffers(_pSDLWindow);
+
+  Perf::popPerf();//**END PERF
+}
+#pragma endregion
+
+//////////////////////////////////////////////////////////////////////////
+
+#pragma region GraphicsWindow
+//Called exclusively by the graphics API
+GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win) : RenderTarget(ct) {
+  _pint = std::make_unique<GraphicsWindow_Internal>();
+  _pint->_pSDLWindow = win;
+  _pint->_pApi = api;
+  _pint->_iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
+  _pint->_iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
+  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
+}
+GraphicsWindow::~GraphicsWindow() {
+  if (_pint->_pSDLWindow != nullptr) {
+    _pint->_pSDLWindow = nullptr;
+  }
+  _pint = nullptr;
+}
+int32_t GraphicsWindow::getWidth() { return _pint->_iLastWidth; }
+int32_t GraphicsWindow::getHeight() { return _pint->_iLastHeight; }
+SDL_Window* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
+std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
+std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
+std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
+void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) { _pint->_pScene = scene; }
+std::shared_ptr<Gui2d> GraphicsWindow::getGui() { return _pint->_pGui; }
+
 void GraphicsWindow::step() {
-  beginRender();
+  _pint->beginRender();
   {
     if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F11)) {
       _pint->toggleFullscreen();
@@ -252,36 +196,55 @@ void GraphicsWindow::step() {
     Gu::getFrameSync()->syncEnd();
   }
 
-  endRender();
+  _pint->endRender();
 }
 
-void GraphicsWindow::createRenderPipe() {
-  //Deferred Renderer
+void GraphicsWindow::initRenderSystem() {
+  if (_pint->_pSDLWindow == nullptr) {
+    BRThrowException("You need to make the SDL window before initializing render system.");
+  }
+
+  SDLUtils::trySetWindowIcon(_pint->_pSDLWindow, Gu::getApp()->getIconFullPath());
+
+  if (Gu::getConfig()->getForceAspectRatio()) {
+    SDL_DisplayMode dm;
+    if (SDL_GetDesktopDisplayMode(0, &dm) != 0) {
+      BRLogError("SDL_GetDesktopDisplayMode failed: " + SDL_GetError());
+    }
+    else {
+      float ar = (float)dm.h / (float)dm.w;
+      int newHeight = (int)((float)_pint->_iLastWidth * ar);
+      if (newHeight != _pint->_iLastHeight) {
+        BRLogInfo("Adjusting window dims from " + _pint->_iLastWidth + " x " + _pint->_iLastHeight + " to " + _pint->_iLastWidth + " x " + newHeight);
+        _pint->_iLastHeight = newHeight;
+      }
+    }
+  }
+
+  BRLogInfo("Setting window size to, " + _pint->_iLastWidth + " x " + _pint->_iLastHeight);
+  SDL_SetWindowSize(_pint->_pSDLWindow, _pint->_iLastWidth, _pint->_iLastHeight);
+  _pint->updateWidthHeight(_pint->_iLastWidth, _pint->_iLastHeight, true);
+
+  if (Gu::getConfig()->getStartFullscreen() == true) {
+    BRLogInfo("Setting window fullscreen.");
+    _pint->toggleFullscreen();
+  }
+
   _pint->_pRenderPipe = std::make_shared<RenderPipe>(getContext(), getThis<GraphicsWindow>());
   _pint->_pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
-  // Gu::setRenderPipe(_pRenderPipe);
 
-  //_pint->_pRenderPipe->getPipeBits().set();
+  _pint->_pGui = std::make_shared<Gui2d>();
+  _pint->_pGui->init();
+
+  _pint->printHelpfulDebug();
 }
-void GraphicsWindow::beginRender() {
 
-  //Make this window current *critical*
-  //OPTIMIZE:TODO:NOTE: if there is only 1 window we don't have to call this.
-  makeCurrent();
-
-  //Update the widnow size
-  int w, h;
-  getDrawableSize(&w, &h);
-  updateWidthHeight(w, h, false);
-
-  Perf::pushPerf();
-}
-void GraphicsWindow::endRender() {
-  swapBuffers();
-
-  Perf::popPerf();
+void GraphicsWindow::mouseWheel(int amount) {
+  if (_pint->_pScene != nullptr) {
+    _pint->_pScene->mouseWheel(amount);
+  }
 }
 
 
-
+#pragma endregion
 }//ns Game

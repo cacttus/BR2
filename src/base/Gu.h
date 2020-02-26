@@ -33,26 +33,17 @@ public:
   static std::shared_ptr<ShaderMaker> getShaderMaker();
   static std::shared_ptr<AppBase> getApp();
   static std::shared_ptr<TexCache> getTexCache();
-  // static std::shared_ptr<Gui2d> getGui();
   static std::shared_ptr<ParticleManager> getParty();
   static std::shared_ptr<EngineConfig> getConfig();
-  //static std::shared_ptr<RenderPipe> getRenderPipe(); //Per window
   static std::shared_ptr<Logger> getLogger();
   static std::shared_ptr<EngineConfig> getEngineConfig();
   static std::shared_ptr<Delta> getDelta();
   static std::shared_ptr<GraphicsApi> getGraphicsApi();
-  //static std::shared_ptr<WindowViewport> getViewport();
   static std::shared_ptr<Net> getNet();
-  static std::shared_ptr<GraphicsWindow> getMainWindow();
   static std::shared_ptr<GLContext> getGraphicsContext();
 
-  static std::shared_ptr<GraphicsWindow> getActiveWindow();
-  static std::shared_ptr<RenderPipe> getRenderPipe();
   static std::shared_ptr<Gui2d> getGui();
-  //  static void setContext(std::shared_ptr<GraphicsContext> rb);
-    //static void setRenderPipe(std::shared_ptr<RenderPipe> r);
   static void setApp(std::shared_ptr<AppBase> b);
-  // static void setEngine(std::shared_ptr<Engine> engine);
   static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
 
   static void updateGlobals();

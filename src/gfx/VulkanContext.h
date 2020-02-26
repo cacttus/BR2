@@ -16,7 +16,7 @@ namespace BR2 {
 */
 class VulkanContext : public GraphicsContext {
 public:
-  VulkanContext();
+  VulkanContext(std::shared_ptr<GraphicsApi> api);
   virtual ~VulkanContext() override;
 
   // virtual bool load(std::shared_ptr<AppBase> br) override { return true; }

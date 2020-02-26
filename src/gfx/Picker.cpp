@@ -12,7 +12,8 @@
 #include "../gfx/CameraNode.h"
 
 namespace BR2 {
-Picker::Picker(std::shared_ptr<GLContext> pc) : GLFramework(pc) {
+Picker::Picker(std::shared_ptr<GLContext> pc, std::shared_ptr<RenderPipe> rp) : GLFramework(pc) {
+  _pRenderPipe = rp;
 }
 Picker::~Picker() {
 }
@@ -30,9 +31,6 @@ void Picker::update(std::shared_ptr<InputManager> pFingers) {
   updatePickedPixel((int32_t)pFingers->getMousePos().x, (int32_t)pFingers->getMousePos().y);
 }
 void Picker::updatePickedPixel(int32_t x, int32_t y) {
-  if (Gu::getRenderPipe() == nullptr) {
-    return;
-  }
   //vec2 mp = Gu::GetMousePosInWindow();
   //if (!Gu::GetRenderManager()->getViewport()->containsPointRelativeToWindow(mp)){
   //    return;
@@ -40,7 +38,7 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
 
   RenderUtils::debugGetRenderState();
 
-  getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, Gu::getRenderPipe()->getBlittedDeferred()->getFramebufferId());
+  getContext()->glBindFramebuffer(GL_READ_FRAMEBUFFER, _pRenderPipe->getBlittedDeferred()->getFramebufferId());
   Gu::checkErrorsDbg();
 
   glReadBuffer(GL_COLOR_ATTACHMENT4);

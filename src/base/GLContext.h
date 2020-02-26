@@ -17,18 +17,21 @@ namespace BR2 {
 */
 struct GLProfile : public VirtualMemory {
 public:
-  int _iDepthBits = 0;
-  int _iMinVersion = 0;
-  int _iMinSubVersion = 0;
-  int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
-  bool _bVsync = true; //Automatic on IOS
-  void make(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
+  GLProfile(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
     _iDepthBits = iDepthBits;
     _iMinSubVersion = iMinSubver;
     _iMinVersion = iMinVer;
     _iProfile = iProfile;
     _bVsync = bVsync;
   }
+  virtual ~GLProfile() override {}
+
+public:
+  int _iDepthBits = 0;
+  int _iMinVersion = 0;
+  int _iMinSubVersion = 0;
+  int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
+  bool _bVsync = true; //Automatic on IOS
 };
 
 /**
@@ -37,13 +40,10 @@ public:
 */
 class GLContext : public GraphicsContext {
 public:
-  GLContext();
+  GLContext(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLProfile> profile, SDL_Window* win);
   virtual ~GLContext() override;
 
   int32_t getSupportedDepthSize() { return _iSupportedDepthSize; }
-
-  bool create(std::shared_ptr<GraphicsWindow> pMainWindow, GLProfile& profile);
-
   SDL_GLContext getSDLGLContext() { return _context; }
 
   //virtual void update(float delta) override;
@@ -61,11 +61,12 @@ public:
   void enableBlend(bool enable) override;
   void enableDepthTest(bool enable) override;
 
-  static void setWindowAndOpenGLFlags(GLProfile& prof);
+  static void setWindowAndOpenGLFlags(std::shared_ptr<GLProfile> prof);
 
   void setLineWidth(float w);
 
 private:
+  std::shared_ptr<GLProfile> _profile;
   bool _bValid = false;
   bool loadOpenGLFunctions();
 
@@ -82,7 +83,6 @@ private:
   void loadCheckProc();
   void printHelpfulDebug();
 
-  GLProfile _profile;
 
   int _iSupportedDepthSize;
 

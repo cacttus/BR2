@@ -22,37 +22,25 @@ class GraphicsWindow : public RenderTarget {
   friend class OpenGLApi;
   friend class VulkanApi;
 public:
-  GraphicsWindow(bool ismain);
+  GraphicsWindow(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win);
   virtual ~GraphicsWindow() override;
 
-  virtual void create(string_t title) = 0;
+  void initRenderSystem();
   virtual int32_t getWidth() override;
   virtual int32_t getHeight() override;
   void step();
   
-  void* getSDLWindow();
+  void mouseWheel(int amount);
+
+  SDL_Window* getSDLWindow();
   std::shared_ptr<RenderViewport> getViewport();
   std::shared_ptr<RenderPipe> getRenderPipe();
   std::shared_ptr<Gui2d> getGui();
   
-  void updateWidthHeight(uint32_t w, uint32_t h, bool force);
-  void printHelpfulDebug();
-
   std::shared_ptr<Scene> getScene();
   void setScene(std::shared_ptr<Scene> scene);
-
-protected:
-  void makeSDLWindow(string_t title, int rendersystem);
-  void initRenderSystem();
-
-  virtual void getDrawableSize(int* w, int* h) = 0;
-  virtual void makeCurrent() = 0;
-  virtual void swapBuffers() = 0;
 private:
   std::unique_ptr<GraphicsWindow_Internal> _pint = nullptr;
-  void createRenderPipe();
-  void beginRender();
-  void endRender();
 };
 
 }//ns Game
