@@ -3,7 +3,6 @@
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/GraphicsWindow.h"
-#include "../base/WindowManager.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"

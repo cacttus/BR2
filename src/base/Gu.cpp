@@ -106,7 +106,7 @@ std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
 std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
-std::shared_ptr<GLContext> Gu::getGraphicsContext() {
+std::shared_ptr<GLContext> Gu::getCoreContext() {
   std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
   std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
   if (!oglapi || oglapi->getCoreContext() == nullptr) {
@@ -117,8 +117,8 @@ std::shared_ptr<GLContext> Gu::getGraphicsContext() {
 }
 void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
-void Gu::checkErrorsDbg() { Gu::getGraphicsContext()->chkErrDbg(); }
-void Gu::checkErrorsRt() { Gu::getGraphicsContext()->chkErrRt(); }
+void Gu::checkErrorsDbg() { Gu::getCoreContext()->chkErrDbg(); }
+void Gu::checkErrorsRt() { Gu::getCoreContext()->chkErrRt(); }
 bool Gu::is64Bit() {
   if (sizeof(size_t) == 8) {
     return true;
@@ -574,19 +574,19 @@ std::string Gu::getCPPVersion() {
 }
 
 void Gu::createManagers() {
-  std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext());
+  std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext());
 
   _pRenderSettings = RenderSettings::create();
   BRLogInfo("GLContext - Building Package");
   _pPackage = std::make_shared<Package>();
   _pPackage->build(FileSystem::getExecutableFullPath());
   BRLogInfo("GLContext - Creating TexCache");
-  _pTexCache = std::make_shared<TexCache>(Gu::getGraphicsContext());
+  _pTexCache = std::make_shared<TexCache>(Gu::getCoreContext());
 
   BRLogInfo("GLContext - Creating TextBoss");
   //    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
   BRLogInfo("GLContext - Creating Party");
-  _pParty = std::make_shared<ParticleManager>(Gu::getGraphicsContext());
+  _pParty = std::make_shared<ParticleManager>(Gu::getCoreContext());
   BRLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
   BRLogInfo("GLContext - Creating Fingers");
@@ -604,7 +604,7 @@ void Gu::createManagers() {
   _pShaderMaker->initialize(Gu::getApp());
 
   BRLogInfo("GLContext - Model Cache");
-  _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
+  _pModelCache = std::make_shared<ModelCache>(Gu::getCoreContext());
 
   BRLogInfo("GLContext - Physics World");
   //Either A) subclass or B) remove genericy thing

@@ -1,19 +1,14 @@
 # Mine City Task Log
 
-Add scene to window
-Move window create down to initRenderSystem (window creation coherence)	
-	**Do this after we have verified the rendering system displays, and works...
-Rename Gu::getGraphicscontext to getCoreContext
-implement drawUi and other stuff from broken RenderPipe
-move 
-	graphicswindow
-	glcontext
-	to /gfx
+## Engine Cleanup
+- [ ] move to /gfx 
+	- [ ] graphicswindow
+	- [ ] glcontext
 	
-Update FlyingCameraControls so that it runs as a script.
-	Make Cameras work with the Scene() and get their update() methods called
-	This would make the flying controls run as a script IN the node as a component instead of AROUND
-	*Currently FlyingCameraControls run on top of the camera 
+- [ ] Update FlyingCameraControls so that it runs as a script.
+	- [ ] Make Cameras work with the Scene() and get their update() methods called
+	- [ ] This would make the flying controls run as a script IN the node as a component instead of AROUND
+		*Currently FlyingCameraControls run on top of the camera 
 
 - [ ] Remove AppMain, and AppBase
 	- [ ] Merge Appbase & Scene
@@ -22,14 +17,13 @@ Update FlyingCameraControls so that it runs as a script.
 	- [ ] Create new Scene() 
 	- [ ] Attach Scene to GraphicsWindow.
 
-- [ ] Pass camera into UiScreen and reference in all UiElements
-
 ## Scene -> PhysicsWorld integration
-	- [ ] Move all object creation to Scene
-	- [ ] Move ALL PhysicsWorld Drawing to Scene
-	- [ ] Link PhysicsWorld and Scene objs (somehow)
+	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
+	- [x] Move all object creation to Scene
+	- [ ] Move ALL drawing to Scene
+	- [ ] Link PhysicsWorld and Scene objs (somehow), hopefully by NOT DUPLICATING DATA between PhysicsWorld and Scene
+		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
 	- [ ] Do the same with LightManager.
-		** Actually, Pass Scene, into PhysicsWorld and LightManager to manage the objectgs.
 
 ## BR0 to BR2 Upgrade
 - [x] Remove /base/ - place in /base/
@@ -58,13 +52,12 @@ Update FlyingCameraControls so that it runs as a script.
 	- [x] Compile, Run.
 - [ ] "App" Removal for Scene
 	- [x] Move /app into /base/
-	- [ ] remove Gui2d
-	- [ ] Add back UIScreen
-	- [ ] Add Scene (from broken version)
+	- [x] remove Gui2d
+	- [x] Add back UIScreen
+	- [x] Add Scene (from broken version)
 	- [ ] Add ApplicationPackage (from broken version), remove Package 
 	* For some reason our old files got mixed in with the new...ugh.
 	- [ ] Remove App, AppBase
-	- [ ] Place this stuff on scene
 - [x] Engine Rename - Rename engine to BR2
 	- [x] Rename "bro.." to "br.." in...
 		- [x] Exceptions

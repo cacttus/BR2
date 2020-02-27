@@ -30,7 +30,7 @@ void ShaderMaker::initialize(std::shared_ptr<AppBase> mainRoom) {
   string_t shadersDir = FileSystem::combinePath(assetPath, mainRoom->getShadersDir());
 
   _pShaderCache = std::make_shared<ShaderCache>(cacheDir);
-  _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getGraphicsContext(), shadersDir);
+  _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getCoreContext(), shadersDir);
 
   //Single VT shaders
   _pImageShader = makeShader(std::vector<string_t> { "f_v3x2_diffuse.vs", "f_v3x2_diffuse.ps" });
@@ -93,9 +93,9 @@ std::shared_ptr<ShaderBase> ShaderMaker::getValidShaderForVertexType(ShaderMap& 
 
 void ShaderMaker::getComputeLimits() {
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &_maxWorkGroupDims[0]);
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &_maxWorkGroupDims[1]);
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &_maxWorkGroupDims[2]);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &_maxWorkGroupDims[0]);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &_maxWorkGroupDims[1]);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &_maxWorkGroupDims[2]);
 
   GLint maxBindings;
   glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &maxBindings);
@@ -314,7 +314,7 @@ std::shared_ptr<ShaderSubProgram> ShaderMaker::preloadShaderSubProgram(DiskLoc l
   if (pSubProg == nullptr) {
     //Adds subprog to map.
     pSubProg = std::make_shared<ShaderSubProgram>();
-    pSubProg->init(Gu::getGraphicsContext(), loc, ShaderType::e::st_use_extension);
+    pSubProg->init(Gu::getCoreContext(), loc, ShaderType::e::st_use_extension);
 
     _setSubPrograms.insert(pSubProg);
   }
@@ -379,7 +379,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
 
   for (std::shared_ptr<ShaderSubProgram> subProg : pProgram->getSubPrograms()) {//size_t i = 0; i<pProgram->_vecSubPrograms.size(); ++i) {
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glAttachShader(pProgram->getGlId(), subProg->getGlId());
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glAttachShader(pProgram->getGlId(), subProg->getGlId());
     GLuint err = glGetError();
 
     if (err != GL_NO_ERROR) {
@@ -402,7 +402,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
   }
 
   // - Link the program.
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glLinkProgram(pProgram->getGlId());
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glLinkProgram(pProgram->getGlId());
   pProgram->setProgramStatus(ShaderStatus::Linked);
 
   // - Add all remaining errors from the GL
@@ -415,7 +415,7 @@ std::shared_ptr<ShaderBase> ShaderMaker::makeProgram(std::vector<std::shared_ptr
 
   // - Try to use it to see if we get an error, if so exit out.
   //Do not use Gd::BindSHader here -- this might fail.
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glUseProgram(pProgram->getGlId());
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glUseProgram(pProgram->getGlId());
   GLenum ex = glGetError();
   if (ex != GL_NO_ERROR) {
     string_t str = "";
@@ -460,7 +460,7 @@ bool ShaderMaker::validateShadersForProgram(std::shared_ptr<ShaderBase> psp) {
 
   for (std::shared_ptr<ShaderSubProgram> subProg : psp->getSubPrograms()) {
     if (!validateSubProgram(subProg, psp)) {
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDetachShader(psp->getGlId(), subProg->getGlId());
+      std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glDetachShader(psp->getGlId(), subProg->getGlId());
       psp->getLinkErrors().push_back(Stz
         "[Link] Failed to validate sub-program " + subProg->getSourceLocation()
       );
@@ -497,11 +497,11 @@ void ShaderMaker::getProgramErrorLog(std::shared_ptr<ShaderBase> psp, std::vecto
 
   // - Do your stuff
   GLsizei buf_size;
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(psp->getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(psp->getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
 
   char* log_out = (char*)GameMemoryManager::allocBlock(buf_size);
   GLsizei length_out;
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramInfoLog(psp->getGlId(), buf_size, &length_out, log_out);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramInfoLog(psp->getGlId(), buf_size, &length_out, log_out);
 
   string_t tempStr;
   char* c = log_out;
@@ -536,7 +536,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
 
   //Uniforms
   BRLogInfo(" Parsing " + nUniforms + " shader Uniforms..");
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORMS, &nUniforms);
   for (int32_t i = 0; i < nUniforms; ++i) {
     GLint name_len = -1;
     GLint iArraySize = -1;
@@ -544,13 +544,13 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
     string_t uniformName;
 
     //Get name an d type
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveUniform(sb->getGlId(), (GLuint)i, NBUFSIZ, &name_len, &iArraySize, &uniformType, (char*)name);
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetActiveUniform(sb->getGlId(), (GLuint)i, NBUFSIZ, &name_len, &iArraySize, &uniformType, (char*)name);
     AssertOrThrow2(name_len < NBUFSIZ);
     name[name_len] = 0;
     uniformName = string_t(name);
 
     //get location
-    GLint glLocation = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetUniformLocation((GLuint)sb->getGlId(), (GLchar*)uniformName.c_str());
+    GLint glLocation = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetUniformLocation((GLuint)sb->getGlId(), (GLchar*)uniformName.c_str());
 
     if (glLocation >= 0) {
       //If location >=0 - then we are not a buffer.
@@ -580,7 +580,7 @@ void ShaderMaker::parseUniforms(std::shared_ptr<ShaderBase> sb) {
         continue;
       }
 
-      std::shared_ptr<ShaderUniform> glVar = std::make_shared<ShaderUniform>(Gu::getGraphicsContext(), uniformType, glLocation, uniformName, iArraySize);
+      std::shared_ptr<ShaderUniform> glVar = std::make_shared<ShaderUniform>(Gu::getCoreContext(), uniformType, glLocation, uniformName, iArraySize);
 
       sb->getUniforms().insert(std::make_pair(glVar->getNameHashed(), glVar));
     }
@@ -602,7 +602,7 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
 
   //Uniform Blocks
   BRLogInfo(" Parsing " + nUniformBlocks + " shader Uniform Blocks..");
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(sb->getGlId(), GL_ACTIVE_UNIFORM_BLOCKS, &nUniformBlocks);
   for (int32_t iBlock = 0; iBlock < nUniformBlocks; ++iBlock) {
     string_t blockName;
     GLint blockDataSize;
@@ -611,10 +611,10 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
     //Because we haven't bound the block yet, the binding will be zero.
     //   GLint binding;
     //  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_BINDING, &binding);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize);
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_DATA_SIZE, &blockDataSize);
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetActiveUniformBlockiv(sb->getGlId(), (GLuint)iBlock, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, &activeUniforms);
 
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveUniformBlockName(sb->getGlId(), iBlock, NBUFSIZ, NULL, name);
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetActiveUniformBlockName(sb->getGlId(), iBlock, NBUFSIZ, NULL, name);
     blockName = string_t(name);
 
     std::shared_ptr<ShaderUniformBlock> pBlock;
@@ -632,10 +632,10 @@ void ShaderMaker::parseUniformBlocks(std::shared_ptr<ShaderBase> sb) {
       }
 
       //set the program's buffer to be bound to this one.
-      bufferIndex = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetUniformBlockIndex(sb->getGlId(), blockName.c_str());
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glUniformBlockBinding(sb->getGlId(), bufferIndex, bindingIndex);
+      bufferIndex = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetUniformBlockIndex(sb->getGlId(), blockName.c_str());
+      std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glUniformBlockBinding(sb->getGlId(), bufferIndex, bindingIndex);
 
-      pBlock = std::make_shared<ShaderUniformBlock>(Gu::getGraphicsContext(), blockName, bufferIndex, bindingIndex, blockDataSize);
+      pBlock = std::make_shared<ShaderUniformBlock>(Gu::getCoreContext(), blockName, bufferIndex, bindingIndex, blockDataSize);
 
       //Uniform blocks are shared between programs.  We doulbe up the reference here.
       _mapUniformBlocks.insert(std::make_pair(STRHASH(blockName), pBlock));
@@ -655,7 +655,7 @@ void ShaderMaker::parseAttributes(std::shared_ptr<ShaderBase> sb) {
   string_t err = "";
 
   GLsizei nAttributes;
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(sb->getGlId(), GL_ACTIVE_ATTRIBUTES, &nAttributes);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(sb->getGlId(), GL_ACTIVE_ATTRIBUTES, &nAttributes);
 
   // std::vector<GlslShaderAttribute*> tempAttributes;
   for (GLsizei iAttr = 0; iAttr < nAttributes; ++iAttr) {
@@ -723,10 +723,10 @@ void ShaderMaker::shaderBound(std::shared_ptr<ShaderBase> sb) {
     _pBound->unbindAllUniforms();
   }
   if (sb == nullptr) {
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glUseProgram(0);
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glUseProgram(0);
   }
   else {// if(_pBound != sb ){ //*this was causing errors because we must be calling UseProgram somewhere.
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glUseProgram(sb->getGlId());
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glUseProgram(sb->getGlId());
   }
   _pBound = sb;
 

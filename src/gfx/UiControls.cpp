@@ -1198,8 +1198,8 @@ void UiElement::drawDebug(RenderParams& rp) {
   //Debug Rendering
   if (Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping()) {
     //draws all children
-    Gu::getGraphicsContext()->setLineWidth(1.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(Gu::getGraphicsContext());
+    Gu::getCoreContext()->setLineWidth(1.0f);
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(Gu::getCoreContext());
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     {
@@ -1211,8 +1211,8 @@ void UiElement::drawDebug(RenderParams& rp) {
 
   if (Gu::getRenderSettings()->getDebug()->getPickGui()) {
     //draws all children
-    Gu::getGraphicsContext()->setLineWidth(2.0f);
-    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(Gu::getGraphicsContext());
+    Gu::getCoreContext()->setLineWidth(2.0f);
+    std::shared_ptr<UtilMeshInline2d> mi = std::make_shared<UtilMeshInline2d>(Gu::getCoreContext());
     mi->setDefaultColor(vec4(1, 0, 1, 1));
     mi->begin(GL_LINES);
     {

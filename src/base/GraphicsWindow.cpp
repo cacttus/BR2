@@ -177,17 +177,17 @@ void GraphicsWindow::step() {
       _pint->toggleFullscreen();
     }
 
-    Gu::getGraphicsContext()->setLoopState(EngineLoopState::SyncBegin);
+    Gu::getCoreContext()->setLoopState(EngineLoopState::SyncBegin);
     Gu::getFrameSync()->syncBegin();
     {
-      Gu::getGraphicsContext()->setLoopState(EngineLoopState::Update);
+      Gu::getCoreContext()->setLoopState(EngineLoopState::Update);
 
       //...?
 
       //App Update steps.
      // Gu::getApp()->step((float)_fDelta);
 
-      Gu::getGraphicsContext()->setLoopState(EngineLoopState::Render);
+      Gu::getCoreContext()->setLoopState(EngineLoopState::Render);
       
       //TEST: HACK: TODO:
       //TEST: HACK: TODO:
@@ -211,7 +211,7 @@ void GraphicsWindow::step() {
         BRLogErrorCycle("Scene was not set on graphics window " + getTitle());
       }
     }
-    Gu::getGraphicsContext()->setLoopState(EngineLoopState::SyncEnd);
+    Gu::getCoreContext()->setLoopState(EngineLoopState::SyncEnd);
     Gu::getFrameSync()->syncEnd();
   }
 

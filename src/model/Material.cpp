@@ -88,7 +88,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
   if (u != nullptr) {
     std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Color);
     if (ts == nullptr) {
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0);
+      std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1Texture2D());
       //Material has no normal map, set it to the default texture.
       pShader->setTextureUf(0);
@@ -104,7 +104,7 @@ void Material::bind(std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound,
   if (u2 != nullptr) {
     std::shared_ptr<TextureSlot> ts = getMapByType(TextureType::e::Normal);
     if (ts == nullptr) {
-      std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE1);
+      std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glActiveTexture(GL_TEXTURE1);
       glBindTexture(GL_TEXTURE_2D, Gu::getTexCache()->getDummy1x1NormalTexture2D());
       //Material has no normal map, set it to the default texture.
       pShader->setTextureUf(1);

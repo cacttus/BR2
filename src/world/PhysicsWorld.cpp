@@ -1476,13 +1476,13 @@ void PhysicsWorld::drawForward() {
 void PhysicsWorld::drawDeferred() {
   Perf::pushPerf();
 
-  Gu::getGraphicsContext()->pushDepthTest();
-  Gu::getGraphicsContext()->pushCullFace();
-  Gu::getGraphicsContext()->pushBlend();
+  Gu::getCoreContext()->pushDepthTest();
+  Gu::getCoreContext()->pushCullFace();
+  Gu::getCoreContext()->pushBlend();
   {
-    Gu::getGraphicsContext()->enableBlend(false);
-    Gu::getGraphicsContext()->enableCullFace(true);
-    Gu::getGraphicsContext()->enableDepthTest(true);
+    Gu::getCoreContext()->enableBlend(false);
+    Gu::getCoreContext()->enableCullFace(true);
+    Gu::getCoreContext()->enableDepthTest(true);
 
     //**
     //2/24 in order to set up the rendering system to be instanced we gotta change a lot around, like merge all the uniform buffers, skin joint buffers, and stuff.  Then reference by gl_InstanceID
@@ -1530,22 +1530,22 @@ void PhysicsWorld::drawDeferred() {
       pm->drawDeferred(rp);
     }
   }
-  Gu::getGraphicsContext()->popBlend();
-  Gu::getGraphicsContext()->popCullFace();
-  Gu::getGraphicsContext()->popDepthTest();
+  Gu::getCoreContext()->popBlend();
+  Gu::getCoreContext()->popCullFace();
+  Gu::getCoreContext()->popDepthTest();
 
   Perf::popPerf();
 }
 void PhysicsWorld::drawTransparent() {
   Perf::pushPerf();
 
-  Gu::getGraphicsContext()->pushDepthTest();
-  Gu::getGraphicsContext()->pushCullFace();
-  Gu::getGraphicsContext()->pushBlend();
+  Gu::getCoreContext()->pushDepthTest();
+  Gu::getCoreContext()->pushCullFace();
+  Gu::getCoreContext()->pushBlend();
   {
-    Gu::getGraphicsContext()->enableDepthTest(true);
-    Gu::getGraphicsContext()->enableCullFace(true);
-    Gu::getGraphicsContext()->enableBlend(false);
+    Gu::getCoreContext()->enableDepthTest(true);
+    Gu::getCoreContext()->enableCullFace(true);
+    Gu::getCoreContext()->enableBlend(false);
 
     RenderParams rp;
     for (std::pair<float, std::shared_ptr<MeshNode>> p : _pRenderBucket->getMeshesTransparent()) {
@@ -1553,9 +1553,9 @@ void PhysicsWorld::drawTransparent() {
       pm->drawTransparent(rp);
     }
   }
-  Gu::getGraphicsContext()->popBlend();
-  Gu::getGraphicsContext()->popCullFace();
-  Gu::getGraphicsContext()->popDepthTest();
+  Gu::getCoreContext()->popBlend();
+  Gu::getCoreContext()->popCullFace();
+  Gu::getCoreContext()->popDepthTest();
 
   Perf::popPerf();
 

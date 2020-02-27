@@ -206,7 +206,7 @@ void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e) {
 }
 void Logger::logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle) {
   //prevents per-frame logging conundrum
-  if (Gu::getGraphicsContext() != nullptr) {
+  if (Gu::getCoreContext() != nullptr) {
     if (Gu::getFpsMeter() != nullptr) {
       if (Gu::getFpsMeter()->frameMod(iCycle)) {
         logWarn(msg, line, file, e);
@@ -216,7 +216,7 @@ void Logger::logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e,
 }
 void Logger::logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle) {
   //prevents per-frame logging conundrum
-  if (Gu::getGraphicsContext() != nullptr) {
+  if (Gu::getCoreContext() != nullptr) {
     if (Gu::getFpsMeter() != nullptr) {
       if (Gu::getFpsMeter()->frameMod(iCycle)) {
         logError(msg, line, file, e);

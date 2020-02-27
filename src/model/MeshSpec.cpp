@@ -97,7 +97,7 @@ void MeshSpec::allocMesh(const void* pFrags, size_t nFrags, const void* pIndexes
 
   if (_pVaoData == nullptr) {
     //Prevent multiple reallocations
-    _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getGraphicsContext(), _pVertexFormat);
+    _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getCoreContext(), _pVertexFormat);
   }
 
   _pVaoData->fillData(pFrags, nFrags, pIndexes, nIndexes);
@@ -591,8 +591,8 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
   GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nFragCount];
   GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nTotalWeights];
 
-  _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeightData));
-  _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeight));
+  _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshWeightData));
+  _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshWeight));
 
   std::set<int32_t> setUniqueJointOrdinals;
 
@@ -715,7 +715,7 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
     BRLogWarn(">  maxoff exceeds vertex array size. Definite Gpu buffer overrun.");
   }
 
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   setUniqueJointOrdinals.clear();
 
   //**We still need the vec weights to compute bone boxes later (optimally putting them here.
@@ -841,7 +841,7 @@ void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
     if (nWeightOffsets > 0) {
       GpuAnimatedMeshWeightData* weightOffsetsGpu = new GpuAnimatedMeshWeightData[nWeightOffsets];
       fb->read((const char*)weightOffsetsGpu, sizeof(GpuAnimatedMeshWeightData) * nWeightOffsets);
-      _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeightData));
+      _pWeightOffsetsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshWeightData));
       _pWeightOffsetsGpu->allocFill(nWeightOffsets, (void*)weightOffsetsGpu);
       delete[] weightOffsetsGpu;
     }
@@ -851,7 +851,7 @@ void MeshSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
     if (nWeights > 0) {
       GpuAnimatedMeshWeight* weightsGpu = new GpuAnimatedMeshWeight[nWeights];
       fb->read((const char*)weightsGpu, sizeof(GpuAnimatedMeshWeight) * nWeights);
-      _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshWeight));
+      _pWeightsGpu = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshWeight));
       _pWeightsGpu->allocFill(nWeights, (void*)weightsGpu);
       delete[] weightsGpu;
     }

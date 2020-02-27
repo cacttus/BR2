@@ -40,7 +40,7 @@ public:
   static std::shared_ptr<Delta> getDelta();
   static std::shared_ptr<GraphicsApi> getGraphicsApi();
   static std::shared_ptr<Net> getNet();
-  static std::shared_ptr<GLContext> getGraphicsContext();
+  static std::shared_ptr<GLContext> getCoreContext();
 
   static void setApp(std::shared_ptr<AppBase> b);
   static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
@@ -128,7 +128,7 @@ private:
 
 };
 
-#define Graphics Gu::getGraphicsContext()
+#define Graphics Gu::getCoreContext()
 #define Config Gu::getEngineConfig()
 
 

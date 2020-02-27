@@ -46,7 +46,7 @@ void Texture2DSpec::calculateTextureFormat() {
 }
 void Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glActiveTexture(GL_TEXTURE0 + eChannel);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glActiveTexture(GL_TEXTURE0 + eChannel);
   glBindTexture(GL_TEXTURE_2D, getGlId());
 
   if (pShader != nullptr) {

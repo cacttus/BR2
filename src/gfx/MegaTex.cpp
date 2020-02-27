@@ -92,7 +92,7 @@ std::vector<std::shared_ptr<Img32>> MtTexPatch::parseImagePatch(std::string file
     //save images (and master
     Gu::saveImage("./data/cache/saved_9P_master.png", master);
     for (int n = 0; n < ret.size(); ++n) {
-      std::shared_ptr<Texture2DSpec> tex = std::make_shared<Texture2DSpec>(ret[n], Gu::getGraphicsContext(), TexFilter::e::Nearest);
+      std::shared_ptr<Texture2DSpec> tex = std::make_shared<Texture2DSpec>(ret[n], Gu::getCoreContext(), TexFilter::e::Nearest);
       RenderUtils::saveTexture(std::move(Stz"./data/cache/saved_9P_" + n + ".png"), tex->getGlId(), GL_TEXTURE_2D);
     }
   }

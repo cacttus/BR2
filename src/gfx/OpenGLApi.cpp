@@ -73,7 +73,7 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title) {
   return pRet;
 }
 void OpenGLApi::makeCurrent(SDL_Window* win) {
-  SDL_GL_MakeCurrent(win, Gu::getGraphicsContext()->getSDLGLContext());
+  SDL_GL_MakeCurrent(win, Gu::getCoreContext()->getSDLGLContext());
 }
 void OpenGLApi::getDrawableSize(SDL_Window* win, int* w, int* h) {
   SDL_GL_GetDrawableSize(win, w, h);

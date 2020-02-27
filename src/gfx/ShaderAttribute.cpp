@@ -25,7 +25,7 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
   memset(buf, 0, 512);
 
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetActiveAttrib(
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetActiveAttrib(
     pShaderBase->getGlId()
     , attribIndex
     , NBUFSIZ
@@ -44,7 +44,7 @@ void ShaderAttribute::parseAttribute(std::shared_ptr<ShaderBase> pShaderBase, in
     _bIsBuiltInAttrib = true;
   }
   else {
-    _iGLLocation = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetAttribLocation(pShaderBase->getGlId(), getName().c_str());
+    _iGLLocation = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetAttribLocation(pShaderBase->getGlId(), getName().c_str());
 
     _eUserType = parseUserType(_strName);
 

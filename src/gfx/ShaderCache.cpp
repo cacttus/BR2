@@ -51,8 +51,8 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
   GLint binBufSz = 0;
   GLint outLen = 0;
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(prog->getGlId(), GL_PROGRAM_BINARY_LENGTH, &binBufSz);
-  Gu::getGraphicsContext()->chkErrRt();
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(prog->getGlId(), GL_PROGRAM_BINARY_LENGTH, &binBufSz);
+  Gu::getCoreContext()->chkErrRt();
 
   if (binBufSz == 0 || binBufSz > MemSize::e::MEMSZ_GIG2) {
     BRThrowException("Shader program binary was 0 or exceeded " + MemSize::e::MEMSZ_GIG2 + " bytes; actual: " + binBufSz);
@@ -60,8 +60,8 @@ GLProgramBinary* ShaderCache::getBinaryFromGpu(std::shared_ptr<ShaderBase> prog)
 
   GLProgramBinary* b = new GLProgramBinary(this, binBufSz);
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramBinary(prog->getGlId(), binBufSz, &outLen, &(b->_glFormat), (void*)b->_binaryData);
-  Gu::getGraphicsContext()->chkErrRt();
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramBinary(prog->getGlId(), binBufSz, &outLen, &(b->_glFormat), (void*)b->_binaryData);
+  Gu::getCoreContext()->chkErrRt();
 
   if (binBufSz != outLen) {
     delete b;
@@ -258,13 +258,13 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
 *    @return false if the program returned errors.
 */
 std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName, GLProgramBinary* bin) {
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   std::shared_ptr<ShaderBase> pProgram = std::make_shared<ShaderBase>(programName);
   pProgram->init();
   Gu::checkErrorsRt();
 
-  GLboolean b1 = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glIsProgram(pProgram->getGlId());
+  GLboolean b1 = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glIsProgram(pProgram->getGlId());
   if (b1 == false) {
     BRLogWarn("[ShaderCache] Program was not valid before loading to GPU");
     return nullptr;
@@ -272,8 +272,8 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
   Gu::checkErrorsRt();
 
   BRLogDebug("[ShaderCache] Loading Cached Program Binary to GPU");
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glProgramBinary(pProgram->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
-  if (Gu::getGraphicsContext()->chkErrRt(true, true)) {
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glProgramBinary(pProgram->getGlId(), bin->_glFormat, (void*)bin->_binaryData, (GLsizei)bin->_binaryLength);
+  if (Gu::getCoreContext()->chkErrRt(true, true)) {
     //If we have en error here, we failed to load the binary.
     BRLogWarn("[ShaderCache] Failed to load binary to GPU - we might be on a different platform.");
     return nullptr;
@@ -288,9 +288,9 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
 
   //validate program.
   GLint iValid;
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glValidateProgram(pProgram->getGlId());
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glValidateProgram(pProgram->getGlId());
   Gu::checkErrorsRt();
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(pProgram->getGlId(), GL_VALIDATE_STATUS, (GLint*)&iValid);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(pProgram->getGlId(), GL_VALIDATE_STATUS, (GLint*)&iValid);
   Gu::checkErrorsRt();
   if (iValid == GL_FALSE) {
     // Program load faiiled
@@ -298,7 +298,7 @@ std::shared_ptr<ShaderBase> ShaderCache::loadBinaryToGpu(std::string programName
     return nullptr;
   }
 
-  GLboolean b2 = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glIsProgram(pProgram->getGlId());
+  GLboolean b2 = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glIsProgram(pProgram->getGlId());
   Gu::checkErrorsRt();
 
   if (b2 == false) {

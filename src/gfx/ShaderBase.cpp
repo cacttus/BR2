@@ -37,8 +37,8 @@ ShaderBase::ShaderBase(string_t strName) {
 ShaderBase::~ShaderBase() {
   deleteUniforms();
   deleteAttributes();
-  if (Gu::getGraphicsContext()) {
-    Gu::getGraphicsContext()->glDeleteProgram(_glId);
+  if (Gu::getCoreContext()) {
+    Gu::getCoreContext()->glDeleteProgram(_glId);
   }
   else {
     BRLogError("Could not get graphics context in dtor.");
@@ -47,7 +47,7 @@ ShaderBase::~ShaderBase() {
 
 }
 void ShaderBase::init() {
-  _glId = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCreateProgram();
+  _glId = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glCreateProgram();
 }
 bool ShaderBase::confirmInit() {
   return ShaderMaker::isGoodStatus(_eProgramStatus);
@@ -108,10 +108,10 @@ void ShaderBase::bindAllUniforms() {
 void ShaderBase::recreateProgram() {
   //20160608 to do this we must rebind all VAO datas to the correctg programs
   //20160505 apparently this is needed by the shader cache.
-  if (std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glIsProgram(_glId)) {
-    std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDeleteProgram(_glId);
+  if (std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glIsProgram(_glId)) {
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glDeleteProgram(_glId);
   }
-  _glId = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCreateProgram();
+  _glId = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glCreateProgram();
 
   _eProgramStatus = ShaderStatus::e::CreateComplete;
 
@@ -125,11 +125,11 @@ void ShaderBase::getProgramErrorLog(std::vector<string_t>& __out_ errs) {
 
   // - Do your stuff
   GLsizei buf_size;
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramiv(getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramiv(getGlId(), GL_INFO_LOG_LENGTH, &buf_size);
 
   char* log_out = (char*)GameMemoryManager::allocBlock(buf_size);
   GLsizei length_out;
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramInfoLog(getGlId(), buf_size, &length_out, log_out);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramInfoLog(getGlId(), buf_size, &length_out, log_out);
 
   errs.clear();
   string_t tempStr;
@@ -279,19 +279,19 @@ void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenu
 }
 void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDrawMode) {
   //Removing the loopstate
-  if (Gu::getGraphicsContext()->getLoopState() != EngineLoopState::e::Render) {
+  if (Gu::getCoreContext()->getLoopState() != EngineLoopState::e::Render) {
     BRLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
   }
   AssertOrThrow2(vao != nullptr);
-  Gu::getGraphicsContext()->chkErrDbg();
+  Gu::getCoreContext()->chkErrDbg();
 
   RenderUtils::debugGetRenderState();
   bind();
   {
-    Gu::getGraphicsContext()->chkErrDbg();
+    Gu::getCoreContext()->chkErrDbg();
     bindAllUniforms();
 
-    Gu::getGraphicsContext()->chkErrDbg();
+    Gu::getCoreContext()->chkErrDbg();
     verifyBound();
 
     RenderUtils::debugGetRenderState();
@@ -305,7 +305,7 @@ void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDr
         RenderUtils::debugGetRenderState();
         //GL_TRIANGLES = 0x0004
         glDrawElements(eDrawMode, iCount, GL_UNSIGNED_INT, (GLvoid*)0);
-        Gu::getGraphicsContext()->chkErrDbg();
+        Gu::getCoreContext()->chkErrDbg();
       }
     }
     vao->unbind();
@@ -353,8 +353,8 @@ void ShaderBase::setLightUf(std::shared_ptr<LightManager> pLightManager) {
 }
 
 void ShaderBase::beginRaster(int iOrthoWidth, int iOrthoHeight) {
-  Gu::getGraphicsContext()->pushDepthTest();
-  Gu::getGraphicsContext()->pushCullFace();
+  Gu::getCoreContext()->pushDepthTest();
+  Gu::getCoreContext()->pushCullFace();
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
@@ -366,12 +366,12 @@ void ShaderBase::beginRaster(int iOrthoWidth, int iOrthoHeight) {
   bind();
   setUf("_ufProj", &_mOrthoProj);
   // setUf("_ufView", &ident);
-  Gu::getGraphicsContext()->chkErrDbg();
+  Gu::getCoreContext()->chkErrDbg();
 }
 void ShaderBase::endRaster() {
-  Gu::getGraphicsContext()->popCullFace();
-  Gu::getGraphicsContext()->popDepthTest();
-  Gu::getGraphicsContext()->chkErrDbg();
+  Gu::getCoreContext()->popCullFace();
+  Gu::getCoreContext()->popDepthTest();
+  Gu::getCoreContext()->chkErrDbg();
 }
 
 
@@ -442,7 +442,7 @@ void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z) {
     BRThrowException("[Compute] Can't dispatch a compute with a zero dimension brosaurus. if need be use glDisbatchCompute(x,1,1)");
   }
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glDispatchCompute(x, y, z);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glDispatchCompute(x, y, z);
   Gu::checkErrorsDbg();
 
   // unbindAllSsbos();
@@ -454,7 +454,7 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
   pDat->bindBuffer(GL_SHADER_STORAGE_BUFFER);
   Gu::checkErrorsDbg();
 
-  blockIndex = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glGetProgramResourceIndex(getGlId(), GL_SHADER_STORAGE_BLOCK, shaderBufferName);
+  blockIndex = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glGetProgramResourceIndex(getGlId(), GL_SHADER_STORAGE_BLOCK, shaderBufferName);
 
   if (blockIndex < 0) {
     BRLogError(
@@ -470,10 +470,10 @@ void ShaderBase::bindSsbo(std::shared_ptr<GpuBufferData> pDat, const char* shade
   AssertOrThrow2(blockIndex >= 0);
   //Gu::checkErrorsDbg();
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glShaderStorageBlockBinding(getGlId(), blockIndex, shaderSsboIndex);
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glShaderStorageBlockBinding(getGlId(), blockIndex, shaderSsboIndex);
   //Gu::checkErrorsDbg();
 
-  std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, shaderSsboIndex, pDat->getGlId());
+  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindBufferBase(GL_SHADER_STORAGE_BUFFER, shaderSsboIndex, pDat->getGlId());
   //Gu::checkErrorsDbg();
 
   // - Cache max bound index.

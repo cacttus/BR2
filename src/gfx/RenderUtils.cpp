@@ -22,7 +22,7 @@ namespace BR2 {
 
 void RenderUtils::setLineWidth(float width) {
   //This is deprecated. so, idk.
-  Gu::getGraphicsContext()->setLineWidth(width);
+  Gu::getCoreContext()->setLineWidth(width);
   //This is deprecated..?
  // Gd::setLineWidth(width);
 }
@@ -32,21 +32,21 @@ void RenderUtils::resetRenderState() {
     Gu::getShaderMaker()->shaderBound(nullptr);
 
     //glUseProgram(NULL);//DO NOT CALL - we must maintain consistency on the gpu driver
-    Gu::getGraphicsContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-    Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, NULL);
+    Gu::getCoreContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+    Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, NULL);
 
     int iMaxTextures = 0;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (GLint*)&iMaxTextures);
     for (int iTex = 0; iTex < iMaxTextures; iTex++) {
-      Gu::getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + iTex);
+      Gu::getCoreContext()->glActiveTexture(GL_TEXTURE0 + iTex);
       glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     //  VaoData::debugDisableAllAttribArrays();
-    Gu::getGraphicsContext()->glBindVertexArray(0);
-    Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, 0);
-    Gu::getGraphicsContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    Gu::getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
+    Gu::getCoreContext()->glBindVertexArray(0);
+    Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, 0);
+    Gu::getCoreContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    Gu::getCoreContext()->glActiveTexture(GL_TEXTURE0);
 
     //Note: Client textures are deprecated
   //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -102,7 +102,7 @@ void RenderUtils::renderTexturedQuadAttrib(std::shared_ptr<CameraNode> cam, floa
 
   static const int _nIndexes = 6;
 
-  Gu::getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
+  Gu::getCoreContext()->glActiveTexture(GL_TEXTURE0);
 
   GLuint bdVerts,
     bdColors,
@@ -111,42 +111,42 @@ void RenderUtils::renderTexturedQuadAttrib(std::shared_ptr<CameraNode> cam, floa
     bdIndexes,
     vaoIndexes;
 
-  Gu::getGraphicsContext()->glGenVertexArrays(1, (GLuint*)&vaoIndexes);
-  Gu::getGraphicsContext()->glBindVertexArray(vaoIndexes);
+  Gu::getCoreContext()->glGenVertexArrays(1, (GLuint*)&vaoIndexes);
+  Gu::getCoreContext()->glBindVertexArray(vaoIndexes);
 
-  Gu::getGraphicsContext()->glGenBuffers(1, (GLuint*)&bdVerts);
-  Gu::getGraphicsContext()->glGenBuffers(1, (GLuint*)&bdColors);
-  Gu::getGraphicsContext()->glGenBuffers(1, (GLuint*)&bdTextures);
-  Gu::getGraphicsContext()->glGenBuffers(1, (GLuint*)&bdNormals);
-  Gu::getGraphicsContext()->glGenBuffers(1, (GLuint*)&bdIndexes);
+  Gu::getCoreContext()->glGenBuffers(1, (GLuint*)&bdVerts);
+  Gu::getCoreContext()->glGenBuffers(1, (GLuint*)&bdColors);
+  Gu::getCoreContext()->glGenBuffers(1, (GLuint*)&bdTextures);
+  Gu::getCoreContext()->glGenBuffers(1, (GLuint*)&bdNormals);
+  Gu::getCoreContext()->glGenBuffers(1, (GLuint*)&bdIndexes);
 
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
-  Gu::getGraphicsContext()->glBufferData(GL_ARRAY_BUFFER,
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
+  Gu::getCoreContext()->glBufferData(GL_ARRAY_BUFFER,
     4 * sizeof(GLfloat) * 3,
     _vertexes,
     GL_STATIC_DRAW);
 
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
-  Gu::getGraphicsContext()->glBufferData(GL_ARRAY_BUFFER,
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
+  Gu::getCoreContext()->glBufferData(GL_ARRAY_BUFFER,
     4 * sizeof(GLfloat) * 4,
     _colors,
     GL_STATIC_DRAW);
 
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
-  Gu::getGraphicsContext()->glBufferData(GL_ARRAY_BUFFER,
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
+  Gu::getCoreContext()->glBufferData(GL_ARRAY_BUFFER,
     4 * sizeof(GLfloat) * 3,
     _normals,
     GL_STATIC_DRAW);
 
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
-  Gu::getGraphicsContext()->glBufferData(GL_ARRAY_BUFFER,
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
+  Gu::getCoreContext()->glBufferData(GL_ARRAY_BUFFER,
     4 * sizeof(GLfloat) * 2,
     _tcoords,
     GL_STATIC_DRAW);
 
   //Hmm...
-  Gu::getGraphicsContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
-  Gu::getGraphicsContext()->glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+  Gu::getCoreContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
+  Gu::getCoreContext()->glBufferData(GL_ELEMENT_ARRAY_BUFFER,
     6 * sizeof(GL_UNSIGNED_SHORT),
     _indexes,
     GL_STATIC_DRAW);
@@ -159,33 +159,33 @@ void RenderUtils::renderTexturedQuadAttrib(std::shared_ptr<CameraNode> cam, floa
   // MUST USE VBOS WITH VERTEX ATTRIBS
 
 
-  Gu::getGraphicsContext()->glEnableVertexAttribArray(attr_v);
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
-  Gu::getGraphicsContext()->glVertexAttribPointer(attr_v,
+  Gu::getCoreContext()->glEnableVertexAttribArray(attr_v);
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdVerts);
+  Gu::getCoreContext()->glVertexAttribPointer(attr_v,
     3,
     GL_FLOAT,
     GL_FALSE,
     sizeof(GLfloat) * 3,
     NULL);
-  Gu::getGraphicsContext()->glEnableVertexAttribArray(attr_c);
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
-  Gu::getGraphicsContext()->glVertexAttribPointer(attr_c,
+  Gu::getCoreContext()->glEnableVertexAttribArray(attr_c);
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdColors);
+  Gu::getCoreContext()->glVertexAttribPointer(attr_c,
     4,
     GL_FLOAT,
     GL_FALSE,
     sizeof(GLfloat) * 4,
     NULL);
-  Gu::getGraphicsContext()->glEnableVertexAttribArray(attr_n);
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
-  Gu::getGraphicsContext()->glVertexAttribPointer(attr_n,
+  Gu::getCoreContext()->glEnableVertexAttribArray(attr_n);
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdNormals);
+  Gu::getCoreContext()->glVertexAttribPointer(attr_n,
     3,
     GL_FLOAT,
     GL_FALSE,
     sizeof(GLfloat) * 3,
     NULL);
-  Gu::getGraphicsContext()->glEnableVertexAttribArray(attr_t);
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
-  Gu::getGraphicsContext()->glVertexAttribPointer(attr_t,
+  Gu::getCoreContext()->glEnableVertexAttribArray(attr_t);
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, bdTextures);
+  Gu::getCoreContext()->glVertexAttribPointer(attr_t,
     2,
     GL_FLOAT,
     GL_FALSE,
@@ -199,22 +199,22 @@ void RenderUtils::renderTexturedQuadAttrib(std::shared_ptr<CameraNode> cam, floa
        //std::cout<<_tcoords<<std::endl;
        //std::cout<<_indexes<<std::endl;
 
-  Gu::getGraphicsContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
+  Gu::getCoreContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bdIndexes);
 
-  Gu::getGraphicsContext()->glBindVertexArray(vaoIndexes);
+  Gu::getCoreContext()->glBindVertexArray(vaoIndexes);
   glDrawElements(GL_TRIANGLES, _nIndexes, GL_UNSIGNED_SHORT, NULL);
-  Gu::getGraphicsContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-  Gu::getGraphicsContext()->glBindBuffer(GL_ARRAY_BUFFER, NULL);
+  Gu::getCoreContext()->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+  Gu::getCoreContext()->glBindBuffer(GL_ARRAY_BUFFER, NULL);
 
-  Gu::getGraphicsContext()->glDeleteBuffers(1, (GLuint*)&bdVerts);
-  Gu::getGraphicsContext()->glDeleteBuffers(1, (GLuint*)&bdColors);
-  Gu::getGraphicsContext()->glDeleteBuffers(1, (GLuint*)&bdTextures);
-  Gu::getGraphicsContext()->glDeleteBuffers(1, (GLuint*)&bdNormals);
-  Gu::getGraphicsContext()->glDeleteBuffers(1, (GLuint*)&bdIndexes);
-  Gu::getGraphicsContext()->glDeleteVertexArrays(1, (GLuint*)&vaoIndexes);
+  Gu::getCoreContext()->glDeleteBuffers(1, (GLuint*)&bdVerts);
+  Gu::getCoreContext()->glDeleteBuffers(1, (GLuint*)&bdColors);
+  Gu::getCoreContext()->glDeleteBuffers(1, (GLuint*)&bdTextures);
+  Gu::getCoreContext()->glDeleteBuffers(1, (GLuint*)&bdNormals);
+  Gu::getCoreContext()->glDeleteBuffers(1, (GLuint*)&bdIndexes);
+  Gu::getCoreContext()->glDeleteVertexArrays(1, (GLuint*)&vaoIndexes);
 }
 void RenderUtils::drawAxisShader(std::shared_ptr<CameraNode> cam, float scale, float lineWidth, mat4& transform) {
-  UtilMeshAxis* ax = new UtilMeshAxis(Gu::getGraphicsContext(), scale, lineWidth, transform);
+  UtilMeshAxis* ax = new UtilMeshAxis(Gu::getCoreContext(), scale, lineWidth, transform);
   ax->init();
   ax->draw(cam);
   delete ax;
@@ -227,7 +227,7 @@ void RenderUtils::drawAxisShader(std::shared_ptr<CameraNode> cam, float scale, f
 //    delete ax;
 //}
 void RenderUtils::drawWireSphereShader(std::shared_ptr<CameraNode> cam, float fRadius, vec4& vColor, int32_t nSlices, int32_t nStacks, mat4* pMatrix) {
-  UtilMeshSphere* ax = new UtilMeshSphere(Gu::getGraphicsContext(), fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
+  UtilMeshSphere* ax = new UtilMeshSphere(Gu::getCoreContext(), fRadius, vec3(0, 0, 0), vColor, nSlices, nStacks);
   ax->init();
   if (pMatrix != nullptr) {
     ax->setModelMatrix(*pMatrix);
@@ -236,13 +236,13 @@ void RenderUtils::drawWireSphereShader(std::shared_ptr<CameraNode> cam, float fR
   delete ax;
 }
 void RenderUtils::drawWireBoxShader(std::shared_ptr<CameraNode> cam, Box3f* box, vec3& vOffset, vec4& vColor) {
-  UtilMeshBox* ax = new UtilMeshBox(Gu::getGraphicsContext(), box, vOffset, vColor);
+  UtilMeshBox* ax = new UtilMeshBox(Gu::getCoreContext(), box, vOffset, vColor);
   ax->init();
   ax->draw(cam);
   delete ax;
 }
 void RenderUtils::drawSolidBoxShaded(std::shared_ptr<CameraNode> cam, Box3f* box, vec3& vOffset, vec4& vColor) {
-  UtilMeshBox* ax = new UtilMeshBox(Gu::getGraphicsContext(), box, vOffset, vColor);
+  UtilMeshBox* ax = new UtilMeshBox(Gu::getCoreContext(), box, vOffset, vColor);
   ax->setWireFrame(false);
   ax->init();
   ax->draw(cam);
@@ -269,7 +269,7 @@ void RenderUtils::drawSolidBoxShaded(std::shared_ptr<CameraNode> cam, Box3f* box
 //    mesh.end();
 //}
 void RenderUtils::drawGridShader(std::shared_ptr<CameraNode> cam, float r, float g, float b, int32_t nSlices, float fSliceWidth, vec3& center, std::shared_ptr<ShaderBase> pShader) {
-  UtilMeshGrid* pGrid = new UtilMeshGrid(Gu::getGraphicsContext(), r, g, b, nSlices, fSliceWidth, center);
+  UtilMeshGrid* pGrid = new UtilMeshGrid(Gu::getCoreContext(), r, g, b, nSlices, fSliceWidth, center);
   pGrid->init();
   pGrid->draw(cam);
   delete pGrid;
@@ -277,7 +277,7 @@ void RenderUtils::drawGridShader(std::shared_ptr<CameraNode> cam, float r, float
 void RenderUtils::drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<FrustumBase> pf, vec4& avColor) {
   setLineWidth(3.0f);
 
-  UtilMeshInline mi(Gu::getGraphicsContext());
+  UtilMeshInline mi(Gu::getCoreContext());
   Color4f c4 = avColor;
   mi.begin(GL_LINES);
   {
@@ -344,20 +344,20 @@ string_t RenderUtils::debugGetRenderState(bool bForceRun, bool bPrintToStdout, b
   appendLine(strState, Stz " Depth Test:" + (iDepthTest ? "ENABLED" : "DISABLED"));
 
 
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   RenderUtils::debugGetLegacyViewAndMatrixStack(strState);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   RenderUtils::debugGetBufferState(strState);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   //RenderUtils::debugGetAttribState(); // This is redundant with vertexarraystate
   //    CheckGpuErrorsDbg();
   RenderUtils::debugGetTextureState(strState);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   RenderUtils::debugGetVertexArrayState(strState);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   RenderUtils::debugGetFramebufferAttachmentState(strState);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   if (bPrintToStdout) {
     Gu::print(strState);
@@ -379,7 +379,7 @@ void RenderUtils::debugGetLegacyViewAndMatrixStack(string_t& strState) {
   appendLine(strState, Stz "Scissor: " + iScissorBox[0] + "," + iScissorBox[1] + "," + iScissorBox[2] + "," + iScissorBox[3]);
   appendLine(strState, Stz "Viewport: " + iViewportBox[0] + "," + iViewportBox[1] + "," + iViewportBox[2] + "," + iViewportBox[3]);
   //TODO: legacy matrix array state.
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 }
 void RenderUtils::debugGetBufferState(string_t& strState) {
   appendLine(strState, "--------------------------------------");
@@ -398,7 +398,7 @@ void RenderUtils::debugGetBufferState(string_t& strState) {
   glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &iUniformBufferBinding);
   glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &iVertexArrayBinding);
   glGetIntegerv(GL_CURRENT_PROGRAM, &iCurrentProgram);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   appendLine(strState, Stz "Bound Vertex Array Buffer Id (VBO):" + iBoundBuffer);
   appendLine(strState, Stz "Bound Element Array Buffer Id (IBO):" + iElementArrayBufferBinding);
@@ -406,7 +406,7 @@ void RenderUtils::debugGetBufferState(string_t& strState) {
   appendLine(strState, Stz "Bound Uniform Buffer Object Id:" + iUniformBufferBinding);
   appendLine(strState, Stz "Bound Vertex Array Object Id:" + iVertexArrayBinding);
   appendLine(strState, Stz "Bound Shader Program Id:" + iCurrentProgram);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   if (Gu::getShaderMaker()->getBound() != nullptr) {
     appendLine(strState, Stz "Bound Shader Name:" +
       Gu::getShaderMaker()->getBound()->getProgramName());
@@ -434,13 +434,13 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, string_t& strState)
   GLint nMaxComponentsComp;
 
   // - Get the number of uniforms
-  Gu::getGraphicsContext()->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORMS, &nUniforms);
-  Gu::getGraphicsContext()->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORM_BLOCKS, (GLint*)&nActiveUniformBlocks);
+  Gu::getCoreContext()->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORMS, &nUniforms);
+  Gu::getCoreContext()->glGetProgramiv(iGlProgramId, GL_ACTIVE_UNIFORM_BLOCKS, (GLint*)&nActiveUniformBlocks);
   glGetIntegerv(GL_MAX_UNIFORM_LOCATIONS, (GLint*)&nMaxUniformLocations);
   glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, (GLint*)&nMaxComponentsVert);
   glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, (GLint*)&nMaxComponentsFrag);
   glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_COMPONENTS, (GLint*)&nMaxComponentsComp);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   appendLine(strState, Stz "# Active Uniforms: " + nUniforms);
   appendLine(strState, Stz "# Active Uniform Blocks: " + nActiveUniformBlocks);
@@ -455,12 +455,12 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, string_t& strState)
   //Get all uniform names and types into a list.
   for (int32_t i = 0; i < nUniforms; ++i) {
     //Get name an d type
-    Gu::getGraphicsContext()->glGetActiveUniform(iGlProgramId, (GLuint)i, 256, &name_len, &iArraySize, &uniformType, (char*)name);
+    Gu::getCoreContext()->glGetActiveUniform(iGlProgramId, (GLuint)i, 256, &name_len, &iArraySize, &uniformType, (char*)name);
     name[name_len] = 0;
     uniformName = string_t(name);
 
     //get location
-    GLint glLocation = Gu::getGraphicsContext()->glGetUniformLocation((GLuint)iGlProgramId, (GLchar*)uniformName.c_str());
+    GLint glLocation = Gu::getCoreContext()->glGetUniformLocation((GLuint)iGlProgramId, (GLchar*)uniformName.c_str());
 
     appendLine(strState, Stz "  Name: " + uniformName);
     appendLine(strState, Stz "  Type: " + RenderUtils::openGlTypeToString(uniformType));
@@ -468,10 +468,10 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, string_t& strState)
     appendLine(strState, Stz "  Array Size: " + iArraySize);
 
     // Uniform Block Data.
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
 
     GLuint iCurrentBlockIdx;
-    iCurrentBlockIdx = Gu::getGraphicsContext()->glGetUniformBlockIndex(iGlProgramId, uniformName.c_str());
+    iCurrentBlockIdx = Gu::getCoreContext()->glGetUniformBlockIndex(iGlProgramId, uniformName.c_str());
 
     if (iCurrentBlockIdx != GL_INVALID_INDEX) {
       int iBlockBinding;
@@ -480,17 +480,17 @@ void RenderUtils::debugPrintActiveUniforms(int iGlProgramId, string_t& strState)
       int iBlockActiveUniforms;
       int iBlockActiveUniformIndices;
 
-      Gu::getGraphicsContext()->chkErrRt();
-      Gu::getGraphicsContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_BINDING, (GLint*)&iBlockBinding);
-      Gu::getGraphicsContext()->chkErrRt();
-      Gu::getGraphicsContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_DATA_SIZE, (GLint*)&iBlockDataSize);
-      Gu::getGraphicsContext()->chkErrRt();
-      Gu::getGraphicsContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_NAME_LENGTH, (GLint*)&iBlockNameLength);
-      Gu::getGraphicsContext()->chkErrRt();
-      Gu::getGraphicsContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, (GLint*)&iBlockActiveUniforms);
-      Gu::getGraphicsContext()->chkErrRt();
-      Gu::getGraphicsContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, (GLint*)&iBlockActiveUniformIndices);
-      Gu::getGraphicsContext()->chkErrRt();
+      Gu::getCoreContext()->chkErrRt();
+      Gu::getCoreContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_BINDING, (GLint*)&iBlockBinding);
+      Gu::getCoreContext()->chkErrRt();
+      Gu::getCoreContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_DATA_SIZE, (GLint*)&iBlockDataSize);
+      Gu::getCoreContext()->chkErrRt();
+      Gu::getCoreContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_NAME_LENGTH, (GLint*)&iBlockNameLength);
+      Gu::getCoreContext()->chkErrRt();
+      Gu::getCoreContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS, (GLint*)&iBlockActiveUniforms);
+      Gu::getCoreContext()->chkErrRt();
+      Gu::getCoreContext()->glGetActiveUniformBlockiv(iGlProgramId, iCurrentBlockIdx, GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES, (GLint*)&iBlockActiveUniformIndices);
+      Gu::getCoreContext()->chkErrRt();
 
       appendLine(strState, Stz "  Block Index:" + iCurrentBlockIdx);
       appendLine(strState, Stz "  Block Binding:" + iBlockBinding);
@@ -595,7 +595,7 @@ void RenderUtils::debugGetTextureState(string_t& strState) {
   appendLine(strState, Stz  "Below are the bound textures Per Texture Channel:");
   // - Get bound texture units.
   for (int i = 0; i < iMaxVertexTextureUnits; ++i) {
-    Gu::getGraphicsContext()->glActiveTexture(GL_TEXTURE0 + i);
+    Gu::getCoreContext()->glActiveTexture(GL_TEXTURE0 + i);
     appendLine(strState, Stz "  Channel " + i);
     glGetIntegerv(GL_TEXTURE_BINDING_1D, &iTextureBinding); if (iTextureBinding > 0) appendLine(strState, Stz "     1D: " + (int)iTextureBinding);
     iTextureBinding = 0;
@@ -643,7 +643,7 @@ void RenderUtils::debugGetFramebufferAttachmentState(string_t& strState) {
   glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFramebuffer);
 
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   appendLine(strState, Stz " # Max Color Attachments: " + maxColorAttachments);
   appendLine(strState, Stz " Current Bound Framebuffer: " + boundFramebuffer);
@@ -687,23 +687,23 @@ void RenderUtils::debugPrintFBOAttachment(string_t& strState, GLenum attachment)
 
   appendLine(strState, Stz "  Attachment: " + strAttachment);
 
-  Gu::getGraphicsContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachmentType);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &attachmentType);
+  Gu::getCoreContext()->chkErrRt();
   if (attachmentType == GL_NONE) {
     appendLine(strState, Stz "    Type: " + "GL_NONE");
   }
   else if (attachmentType == GL_RENDERBUFFER) {
-    Gu::getGraphicsContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
+    Gu::getCoreContext()->chkErrRt();
     appendLine(strState, Stz "    Type: " + "GL_RENDERBUFFER");
     appendLine(strState, Stz "    Name: " + attachmentName);
 
   }
   else if (attachmentType == GL_TEXTURE) {
-    Gu::getGraphicsContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
-    Gu::getGraphicsContext()->chkErrRt();
-    Gu::getGraphicsContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL, &mipmapLevel);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &attachmentName);
+    Gu::getCoreContext()->chkErrRt();
+    Gu::getCoreContext()->glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, attachment, GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL, &mipmapLevel);
+    Gu::getCoreContext()->chkErrRt();
     appendLine(strState, Stz "    Type: " + "GL_TEXTURE");
     appendLine(strState, Stz "    Name: " + attachmentName);
     appendLine(strState, Stz "    Mipmap Level: " + mipmapLevel);
@@ -722,7 +722,7 @@ void RenderUtils::debugGetVertexArrayState(string_t& strState) {
   appendLine(strState, Stz("---------------------------------------"));
   appendLine(strState, Stz("--Active Vertex Attribs: "));
 
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   // - Disable all arrays by default.
   for (int iAttrib = 0; iAttrib < nMaxAttribs; ++iAttrib) {
@@ -742,21 +742,21 @@ void RenderUtils::debugGetVertexArrayState(string_t& strState) {
     memset(iCurAttrib, 0, sizeof(GLint) * 4);
     memset(uiCurAttrib, 0, sizeof(GLuint) * 4);
 
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, (GLint*)&iArrayBufferBinding);
-    Gu::getGraphicsContext()->chkErrRt();
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_ENABLED, (GLint*)&iArrayEnabled);
-    Gu::getGraphicsContext()->chkErrRt();
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_SIZE, (GLint*)&iAttribArraySize);
-    Gu::getGraphicsContext()->chkErrRt();
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&iAttribArrayType);
-    Gu::getGraphicsContext()->chkErrRt();
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*)&iAttribArrayStride);
-    Gu::getGraphicsContext()->chkErrRt();
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_INTEGER, (GLint*)&iAttribArrayInteger);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, (GLint*)&iArrayBufferBinding);
+    Gu::getCoreContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_ENABLED, (GLint*)&iArrayEnabled);
+    Gu::getCoreContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_SIZE, (GLint*)&iAttribArraySize);
+    Gu::getCoreContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_TYPE, (GLint*)&iAttribArrayType);
+    Gu::getCoreContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_STRIDE, (GLint*)&iAttribArrayStride);
+    Gu::getCoreContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_INTEGER, (GLint*)&iAttribArrayInteger);
+    Gu::getCoreContext()->chkErrRt();
 
-    Gu::getGraphicsContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&iAttribArrayNormalized);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_NORMALIZED, (GLint*)&iAttribArrayNormalized);
+    Gu::getCoreContext()->chkErrRt();
     //glGetVertexAttribiv(iAttrib, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, (GLint*)&iAttribArrayDivisor);
     //CheckGpuErrorsDbg();
 
@@ -779,18 +779,18 @@ void RenderUtils::debugGetVertexArrayState(string_t& strState) {
       //other generic vertex attributes is (0,0,0,1).
       switch (iAttribArrayType) {
       case GL_INT:
-        Gu::getGraphicsContext()->glGetVertexAttribIiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLint*)&iCurAttrib);
-        Gu::getGraphicsContext()->chkErrRt();
+        Gu::getCoreContext()->glGetVertexAttribIiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLint*)&iCurAttrib);
+        Gu::getCoreContext()->chkErrRt();
         appendLine(strState, Stz "  Cur Value: " + iCurAttrib[0] + "," + iCurAttrib[1] + "," + iCurAttrib[2] + "," + iCurAttrib[3]);
         break;
       case GL_UNSIGNED_INT:
-        Gu::getGraphicsContext()->glGetVertexAttribIuiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLuint*)&uiCurAttrib);
-        Gu::getGraphicsContext()->chkErrRt();
+        Gu::getCoreContext()->glGetVertexAttribIuiv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLuint*)&uiCurAttrib);
+        Gu::getCoreContext()->chkErrRt();
         appendLine(strState, Stz "  Cur Value: " + uiCurAttrib[0] + "," + uiCurAttrib[1] + "," + uiCurAttrib[2] + "," + uiCurAttrib[3]);
         break;
       case GL_FLOAT:
-        Gu::getGraphicsContext()->glGetVertexAttribfv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLfloat*)&iCurAttrib);
-        Gu::getGraphicsContext()->chkErrRt();
+        Gu::getCoreContext()->glGetVertexAttribfv(iAttrib, GL_CURRENT_VERTEX_ATTRIB, (GLfloat*)&iCurAttrib);
+        Gu::getCoreContext()->chkErrRt();
         appendLine(strState, Stz "  Cur Value: " + fCurAttrib[0] + "," + fCurAttrib[1] + "," + fCurAttrib[2] + "," + fCurAttrib[3]);
         break;
       default:
@@ -827,7 +827,7 @@ void RenderUtils::saveFramebufferAsPng(string_t&& strLoc, GLuint iFBOId) {
     iFBOId = iFbBindingLast;
   }
 
-  Gu::getGraphicsContext()->glBindFramebuffer(GL_FRAMEBUFFER, iFBOId);
+  Gu::getCoreContext()->glBindFramebuffer(GL_FRAMEBUFFER, iFBOId);
   {
     //glGetIntegerv(GL_FRAMEBUFFER_DEFAULT_WIDTH, &iFbWidth);
     //glGetIntegerv(GL_FRAMEBUFFER_DEFAULT_HEIGHT, &iFbHeight);
@@ -845,7 +845,7 @@ void RenderUtils::saveFramebufferAsPng(string_t&& strLoc, GLuint iFBOId) {
     bi->flipV(); //the GL tex image must be flipped to show uprih
     Gu::saveImage(strLoc, bi);
   }
-  Gu::getGraphicsContext()->glBindFramebuffer(GL_FRAMEBUFFER, iFbBindingLast);
+  Gu::getCoreContext()->glBindFramebuffer(GL_FRAMEBUFFER, iFbBindingLast);
 }
 //void RenderUtils::createDepthTexture(GLuint& __out_ texId, int w, int h, GLenum depthSize){
 //    //This will query the device to make sure the depth format is supported.
@@ -867,7 +867,7 @@ void RenderUtils::saveFramebufferAsPng(string_t&& strLoc, GLuint iFBOId) {
 //}
 void RenderUtils::createDepthTexture(GLuint* __out_ texId, int32_t w, int32_t h, bool bMsaaEnabled, int32_t nMsaaSamples, GLenum eRequestedDepth) {
   //This will query the device to make sure the depth format is supported.
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   GLenum texTarget;
 
   if (bMsaaEnabled) {
@@ -878,30 +878,30 @@ void RenderUtils::createDepthTexture(GLuint* __out_ texId, int32_t w, int32_t h,
   }
 
   glGenTextures(1, texId);
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
   glBindTexture(texTarget, *texId);
   //THe following parameters are for depth textures only
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   if (bMsaaEnabled == false) {
     //For some reason you can't use this with multisample.
     glTexParameteri(texTarget, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);//GL_NONE
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
     glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
     glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
     glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
     glTexParameteri(texTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
     glTexParameteri(texTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    Gu::getGraphicsContext()->chkErrRt();
+    Gu::getCoreContext()->chkErrRt();
   }
 
   getCompatibleDepthComponent(eRequestedDepth, [&](GLenum eDepth) {
     if (bMsaaEnabled) {
-      Gu::getGraphicsContext()->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nMsaaSamples, eDepth, w, h, GL_TRUE);
+      Gu::getCoreContext()->glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nMsaaSamples, eDepth, w, h, GL_TRUE);
       Gu::checkErrorsRt();
     }
     else {
@@ -914,7 +914,7 @@ void RenderUtils::createDepthTexture(GLuint* __out_ texId, int32_t w, int32_t h,
 }
 
 GLenum RenderUtils::getSupportedDepthSize() {
-  int32_t depth = Gu::getGraphicsContext()->getSupportedDepthSize();
+  int32_t depth = Gu::getCoreContext()->getSupportedDepthSize();
   //If we don't support requested depth, change it.
   if (depth == 16) {
     return GL_DEPTH_COMPONENT16;
@@ -932,7 +932,7 @@ GLenum RenderUtils::getSupportedDepthSize() {
   }
 }
 void RenderUtils::getCompatibleDepthComponent(GLenum eRequestedDepth, std::function<void(GLenum)> func) {
-  int32_t depth = Gu::getGraphicsContext()->getSupportedDepthSize();
+  int32_t depth = Gu::getCoreContext()->getSupportedDepthSize();
   //Shortcut lambda to create something that asks for a GL_DEPTH_COMPONENT enum.
   GLenum eDepthSize;
   if (eRequestedDepth == GL_DEPTH_COMPONENT32F && depth < 32) {
@@ -948,7 +948,7 @@ void RenderUtils::getCompatibleDepthComponent(GLenum eRequestedDepth, std::funct
     eDepthSize = eRequestedDepth;
   }
 
-  Gu::getGraphicsContext()->chkErrRt();
+  Gu::getCoreContext()->chkErrRt();
 
   //**This might fail on phones - change to depth component 24
   func(eDepthSize);
@@ -1030,7 +1030,7 @@ bool RenderUtils::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image, GLu
   glGetIntegerv(eTexBinding, &iSavedTextureBinding);
   Gu::checkErrorsRt();
 
-  Gu::getGraphicsContext()->glActiveTexture(GL_TEXTURE0);
+  Gu::getCoreContext()->glActiveTexture(GL_TEXTURE0);
   glBindTexture(eTexTargetBase, iGLTexId);
   Gu::checkErrorsRt();
   {

@@ -75,7 +75,9 @@ void AppRunner_Internal::initSDLAndCreateGraphicsApi(string_t windowTitle, std::
   }
   Gu::setGraphicsApi(_pGraphicsApi);
 
-  //TRY MOVING DOWN
+  //Unfortunately we need a window for a graphics context.  We need contexts to init the managers.
+  // This default window must come here.  We initialize the rendering system later. 
+  // After this window is made, more windows can be made (since we have a core context).
   std::shared_ptr<GraphicsWindow> window = _pGraphicsApi->createWindow(windowTitle);
   SDLUtils::checkSDLErr();
 

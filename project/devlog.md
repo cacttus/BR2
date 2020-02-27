@@ -7,12 +7,12 @@
 * Also fixed the Opengl Context creation issue.  Contexts now create OpenGL Windows
 * Updated and fixed some Vulkan window creation routines
 * Moved application update logic to GraphicsContext.
-
-* Rendering works for screen images, at least.
-
+* Rendering works for screen images, and some UI features.
 * Updated some of RenderPipe (from broken RenderPipe)
 	* Updated Virtual Draw Methods to fit new RenderPipe method
-
+* Unfortunately we can't move GraphicsWindow creation down and 'fully modularize' it.  The reason is that we MUST have a graphics context when we initialize the global managers, however,
+in SDL, you must have a SDL_window to initialize the graphics context (since all contexts require surfaces).  So that means that we need to separate the *initial* window creation with its
+render system initialization.
 
 *2/25/19*
 

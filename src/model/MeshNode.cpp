@@ -130,7 +130,7 @@ void MeshNode::createSkin() {
 
   //  _pSkinCompute = new GpuComputeSync(Gu::getGraphicsContext());
 
-  _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getGraphicsContext(), sizeof(GpuAnimatedMeshSkinMatrix));
+  _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshSkinMatrix));
   _pArmJoints->allocate(iOrdCount);
   _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
 
@@ -193,7 +193,7 @@ void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& 
 
 void MeshNode::computeSkinFrame() {
   Perf::pushPerf();
-  Gu::getGraphicsContext()->chkErrDbg();
+  Gu::getCoreContext()->chkErrDbg();
   copyJointsToGpu();
   Perf::popPerf();
   // dispatchSkinCompute();
