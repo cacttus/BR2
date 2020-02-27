@@ -21,16 +21,18 @@
 	- [ ] Attach Scene to GraphicsWindow.
 
 - [ ] **CRITICAL** Squashed viewport Bug
-	- [ ] Implement the updated viewport class from the engine.
-		- [ ] Make sure it has width/height defined.
-	- [ ] Update everywhere where viewport is referenced.
-	- [ ] Fixed the squashed UI problems.
+	- [x] Implement the updated viewport class from the engine.
+		- [x] Make sure it has width/height defined.
+	- [x] Update everywhere where viewport is referenced.
+	- [ ] Fixed render squishing by boxing the render viewport in windowed mode.
+	- [ ] In fullscreen mode, force the w/h to be the screen.
+	- [ ] Fixed the squashed UI image problems.
 		- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
 ## Bottle World
 - [ ] CSharp inline *minimal* scripts.
 	* This should fix the camera, so we can easily add the bottle topologizer.
-	- [ ] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
+	- [x] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
 	- [ ] Update FlyingCameraControls so that it runs as a script.
 		- [ ] Make Cameras work with the Scene() and get their update() methods called
 		- [ ] This would make the flying controls run as a script IN the node as a component instead of AROUND
@@ -53,15 +55,15 @@ will have only 4 kinds of nodes then:
 	* -> LightNode (Point and Directional)
 	* -> WorldNode (A Glob in the game world)
 The system will be rewritten in 3 areas:
-	1. Remove Global Camera (Gu::getCamera())  Pass it around to rendering functions.
-	1. Remove all Data classes, besides MeshData.  MeshData will be referred to as a "slot" in the "MeshComponent"
+	- [x] Remove Global Camera (Gu::getCamera())  Pass it around to rendering functions.
+	- [ ] Remove all Data classes, besides MeshData.  MeshData will be referred to as a "slot" in the "MeshComponent"
 		* Add NodeData to SceneNode, not copying it.
-	2. Implement `clone()` and `copy()` on SceneNode
-	3. Remove `serialize()` and `deserialize()` from all *Data's and place them on SceneNode and all Sub-Nodes.
-	4. Add a generic component class, which is subclassed by
+	- [ ] Implement `clone()` and `copy()` on SceneNode
+	- [ ] Remove `serialize()` and `deserialize()` from all *Data's and place them on SceneNode and all Sub-Nodes.
+	- [ ] Add a generic component class, which is subclassed by
 		* CSharpScript (ScriptComponent)
 		* Mesh (MeshComponent)
-	5. Integration of "PhysicsNode" with the nodes themselves. (it makes no sense do deprive a node of velocity).
+	- [x] Integration of "PhysicsNode" with the nodes themselves. (it makes no sense do deprive a node of velocity).
 		* Remove Velocity from "PhysicsNode" and place the Velocity on SceneNode.
 		* Create a ColliderComponent
 		* Place Mass, Shape, and all other PhysicsNode properties on the ColliderComponent
@@ -90,7 +92,7 @@ The system will be rewritten in 3 areas:
 - [ ] Componentize "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
 - [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
 
-## Mine City Enhancements, Phase I
+## Mine City Phase I
 - [ ] UI System tasks
 	- [ ] Simplify the UI to work with the UI design for this game.  (Which should update UI performance)\
 	- [ ] Implement hard coded x/y locations.  
@@ -125,6 +127,9 @@ The system will be rewritten in 3 areas:
 
 - [ ] **Story**: Be able to build paths for the peons to navigate.
 	- [ ] Path Builder Tab & Path Builder Toolbar item
+
+
+# Backlog
 
 ## Engine Enhancements, Unrelated to Game
 - [ ] CMake integration. Test on iOS, Linux, Android.
