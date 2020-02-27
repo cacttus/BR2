@@ -14,7 +14,7 @@ AppBase::AppBase() {
 AppBase::~AppBase() {
 
 }
-void AppBase::drawDebug(RenderParams& rp) {
+void AppBase::drawForwardDebug(RenderParams& rp) {
 
   if (Gu::getGraphicsContext() != nullptr /*&& Gu::getCamera() != nullptr*/) {
     RenderUtils::drawGridShader(rp.getCamera(), 1, 1, 1, 20, 5.0f);

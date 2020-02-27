@@ -37,8 +37,14 @@ ShaderBase::ShaderBase(string_t strName) {
 ShaderBase::~ShaderBase() {
   deleteUniforms();
   deleteAttributes();
-  Gu::getGraphicsContext();
-  Gu::getGraphicsContext()->glDeleteProgram(_glId);
+  if (Gu::getGraphicsContext()) {
+    Gu::getGraphicsContext()->glDeleteProgram(_glId);
+  }
+  else {
+    BRLogError("Could not get graphics context in dtor.");
+    Gu::debugBreak();
+  }
+
 }
 void ShaderBase::init() {
   _glId = std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glCreateProgram();

@@ -8,6 +8,12 @@
 * Updated and fixed some Vulkan window creation routines
 * Moved application update logic to GraphicsContext.
 
+* Rendering works for screen images, at least.
+
+* Updated some of RenderPipe (from broken RenderPipe)
+	* Updated Virtual Draw Methods to fit new RenderPipe method
+
+
 *2/25/19*
 
 * WindowViewport (old) -> RenderViewport

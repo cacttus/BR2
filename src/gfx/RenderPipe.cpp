@@ -99,6 +99,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
     }
     _pMsaaForward->clearFb();
 
+    //1. 3D, Deferred lighting
     if (pipeBits.test(PipeBit::e::Deferred)) {
       beginRenderDeferred();
       {
@@ -112,51 +113,37 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
       if (pipeBits.test(PipeBit::e::Transparent)) {
         toDraw->drawTransparent(rp);
       }
-
-      //Do post processing
-
-    }
-    /*
-
-    //Do post processing
-    postProcessDeferredRender();
     }
 
-    if (pipeBits.test(PipeBit::e::Forward)) {
-    beginRenderForward();
-    {
-    toDraw->drawForward(rp);
-
-    if (pipeBits.test(PipeBit::e::Debug)) {
-    toDraw->drawDebug(rp);
-    }
-    if (pipeBits.test(PipeBit::e::NonDepth)) {
-    //UI
-    toDraw->drawNonDepth(rp);
-    }
-    }
-    endRenderForward();
-    }
-    */
+    //2. Forward Rendering
     if (pipeBits.test(PipeBit::e::Forward)) {
       beginRenderForward();
 
       toDraw->drawForward(rp);
 
+      //2.1 - Debug
       if (pipeBits.test(PipeBit::e::Debug)) {
-        toDraw->drawDebug(rp);
+        toDraw->drawForwardDebug(rp);
       }
 
-      //DOF
-      postProcessDOF(lightman, cam);
+      //2.2 - DOF
+      if (pipeBits.test(PipeBit::e::DepthOfField)) {
+        postProcessDOF(lightman, cam);
+      }
 
       //Rebind Forward FBO
       beginRenderForward();
 
-      //UI
+      //3. Orthographic, Behind the UI 
       if (pipeBits.test(PipeBit::e::NonDepth)) {
         toDraw->drawNonDepth(rp);
       }
+
+      //4. The UI
+      if (pipeBits.test(PipeBit::e::UI_Overlay)) {
+        toDraw->drawUI(rp);
+      }
+
 
       endRenderForward();
     }

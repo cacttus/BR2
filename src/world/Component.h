@@ -17,8 +17,11 @@ namespace BR2 {
 */
 class Component : public VirtualMemoryShared<Component> {
 public:
-  Component(std::shared_ptr<SceneNode> ob);
+  Component();
   virtual ~Component() override;
+  
+  virtual void afterAdded() = 0;
+
   void setNode(std::shared_ptr<SceneNode> ob) { _pWorldObject = ob;  }
 
   template < class Tx = SceneNode >

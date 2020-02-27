@@ -10,7 +10,6 @@
 #include "../base/InputManager.h"
 #include "../base/AppBase.h"
 #include "../gfx/LightManager.h"
-#include "../gfx/ShaderManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/RenderViewport.h"
@@ -49,7 +48,7 @@ Scene::~Scene() {
 void Scene::init() {
   BRLogInfo("Making PhysicsWorld");
   _pPhysicsWorld = PhysicsWorld::create(getThis<Scene>(),
-    BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0,1,0)), 
+    BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
     BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
     BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
     BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
@@ -135,21 +134,22 @@ void Scene::createFlyingCamera() {
 
 #ifdef NOSCRIPT
   BRLogInfo("Creating Fly Camera.");
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(_pGraphicsWindow->getViewport());
-  std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>(_pGraphicsWindow->getViewport(), getThis<Scene>());
+  std::shared_ptr<CameraNode> cn = CameraNode::create(_pGraphicsWindow->getViewport());
+  std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
   cn->addComponent(css);
+
   setActiveCamera(cn);
 
- // attachChild(cn);
-  // cn->init();
+  // attachChild(cn);
+   // cn->init();
 
-  //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
-  //updateCameraPosition();
-  //_vMoveVel.construct(0, 0, 0);
-  //_pCamera->setPos(vec3(30, 30, 30));
-  //_pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-  //_vCamNormal = _pCamera->getViewNormal();
-  //_vCamPos = _pCamera->getPos();
+   //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+   //updateCameraPosition();
+   //_vMoveVel.construct(0, 0, 0);
+   //_pCamera->setPos(vec3(30, 30, 30));
+   //_pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
+   //_vCamNormal = _pCamera->getViewNormal();
+   //_vCamPos = _pCamera->getPos();
 #else
   //Sort of also a scripting test.
   std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
@@ -317,33 +317,21 @@ void Scene::drawDeferred(RenderParams& rp) {
 
 
 void Scene::drawForward(RenderParams& rp) {
-  //TESTING:
-  //TESTING:
-  //TESTING:
-  //TESTING:
-  //TESTING:
-  //TESTING:
-  //TESTING:
-  static std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
-  static std::shared_ptr<Texture2DSpec> _pTex = nullptr;
-
-  //if (_pQuadMeshBackground == nullptr) {
-  //  _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-  //  _pTex = Gu::getTexCache()->getOrLoad(Gu::getApp()->makeAssetPath("tex", "test_tex3.png"));
-  //}
-
   //Meshes
   for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
     std::shared_ptr<SceneNode> pm = p.second;
     pm->drawForward(rp);
   }
 
-  RenderUtils::drawAxisShader(getActiveCamera());
+  drawBackgroundImage();
 
+  RenderUtils::drawAxisShader(getActiveCamera());
+}
+void Scene::drawBackgroundImage() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+    _pTex = Gu::getTexCache()->getOrLoad(Gu::getApp()->makeAssetPath("tex", "test_tex3.png"));
   }
   std::shared_ptr<CameraNode> bc = getActiveCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
@@ -356,8 +344,6 @@ void Scene::drawForward(RenderParams& rp) {
     Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
   }
   Gu::getShaderMaker()->getImageShader_F()->endRaster();
-
-
 }
 void Scene::drawShadow(RenderParams& rp) {
 }
@@ -390,7 +376,6 @@ void Scene::drawTransparent(RenderParams& rp) {
   Perf::popPerf();
 }
 void Scene::drawUI(RenderParams& rp) {
-  BRThrowNotImplementedException();
   _pUiScreen->update(Gu::getInputManager());
   _pUiScreen->drawForward();
 }
@@ -415,29 +400,35 @@ void Scene::drawDebugText() {
   int dy = 16;//Also the font size
   int cy = 0;
 
-  //  _pAppUi->clearDebugText();
-  //  if (_bShowDebugText) {
-  //    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-  //
-  //    //////////////////////////////////////////////////////////////////////////
-  //#define DBGL(...) _pAppUi->dbgLine(StringUtil::format(__VA_ARGS__))
-  ////////////////////////////////////////////////////////////////////////////
-  //    //DBGL("%.2f", Gu::getFpsMeter()->getFps());
-  //
-  //    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-  //    DBGL("Global");
-  //    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-  //    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-  //    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-  //    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-  //    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-  //    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-  //    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-  //
-  //    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
-  //
-  //  }
-  //  _pAppUi->endDebugText();
+  if (_pDebugLabel != nullptr) {
+    _pDebugLabel->setText("Debug\n");
+  }
+  if (_bShowDebugText) {
+    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+
+#define DBGL(...) if (_pDebugLabel != nullptr) { \
+      std::string dtxt = _pDebugLabel->getText(); \
+      dtxt += (__VA_ARGS__);\
+      dtxt += "\r\n"; \
+      _pDebugLabel->setText(dtxt); \
+      }
+
+      //DBGL("%.2f", Gu::getFpsMeter()->getFps());
+
+      //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
+    DBGL("Global");
+    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
+    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
+    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
+    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
+    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
+    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
+
+    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+
+  }
+
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pUiScreen->screenChanged(w, h);

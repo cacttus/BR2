@@ -18,9 +18,10 @@ namespace BR2 {
 */
 class FlyingCameraControls : public CSharpScript {
 public:
-  FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene);
+  FlyingCameraControls();
   virtual ~FlyingCameraControls() override;
 
+  virtual void afterAdded() override;
   virtual void start() override;
   virtual void update(float delta) override;
 
@@ -30,11 +31,9 @@ public:
   //void setActive();
 
   void setPosAndLookAt(vec3&& pos, vec3&& lookat);
-  std::shared_ptr<CameraNode> getCam() { return _pCamera; }
 
 private:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
-  std::shared_ptr<CameraNode> _pCamera = nullptr;
   vec2 _vMousePress;
   vec3 _vCamPos;
   vec3 _vMoveVel;

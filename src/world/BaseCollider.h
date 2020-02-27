@@ -18,7 +18,7 @@ namespace BR2 {
 */
 class BaseCollider : public Component {
 public:
-  BaseCollider(std::shared_ptr<SceneNode> pnode);
+  BaseCollider();
   virtual ~BaseCollider();
 
   //virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;

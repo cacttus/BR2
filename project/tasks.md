@@ -9,6 +9,11 @@ move
 	graphicswindow
 	glcontext
 	to /gfx
+	
+Update FlyingCameraControls so that it runs as a script.
+	Make Cameras work with the Scene() and get their update() methods called
+	This would make the flying controls run as a script IN the node as a component instead of AROUND
+	*Currently FlyingCameraControls run on top of the camera 
 
 - [ ] Remove AppMain, and AppBase
 	- [ ] Merge Appbase & Scene

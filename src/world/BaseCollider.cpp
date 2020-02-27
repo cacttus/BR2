@@ -9,14 +9,14 @@
 #include "../model/SceneNode.h" 
 
 namespace BR2 {
-BaseCollider::BaseCollider(std::shared_ptr<SceneNode> pnode): Component(pnode) {
+BaseCollider::BaseCollider() {
   _pSpeedbox = new Box3f();
   _pBoundBox = new Box3f();
   _pManifold = new GridManifold();
   _vHistoryPos.push_back(vec3(0, 0, 0));
   _vHistoryVel.push_back(vec3(0, 0, 0));
   //  _vTempAcc = 0.0f;S
-  _vTempPos = pnode->getPos();
+  _vTempPos = vec3(0, 0, 0);// pnode->getPos();
   _vTempVel = 0.0f;
   //calcBoundBox();//don't call this here, tTHIIS is null
 }

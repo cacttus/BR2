@@ -11,43 +11,60 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-FlyingCameraControls::FlyingCameraControls(std::shared_ptr<RenderViewport> pv, std::shared_ptr<Scene> pscene) : CSharpScript(nullptr), _pViewport(pv) {
+FlyingCameraControls::FlyingCameraControls() {
 }
 FlyingCameraControls::~FlyingCameraControls() {
 }
+void FlyingCameraControls::afterAdded() {
+  start();
+}
+void FlyingCameraControls::start() {
 
-void FlyingCameraControls::start(){
-
-  BRLogInfo("Creating Fly Camera.");
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
-  // cam = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
-  cam->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
-  updateCameraPosition();
-  _vMoveVel.construct(0, 0, 0);
-  cam->setPos(vec3(30, 30, 30));
-  
-  cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-  _vCamNormal = cam->getViewNormal();
-  _vCamPos = cam->getPos();
+  if (cam == nullptr) {
+    BRLogError("Script could not start, object node was not set.");
+    Gu::debugBreak();
+    return;
+  }
+    // cam = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
+    cam->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+    updateCameraPosition();
+    _vMoveVel.construct(0, 0, 0);
+    cam->setPos(vec3(30, 30, 30));
+
+    cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
+    _vCamNormal = cam->getViewNormal();
+    _vCamPos = cam->getPos();
+
 }
 void FlyingCameraControls::update(float delta) {
 }
 
 void FlyingCameraControls::updateCameraPosition() {
-  if (_vCamNormal.squaredLength() == 0.0f) {
-    //We have an error wit the camera normal because we're using the same normal from the
-    //camera to do calculations.  This is a HACK:
-    _vCamNormal.construct(1.0f, 0, 0);
-    Gu::debugBreak();
+  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
+  if (!cam) {
+    return;
   }
-  vec3 vLookat = _vCamPos + _vCamNormal;
-  _pCamera->setPos(std::move(_vCamPos));
-  _pCamera->setLookAt(std::move(vLookat));
+    if (_vCamNormal.squaredLength() == 0.0f) {
+      //We have an error wit the camera normal because we're using the same normal from the
+      //camera to do calculations.  This is a HACK:
+      _vCamNormal.construct(1.0f, 0, 0);
+      Gu::debugBreak();
+    }
+    vec3 vLookat = _vCamPos + _vCamNormal;
+    cam->setPos(std::move(_vCamPos));
+    cam->setLookAt(std::move(vLookat));
 }
 void FlyingCameraControls::moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta) {
+  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
+  if (!cam) {
+    return;
+  }
+
   //Damp Slows us a bit when we zoom out.
  // float damp = fabsf(_fCamDist)*0.001f;
   float strafeAmt = 1.05; //fabsf(_fCamDist) / (CongaUtils::getNodeWidth() + damp) * factor;
+
 
   if (pInput->shiftHeld()) {
     strafeAmt = 2.1f;
@@ -57,16 +74,16 @@ void FlyingCameraControls::moveCameraWSAD(std::shared_ptr<InputManager> pInput, 
   vec3 vel(0, 0, 0);
 
   if (pInput->keyPressOrDown(SDL_SCANCODE_W)) {
-    vel += _pCamera->getViewNormal() * strafeAmt;
+    vel += cam->getViewNormal() * strafeAmt;
   }
   if (pInput->keyPressOrDown(SDL_SCANCODE_S)) {
-    vel += _pCamera->getViewNormal() * -strafeAmt;
+    vel += cam->getViewNormal() * -strafeAmt;
   }
   if (pInput->keyPressOrDown(SDL_SCANCODE_A)) {
-    vel += _pCamera->getRightNormal() * -strafeAmt;
+    vel += cam->getRightNormal() * -strafeAmt;
   }
   if (pInput->keyPressOrDown(SDL_SCANCODE_D)) {
-    vel += _pCamera->getRightNormal() * strafeAmt;
+    vel += cam->getRightNormal() * strafeAmt;
   }
   _vMoveVel += vel;
   updateCameraPosition();
@@ -74,6 +91,12 @@ void FlyingCameraControls::moveCameraWSAD(std::shared_ptr<InputManager> pInput, 
 void FlyingCameraControls::userZoom(float amt) {
 }
 void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt) {
+  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
+  if (!cam) {
+    return;
+  }
+
+
   //Capture & u8pdate input
   ButtonState::e eLmb = pInput->getLmbState();
   vec2 vLast = pInput->getLastMousePos();
@@ -82,7 +105,7 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
   updateRotate(pInput);
 
   //set cam pos
-  //vec3 pos = _pCamera->getPos();
+  //vec3 pos = cam->getPos();
   _vCamPos += _vMoveVel;
   updateCameraPosition();
 
@@ -95,9 +118,14 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
   _vMoveVel = v_n * v_new_len;
 
   RenderParams rp;
-  rp.setCamera(_pCamera);
+  rp.setCamera(cam);
+
+
   //Finalluy update camera
-  _pCamera->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
+
+  //**TODO: this should likely be done on the scene automatically.
+  //This would run as a CSHarpScript (in the future) and get its update() method called.
+  cam->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 void FlyingCameraControls::updateRotate(std::shared_ptr<InputManager> pInput) {
   vec2 vMouse = pInput->getMousePos();
@@ -138,6 +166,11 @@ void FlyingCameraControls::updateRotate(std::shared_ptr<InputManager> pInput) {
   }
 }
 void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
+  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
+  if (!cam) {
+    return;
+  }
+
   // mat4 rot = mat4::getRotationRad(dRot, vec3(0, 1, 0));
   vec3 camPos = getNode()->getScene()->getActiveCamera()->getPos();
 
@@ -150,8 +183,8 @@ void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
    //        1.0f);
    //vec4 res = rot * mul;
 
-  vec3 rt = _pCamera->getRightNormal();
-  vec3 up = _pCamera->getUpNormal();
+  vec3 rt = cam->getRightNormal();
+  vec3 up = cam->getUpNormal();
 
   vec3 vNewCamNormal = (_vCamNormal + rt * rotX + up * rotY).normalize();
 

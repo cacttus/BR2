@@ -10,7 +10,6 @@
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
 #include "../base/GLContext.h"
-#include "../math/Random.h"
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderPipe.h"
 
@@ -45,8 +44,6 @@ void GraphicsApi::updateLoop() {
       for (std::shared_ptr<GraphicsContext> ct : _contexts) {
         std::shared_ptr<GraphicsWindow> w = ct->getGraphicsWindow();
         w->step();
-
-        w->getRenderPipe()->setClear(std::move(vec4(1, Random::frand01(), 0, 1)));
       }
 
       //Update all button states.

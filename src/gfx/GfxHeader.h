@@ -44,7 +44,6 @@ typedef enum {
   , Pick
 } RenderMode;
 
-typedef std::bitset<8> PipeBits;
 
 
 namespace ShaderClass { typedef enum { Shadow, Diffuse } e; }
@@ -69,16 +68,19 @@ namespace ProjectionMode { typedef enum { Perspective, Orthographic }e; }
 
 namespace TexWrap { typedef enum { Clamp, Repeat } e; }
 namespace TexFilter { typedef enum { Linear, Nearest } e; }
+
+typedef std::bitset<16> PipeBits;
 namespace PipeBit {
 typedef enum {
-  Deferred,
-  Shadow,
-  Forward,
-  Debug,
-  NonDepth,
-  Transparent,
-  BlitFinal,
-  Full,
+  Deferred,     // 1 Basic 3D lighted rendering
+  Shadow,       // 2 Shadow step
+  Forward,      // 3 Forward Rendering
+  Debug,        // 4 Debug rendering
+  NonDepth,     // 5 2D rendering, behind the UI
+  UI_Overlay,   // 6 The UI
+  Transparent,  // 7 Transparency Pass
+  BlitFinal,    // 8 Use this to blit to the screen, otherwise, the rendering stays offscreen.
+  DepthOfField, // 9 Depth of Field.
   MaxPipes
 } e;
 }
@@ -416,7 +418,6 @@ public:
   virtual void drawNonDepth(RenderParams& rp) = 0; // draw the non-depth test items (last)
   virtual void drawTransparent(RenderParams& rp) = 0; //These come after the way after, the very end
   virtual void drawUI(RenderParams& rp) = 0;
-  virtual void drawDebug(RenderParams& rp) = 0;
 };
 
 class CullParams : public VirtualMemoryShared <CullParams> {

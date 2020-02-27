@@ -6,9 +6,11 @@
 #include "../base/GLContext.h"
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
+#include "../base/GraphicsWindow.h"  
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderViewport.h"  
+#include "../gfx/CameraNode.h"  
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
@@ -26,6 +28,7 @@
 #include "../model/VaoDataGeneric.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
+#include "../world/Scene.h"
 #include <future>
 
 namespace BR2 {
@@ -282,7 +285,7 @@ void UiElement::computepad_unit(float& pt, float dim, uDim& ud) {
     pt = 0;
   }
 }
-void UiElement::performLayout(bool bForce) {
+void UiElement::performLayout(std::shared_ptr<UiScreen> s, bool bForce) {
   //thinking of ditching generic layout and going for a manual approach
   //each element has its own performlayout, and we just do it based on that.
   //remove display(), position() 
@@ -319,27 +322,27 @@ void UiElement::performLayout(bool bForce) {
 
   //3/4 - adding "auto" autosize
   positionChildren(bForce);
-  performLayoutChildren(bForce);
+  performLayoutChildren(s, bForce);
 
   //finalize Child Quad
   for (auto p : getChildren()) {
     std::shared_ptr<UiElement> ele = p.second;
     if (ele->getLayoutVisible()) {
-      layoutEleQuad(ele);
+      layoutEleQuad(s, ele);
     }
   }
 
   computeContentQuad();
 }
-void UiElement::performLayoutChildren(bool bForce) {
+void UiElement::performLayoutChildren(std::shared_ptr<UiScreen> s, bool bForce) {
 
   for (auto p : getChildren()) {
     std::shared_ptr<UiElement> ele = p.second;
 
     if (ele->getLayoutVisible()) {
 
-      ele->performLayout(bForce);
-      layoutEleQuad(ele);
+      ele->performLayout(s, bForce);
+      layoutEleQuad(s, ele);
     }
   }
 
@@ -758,7 +761,7 @@ void UiElement::validateQuad() {
     _bottom = _top;
   }
 }
-void UiElement::layoutEleQuad(std::shared_ptr<UiElement> ele) {
+void UiElement::layoutEleQuad(std::shared_ptr<UiScreen> s, std::shared_ptr<UiElement> ele) {
   float fr, fl, ft, fb;
   fl = getComputedQuad().left() + ele->left().px();
   ft = getComputedQuad().top() + ele->top().px();
@@ -770,9 +773,9 @@ void UiElement::layoutEleQuad(std::shared_ptr<UiElement> ele) {
     nnn++;
   }
 
-  ele->computeQuads(fr, fl, ft, fb);
+  ele->computeQuads(s, fr, fl, ft, fb);
 }
-void UiElement::computeQuads(float final_r, float final_l, float final_t, float final_b) {
+void UiElement::computeQuads(std::shared_ptr<UiScreen> pscreen, float final_r, float final_l, float final_t, float final_b) {
   //Design space quad
   _b2ComputedQuad.left() = final_l;
   _b2ComputedQuad.top() = final_t;
@@ -801,7 +804,7 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Raster Quad (for drawing)
   _b2RasterQuad = _b2LayoutQuad;
-  Gu::guiQuad2d(_b2RasterQuad, getWindowCamera()->getViewport());
+  Gu::guiQuad2d(_b2RasterQuad, pscreen->getWindow()->getScene()->getActiveCamera()->getViewport());
 }
 
 void UiElement::applyMinMax(float& wpx, float& hpx) {
@@ -1478,8 +1481,8 @@ void UiImage::setWrapMode(TexWrap::e u, TexWrap::e v) {
   }
 }
 
-void UiImage::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiImage::performLayout(std::shared_ptr<UiScreen> s, bool bForce) {
+  UiElement::performLayout(s, bForce);
 }
 
 void UiImage::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
@@ -1499,9 +1502,9 @@ std::shared_ptr<UiGlyph> UiGlyph::create(uint32_t iChar) {
   //g->setName("G");//**Save space?
   return g;
 }
-void UiGlyph::performLayout(bool bForce) {
+void UiGlyph::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
   //Skips UiImage PerformLayout
-  UiElement::performLayout(bForce);
+  UiElement::performLayout(pscreen,bForce);
 }
 void UiGlyph::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
   getQuadVerts(verts, inds, b2ClipRect);
@@ -1527,7 +1530,7 @@ void UiLabel::setText(std::string s) {
   _strText = s;
 }
 
-void UiLabel::performLayout(bool bForce) {
+void UiLabel::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
 
   if (_pFontInfo != nullptr) {
     //glyph creation is in performlayout because the HEIGHT of the label needs to be
@@ -1549,7 +1552,7 @@ void UiLabel::performLayout(bool bForce) {
   }
   //Use the system to flow the layout.
   t_timeval us0 = Gu::getMicroSeconds();
-  UiElement::performLayout(bForce);
+  UiElement::performLayout(pscreen,bForce);
   t_timeval us1 = Gu::getMicroSeconds() - us0;
   int nn = 0;
   nn++;
@@ -1820,8 +1823,8 @@ void UiGridRow::resizeCols() {
     c->height() = "100%";
   }
 }
-void UiGridRow::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiGridRow::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiElement::performLayout(pscreen,bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -1840,8 +1843,8 @@ std::shared_ptr<UiElement> UiGrid::getCell(size_t iRow, size_t iCol) {
   }
   return  _rows[iRow]->getCol(iCol);
 }
-void UiGrid::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiGrid::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiElement::performLayout(pscreen,bForce);
 }
 std::shared_ptr<UiGridRow> UiGrid::addRow(int nr, int nc, bool bAutoSizeRows, uint32_t iSort) {
   std::vector<std::shared_ptr<UiGridRow>> added;
@@ -2296,8 +2299,8 @@ void UiScrubGenThumb::setBarSizePct(float pos01) {
   }
   _fBarSizePct = pos01;
 }
-void UiScrubGenThumb::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiScrubGenThumb::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiElement::performLayout(pscreen,bForce);
 }
 float UiScrubGenThumb::getScrollPct() {
   return _fScrollPct;
@@ -2385,8 +2388,8 @@ void UiScrollbarThumb::init() {
 void UiScrollbarThumb::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGenThumb::update(pFingers);
 }
-void UiScrollbarThumb::performLayout(bool bForce) {
-  UiScrubGenThumb::performLayout(bForce);
+void UiScrollbarThumb::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiScrubGenThumb::performLayout(pscreen,bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -2429,8 +2432,8 @@ void UiScrollbar::init() {
 void UiScrollbar::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGen::update(pFingers);
 }
-void UiScrollbar::performLayout(bool bForce) {
-  UiScrubGen::performLayout(bForce);
+void UiScrollbar::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiScrubGen::performLayout(pscreen,bForce);
 }
 std::shared_ptr<UiScrubGenThumb> UiScrollbar::createThumb() {
   std::shared_ptr<UiScrollbarThumb> thumb = UiScrollbarThumb::create(_pSkin);
@@ -2490,8 +2493,8 @@ void UiCheckbox::init() {
 void UiCheckbox::update(std::shared_ptr<InputManager> pFingers) {
   UiElement::update(pFingers);
 }
-void UiCheckbox::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiCheckbox::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiElement::performLayout(pscreen,bForce);
 }
 void UiCheckbox::setChecked(bool b) {
   _bChecked = b;
@@ -2542,8 +2545,8 @@ void UiSliderThumb::update(std::shared_ptr<InputManager> pFingers) {
 
   UiScrubGenThumb::update(pFingers);
 }
-void UiSliderThumb::performLayout(bool bForce) {
-  UiScrubGenThumb::performLayout(bForce);
+void UiSliderThumb::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiScrubGenThumb::performLayout(pscreen,bForce);
 }
 #pragma endregion 
 //////////////////////////////////////////////////////////////////////////
@@ -2595,7 +2598,7 @@ void UiSlider::update(std::shared_ptr<InputManager> pFingers) {
   }
   else { throw 0; }
 }
-void UiSlider::performLayout(bool bForce) {
+void UiSlider::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
 
   // a little padding for the left/right of the track makes it look better
   if (_eOrientation == Orientation::e::Horizontal) {
@@ -2615,7 +2618,7 @@ void UiSlider::performLayout(bool bForce) {
     _pImage->padBottom() = uDim(imagePad, UiDimUnit::e::Pixel);
   }
 
-  UiScrubGen::performLayout(bForce);
+  UiScrubGen::performLayout(pscreen,bForce);
 
 
 }
@@ -2760,8 +2763,8 @@ void UiDropdown::addItem(std::shared_ptr<UiElement> item, bool bFitHeight) {
     setSelectedItem(item);
   }
 }
-void  UiDropdown::performLayout(bool bForce) {
-  Ui9Grid::performLayout(bForce);
+void  UiDropdown::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  Ui9Grid::performLayout(pscreen,bForce);
 
 }
 #pragma endregion
@@ -3070,8 +3073,8 @@ bool UiWindow::pick(std::shared_ptr<InputManager> fingers) {
 
   return b;
 }
-void UiWindow::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiWindow::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiElement::performLayout(pscreen,bForce);
 }
 void UiWindow::enableVScrollbar() {
   _pContainer->enableScrollbar(_pWindowSkin->_pVScroll);
@@ -3110,8 +3113,8 @@ void UiToolbar::init() {
 void UiToolbar::update(std::shared_ptr<InputManager> pFingers) {
   UiWindow::update(pFingers);
 }
-void UiToolbar::performLayout(bool bForce) {
-  UiElement::performLayout(bForce);
+void UiToolbar::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiElement::performLayout(pscreen,bForce);
   for (auto p : getChildren()) {
     std::shared_ptr<UiElement> e = p.second;
   }
@@ -3133,8 +3136,8 @@ std::shared_ptr<UiCursor> UiCursor::create(std::shared_ptr<UiCursorSkin> ss) {
 void UiCursor::init() {
   UiImage::init();
 }
-void UiCursor::performLayout(bool bForce) {
-  UiImage::performLayout(bForce);
+void UiCursor::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
+  UiImage::performLayout(pscreen,bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -3222,16 +3225,16 @@ void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
       //     if (std::shared_ptr<Gui2d> gui = gw.lock()) {
   if (getLayoutChanged()) {
     //Gui2d doesn't have a parent, so we have to compute the quads to create a valid clip region.
-    computeQuads(right().px(), left().px(), top().px(), bottom().px());
+    computeQuads(getThis<UiScreen>(), right().px(), left().px(), top().px(), bottom().px());
 
-    performLayout(_pint->_bDebugForceLayoutChange);
+    performLayout(getThis<UiScreen>(), _pint->_bDebugForceLayoutChange);
     _pint->_bDebugForceLayoutChange = false;
   }
 
   //Cursor
   computePositionalElement(_pint->_pCursor);
-  UiElement::layoutEleQuad(_pint->_pCursor);
-  _pint->_pCursor->performLayout(false);
+  UiElement::layoutEleQuad(getThis<UiScreen>(), _pint->_pCursor);
+  _pint->_pCursor->performLayout(getThis<UiScreen>(), false);
   //        }
    //       return true;
    //   });
@@ -3299,7 +3302,7 @@ void UiScreen::debugForceLayoutChanged() {
   _pint->_bDebugForceLayoutChange = true;
 }
 void UiScreen::performForcedLayout() {
-  performLayout(true);
+  performLayout(getThis<UiScreen>(),true);
 }
 void UiScreen::error(std::string errMsg) {
   BRLogError(errMsg);

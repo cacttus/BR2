@@ -3,9 +3,10 @@
 
 
 namespace BR2 {
-Component::Component(std::shared_ptr<SceneNode> ob) : _pWorldObject(ob) {
+Component::Component() {
 }
 Component::~Component() {
 }
+
 
 }//ns BR2

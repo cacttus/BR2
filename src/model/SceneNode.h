@@ -90,10 +90,9 @@ public:
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp) override;
   virtual void drawShadow(RenderParams& rp) override;
-  virtual void drawDebug(RenderParams& rp) override;
+  virtual void drawForwardDebug(RenderParams& rp) override;
   virtual void drawNonDepth(RenderParams& rp) override;
   virtual void drawTransparent(RenderParams& rp) override;
-  virtual void drawForwardDebug(RenderParams& rp) override {}
   virtual void drawUI(RenderParams& rp) override {}
   
   void addComponent(std::shared_ptr<Component> comp);

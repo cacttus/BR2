@@ -220,7 +220,7 @@ void AppMain::drawForward(RenderParams& rp) {
 }
 void AppMain::drawShadow(RenderParams& rp) {
 }
-void AppMain::drawDebug(RenderParams& rp) {
+void AppMain::drawForwardDebug(RenderParams& rp) {
 }
 void AppMain::drawNonDepth(RenderParams& rp) {
   draw2d();
@@ -274,9 +274,7 @@ void AppMain::drawDebugText() {
   }
   _pAppUi->endDebugText();
 }
-void AppMain::drawForwardDebug(RenderParams& rp){
 
-}
 void AppMain::drawUI(RenderParams& rp) {
 
 }

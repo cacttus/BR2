@@ -17,7 +17,7 @@ namespace BR2 {
 */
 class CSharpScript : public Component {
 public:
-  CSharpScript(std::shared_ptr<SceneNode> myObj);
+  CSharpScript();
   virtual ~CSharpScript() override;
 
   virtual void start() = 0;

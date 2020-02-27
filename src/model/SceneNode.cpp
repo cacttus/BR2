@@ -99,7 +99,9 @@ Hash32 SceneNode::getSpecNameHashed() {
   }
 }
 void SceneNode::init() {
-  //Nodes now need to be initialized due to shared_ptr constructors not having this ptr
+  // ** WHY IS THIS HERE? -- READ BELOW ** 
+  // All nodes require separate initialization due to the fact that shared_ptr cannot pass its own reference in a constructor.
+  // Making this universal, we added this init() variable to prevent accidentally forgetting to call the node's init() method.
   if (_bInitialized == true) {
     BRLogWarnCycle(getSpecName() + "..Node already initializd..errors will result");
   }
@@ -430,11 +432,11 @@ void SceneNode::drawShadow(RenderParams& rp) {
     }
   }
 }
-void SceneNode::drawDebug(RenderParams& rp) {
+void SceneNode::drawForwardDebug(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
       std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
-      pc->drawDebug(rp);
+      pc->drawForwardDebug(rp);
     }
   }
 }
@@ -473,6 +475,9 @@ void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
 void SceneNode::addComponent(std::shared_ptr<Component> comp) {
   comp->setNode(getThis<SceneNode>());
   _vecComponents.push_back(comp); 
+
+  comp->afterAdded();
+  //this->afterAdded();
 }
 std::shared_ptr<Scene> SceneNode::getScene() {
   std::shared_ptr<Scene> x = findParent<Scene>();

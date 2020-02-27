@@ -73,7 +73,6 @@ private:
 
   std::shared_ptr<UiLabel> _pDebugLabel = nullptr;
   std::shared_ptr<LightManager> _pLightManager = nullptr;
-
   std::shared_ptr<ProjectFile> _pProjectFile = nullptr;
   std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
   std::shared_ptr<UiScreen> _pUiScreen = nullptr;
@@ -82,6 +81,10 @@ private:
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   //The default fly camera must always be available.
 //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
+
+  //Test data.
+  std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
+  std::shared_ptr<Texture2DSpec> _pTex = nullptr;
 
   void init();
   void createUi();
