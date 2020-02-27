@@ -1,23 +1,7 @@
 # Mine City Task Log
 
-## Engine Cleanup
-- [ ] move to /gfx 
-	- [ ] graphicswindow
-	- [ ] glcontext
-	
-- [ ] Update FlyingCameraControls so that it runs as a script.
-	- [ ] Make Cameras work with the Scene() and get their update() methods called
-	- [ ] This would make the flying controls run as a script IN the node as a component instead of AROUND
-		*Currently FlyingCameraControls run on top of the camera 
-
-- [ ] Remove AppMain, and AppBase
-	- [ ] Merge Appbase & Scene
-	- [ ] Remove AppBase
-	- [ ] Add ApplicationPackage back.
-	- [ ] Create new Scene() 
-	- [ ] Attach Scene to GraphicsWindow.
-
-## Scene -> PhysicsWorld integration
+## BR0 to BR2 Upgrade
+- [ ] Scene -> PhysicsWorld integration
 	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
 	- [x] Move all object creation to Scene
 	- [ ] Move ALL drawing to Scene
@@ -25,56 +9,33 @@
 		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
 	- [ ] Do the same with LightManager.
 
-## BR0 to BR2 Upgrade
-- [x] Remove /base/ - place in /base/
-	- [x] Compile, Run.
-- [x] Code Cleanup
-	- [x] Remove empty H/CPP files
-	- [x] Fix Comments 
-	- [x] Remove Name
-	- [x] Fix spacing
-	- [x] Organize public members first.
-	- [x] Compile, Run.
-- [x] Engine Rename - Rename engine to BR2
-	- [x] Rename "bro.." to "br.." in...
-		- [x] Exceptions
-		- [x] math
-	- [x] Compile, Run.
-- [x] File Additions, and Replacements (from broken version)	
-	- [x] Remove most of Globalincludes.
-		- [x] Add SDLIncludes
-	- [x] Compile, run.
-	- [x] Rename t_string to string_t and remove string_t
-	- [x] Replace OperatingSystem file
-	- [x] Replace BuildConfig
-	- [x] Rename Fingers -> InputManager
-	- [x] Rename Party -> ParticleManager
-	- [x] Compile, Run.
-- [ ] "App" Removal for Scene
-	- [x] Move /app into /base/
-	- [x] remove Gui2d
-	- [x] Add back UIScreen
-	- [x] Add Scene (from broken version)
-	- [ ] Add ApplicationPackage (from broken version), remove Package 
-	* For some reason our old files got mixed in with the new...ugh.
-	- [ ] Remove App, AppBase
-- [x] Engine Rename - Rename engine to BR2
-	- [x] Rename "bro.." to "br.." in...
-		- [x] Exceptions
-		- [x] math
-		- [x] Compile, Run.
-	- [x] Rename ObjectFile to ObjFile
-	- [x] Compile, Run.
-- [ ] Squashed viewport Bug
+- [ ] move to /gfx 
+	- [ ] graphicswindow
+	- [ ] glcontext
+	
+- [ ] Remove AppMain, and AppBase
+	- [ ] Merge Appbase & Scene
+	- [ ] Remove AppBase
+	- [ ] Add ApplicationPackage back.
+	- [ ] Create new Scene() 
+	- [ ] Attach Scene to GraphicsWindow.
+
+- [ ] **CRITICAL** Squashed viewport Bug
 	- [ ] Implement the updated viewport class from the engine.
 		- [ ] Make sure it has width/height defined.
 	- [ ] Update everywhere where viewport is referenced.
-	- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
+	- [ ] Fixed the squashed UI problems.
+		- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
 ## Bottle World
 - [ ] CSharp inline *minimal* scripts.
 	* This should fix the camera, so we can easily add the bottle topologizer.
 	- [ ] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
+	- [ ] Update FlyingCameraControls so that it runs as a script.
+		- [ ] Make Cameras work with the Scene() and get their update() methods called
+		- [ ] This would make the flying controls run as a script IN the node as a component instead of AROUND
+			*Currently FlyingCameraControls run on top of the camera 
+
 - [ ] Add Bottle World
 	- [ ] Add the foundation (globs, awareness)
 	- [ ] Test and render the Bottle Globs.
