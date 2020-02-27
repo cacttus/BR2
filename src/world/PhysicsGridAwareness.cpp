@@ -1,4 +1,5 @@
 #include "../base/Gu.h"
+#include "../base/Logger.h"
 #include "../gfx/CameraNode.h"
 #include "../base/GLContext.h"
 #include "../world/PhysicsGridAwareness.h"
@@ -8,7 +9,7 @@
 namespace BR2 {
 PhysicsGridAwareness::PhysicsGridAwareness(std::shared_ptr<PhysicsWorld> pw, MpFloat rxz, float incXZ, MpFloat ry, float incY) {
   _pPhysics = pw;
-  _vLastAwarenessPos = getAwarenessPos();
+  _vLastAwarenessPos = vec3(0, 0, 0);// getAwarenessPos();
   _mpXz = rxz;
   _mpY = ry;
   _incY = incY;
@@ -66,10 +67,14 @@ vec3 PhysicsGridAwareness::getAwarenessPos() {
   //This is a debatable position.  If we use the "raycast" version we end up
   //creating / deleting tons of cells. 
   std::shared_ptr<CameraNode> cam = NodeUtils::getActiveCamera(_pPhysics);
-  vec3 vp = cam->getPos();//getRaycastViewCenter(); //->getCamera()->getPos();//getProjectedViewCenter();
-                                                    // vp.y = 0;
-
-  return vp;
+  if (cam == nullptr) {
+    BRLogWarn("Awareness didn't have a camera (may not be a bug)");
+    return vec3(0, 0, 0);
+  }
+  else {
+    vec3 vp = cam->getPos();//getRaycastViewCenter(); //->getCamera()->getPos();//getProjectedViewCenter();
+    return vp;
+  }
 }
 
 

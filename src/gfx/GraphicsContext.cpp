@@ -40,13 +40,15 @@ std::shared_ptr<CameraNode> GraphicsContext::getActiveCamera() {
 }
 
 std::shared_ptr<GraphicsWindow> GraphicsContext::getGraphicsWindow() {
-  //Set this last, since this being null is our 'error code'
-  try {
-    _pWindow = std::make_shared<GraphicsWindow>(_pGraphicsApi, getThis<GLContext>(), _pSDLWindow);
-  }
-  catch (Exception * ex) {
-    _pWindow = nullptr;
-    BRLogError("Error creating graphics window from graphics context.");
+  if (_pWindow == nullptr) {
+    //We must lazy initialize window because we want to pass context to window, but need context first.
+    try {
+      _pWindow = std::make_shared<GraphicsWindow>(_pGraphicsApi, getThis<GLContext>(), _pSDLWindow);
+    }
+    catch (Exception * ex) {
+      _pWindow = nullptr;
+      BRLogError("Error creating graphics window from graphics context.");
+    }
   }
 
   return _pWindow;

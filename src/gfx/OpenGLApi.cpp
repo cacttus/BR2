@@ -16,6 +16,7 @@ void OpenGLApi::cleanup() {
 }
 
 std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title) {
+  std::shared_ptr<GraphicsWindow> pRet = nullptr;
   //Make SDL Window and Initialize Graphics Window
   SDL_Window* win = makeSDLWindow(title, SDL_WINDOW_OPENGL);
 
@@ -51,16 +52,17 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title) {
       SDLUtils::checkSDLErr();
 
       context = std::make_shared<GLContext>(getThis<GraphicsApi>(), profs[iProf], win);
-      //Graphics window's creation is our error code for context creation.
-      if (context->getGraphicsWindow()) {
-        SDL_GL_SetSwapInterval(profs[iProf]->_bVsync ? 1 : 0);  //Vsync is automatic on IOS
-        SDLUtils::checkSDLErr();
+      if (context != nullptr) {
+        pRet = context->getGraphicsWindow();
+        if (pRet != nullptr) {
+          SDL_GL_SetSwapInterval(profs[iProf]->_bVsync ? 1 : 0);  //Vsync is automatic on IOS
+          SDLUtils::checkSDLErr();
 
-        SDLUtils::checkSDLErr();
-        //Context created successfully
-        this->_mainContext = context;
-        _contexts.push_back(context);
-        break;
+          //Context created successfully
+          setMainContext(context);
+          getContexts().push_back(context);
+          break;
+        }
       }
     }
     catch (Exception * ex) {
@@ -68,10 +70,7 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title) {
     }
   }
 
-  if (context != nullptr) {
-    return context->getGraphicsWindow();
-  }
-  return nullptr;
+  return pRet;
 }
 void OpenGLApi::makeCurrent(SDL_Window* win) {
   SDL_GL_MakeCurrent(win, Gu::getGraphicsContext()->getSDLGLContext());

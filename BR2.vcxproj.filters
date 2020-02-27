@@ -22,6 +22,9 @@
     <Filter Include="ext\pugixml">
       <UniqueIdentifier>{cb0c6a5b-fd14-48ed-af8d-ae4b27c18e83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="bottle">
+      <UniqueIdentifier>{07716b7b-0f40-472a-82b2-e46f1a6e7208}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\base\AppMain.cpp">
@@ -473,6 +476,12 @@
     </ClCompile>
     <ClCompile Include="src\world\NodeUtils.cpp">
       <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\BottleUtils.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\SpriteBucket.cpp">
+      <Filter>bottle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1054,6 +1063,21 @@
     </ClInclude>
     <ClInclude Include="src\world\NodeUtils.h">
       <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\BottleUtils.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\BottleHeader.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\SpriteBucket.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\ObFile.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\Tile25Spec.h">
+      <Filter>bottle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

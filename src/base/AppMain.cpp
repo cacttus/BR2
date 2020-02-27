@@ -41,32 +41,32 @@
 namespace BR2 {
 AppUi::AppUi() {
 
-  string_t DEBUG_FONT = "Lato-Regular.ttf";
+  //string_t DEBUG_FONT = "Lato-Regular.ttf";
 
-  //skins first
-  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
-  std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
-  pCursorSkin->_pTex = UiTex::create(Gu::getGui(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+  ////skins first
+  //std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(Gu::getGui(), Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+  //std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+  //pCursorSkin->_pTex = UiTex::create(Gu::getGui(), Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
 
-  Gu::getGui()->getTex()->loadImages();
+  //Gu::getGui()->getTex()->loadImages();
 
-  //debug label
-  _pDebugLabel = UiLabel::create("", debugTextSkin);
-  _pDebugLabel->position() = UiPositionMode::e::Relative;
-  _pDebugLabel->left() = "20px";
-  _pDebugLabel->top() = "100px";
-  _pDebugLabel->width() = "200px";
-  _pDebugLabel->height() = "1800px";
-  _pDebugLabel->enableWordWrap();
-  Gu::getGui()->addChild(_pDebugLabel);
+  ////debug label
+  //_pDebugLabel = UiLabel::create("", debugTextSkin);
+  //_pDebugLabel->position() = UiPositionMode::e::Relative;
+  //_pDebugLabel->left() = "20px";
+  //_pDebugLabel->top() = "100px";
+  //_pDebugLabel->width() = "200px";
+  //_pDebugLabel->height() = "1800px";
+  //_pDebugLabel->enableWordWrap();
+  //Gu::getGui()->addChild(_pDebugLabel);
 
-  //Cursor 
-  std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
-  cs->width() = "32px";
-  cs->height() = "auto"; // Auto?
-  Gu::getGui()->setCursor(cs);
+  ////Cursor 
+  //std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
+  //cs->width() = "32px";
+  //cs->height() = "auto"; // Auto?
+  //Gu::getGui()->setCursor(cs);
 
-  Gu::getGui()->getTex()->compile();
+  //Gu::getGui()->getTex()->compile();
 
 }
 void AppUi::clearDebugText() {
@@ -230,9 +230,9 @@ void AppMain::drawTransparent(RenderParams& rp) {
 void AppMain::draw2d() {
   drawDebugText();
 
-  //  Gu::getGui()->debugForceLayoutChanged();
-  Gu::getGui()->update(Gu::getInputManager());
-  Gu::getGui()->drawForward();
+  ////  Gu::getGui()->debugForceLayoutChanged();
+  //Gu::getGui()->update(Gu::getInputManager());
+  //Gu::getGui()->drawForward();
 }
 void AppMain::setDebugMode() {
   //set some debug vars to make ikte easier

@@ -45,8 +45,8 @@ std::string Orientation::toString(Orientation::e eOr) {
 }
 //////////////////////////////////////////////////////////////////////////
 void UiDragInfo::update(std::shared_ptr<InputManager> pFingers) {
-  float mw = 1.0f / Gui2d::getDesignMultiplierW();
-  float mh = 1.0f / Gui2d::getDesignMultiplierH();
+  float mw = 1.0f / UiScreen::getDesignMultiplierW();
+  float mh = 1.0f / UiScreen::getDesignMultiplierH();
 
   if (_bDragStart) {
     if (pFingers->getLmbState() == ButtonState::e::Up) {
@@ -126,7 +126,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
   //    return DimUnit::e::Initial;
   //}
   else {
-    Gui2d::error(Stz "Invalid layout unit " + str);
+    UiScreen::error(Stz "Invalid layout unit " + str);
     bSuccess = false;
     return UiDimUnit::e::Pixel;
   }
@@ -134,7 +134,7 @@ UiDimUnit::e UiParser::parseLayoutUnit(std::string str, bool& bSuccess) {
 //////////////////////////////////////////////////////////////////////////
 uDim::uDim(char* str) : uDim(std::string(str)) {
   if (str == 0) {
-    Gui2d::error("Passed 0 in for a char* string to uDim");
+    UiScreen::error("Passed 0 in for a char* string to uDim");
   }
 }
 uDim::uDim(std::string str) {
@@ -188,13 +188,13 @@ void uDim::setSize(std::string str) {
   float fs;
   if (UiParser::parseSize(str, fs, eunit)) {
     if (eunit == UiDimUnit::e::Percent && ((fs < 0) || (fs > 100))) {
-      Gui2d::error(Stz "Dim %units were not within 0/100" + fs);
+      UiScreen::error(Stz "Dim %units were not within 0/100" + fs);
     }
     _units = fs;
     _eDimUnit = eunit;
   }
   else {
-    Gui2d::error("Failed to parse seize.");
+    UiScreen::error("Failed to parse seize.");
   }
 
   debugThunk();
@@ -213,7 +213,7 @@ uDim uDim::autoHeight(std::shared_ptr<UiTex> tex) {
     }
   }
   else {
-    Gui2d::error("Tried to auto-height a non-pixel udim");
+    UiScreen::error("Tried to auto-height a non-pixel udim");
   }
   return uDim(1.0f, UiDimUnit::e::Pixel);
 }
@@ -228,7 +228,7 @@ uDim uDim::autoWidth(std::shared_ptr<UiTex> tex) {
     }
   }
   else {
-    Gui2d::error("Tried to auto-height a non-pixel udim");
+    UiScreen::error("Tried to auto-height a non-pixel udim");
   }
   return uDim(1.0f, UiDimUnit::e::Pixel);
 }

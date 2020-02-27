@@ -8,7 +8,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-
+#include "../base/AppBase.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShaderManager.h"
 #include "../gfx/ShadowBox.h"
@@ -22,6 +22,8 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/FlyingCameraControls.h"
+#include "../gfx/ShaderMaker.h"
+#include "../gfx/ShaderBase.h"
 #include "../gfx/MegaTex.h"
 #include "../model/MeshUtils.h"
 #include "../model/Model.h"
@@ -29,27 +31,76 @@
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
+#include "../bottle/BottleUtils.h"
 
 
 namespace BR2 {
+std::shared_ptr<Scene> Scene::create() {
+  std::shared_ptr<Scene> s = std::make_shared<Scene>();
+  s->init();
+  return s;
+}
 Scene::Scene() : SceneNode(nullptr) {
-  BRThrowNotImplementedException();
-  //BRLogInfo("Creating Window UI");
-  //_pScreen = std::make_shared<UiScreen>(getThis<GraphicsWindow>());
-
-  BRLogInfo("Making PhysicsWorld");
-  _pPhysicsWorld = std::make_shared <PhysicsWorld>(getThis<Scene>());
-
-  BRLogInfo("Making LightManager");
-  _pLightManager = std::make_shared<LightManager>(getContext(), getThis<Scene>());
-
-  BRLogInfo("Making Flying Camera");
-  createFlyingCamera();
-  _pRenderBucket = std::make_shared<RenderBucket>();
 }
 Scene::~Scene() {
   //_pScreen = nullptr;
   _pLightManager = nullptr;
+}
+void Scene::init() {
+  BRLogInfo("Making PhysicsWorld");
+  _pPhysicsWorld = PhysicsWorld::create(getThis<Scene>(),
+    BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0,1,0)), 
+    BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
+    BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
+    BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
+
+  BRLogInfo("..LightManager");
+  _pLightManager = std::make_shared<LightManager>(getThis<Scene>());
+
+  BRLogInfo("..Render Bucket");
+  _pRenderBucket = std::make_shared<RenderBucket>();
+}
+void Scene::afterAttachedToWindow() {
+  //Lazy init, requires our window to be set before creating.
+  //**NOTE** we may not need this in the future if we're going turn flyihg camera to script.
+  //***POSSIBLE DISCARD***
+  BRLogInfo("Making Flying Camera");
+  createFlyingCamera();
+
+  BRLogInfo("Making UI");
+  createUi();
+}
+void Scene::createUi() {
+  string_t DEBUG_FONT = "Lato-Regular.ttf";
+
+  AssertOrThrow2(getWindow() != nullptr);
+
+  _pUiScreen = UiScreen::create(getWindow());
+
+  //skins first
+  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+  std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+  pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+
+  _pUiScreen->getTex()->loadImages();
+
+  //debug label
+  _pDebugLabel = UiLabel::create("", debugTextSkin);
+  _pDebugLabel->position() = UiPositionMode::e::Relative;
+  _pDebugLabel->left() = "20px";
+  _pDebugLabel->top() = "100px";
+  _pDebugLabel->width() = "200px";
+  _pDebugLabel->height() = "1800px";
+  _pDebugLabel->enableWordWrap();
+  _pUiScreen->addChild(_pDebugLabel);
+
+  //Cursor 
+  std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
+  cs->width() = "32px";
+  cs->height() = "auto"; // Auto?
+  _pUiScreen->setCursor(cs);
+
+  _pUiScreen->getTex()->compile();
 }
 void Scene::update(float delta) {
 
@@ -57,7 +108,16 @@ void Scene::update(float delta) {
 void Scene::idle(int64_t us) {
 }
 std::shared_ptr<GLContext> Scene::getContext() {
-  return getWindow()->getContext();
+  std::shared_ptr<GraphicsWindow> w = getWindow();
+  if (w) {
+    std::shared_ptr<GLContext> c = w->getContext();
+    return c;
+  }
+  else {
+    BRLogErrorOnce("Window was null when getting graphics context.");
+    Gu::debugBreak();
+  }
+  return nullptr;
 }
 std::vector<std::shared_ptr<CameraNode>> Scene::getAllCameras() {
   std::vector<std::shared_ptr<CameraNode>> ret;
@@ -78,7 +138,9 @@ void Scene::createFlyingCamera() {
   std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(_pGraphicsWindow->getViewport());
   std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>(_pGraphicsWindow->getViewport(), getThis<Scene>());
   cn->addComponent(css);
-  attachChild(cn);
+  setActiveCamera(cn);
+
+ // attachChild(cn);
   // cn->init();
 
   //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
@@ -252,25 +314,50 @@ void Scene::drawDeferred(RenderParams& rp) {
 
   Perf::popPerf();
 }
+
+
 void Scene::drawForward(RenderParams& rp) {
-  BRThrowNotImplementedException();
-  //debugChangeRenderState();
+  //TESTING:
+  //TESTING:
+  //TESTING:
+  //TESTING:
+  //TESTING:
+  //TESTING:
+  //TESTING:
+  static std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
+  static std::shared_ptr<Texture2DSpec> _pTex = nullptr;
 
   //if (_pQuadMeshBackground == nullptr) {
-  //  _pQuadMeshBackground = std::make_shared<MeshNode>(
-  //    MeshUtils::createScreenQuadMesh(getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-
-  //  _pTex = Gu::getTexCache()->getOrLoad(Gu::getAppPackage()->makeAssetPath("tex", "test_tex3.png"));
+  //  _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
+  //  _pTex = Gu::getTexCache()->getOrLoad(Gu::getApp()->makeAssetPath("tex", "test_tex3.png"));
   //}
 
-  ////Meshes
-  //RenderParams rp;
-  //for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
-  //  std::shared_ptr<SceneNode> pm = p.second;
-  //  pm->drawForward(rp);
-  //}
+  //Meshes
+  for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
+    std::shared_ptr<SceneNode> pm = p.second;
+    pm->drawForward(rp);
+  }
 
-  //RenderUtils::drawAxisShader();
+  RenderUtils::drawAxisShader(getActiveCamera());
+
+  if (_pQuadMeshBackground == nullptr) {
+    _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
+      getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
+    _pTex = Gu::getTexCache()->getOrLoad(makeAssetPath("tex", "test_tex3.png"));
+  }
+  std::shared_ptr<CameraNode> bc = getActiveCamera();
+  Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
+  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport()->getWidth(), bc->getViewport()->getHeight());
+  {
+    //We want depth test so we can see what's in front.
+    //glEnable(GL_DEPTH_TEST);
+    _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
+
+    Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
+  }
+  Gu::getShaderMaker()->getImageShader_F()->endRaster();
+
+
 }
 void Scene::drawShadow(RenderParams& rp) {
 }
@@ -304,10 +391,11 @@ void Scene::drawTransparent(RenderParams& rp) {
 }
 void Scene::drawUI(RenderParams& rp) {
   BRThrowNotImplementedException();
-  //_pUiScreen->update(Gu::getInputManager());
-  //_pUiScreen->drawForward();
+  _pUiScreen->update(Gu::getInputManager());
+  _pUiScreen->drawForward();
 }
 void Scene::draw2d() {
+  //  Gu::getGui()->debugForceLayoutChanged();
   drawDebugText();
 }
 
@@ -352,8 +440,7 @@ void Scene::drawDebugText() {
   //  _pAppUi->endDebugText();
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
-  BRThrowNotImplementedException();
-  //_pUiScreen->screenChanged(w, h);
+  _pUiScreen->screenChanged(w, h);
 }
 //std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
 //  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);

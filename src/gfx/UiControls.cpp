@@ -18,6 +18,7 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/MegaTex.h"
 #include "../gfx/RenderSettings.h"
+#include "../base/GraphicsWindow.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
 #include "../model/UtilMeshInline.h"
@@ -25,6 +26,7 @@
 #include "../model/VaoDataGeneric.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
+#include <future>
 
 namespace BR2 {
 std::shared_ptr<UiEventFunc> UiEventFunc::create(std::function<void(UiEventId::e eventId, void*)> f) {
@@ -44,8 +46,13 @@ UiElement::~UiElement() {
 }
 void UiElement::init() {
   setName("UiElement");
-
 }
+std::shared_ptr<UiScreen> UiElement::getScreen() {
+  //TODO: we need to pass the Screen to eadch element (and update the nodes when attached, as neceswsary), or, alternatively
+  // go up the node root until we reach a UiScreen element.
+  return nullptr;
+}
+
 vec4 UiElement::makeClipRectForRender(const Box2f& b2ClipRect) {
   vec4 clipRect;
 
@@ -271,7 +278,7 @@ void UiElement::computepad_unit(float& pt, float dim, uDim& ud) {
     pt = ud.pctOf(bt);
   }
   else {
-    Gui2d::error("Invalid value for pad");
+    UiScreen::error("Invalid value for pad");
     pt = 0;
   }
 }
@@ -492,19 +499,19 @@ void UiElement::validateDims() {
   //these must be pixel
   //Validate Element dims.
   if (top().getDimUnit() != UiDimUnit::e::Pixel) {
-    Gui2d::error("Ui Element Top was not a pixel unit");
+    UiScreen::error("Ui Element Top was not a pixel unit");
     top() = uDim(0, UiDimUnit::e::Pixel);
   }
   if (bottom().getDimUnit() != UiDimUnit::e::Pixel) {
-    Gui2d::error("Ui Element bottom was not a pixel unit");
+    UiScreen::error("Ui Element bottom was not a pixel unit");
     bottom() = uDim(0, UiDimUnit::e::Pixel);
   }
   if (left().getDimUnit() != UiDimUnit::e::Pixel) {
-    Gui2d::error("Ui Element left was not a pixel unit");
+    UiScreen::error("Ui Element left was not a pixel unit");
     left() = uDim(0, UiDimUnit::e::Pixel);
   }
   if (right().getDimUnit() != UiDimUnit::e::Pixel) {
-    Gui2d::error("Ui Element right was not a pixel unit");
+    UiScreen::error("Ui Element right was not a pixel unit");
     right() = uDim(0, UiDimUnit::e::Pixel);
   }
 
@@ -513,7 +520,7 @@ void UiElement::validateDims() {
 void UiElement::layoutLayer(std::vector<std::shared_ptr<UiElement>> stats) {
   //Calc width with all static blocks using 0 width for autos (expandable blocks).
   float fTotalHeight = 0;
-  std::vector<UiElement::UiLine> vecLines;
+  std::vector<UiLine> vecLines;
   vecLines.push_back(UiLine());
   for (std::shared_ptr<UiElement> ele : stats) {
     calcStaticElement(ele, vecLines, 0.0f, 0.0f);
@@ -539,7 +546,7 @@ void UiElement::layoutLayer(std::vector<std::shared_ptr<UiElement>> stats) {
   //in css block elements expand "grow" to 100% of parent
   //inline elements shrink to smallest size.  our auto is somewhat broken
   //Hmm..Auto size = grow would cause autos to expand to be the size of the max width..which defaults to 99999
-  std::vector<UiElement::UiLine> vecLines2;//Technically this dummy variable should be '1'
+  std::vector<UiLine> vecLines2;//Technically this dummy variable should be '1'
   vecLines2.push_back(UiLine());
   for (size_t iLine = 0; iLine < vecLines.size(); iLine++) {
     UiLine& line = vecLines[iLine];
@@ -586,7 +593,7 @@ void UiElement::computePositionalElement(std::shared_ptr<UiElement> ele) {
   ele->bottom() = ele->top().px() + hpx;
   ele->validateQuad();
 }
-void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiElement::UiLine>& vecLines, float fAutoWidth, float fAutoHeight) {
+void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiLine>& vecLines, float fAutoWidth, float fAutoHeight) {
   if (vecLines.size() == 0) {
     BRThrowException("GUI error - tried to run calc algorithm without any UILines created");
   }
@@ -673,14 +680,14 @@ void UiElement::computewh(float& __out_ wpx, float& __out_ hpx) {
   else if (width().getDimUnit() == UiDimUnit::e::Auto) {
     //  if(position() == UiPositionMode::e::Relative) {
           //Error - relative elements can't be auto
-    //      Gui2d::error(TStr(_strName, ": Tried to autosize relative (fixed size) element width."));
+    //      UiScreen::error(TStr(_strName, ": Tried to autosize relative (fixed size) element width."));
    //   }
    //   else {
     wpx = getAutoWidth();
     //   }
   }
   else {
-    Gui2d::error("Invalid enum");
+    UiScreen::error("Invalid enum");
   }
 
   //Height
@@ -698,14 +705,14 @@ void UiElement::computewh(float& __out_ wpx, float& __out_ hpx) {
   else if (height().getDimUnit() == UiDimUnit::e::Auto) {
     //   if (position() == UiPositionMode::e::Relative) {
            //Error - relative elements can't be auto
-      //     Gui2d::error(TStr(_strName, ": Tried to autosize relative (fixed size) element height."));
+      //     UiScreen::error(TStr(_strName, ": Tried to autosize relative (fixed size) element height."));
    //    }
    //    else {
     hpx = getAutoHeight();
     //    }
   }
   else {
-    Gui2d::error("Invalid enum");
+    UiScreen::error("Invalid enum");
   }
   //Make sure it's an actual heght
   if (hpx < 0.0f) {
@@ -728,7 +735,7 @@ float UiElement::getAutoWidth() {
     return 0;
   }
   else {
-    Gui2d::error("Auto w/h invlaid");
+    UiScreen::error("Auto w/h invlaid");
   }
   return 0;//?
 }
@@ -739,14 +746,14 @@ void UiElement::validateQuad() {
   if (_right.px() < _left.px()) {
     static int nn = 0;
     if (nn == 0) {
-      Gui2d::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
+      UiScreen::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
     }
     _right = _left;
   }
   if (_bottom.px() < _top.px()) {
     static int nn = 0;
     if (nn == 0) {
-      Gui2d::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
+      UiScreen::error(Stz "Quad is invalid, rtbl= " + _right.px() + "," + _top.px() + "," + _bottom.px() + "," + _left.px());
     }
     _bottom = _top;
   }
@@ -774,8 +781,8 @@ void UiElement::computeQuads(float final_r, float final_l, float final_t, float 
 
   //Layout Quad (for picking, debug)
   float w1 = 1.0f, h1 = 1.0f;
-  w1 = Gui2d::getDesignMultiplierW();
-  h1 = Gui2d::getDesignMultiplierH();
+  w1 = UiScreen::getDesignMultiplierW();
+  h1 = UiScreen::getDesignMultiplierH();
 
   //Set to false if we're controllig coordinates of this element (cursor, or window position)
   if (getShouldScalePositionToDesign() == true) {
@@ -938,7 +945,7 @@ void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, 
 std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uint32_t uiSort, bool bUpdateLayout, bool bCheckDupes) {
   if (c == nullptr) {
     //Allow this to simply fail this may happen if you fail to specify certain skin requirements.
-    Gui2d::error(Stz "Tried to add a null child to UI element " + _strName);
+    UiScreen::error(Stz "Tried to add a null child to UI element " + _strName);
     return nullptr;
   }
 
@@ -967,7 +974,7 @@ bool UiElement::checkDupes(std::shared_ptr<UiElement> childTree) {
     bool b = false;;
     rp->findElement(e, b);
     if (b == true) {
-      Gui2d::error(Stz "Gui2d: child '" + e->_strName + "' found multiple times in GUI, please create new GUI element then add.");
+      UiScreen::error(Stz "Gui2d: child '" + e->_strName + "' found multiple times in GUI, please create new GUI element then add.");
       return true;
     }
   }
@@ -1294,7 +1301,7 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     //Tex coords are computed (used for UiGlyph)
   }
   else {
-    Gui2d::error("Invalid layout X image size mode.");
+    UiScreen::error("Invalid layout X image size mode.");
   }
 
   if (_eSizeModeY == UiImageSizeMode::e::Expand) {
@@ -1326,7 +1333,7 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     _q2Tex._p1.y = _q2Tex._p0.y + fh;
   }
   else {
-    Gui2d::error("Invalid layout size mode.");
+    UiScreen::error("Invalid layout size mode.");
   }
 
   //if(_pQuad != nullptr) {
@@ -1715,9 +1722,9 @@ void UiButtonBase::update(std::shared_ptr<InputManager> pFingers) {
 
   UiElement::update(pFingers);
 }
-int UiButtonBase::layerIdUp() { return  Gui2d::sortLayer(0); }
-int UiButtonBase::layerIdHover() { return  Gui2d::sortLayer(1); }
-int UiButtonBase::layerIdDown() { return  Gui2d::sortLayer(2); }
+int UiButtonBase::layerIdUp() { return  UiScreen::sortLayer(0); }
+int UiButtonBase::layerIdHover() { return  UiScreen::sortLayer(1); }
+int UiButtonBase::layerIdDown() { return  UiScreen::sortLayer(2); }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiImageButton
@@ -1784,7 +1791,7 @@ void UiGridRow::init() {
 }
 std::shared_ptr<UiElement> UiGridRow::getCol(size_t iCol) {
   if (iCol >= _cols.size()) {
-    Gui2d::error(Stz "UiGridRow: Error: tried to access grid column outside of bounds: " + iCol);
+    UiScreen::error(Stz "UiGridRow: Error: tried to access grid column outside of bounds: " + iCol);
     return nullptr;
   }
   return _cols[iCol];
@@ -1828,7 +1835,7 @@ std::shared_ptr<UiGrid> UiGrid::create(int nr, int nc) {
 }
 std::shared_ptr<UiElement> UiGrid::getCell(size_t iRow, size_t iCol) {
   if (iRow >= _rows.size()) {
-    Gui2d::error(Stz "UiGrid: Error: tried to access grid cell outside of bounds tried, (" + iRow + "," + iCol + ") ");
+    UiScreen::error(Stz "UiGrid: Error: tried to access grid cell outside of bounds tried, (" + iRow + "," + iCol + ") ");
     return nullptr;
   }
   return  _rows[iRow]->getCol(iCol);
@@ -1868,7 +1875,7 @@ void UiGrid::resizeRows() {
 }
 std::shared_ptr<UiGrid> UiGrid::createImageStack(std::shared_ptr<Ui3Tex> tex, uDim uWorHPx, Orientation::e eOr) {
   if (uWorHPx.px() == 0) {
-    Gui2d::error(Stz "Image stack width or hieght was zero, errors will occur orientation = " + Orientation::toString(eOr));
+    UiScreen::error(Stz "Image stack width or hieght was zero, errors will occur orientation = " + Orientation::toString(eOr));
     return nullptr;
   }
   std::shared_ptr<UiGrid> pg = UiGrid::create(0, 0);
@@ -1880,7 +1887,7 @@ std::shared_ptr<UiGrid> UiGrid::createImageStack(std::shared_ptr<Ui3Tex> tex, uD
   std::shared_ptr<UiImage> imgMid;
   std::shared_ptr<UiImage> imgBotOrRight;
 
-  uint32_t iSortLayer = Gui2d::sortLayer(0);
+  uint32_t iSortLayer = UiScreen::sortLayer(0);
 
   if (eOr == Orientation::e::Vertical) {
     pg->setName("UiGrid(UiImage3Stack_Vertical)");
@@ -1946,9 +1953,9 @@ std::shared_ptr<UiGrid> UiGrid::createImageStack(std::shared_ptr<Ui3Tex> tex, uD
     imgMid = UiImage::create(tex->get(1), UiImageSizeMode::e::Tile, UiImageSizeMode::e::Expand, hR1.px(), uWorHPx.px());
     imgBotOrRight = UiImage::create(tex->get(2), UiImageSizeMode::e::Expand, UiImageSizeMode::e::Expand, hR2.px(), uWorHPx.px());
   }
-  c0->addChild(imgTopOrLeft, Gui2d::sortLayer(0));
-  c1->addChild(imgMid, Gui2d::sortLayer(0));
-  c2->addChild(imgBotOrRight, Gui2d::sortLayer(0));
+  c0->addChild(imgTopOrLeft, UiScreen::sortLayer(0));
+  c1->addChild(imgMid, UiScreen::sortLayer(0));
+  c2->addChild(imgBotOrRight, UiScreen::sortLayer(0));
 
   return pg;
 }
@@ -1983,7 +1990,7 @@ void Ui9Grid::init() {
   _pContentContainer->width() = "100%";
   _pContentContainer->height() = "100%";
   std::shared_ptr<UiElement> c = getCell(1, 1);
-  c->addChild(_pContentContainer, Gui2d::sortLayer(Ui9Grid::getContentSortLayer()));
+  c->addChild(_pContentContainer, UiScreen::sortLayer(Ui9Grid::getContentSortLayer()));
 }
 void Ui9Grid::set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer) {
 
@@ -2053,7 +2060,7 @@ void Ui9Grid::setBorderWidth(std::shared_ptr<UiBorderDim> dims) {
 
   for (int i = 0; i < 4; ++i) {
     if (_pBorder->get((GridBorder::e)i).getDimUnit() != UiDimUnit::e::Pixel) {
-      Gui2d::error("Border width for window was not specified in pixels.  Errors will occur");
+      UiScreen::error("Border width for window was not specified in pixels.  Errors will occur");
       _pBorder->get((GridBorder::e)i).setDimUnit(UiDimUnit::e::Pixel);
     }
   }
@@ -2170,7 +2177,7 @@ std::shared_ptr<UiElement> UiFlexButton::getContentContainer() {
 }
 void UiFlexButton::setLabel(std::string strText, std::shared_ptr<UiLabelSkin> labelFont) {
   if (_pLabelSkin == nullptr && labelFont == nullptr) {
-    Gui2d::error(("No font specified when calling setLabel on flexbutton"));
+    UiScreen::error(("No font specified when calling setLabel on flexbutton"));
     return;
   }
   if (_pLabel == nullptr) {
@@ -2285,7 +2292,7 @@ void UiScrubGenThumb::update(std::shared_ptr<InputManager> pFingers) {
 void UiScrubGenThumb::setBarSizePct(float pos01) {
   if (pos01 < 0.0f || pos01 > 1.0f) {
     pos01 = MathUtils::brClamp(pos01, 0.0f, 1.0f);
-    Gui2d::error("invalid scroll position sent to scrollbar, clamping");
+    UiScreen::error("invalid scroll position sent to scrollbar, clamping");
   }
   _fBarSizePct = pos01;
 }
@@ -2299,10 +2306,10 @@ float UiScrubGenThumb::getScrollPct() {
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiScrollGen
 uint32_t UiScrubGen::getThumbSortLayer() {
-  return Gui2d::sortLayer(1);
+  return UiScreen::sortLayer(1);
 }
 uint32_t UiScrubGen::getBackgroundSortLayer() {
-  return Gui2d::sortLayer(0);
+  return UiScreen::sortLayer(0);
 }
 void UiScrubGen::setBarSizePct(float pos01) {
   _pThumb->setBarSizePct(pos01);
@@ -2342,7 +2349,7 @@ void UiScrubGen::update(std::shared_ptr<InputManager> pFingers) {
           float fMax = maxVal();
           float fMin = minVal();
           if (fMax < fMin) {
-            Gui2d::error(Stz "Max '" + fMax + "' was greater than min '" + fMin + "' for scrollgen.");
+            UiScreen::error(Stz "Max '" + fMax + "' was greater than min '" + fMin + "' for scrollgen.");
             maxVal() = minVal();
           }
           float fVal = fMin + (fMax - fMin) * _pThumb->getScrollPct();
@@ -2667,15 +2674,16 @@ void UiDropdown::init() {
   getContentContainer()->addChild(_pSelectedContainer);
 
   //**This will have errors because until now we assueme gui2d has only windows as children
-  Gu::getGui()->addChild(_pListContainer);
+  getScreen()->addChild(_pListContainer);
 
   std::weak_ptr<Ui9Grid> cont_w = _pListContainer;
   std::weak_ptr<UiDropdown> dd_w = getThis<UiDropdown>();
   uDim* contW = &_uListContainerWidth;
 
   //You can click anything, anything you like.
+  std::shared_ptr<UiScreen> ps = getScreen();
   setPickRoot();
-  setPress([cont_w, dd_w, contW]() {
+  setPress([cont_w, dd_w, contW, ps]() {
     //Show container
     std::shared_ptr<Ui9Grid> cont = cont_w.lock();
     std::shared_ptr<UiDropdown> dd = dd_w.lock();
@@ -2685,13 +2693,13 @@ void UiDropdown::init() {
         cont->width() = dd->getComputedQuad().right() - dd->getComputedQuad().left();
       }
       else if (contW->getDimUnit() == UiDimUnit::e::Percent) {
-        Gui2d::error("Percentage width on dropdown container... is invalid");
+        UiScreen::error("Percentage width on dropdown container... is invalid");
       }
       else {
         cont->width() = contW->px();
       }
       cont->top() = dd->getComputedQuad().bottom();
-      Gu::getGui()->bringToFront(cont, true);
+      ps->bringToFront(cont, true);
       cont->overflow() = (UiOverflowMode::e::Hide);
       cont->show();
     }
@@ -2709,7 +2717,7 @@ void UiDropdown::setSelectedItem(std::shared_ptr<UiElement> item) {
     return;
   }
   if (_pListContainer->getContentContainer()->hasChild(item) == false) {
-    Gui2d::error(Stz "Dropdown didn't have the item you treid to select: " + item->getName());
+    UiScreen::error(Stz "Dropdown didn't have the item you treid to select: " + item->getName());
     return;
   }
 
@@ -2802,7 +2810,7 @@ std::shared_ptr<UiElement> UiContainer::getContentContainer() {
 }
 void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
   //if (pSkin == nullptr) {
-  //    Gui2d::error("Could not enable scroll bar on window, the skin didn't have one");
+  //    UiScreen::error("Could not enable scroll bar on window, the skin didn't have one");
   //    return;
   //}
   //detachContentContainer();
@@ -2838,7 +2846,7 @@ void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
   std::shared_ptr<UiElement> scrollLeftOrTopPad = UiElement::create();
   scrollLeftOrTopPad->width() = d0w;
   scrollLeftOrTopPad->height() = d0h; //100%
-  pCell->addChild(scrollLeftOrTopPad, Gui2d::sortLayer(2));
+  pCell->addChild(scrollLeftOrTopPad, UiScreen::sortLayer(2));
 
   std::weak_ptr<UiWindow> weak_win = getThis<UiWindow>();
   std::weak_ptr<UiElement> weakControlObject = getContentContainer();
@@ -2914,13 +2922,13 @@ void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
 
   //add the scrollar
   _pVScrollBar = UiScrollbar::create(pSkin, barWidthfunc, scrollFunc);
-  pCell->addChild(_pVScrollBar, Gui2d::sortLayer(2));
+  pCell->addChild(_pVScrollBar, UiScreen::sortLayer(2));
 
   //Right pad
   //  std::shared_ptr<UiElement> scrollRightOrBotPad = UiElement::create();
   //  scrollRightOrBotPad->width() = d2w;
   //  scrollRightOrBotPad->height() = d2h; //100%
-  //  pCell->addChild(scrollRightOrBotPad, Gui2d::sortLayer(2));
+  //  pCell->addChild(scrollRightOrBotPad, UiScreen::sortLayer(2));
 
   setLayoutChanged();
   setLayoutChanged(true);
@@ -2969,7 +2977,7 @@ void UiWindow::init() {
   //Create background
   _pBackground = Ui9Grid::create(_pWindowSkin->_pBorder);
   _pBackground->set9GridImages(_pWindowSkin->_pBorderImgs);
-  addChild(_pBackground, Gui2d::sortLayer(0));
+  addChild(_pBackground, UiScreen::sortLayer(0));
 
   _pTitleBar = UiElement::create();
   _pTitleBar->width() = "100%";
@@ -2983,8 +2991,8 @@ void UiWindow::init() {
   _pContainer->height() = "100%";
   _pContentArea->addChild(_pContainer);
 
-  addChild(_pTitleBar, Gui2d::sortLayer(1));
-  addChild(_pContentArea, Gui2d::sortLayer(1));
+  addChild(_pTitleBar, UiScreen::sortLayer(1));
+  addChild(_pContentArea, UiScreen::sortLayer(1));
 
   //Title Bar
   _lblTitle = UiLabel::create("Title", _pWindowSkin->_pTitleFont);
@@ -3086,7 +3094,7 @@ std::shared_ptr<UiToolbar> UiToolbar::create(std::shared_ptr<UiToolbarSkin> skin
 }
 void UiToolbar::init() {
   UiWindow::init();
-  setName("Toolbarf");
+  setName("Toolbar");
 
   _pTitleBar->hide();
 
@@ -3094,9 +3102,9 @@ void UiToolbar::init() {
   display() = UiDisplayMode::InlineNoWrap;
   //Set some default position stuff so we can see it.
   top() = "0px";
-  left() = uDim(Gu::getGui()->getDesignSize().getWidth() * 0.1f, UiDimUnit::e::Pixel);
-  width() = "auto";//uDim(Gu::getGui()->getDesignSize().getWidth() * 0.8f, UiDimUnit::e::Pixel);
-  height() = "auto";//uDim(Gu::getGui()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
+  left() = uDim(getScreen()->getDesignSize().getWidth() * 0.1f, UiDimUnit::e::Pixel);
+  width() = "auto";//uDim(getScreen()->getDesignSize().getWidth() * 0.8f, UiDimUnit::e::Pixel);
+  height() = "auto";//uDim(getScreen()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
 
 }
 void UiToolbar::update(std::shared_ptr<InputManager> pFingers) {
@@ -3130,27 +3138,62 @@ void UiCursor::performLayout(bool bForce) {
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
-#pragma region Gui2d
-Gui2d::Gui2d() {
+#pragma region UiScreen
+class UiScreen_Internal {
+public:
+  //bool _bLayoutChanged = false;
+  bool _bIsPicked = false;//capture of the bubbled-up pick
+  std::shared_ptr<UiCursor> _pCursor = nullptr;
+  UiDesignSize _designSize;//1920 x 1080
+  ButtonState::e _eLmb = ButtonState::e::Up;
+  ButtonState::e _eRmb = ButtonState::e::Up;
+  ButtonState::e _eMmb = ButtonState::e::Up;
+  //void updateCursorPos(const vec2& vMouse);
+  bool _bDebugForceLayoutChange = false;
+  std::future<bool> _updateFuture;
+  std::shared_ptr<MegaTex> _pTex = nullptr;
+  std::shared_ptr<MeshNode> _pMesh = nullptr;
+  std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
+  //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;
+
+};
+
+
+UiScreen::UiScreen(std::shared_ptr<GraphicsWindow> pw) : UiElement() {
+  _pint = std::make_unique<UiScreen_Internal>();
+  _pint->_pWindow = pw;
 }
-Gui2d::~Gui2d() {
+UiScreen::~UiScreen() {
+  _pint = nullptr;
 }
-void Gui2d::init() {
+std::shared_ptr<UiScreen> UiScreen::create(std::shared_ptr<GraphicsWindow> g) {
+  std::shared_ptr<UiScreen> ret = std::make_shared<UiScreen>(g);
+  ret->init();
+  return ret;
+}
+bool UiScreen::getIsPicked() { return _pint->_bIsPicked; }
+const UiDesignSize& UiScreen::getDesignSize() { return _pint->_designSize; }
+std::shared_ptr<UiCursor> UiScreen::getCursor() { return _pint->_pCursor; }
+std::shared_ptr<MegaTex> UiScreen::getTex() { return _pint->_pTex; }
+std::shared_ptr<GraphicsWindow> UiScreen::getWindow() { return _pint->_pWindow; }
+
+
+void UiScreen::init() {
   //Note:this init() is lazy and happens way after Gui2d is allocated
   UiElement::init();
 
-  right() = _designSize.getWidth() - 1;//Gu::getViewport()->getWidth();
-  bottom() = _designSize.getHeight() - 1;//Gu::getViewport()->getHeight();
+  right() = _pint->_designSize.getWidth() - 1;//Gu::getViewport()->getWidth();
+  bottom() = _pint->_designSize.getHeight() - 1;//Gu::getViewport()->getHeight();
   top() = 0;
   left() = 0;
-  minWidth() = maxWidth() = _designSize.getWidth() - 1;//right();
-  minHeight() = maxHeight() = _designSize.getHeight() - 1;//bottom();
+  minWidth() = maxWidth() = _pint->_designSize.getWidth() - 1;//right();
+  minHeight() = maxHeight() = _pint->_designSize.getHeight() - 1;//bottom();
   setName("Gui2d");
-  _pTex = std::make_shared<MegaTex>(Gu::getGraphicsContext());
+  _pint->_pTex = std::make_shared<MegaTex>(getWindow()->getContext());
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
-  _pMesh = MeshNode::create(
+  _pint->_pMesh = MeshNode::create(
     std::make_shared<MeshSpec>(
       verts.data(), verts.size(),
       inds.data(), inds.size(),
@@ -3158,19 +3201,19 @@ void Gui2d::init() {
   );
 }
 
-void Gui2d::update(std::shared_ptr<InputManager> pFingers) {
-  UiElement::update(pFingers);//Note: due to buttons resetting themselves update() must come before pick()
+void UiScreen::update(std::shared_ptr<InputManager> pInputManager) {
+  UiElement::update(pInputManager);//Note: due to buttons resetting themselves update() must come before pick()
 
  // if (Gu::getFpsMeter()->frameMod(2)) {
-  updateLayout(pFingers);
+  updateLayout(pInputManager);
   // }
 
    //Updating this per frame to indicate if the GUI is picked.
-  _bIsPicked = pick(pFingers);
+  _pint->_bIsPicked = pick(pInputManager);
 }
-void Gui2d::updateLayout(std::shared_ptr<InputManager> pFingers) {
-  _pCursor->left() = pFingers->getMousePos().x;
-  _pCursor->top() = pFingers->getMousePos().y;
+void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
+  _pint->_pCursor->left() = pInputManager->getMousePos().x;
+  _pint->_pCursor->top() = pInputManager->getMousePos().y;
 
   // if(_updateFuture.valid() == false) {
      //  std::weak_ptr<Gui2d> gw = getThis<Gui2d>();
@@ -3181,14 +3224,14 @@ void Gui2d::updateLayout(std::shared_ptr<InputManager> pFingers) {
     //Gui2d doesn't have a parent, so we have to compute the quads to create a valid clip region.
     computeQuads(right().px(), left().px(), top().px(), bottom().px());
 
-    performLayout(_bDebugForceLayoutChange);
-    _bDebugForceLayoutChange = false;
+    performLayout(_pint->_bDebugForceLayoutChange);
+    _pint->_bDebugForceLayoutChange = false;
   }
 
   //Cursor
-  computePositionalElement(_pCursor);
-  UiElement::layoutEleQuad(_pCursor);
-  _pCursor->performLayout(false);
+  computePositionalElement(_pint->_pCursor);
+  UiElement::layoutEleQuad(_pint->_pCursor);
+  _pint->_pCursor->performLayout(false);
   //        }
    //       return true;
    //   });
@@ -3202,8 +3245,7 @@ void Gui2d::updateLayout(std::shared_ptr<InputManager> pFingers) {
  // }
 
 }
-void Gui2d::updateMesh() {
-
+void UiScreen::updateMesh() {
   Box2f b = getGLRasterQuad();
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
@@ -3211,72 +3253,71 @@ void Gui2d::updateMesh() {
 
   //CURSOR
   b = getGLRasterQuad();
-  _pCursor->regenMeshExposed(verts, inds, b);
+  _pint->_pCursor->regenMeshExposed(verts, inds, b);
   //CURSOR
 
-  _pMesh->getMeshSpec()->getVaoData()->getVbo()->allocate(verts.size());
-  _pMesh->getMeshSpec()->getVaoData()->getVbo()->copyDataClientServer(verts.size(), verts.data());
-  _pMesh->getMeshSpec()->getVaoData()->getIbo()->allocate(inds.size());
-  _pMesh->getMeshSpec()->getVaoData()->getIbo()->copyDataClientServer(inds.size(), inds.data());
-
+  _pint->_pMesh->getMeshSpec()->getVaoData()->getVbo()->allocate(verts.size());
+  _pint->_pMesh->getMeshSpec()->getVaoData()->getVbo()->copyDataClientServer(verts.size(), verts.data());
+  _pint->_pMesh->getMeshSpec()->getVaoData()->getIbo()->allocate(inds.size());
+  _pint->_pMesh->getMeshSpec()->getVaoData()->getIbo()->copyDataClientServer(inds.size(), inds.data());
 }
-void Gui2d::screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) {
+void UiScreen::screenChanged(uint32_t uiWidth, uint32_t uiHeight) {
   //Mark all children as dirty
   setLayoutChanged(true);
 }
-
-void Gui2d::drawForward() {
+void UiScreen::drawForward() {
   RenderParams rp;
   Box2f b = getGLRasterQuad();
   drawForward(rp, b);
 }
-
-void Gui2d::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
+void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   rp.setShader(Gu::getShaderMaker()->getGuiShader());
 
   //Zero useless params.
   getTex()->bind(TextureChannel::e::Channel0, rp.getShader());
-  rp.setMesh(_pMesh);
+  rp.setMesh(_pint->_pMesh);
   rp.setDrawMode(GL_POINTS);
   rp.draw();
 
   //*Debug
   UiElement::drawDebug(rp);
 }
-void Gui2d::error(std::string errMsg) {
+void UiScreen::hideCursor() {
+  _pint->_pCursor->setLayoutVisible(false);
+}
+void UiScreen::showCursor() {
+  _pint->_pCursor->setLayoutVisible(true);
+}
+void UiScreen::setCursor(std::shared_ptr<UiCursor> c) {
+  //Do not add the cursor
+  _pint->_pCursor = c;
+  c->position() = UiPositionMode::Relative;
+  //updateCursorPos(Gu::getInputManager()->getMousePos());
+}
+void UiScreen::debugForceLayoutChanged() {
+  setLayoutChanged(true);
+  _pint->_bDebugForceLayoutChange = true;
+}
+void UiScreen::performForcedLayout() {
+  performLayout(true);
+}
+void UiScreen::error(std::string errMsg) {
   BRLogError(errMsg);
   Gu::debugBreak();
 }
-void Gui2d::hideCursor() {
-  _pCursor->setLayoutVisible(false);
+float UiScreen::getDesignMultiplierW() {
+  //float dw = getScreen()->getDesignSize().getWidth();
+  //float vw = (float)Gu::getCamera()->getViewport()->getWidth();
+  //float w1 = vw / dw;
+//    return w1;
+  return 1;
 }
-void Gui2d::showCursor() {
-  _pCursor->setLayoutVisible(true);
-}
-void Gui2d::setCursor(std::shared_ptr<UiCursor> c) {
-  //Do not add the cursor
-  _pCursor = c;
-  c->position() = UiPositionMode::Relative;
-  //updateCursorPos(Gu::getFingers()->getMousePos());
-}
-float Gui2d::getDesignMultiplierW() {
-  float dw = Gu::getGui()->getDesignSize().getWidth();
-  float vw = (float)Gu::getGui()->getWindowCamera()->getViewport()->getWidth();
-  float w1 = vw / dw;
-  return w1;
-}
-float Gui2d::getDesignMultiplierH() {
-  float dh = Gu::getGui()->getDesignSize().getHeight();
-  float vh = (float)Gu::getGui()->getWindowCamera()->getViewport()->getHeight();
-  float h1 = vh / dh;
-  return h1;
-}
-void Gui2d::debugForceLayoutChanged() {
-  setLayoutChanged(true);
-  _bDebugForceLayoutChange = true;
-}
-void Gui2d::performForcedLayout() {
-  performLayout(true);
+float UiScreen::getDesignMultiplierH() {
+  return 1;
+  //float dh = getScreen()->getDesignSize().getHeight();
+  //float vh = (float)Gu::getCamera()->getViewport()->getHeight();
+  //float h1 = vh / dh;
+  //return h1;
 }
 
 

@@ -1,6 +1,14 @@
 # Mine City Task Log
 
-move window create down to initRenderSystem (window creation coherenc)
+Add scene to window
+Move window create down to initRenderSystem (window creation coherence)	
+	**Do this after we have verified the rendering system displays, and works...
+Rename Gu::getGraphicscontext to getCoreContext
+implement drawUi and other stuff from broken RenderPipe
+move 
+	graphicswindow
+	glcontext
+	to /gfx
 
 - [ ] Remove AppMain, and AppBase
 	- [ ] Merge Appbase & Scene

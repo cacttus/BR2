@@ -9,7 +9,10 @@
 #include "../base/Delta.h"
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
+#include "../base/GLContext.h"
+#include "../math/Random.h"
 #include "../gfx/GraphicsContext.h"
+#include "../gfx/RenderPipe.h"
 
 namespace BR2 {
 
@@ -22,6 +25,10 @@ void GraphicsApi::updateLoop() {
 #ifdef __WINDOWS__
   SDL_ShowCursor(SDL_DISABLE);
 #endif
+  if (_pCoreContext == nullptr) {
+    BRLogError("No main window was created entering game loop.  Cannot continue");
+    return;
+  }
 
   while (true) {
     Perf::beginPerf();
@@ -38,6 +45,8 @@ void GraphicsApi::updateLoop() {
       for (std::shared_ptr<GraphicsContext> ct : _contexts) {
         std::shared_ptr<GraphicsWindow> w = ct->getGraphicsWindow();
         w->step();
+
+        w->getRenderPipe()->setClear(std::move(vec4(1, Random::frand01(), 0, 1)));
       }
 
       //Update all button states.
@@ -48,7 +57,7 @@ void GraphicsApi::updateLoop() {
     DebugHelper::checkMemory();
 
     //**End of loop error -- Don't Remove** 
-    _pMainContext->chkErrRt();
+    _pCoreContext->chkErrRt();
     //**End of loop error -- Don't Remove** 
   }
 
@@ -147,8 +156,6 @@ void GraphicsApi::destroyWindow(std::shared_ptr<GraphicsWindow> w) {
   //if (it != _pvecWindows.end()) {
   //  _pvecWindows.erase(it);
   //}
-}
-void GraphicsApi::cleanup() {
 }
 SDL_Window* GraphicsApi::makeSDLWindow(string_t windowTitle, int render_system) {
   string_t title;

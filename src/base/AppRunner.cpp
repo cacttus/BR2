@@ -49,7 +49,6 @@ public:
   void exitApp(string_t error, int rc);
   bool argMatch(const std::vector<string_t>& args, string_t arg1, int32_t iCount);
   bool runCommands(const std::vector<string_t>& args);
-
 };
 
 void AppRunner_Internal::initSDLAndCreateGraphicsApi(string_t windowTitle, std::shared_ptr<AppBase> app) {

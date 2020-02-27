@@ -21,26 +21,25 @@ public:
   }
   static std::shared_ptr<UiEventFunc> create(std::function<void(UiEventId::e eventId, void*)> f);
 };
+struct UiLine {
+  float _top = 0;
+  float _left = 0;
+  float _height = 0;
+  float _width = 0;
+  std::vector<std::shared_ptr<UiElement>> _eles;
+};
 class UiElement : public VirtualMemoryShared<UiElement> {
 public:
   typedef std::vector<std::shared_ptr<UiEventFunc>> EventFuncList;
   typedef std::map<UiEventId::e, EventFuncList> EventMap;
-
   static const uint32_t c_uiBaseLayer0SortId = 1000;
   typedef std::function<void()> MouseFunc;
-
-private:
-  struct UiLine {
-    float _top = 0;
-    float _left = 0;
-    float _height = 0;
-    float _width = 0;
-    std::vector<std::shared_ptr<UiElement>> _eles;
-  };
 public:
   static std::shared_ptr<UiElement> create();
   UiElement();
   virtual ~UiElement() override;
+
+  std::shared_ptr<UiScreen> getScreen();
 
   std::string getName() { return _strName; }
   virtual void update(std::shared_ptr<InputManager> pFingers);
@@ -220,7 +219,7 @@ private:
   void computepad(float& pt, float& pr, float& pb, float& pl);
   void computepad_unit(float& pt, float dim, uDim& ud);
   void validateQuad();
-  void calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiElement::UiLine>& vecLines, float fAutoWidth, float fAutoHeight);
+  void calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiLine>& vecLines, float fAutoWidth, float fAutoHeight);
   void getRootParent(std::shared_ptr<UiElement>& rp);
   void applyMinMax(float& wpx, float& hpx);
   void drawBoundBox(std::shared_ptr<UtilMeshInline2d> pt, vec4& color, bool bPickedOnly);
@@ -616,38 +615,30 @@ public:
   virtual void init() override;
   virtual void performLayout(bool bForce) override;
 };
-
-class Gui2d : public UiElement {
-  //bool _bLayoutChanged = false;
-  bool _bIsPicked = false;//capture of the bubbled-up pick
-  std::shared_ptr<UiCursor> _pCursor = nullptr;
-  UiDesignSize _designSize;//1920 x 1080
-  ButtonState::e _eLmb = ButtonState::e::Up;
-  ButtonState::e _eRmb = ButtonState::e::Up;
-  ButtonState::e _eMmb = ButtonState::e::Up;
-  //void updateCursorPos(const vec2& vMouse);
-  bool _bDebugForceLayoutChange = false;
-  //std::future<bool> _updateFuture;
-  std::shared_ptr<MegaTex> _pTex = nullptr;
-  std::shared_ptr<MeshNode> _pMesh = nullptr;
-  //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;
-  void updateMesh();
-  void updateLayout(std::shared_ptr<InputManager> pFingers);
-protected:
-  std::shared_ptr<UiCursor> getCursor() { return _pCursor; }
+/**
+* @class UiScreen
+* @brief A screen, the root of a UI hierarchy, for a window.
+*/
+class UiScreen_Internal;
+class UiScreen : public UiElement {
 public:
-  Gui2d();
-  virtual ~Gui2d() override;
-  bool getIsPicked() { return _bIsPicked; }
-  const UiDesignSize& getDesignSize() { return _designSize; }
+  UiScreen(std::shared_ptr<GraphicsWindow> pw);
+  virtual ~UiScreen() override;
+
+  static std::shared_ptr<UiScreen> create(std::shared_ptr<GraphicsWindow> g);
+  bool getIsPicked();
+  const UiDesignSize& getDesignSize();
+  std::shared_ptr<UiCursor> getCursor();
+  std::shared_ptr<MegaTex> getTex();
+
   virtual void init() override;
-  virtual void update(std::shared_ptr<InputManager> pFingers) override;
+  virtual void update(std::shared_ptr<InputManager> pInputManager) override;
   void drawForward();
   virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect) override;
   void setCursor(std::shared_ptr<UiCursor> c);
   void hideCursor();
   void showCursor();
-  void screenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen);
+  void screenChanged(uint32_t uiWidth, uint32_t uiHeight);
   static void error(std::string errMsg);
   static uint32_t sortLayer(uint32_t n) {
     //Mnemonic wich gves you the base sort layer, provided n will return additional layers.
@@ -655,10 +646,14 @@ public:
   }
   static float getDesignMultiplierW();
   static float getDesignMultiplierH();
+
   void debugForceLayoutChanged();
   void performForcedLayout();
-  std::shared_ptr<MegaTex> getTex() { return _pTex; }
-
+  std::shared_ptr<GraphicsWindow> getWindow();
+private:
+  std::unique_ptr<UiScreen_Internal> _pint = nullptr;
+  void updateMesh();
+  void updateLayout(std::shared_ptr<InputManager> pInputManager);
 };
 
 }//ns Game

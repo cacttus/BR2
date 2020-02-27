@@ -17,7 +17,9 @@
 #include "../world/WorldHeader.h"
 #include "../math/MathAll.h"
 #include "../gfx/GfxHeader.h"
-namespace Game {
+#include "../model/VertexTypes.h"
+
+namespace BR2 {
 //typedef uint32_t World25GridId;
 //We store materials in the hash32
 //typedef Hash32 WorldCellSize;
@@ -41,7 +43,7 @@ typedef v_v3i2n3 W25MeshVert;
 
 #define PIX_OBJ_TYPE_INVALID 0
 namespace GridShow { typedef enum { None, Top, TopSideBot } e; }
-namespace GameMode { typedef enum { Play, WorldSelect } e; }
+namespace BR2Mode { typedef enum { Play, WorldSelect } e; }
 namespace DrawType { typedef enum { Sprite, Box5, Mesh, Model, MaxDrawTypes } e; }
 namespace EditMode { typedef enum { Invalid, Tile, Block, Vertex, VertexGroup, HillTile, PlaceObject, NineTile, Select,  Proc, MaxEditModes} e; }
 namespace EditTool { typedef enum { Invalid, Pencil, Eraser, MaxEditTools } e; }
@@ -192,7 +194,8 @@ class W25GridMesh;
 class WorldObj;
 class WorldEditState;
 class GameUi;
-//////////////////////////////////////////////////////////////////////////
+
+
 class World25Plane : public Plane3f {
     vec3 _u, _v;
 public:

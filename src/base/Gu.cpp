@@ -109,32 +109,26 @@ std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
 std::shared_ptr<GLContext> Gu::getGraphicsContext() {
   std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
   std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
-  return oglapi->getContext();
+  if (!oglapi || oglapi->getCoreContext() == nullptr) {
+    BRLogErrorOnce("Tried to retrieve a null Core Context. Application may fail.");
+    return nullptr;
+  }
+  return oglapi->getCoreContext()->getThis<GLContext>();
 }
-std::shared_ptr<Gui2d> Gu::getGui() {
-  //This function is not possible.  Pass in the active GraphicsWindow to get the gui
-  //TODO: remove this
-  return nullptr;
-}
-
 void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
-
-void Gu::checkErrorsDbg() {
-  Gu::getGraphicsContext()->chkErrDbg();
-}
-void Gu::checkErrorsRt() {
-  Gu::getGraphicsContext()->chkErrRt();
-}
-
+void Gu::checkErrorsDbg() { Gu::getGraphicsContext()->chkErrDbg(); }
+void Gu::checkErrorsRt() { Gu::getGraphicsContext()->chkErrRt(); }
 bool Gu::is64Bit() {
   if (sizeof(size_t) == 8) {
     return true;
   }
-  if (sizeof(size_t) == 4)
+  else if (sizeof(size_t) == 4) {
     return false;
-  //WTF
-  BRThrowNotImplementedException();
+  }
+  else {
+    BRThrowNotImplementedException();
+  }
 }
 void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
@@ -611,10 +605,6 @@ void Gu::createManagers() {
 
   BRLogInfo("GLContext - Model Cache");
   _pModelCache = std::make_shared<ModelCache>(Gu::getGraphicsContext());
-
-  
-  //BroLogInfo("GLContext - Gui");
-//   _pGui2d = std::make_shared<Gui2d>();
 
   BRLogInfo("GLContext - Physics World");
   //Either A) subclass or B) remove genericy thing

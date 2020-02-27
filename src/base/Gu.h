@@ -42,7 +42,6 @@ public:
   static std::shared_ptr<Net> getNet();
   static std::shared_ptr<GLContext> getGraphicsContext();
 
-  static std::shared_ptr<Gui2d> getGui();
   static void setApp(std::shared_ptr<AppBase> b);
   static void setGraphicsApi(std::shared_ptr<GraphicsApi> api);
 

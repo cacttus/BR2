@@ -25,10 +25,9 @@ public:
   virtual void makeCurrent(SDL_Window* win) override;
   virtual void getDrawableSize(SDL_Window* win, int* w, int* h) override;
   virtual void swapBuffers(SDL_Window* win) override;
-
   virtual void cleanup() override;
-  virtual void createRenderer() {}
 
+  virtual void createRenderer() {}
 private:
   std::unique_ptr<VulkanApi_Internal> _pint = nullptr;
 };

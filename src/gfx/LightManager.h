@@ -16,9 +16,9 @@ namespace BR2 {
 *  @class LightManager
 *  @brief Manages both lights, and shadow maps, for all objects which emit.
 */
-class LightManager : public GLFramework {
+class LightManager : public VirtualMemoryShared<LightManager> {
 public:
-  LightManager(std::shared_ptr<GLContext> tc, std::shared_ptr<Scene> pScene);
+  LightManager(std::shared_ptr<Scene> pScene);
   virtual ~LightManager() override;
 
   void update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf);

@@ -30,8 +30,8 @@ public:
   void setWrapU(TexWrap::e eWrap);
   void setWrapV(TexWrap::e eWrap);
 
-  static std::shared_ptr<UiTex> create(std::shared_ptr<Gui2d> gui, std::shared_ptr<Img32> generated);
-  static std::shared_ptr<UiTex> create(std::shared_ptr<Gui2d> gui, std::string file, bool bLoadNow = false);
+  static std::shared_ptr<UiTex> create(std::shared_ptr<UiScreen> gui, std::shared_ptr<Img32> generated);
+  static std::shared_ptr<UiTex> create(std::shared_ptr<UiScreen> gui, std::string file, bool bLoadNow = false);
   static std::shared_ptr<UiTex> create(std::shared_ptr<MtTex> mt);
   virtual bool validate() override {
     return _pTex != nullptr;
@@ -46,7 +46,7 @@ public:
     AssertOrThrow2(i < 3);
     return _images[i];
   }
-  static std::shared_ptr<Ui3Tex> create(std::shared_ptr<Gui2d> gui, std::string file);
+  static std::shared_ptr<Ui3Tex> create(std::shared_ptr<UiScreen> gui, std::string file);
   virtual bool validate() override {
     for (int i = 0; i < 3; ++i) {
       if (setAndValid(_images[i]) == false) {
@@ -63,7 +63,7 @@ public:
     AssertOrThrow2(i < 9);
     return _images[i];
   }
-  static std::shared_ptr<Ui9Tex> create(std::shared_ptr<Gui2d> gui, std::string file);
+  static std::shared_ptr<Ui9Tex> create(std::shared_ptr<UiScreen> gui, std::string file);
   virtual bool validate() override {
     for (int i = 0; i < 3; ++i) {
       if (setAndValid(_images[i]) == false) {
@@ -86,7 +86,7 @@ public:
   std::shared_ptr<MtFont> getFont() { return _pFont; }
   uDim& getFontSize() { return _uFontSize; }
 
-  static std::shared_ptr<UiLabelSkin> create(std::shared_ptr<Gui2d> gui, std::string name, uDim height = "100%");//height is also the text height - fits to the label
+  static std::shared_ptr<UiLabelSkin> create(std::shared_ptr<UiScreen> gui, std::string name, uDim height = "100%");//height is also the text height - fits to the label
   UiLabelSkin() {}
   virtual ~UiLabelSkin() override {}
 

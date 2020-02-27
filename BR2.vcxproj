@@ -70,6 +70,8 @@
     <ClCompile Include="src\base\TypeConv.cpp" />
     <ClCompile Include="src\base\VulkanWindow.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
+    <ClCompile Include="src\bottle\BottleUtils.cpp" />
+    <ClCompile Include="src\bottle\SpriteBucket.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
@@ -239,6 +241,11 @@
     <ClInclude Include="src\base\VulkanWindow.h" />
     <ClInclude Include="src\base\WindowsIncludes.h" />
     <ClInclude Include="src\base\XmlFile.h" />
+    <ClInclude Include="src\bottle\BottleHeader.h" />
+    <ClInclude Include="src\bottle\BottleUtils.h" />
+    <ClInclude Include="src\bottle\ObFile.h" />
+    <ClInclude Include="src\bottle\SpriteBucket.h" />
+    <ClInclude Include="src\bottle\Tile25Spec.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />

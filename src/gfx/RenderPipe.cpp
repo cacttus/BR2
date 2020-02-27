@@ -39,6 +39,20 @@ RenderPipe::~RenderPipe() {
 }
 
 void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<CameraNode> cam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits) {
+  if (cam == nullptr) {
+    BRLogWarn("camera not set in RenderPipe::renderScene()");
+    return;
+  }
+  if (toDraw == nullptr) {
+    BRLogWarn("toDraw not set in RenderPipe::renderScene()");
+    return;
+  }
+  if (lightman == nullptr) {
+    BRLogWarn("lightmanager not set in RenderPipe::renderScene()");
+    return;
+  }
+
+
   cam->getViewport()->bind(_pWindow);
 
   if (_pPicker != nullptr) {
@@ -165,9 +179,19 @@ const vec4& RenderPipe::getClear() {
   return _vClear;
 }
 void RenderPipe::setClear(vec4& v) {
-  _vClear = v;;
-  _pBlittedForward->setClear(_vClear);
-  _pBlittedDeferred->setClear(_vClear);
+  _vClear = v;
+  if (_pBlittedForward) {
+    _pBlittedForward->setClear(_vClear);
+  }
+  else {
+    BRLogError("Framebuffer was null when setting clear color.");
+  }
+  if (_pBlittedDeferred) {
+    _pBlittedDeferred->setClear(_vClear);
+  }
+  else {
+    BRLogError("Framebuffer was null when setting clear color.");
+  }
 }
 void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath) {
   BRLogInfo("[RenderPipe] Initializing.");

@@ -15,6 +15,7 @@
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/RenderPipe.h"
+#include "../base/SDLIncludes.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
@@ -25,7 +26,6 @@ public:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
   std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
-  std::shared_ptr<Gui2d> _pGui = nullptr;
   std::shared_ptr<GraphicsApi> _pApi = nullptr;
 
   SDL_Window* _pSDLWindow = nullptr;
@@ -97,8 +97,8 @@ void GraphicsWindow_Internal::updateWidthHeight(uint32_t w, uint32_t h, bool bFo
       //   _pApp->screenChanged(w, h, _bFullscreen);
 
       //TODO: one Gui per window.
-      if (_pGui != nullptr) {
-        _pGui->screenChanged(w, h, _bFullscreen);
+      if (_pScene != nullptr) {
+        _pScene->updateWidthHeight(w, h, bForce);
       }
     }
     _iLastWidth = w;
@@ -165,9 +165,11 @@ SDL_Window* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
 std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
 std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
 std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
-void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) { _pint->_pScene = scene; }
-std::shared_ptr<Gui2d> GraphicsWindow::getGui() { return _pint->_pGui; }
-
+void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) { 
+  scene->setWindow(getThis<GraphicsWindow>());
+  _pint->_pScene = scene;
+  scene->afterAttachedToWindow();
+}
 void GraphicsWindow::step() {
   _pint->beginRender();
   {
@@ -186,11 +188,28 @@ void GraphicsWindow::step() {
      // Gu::getApp()->step((float)_fDelta);
 
       Gu::getGraphicsContext()->setLoopState(EngineLoopState::Render);
+      
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      //TEST: HACK: TODO:
+      if (_pint->_pScene == nullptr) {
+        setScene(Scene::create());
+      }
 
-      //Main Render
-      PipeBits pbs;
-      pbs.set();
-      _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), pbs);
+      if (getScene() != nullptr) {
+        //Main Render
+        PipeBits pbs;
+        pbs.set();
+        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), pbs);
+      }
+      else {
+        BRLogErrorCycle("Scene was not set on graphics window " + getTitle());
+      }
     }
     Gu::getGraphicsContext()->setLoopState(EngineLoopState::SyncEnd);
     Gu::getFrameSync()->syncEnd();
@@ -198,7 +217,6 @@ void GraphicsWindow::step() {
 
   _pint->endRender();
 }
-
 void GraphicsWindow::initRenderSystem() {
   if (_pint->_pSDLWindow == nullptr) {
     BRThrowException("You need to make the SDL window before initializing render system.");
@@ -233,16 +251,16 @@ void GraphicsWindow::initRenderSystem() {
   _pint->_pRenderPipe = std::make_shared<RenderPipe>(getContext(), getThis<GraphicsWindow>());
   _pint->_pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
 
-  _pint->_pGui = std::make_shared<Gui2d>();
-  _pint->_pGui->init();
-
   _pint->printHelpfulDebug();
 }
-
 void GraphicsWindow::mouseWheel(int amount) {
   if (_pint->_pScene != nullptr) {
     _pint->_pScene->mouseWheel(amount);
   }
+}
+string_t GraphicsWindow::getTitle() {
+  string_t st(SDL_GetWindowTitle(_pint->_pSDLWindow));
+  return st;
 }
 
 

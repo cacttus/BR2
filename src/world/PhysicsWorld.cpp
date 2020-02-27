@@ -41,6 +41,14 @@ PhysicsWorld::~PhysicsWorld() {
   //DEL_MEM(_pRenderBucket);
   //DEL_MEM(_pRenderBucket);
 }
+
+std::shared_ptr<PhysicsWorld> PhysicsWorld::create(std::shared_ptr<Scene> s, float fNodeWidth, float fNodeHeight, vec3& vUp,
+  MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
+  MpInt mpNodesY, uint32_t iGridCountLimit) {
+  std::shared_ptr<PhysicsWorld> w = std::make_shared<PhysicsWorld>(s);
+  w->init(fNodeWidth, fNodeHeight, vUp, awXZ, awXZInc, awY, awYInc, mpNodesY, iGridCountLimit);
+  return w;
+}
 std::multimap<float, std::shared_ptr<PhysicsGrid>>& PhysicsWorld::getVisibleGrids() { return _pRenderBucket->getGrids(); }
 std::multimap<float, std::shared_ptr<SceneNode>>& PhysicsWorld::getVisibleNodes() { return _pRenderBucket->getObjs(); }
 void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,

@@ -11,7 +11,7 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-LightManager::LightManager(std::shared_ptr<GLContext> tc, std::shared_ptr<Scene> pScene) : GLFramework(tc) {
+LightManager::LightManager(std::shared_ptr<Scene> pScene) {
   _pScene = pScene;
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();
 

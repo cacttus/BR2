@@ -28,9 +28,9 @@ public:
   PhysicsWorld(std::shared_ptr<Scene> pscene);
   virtual ~PhysicsWorld() override;
 
-  virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
-    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
-    MpInt mpNodesY, uint32_t iGridCountLimit);
+  static std::shared_ptr<PhysicsWorld> create(std::shared_ptr<Scene>, float fNodeWidth, float fNodeHeight, vec3& vUp,
+      MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
+      MpInt mpNodesY, uint32_t iGridCountLimit);
   virtual void update(float delta);
   //virtual void drawForward();
   void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
@@ -110,6 +110,10 @@ private:
   std::unique_ptr<Box3f> _pWorldBox = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
+
+  virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
+    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
+    MpInt mpNodesY, uint32_t iGridCountLimit);
   void updateWorldBox();
   void sortObjects_CalculateSpeedboxes_And_CollectManifolds();
   void collisionLoopDual(float delta);
