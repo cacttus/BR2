@@ -1,31 +1,8 @@
 # Mine City Task Log
 
 ## BR0 to BR2 Upgrade
-- [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (org) 
-- [ ] Move ModelCache's model load methods into ApplicationPackage (org)
-- [ ] See if we can make ParticleManager part of PhysicsWorld
-- [ ] Remove Graphics and Config defines in Gu
-- [ ] Remove AppMain, and AppBase, and Package
-	- [ ] Merge Appbase & Scene
-	- [ ] Remove AppBase
-	- [ ] Add ApplicationPackage back.
-	- [ ] Create new Scene() 
-	- [ ] Attach Scene to GraphicsWindow.	
-
-- [ ] move to /gfx 
-	- [ ] graphicswindow
-	- [ ] glcontext
-
-- [ ] Scene -> PhysicsWorld integration
-	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
-	- [x] Move all object creation to Scene
-	- [ ] Move ALL drawing to Scene
-	- [ ] Link PhysicsWorld and Scene objs (somehow), hopefully by NOT DUPLICATING DATA between PhysicsWorld and Scene
-		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
-	- [ ] Do the same with LightManager.
-
-	
-
+- [x] Fix rendering issues after /appbase was deleted.
+- [ ] Figure out some way to prevent recursive node updating for SceneNode, this has been causing MULTILPE issues.
 
 - [ ] **CRITICAL** Squashed viewport Bug
 	- [x] Implement the updated viewport class from the engine.
@@ -35,6 +12,31 @@
 	- [ ] In fullscreen mode, force the w/h to be the screen.
 	- [ ] Fixed the squashed UI image problems.
 		- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
+
+- [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (reorg) 
+- [ ] Move ModelCache's model load methods into ApplicationPackage (reorg)
+- [ ] See if we can make ParticleManager part of PhysicsWorld (reorg)
+- [ ] Remove Graphics and Config defines in Gu (reorg)
+
+- [x] Remove AppMain, and AppBase, and Package (reorg)
+	- [x] Merge Appbase & Scene
+	- [x] Remove AppBase
+	- [x] Add ApplicationPackage back.
+	- [x] Create new Scene() 
+	- [x] Attach Scene to GraphicsWindow.	
+
+- [ ] move to /gfx  (reorg)
+	- [ ] graphicswindow
+	- [ ] glcontext
+
+- [ ] Scene -> PhysicsWorld integration (reorg)
+	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
+	- [x] Move all object creation to Scene
+	- [ ] Move ALL drawing to Scene
+	- [ ] Link PhysicsWorld and Scene objs (somehow), hopefully by NOT DUPLICATING DATA between PhysicsWorld and Scene
+		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
+	- [ ] Do the same with LightManager.
+
 
 ## Bottle World
 - [ ] CSharp inline *minimal* scripts.

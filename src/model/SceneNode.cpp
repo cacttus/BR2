@@ -132,6 +132,8 @@ void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
 
   applyParent();
 
+  updateComponents(delta);
+
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {
       std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
@@ -141,6 +143,12 @@ void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
 
   calcBoundBox();//Must come after matrix calc
 }
+void SceneNode::updateComponents(float delta) {
+  for (auto comp : _vecComponents) {
+    comp->update(delta);
+  }
+}
+
 void SceneNode::compileWorldMatrix() {
   //So this is technically only ever going to 
   //be used by ModelNode, however it allows us to

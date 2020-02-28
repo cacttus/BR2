@@ -117,6 +117,8 @@ void Scene::update(float delta) {
   //if (_pLightManager != nullptr) {
   //  _pLightManager->update(getWindow()->getDelta()->get());
   //}
+  
+
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 void Scene::idle(int64_t us) {
@@ -155,7 +157,7 @@ void Scene::createFlyingCamera() {
 
   setActiveCamera(cn);
 
-  // attachChild(cn);
+  attachChild(cn);
    // cn->init();
 
    //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  

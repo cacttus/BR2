@@ -209,7 +209,9 @@ void GraphicsWindow::step() {
         _pint->_pScene->update(_pint->_pDelta->get());
 
         _pint->setFrameState(FrameState::Render);
-        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), 0xF);
+        PipeBits p;
+        p.set();
+        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), p);
       }
       else {
         BRLogErrorCycle("Scene was not set on graphics window " + getTitle());

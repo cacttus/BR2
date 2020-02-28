@@ -21,6 +21,7 @@ public:
   virtual ~Component() override;
   
   virtual void afterAdded() = 0;
+  virtual void update(float d) = 0;
 
   void setNode(std::shared_ptr<SceneNode> ob) { _pWorldObject = ob;  }
 

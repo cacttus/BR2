@@ -2,9 +2,9 @@
 # Mine City Devlog
 *2/27/20*
 
-* Deleted AppBase.
-* Deleted Package.
-* Deleted AppMain.
+* Deleted & removed AppBase.
+* Deleted & removed Package.
+* Deleted & removed AppMain.
 * Added ApplicationPackage to replace all project directory methods in AppBase & AppMain.
 * Moved Delta to GraphicsWindow.
 * Moved FpsMEter to GraphicsWindow.
@@ -17,6 +17,9 @@
 * Internalized ApplicationPackage and made PackageConfiguration only in that file (allows us to exclude HashMap from XmlFile)
 * Fixed HashMap, moved from the broken verion
 * Deleted Script
+* Changed /data/ folders to be full names: tex->textures, shr->shaders, fnt->fonts
+* commit 2
+* Added update routine to components (conseqauentially flying camera).
 
 
 *2/26/20*

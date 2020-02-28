@@ -25,7 +25,6 @@ namespace BR2 {
 //typedef Hash32 WorldCellSize;
 //typedef uint64_t PixObjId;
 //#define W25_NO_OBJECT_ID 0
-class FlyCam;
 //Serialized Types.
 typedef uint8_t TileId8;
 typedef v_v3i2n3 W25MeshVert;

@@ -188,6 +188,7 @@ private:
   vec3 _vLastPos;
   bool _bTransformChanged = true;
   bool _bInitialized = false;
+  void updateComponents(float delta);
 };
 
 
