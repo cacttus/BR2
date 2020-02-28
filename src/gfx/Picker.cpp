@@ -3,7 +3,7 @@
 #include "../base/Logger.h"
 #include "../base/Gu.h"
 #include "../base/FpsMeter.h"
-
+#include "../base/GraphicsWindow.h"
 #include "../gfx/Picker.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/DeferredFramebuffer.h"
@@ -52,8 +52,9 @@ void Picker::updatePickedPixel(int32_t x, int32_t y) {
   Gu::checkErrorsDbg();
 
 #ifdef _DEBUG
+  
   if (_uiLastSelectedPixelId > 0) {
-    if (Gu::getFpsMeter()->frameMod(20)) {
+    if (_pRenderPipe->getWindow()->getFpsMeter()->frameMod(20)) {
       BRLogDebug("(" + x + "," + y + "), picked " + _uiLastSelectedPixelId);
     }
   }

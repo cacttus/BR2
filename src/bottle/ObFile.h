@@ -20,7 +20,7 @@ namespace BR2 {
 class ObFile : public PoundFile {
   typedef std::map<Hash32, std::shared_ptr<SpriteSpec>> MotionSpecMap;
 public:
-  ObFile(std::shared_ptr<AppBase> pRoom);
+  ObFile();
   virtual ~ObFile() override;
 
   std::vector<WalkerSpec*>& getWalkerSpecs() { return _vecWalkers; }
@@ -38,12 +38,9 @@ protected:
   virtual void pkp(std::vector<string_t>& tokens);
   virtual void preLoad();
   virtual void postLoad();
-  std::shared_ptr<AppBase> _pApp;
   std::shared_ptr<SpriteBucket> _pBucket = nullptr;
   std::vector<std::shared_ptr<SpriteSpec>> _vecMotionSpecs;
-  //std::vector<WorldObjectSpec*> _vecPixObjSpecs;
   std::vector<std::shared_ptr<WorldObj>> _vecWorldObjs;
-  // std::vector<ObModel*> _vecModelSpecs;
   std::vector<Tile25Spec*> _vecTileSpecs;
   std::vector<WalkerSpec*> _vecWalkers;
   std::vector<LairSpec*> _vecLairs;

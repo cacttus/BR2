@@ -4,7 +4,7 @@
 #include "../base/EngineConfig.h"
 #include "../base/Hash.h"
 #include "../base/Allocator.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/BinaryFile.h"
 #include "../base/GLContext.h"
 #include "../gfx/UiControls.h"

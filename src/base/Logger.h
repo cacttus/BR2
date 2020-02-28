@@ -22,7 +22,7 @@ public:
   Logger();
   virtual ~Logger() override;
 
-  void init(std::shared_ptr<AppBase> rb);
+  void init(string_t cacheFolder);
 
   void enableLogToConsole(bool bLogToConsole);
   void enableLogToFile(bool bLogToFile);

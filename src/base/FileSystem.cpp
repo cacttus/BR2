@@ -1,8 +1,8 @@
 #include "../base/FileSystem.h"
 #include "../base/GLContext.h"
-#include "../base/AppBase.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/Exception.h"
 
 #include "../base/DateTime.h"
@@ -13,15 +13,14 @@
 namespace BR2 {
 string_t FileSystem::_strExePath = "";
 FileSystem::FileSystem() {
-
 }
 FileSystem::~FileSystem() {
-
 }
-string_t FileSystem::appendCachePathToFile(const string_t& strFileName) {
-  std::shared_ptr<AppBase> rb = Gu::getApp();
-  string_t ret = rb->makeAssetPath(rb->getCacheDir(), strFileName);
-  return ret;
+void FileSystem::init(string_t executablePath) {
+  FileSystem::setExecutablePath(executablePath);
+  string_t a = FileSystem::getCurrentDirectory();
+  FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
+  string_t b = FileSystem::getCurrentDirectory();
 }
 string_t FileSystem::getExecutableFullPath() {
   //  t_string ret;
@@ -434,8 +433,8 @@ string_t FileSystem::getScreenshotFilename() {
   string_t fname = DateTime::dateTimeToStr(DateTime::getDateTime()) + "_" + FileSystem::getExecutableName() + "_frame.png";
   fname = FileSystem::replaceInvalidCharsFromFilename(fname);
   fname = StringUtil::replaceAll(fname, " ", "_");
-  fname = FileSystem::appendCachePathToFile(fname);
-
+  fname = FileSystem::combinePath(Gu::getPackage()->getCacheFolder(), fname);
+  
   return fname;
 }
 string_t FileSystem::replaceInvalidCharsFromFilename(const string_t& __in_ fnIn, char replaceChar, bool bIgnoreSlashes) {

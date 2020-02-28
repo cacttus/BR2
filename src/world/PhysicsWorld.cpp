@@ -365,6 +365,7 @@ void PhysicsWorld::update(float delta) {
   BvhCollectionParams bcp;
   bcp._pFrustum = _pScene->getActiveCamera()->getFrustum();
   bcp._pRenderBucket = _pRenderBucket;
+  bcp._pVisibleCamera = _pScene->getActiveCamera();
   float nw = getNodeWidth();
   float nh = getNodeHeight();
   float dd = Gu::getRenderSettings()->drawDistance();
@@ -383,7 +384,7 @@ void PhysicsWorld::collisionLoopDual(float delta) {
   vec3 vGrav = _vUp * getGravityAmount();
   //  Physics* that = this;
   int32_t nIterV = 0, nIterA = 0;
-  uint64_t frameId = Gu::getFpsMeter()->getFrameNumber();
+  uint64_t frameId = getScene()->getFrameNumber();
   vec3 vDa = vGrav * delta;
 
   //Accelleration
@@ -1222,7 +1223,7 @@ void PhysicsWorld::makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_pt
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::loadGrid(const ivec3& pos) {
   std::shared_ptr<PhysicsGrid> p = nullptr;
-  BRThrowNotImplementedException();
+  BRLogWarnCycle("TODO: implement World25::loadGrid here");
   return p;
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::getNodeForPoint(vec3& pt) {

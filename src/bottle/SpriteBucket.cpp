@@ -3,7 +3,6 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/GLContext.h"
-#include "../base/AppMain.h"
 #include "../base/PoundFile.h"
 #include "../base/Img32.h"
 

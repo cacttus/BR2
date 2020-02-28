@@ -2,6 +2,7 @@
 #include "../base/Logger.h"
 #include "../base/Exception.h"
 #include "../base/EngineConfig.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/FpsMeter.h"
 #include "../base/Gu.h"
 #include "../base/Perf.h"
@@ -180,17 +181,26 @@ bool LightNodePoint::renderShadows(std::shared_ptr<ShadowBox> pf) {
 }
 void LightNodePoint::updateFlicker() {
   if (_bFlickerEnabled) {
+    auto s = getScene();
+    if (s) {
+      auto w = s->getWindow();
+      if (w) {
 
-    _fFlickerValue += (1 / 10.0f) * 1.0f / Gu::getFpsMeter()->getFps();
+        _fFlickerValue += (1 / 10.0f) * 1.0f / w->getFpsMeter()->getFps();
 
-    if (_fFlickerValue >= 1.0f) {
-      _fLastRandomValue = _fNextRandomValue;
-      _fNextRandomValue = Random::nextFloat(0.0f, 1.0f);
+        if (_fFlickerValue >= 1.0f) {
+          _fLastRandomValue = _fNextRandomValue;
+          _fNextRandomValue = Random::nextFloat(0.0f, 1.0f);
 
-      _fFlickerValue = 0.0f;
+          _fFlickerValue = 0.0f;
+        }
+
+        _fFlickerAddRadius = _fFlickerMaxRadius * (Alg::cosine_interpolate(_fLastRandomValue, _fNextRandomValue, _fFlickerValue));//pnoise in range -1,1 so make it 1,1
+
+      }
     }
 
-    _fFlickerAddRadius = _fFlickerMaxRadius * (Alg::cosine_interpolate(_fLastRandomValue, _fNextRandomValue, _fFlickerValue));//pnoise in range -1,1 so make it 1,1
+
   }
 
   // optimized radius for shader.

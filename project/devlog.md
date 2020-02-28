@@ -1,7 +1,25 @@
 
 # Mine City Devlog
+*2/27/20*
 
-*2/26/19*
+* Deleted AppBase.
+* Deleted Package.
+* Deleted AppMain.
+* Added ApplicationPackage to replace all project directory methods in AppBase & AppMain.
+* Moved Delta to GraphicsWindow.
+* Moved FpsMEter to GraphicsWindow.
+* Moved FrameSync to GraphicsWindow.
+* Moving these is important since each window has its own frame rate (thread).
+* Replaced XmlFile with old version.
+* Moved Gu::getFrameNuamber to GraphicsWindow.
+* Updated Global init with new cache directory method.
+* Moved ParticleManager to Scene
+* Internalized ApplicationPackage and made PackageConfiguration only in that file (allows us to exclude HashMap from XmlFile)
+* Fixed HashMap, moved from the broken verion
+* Deleted Script
+
+
+*2/26/20*
 
 * Refactored graphics api to "make more sense" giving us the ability to create multiple windows.
 * Also fixed the Opengl Context creation issue.  Contexts now create OpenGL Windows
@@ -14,7 +32,7 @@
 in SDL, you must have a SDL_window to initialize the graphics context (since all contexts require surfaces).  So that means that we need to separate the *initial* window creation with its
 render system initialization.
 
-*2/25/19*
+*2/25/20*
 
 * WindowViewport (old) -> RenderViewport
 	* Note many places we changed the viewport updateChanged to bind() which may impact rendering.

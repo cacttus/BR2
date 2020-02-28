@@ -46,21 +46,17 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce);
 
   virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect);
-  void drawDebug(RenderParams& rp);//ONLY CALL ON Gui2d!!
+  void drawDebug(RenderParams& rp, std::shared_ptr<UiScreen> pscreen);
   virtual std::shared_ptr<UiElement> addChild(std::shared_ptr<UiElement> c, uint32_t uiSort = UiElement::c_uiBaseLayer0SortId, bool bUpdateLayout = true, bool bCheckDupes = true);
   std::shared_ptr<UiElement> getParent() { return _pParent; }
   virtual void setLayoutChanged(bool bChildren = false);//Don't use bChildren unless we're Gui2D
 
   void enableDrag(UiDragInfo::DragFunc func);
 
-  /// TODO: set this 
-  //    Pass a Camera into UiScreen and all UiElements reference it..
-  
   std::shared_ptr<Picker> getPicker() { 
     BRThrowNotImplementedException();
     return nullptr; 
   }
-
 
   void setName(std::string n) { _strName = n; }
   virtual void init();
@@ -99,7 +95,7 @@ public:
   bool removeChild(std::shared_ptr<UiElement> ele, bool bUpdateLayout = true);
   bool hasChild(std::shared_ptr<UiElement> ele);
 
-  virtual bool pick(std::shared_ptr<InputManager> fingers);
+  virtual bool pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen);
   void addEvent(UiEventId::e ev, std::shared_ptr<UiEventFunc> f);
   bool removeEvent(UiEventId::e evId, std::shared_ptr<UiEventFunc> f);
 
@@ -144,10 +140,8 @@ protected:
   virtual bool getShouldScalePositionToDesign() { return true; }
   virtual bool getIsPickEnabled() { return _bPickEnabled; }
   vec4 makeClipRectForRender(const Box2f& b2ClipRect);
-
   bool getLayoutChanged() { return _bLayoutChanged; }
   virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect);
-  //virtual void setQuad() { }
   bool getPickedLastFrame() { return _bPickedLastFrame; }
 
 private:
@@ -179,10 +173,6 @@ private:
   uDim _padRight = "0px";//Bottom Padding   static elements only*
   uDim _padBottom = "0px";//Bottom Padding  static elements only*
   uDim _padLeft = "0px";//Bottom Padding    static elements only*
-
- // ButtonState::e _eLastLmb = ButtonState::e::Up;
- // ButtonState::e _eLastRmb = ButtonState::e::Up;
- // ButtonState::e _eLastMmb = ButtonState::e::Up;
 
   UiDisplayMode::e _eDisplayMode = UiDisplayMode::e::InlineWrap;// All elements default to inline, block elements (like whitespace characters) will wrap to new lines.
   UiOverflowMode::e _eOverflowMode = UiOverflowMode::e::Show;//Really only windows should hide stuff
@@ -220,7 +210,7 @@ private:
   void calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<UiLine>& vecLines, float fAutoWidth, float fAutoHeight);
   void getRootParent(std::shared_ptr<UiElement>& rp);
   void applyMinMax(float& wpx, float& hpx);
-  void drawBoundBox(std::shared_ptr<UtilMeshInline2d> pt, vec4& color, bool bPickedOnly);
+  void drawBoundBox(std::shared_ptr<UtilMeshInline2d> pt, vec4& color, bool bPickedOnly, std::shared_ptr<UiScreen> pscreen);
   bool checkDupes(std::shared_ptr<UiElement> c);
   void findElement(std::shared_ptr<UiElement> ele, bool& b);
   void layoutLayer(std::vector<std::shared_ptr<UiElement>> bucket);
@@ -229,8 +219,6 @@ private:
   void performLayoutChildren(std::shared_ptr<UiScreen> s, bool bForce);
   void positionChildren(bool bForce);
   void computeContentQuad();
-
-
 };
 class UiImage : public UiElement {
   // std::shared_ptr<MeshNode> _pMesh = nullptr;
@@ -263,7 +251,7 @@ public:
   virtual bool getPickable() override { return true; }
   void setSizeMode(UiImageSizeMode::e eSizeX, UiImageSizeMode::e eSizeY);
   void setWrapMode(TexWrap::e u, TexWrap::e v);
-  virtual bool pick(std::shared_ptr<InputManager> fingers) override;
+  virtual bool pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) override;
   Box2f& getTexs() { return  _q2Tex; }
   void regenMeshExposed(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) { regenMesh(verts, inds, b2ClipRect); }
 
@@ -577,7 +565,7 @@ public:
   virtual void init() override;
   virtual void update(std::shared_ptr<InputManager> pFingers);
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
-  virtual bool pick(std::shared_ptr<InputManager> fingers) override;
+  virtual bool pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) override;
   void enableVScrollbar();//Call this to scroll contents
   void enableHScrollbar();//Call this to scroll contents
   void enableResize();
@@ -640,6 +628,8 @@ public:
 
   void debugForceLayoutChanged();
   void performForcedLayout();
+  uint64_t getFrameNumber();
+
   std::shared_ptr<GraphicsWindow> getWindow();
 private:
   std::unique_ptr<UiScreen_Internal> _pint = nullptr;

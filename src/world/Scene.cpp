@@ -2,12 +2,13 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
+#include "../base/Delta.h"
 #include "../base/GraphicsWindow.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/FileSystem.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../base/AppBase.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
@@ -19,6 +20,7 @@
 #include "../gfx/RenderUtils.h"
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
+#include "../gfx/ParticleManager.h"
 #include "../gfx/FlyingCameraControls.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
@@ -57,6 +59,8 @@ void Scene::init() {
 
   BRLogInfo("..Render Bucket");
   _pRenderBucket = std::make_shared<RenderBucket>();
+
+  SceneNode::init();
 }
 void Scene::afterAttachedToWindow() {
   //Lazy init, requires our window to be set before creating.
@@ -67,6 +71,9 @@ void Scene::afterAttachedToWindow() {
 
   BRLogInfo("Making UI");
   createUi();
+
+  BRLogInfo("..ParticleManager");
+  _pParticleManager = std::make_shared<ParticleManager>(getWindow()->getContext());
 }
 void Scene::createUi() {
   string_t DEBUG_FONT = "Lato-Regular.ttf";
@@ -76,9 +83,9 @@ void Scene::createUi() {
   _pUiScreen = UiScreen::create(getWindow());
 
   //skins first
-  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, Gu::getApp()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
   std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
-  pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getApp()->makeAssetPath("ui", "wings-cursor.png"));
+  pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
 
   _pUiScreen->getTex()->loadImages();
 
@@ -101,7 +108,16 @@ void Scene::createUi() {
   _pUiScreen->getTex()->compile();
 }
 void Scene::update(float delta) {
-
+  if (_pPhysicsWorld != nullptr) {
+    _pPhysicsWorld->update(getWindow()->getDelta()->get());
+  }
+  if (_pParticleManager != nullptr) {
+    _pParticleManager->update(getWindow()->getDelta()->get());
+  }
+  //if (_pLightManager != nullptr) {
+  //  _pLightManager->update(getWindow()->getDelta()->get());
+  //}
+  SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 void Scene::idle(int64_t us) {
 }
@@ -330,7 +346,7 @@ void Scene::drawBackgroundImage() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(Gu::getApp()->makeAssetPath("tex", "test_tex3.png"));
+    _pTex = Gu::getTexCache()->getOrLoad(Gu::getPackage()->makeAssetPath("textures", "test_tex3.png"));
   }
   std::shared_ptr<CameraNode> bc = getActiveCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
@@ -382,7 +398,6 @@ void Scene::draw2d() {
   //  Gu::getGui()->debugForceLayoutChanged();
   drawDebugText();
 }
-
 void Scene::setDebugMode() {
   //set some debug vars to make ikte easier
   _bShowDebugText = true;
@@ -425,9 +440,7 @@ void Scene::drawDebugText() {
     DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
 
     //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
-
   }
-
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pUiScreen->screenChanged(w, h);
@@ -515,6 +528,9 @@ void Scene::mouseWheel(int amount) {
   //Likely, this is going to switch items on the toolbelt if hovered, AND
   // if not hovered over toolbelt, this will zoom the camera in the game world.
 
+}
+uint64_t Scene::getFrameNumber(){
+  return getWindow()->getFpsMeter()->getFrameNumber();
 }
 
 }//ns BR2

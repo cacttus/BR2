@@ -2,9 +2,11 @@
 This is the package specification for the graphics project.
 -->
 <ApplicationPackage name="MyAppName">
-  <TextureFolder value="./tex/"/>
+  <TextureFolder value="./textures/"/>
   <ShaderFolder value="./shaders/"/>
   <ModelsTextFolder value="./mob/"/>
   <ModelsBinFolder value="./mbi/"/>
   <ScriptsFolder value="./scripts/"/>
+  <SoundsFolder value="./sounds/"/>
+  <FontsFolder value="./fonts/"/>
 </ApplicationPackage>

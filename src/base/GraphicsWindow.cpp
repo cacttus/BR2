@@ -2,11 +2,12 @@
 #include "../base/Logger.h"
 #include "../base/EngineConfig.h"
 #include "../base/GLContext.h"
-#include "../base/AppBase.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
 #include "../base/GraphicsWindow.h"
 #include "../base/Delta.h"
+#include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
@@ -27,6 +28,10 @@ public:
   std::shared_ptr<Scene> _pScene = nullptr;
   std::shared_ptr<RenderPipe> _pRenderPipe = nullptr;
   std::shared_ptr<GraphicsApi> _pApi = nullptr;
+  std::shared_ptr<FrameSync> _pFrameSync = nullptr;
+  std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
+  std::shared_ptr<Delta> _pDelta = nullptr;
+  FrameState _eFrameState = FrameState::None;
 
   SDL_Window* _pSDLWindow = nullptr;
   bool _bFullscreen = false;
@@ -40,6 +45,7 @@ public:
   void endRender();
   void updateWidthHeight(uint32_t w, uint32_t h, bool force);
   void toggleFullscreen();
+  void setFrameState(FrameState e) { _eFrameState = e; }
 
 };
 void GraphicsWindow_Internal::toggleFullscreen() {
@@ -81,8 +87,6 @@ void GraphicsWindow_Internal::toggleFullscreen() {
   }
 
 }
-
-
 void GraphicsWindow_Internal::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
   if (_iLastWidth != w || bForce) {
@@ -141,7 +145,6 @@ void GraphicsWindow_Internal::endRender() {
 }
 #pragma endregion
 
-//////////////////////////////////////////////////////////////////////////
 
 #pragma region GraphicsWindow
 //Called exclusively by the graphics API
@@ -149,9 +152,6 @@ GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsApi> api, std::shared_ptr
   _pint = std::make_unique<GraphicsWindow_Internal>();
   _pint->_pSDLWindow = win;
   _pint->_pApi = api;
-  _pint->_iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
-  _pint->_iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
 }
 GraphicsWindow::~GraphicsWindow() {
   if (_pint->_pSDLWindow != nullptr) {
@@ -159,70 +159,79 @@ GraphicsWindow::~GraphicsWindow() {
   }
   _pint = nullptr;
 }
+void GraphicsWindow::init() {
+  _pint->_iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
+  _pint->_iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
+  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
+  _pint->_pFrameSync = std::make_shared<FrameSync>(getThis<GraphicsWindow>());
+  _pint->_pDelta = std::make_shared<Delta>();
+  _pint->_pFpsMeter = std::make_shared<FpsMeter>();
+}
+std::shared_ptr<GraphicsWindow> GraphicsWindow::create(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win) {
+  std::shared_ptr<GraphicsWindow> w = std::make_shared<GraphicsWindow>(api, ct, win);
+  w->init();
+  return w;
+}
+uint64_t GraphicsWindow::getFrameNumber() { return _pint->_pFpsMeter->getFrameNumber(); }
 int32_t GraphicsWindow::getWidth() { return _pint->_iLastWidth; }
 int32_t GraphicsWindow::getHeight() { return _pint->_iLastHeight; }
 SDL_Window* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
 std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
 std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
 std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
-void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) { 
+std::shared_ptr<FrameSync> GraphicsWindow::getFrameSync() { return _pint->_pFrameSync; }
+std::shared_ptr<Delta> GraphicsWindow::getDelta() { return _pint->_pDelta; }
+std::shared_ptr<FpsMeter> GraphicsWindow::getFpsMeter() { return _pint->_pFpsMeter; }
+void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) {
   scene->setWindow(getThis<GraphicsWindow>());
   _pint->_pScene = scene;
   scene->afterAttachedToWindow();
 }
 void GraphicsWindow::step() {
+  _pint->_pDelta->update();
+  _pint->_pFpsMeter->update();
+
+  if (_pint->_pScene == nullptr) {
+    setScene(Scene::create());
+  }
+
   _pint->beginRender();
   {
     if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F11)) {
       _pint->toggleFullscreen();
     }
 
-    Gu::getCoreContext()->setLoopState(EngineLoopState::SyncBegin);
-    Gu::getFrameSync()->syncBegin();
+    _pint->setFrameState(FrameState::SyncBegin);
+    _pint->_pFrameSync->syncBegin();
     {
-      Gu::getCoreContext()->setLoopState(EngineLoopState::Update);
-
-      //...?
-
-      //App Update steps.
-     // Gu::getApp()->step((float)_fDelta);
-
-      Gu::getCoreContext()->setLoopState(EngineLoopState::Render);
-      
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      //TEST: HACK: TODO:
-      if (_pint->_pScene == nullptr) {
-        setScene(Scene::create());
-      }
-
       if (getScene() != nullptr) {
-        //Main Render
-        PipeBits pbs;
-        pbs.set();
-        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), pbs);
+        _pint->setFrameState(FrameState::Update);
+        _pint->_pScene->update(_pint->_pDelta->get());
+
+        _pint->setFrameState(FrameState::Render);
+        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), 0xF);
       }
       else {
         BRLogErrorCycle("Scene was not set on graphics window " + getTitle());
       }
     }
-    Gu::getCoreContext()->setLoopState(EngineLoopState::SyncEnd);
-    Gu::getFrameSync()->syncEnd();
+    _pint->setFrameState(FrameState::SyncEnd);
+    _pint->_pFrameSync->syncEnd();
   }
 
   _pint->endRender();
+}
+void GraphicsWindow::idle(int64_t us) {
+  if (_pint->_pScene != nullptr) {
+    _pint->_pScene->idle(us);
+  }
 }
 void GraphicsWindow::initRenderSystem() {
   if (_pint->_pSDLWindow == nullptr) {
     BRThrowException("You need to make the SDL window before initializing render system.");
   }
 
-  SDLUtils::trySetWindowIcon(_pint->_pSDLWindow, Gu::getApp()->getIconFullPath());
+  SDLUtils::trySetWindowIcon(_pint->_pSDLWindow, Gu::getPackage()->getIconPath());
 
   if (Gu::getConfig()->getForceAspectRatio()) {
     SDL_DisplayMode dm;
@@ -249,7 +258,7 @@ void GraphicsWindow::initRenderSystem() {
   }
 
   _pint->_pRenderPipe = std::make_shared<RenderPipe>(getContext(), getThis<GraphicsWindow>());
-  _pint->_pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getApp()->makeAssetPath(Gu::getApp()->getEnvTexturePath()));
+  _pint->_pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getPackage()->makeAssetPath(Gu::getPackage()->getEnvTextureFolder()));
 
   _pint->printHelpfulDebug();
 }

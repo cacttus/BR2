@@ -16,11 +16,11 @@ namespace BR2 {
 */
 class FrameSync : public VirtualMemory {
 public:
-  FrameSync();
+  FrameSync(std::shared_ptr<GraphicsWindow> win);
   virtual ~FrameSync() override;
   void disable();
   void enable();
-  FORCE_INLINE bool isEnabled() { return !_bVsyncDisabled; }
+  bool isEnabled() { return !_bVsyncDisabled; }
 
   void syncBegin();    // Call before you do your frame update
   int syncEnd();        // Call after you do your frame update.
@@ -32,6 +32,7 @@ private:
   t_timeval _syncEnd;
   bool _bVsyncDisabled = false;
   float _nFramesMax = 60.0f;//Max FPS - the cap if we want to cap it.  
+  std::shared_ptr<GraphicsWindow> _pGraphicsWindow = nullptr;
   int64_t calculateWaitMicroseconds();
   bool shouldWait(int64_t& waitUs);
 };

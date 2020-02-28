@@ -10,7 +10,7 @@
 #include "../base/TextConfigFile.h"
 
 namespace BR2 {
-class XmlFile_Internal;
+class PackageConfiguration;
 /**
 *  @class XmlFile
 *  @brief Brief interface that handles loading the XML file into a pugixml document.
@@ -21,16 +21,14 @@ public:
   XmlFile(string_t loc);
   virtual ~XmlFile() override;
 
+  static std::shared_ptr<PackageConfiguration> getXMLConfiguration(string_t filepath);
+
 protected:
   virtual void parse(char* buf, int64_t size) override;
-  //To mimick the behavior of PoundFile.
   virtual void pkp(std::vector<string_t>& tokens) = 0;
-
-private:
-  std::unique_ptr<XmlFile_Internal> _pint = nullptr;
 };
 
-}//ns Game
+}//ns BR2
 
 
 

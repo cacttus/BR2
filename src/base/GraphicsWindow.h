@@ -25,7 +25,10 @@ public:
   GraphicsWindow(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win);
   virtual ~GraphicsWindow() override;
 
+  static std::shared_ptr<GraphicsWindow> create(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win);
+  void init();
   void step();
+  void idle(int64_t us);
 
   void initRenderSystem();
   virtual int32_t getWidth() override;
@@ -38,6 +41,10 @@ public:
   std::shared_ptr<RenderViewport> getViewport();
   std::shared_ptr<RenderPipe> getRenderPipe();
   std::shared_ptr<Scene> getScene();
+  std::shared_ptr<FrameSync> getFrameSync();
+  std::shared_ptr<Delta> getDelta();
+  std::shared_ptr<FpsMeter> getFpsMeter();
+  uint64_t getFrameNumber();
 
   void setScene(std::shared_ptr<Scene> scene);
 private:

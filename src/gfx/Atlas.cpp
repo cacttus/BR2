@@ -1,10 +1,9 @@
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
 #include "../base/Allocator.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/Img32.h"
 #include "../base/Hash.h"
-
-
 #include "../gfx/Atlas.h"
 #include "../gfx/TexCache.h"
 
@@ -269,7 +268,7 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
 string_t Atlas::getCachedImageFilePath() {
   string_t fn;
   fn = getName() + ".png";
-  fn = FileSystem::appendCachePathToFile(fn);
+  fn = FileSystem::combinePath(Gu::getPackage()->getCacheFolder(), fn);
   return fn;
 }
 void Atlas::getTCoords(Hash32 emat, vec2* __out_ bl, vec2* __out_ br, vec2* __out_ tl, vec2* __out_ tr, bool bHalfPixelPadding) {

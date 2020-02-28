@@ -4,7 +4,7 @@
 
 //#include "../base/OperatingSystemHeader.h"
 
-#ifdef __WINDOWS__
+#ifdef _WIN32
 /*
 FOREGROUND_BLUE    Text color contains blue.
 FOREGROUND_GREEN    Text color contains green.

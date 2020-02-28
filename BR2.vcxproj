@@ -19,8 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\base\AppBase.cpp" />
-    <ClCompile Include="src\base\AppMain.cpp" />
+    <ClCompile Include="src\base\ApplicationPackage.cpp" />
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
@@ -49,10 +48,8 @@
     <ClCompile Include="src\base\oglErr.cpp" />
     <ClCompile Include="src\base\OpenGLWindow.cpp" />
     <ClCompile Include="src\base\OperatingSystem.cpp" />
-    <ClCompile Include="src\base\Package.cpp" />
     <ClCompile Include="src\base\Perf.cpp" />
     <ClCompile Include="src\base\PoundFile.cpp" />
-    <ClCompile Include="src\base\Script.cpp" />
     <ClCompile Include="src\base\SDLUtils.cpp" />
     <ClCompile Include="src\base\Sequencer.cpp" />
     <ClCompile Include="src\base\SoundCache.cpp" />
@@ -174,9 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\Allocator.h" />
-    <ClInclude Include="src\base\AppBase.h" />
-    <ClInclude Include="src\base\AppHeader.h" />
-    <ClInclude Include="src\base\AppMain.h" />
+    <ClInclude Include="src\base\ApplicationPackage.h" />
     <ClInclude Include="src\base\AppRunner.h" />
     <ClInclude Include="src\base\BaseDefines.h" />
     <ClInclude Include="src\base\BaseHeader.h" />
@@ -215,11 +210,10 @@
     <ClInclude Include="src\base\OpenGLWindow.h" />
     <ClInclude Include="src\base\OperatingSystem.h" />
     <ClInclude Include="src\base\OperatingSystemHeader.h" />
-    <ClInclude Include="src\base\Package.h" />
+    <ClInclude Include="src\base\PackageConfiguration.h" />
     <ClInclude Include="src\base\Perf.h" />
     <ClInclude Include="src\base\PoundFile.h" />
     <ClInclude Include="src\base\RetCode.h" />
-    <ClInclude Include="src\base\Script.h" />
     <ClInclude Include="src\base\SDLGLIncludes.h" />
     <ClInclude Include="src\base\SDLIncludes.h" />
     <ClInclude Include="src\base\SDLUtils.h" />

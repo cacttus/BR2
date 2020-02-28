@@ -1,6 +1,21 @@
 # Mine City Task Log
 
 ## BR0 to BR2 Upgrade
+- [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (org) 
+- [ ] Move ModelCache's model load methods into ApplicationPackage (org)
+- [ ] See if we can make ParticleManager part of PhysicsWorld
+- [ ] Remove Graphics and Config defines in Gu
+- [ ] Remove AppMain, and AppBase, and Package
+	- [ ] Merge Appbase & Scene
+	- [ ] Remove AppBase
+	- [ ] Add ApplicationPackage back.
+	- [ ] Create new Scene() 
+	- [ ] Attach Scene to GraphicsWindow.	
+
+- [ ] move to /gfx 
+	- [ ] graphicswindow
+	- [ ] glcontext
+
 - [ ] Scene -> PhysicsWorld integration
 	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
 	- [x] Move all object creation to Scene
@@ -9,16 +24,8 @@
 		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
 	- [ ] Do the same with LightManager.
 
-- [ ] move to /gfx 
-	- [ ] graphicswindow
-	- [ ] glcontext
 	
-- [ ] Remove AppMain, and AppBase
-	- [ ] Merge Appbase & Scene
-	- [ ] Remove AppBase
-	- [ ] Add ApplicationPackage back.
-	- [ ] Create new Scene() 
-	- [ ] Attach Scene to GraphicsWindow.
+
 
 - [ ] **CRITICAL** Squashed viewport Bug
 	- [x] Implement the updated viewport class from the engine.

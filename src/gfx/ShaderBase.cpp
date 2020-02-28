@@ -279,9 +279,9 @@ void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenu
 }
 void ShaderBase::draw(std::shared_ptr<VaoShader> vao, int32_t iCount, GLenum eDrawMode) {
   //Removing the loopstate
-  if (Gu::getCoreContext()->getLoopState() != EngineLoopState::e::Render) {
-    BRLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
-  }
+  //if (Gu::getCoreContext()->getLoopState() != EngineLoopState::e::Render) {
+  //  BRLogWarn("Called a draw() function when the engine wan't in a valid render loop.");
+  //}
   AssertOrThrow2(vao != nullptr);
   Gu::getCoreContext()->chkErrDbg();
 

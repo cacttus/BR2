@@ -14,8 +14,6 @@
 #include "../base/Logger.h"
 #include "../base/SDLUtils.h"
 #include "../base/oglErr.h"
-#include "../base/AppBase.h"
-#include "../base/Package.h"
 #include "../base/GraphicsWindow.h"
 #include "../math/MathAll.h"
 #include "../gfx/RenderUtils.h"

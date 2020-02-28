@@ -1,14 +1,13 @@
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
-
+#include "../base/ApplicationPackage.h"
 #include "../base/DateTime.h"
 #include "../base/Gu.h"
 #include "../base/DebugHelper.h"
 #include "../base/StringUtil.h"
-#include "../base/AppBase.h"
+#include "../base/GraphicsWindow.h"
 #include "../base/GLContext.h"
 #include "../base/FpsMeter.h"
-
 #include <mutex>
 #include <atomic>
 #include <fstream>
@@ -99,9 +98,10 @@ Logger::Logger() {
 Logger::~Logger() {
   _pint = nullptr;
 }
-void Logger::init(std::shared_ptr<AppBase> rb) {
+void Logger::init(string_t cache) {
   _pint->_logFileName = "Log.txt";
-  _pint->_logDir = rb->makeAssetPath(rb->getCacheDir(), _pint->_logFileName);
+  string_t cache_rooted = FileSystem::getRootedPath(cache);
+  _pint->_logDir = FileSystem::combinePath(cache_rooted, _pint->_logFileName);
 
   //*Note: do not call the #define shortcuts here.
   logInfo(Stz  "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
@@ -207,9 +207,11 @@ void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e) {
 void Logger::logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle) {
   //prevents per-frame logging conundrum
   if (Gu::getCoreContext() != nullptr) {
-    if (Gu::getFpsMeter() != nullptr) {
-      if (Gu::getFpsMeter()->frameMod(iCycle)) {
-        logWarn(msg, line, file, e);
+    if (Gu::getCoreContext()->getGraphicsWindow() != nullptr) {
+      if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()) {
+        if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()->frameMod(iCycle)) {
+          logWarn(msg, line, file, e);
+        }
       }
     }
   }
@@ -217,9 +219,11 @@ void Logger::logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e,
 void Logger::logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle) {
   //prevents per-frame logging conundrum
   if (Gu::getCoreContext() != nullptr) {
-    if (Gu::getFpsMeter() != nullptr) {
-      if (Gu::getFpsMeter()->frameMod(iCycle)) {
-        logError(msg, line, file, e);
+    if (Gu::getCoreContext()->getGraphicsWindow() != nullptr) {
+      if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()) {
+        if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()->frameMod(iCycle)) {
+          logError(msg, line, file, e);
+        }
       }
     }
   }

@@ -1,6 +1,5 @@
 #include "../base/GLContext.h"
 #include "../base/OglErr.h"
-#include "../base/AppBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../model/MeshNode.h"
 #include "../model/VaoDataGeneric.h"

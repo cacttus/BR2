@@ -283,6 +283,9 @@ void SceneNode::applyParent() {
     }
 
   }
+  else if (getThis<Scene>() != nullptr) {
+    //Scene node..67
+  }
   else {
     BRLogWarnCycle("Unrecognized node type when updating parent.");
   }

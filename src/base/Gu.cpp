@@ -1,11 +1,11 @@
 #include "../base/Logger.h"
-
+#include "../base/SDLIncludes.h"
+#include "../base/SDLGLIncludes.h"
 #include "../base/Img32.h"
 #include "../base/Allocator.h"
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
 #include "../base/EngineConfigFile.h"
-#include "../base/AppBase.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
@@ -15,7 +15,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../base/Package.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
 #include "../base/SoundCache.h"
@@ -23,12 +23,8 @@
 #include "../base/EngineConfig.h"
 #include "../base/GLContext.h"
 #include "../base/Net.h"
-#include "../base/Delta.h"
-
-#include "../math/Algorithm.h"
-
 #include "../base/ProjectFile.h"
-
+#include "../math/Algorithm.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GraphicsApi.h"
@@ -40,14 +36,9 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/OpenGLApi.h"
 #include "../base/GLContext.h"
-
 #include "../model/ModelCache.h"
 #include "../model/VertexTypes.h"
 #include "../model/VertexFormat.h"
-
-
-#include "../base/SDLIncludes.h"
-#include "../base/SDLGLIncludes.h"
 #include "../ext/lodepng.h" 
 #include <chrono>
 #include <thread>
@@ -71,41 +62,31 @@ extern "C" {
 
 namespace BR2 {
 std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
-std::shared_ptr<ParticleManager> Gu::_pParty = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
-std::shared_ptr<AppBase> Gu::_pAppBase = nullptr;
 std::shared_ptr<InputManager> Gu::_pInputManager = nullptr;
-std::shared_ptr<FpsMeter> Gu::_pFpsMeter = nullptr;
-std::shared_ptr<FrameSync> Gu::_pFrameSync = nullptr;
 std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
 std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
 std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
-std::shared_ptr<Package> Gu::_pPackage = nullptr;
+std::shared_ptr<ApplicationPackage> Gu::_pPackage = nullptr;
 std::shared_ptr<RenderSettings> Gu::_pRenderSettings = nullptr;
 std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
-std::shared_ptr<Delta> Gu::_pDelta = nullptr;
 
 std::shared_ptr<RenderSettings> Gu::getRenderSettings() { return _pRenderSettings; }
-std::shared_ptr<Package> Gu::getPackage() { return _pPackage; }
+std::shared_ptr<ApplicationPackage> Gu::getPackage() { return _pPackage; }
 std::shared_ptr<ModelCache> Gu::getModelCache() { return _pModelCache; }
 std::shared_ptr<Sequencer> Gu::getSequencer() { return _pSequencer; }
 std::shared_ptr<InputManager> Gu::getInputManager() { return _pInputManager; }
-std::shared_ptr<FpsMeter> Gu::getFpsMeter() { return _pFpsMeter; }
-std::shared_ptr<FrameSync> Gu::getFrameSync() { return _pFrameSync; }
 std::shared_ptr<SoundCache> Gu::getSoundCache() { return _pSoundCache; }
 std::shared_ptr<TexCache> Gu::getTexCache() { return _pTexCache; }
 std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
-std::shared_ptr<AppBase> Gu::getApp() { return _pAppBase; }
-std::shared_ptr<ParticleManager> Gu::getParty() { return _pParty; }
 std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
 std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
 std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
 std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
 std::shared_ptr<Net> Gu::getNet() { return _pNet; }
-std::shared_ptr<Delta> Gu::getDelta() { return _pDelta; }
 std::shared_ptr<GLContext> Gu::getCoreContext() {
   std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
   std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
@@ -115,7 +96,6 @@ std::shared_ptr<GLContext> Gu::getCoreContext() {
   }
   return oglapi->getCoreContext()->getThis<GLContext>();
 }
-void Gu::setApp(std::shared_ptr<AppBase> b) { AssertOrThrow2(b != nullptr); _pAppBase = b; }
 void Gu::setGraphicsApi(std::shared_ptr<GraphicsApi> api) { AssertOrThrow2(api != nullptr); _pGraphicsApi = api; }
 void Gu::checkErrorsDbg() { Gu::getCoreContext()->chkErrDbg(); }
 void Gu::checkErrorsRt() { Gu::getCoreContext()->chkErrRt(); }
@@ -164,22 +144,13 @@ void parsearg(std::string arg) {
   }
   parsearg(key, value);
 }
-
-void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>& args) {
-  //Try to create teh cache dir.
-  //Make sure to check this on IOS
-  FileSystem::createDirectoryRecursive(FileSystem::formatPath(rb->getCacheDir()));
-
-  _pAppBase = rb;
-
-  //Log
+void Gu::createLogger(string_t logfile_dir) {
   Gu::_pLogger = std::make_shared<Logger>();
-  Gu::_pLogger->init(rb);
-
+  Gu::_pLogger->init(logfile_dir);
+}
+void Gu::initGlobals(const std::vector<std::string>& args) {
   //Config
-  EngineConfigFile ef;
-  ef.loadAndParse(rb->getConfigPath());
-  Gu::_pEngineConfig = ef.getConfig();
+  loadConfig(args);
 
   //Override EngineConfig
   for (std::string arg : args) {
@@ -187,7 +158,7 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>
     parsearg(arg);
   }
 
-  //Setup Global Configruation
+  //Setup Global Configuration
   getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
   getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
 
@@ -203,14 +174,31 @@ void Gu::initGlobals(std::shared_ptr<AppBase> rb, const std::vector<std::string>
     OperatingSystem::showConsole();
   }
 }
+void Gu::loadConfig(const std::vector<std::string>& args) {
+  string_t configPath = ApplicationPackage::getEngineConfigFilePath();
+  BRLogInfo("Loading config from '" + configPath + "'");
+  if (!FileSystem::fileExists(configPath)) {
+    BRThrowException("Engine configuration file '" + configPath + "' does not exist.");
+  }
+  else {
+    EngineConfigFile ef;
+    ef.loadAndParse(configPath);
+    Gu::_pEngineConfig = ef.getConfig();
+  }
+
+  //Override the EngineConfig
+  for (std::string arg : args) {
+    parsearg(arg);//TODO: skip arg 0 (app)
+  }
+
+}
 //void Gu::setContext(std::shared_ptr<GraphicsContext> rb) {
 //    Gu::_pContext = rb;
 //}
-void Gu::deleteGlobals() {
+void Gu::deleteManagers() {
   //This must be called in order to delete these in order.
   //Teh GL context needs to come at the end.
   _pTexCache = nullptr;
-  _pParty = nullptr;
   _pSequencer = nullptr;
 
   _pSoundCache = nullptr;
@@ -224,12 +212,8 @@ void Gu::deleteGlobals() {
   _pPackage = nullptr;
   _pLogger = nullptr;
   _pNet = nullptr;
-  _pDelta = nullptr;
-  _pFpsMeter = nullptr;
-  _pFrameSync = nullptr;
 
   _pGraphicsApi = nullptr;
-  _pAppBase = nullptr;
 }
 
 bool Gu::isBigEndian() {
@@ -513,7 +497,7 @@ std::vector<string_t> Gu::argsToVectorOfString(int argc, char** argv, char delim
 }
 
 void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp) {
-  //Transforms a quad for the matrix-less gui projection.
+  //Transforms a quad for the matrix-less Gui projection.
 
   //The resulting coordinates for the GPU are -0.5 +0.5 in both axes with the center being in the center of the screen
   //Translate a 2D screen quad to be rendered in a shader.
@@ -527,7 +511,7 @@ void Gu::guiQuad2d(Box2f& pq, std::shared_ptr<RenderViewport> vp) {
   pq._p0.x -= w2;
   pq._p1.x -= w2;
 
-  //Invert text to show rightside up and divide by perspective
+  //Invert text to show rightsize up and divide by perspective
   pq._p0.x = pq._p0.x / w2;
   pq._p0.y = (h2 - pq._p0.y - 1) / h2;
   pq._p1.x = pq._p1.x / w2;
@@ -551,10 +535,6 @@ void Gu::print(const char* msg) {
   }
 }
 
-uint64_t Gu::getFrameNumber() {
-  return Gu::getFpsMeter()->getFrameNumber();
-}
-
 std::string Gu::getCPPVersion() {
   //https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
 
@@ -575,65 +555,41 @@ std::string Gu::getCPPVersion() {
 
 void Gu::createManagers() {
   std::shared_ptr<GLContext> ct = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext());
-
   _pRenderSettings = RenderSettings::create();
-  BRLogInfo("GLContext - Building Package");
-  _pPackage = std::make_shared<Package>();
+
+  BRLogInfo("GLContext - Building ApplicationPackage");
+  _pPackage = std::make_shared<ApplicationPackage>();
   _pPackage->build(FileSystem::getExecutableFullPath());
+
   BRLogInfo("GLContext - Creating TexCache");
   _pTexCache = std::make_shared<TexCache>(Gu::getCoreContext());
-
-  BRLogInfo("GLContext - Creating TextBoss");
-  //    _pTextManager = std::make_shared<TextBoss>(shared_from_this());
-  BRLogInfo("GLContext - Creating Party");
-  _pParty = std::make_shared<ParticleManager>(Gu::getCoreContext());
   BRLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
   BRLogInfo("GLContext - Creating Fingers");
   _pInputManager = std::make_shared<InputManager>();
   _pInputManager->init();
-  BRLogInfo("GLContext - Creating FpsMeter");
-  _pFpsMeter = std::make_shared<FpsMeter>();
-  BRLogInfo("GLContext - Creating FrameSync");
-  _pFrameSync = std::make_shared<FrameSync>();
-  //This was commented out.  Why? 11/6
   BRLogInfo("GLContext - Creating SoundCache");
   _pSoundCache = std::make_shared<SoundCache>();
   BRLogInfo("GLContext - Creating ShaderMaker & base shaders");
   _pShaderMaker = std::make_shared<ShaderMaker>();
-  _pShaderMaker->initialize(Gu::getApp());
-
+  _pShaderMaker->initialize();
   BRLogInfo("GLContext - Model Cache");
   _pModelCache = std::make_shared<ModelCache>(Gu::getCoreContext());
-
-  BRLogInfo("GLContext - Physics World");
-  //Either A) subclass or B) remove genericy thing
-
   BRLogInfo("Network");
   _pNet = std::make_shared<Net>();
-
-  BRLogInfo("Delta");
-  _pDelta = std::make_shared<Delta>();
 }
-void Gu::updateGlobals() {
-  getDelta()->update();
+void Gu::updateManagers() {
 
   if (_pSequencer != nullptr) {
     _pSequencer->update();
   }
-  if (_pParty != nullptr) {
-    _pParty->update(getDelta()->get());
-  }
-  if (_pFpsMeter != nullptr) {
-    _pFpsMeter->update();
-  }
+
   if (_pSoundCache != nullptr) {
     _pSoundCache->update();
   }
   if (_pNet != nullptr) {
     _pNet->update();
   }
-
 
 }
 void Gu::sleepThread(uint64_t milliseconds) {

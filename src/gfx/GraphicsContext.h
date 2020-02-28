@@ -36,8 +36,6 @@ public:
   virtual void enableDepthTest(bool enable) = 0;
 
   std::shared_ptr<GraphicsWindow> getGraphicsWindow();
-  EngineLoopState::e getLoopState() { return _eLoopState; }
-  void setLoopState(EngineLoopState::e ee) { _eLoopState = ee; }
   std::shared_ptr<CameraNode> getActiveCamera();
   std::shared_ptr<GraphicsApi> getGraphicsApi() { return _pGraphicsApi; }
 
@@ -52,7 +50,6 @@ protected:
 private:
   std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
   std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
-  EngineLoopState::e _eLoopState = EngineLoopState::Update;
   float _fClearR = 1.0f;
   float _fClearG = 1.0f;
   float _fClearB = 1.0f;

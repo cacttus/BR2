@@ -2,8 +2,8 @@
 #include "../base/FileSystem.h"
 #include "../base/InputManager.h"
 #include "../base/Img32.h"
-#include "../base/FpsMeter.h"
 #include "../base/GLContext.h"
+#include "../base/FpsMeter.h"
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
 #include "../base/GraphicsWindow.h"  
@@ -20,7 +20,6 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/MegaTex.h"
 #include "../gfx/RenderSettings.h"
-#include "../base/GraphicsWindow.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
 #include "../model/UtilMeshInline.h"
@@ -226,14 +225,14 @@ std::shared_ptr<UiElement> UiElement::cloneSelfOnly() {
   ret->_mapChildren.clear();// do not clone children
   return ret;
 }
-bool UiElement::pick(std::shared_ptr<InputManager> fingers) {
+bool UiElement::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) {
   bool bPicked = false;
   const Box2f& q = getLayoutQuad();
   if (getLayoutVisible() == true) {
     if (getRenderVisible() == true) {
       if (getIsPickEnabled() == true) {
         if (q.containsPointInclusive(fingers->getMousePos())) {
-          _iPickedFrameId = Gu::getFrameNumber();
+          _iPickedFrameId = pscreen->getFrameNumber();
 
           if (getPickRoot()) {
             //Pick root items pick by boundbox
@@ -243,7 +242,7 @@ bool UiElement::pick(std::shared_ptr<InputManager> fingers) {
             //Else pick all children to find the pick root
             for (auto it = getChildren().rbegin(); it != getChildren().rend(); it++) {
               std::shared_ptr<UiElement> ele = it->second;
-              if (ele->pick(fingers) == true) {
+              if (ele->pick(fingers,pscreen) == true) {
                 //We pick the first child in the TOP level sort order
                 //If we hit it, break out because we don't want to pick children underneath
                 bPicked = true;
@@ -908,8 +907,8 @@ void UiElement::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   }
 
 }
-void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, bool bPickedOnly) {
-  if (bPickedOnly && (_iPickedFrameId != Gu::getFpsMeter()->getFrameNumber())) {
+void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, bool bPickedOnly, std::shared_ptr<UiScreen> pscreen) {
+  if (bPickedOnly && (_iPickedFrameId != pscreen->getFrameNumber())) {
     //return bc only picked gets showed
     return;
   }
@@ -917,7 +916,7 @@ void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, 
   for (auto p : getChildren()) {
     std::shared_ptr<UiElement> ele = p.second;
     if (ele->getLayoutVisible()) {
-      ele->drawBoundBox(mi, color, bPickedOnly);
+      ele->drawBoundBox(mi, color, bPickedOnly, pscreen);
     }
   }
 
@@ -1193,7 +1192,7 @@ void UiElement::setHover(MouseFunc cc) {
   }
   _hoverFunc = cc;
 }
-void UiElement::drawDebug(RenderParams& rp) {
+void UiElement::drawDebug(RenderParams& rp, std::shared_ptr<UiScreen> pscreen) {
   //ONLY CALL ON Gui2d!!
   //Debug Rendering
   if (Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping()) {
@@ -1204,7 +1203,7 @@ void UiElement::drawDebug(RenderParams& rp) {
     mi->begin(GL_LINES);
     {
       vec4 c4(1, 0, 0, 1);
-      drawBoundBox(mi, c4, false);
+      drawBoundBox(mi, c4, false, pscreen);
     }
     mi->end(rp.getCamera());
   }
@@ -1217,7 +1216,7 @@ void UiElement::drawDebug(RenderParams& rp) {
     mi->begin(GL_LINES);
     {
       vec4 c4(1, 0, 1, 1);
-      drawBoundBox(mi, c4, true);
+      drawBoundBox(mi, c4, true, pscreen);
     }
     mi->end(rp.getCamera());
   }
@@ -1424,7 +1423,7 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
   verts.push_back(v);
 
 }
-bool UiImage::pick(std::shared_ptr<InputManager> fingers) {
+bool UiImage::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) {
   if (getLayoutVisible()) {
     if (getRenderVisible()) {
       if (_iPickId > 0) {
@@ -1432,7 +1431,7 @@ bool UiImage::pick(std::shared_ptr<InputManager> fingers) {
         if (pixid != 0) {
           if (pixid == _iPickId) {
 
-            _iPickedFrameId = Gu::getFrameNumber();
+            _iPickedFrameId = pscreen->getFrameNumber();
 
             return true;
           }
@@ -3068,8 +3067,8 @@ void UiWindow::enableDrag() {
   _pTitleBar->enableDrag(moveFunc);
   setLayoutChanged();
 }
-bool UiWindow::pick(std::shared_ptr<InputManager> fingers) {
-  bool b = UiElement::pick(fingers);
+bool UiWindow::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) {
+  bool b = UiElement::pick(fingers,pscreen);
 
   return b;
 }
@@ -3212,7 +3211,7 @@ void UiScreen::update(std::shared_ptr<InputManager> pInputManager) {
   // }
 
    //Updating this per frame to indicate if the GUI is picked.
-  _pint->_bIsPicked = pick(pInputManager);
+  _pint->_bIsPicked = pick(pInputManager,getThis<UiScreen>());
 }
 void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
   _pint->_pCursor->left() = pInputManager->getMousePos().x;
@@ -3283,7 +3282,7 @@ void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   rp.draw();
 
   //*Debug
-  UiElement::drawDebug(rp);
+  UiElement::drawDebug(rp, getThis<UiScreen>());
 }
 void UiScreen::hideCursor() {
   _pint->_pCursor->setLayoutVisible(false);
@@ -3322,7 +3321,9 @@ float UiScreen::getDesignMultiplierH() {
   //float h1 = vh / dh;
   //return h1;
 }
-
+uint64_t UiScreen::getFrameNumber() {
+  return getWindow()->getFpsMeter()->getFrameNumber();
+}
 
 
 #pragma endregion

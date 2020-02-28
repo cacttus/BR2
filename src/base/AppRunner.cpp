@@ -1,6 +1,7 @@
 #include "../base/AppRunner.h"
 #include "../base/SoundCache.h"
 #include "../base/GLContext.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/InputManager.h"
 #include "../base/Logger.h"
 #include "../base/SDLIncludes.h"
@@ -11,7 +12,6 @@
 #include "../base/OperatingSystem.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
-#include "../base/AppBase.h"
 #include "../math/MathAll.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/RenderUtils.h"
@@ -38,7 +38,7 @@ public:
   TCPsocket _server_tcpsock;//Accept connections
   std::shared_ptr<GraphicsApi> _pGraphicsApi = nullptr;
 
-  void initSDLAndCreateGraphicsApi(string_t windowTitle, std::shared_ptr<AppBase> app);
+  void initSDLAndCreateGraphicsApi();
   void doShowError(string_t err, Exception* e);
   void attachToGameHost();
   void printVideoDiagnostics();
@@ -49,9 +49,10 @@ public:
   void exitApp(string_t error, int rc);
   bool argMatch(const std::vector<string_t>& args, string_t arg1, int32_t iCount);
   bool runCommands(const std::vector<string_t>& args);
+  void loadAppPackage();
 };
 
-void AppRunner_Internal::initSDLAndCreateGraphicsApi(string_t windowTitle, std::shared_ptr<AppBase> app) {
+void AppRunner_Internal::initSDLAndCreateGraphicsApi() {
   //Nix main()
   SDL_SetMainReady();
 
@@ -78,7 +79,7 @@ void AppRunner_Internal::initSDLAndCreateGraphicsApi(string_t windowTitle, std::
   //Unfortunately we need a window for a graphics context.  We need contexts to init the managers.
   // This default window must come here.  We initialize the rendering system later. 
   // After this window is made, more windows can be made (since we have a core context).
-  std::shared_ptr<GraphicsWindow> window = _pGraphicsApi->createWindow(windowTitle);
+  std::shared_ptr<GraphicsWindow> window = _pGraphicsApi->createWindow(Stz ""); //Just avoid title
   SDLUtils::checkSDLErr();
 
   initAudio();
@@ -224,7 +225,7 @@ void AppRunner_Internal::runGameLoopTryCatch() {
   previousHandler = signal(SIGSEGV, SignalHandler);
 
   //test the globals before starting the game loop
-  Gu::updateGlobals();
+  Gu::updateManagers();
 
   //Print the setup time.
   BRLogInfo(Stz "**Total initialization time: " + MathUtils::round((float)((Gu::getMicroSeconds() - _tvInitStartTime) / 1000) / 1000.0f, 2) + " seconds\r\n");
@@ -281,7 +282,19 @@ bool AppRunner_Internal::runCommands(const std::vector<string_t>& args) {
     return false;
   }
 }
+void AppRunner_Internal::loadAppPackage() {
+  string_t file = OperatingSystem::showOpenFileDialog("Open project package.", "(*.xml)\0*.xml\0\0", "*.xml", FileSystem::getExecutableDirectory());
 
+  if (StringUtil::isNotEmpty(file)) {
+    BRLogInfo("Building Package");
+    std::shared_ptr<ApplicationPackage> pack = std::make_shared<ApplicationPackage>();
+    pack->build(FileSystem::getExecutableFullPath());
+    Gu::setPackage(pack);
+  }
+  else {
+    BRLogInfo("Package could not be loaded.  Folder not selected, or invalid path.");
+  }
+}
 //////////////////////////////////////////////////////////////////////////
 AppRunner::AppRunner() {
   _pint = std::make_unique<AppRunner_Internal>();
@@ -289,25 +302,27 @@ AppRunner::AppRunner() {
 AppRunner::~AppRunner() {
   _pint = nullptr;
 }
-void AppRunner::runApp(const std::vector<string_t>& args, string_t windowTitle, std::shared_ptr<AppBase> app) {
+void AppRunner::runApp(const std::vector<string_t>& args) {
   _pint->_tvInitStartTime = Gu::getMicroSeconds();
 
   //Root the engine FIRST so we can find the EngineConfig.dat
-  FileSystem::setExecutablePath(args[0]);
-  string_t a = FileSystem::getCurrentDirectory();
-  FileSystem::setCurrentDirectory(FileSystem::getExecutableDirectory());
-  string_t b = FileSystem::getCurrentDirectory();
+  FileSystem::init(args[0]);
+
+  //Start logger
+  Gu::createLogger("./logs/");
+
+  _pint->loadAppPackage();
 
   //**Must come first before other logic
-  Gu::initGlobals(app, args);
+  Gu::initGlobals(args);
   {
-    _pint->initSDLAndCreateGraphicsApi(windowTitle, app);
+    _pint->initSDLAndCreateGraphicsApi();
 
     if (_pint->runCommands(args) == false) {
       _pint->runGameLoopTryCatch();
     }
   }
-  Gu::deleteGlobals();
+  Gu::deleteManagers();
 }
 
 

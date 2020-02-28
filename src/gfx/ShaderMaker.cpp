@@ -1,6 +1,6 @@
 #include "../base/Logger.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/FileSystem.h"
-#include "../base/AppBase.h"
 #include "../base/Hash.h"
 #include "../base/GLContext.h"
 #include "../gfx/ShaderMaker.h"
@@ -24,10 +24,9 @@ ShaderMaker::~ShaderMaker() {
   _pShaderCompiler = nullptr;
 }
 
-void ShaderMaker::initialize(std::shared_ptr<AppBase> mainRoom) {
-  string_t assetPath = mainRoom->getAssetsDir();
-  string_t cacheDir = FileSystem::combinePath(assetPath, mainRoom->getCacheDir());
-  string_t shadersDir = FileSystem::combinePath(assetPath, mainRoom->getShadersDir());
+void ShaderMaker::initialize() {
+  string_t cacheDir = Gu::getPackage()->getCacheFolder();
+  string_t shadersDir = Gu::getPackage()->getShadersFolder();
 
   _pShaderCache = std::make_shared<ShaderCache>(cacheDir);
   _pShaderCompiler = std::make_shared<ShaderCompiler>(Gu::getCoreContext(), shadersDir);
@@ -179,10 +178,8 @@ void ShaderMaker::deleteShader(std::shared_ptr<ShaderBase> ps) {
   }
 }
 void ShaderMaker::fullyQualifyFiles(std::vector<string_t>& vecFiles) {
-  AssertOrThrow2(Gu::getApp() != nullptr);
-
   for (size_t iFile = 0; iFile < vecFiles.size(); iFile++) { // strFile : vecFiles) {
-    string_t qual = Gu::getApp()->makeAssetPath(Gu::getApp()->getShadersDir(), vecFiles[iFile]);
+    string_t qual = FileSystem::combinePath(Gu::getPackage()->getShadersFolder(), vecFiles[iFile]);
     vecFiles[iFile] = qual;
   }
 }

@@ -84,7 +84,8 @@ typedef std::string string_t;
 /************************************************************************/
 /* Enums                                                                */
 /************************************************************************/
-namespace EngineLoopState { typedef enum { SyncBegin, Update, Render, SyncEnd } e; }
+enum class FrameState { None, SyncBegin, Update, Render, SyncEnd };
+
 namespace ColorSpace { typedef enum { Linear, SRGB } e; }
 namespace ButtonState { typedef enum { Up, Press, Down, Release, None } e; }//2/11/18 added "None" for no mouse interation
 namespace MouseButton { typedef enum { Left, Right, Middle } e; }
@@ -130,7 +131,6 @@ class Delta;
 class EngineConfig;
 class EngineConfigFile;
 class TreeNode;
-class Package; // ApplicationPackage;
 class Crc32;
 class StreamBuffer;
 class Net;
@@ -147,10 +147,8 @@ class WindowManager;
 class CSharpScript;
 class CSharpCompiler;
 class Packet;
-
+class ApplicationPackage;
 //Classes that will be removed
-class AppBase;
-class AppMain;
 
 template < class Tx >
 class DynamicBuffer;

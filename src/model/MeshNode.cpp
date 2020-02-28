@@ -1,6 +1,5 @@
 #include "../base/Logger.h"
 #include "../base/OglErr.h"
-#include "../base/AppBase.h"
 #include "../base/Perf.h"
 #include "../base/GLContext.h"
 #include "../math/Random.h"

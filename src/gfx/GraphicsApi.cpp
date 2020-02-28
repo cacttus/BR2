@@ -39,7 +39,7 @@ void GraphicsApi::updateLoop() {
 
       Gu::getInputManager()->preUpdate();
 
-      Gu::updateGlobals();
+      Gu::updateManagers();
 
       for (std::shared_ptr<GraphicsContext> ct : _contexts) {
         std::shared_ptr<GraphicsWindow> w = ct->getGraphicsWindow();

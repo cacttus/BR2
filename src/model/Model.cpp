@@ -2,9 +2,9 @@
 #include "../base/BinaryFile.h"
 #include "../base/Img32.h"
 #include "../base/Hash.h"
-#include "../base/AppBase.h"
 #include "../base/Perf.h"
 #include "../base/GLContext.h"
+#include "../base/ApplicationPackage.h"
 #include "../math/Algorithm.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/CameraNode.h"
@@ -725,7 +725,7 @@ void ModelSpec::deserialize( std::shared_ptr<BinaryFile> fb) {
         _pThumb = std::make_shared<Img32>();
         _pThumb->deserialize(fb);
         if(false) {
-            string_t cached = Gu::getApp()->makeAssetPath("cache", getName() + "-thumb-loaded.png");
+            string_t cached = Gu::getPackage()->makeAssetPath("cache", getName() + "-thumb-loaded.png");
             Gu::saveImage(cached, _pThumb);
         }
     }
@@ -760,7 +760,7 @@ void ModelSpec::serialize( std::shared_ptr<BinaryFile> fb) {
         fb->writeBool(true);
 
         if (false) {
-            string_t cached = Gu::getApp()->makeAssetPath("cache", getName() + "-thumb-saved.png");
+            string_t cached = Gu::getPackage()->makeAssetPath("cache", getName() + "-thumb-saved.png");
             Gu::saveImage(cached, _pThumb);
         }
 

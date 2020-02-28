@@ -1,6 +1,6 @@
 #include "../base/Logger.h"
-#include "../base/Package.h"
 #include "../base/FileSystem.h"
+#include "../base/ApplicationPackage.h"
 #include "../base/DiskFile.h"
 #include "../base/BinaryFile.h"
 #include "../base/GLContext.h"

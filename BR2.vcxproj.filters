@@ -27,9 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\base\AppMain.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\AppRunner.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -102,16 +99,10 @@
     <ClCompile Include="src\base\OperatingSystem.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\Package.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="src\base\Perf.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\PoundFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\Script.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\SDLUtils.cpp">
@@ -160,9 +151,6 @@
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\base\XmlFile.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
-    <ClCompile Include="src\base\AppBase.cpp">
       <Filter>base</Filter>
     </ClCompile>
     <ClCompile Include="src\ext\lodepng.cpp">
@@ -483,11 +471,11 @@
     <ClCompile Include="src\bottle\SpriteBucket.cpp">
       <Filter>bottle</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\ApplicationPackage.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\base\AppMain.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\AppRunner.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -584,9 +572,6 @@
     <ClInclude Include="src\base\OperatingSystem.h">
       <Filter>base</Filter>
     </ClInclude>
-    <ClInclude Include="src\base\Package.h">
-      <Filter>base</Filter>
-    </ClInclude>
     <ClInclude Include="src\base\Perf.h">
       <Filter>base</Filter>
     </ClInclude>
@@ -594,9 +579,6 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\RetCode.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\Script.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\SDLUtils.h">
@@ -651,12 +633,6 @@
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\base\Allocator.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\AppBase.h">
-      <Filter>base</Filter>
-    </ClInclude>
-    <ClInclude Include="src\base\AppHeader.h">
       <Filter>base</Filter>
     </ClInclude>
     <ClInclude Include="src\ext\dirent.h">
@@ -1078,6 +1054,12 @@
     </ClInclude>
     <ClInclude Include="src\bottle\Tile25Spec.h">
       <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\ApplicationPackage.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\PackageConfiguration.h">
+      <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

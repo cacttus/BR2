@@ -36,6 +36,7 @@ class FileSystem : public VirtualMemory {
   public:
   FileSystem();
   virtual ~FileSystem() override;
+  static void init(string_t exePath);
   static string_t getExecutableFullPath();
   static string_t getExecutableName();
   static void setExecutablePath(string_t st) { _strExePath = st; }
@@ -69,7 +70,6 @@ class FileSystem : public VirtualMemory {
   static string_t getPathFromPath(const string_t& name, bool bformatPath = true); // - Gets the file name with extension from a / path 
   static string_t getFileNameFromPath(const string_t& name, bool bformatPath = true);
   static string_t getDirectoryFromPath(const string_t& name, bool bformatPath = true);
-  static string_t appendCachePathToFile(const string_t& file);
 
   static bool isFile(string_t fileOrDirPath);
   static bool isDir(string_t fileOrDirPath);

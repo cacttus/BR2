@@ -221,6 +221,7 @@ std::shared_ptr<ShaderBase> ShaderCache::tryLoadCachedBinary(std::string program
       FileInfo inf = FileSystem::getFileInfo(file);
       if (!inf._exists) {
         BRLogError("Shader source file '" + file + "' does not exist.");
+        Gu::debugBreak();
       }
       else {
         maxTime = MathUtils::brMax(inf._modified, maxTime);

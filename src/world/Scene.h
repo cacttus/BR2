@@ -23,7 +23,6 @@ public:
   Scene();
   virtual ~Scene() override;
 
-
   static std::shared_ptr<Scene> create();
   void idle(int64_t us);
   void update(float delta);
@@ -56,6 +55,7 @@ public:
 
   void afterAttachedToWindow();
   void mouseWheel(int amount);
+  uint64_t getFrameNumber();
 
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
@@ -79,6 +79,7 @@ private:
   std::shared_ptr<CameraNode> _pActiveCamera = nullptr;
   std::shared_ptr<GraphicsWindow> _pGraphicsWindow = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
+  std::shared_ptr<ParticleManager> _pParticleManager = nullptr;
   //The default fly camera must always be available.
 //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
 

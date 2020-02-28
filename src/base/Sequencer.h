@@ -12,7 +12,7 @@
 namespace BR2 {
 /**
 *  @class Sequencer
-*  @brief manages sequenceas of actions (lambdas)
+*  @brief Manages sequences of lambas.
 */
 class Sequencer : public VirtualMemory {
 public:
@@ -24,13 +24,11 @@ public:
     float delaySeconds, float durationSeconds);
 private:
   std::vector<Sequence*> _vecSequences;
-
 };
-
 
 /**
 *  @class Sequence
-*  @brief dsrequences of actions / events /etc. based on time. very generic.  execute functions in sequence.
+*  @brief Sequences of actions / events /etc. based on time. very generic.  execute functions in sequence.
 */
 class Sequence : public VirtualMemory {
 public:

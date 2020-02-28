@@ -3,7 +3,6 @@
 #include "../base/Delta.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
-#include "../base/Package.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
 #include "../base/SoundCache.h"
@@ -43,7 +42,7 @@ std::shared_ptr<GraphicsWindow> GraphicsContext::getGraphicsWindow() {
   if (_pWindow == nullptr) {
     //We must lazy initialize window because we want to pass context to window, but need context first.
     try {
-      _pWindow = std::make_shared<GraphicsWindow>(_pGraphicsApi, getThis<GLContext>(), _pSDLWindow);
+      _pWindow = GraphicsWindow::create(_pGraphicsApi, getThis<GLContext>(), _pSDLWindow);
     }
     catch (Exception * ex) {
       _pWindow = nullptr;
