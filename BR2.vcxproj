@@ -23,7 +23,6 @@
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
-    <ClCompile Include="src\base\CSharpCompiler.cpp" />
     <ClCompile Include="src\base\CSharpScript.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
@@ -179,7 +178,7 @@
     <ClInclude Include="src\base\BuildConfig.h" />
     <ClInclude Include="src\base\ConsoleColors.h" />
     <ClInclude Include="src\base\Crc32.h" />
-    <ClInclude Include="src\base\CSharpCompiler.h" />
+    <ClInclude Include="src\base\CSharp.h" />
     <ClInclude Include="src\base\CSharpScript.h" />
     <ClInclude Include="src\base\DateTime.h" />
     <ClInclude Include="src\base\DebugHelper.h" />

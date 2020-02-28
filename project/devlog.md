@@ -20,7 +20,17 @@
 * Changed /data/ folders to be full names: tex->textures, shr->shaders, fnt->fonts
 * commit 2
 * Added update routine to components (conseqauentially flying camera).
-
+* commit 3
+* Started brushing up the CSharpScript.
+	* Removed scriptmanager it isn't needed due to the flexibility of the component system.
+	* We are making a Quick and dirty c sharp script class that does basic stuff.
+	* Scirpts will use class definitions and method definitions.
+	* `CSharpClass ("Int32",{"int" /*Type Aliases*/}, { /*Methods*/`
+	* `CSharpMethod({}), CSharpMethod({})`
+	* `)`
+	* compile() will be used on CSharpLanguage
+	* execute() will be on CSharpRuntime
+	* The recursive parse solution probably isn't the best approach since we want to see multiple compile errors, even if we hit one. So we need more of a whole-file approach.
 
 *2/26/20*
 

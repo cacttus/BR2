@@ -97,7 +97,6 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
     return;
   }
 
-
   //Capture & u8pdate input
   ButtonState::e eLmb = pInput->getLmbState();
   vec2 vLast = pInput->getLastMousePos();
@@ -120,7 +119,6 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
 
   RenderParams rp;
   rp.setCamera(cam);
-
 
   //Finalluy update camera
 
