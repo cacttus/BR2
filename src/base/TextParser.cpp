@@ -52,16 +52,16 @@ bool TextParser::seekPastChar(char c) {
   return false;
 }
 /**
-*    @fn seekToChars()
-*    @brief Seeks to any of hte input chars and increments the pointer past it
+*  @fn seekToChars()
+*  @brief Seeks to any of hte input chars and increments the pointer past it
 */
 void TextParser::seekPastChars(std::vector<char> cv) {
   seekToChars(cv);
   inc();
 }
 /**
-*    @fn seekToChars()
-*    @brief Seek pointer until one of the specified characters is reached.
+*  @fn seekToChars()
+*  @brief Seek pointer until one of the specified characters is reached.
 */
 void TextParser::seekToChars(std::vector<char> cv) {
   bool exit = false;
@@ -95,6 +95,7 @@ bool TextParser::inc() {
 
   if (charAt() == '\r' && nextChar() == '\n') {
     _linenum++;
+    _charnum = 1;
   }
 
   _ptrState = ptr_seek;
@@ -112,6 +113,7 @@ void TextParser::dec() {
 
   if (charAt() == '\r' && nextChar() == '\n') {
     _linenum--;
+    _charnum = 1; //UH.. Not valid, but how to tell?  we'd have to reverse parse until the next line
   }
   if (_bEof) {
     _bEof = false;
@@ -140,7 +142,11 @@ bool TextParser::eof() {
 *    eatws()
 *    eats white space
 */
-void TextParser::eatws() { while (charIsWs()) inc(); }
+void TextParser::eatws() {
+  while (charIsWs()) { 
+    inc();
+  }
+}
 /**
 *    eatBlockComment()
 *    eats a /* comment.
@@ -160,27 +166,12 @@ void TextParser::eatBlockComment() {
   else if (nextChar() == 0) {
     throw new Exception(" [Parser] Unmatched Comment Encountered at line ", __LINE__, __FILE__);
   }
-
-}
-/**
-*    @fn eatLine()
-*    @breif Eats a line until \n
-*/
-void TextParser::eatLine() {
-  while (1) {
-    if (charAt() == '\n') {
-      if (inc()) return;
-      break;
-    }
-    else if (inc()) {
-      return;
-    }
-  }
 }
 
+
 /**
-*    @fn eatBody
-*    @brief Eat the body of a statement/function
+*  @fn eatBody
+*  @brief Eat the body of a statement/function
 */
 void TextParser::eatBody() {
   if (charAt() == '{') {
@@ -199,8 +190,13 @@ void TextParser::eatBody() {
   }
 }
 
-
-
+/**
+*  @fn eatLine()
+*  @breif Eats a line until \n
+*/
+void TextParser::eatLine() {
+  eatLine(_linenum);
+}
 void TextParser::eatLine(int32_t& lineCountToAddTo) {
   while (1) {
     if (charAt() == '\n') {
@@ -217,9 +213,5 @@ void TextParser::eatLine(int32_t& lineCountToAddTo) {
     }
   }
 }
-
-
-
-
 
 }//Ns Game

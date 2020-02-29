@@ -34,9 +34,12 @@ public:
   bool eof(); // - Return if we are at end of file.
   void eatws();// - EAT
   void eatBlockComment();
+  void eatLine(int32_t& lineCountToAddTo);
   void eatLine();
   void eatBody();// - Eat the body of a statement/function from { to }
-  void eatLine(int32_t& lineCountToAddTo);
+
+  int32_t linenum() { return _linenum; }
+  int32_t charnum() { return _charnum; }
 
 private:
   typedef enum {
@@ -47,7 +50,8 @@ private:
 
 private:
   bool _bEof = false;
-  int _linenum = 1;
+  int32_t _linenum = 1;
+  int32_t _charnum = 1;
   t_ptr_state _ptrState = t_ptr_state::ptr_begin;
   char* _ptr = nullptr;
 };
