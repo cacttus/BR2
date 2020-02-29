@@ -1047,8 +1047,15 @@ public:
       public := "public"
       private := "private"
       protected := "protected"
+      final := "final"
+      sealed := "sealed"
+      internal := "internal"
       lbrace := "{"
       rbrace := "}"
+      lparen := "("
+      rparen := ")"
+      lbracket := "["
+      rbracket := "]"
       inc := "++"
       dec := "--"
       semicolon := ';'
@@ -1060,9 +1067,12 @@ public:
       times := "*"
       divide := "/"
       dot := "."
+      colon := ":"
+      new := "new"
 
       //////////////////////////////////////////////////////////////////////////
-      //Grammar Table
+      //Grammar Table... jeez this is crazy.
+      //still needs: Arrays, and New classes
       storage_operator := (equals|plusequals|minusequals|timesequals|divideequals)
       binary_operator := (plus|minus|times|divide|dot)
       unary_operator := (minusminus|plusplus)
@@ -1074,16 +1084,21 @@ public:
       using_directive := using (scoped_access_operator)* (namespace_identifier|class_identifier) semicolon
       namespace_decl := namespace lbrace (class_decl|enum_decl)* rbrace
 
-      enum_decl := (access_modifier)? enum lbrace enum_identifier rbrace 
+      enum_decl := (access_modifier)? enum lbrace enum_identifier_decl rbrace 
 
-      class_decl := (static)? (access_modifier)? (state_modifier)? class identifier_decl (inherited_class)? lbrace (method_decl|property_decl|class_variable_decl)+ rbrace
+      class_decl := (static)? (access_modifier)? (state_modifier)? class class_identifier_decl (inherited_class)? lbrace (method_decl|property_decl|class_variable_decl)+ rbrace
       struct_decl := (state_modifier)? struct identifier lbrace (method_decl|property_decl|class_variable_decl)+ rbrace
       
-      identifier_decl := create_identifier() // this function will create a new identifier CSharpVariable, CSharpStruct or CSharpMethod
+      variable_identifier_decl := create_identifier(class) // this function will create a new identifier CSharpVariable, CSharpStruct or CSharpMethod, if its already found in the current context, then emit error.
+      variable_identifier := lookup_identifier(variable) // - this is a method that we use to find the declared identifer in the given scope
+      class_identifier_decl := create_identifier(variable)
+      enum_identifier_decl := create_identifier(enum)
+      method_identifier_decl := create_identifier(method)
+      property_identifier_decl := create_identifier(property)
 
       inherited_class := colon class_identifier
 
-      property_decl := variable_decl ((lbrace ( (get (method_block)? semicolon)? (set (method_block)? semicolon)? )? rbrace)|semicolon)
+      property_decl := data_type property_identifier_decl ((lbrace ( (get (method_block)? semicolon)? (set (method_block)? semicolon)? )? rbrace)|semicolon)
       data_type := (integral_type|user_type)
       integral_type := (int|float|decimal|double|Int32)
       method_block := lbrace (statement)* rbrace
@@ -1091,27 +1106,24 @@ public:
       class_variable_decl := (access_modifier)? (storage_class)? (variable_decl | variable_assign_decl)
       
       variable_inc_dec := (pre_incdec|post_incdec)
-      variable_decl := data_type identifier_decl semicolon
-      variable_assign_decl := data_type identifier equals expresssion semicolon
+      variable_decl := data_type variable_identifier_decl semicolon
+      variable_assign_decl := data_type identifier equals expression semicolon
       variable_assignment := variable storage_operator expression semicolon
       pre_incdec := (unary_operator variable_identifier)
       post_incdec := (variable_identifier unary_operator)
 
       statement := (variable_inc_dec | variable_assignment | variable_decl | variable_decl_assignment | method_call)  // a +=b  a = b a-- --a
-      variable_identifier := lookup_identifier(variable) // - this is a method that we use to find the declared identifer in the given scope
       constant := number
       number := floating_point_number|int32_number|int64_number|decimal_number
       decimal_number := [0-9]*.[0-9]*d
 
       scoped_access_operator := (namespace_identifier|class_identifier) dot
       local_method_identifier := lookup_identifier(method) -- this must take into account the preceding class access operators. if not found, then method_identifier is looked up
-      class_identifier := lookup_identifier(class)
-
+      class_identifier := lookup_identifier(class)    //This is the identifier
       method_call := ((method_identifier|paren_expr) dot method_param)
-
       method_identifier := ((scoped_access_operator)* local_method_identifier)
 
-      expression := lvalue (term)+   //2+(1*5)
+      expression := lvalue (term)*   //2+(1*5)
       paren_expr := lparen expression rparen
       term := binary_operator lvalue
       lvalue := (constant|variable_identifier|paren_expr|method_call) 
