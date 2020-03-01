@@ -21,7 +21,7 @@ class AppRunner : public VirtualMemory {
 public:
   AppRunner();
   virtual ~AppRunner() override;
-  void runApp(const std::vector<string_t>& args);
+  void runApp(const std::vector<string_t>& args, std::vector< std::function<bool() >> unit_tests);
 
 private:
   std::unique_ptr<AppRunner_Internal> _pint = nullptr;

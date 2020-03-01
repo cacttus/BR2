@@ -1,6 +1,7 @@
 #include "../base/PoundFile.h"
 #include "../base/StringUtil.h"
 #include "../base/Logger.h"
+#include "../base/TextParser.h"
 
 namespace BR2 {
 PoundFile::PoundFile() {

@@ -10,6 +10,8 @@
 #include "../world/Component.h"
 
 namespace BR2 {
+class CSToken;
+
 class CSharpFile : public VirtualMemory {
 public:
   string_t _name;
@@ -32,6 +34,9 @@ public:
   CSharpScript();
   virtual ~CSharpScript() override;
   
+  static std::vector<CSToken*> lexTest(string_t str);
+  static string_t tokensToString(std::vector<CSToken*> toks);
+
   static void initScriptSystem();
   static std::shared_ptr<CSharpScript> compile(std::shared_ptr<CSharpCompileContext> files);
 

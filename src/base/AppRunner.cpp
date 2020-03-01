@@ -50,6 +50,8 @@ public:
   bool argMatch(const std::vector<string_t>& args, string_t arg1, int32_t iCount);
   bool runCommands(const std::vector<string_t>& args);
   void loadAppPackage();
+  void runUnitTests(std::vector< std::function<bool() >>);
+
 };
 
 void AppRunner_Internal::initSDLAndCreateGraphicsApi() {
@@ -111,6 +113,19 @@ void AppRunner_Internal::doShowError(string_t err, Exception* e) {
     OperatingSystem::showErrorDialog("No Error Message" + err);
   }
 }
+void AppRunner_Internal::runUnitTests(std::vector<std::function<bool()>> unit_tests) {
+  int x = 1;
+  for (auto test : unit_tests) {
+    if (!test()) {
+      BRLogError("Unit test " + x + " failed.");
+      Gu::debugBreak();
+    }
+    x++;
+  }
+
+
+}
+
 void AppRunner_Internal::attachToGameHost() {
   int GameHostPort = Gu::getEngineConfig()->getGameHostPort();
 
@@ -302,7 +317,7 @@ AppRunner::AppRunner() {
 AppRunner::~AppRunner() {
   _pint = nullptr;
 }
-void AppRunner::runApp(const std::vector<string_t>& args) {
+void AppRunner::runApp(const std::vector<string_t>& args, std::vector< std::function<bool() >> unit_tests) {
   _pint->_tvInitStartTime = Gu::getMicroSeconds();
 
   //Root the engine FIRST so we can find the EngineConfig.dat
@@ -319,6 +334,7 @@ void AppRunner::runApp(const std::vector<string_t>& args) {
     _pint->initSDLAndCreateGraphicsApi();
 
     if (_pint->runCommands(args) == false) {
+      _pint->runUnitTests(unit_tests);
       _pint->runGameLoopTryCatch();
     }
   }

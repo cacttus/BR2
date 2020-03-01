@@ -1,5 +1,10 @@
 
 # Mine City Devlog
+*3/1/20*
+
+* Fixed StringUtil's isDelim.
+* Added a simple, silly bool unit test lambdas to the main method so we can easily drop a unit test in main() if needed.
+
 *2/27/20*
 
 * Deleted & removed AppBase.

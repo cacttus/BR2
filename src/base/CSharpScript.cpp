@@ -70,6 +70,54 @@ enum class CSharpCallingConvention {
   CDecl,
   StdCall,
 };
+enum class CSTokenType {
+  None,
+
+  //////////////////////////////////////////////////////////////////////////
+  // Tokens
+  TokensStart,
+  //Tab, Space, //unnecessary
+  Whitespace,
+  Class, Struct, Enum,
+  If, While, For, Do,
+  Public, Private, Protected,
+  Sealed, Final, Internal,
+  Throw, Catch, Finally,
+  Get, Set,
+  Namespace, Using,
+  Equals, Plus, Times, Divide, Minus, // = + * / -
+  PlusEquals, MinusEquals, TimesEquals, DivideEquals,// += -= *= /=
+  GreaterThan, LessThan,// > <
+  LogicalOr, LogicalAnd, LogicalNot, // || && !
+  BitwiseOr, BitwiseAnd, BitwiseNot, // | & ~
+  RShift, LShift,// >> <<
+  Dot, Colon,// . :
+  Inc, Dec, //++ --
+  New, //new 
+  Semicolon,//;
+  LBrace, RBrace, //{ }
+  LParen, RParen, //( )
+  LBracket, RBracket,//[ ]
+  VerbatimLiteral, //@
+  SQuote, DQuote,// ' "
+  TokensEnd,
+
+  //Variables
+  Word, //Word is defined as a token, but it's also a grammatical construct.  It's a defualt item if not in token table.
+  Number,
+
+  //////////////////////////////////////////////////////////////////////////
+  //Grammar 
+  DataType, //int, float, class..
+  String, //""
+  StringLiteral, //''
+  ZeroClosure,  //*
+  PositiveClosure,  //+
+  Block, // {..} OR Inline block (single line) ** 
+  Expression, // any values id|(..)
+};
+typedef CSTokenType LT;
+
 
 class CSRuntimeContext;
 class CSharpVariable;
@@ -79,6 +127,276 @@ class CSharpParameter;
 class CSharpScope;
 class CSharpStatement;
 class CSharpTerm;
+
+
+
+class CSToken {
+public:
+  CSToken() {}
+  CSToken(string_t tok, CSTokenType type) { _token = tok; _type = type; }
+  string_t token() { return _token; }
+  CSTokenType& type() { return _type; } //If CSTokenType is keyword, then use keyword() below.
+private:
+  string_t _token = "";
+  CSTokenType _type = CSTokenType::None;
+};
+class CSLexer : public VirtualMemory {
+public:
+  enum class Ele { Word, Number, Ws, Sym, Undefined };// Element Class
+  const string_t c_test = "using System; namespace MyNS { class MyCL{int[] x = new int[]; int b(float a ){ return b + a*(2*(3+.0006d); }} }";
+  //We can use Dec or Int.Intf.. which since we need to parse 'f' out I think Int.Int is also relevant.
+private:
+  class TokenTableEntry {
+  public:
+    TokenTableEntry(string_t s, CSTokenType t) {
+      _str = s;
+      _tok = t;
+    }
+    const string_t str() const { return _str; }
+    const CSTokenType tok() const { return _tok; }
+  private:
+    string_t _str;
+    CSTokenType _tok;
+  };
+public:
+
+  CSLexer(string_t filename, string_t code) {
+    _strFile = filename;
+    _tp = std::make_shared<TextParser>(const_cast<char*>(code.c_str()));
+    makeTable();
+  }
+  virtual ~CSLexer() override {
+    for (auto t : _tokenTable) {
+      delete t;
+    }
+    _tokenHashTable.clear();
+  }
+  std::vector<CSToken*> parsedTokens() { return _parsedTokens; }
+
+  void removeWsTokens() {
+    std::vector<CSToken*> newtoks;
+    for (auto tok : _parsedTokens) {
+      if (tok->type() != CSTokenType::Whitespace) {
+        newtoks.push_back(tok);
+      }
+      else {
+        delete tok;
+      }
+    }
+    _parsedTokens = newtoks;
+  }
+
+  void lex() {
+    char c = ' ';
+    while (_tp->eof() == false) {
+      c = _tp->charAt();
+
+      if (_tp->eof()) {
+        break;
+      }
+      else {
+        matchToken(c);
+        _token += c;
+        _tp->inc();
+      }
+    }
+
+    if (_token.length()) {
+      matchToken(c);
+    }
+  }
+
+private:
+  void lex_error(string_t err) {
+    BRLogError("" + _strFile + " (" + _tp->linenum() + "," + _tp->charnum() + "): error: " + err);
+  }
+  void makeTable() {
+#define MPA(str,sym) do{ _tokenTable.push_back(new TokenTableEntry(str, CSTokenType::sym)); _tokenHashTable.insert(std::make_pair(str,CSTokenType::sym)); } while(0);
+    //  MPA("\t", Tab); MPA(" ", Space);
+    MPA("class", Class); MPA("struct", Struct); MPA("enum", Enum);
+    MPA("if", If); MPA("while", While); MPA("for", For); MPA("do", Do);
+    MPA("public", Public); MPA("private", Private); MPA("protected", Protected);
+    MPA("sealed", Sealed); MPA("final", Final); MPA("internal", Internal);
+    MPA("throw", Throw); MPA("catch", Catch); MPA("finally", Finally);
+    MPA("get", Get); MPA("set", Set);
+    MPA("namespace", Namespace); MPA("using", Using);
+    MPA("=", Equals); MPA("+", Plus); MPA("-", Minus); MPA("*", Times); MPA("/", Divide);
+    MPA("+=", PlusEquals); MPA("-=", MinusEquals); MPA("*=", TimesEquals); MPA("/=", DivideEquals);
+    MPA("||", LogicalOr); MPA("&&", LogicalAnd); MPA("!", LogicalNot);
+    MPA(">", GreaterThan); MPA("<", LessThan);
+    MPA("|", BitwiseOr); MPA("&", BitwiseAnd); MPA("~", BitwiseNot);
+    MPA(">>", RShift); MPA("<<", LShift);
+    MPA(".", Dot); MPA(":", Colon);  MPA(";", Semicolon);
+    MPA("++", Inc); MPA("--", Dec);
+    MPA("new", New);
+    MPA("{", LBrace); MPA("}", RBrace);
+    MPA("(", LParen); MPA(")", RParen);
+    MPA("[", LBracket); MPA("]", RBracket);
+    MPA("'", SQuote); MPA("\"", DQuote);
+    MPA("@", VerbatimLiteral);
+
+    //sort table by grammatical superset
+    std::sort(_tokenTable.begin(), _tokenTable.end(), [](const TokenTableEntry* lhs, const TokenTableEntry* rhs) {
+      return lhs->str().compare(rhs->str());
+      });
+
+    //TODO: check sort is descending
+    Gu::debugBreak();
+
+    //validate table
+    int c = (int)CSTokenType::TokensEnd - (int)CSTokenType::TokensStart;
+    string_t missing = "";
+    for (int t = (int)CSTokenType::TokensStart + 1; t < c; ++t) {
+      bool found = false;
+      for (size_t ti = 0; ti < _tokenTable.size(); ti++) {
+        if ((CSTokenType)t == _tokenTable[ti]->tok()) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        missing += Stz TypeConv::intToStr(t);
+      }
+    }
+    if (missing.length() != 0) {
+      BRLogError("Missing Tokens from Lex table: " + missing);
+      Gu::debugBreak();
+    }
+  }
+  void matchToken(int next) {
+    Ele next_ele = getClass(next);
+
+    //Initialize token with first char
+    if (_token.length() == 0) {
+      _ele = next_ele;
+    }
+    else {
+      process(next, next_ele);
+    }
+  }
+  void process(int next, Ele next_ele) {
+    //Taken a set T, a set E+ and element X, !T(EX) -> T(E)
+    if (_ele == Ele::Word) {
+      if (next_ele == Ele::Ws || next_ele == Ele::Sym) {
+        CSTokenType type = findExact(_token);
+        if (type == CSTokenType::None) {
+          type = CSTokenType::Word;
+        }
+        pushTok(type, next_ele);
+      }
+    }
+    else if (_ele == Ele::Number) {
+      if (next_ele != Ele::Number) {
+        //Note we aren't checking for float symbols '.' '-' 'e' 'f' and 'd' here..  we may do that in the grammar step although it's probably not the most optimal
+        pushTok(CSTokenType::Number, next_ele);
+      }
+    }
+    else if (_ele == Ele::Sym) {
+      if (next_ele == Ele::Sym) {
+        CSTokenType type = findExact(_token);
+        if (type != CSTokenType::None) {
+          CSTokenType test = findExact(_token + next);
+          if (test == CSTokenType::None) {
+            //Split up, for example +=.5 we want to split += from .
+            pushTok(type, next_ele);
+          }
+        }
+      }
+      else { //symbol, delimited by number, ws, and word
+        CSTokenType type = findExact(_token);
+        if (type != CSTokenType::None) {
+          pushTok(type, next_ele);
+        }
+      }
+    }
+    else if (_ele == Ele::Ws) {
+      if (next_ele != Ele::Ws) {
+        pushTok(CSTokenType::Whitespace, next_ele);
+      }
+    }
+  }
+  CSTokenType findExact(string_t tok) {
+    //returns None if not found.
+    std::unordered_map<string_t, CSTokenType>::iterator it = _tokenHashTable.find(tok);
+    if (it == _tokenHashTable.end()) {
+      return CSTokenType::None;
+    }
+    return it->second;
+  }
+  bool isWs(int c) {
+    return ((c == ' ') || (c == '\t') || (c == '\r') || (c == '\n'));
+  }
+  bool isSym(int c) {
+    if ((c == '=') || (c == '+') || (c == '-') || (c == '*') || (c == '/') ||
+      (c == '\\') || (c == '~') || (c == '!') || (c == '&') || (c == '|') ||
+      (c == ';') || (c == ':') || (c == '.') ||
+      (c == '{') || (c == '}') || (c == '(') || (c == ')') || (c == '[') || (c == ']') ||
+      (c == '"') || (c == '\'') || (c == '@')
+      ) {
+      return true;
+    }
+    return false;
+  }
+  bool isWord(int next) {
+    bool w = isalpha(next) || next == '_';
+    return w;
+  }
+  bool isInt(int next) {
+    bool n = isdigit(next);
+    return n;
+  }
+  Ele getClass(int next) {
+    Ele ele = Ele::Undefined;
+    if (isWs(next)) {
+      ele = Ele::Ws;
+    }
+    else if (isWord(next)) {
+      ele = Ele::Word;
+    }
+    else if (isInt(next)) {
+      ele = Ele::Number; // We start as Int, but promote to Dec if we find a '.'
+    }
+    else if (isSym(next)) {
+      ele = Ele::Sym;
+    }
+    return ele;
+  }
+  void pushTok(CSTokenType type, Ele next_ele, string_t error = "") {
+    if (error.length()) {
+      _errors.push_back("Error '" + _token + "' " + error);
+    }
+    else {
+      _parsedTokens.push_back(new CSToken(_token, type));
+    }
+    resetTok(next_ele);
+  }
+  void resetTok(Ele next_ele) {
+    //reset
+    _token = "";
+    _ele = next_ele;
+  }
+
+private:
+  std::unordered_map<string_t, CSTokenType> _tokenHashTable;
+  std::vector<TokenTableEntry*> _tokenTable;
+  std::vector<CSToken*> _parsedTokens;
+  std::vector<std::string> _errors;
+  string_t _token;
+  Ele _ele;
+
+  //CSTokenType _tokenType;
+  bool _bStringProfileDouble = false;
+  bool _bStringProfileSingle = false;
+  int32_t _nParenProfile = 0;
+  int32_t _nBracketProfile = 0;
+  bool _bVerbatimLiteral;
+  string_t _strFile = "<invalid>";
+
+  bool _bEscape = false;
+  std::shared_ptr<TextParser> _tp = nullptr;
+};
+
+
 
 class CSCallstack : public VirtualMemoryShared<CSRuntimeContext> {
 public:
@@ -644,7 +962,6 @@ void CSharpScript_Internal::compile(std::shared_ptr<CSharpCompileContext> contex
 
 }
 
-
 #pragma endregion
 
 #pragma region CSharpScript
@@ -655,6 +972,77 @@ CSharpScript::CSharpScript() {
 CSharpScript::~CSharpScript() {
   _pint = nullptr;
 }
+std::vector<CSToken*> CSharpScript::lexTest(string_t str) {
+  CSLexer* lex = new CSLexer("testFile.cs", str);
+  lex->lex();
+  lex->removeWsTokens();
+  
+  return lex->parsedTokens();
+}
+string_t cstoken_to_string(CSTokenType tt) {
+  static std::unique_ptr<std::map < CSTokenType, std::string >> cs_token_type_to_string_tab = nullptr;
+
+  if (cs_token_type_to_string_tab == nullptr) {
+    cs_token_type_to_string_tab = std::make_unique<std::map<CSTokenType, std::string>>();
+#define TAB_INS(x) do { cs_token_type_to_string_tab->insert(std::make_pair(CSTokenType::x, Stz #x)); } while(0)
+    TAB_INS(None);
+
+    TAB_INS(TokensStart);
+
+    TAB_INS(Whitespace);
+    TAB_INS(Class); TAB_INS(Struct); TAB_INS(Enum);
+    TAB_INS(If); TAB_INS(While); TAB_INS(For); TAB_INS(Do);
+    TAB_INS(Public); TAB_INS(Private); TAB_INS(Protected);
+    TAB_INS(Sealed); TAB_INS(Final); TAB_INS(Internal);
+    TAB_INS(Throw); TAB_INS(Catch); TAB_INS(Finally);
+    TAB_INS(Get); TAB_INS(Set);
+    TAB_INS(Namespace); TAB_INS(Using);
+    TAB_INS(Equals); TAB_INS(Plus); TAB_INS(Times); TAB_INS(Divide); TAB_INS(Minus);
+    TAB_INS(PlusEquals); TAB_INS(MinusEquals); TAB_INS(TimesEquals); TAB_INS(DivideEquals);
+    TAB_INS(GreaterThan); TAB_INS(LessThan);
+    TAB_INS(LogicalOr); TAB_INS(LogicalAnd); TAB_INS(LogicalNot);
+    TAB_INS(BitwiseOr); TAB_INS(BitwiseAnd); TAB_INS(BitwiseNot);
+    TAB_INS(RShift); TAB_INS(LShift);
+    TAB_INS(Dot); TAB_INS(Colon);
+    TAB_INS(Inc); TAB_INS(Dec);
+    TAB_INS(New);
+    TAB_INS(Semicolon);
+    TAB_INS(LBrace); TAB_INS(RBrace);
+    TAB_INS(LParen); TAB_INS(RParen);
+    TAB_INS(LBracket); TAB_INS(RBracket);
+    TAB_INS(VerbatimLiteral);
+    TAB_INS(SQuote); TAB_INS(DQuote);
+    TAB_INS(TokensEnd);
+
+    TAB_INS(Word);
+    TAB_INS(Number);
+
+    TAB_INS(DataType);
+    TAB_INS(String);
+    TAB_INS(StringLiteral);
+    TAB_INS(ZeroClosure);
+    TAB_INS(PositiveClosure);
+    TAB_INS(Block);
+    TAB_INS(Expression);
+  }
+
+  std::map < CSTokenType, std::string >::iterator it = cs_token_type_to_string_tab->find(tt);
+  if (it != cs_token_type_to_string_tab->end()) {
+    return it->second;
+  }
+  Gu::debugBreak();
+  return "<not_found>";
+}
+
+string_t CSharpScript::tokensToString(std::vector<CSToken*> toks) {
+  string_t str = "";
+  for (auto tok : toks) {
+    str += cstoken_to_string(tok->type());
+  }
+  return str;
+
+}
+
 
 ////execute is only available for the root class.
 //virtual void execute(std::shared_ptr<CSharpContext> context) override {
@@ -703,10 +1091,10 @@ std::shared_ptr<CSharpScript> CSharpScript::compile(std::shared_ptr<CSharpCompil
   if (!ct->_bGatheredClasses) {
     //gather
   }
-//  std::shared_ptr<CSharpScript> ret = std::make_shared<CSharpScript>();
-//  ret->_pint->compile(ct);
-//
-  //std::shared_ptr<CSharpContext> context = std::make_shared<CSharpContext>();
+  //  std::shared_ptr<CSharpScript> ret = std::make_shared<CSharpScript>();
+  //  ret->_pint->compile(ct);
+  //
+    //std::shared_ptr<CSharpContext> context = std::make_shared<CSharpContext>();
 
 
 
@@ -773,53 +1161,8 @@ enum class CSIntegralType {
       new := "new"
 */
 //
-enum class CSTokenType {
-  None,
 
-  //////////////////////////////////////////////////////////////////////////
-  // Tokens
-  TokensStart,
-  //Tab, Space, //unnecessary
-  Whitespace,
-  Class, Struct, Enum,
-  If, While, For, Do,
-  Public, Private, Protected,
-  Sealed, Final, Internal,
-  Throw, Catch, Finally,
-  Get, Set,
-  Namespace, Using,
-  Equals, Plus, Times, Divide, Minus, // = + * / -
-  PlusEquals, MinusEquals, TimesEquals, DivideEquals,// += -= *= /=
-  GreaterThan, LessThan,// > <
-  LogicalOr, LogicalAnd, LogicalNot, // || && !
-  BitwiseOr, BitwiseAnd, BitwiseNot, // | & ~
-  RShift, LShift,// >> <<
-  Dot, Colon,// . :
-  Inc, Dec, //++ --
-  New, //new 
-  Semicolon,//;
-  LBrace, RBrace, //{ }
-  LParen, RParen, //( )
-  LBracket, RBracket,//[ ]
-  VerbatimLiteral, //@
-  SQuote, DQuote,// ' "
-  TokensEnd,
-  
-  //Variables
-  Word, //Word is defined as a token, but it's also a grammatical construct.  It's a defualt item if not in token table.
-  Number,
 
-  //////////////////////////////////////////////////////////////////////////
-  //Grammar 
-  DataType, //int, float, class..
-  String, //""
-  StringLiteral, //''
-  ZeroClosure,  //*
-  PositiveClosure,  //+
-  Block, // {..} OR Inline block (single line) ** 
-  Expression, // any values id|(..)
-};
-typedef CSTokenType LT;
 
 enum CSContext {
   Global, Namespace,
@@ -1207,258 +1550,6 @@ public:
   }
 };
 
-
-class CSToken {
-public:
-  CSToken() {}
-  CSToken(string_t tok, CSTokenType type) { _token = tok; _type = type; }
-  string_t token() { return _token; }
-  CSTokenType& type() { return _type; } //If CSTokenType is keyword, then use keyword() below.
-private:
-  string_t _token = "";
-  CSTokenType _type = CSTokenType::None;
-};
-class TokenTableEntry {
-public:
-  TokenTableEntry(string_t s, CSTokenType t) {
-    _str = s;
-    _tok = t;
-  }
-  const string_t str() const { return _str; }
-  const CSTokenType tok() const { return _tok; }
-private:
-  string_t _str;
-  CSTokenType _tok;
-};
-class CSLex : public VirtualMemory {
-public:
-  enum class Ele { Word, Number, Ws, Sym, Undefined };// Element Class
-  const string_t c_test = "using System; namespace MyNS { class MyCL{int[] x = new int[]; int b(float a ){ return b + a*(2*(3+.0006d); }} }";
-  //We can use Dec or Int.Intf.. which since we need to parse 'f' out I think Int.Int is also relevant.
-public:
-
-  CSLex(string_t filename, string_t code) {
-    _strFile = filename;
-    _tp = std::make_shared<TextParser>(const_cast<char*>(code.c_str()));
-    makeTable();
-  }
-  virtual ~CSLex() override {
-    for (auto t : _tokenTable) {
-      delete t;
-    }
-    _tokenHashTable.clear();
-  }
-  void lex_error(string_t err) {
-    BRLogError("" + _strFile + " (" + _tp->linenum() + "," + _tp->charnum() + "): error: " + err);
-  }
-  void makeTable() {
-#define MPA(str,sym) do{ _tokenTable.push_back(new TokenTableEntry(str, CSTokenType::sym)); _tokenHashTable.insert(std::make_pair(str,CSTokenType::sym)); } while(0);
-  //  MPA("\t", Tab); MPA(" ", Space);
-    MPA("class", Class); MPA("struct", Struct); MPA("enum", Enum);
-    MPA("if", If); MPA("while", While); MPA("for", For); MPA("do", Do);
-    MPA("public", Public); MPA("private", Private); MPA("protected", Protected);
-    MPA("sealed", Sealed); MPA("final", Final); MPA("internal", Internal);
-    MPA("throw", Throw); MPA("catch", Catch); MPA("finally", Finally);
-    MPA("get", Get); MPA("set", Set);
-    MPA("namespace", Namespace); MPA("using", Using);
-    MPA("=", Equals); MPA("+", Plus); MPA("-", Minus); MPA("*", Times); MPA("/", Divide);
-    MPA("+=", PlusEquals); MPA("-=", MinusEquals); MPA("*=", TimesEquals); MPA("/=", DivideEquals);
-    MPA("||", LogicalOr); MPA("&&", LogicalAnd); MPA("!", LogicalNot);
-    MPA(">", GreaterThan); MPA("<", LessThan);
-    MPA("|", BitwiseOr); MPA("&", BitwiseAnd); MPA("~", BitwiseNot);
-    MPA(">>", RShift); MPA("<<", LShift);
-    MPA(".", Dot); MPA(":", Colon);  MPA(";", Semicolon);
-    MPA("++", Inc); MPA("--", Dec);
-    MPA("new", New);
-    MPA("{", LBrace); MPA("}", RBrace);
-    MPA("(", LParen); MPA(")", RParen);
-    MPA("[", LBracket); MPA("]", RBracket);
-    MPA("'", SQuote); MPA("\"", DQuote);
-    MPA("@", VerbatimLiteral);
-
-    //sort table by grammatical superset
-    std::sort(_tokenTable.begin(), _tokenTable.end(), [](const TokenTableEntry* lhs, const TokenTableEntry* rhs) {
-      return lhs->str().compare(rhs->str());
-      });
-
-    //TODO: check sort is descending
-    Gu::debugBreak();
-
-    //validate table
-    int c = (int)CSTokenType::TokensEnd - (int)CSTokenType::TokensStart;
-    string_t missing = "";
-    for (int t = (int)CSTokenType::TokensStart + 1; t < c; ++t) {
-      bool found = false;
-      for (size_t ti = 0; ti < _tokenTable.size(); ti++) {
-        if ((CSTokenType)t == _tokenTable[ti]->tok()) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        missing += Stz TypeConv::intToStr(t);
-      }
-    }
-    if (missing.length() != 0) {
-      BRLogError("Missing Tokens from Lex table: " + missing);
-      Gu::debugBreak();
-    }
-  }
-  void lex() {
-    char c = ' ';
-    while (_tp->eof() == false) {
-      c = _tp->charAt();
-
-      if (_tp->eof()) {
-        break;
-      }
-      else {
-        matchToken(c);
-        _token += c;
-        _tp->inc();
-      }
-    }
-  }
-  void matchToken(int next) {
-    Ele next_ele = getClass(next);
-
-    //Initialize token with first char
-    if (_token.length() == 0) {
-      _ele = next_ele;
-    }
-    else {
-      process(next, next_ele);
-    }
-  }
-  void process(int next, Ele next_ele) {
-    //Taken a set T, a set E+ and element X, !T(EX) -> T(E)
-    if (_ele == Ele::Word) {
-      if (next_ele == Ele::Ws || next_ele == Ele::Sym) {
-        CSTokenType type = findExact(_token);
-        if (type == CSTokenType::None) {
-          type = CSTokenType::Word;
-        }
-        pushTok(type, next_ele);
-      }
-    }
-    else if (_ele == Ele::Number) {
-      if (next_ele != Ele::Number) {
-        //Note we aren't checking for float symbols '.' '-' 'e' 'f' and 'd' here..  we may do that in the grammar step although it's probably not the most optimal
-        pushTok(CSTokenType::Number, next_ele);
-      }
-    }
-    else if (_ele == Ele::Sym) {
-      if (next_ele == Ele::Sym) {
-        CSTokenType type = findExact(_token);
-        if (type != CSTokenType::None) {
-          CSTokenType test = findExact(_token + next);
-          if (test == CSTokenType::None) {
-            //Split up, for example +=.5 we want to split += from .
-            pushTok(type, next_ele);
-          }
-        }
-      }
-      else { //symbol, delimited by number, ws, and word
-        CSTokenType type = findExact(_token);
-        if (type != CSTokenType::None) {
-          pushTok(type, next_ele);
-        }
-      }
-    }
-    else if (_ele == Ele::Ws) {
-      if (next_ele != Ele::Ws) {
-        pushTok(CSTokenType::Whitespace, next_ele);
-      }
-    }
-  }
-  CSTokenType findExact(string_t tok) {
-    //returns None if not found.
-    std::unordered_map<string_t, CSTokenType>::iterator it = _tokenHashTable.find(tok);
-    if (it == _tokenHashTable.end()) {
-      return CSTokenType::None;
-    }
-    return it->second;
-  }
-  bool isWs(int c) {
-    return ((c == ' ') || (c == '\t') || (c == '\r') || (c == '\n'));
-  }
-  bool isSym(int c) {
-    if ((c == '=') || (c == '+') || (c == '-') || (c == '*') || (c == '/') ||
-      (c == '\\') || (c == '~') || (c == '!') || (c == '&') || (c == '|') ||
-      (c == ';') || (c == ':') || (c == '.') ||
-      (c == '{') || (c == '}') || (c == '(') || (c == ')') || (c == '[') || (c == ']') ||
-      (c == '"') || (c == '\'') || (c == '@')
-      ) {
-      return true;
-    }
-    return false;
-  }
-  bool isWord(int next) {
-    bool w = isalpha(next) || next == '_';
-    return w;
-  }
-  bool isInt(int next) {
-    bool n = isdigit(next);
-    return n;
-  }
-  Ele getClass(int next) {
-    Ele ele = Ele::Undefined;
-    if (isWs(next)) {
-      ele = Ele::Ws;
-    }
-    else if (isWord(next)) {
-      ele = Ele::Word;
-    }
-    else if (isInt(next)) {
-      ele = Ele::Number; // We start as Int, but promote to Dec if we find a '.'
-    }
-    else if (isSym(next)) {
-      ele = Ele::Sym;
-    }
-    return ele;
-  }
-  void pushTok(CSTokenType type, Ele next_ele, string_t error = "") {
-    if (error.length()) {
-      _errors.push_back("Error '" + _token + "' " + error);
-    }
-    else {
-      _parsedTokens.push_back(new CSToken(_token, type));
-    }
-    resetTok(next_ele);
-  }
-  void resetTok(Ele next_ele) {
-    //reset
-    _token = "";
-    _ele = next_ele;
-  }
-
-private:
-  std::unordered_map<string_t, CSTokenType> _tokenHashTable;
-  std::vector<TokenTableEntry*> _tokenTable;
-  std::vector<CSToken*> _parsedTokens;
-  std::vector<std::string> _errors;
-  string_t _token;
-  Ele _ele;
-
-  //CSTokenType _tokenType;
-  bool _bStringProfileDouble = false;
-  bool _bStringProfileSingle = false;
-  int32_t _nParenProfile = 0;
-  int32_t _nBracketProfile = 0;
-  bool _bVerbatimLiteral;
-  string_t _strFile = "<invalid>";
-
-  bool _bEscape = false;
-  std::shared_ptr<TextParser> _tp = nullptr;
-};
-
-
-/*
-Note; if you add more delimiters make sure to update isEscapeCharacter()
-*/
-/**
-
-*/
 
 
 

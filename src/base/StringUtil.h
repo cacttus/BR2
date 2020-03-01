@@ -61,7 +61,7 @@ public:
   static string_t toHex(int value, bool bIncludePrefix);
   static string_t toDec(int value);
   static string_t getEscapedCharLiteral(char c);
-  static bool process(char c, string_t delims);
+  static bool isDelim(char c, string_t delims);
   static bool isChar(char c);
   static bool isWs(int c);
   static bool isWsExceptNewline(char c);
