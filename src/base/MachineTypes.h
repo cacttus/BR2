@@ -11,11 +11,12 @@
 namespace BR2 {
 
 typedef std::string string_t;
+typedef wint_t br_char;
 
 //#endif
 #define memsize_max (size_t)(-1)
 typedef unsigned char       t_byte;
-typedef char                t_char;
+typedef char                t_char;//Remove this.
 
 typedef uint64_t t_timeval;
 

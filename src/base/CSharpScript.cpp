@@ -3,7 +3,8 @@
 #include "../base/Logger.h"
 #include "../base/HashMap.h"
 #include "../base/TextParser.h"
-
+#include <unordered_map>
+#include <algorithm>
 namespace BR2 {
 #ifndef FORCE_INLINE
 #ifdef BR2_OS_WINDOWS
@@ -71,8 +72,13 @@ enum class CSharpCallingConvention {
 };
 
 class CSRuntimeContext;
-
-
+class CSharpVariable;
+class CSharpStruct;
+class CSharpMethod;
+class CSharpParameter;
+class CSharpScope;
+class CSharpStatement;
+class CSharpTerm;
 
 class CSCallstack : public VirtualMemoryShared<CSRuntimeContext> {
 public:
@@ -90,11 +96,7 @@ public:
       this->push(item);
     }
   }
-  std::shared_ptr<CSharpVariable> top() {
-    if (_callstack.size() == 0) {
-      _pContext->error("Stack Underflow.");
-    }
-  }
+  std::shared_ptr<CSharpVariable> CSCallstack::top();
   std::vector<std::shared_ptr<CSharpVariable>> pop(size_t count = 1) {
     std::vector<std::shared_ptr<CSharpVariable>> ret;
     for (size_t x = 0; x < count; ++x) {
@@ -106,7 +108,7 @@ public:
   }
 private:
   std::vector<std::shared_ptr<CSharpVariable>> _callstack; //Callstack.
-  std::shared_ptr<CSharpContext> _pContext = nullptr;
+  std::shared_ptr<CSRuntimeContext> _pContext = nullptr;
 };
 
 //Base class for where we are in the file/line
@@ -117,14 +119,11 @@ public:
   virtual ~CSharpContext() override {}
   virtual void init() = 0;
   virtual void error(string_t err) = 0;
-
-protected:
-
 };
 class CSRuntimeContext : public CSharpContext {
 public:
   void init() {
-    _callstack = std::make_shared<CSCallstack>(getThis<CSRuntimeContext>());
+    //_callstack = std::make_shared<CSCallstack>(getThis<CSRuntimeContext>());
   }
   virtual void error(string_t err) override {
     BRLogError("Runtime Error: " + err);
@@ -134,12 +133,18 @@ private:
   std::shared_ptr<CSCallstack> _callstack = nullptr;//Call init()
   int32_t _instructionPointer; // the current instruction point.er
 };
-
+std::shared_ptr<CSharpVariable> CSCallstack::top() {
+  if (_callstack.size() == 0) {
+    _pContext->error("Stack Underflow.");
+  }
+}
 
 //Language definition classes, class, method, property, code block, variables, statements.
 class CSharpLanguage : public VirtualMemory {
 public:
-  virtual void execute(std::shared_ptr<CSRuntimeContext> context) = 0;  //Execute the code.
+  virtual void execute(std::shared_ptr<CSRuntimeContext> context) {
+    BRThrowNotImplementedException();
+  } //Execute the code.
 protected:
   int32_t _iLine = -1;  //The line this element was found on.  If the expression spans multiple lines, this is the first line.
   string_t _code; //The code that was parsed to create this language item.
@@ -151,12 +156,12 @@ protected:
 class CSharpNamespace : public CSharpLanguage {
 public:
   string_t getIdentifier() { return _identifier; }
-  std::vector<CSharpClass> getClasses() { return _classes; }
+  std::vector<CSharpStruct> getClasses() { return _classes; }
   std::shared_ptr<CSharpNamespace> parent() { return _parent; }
   std::vector<std::shared_ptr<CSharpNamespace>> children() { return _children; }
 private:
   string_t _identifier = "<invalid>";
-  std::vector<CSharpClass> _classes;
+  std::vector<CSharpStruct> _classes;
   std::shared_ptr<CSharpNamespace> _parent = nullptr;
   std::vector<std::shared_ptr<CSharpNamespace>> _children;
 };
@@ -192,15 +197,17 @@ public:
 
   //Call is really the () operator, but () can't be overloaded in c#
   //virtual std::shared_ptr<CSharpVariable> call(std::shared_ptr<CSharpVariable> v, std::shared_ptr<CSharpContext> context) = 0;
-  std::shared_ptr<CSharpClass> getBase() { return _baseClass; }
+  std::shared_ptr<CSharpStruct> getBase() { return _baseClass; }
 
   bool isClass() { return _baseClass != nullptr; }
 
-  HashMap<CSharpVariable> getMembers() { return _members; }
-  HashMap<CSharpMethod> getMethods() { return _methods; }
+  HashMap<std::shared_ptr<CSharpVariable>> getMembers() { return _members; }
+  HashMap<std::shared_ptr<CSharpMethod>> getMethods() { return _methods; }
 
   //virtual std::shared_ptr<CSharpType> getType(std::shared_ptr<CSharpVariable> v, std::shared_ptr<CSharpContext> context) = 0;
-  virtual string_t ToString(std::shared_ptr<CSharpVariable> v, std::shared_ptr<CSharpContext> context) = 0;
+  virtual string_t ToString(std::shared_ptr<CSharpVariable> v, std::shared_ptr<CSharpContext> context) {
+    BRThrowNotImplementedException();
+  }
 
   virtual string_t toString() {
     if (_eDataType == CSharpDataType::None) { return "None"; }
@@ -223,15 +230,15 @@ private:
   CSharpStorageClass _storageClass = CSharpStorageClass::Dynamic;
   CSharpAccessModifier _modifier = CSharpAccessModifier::None;
   CSharpDataType _eDataType = CSharpDataType::None;
-  std::shared_ptr<CSharpClass> _pClass = nullptr;//Not set if we're not a class.
-  HashMap<CSharpVariable> _members;
-  HashMap<CSharpMethod> _methods;
+  std::shared_ptr<CSharpStruct> _pClass = nullptr;//Not set if we're not a class.
+  HashMap<std::shared_ptr<CSharpVariable>> _members;
+  HashMap<std::shared_ptr<CSharpMethod>> _methods;
   std::shared_ptr<CSharpNamespace> _namespace;
 
   std::vector<std::function<void()>> _cpp_lambdas;
 
   //If is a class then this WILL be defined.  Base class is object.
-  std::shared_ptr<CSharpClass> _baseClass = nullptr;
+  std::shared_ptr<CSharpStruct> _baseClass = nullptr;
 };
 //class CSharpType : public CSharpStruct {
 //public:
@@ -392,7 +399,7 @@ public:
 
 private:
   string_t _identifier = "<invalid>"; // The language identifier
-  std::shared_ptr<CSharpClass> _myClass = nullptr;  //nullptr, if this is a local variable.
+  std::shared_ptr<CSharpStruct> _myClass = nullptr;  //nullptr, if this is a local variable.
   CSharpDataType _dataType = CSharpDataType::None; //This can basically be gotten from the subclass.
 };
 
@@ -405,9 +412,9 @@ public:
     //Push all the locals on the callstack.
     //Note: C# does not allow redefining enclosing scope parameters.  so you wouldn't have to do that.
 
-    for (auto expr : _expressions) {
-      expr->execute(context);
-    }
+    //for (auto expr : _expressions) {
+    //  expr->execute(context);
+    //}
   }
 private:
   std::vector<std::shared_ptr<CSharpStatement>> _expressions;
@@ -433,12 +440,12 @@ private:
 class CSharpStatement : public CSharpLanguage {
 public:
   std::shared_ptr<CSharpVariable> evaluate(std::shared_ptr<CSRuntimeContext> context) {
-    std::shared_ptr<CSharpVariable> evaluated_value;
-    context->getCallstack()->push(evaluated_value);
-    for (auto term : _terms) {
-      term->execute(context);
-    }
-    return evaluated_value;
+    //std::shared_ptr<CSharpVariable> evaluated_value;
+    //context->getCallstack()->push(evaluated_value);
+    //for (auto term : _terms) {
+    //  term->execute(context);
+    //}
+    //return evaluated_value;
   }
   virtual void execute(std::shared_ptr<CSRuntimeContext> context) override {
     evaluate(context);
@@ -556,11 +563,6 @@ private:
 
 
 #pragma region CSharpScript_Internal
-class CSharpUsing {
-public:
-  string_t _string;
-};
-
 class CSharpScript_Internal {
 public:
   //**CLASSES AS WELL.  Classes can exist without namespaces.  Thus, so can enums, etc ..
@@ -701,10 +703,10 @@ std::shared_ptr<CSharpScript> CSharpScript::compile(std::shared_ptr<CSharpCompil
   if (!ct->_bGatheredClasses) {
     //gather
   }
-  std::shared_ptr<CSharpScript> ret = std::make_shared<CSharpScript>();
-  ret->_pint->compile(ct);
-
-  std::shared_ptr<CSharpContext> context = std::make_shared<CSharpContext>();
+//  std::shared_ptr<CSharpScript> ret = std::make_shared<CSharpScript>();
+//  ret->_pint->compile(ct);
+//
+  //std::shared_ptr<CSharpContext> context = std::make_shared<CSharpContext>();
 
 
 
@@ -737,60 +739,87 @@ void CSharpScript::update(float dt) {
 }
 #pragma endregion
 
-#pragma region CSharpScript_Internal
-class CSharpScript_Internal {
-public:
-  std::shared_ptr<CSharpMethod> _start = nullptr;
-  std::shared_ptr<CSharpMethod> _update = nullptr;
-};
-
-#pragma endregion
-
 enum class CSIntegralType {
   Int, Float, Double, Decimal,
 };
-
+/*
+      using := "using"
+      namespace := "namespace"
+      class := "class"
+      public := "public"
+      private := "private"
+      protected := "protected"
+      final := "final"
+      sealed := "sealed"
+      internal := "internal"
+      lbrace := "{"
+      rbrace := "}"
+      lparen := "("
+      rparen := ")"
+      lbracket := "["
+      rbracket := "]"
+      inc := "++"
+      dec := "--"
+      semicolon := ';'
+      equals := "="
+      plusequals := "+="
+      minusequals := "-="
+      plus := "+"
+      minus := "-"
+      times := "*"
+      divide := "/"
+      dot := "."
+      colon := ":"
+      new := "new"
+*/
 //
-enum class CSLexType {
+enum class CSTokenType {
   None,
-  Whitespace,
 
-  //Keywords
+  //////////////////////////////////////////////////////////////////////////
+  // Tokens
+  TokensStart,
+  //Tab, Space, //unnecessary
+  Whitespace,
   Class, Struct, Enum,
-  If, While, For,
+  If, While, For, Do,
   Public, Private, Protected,
   Sealed, Final, Internal,
   Throw, Catch, Finally,
   Get, Set,
   Namespace, Using,
-
-  //Operators
-  Equals, Add, Multiply, Divide, Subtract, //subtract is also unary minus 
-  LogicalOr, LogicalAnd, LogicalNot,
-  BitwiseOr, BitwiseAnd, BitwiseNot,
-
+  Equals, Plus, Times, Divide, Minus, // = + * / -
+  PlusEquals, MinusEquals, TimesEquals, DivideEquals,// += -= *= /=
+  GreaterThan, LessThan,// > <
+  LogicalOr, LogicalAnd, LogicalNot, // || && !
+  BitwiseOr, BitwiseAnd, BitwiseNot, // | & ~
+  RShift, LShift,// >> <<
+  Dot, Colon,// . :
+  Inc, Dec, //++ --
+  New, //new 
+  Semicolon,//;
+  LBrace, RBrace, //{ }
+  LParen, RParen, //( )
+  LBracket, RBracket,//[ ]
+  VerbatimLiteral, //@
+  SQuote, DQuote,// ' "
+  TokensEnd,
+  
   //Variables
-  DataType, //int, float, class..
-  Identifier,
+  Word, //Word is defined as a token, but it's also a grammatical construct.  It's a defualt item if not in token table.
   Number,
 
-  //Delimiters
+  //////////////////////////////////////////////////////////////////////////
+  //Grammar 
+  DataType, //int, float, class..
   String, //""
   StringLiteral, //''
-  Semicolon,
-  LeftBrace, //{
-  RightBrace, //}
-  LeftParen, //(
-  RightParen, //)
-  VerbatimLiteral, //@
-
-  //Grammar types.
   ZeroClosure,  //*
   PositiveClosure,  //+
   Block, // {..} OR Inline block (single line) ** 
   Expression, // any values id|(..)
 };
-typedef CSLexType LT;
+typedef CSTokenType LT;
 
 enum CSContext {
   Global, Namespace,
@@ -800,13 +829,13 @@ enum CSContext {
 class CSGrammarExp {
 public:
   CSGrammarExp() {}
-  CSGrammarExp(std::vector<CSLexType> toks, CSContext ctx) { _grammar = toks; _context = ctx; }
+  CSGrammarExp(std::vector<CSTokenType> toks, CSContext ctx) { _grammar = toks; _context = ctx; }
 
-  std::vector<CSLexType> grammar() { return _grammar; }
+  std::vector<CSTokenType> grammar() { return _grammar; }
   std::vector<CSContext> contexts() { return _contexts; }
   CSContext context() { return _context; }
 private:
-  std::vector<CSLexType> _grammar;
+  std::vector<CSTokenType> _grammar;
   std::vector<CSContext> _contexts;//Valid contexts
   CSContext _context;//The context of this expression
 };
@@ -817,30 +846,30 @@ class GrammarTest {
 public:
   void test() {
 
-    CSGrammarExp xp_namespace(std::vector<CSLexType>({ LT::Namespace, LT::Identifier, LT::Block }), CSContext::Namespace);
-    xp_namespace.contexts().push_back(CSContext::Global);
-    xp_namespace.contexts().push_back(CSContext::Namespace);
+    //CSGrammarExp xp_namespace(std::vector<CSTokenType>({ LT::Namespace, LT::Identifier, LT::Block }), CSContext::Namespace);
+    //xp_namespace.contexts().push_back(CSContext::Global);
+    //xp_namespace.contexts().push_back(CSContext::Namespace);
 
-    CSGrammarExp xp_using_directive(std::vector<CSLexType>({ LT::Using, LT::Identifier, LT::Semicolon }), CSContext::Global);
-    xp_using_directive.contexts().push_back(CSContext::Global);
+    //CSGrammarExp xp_using_directive(std::vector<CSTokenType>({ LT::Using, LT::Identifier, LT::Semicolon }), CSContext::Global);
+    //xp_using_directive.contexts().push_back(CSContext::Global);
 
-    CSGrammarExp xp_using_inline(std::vector<CSLexType>({ LT::Using, LT::Identifier, LT::Block }), CSContext::MethodBody);
-    xp_using_inline.contexts().push_back(CSContext::MethodBody);
+    //CSGrammarExp xp_using_inline(std::vector<CSTokenType>({ LT::Using, LT::Identifier, LT::Block }), CSContext::MethodBody);
+    //xp_using_inline.contexts().push_back(CSContext::MethodBody);
 
-    CSGrammarExp xp_class(std::vector<CSLexType>({ LT::Class, LT::Identifier, LT::LeftBrace, LT::ZeroClosure, LT::RightBrace }), CSContext::ClassBody);
-    xp_class.contexts().push_back(CSContext::Global);
-    xp_class.contexts().push_back(CSContext::Namespace);
+    //CSGrammarExp xp_class(std::vector<CSTokenType>({ LT::Class, LT::Identifier, LT::LeftBrace, LT::ZeroClosure, LT::RightBrace }), CSContext::ClassBody);
+    //xp_class.contexts().push_back(CSContext::Global);
+    //xp_class.contexts().push_back(CSContext::Namespace);
 
-    CSGrammarExp xp_declare(std::vector<CSLexType>({ LT::DataType, LT::Identifier, LT::Semicolon }), CSContext::Inherited);
-    xp_declare.contexts().push_back(CSContext::MethodBody);
-    xp_declare.contexts().push_back(CSContext::ClassBody);
+    //CSGrammarExp xp_declare(std::vector<CSTokenType>({ LT::DataType, LT::Identifier, LT::Semicolon }), CSContext::Inherited);
+    //xp_declare.contexts().push_back(CSContext::MethodBody);
+    //xp_declare.contexts().push_back(CSContext::ClassBody);
 
-    CSGrammarExp xp_assign(std::vector<CSLexType>({ LT::DataType, LT::Identifier, LT::Equals, LT::Expression, LT::Semicolon }), CSContext::Inherited);
-    xp_assign.contexts().push_back(CSContext::MethodBody);
-    xp_assign.contexts().push_back(CSContext::ClassBody);
+    //CSGrammarExp xp_assign(std::vector<CSTokenType>({ LT::DataType, LT::Identifier, LT::Equals, LT::Expression, LT::Semicolon }), CSContext::Inherited);
+    //xp_assign.contexts().push_back(CSContext::MethodBody);
+    //xp_assign.contexts().push_back(CSContext::ClassBody);
 
-    CSGrammarExp xp_property(std::vector<CSLexType>({ LT::DataType, LT::Identifier, LT::LeftBrace, LT::Get, LT::Set, LT::RightBrace }), CSContext::Inherited);
-    xp_property.contexts().push_back(CSContext::ClassBody);
+    //CSGrammarExp xp_property(std::vector<CSTokenType>({ LT::DataType, LT::Identifier, LT::LeftBrace, LT::Get, LT::Set, LT::RightBrace }), CSContext::Inherited);
+    //xp_property.contexts().push_back(CSContext::ClassBody);
     /*
     3 Compile Phases && Phase 1 and 2 can be rolled together
 
@@ -1028,13 +1057,13 @@ public:
       Each grammar is a replace/rewrite system of some kind.
       This is actualy really easy to create either way, the grammars are just going to be hard.
       You must validate a reduction, because you can reduce to a dead end.
-      An LR parser uses two tables: 
-      1.The action table Action[s,a] tells the parser what to do when the state on top of the stack is s and terminal a is the next input token.  
-      The possible actions are to shift a state onto the stack, to reduce the handle on top of the stack, to accept the input, or to report an error. 
+      An LR parser uses two tables:
+      1.The action table Action[s,a] tells the parser what to do when the state on top of the stack is s and terminal a is the next input token.
+      The possible actions are to shift a state onto the stack, to reduce the handle on top of the stack, to accept the input, or to report an error.
       2.The goto table Goto[s,X] indicates the new state to place on top of the stack after a reduction of the nonterminal X while state s is on top of the stack.
 
       LL is recursive descent and less powerful than LALR.  LR will allow us to show multiple errors and such.
-     
+
       if there is an error, clean the  stack, then you can process stuff after an error
 
       CSRegEx
@@ -1075,7 +1104,7 @@ public:
       //still needs: Arrays, and New classes
       storage_operator := (equals|plusequals|minusequals|timesequals|divideequals)
       binary_operator := (plus|minus|times|divide|dot)
-      unary_operator := (minusminus|plusplus)
+      unary_operator := (inc|dec|minus)
       keyword := (class|public|private|protected|...)
       storage_class := (static|const)
       access_modifier := (public|private|protected)
@@ -1084,11 +1113,11 @@ public:
       using_directive := using (scoped_access_operator)* (namespace_identifier|class_identifier) semicolon
       namespace_decl := namespace lbrace (class_decl|enum_decl)* rbrace
 
-      enum_decl := (access_modifier)? enum lbrace enum_identifier_decl rbrace 
+      enum_decl := (access_modifier)? enum lbrace enum_identifier_decl rbrace
 
       class_decl := (static)? (access_modifier)? (state_modifier)? class class_identifier_decl (inherited_class)? lbrace (method_decl|property_decl|class_variable_decl)+ rbrace
       struct_decl := (state_modifier)? struct identifier lbrace (method_decl|property_decl|class_variable_decl)+ rbrace
-      
+
       variable_identifier_decl := create_identifier(class) // this function will create a new identifier CSharpVariable, CSharpStruct or CSharpMethod, if its already found in the current context, then emit error.
       variable_identifier := lookup_identifier(variable) // - this is a method that we use to find the declared identifer in the given scope
       class_identifier_decl := create_identifier(variable)
@@ -1102,9 +1131,9 @@ public:
       data_type := (integral_type|user_type)
       integral_type := (int|float|decimal|double|Int32)
       method_block := lbrace (statement)* rbrace
-      
+
       class_variable_decl := (access_modifier)? (storage_class)? (variable_decl | variable_assign_decl)
-      
+
       variable_inc_dec := (pre_incdec|post_incdec)
       variable_decl := data_type variable_identifier_decl semicolon
       variable_assign_decl := data_type identifier equals expression semicolon
@@ -1123,10 +1152,10 @@ public:
       method_call := ((method_identifier|paren_expr) dot method_param)
       method_identifier := ((scoped_access_operator)* local_method_identifier)
 
-      expression := lvalue (term)*   //2+(1*5)
+      expression := (lvalue | ( (term)+ lvalue) )  //2+(1*5)
       paren_expr := lparen expression rparen
       term := binary_operator lvalue
-      lvalue := (constant|variable_identifier|paren_expr|method_call) 
+      lvalue := (constant|variable_identifier|paren_expr|method_call)
 
 
       //////////////////////////////////////////////////////////////////////////
@@ -1182,129 +1211,236 @@ public:
 class CSToken {
 public:
   CSToken() {}
-  CSToken(string_t tok, CSLexType type) { _token = tok; _type = type; }
+  CSToken(string_t tok, CSTokenType type) { _token = tok; _type = type; }
   string_t token() { return _token; }
-  CSLexType& type() { return _type; } //If CSTokenType is keyword, then use keyword() below.
+  CSTokenType& type() { return _type; } //If CSTokenType is keyword, then use keyword() below.
 private:
   string_t _token = "";
-  CSLexType _type = CSLexType::None;
+  CSTokenType _type = CSTokenType::None;
 };
-class CSharpParser : public VirtualMemory {
+class TokenTableEntry {
 public:
-  CSharpParser(string_t filename, string_t code) {
+  TokenTableEntry(string_t s, CSTokenType t) {
+    _str = s;
+    _tok = t;
+  }
+  const string_t str() const { return _str; }
+  const CSTokenType tok() const { return _tok; }
+private:
+  string_t _str;
+  CSTokenType _tok;
+};
+class CSLex : public VirtualMemory {
+public:
+  enum class Ele { Word, Number, Ws, Sym, Undefined };// Element Class
+  const string_t c_test = "using System; namespace MyNS { class MyCL{int[] x = new int[]; int b(float a ){ return b + a*(2*(3+.0006d); }} }";
+  //We can use Dec or Int.Intf.. which since we need to parse 'f' out I think Int.Int is also relevant.
+public:
+
+  CSLex(string_t filename, string_t code) {
     _strFile = filename;
-    _tp = std::make_shared<TextParser>(code);
+    _tp = std::make_shared<TextParser>(const_cast<char*>(code.c_str()));
+    makeTable();
+  }
+  virtual ~CSLex() override {
+    for (auto t : _tokenTable) {
+      delete t;
+    }
+    _tokenHashTable.clear();
   }
   void lex_error(string_t err) {
     BRLogError("" + _strFile + " (" + _tp->linenum() + "," + _tp->charnum() + "): error: " + err);
   }
-  void chop(string_t tok, CSTokenType type) {
-    _tokens.push_back(new CSToken(tok, type));
+  void makeTable() {
+#define MPA(str,sym) do{ _tokenTable.push_back(new TokenTableEntry(str, CSTokenType::sym)); _tokenHashTable.insert(std::make_pair(str,CSTokenType::sym)); } while(0);
+  //  MPA("\t", Tab); MPA(" ", Space);
+    MPA("class", Class); MPA("struct", Struct); MPA("enum", Enum);
+    MPA("if", If); MPA("while", While); MPA("for", For); MPA("do", Do);
+    MPA("public", Public); MPA("private", Private); MPA("protected", Protected);
+    MPA("sealed", Sealed); MPA("final", Final); MPA("internal", Internal);
+    MPA("throw", Throw); MPA("catch", Catch); MPA("finally", Finally);
+    MPA("get", Get); MPA("set", Set);
+    MPA("namespace", Namespace); MPA("using", Using);
+    MPA("=", Equals); MPA("+", Plus); MPA("-", Minus); MPA("*", Times); MPA("/", Divide);
+    MPA("+=", PlusEquals); MPA("-=", MinusEquals); MPA("*=", TimesEquals); MPA("/=", DivideEquals);
+    MPA("||", LogicalOr); MPA("&&", LogicalAnd); MPA("!", LogicalNot);
+    MPA(">", GreaterThan); MPA("<", LessThan);
+    MPA("|", BitwiseOr); MPA("&", BitwiseAnd); MPA("~", BitwiseNot);
+    MPA(">>", RShift); MPA("<<", LShift);
+    MPA(".", Dot); MPA(":", Colon);  MPA(";", Semicolon);
+    MPA("++", Inc); MPA("--", Dec);
+    MPA("new", New);
+    MPA("{", LBrace); MPA("}", RBrace);
+    MPA("(", LParen); MPA(")", RParen);
+    MPA("[", LBracket); MPA("]", RBracket);
+    MPA("'", SQuote); MPA("\"", DQuote);
+    MPA("@", VerbatimLiteral);
+
+    //sort table by grammatical superset
+    std::sort(_tokenTable.begin(), _tokenTable.end(), [](const TokenTableEntry* lhs, const TokenTableEntry* rhs) {
+      return lhs->str().compare(rhs->str());
+      });
+
+    //TODO: check sort is descending
+    Gu::debugBreak();
+
+    //validate table
+    int c = (int)CSTokenType::TokensEnd - (int)CSTokenType::TokensStart;
+    string_t missing = "";
+    for (int t = (int)CSTokenType::TokensStart + 1; t < c; ++t) {
+      bool found = false;
+      for (size_t ti = 0; ti < _tokenTable.size(); ti++) {
+        if ((CSTokenType)t == _tokenTable[ti]->tok()) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        missing += Stz TypeConv::intToStr(t);
+      }
+    }
+    if (missing.length() != 0) {
+      BRLogError("Missing Tokens from Lex table: " + missing);
+      Gu::debugBreak();
+    }
   }
-  //Lexer.  Token chopper.
   void lex() {
+    char c = ' ';
     while (_tp->eof() == false) {
       c = _tp->charAt();
 
       if (_tp->eof()) {
         break;
       }
-      //else if (_iLineContinuation) {
-      //  error(")
-      //}
-      //else if (c == '\\') {
-      //  _iLineContinuation = true;
-      //}
-      else if (c == '@') {
-        chop(Stz c, CSTokenType::VerbatimLiteral);
-        _bVerbatimLiteral = true;
-      }
-      else if (c == '"') {
-        _tokenType = CSTokenType::String;
-        if (_bStringProfileDouble == false) {
-          _bStringProfileDouble = true;
-        }
-        else {
-          _bVerbatimLiteral = false; //end the literal @
-          _bStringProfileDouble = false;
-        }
-
-        token += c;
-        _tp->inc();
-      }
-      else if (c == '\'') {
-        if (_bStringProfileSingle == false) {
-          _bStringProfileSingle = true;
-        }
-        else {
-          _bStringProfileSingle = false;
-        }
-        //Don't worry about multiple characters in literal, we handle that in the parser.
-
-        token += c;
-        _tp->inc();
-      }
-      else if (_bStringProfileSingle || _bStringProfileDouble) {
-        //Inside string - do not parse other delimiters
-        token += c;
-        _tp->inc();
-      }
-      else if (c == '(') {
-        _nParenProfile++;
-
-        token += c;
-        _tp->inc();
-      }
-      else if (c == ')') {
-        _nParenProfile--;
-
-        if (_nParenProfile < 0) {
-          lex_error("Parentheses profile is invalid. You're missing a parentheses somewhere.");
-        }
-
-        token += c;
-        _tp->inc();
-      }
-      else if (c == '[') {
-        _nBracketProfile++;
-
-        token += c;
-        _tp->inc();
-      }
-      else if (c == ']') {
-        _nBracketProfile--;
-
-        if (_nBracketProfile < 0) {
-          error("Bracket profile is invalid. You're missing a Bracket somewhere.");
-        }
-
-        token += c;
-        _tp->inc();
-      }
-      else if (c == '\n' || c == '\r') {
-        _bStringProfileDouble = false;
-        _tp->eatLine(_iLine);
-      }
-      // - If we're whitespace but we also are within a string or bracket then do not skip it, add it to
-      // the argument.
-      else if (StringUtil::isWs(c) && !(_bStringProfileDouble || _bStringProfileSingle || _nParenProfile || _nBracketProfile)) {
-        if (token.length()) {
-          _vecTokens.push_back(string_t(token));
-        }
-        token = "";
-        _tp->inc();
-      }
       else {
-        token += c;
+        matchToken(c);
+        _token += c;
         _tp->inc();
       }
-
     }
   }
+  void matchToken(int next) {
+    Ele next_ele = getClass(next);
+
+    //Initialize token with first char
+    if (_token.length() == 0) {
+      _ele = next_ele;
+    }
+    else {
+      process(next, next_ele);
+    }
+  }
+  void process(int next, Ele next_ele) {
+    //Taken a set T, a set E+ and element X, !T(EX) -> T(E)
+    if (_ele == Ele::Word) {
+      if (next_ele == Ele::Ws || next_ele == Ele::Sym) {
+        CSTokenType type = findExact(_token);
+        if (type == CSTokenType::None) {
+          type = CSTokenType::Word;
+        }
+        pushTok(type, next_ele);
+      }
+    }
+    else if (_ele == Ele::Number) {
+      if (next_ele != Ele::Number) {
+        //Note we aren't checking for float symbols '.' '-' 'e' 'f' and 'd' here..  we may do that in the grammar step although it's probably not the most optimal
+        pushTok(CSTokenType::Number, next_ele);
+      }
+    }
+    else if (_ele == Ele::Sym) {
+      if (next_ele == Ele::Sym) {
+        CSTokenType type = findExact(_token);
+        if (type != CSTokenType::None) {
+          CSTokenType test = findExact(_token + next);
+          if (test == CSTokenType::None) {
+            //Split up, for example +=.5 we want to split += from .
+            pushTok(type, next_ele);
+          }
+        }
+      }
+      else { //symbol, delimited by number, ws, and word
+        CSTokenType type = findExact(_token);
+        if (type != CSTokenType::None) {
+          pushTok(type, next_ele);
+        }
+      }
+    }
+    else if (_ele == Ele::Ws) {
+      if (next_ele != Ele::Ws) {
+        pushTok(CSTokenType::Whitespace, next_ele);
+      }
+    }
+  }
+  CSTokenType findExact(string_t tok) {
+    //returns None if not found.
+    std::unordered_map<string_t, CSTokenType>::iterator it = _tokenHashTable.find(tok);
+    if (it == _tokenHashTable.end()) {
+      return CSTokenType::None;
+    }
+    return it->second;
+  }
+  bool isWs(int c) {
+    return ((c == ' ') || (c == '\t') || (c == '\r') || (c == '\n'));
+  }
+  bool isSym(int c) {
+    if ((c == '=') || (c == '+') || (c == '-') || (c == '*') || (c == '/') ||
+      (c == '\\') || (c == '~') || (c == '!') || (c == '&') || (c == '|') ||
+      (c == ';') || (c == ':') || (c == '.') ||
+      (c == '{') || (c == '}') || (c == '(') || (c == ')') || (c == '[') || (c == ']') ||
+      (c == '"') || (c == '\'') || (c == '@')
+      ) {
+      return true;
+    }
+    return false;
+  }
+  bool isWord(int next) {
+    bool w = isalpha(next) || next == '_';
+    return w;
+  }
+  bool isInt(int next) {
+    bool n = isdigit(next);
+    return n;
+  }
+  Ele getClass(int next) {
+    Ele ele = Ele::Undefined;
+    if (isWs(next)) {
+      ele = Ele::Ws;
+    }
+    else if (isWord(next)) {
+      ele = Ele::Word;
+    }
+    else if (isInt(next)) {
+      ele = Ele::Number; // We start as Int, but promote to Dec if we find a '.'
+    }
+    else if (isSym(next)) {
+      ele = Ele::Sym;
+    }
+    return ele;
+  }
+  void pushTok(CSTokenType type, Ele next_ele, string_t error = "") {
+    if (error.length()) {
+      _errors.push_back("Error '" + _token + "' " + error);
+    }
+    else {
+      _parsedTokens.push_back(new CSToken(_token, type));
+    }
+    resetTok(next_ele);
+  }
+  void resetTok(Ele next_ele) {
+    //reset
+    _token = "";
+    _ele = next_ele;
+  }
+
 private:
-  char c;
-  string_t token;
-  CSTokenType _tokenType;
+  std::unordered_map<string_t, CSTokenType> _tokenHashTable;
+  std::vector<TokenTableEntry*> _tokenTable;
+  std::vector<CSToken*> _parsedTokens;
+  std::vector<std::string> _errors;
+  string_t _token;
+  Ele _ele;
+
+  //CSTokenType _tokenType;
   bool _bStringProfileDouble = false;
   bool _bStringProfileSingle = false;
   int32_t _nParenProfile = 0;
@@ -1314,7 +1450,6 @@ private:
 
   bool _bEscape = false;
   std::shared_ptr<TextParser> _tp = nullptr;
-  std::vector<CSToken*> _tokens;
 };
 
 

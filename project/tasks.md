@@ -1,7 +1,15 @@
 # Mine City Task Log
 
 ## BR0 to BR2 Upgrade
-- [x] Fix rendering issues after /appbase was deleted.
+- [ ] Test the c# lexer.
+
+- [ ] For proper code page conversion, change all the following to use wint_t instead of "char"
+	- [ ] remove t_char
+	- [ ] TextParser
+	- [ ] StringUtil
+	- [ ] DiskFile
+	- [ ] remove t_byte SHOULD keep a 'byte' type though.  Make good decisions here.
+
 - [ ] Figure out some way to prevent recursive node updating for SceneNode, this has been causing MULTILPE issues.
 
 - [ ] **CRITICAL** Squashed viewport Bug

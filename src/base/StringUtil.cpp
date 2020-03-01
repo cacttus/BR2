@@ -85,14 +85,13 @@ string_t StringUtil::uppercase(const char* _in) {
     out += toupper(in[n]);
   }
   in = out;
-  return in;
+  return in; 
 }
-
-bool StringUtil::isWspaceEx(char c)//iswspace with newlines and unprintable chars
+bool StringUtil::isWspaceEx(int c)//iswspace with newlines and unprintable chars
 {
   return (iswspace(c) || isNewline(c) || (c == '\0'));
 }
-bool StringUtil::isNewline(char c) {
+bool StringUtil::isNewline(int c) {
   return ((c == '\r') || (c == '\n'));
 }
 string_t StringUtil::trimBeg(string_t s) {
@@ -318,7 +317,7 @@ bool StringUtil::isChar(char c) {
   int r = isalnum(c);
   return r != 0;
 }
-bool StringUtil::isWs(char c) {
+bool StringUtil::isWs(int c) {
   return (
     (c == ' ') ||
     (c == '\t') ||

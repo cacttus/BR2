@@ -7,7 +7,7 @@
 #ifndef __BASEDATAFILE_210628895103872956110227_H__
 #define __BASEDATAFILE_210628895103872956110227_H__
 
-#include "../base/TextParser.h"
+#include "../base/BaseHeader.h"
 
 namespace BR2 {
 /**

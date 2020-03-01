@@ -11,10 +11,10 @@
 #include "../math/MathHeader.h"
 
 namespace BR2 {
-
 /**
 *  @class String
 *  @brief String util.
+*  TODO: this class needs to be converted to a proper code page using wint_t instead of char.
 */
 class StringUtil : public VirtualMemory {
 public:
@@ -35,8 +35,8 @@ public:
   static std::vector<string_t> split(string_t in, std::vector<char>& dels);
   static void split(string_t __in_ in, const std::vector<char>& __in_ dels, std::vector<string_t>& __out_ ret);
   static string_t::size_type findFirstOf(string_t sin, std::vector<char>& chars);
-  static bool isWspaceEx(char c);
-  static bool isNewline(char c);
+  static bool isWspaceEx(int c);
+  static bool isNewline(int c);
   static string_t stripDoubleQuotes(string_t lc);
   static string_t stripAllChars(string_t lc, char ch);
   static string_t getZeroPaddedNumber(int32_t number, int32_t numberOfZeros);
@@ -61,9 +61,9 @@ public:
   static string_t toHex(int value, bool bIncludePrefix);
   static string_t toDec(int value);
   static string_t getEscapedCharLiteral(char c);
-  static bool isDelim(char c, string_t delims);
+  static bool process(char c, string_t delims);
   static bool isChar(char c);
-  static bool isWs(char c);
+  static bool isWs(int c);
   static bool isWsExceptNewline(char c);
   static string_t removeNewline(string_t str);
   static string_t appendLine(string_t str, string_t toAppend);

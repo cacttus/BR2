@@ -29,14 +29,14 @@ private:
 class CSharpScript_Internal;
 class CSharpScript : public Component {
 public:
-  CSharpScript() {}
-  virtual ~CSharpScript() override {}
+  CSharpScript();
+  virtual ~CSharpScript() override;
   
   static void initScriptSystem();
   static std::shared_ptr<CSharpScript> compile(std::shared_ptr<CSharpCompileContext> files);
 
-  virtual void start() {}
-  virtual void update(float delta) {}
+  virtual void start();
+  virtual void update(float delta);
   virtual void exit() {}
 private:
   std::unique_ptr<CSharpScript_Internal> _pint = nullptr;
