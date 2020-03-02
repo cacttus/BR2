@@ -144,8 +144,8 @@ void parsearg(std::string arg) {
   }
   parsearg(key, value);
 }
-void Gu::createLogger(string_t logfile_dir) {
-  Gu::_pLogger = std::make_shared<Logger>();
+void Gu::createLogger(string_t logfile_dir, bool async) {
+  Gu::_pLogger = std::make_shared<Logger>(async);
   Gu::_pLogger->init(logfile_dir);
 }
 void Gu::initGlobals(const std::vector<std::string>& args) {
@@ -161,7 +161,6 @@ void Gu::initGlobals(const std::vector<std::string>& args) {
   //Setup Global Configuration
   getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
   getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
-
 
   //Print some environment Diagnostics
   BRLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());

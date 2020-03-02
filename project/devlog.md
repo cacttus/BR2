@@ -2,7 +2,13 @@
 # Mine City Devlog
 *3/2/20*
 
-* Updated tasklog..
+* Implemented async logging.
+	* Async logging decreases startup time by about 2 seconds, vs 4, not really necessary.
+	* Disabling console logging doesn't increase performance much either.
+	* Only one console per process, so either way, we need to share the console window.
+	* Async logging may cause loss of log messages when app fails critically.
+	* Essentially, it is only necessary for seriously needed performance gains.
+* Removing console colors from the base header appears to have decreased compile time somewhat
 
 *3/1/20*
 

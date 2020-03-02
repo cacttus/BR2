@@ -8,9 +8,20 @@
 #include "../base/GraphicsWindow.h"
 #include "../base/GLContext.h"
 #include "../base/FpsMeter.h"
+#include "../base/ConsoleColors.h"
 #include <mutex>
 #include <atomic>
 #include <fstream>
+#include <thread>
+#include <future>
+#include <algorithm>
+
+
+#define SetLoggerColor_Error() ConsoleColorRed()
+#define SetLoggerColor_Info() ConsoleColorGray()
+#define SetLoggerColor_Debug() ConsoleColorCyan()
+#define SetLoggerColor_Warn() ConsoleColorYellow()
+
 
 namespace BR2 {
 class Logger_Internal {
@@ -18,46 +29,82 @@ public:
   typedef enum { Debug, Info, Warn, Error, }LogLevel;
   string_t _logDir;
   string_t _logFileName;
-  int32_t _nMsg = 0;    // - Profiling variables.  We increment them when we log.
+  bool _bAsync = false;
 
-  std::atomic_bool _bSuppressLineFileDisplay = false;
-  std::mutex _mtLogWriteMutex;
+  std::vector<std::string> _toLog;
 
   bool _bEnabled = false;
   bool _bLogToFile = false;
   bool _bLogToConsole = false;
 
-  string_t Logger_Internal::addStackTrace(string_t msg) {
-    msg += "\r\n";
-    msg += DebugHelper::getStackTrace();
-    return msg;
-  }
-  void Logger_Internal::addLineFileToMsg(string_t msg, int line, char* file) {
-    if (_bSuppressLineFileDisplay == false) {
-      msg = msg + "  (" + FileSystem::getFileNameFromPath(file) + " : " + line + ")";
-    }
-  }
-  string_t Logger_Internal::createMessageHead(LogLevel level) {
-    string_t str;
-    if (level == LogLevel::Debug) {
-      str = "DBG";
-    }
-    else if (level == LogLevel::Info) {
-      str = "INF";
-    }
-    else if (level == LogLevel::Warn) {
-      str = "WRN";
-    }
-    else if (level == LogLevel::Error) {
-      str = "ERR";
-    }
-    return Stz "" + DateTime::timeToStr(DateTime::getTime()) + " " + str + " ";
-  }
-  void Logger_Internal::log(string_t msg, string_t header, BR2::Exception* e) {
-    std::lock_guard<std::mutex> guard(_mtLogWriteMutex);
+  std::atomic_bool _bSuppressLineFileDisplay = false;
+  std::mutex _mtLogStackAccess;
+  std::atomic_bool _kill;
 
-    string_t m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";
+  string_t addStackTrace(string_t msg);
+  void addLineFileToMsg(string_t msg, int line, char* file);
+  string_t createMessageHead(LogLevel level);
+  void log(string_t msg, string_t header, BR2::Exception* e);
+  void processLogs_Async();
+};
 
+string_t Logger_Internal::addStackTrace(string_t msg) {
+  msg += "\r\n";
+  msg += DebugHelper::getStackTrace();
+  return msg;
+}
+void Logger_Internal::addLineFileToMsg(string_t msg, int line, char* file) {
+  if (_bSuppressLineFileDisplay == false) {
+    msg = msg + "  (" + FileSystem::getFileNameFromPath(file) + " : " + line + ")";
+  }
+}
+string_t Logger_Internal::createMessageHead(LogLevel level) {
+  string_t str;
+  if (level == LogLevel::Debug) {
+    str = "DBG";
+  }
+  else if (level == LogLevel::Info) {
+    str = "INF";
+  }
+  else if (level == LogLevel::Warn) {
+    str = "WRN";
+  }
+  else if (level == LogLevel::Error) {
+    str = "ERR";
+  }
+  return Stz "" + DateTime::timeToStr(DateTime::getTime()) + " " + str + " ";
+}
+void Logger_Internal::log(string_t msg, string_t header, BR2::Exception* e) {
+
+  string_t m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";
+
+  if (_bAsync) {
+    _mtLogStackAccess.lock();
+    {
+      _toLog.push_back(m);
+    }
+    _mtLogStackAccess.unlock();
+  }
+  else {
+    _toLog.push_back(m);
+    processLogs_Async();
+  }
+}
+void Logger_Internal::processLogs_Async() {
+  std::vector<string_t> logs;
+  if (_bAsync) {
+    _mtLogStackAccess.lock();
+    {
+      logs.swap(_toLog);
+    }
+    _mtLogStackAccess.unlock();
+  }
+  else {
+    logs.swap(_toLog);
+  }
+
+  string_t appended;
+  for (string_t m : logs) {
     if (_bLogToConsole) {
       Gu::print(m);
     }
@@ -82,20 +129,22 @@ public:
         Gu::debugBreak();
       }
     }
+    if (_bLogToConsole) {
+      SetLoggerColor_Info();
+    }
 
-    _nMsg++;
-
-    SetLoggerColor_Info();
   }
 
-};
-
+}
 //////////////////////////////////////////////////////////////////////////
 
-Logger::Logger() {
-  _pint = std::make_unique<Logger_Internal>();
+Logger::Logger(bool async) {
+  _pint = std::make_shared<Logger_Internal>();
+  _pint->_bAsync = async;
 }
 Logger::~Logger() {
+  //kill thread.
+  _pint->_kill = true;
   _pint = nullptr;
 }
 void Logger::init(string_t cache) {
@@ -105,6 +154,23 @@ void Logger::init(string_t cache) {
 
   //*Note: do not call the #define shortcuts here.
   logInfo(Stz  "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
+
+  //Run async, if applicable
+  if (_pint->_bAsync) {
+    //https://thispointer.com/c11-how-to-stop-or-terminate-a-thread/
+    std::weak_ptr<Logger_Internal> gw = _pint;
+    std::thread th([gw]() {
+      while (std::shared_ptr<Logger_Internal> li = gw.lock()) {
+        if (li->_kill) {
+          break;
+        }
+        li->processLogs_Async();
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+      }
+      });
+    th.detach();
+  }
+
 }
 string_t Logger::getLogPath() { return _pint->_logDir; }
 void Logger::logDebug(const char* msg) {
@@ -139,14 +205,19 @@ void Logger::logDebug(string_t msg) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Debug();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Debug();
+  }
+
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Debug), NULL);
 }
 void Logger::logDebug(string_t msg, int line, char* file) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Debug();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Debug();
+  }
   _pint->addLineFileToMsg(msg, line, file);
 
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Debug), NULL);
@@ -155,7 +226,9 @@ void Logger::logError(string_t msg, BR2::Exception* e) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Error();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Error();
+  }
 
   msg = _pint->addStackTrace(msg);
 
@@ -165,7 +238,10 @@ void Logger::logError(string_t msg, int line, char* file, BR2::Exception* e, boo
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Error();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Error();
+  }
+
   _pint->addLineFileToMsg(msg, line, file);
 
   if (hideStackTrace == false) {
@@ -178,14 +254,18 @@ void Logger::logInfo(string_t msg) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Info();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Info();
+  }
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Info), NULL);
 }
 void Logger::logInfo(string_t msg, int line, char* file) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Info();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Info();
+  }
   _pint->addLineFileToMsg(msg, line, file);
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Info), NULL);
 }
@@ -193,14 +273,18 @@ void Logger::logWarn(string_t msg, BR2::Exception* e) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Warn();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Warn();
+  }
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Warn), e);
 }
 void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  SetLoggerColor_Warn();
+  if (_pint->_bLogToConsole) {
+    SetLoggerColor_Warn();
+  }
   _pint->addLineFileToMsg(msg, line, file);
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Warn), e);
 }
