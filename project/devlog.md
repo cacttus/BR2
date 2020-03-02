@@ -1,5 +1,9 @@
 
 # Mine City Devlog
+*3/2/20*
+
+* Updated tasklog..
+
 *3/1/20*
 
 * Fixed StringUtil's isDelim.
