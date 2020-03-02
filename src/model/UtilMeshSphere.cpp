@@ -7,14 +7,14 @@
 
 namespace BR2 {
 UtilMeshSphere::UtilMeshSphere(std::shared_ptr<GLContext> ctx, float radius, vec3& vOffset, vec4& vColor, int32_t nSlices, int32_t nStacks) :
-  UtilMesh(ctx, MeshUtils::MeshMakerVert::getVertexFormat(), nullptr, GL_TRIANGLES)
-  , _fRadius(radius)
-  , _vOffset(vOffset)
-  , _vColor(vColor)
-  , _blnWireFrame(true)
-  , _nSlices(nSlices)
-  , _nStacks(nStacks) {
+  UtilMesh(ctx, MeshUtils::MeshMakerVert::getVertexFormat(), nullptr, GL_TRIANGLES) {
   //wireframe isn't getting unloaded. 
+  _fRadius = radius;
+  _vOffset = vOffset;
+  _vColor = vColor;
+  _blnWireFrame = true;
+  _nSlices = nSlices;
+  _nStacks = nStacks;
 }
 UtilMeshSphere::~UtilMeshSphere() {
 

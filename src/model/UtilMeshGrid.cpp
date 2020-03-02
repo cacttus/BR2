@@ -8,18 +8,12 @@
 #include "../model/VaoDataGeneric.h"
 
 namespace BR2 {
-UtilMeshGrid::UtilMeshGrid(std::shared_ptr<GLContext> pc,
-  float r, float g, float b,
-  int32_t nSlices,
-  float fSliceWidth,
-  Vector3& center
-) :
-  UtilMesh(pc, v_v3c4::getVertexFormat(), nullptr),
-  _nSlices(nSlices),
-  _fSliceWidth(fSliceWidth),
-  _center(center),
-  _color(r, g, b, 1.0f),
-  _lineWidth(1.0f) {
+UtilMeshGrid::UtilMeshGrid(std::shared_ptr<GLContext> pc, float r, float g, float b, int32_t nSlices, float fSliceWidth, Vector3& center) : UtilMesh(pc, v_v3c4::getVertexFormat(), nullptr) {
+  _nSlices = nSlices;
+  _fSliceWidth = fSliceWidth;
+  _center = center;
+  _color = Color4f(r, g, b, 1.0f);
+  _lineWidth = 1.0f;
 }
 UtilMeshGrid::~UtilMeshGrid() {
 
