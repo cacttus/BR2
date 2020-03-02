@@ -31,7 +31,7 @@ public:
   std::shared_ptr<GraphicsContext> getCoreContext() { return _pCoreContext; }
 
 protected:
-  SDL_Window* makeSDLWindow(string_t windowTitle, int render_system);
+  SDL_Window* makeSDLWindow(string_t windowTitle, int render_system, bool show);
   void setMainContext(std::shared_ptr<GraphicsContext> ct) { _pCoreContext = ct; }
   std::vector<std::shared_ptr<GraphicsContext>>& getContexts() { return _contexts; }
 private:

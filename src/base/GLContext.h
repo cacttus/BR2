@@ -17,21 +17,39 @@ namespace BR2 {
 */
 struct GLProfile : public VirtualMemory {
 public:
-  GLProfile(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync) {
+  GLProfile(int iDepthBits, int iMinVer, int iMinSubver, int iProfile, bool bVsync, int msaa_buffers, int msaa_samples, bool srgb, bool forward_compatible) {
     _iDepthBits = iDepthBits;
     _iMinSubVersion = iMinSubver;
     _iMinVersion = iMinVer;
     _iProfile = iProfile;
     _bVsync = bVsync;
+    _iMSAASamples = msaa_samples;
+    _iMSAABuffers = msaa_buffers;
+    _bSRGB = srgb;
+    _bForwardCompatible = forward_compatible;
   }
   virtual ~GLProfile() override {}
+  string_t toString() {
+    string_t ret = "";
+    string_t profile = "basic";
+    if (_iProfile & SDL_GL_CONTEXT_PROFILE_COMPATIBILITY) { profile = "compatibility"; }
+    else if (_iProfile & SDL_GL_CONTEXT_PROFILE_CORE) { profile = "core"; }
+    else if (_iProfile & SDL_GL_CONTEXT_PROFILE_ES) { profile = "ES"; }
 
+    return Stz "version: " + _iMinVersion + "." + _iMinSubVersion + 
+      " depth:" + _iDepthBits + " profile:" + profile + " vsync" + _bVsync + " msaa: " + 
+      _iMSAABuffers + ", " + _iMSAASamples + " srgb:" + (_bSRGB?"true":"false") + " forward_compatible: " + (_bForwardCompatible? "true" : "false");
+  }
 public:
-  int _iDepthBits = 0;
-  int _iMinVersion = 0;
-  int _iMinSubVersion = 0;
-  int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Set to true to enable the compatibility profile
+  bool _bForwardCompatible = true;
+  int _iDepthBits = 32;
+  int _iMinVersion = 3;
+  int _iMinSubVersion = 3;
+  int _iMSAASamples = 0;
+  int _iMSAABuffers = 0;
+  int _iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // _CORE, _ES
   bool _bVsync = true; //Automatic on IOS
+  bool _bSRGB = false;
 };
 
 /**
@@ -57,19 +75,25 @@ public:
   virtual void pushDepthTest() override;
   virtual void popDepthTest() override;
 
+  //compatibility issues
+   void setPolygonMode(PolygonMode p) ;
+   void setLineWidth(float w);
+
   void enableCullFace(bool enable) override;
   void enableBlend(bool enable) override;
   void enableDepthTest(bool enable) override;
 
   static void setWindowAndOpenGLFlags(std::shared_ptr<GLProfile> prof);
 
-  void setLineWidth(float w);
 
+  bool valid() { return _bValid; }
+  bool getForwardCompatible() { return _bForwardCompatible; }
 private:
   std::shared_ptr<GLProfile> _profile;
   bool _bValid = false;
   bool loadOpenGLFunctions();
 
+  bool _bForwardCompatible = false;
   //Render Stack.
   std::stack<GLenum> _eLastCullFaceStack;
   std::stack<GLenum> _eLastBlendStack;
@@ -78,11 +102,10 @@ private:
 
   SDL_GLContext _context;
 
-  void checkForOpenGlMinimumVersion(int required_version, int required_subversion);
+  bool checkOpenGlMinimumVersionInfo(int required_version, int required_subversion);
   void getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad_subver);
   void loadCheckProc();
   void printHelpfulDebug();
-
 
   int _iSupportedDepthSize;
 

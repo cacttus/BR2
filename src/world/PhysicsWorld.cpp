@@ -1253,9 +1253,8 @@ void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
   AssertOrThrow2(parms->_pRenderBucket != nullptr);
   AssertOrThrow2(parms->_pVisibleCamera != nullptr);
 
-  
   if (parms->_pRenderBucket->hasItems()) {
-    BRLogWarn("Render bucket had items while collecting nodes.");
+    BRLogWarnCycle("Render bucket had items while collecting nodes.");
   }
 
   parms->_pRenderBucket->clear(parms->_pVisibleCamera);

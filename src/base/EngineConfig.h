@@ -17,13 +17,12 @@ namespace BR2 {
 *  @brief Stores configuration options for the graphics engine.
 */
 class EngineConfig {
-
 public:
-
   EngineConfig() {}
   virtual ~EngineConfig() {
   }
   bool getEnableMsaa() { return _bEnableMsaa; }
+  void setEnableMsaa(bool b) { _bEnableMsaa = b; }
   int32_t getMsaaSamples() { return _iMsaaSamples; }
   bool getEnableLogToConsole() { return       _bEnableLogToConsole; }
   bool getEnableLogToFile() { return       _bEnableLogToFile; }

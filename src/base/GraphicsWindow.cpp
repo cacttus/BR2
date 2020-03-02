@@ -46,7 +46,6 @@ public:
   void updateWidthHeight(uint32_t w, uint32_t h, bool force);
   void toggleFullscreen();
   void setFrameState(FrameState e) { _eFrameState = e; }
-
 };
 void GraphicsWindow_Internal::toggleFullscreen() {
   if (_bFullscreen == false) {
@@ -85,7 +84,6 @@ void GraphicsWindow_Internal::toggleFullscreen() {
       //_pApp->screenChanged(_iLastWidth, _iLastHeight, _bFullscreen);
     }
   }
-
 }
 void GraphicsWindow_Internal::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
@@ -124,17 +122,20 @@ void GraphicsWindow_Internal::printHelpfulDebug() {
 
   SDLUtils::checkSDLErr();
 }
-
 void GraphicsWindow_Internal::beginRender() {
 
+  Gu::checkErrorsDbg();
   //Make this window current *critical*
   //OPTIMIZE:TODO:NOTE: if there is only 1 window we don't have to call this.
   _pApi->makeCurrent(_pSDLWindow);
+  Gu::checkErrorsDbg();
 
   //Update the widnow size
   int w, h;
   _pApi->getDrawableSize(_pSDLWindow, &w, &h);
+  Gu::checkErrorsDbg();
   updateWidthHeight(w, h, false);
+  Gu::checkErrorsDbg();
 
   Perf::pushPerf();//**BEGIN PERF 
 }

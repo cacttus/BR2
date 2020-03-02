@@ -52,6 +52,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
     return;
   }
 
+  Gu::checkErrorsDbg();
 
   cam->getViewport()->bind(_pWindow);
 
@@ -89,6 +90,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
     if (pipeBits.test(PipeBit::e::Shadow)) {
       beginRenderShadows();
       {
+        Gu::checkErrorsDbg();
         //**This shouldn't be an option ** 
         //Curetly we update lights at the same time as shadows.  this is erroneous
         if (pipeBits.test(PipeBit::e::Shadow)) {
@@ -407,11 +409,16 @@ void RenderPipe::beginRenderShadows() {
   getContext()->pushDepthTest();
   getContext()->pushBlend();
   getContext()->pushCullFace();
-  glCullFace(GL_FRONT);
 
+  Gu::checkErrorsDbg();
+  glCullFace(GL_FRONT);
+  Gu::checkErrorsDbg();
   glEnable(GL_DEPTH_TEST);
+  Gu::checkErrorsDbg();
   glEnable(GL_CULL_FACE);
+  Gu::checkErrorsDbg();
   glDisable(GL_BLEND);
+  Gu::checkErrorsDbg();
 }
 void RenderPipe::endRenderShadows() {
 
@@ -422,6 +429,7 @@ void RenderPipe::endRenderShadows() {
 }
 void RenderPipe::renderShadows(std::shared_ptr<LightManager> lightman, std::shared_ptr<CameraNode> cam) {
   lightman->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
+  Gu::checkErrorsDbg();
 
   //Force refresh teh viewport.
   cam->getViewport()->bind(nullptr);
@@ -715,7 +723,7 @@ void RenderPipe::endRenderAndBlit(std::shared_ptr<LightManager> lightman, std::s
     saveScreenshot(lightman);
     getContext()->chkErrDbg();
 
-    debugForceSetPolygonMode();
+    Gu::getCoreContext()->setPolygonMode(PolygonMode::Fill);
     getContext()->chkErrDbg();
 
     _pForwardShader->setTextureUf(0);
@@ -780,16 +788,6 @@ void RenderPipe::checkMultisampleParams() {
       Gu::debugBreak();
     }
   }
-}
-void RenderPipe::debugForceSetPolygonMode() {
-
-#ifdef __WINDOWS__
-#ifdef _DEBUG
-  //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
-  glPolygonMode(GL_FRONT, GL_FILL);
-  glPolygonMode(GL_BACK, GL_FILL);
-#endif
-#endif
 }
 void RenderPipe::releaseFbosAndMesh() {
   getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);

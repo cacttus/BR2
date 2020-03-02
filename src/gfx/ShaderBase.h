@@ -19,7 +19,6 @@ namespace BR2 {
 *  @brief Base class for handling OpenGL haders.
 */
 class ShaderBase : public VirtualMemoryShared<ShaderBase> {
-
 public:
   ShaderBase(string_t strName);
   virtual ~ShaderBase() override;

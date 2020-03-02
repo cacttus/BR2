@@ -37,7 +37,11 @@ void GraphicsApi::updateLoop() {
         break;//SDL_QUIT
       }
 
+      Gu::checkErrorsDbg();
+
       Gu::getInputManager()->preUpdate();
+
+      Gu::checkErrorsDbg();
 
       Gu::updateManagers();
 
@@ -154,7 +158,7 @@ void GraphicsApi::destroyWindow(std::shared_ptr<GraphicsWindow> w) {
   //  _pvecWindows.erase(it);
   //}
 }
-SDL_Window* GraphicsApi::makeSDLWindow(string_t windowTitle, int render_system) {
+SDL_Window* GraphicsApi::makeSDLWindow(string_t windowTitle, int render_system, bool show) {
   string_t title;
   bool bFullscreen = false;
   SDL_Window* ret = nullptr;
@@ -174,7 +178,7 @@ SDL_Window* GraphicsApi::makeSDLWindow(string_t windowTitle, int render_system) 
     flags = render_system;
   }
   else {
-    x = 100, y = 100, w = 800, h = 600, flags = SDL_WINDOW_SHOWN | render_system | SDL_WINDOW_RESIZABLE;
+    x = 100, y = 100, w = 800, h = 600, flags = (show ? SDL_WINDOW_SHOWN : SDL_WINDOW_HIDDEN) | render_system | SDL_WINDOW_RESIZABLE;
   }
   title = windowTitle;
 #else

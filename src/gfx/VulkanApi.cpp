@@ -414,7 +414,7 @@ VulkanApi::~VulkanApi() {
   _pint = nullptr;
 }
 std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(string_t title) {
-  SDL_Window* win = makeSDLWindow(title, SDL_WINDOW_VULKAN);
+  SDL_Window* win = makeSDLWindow(title, SDL_WINDOW_VULKAN, false);
 
    //loadCaps();
   _pint->createVulkanInstance(title, win);
@@ -424,6 +424,9 @@ std::shared_ptr<GraphicsWindow> VulkanApi::createWindow(string_t title) {
   _pint->createLogicalDevice();
   _pint->makeSwapChain();
   _pint->makeImageViews();
+
+  //*If successful
+  SDL_ShowWindow(win);
 
   //TODO: later we fix this
   return nullptr;

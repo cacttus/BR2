@@ -44,7 +44,8 @@ typedef enum {
   , Pick
 } RenderMode;
 
-
+//Deprecated in OpenGL, but we can implement our own if needed.
+enum class PolygonMode {Fill, Line, Point};
 
 namespace ShaderClass { typedef enum { Shadow, Diffuse } e; }
 

@@ -1,7 +1,10 @@
 # Mine City Task Log
 
 ## BR0 to BR2 Upgrade
-- [ ] Test the c# lexer.
+- [ ] Support line and point in UtilMesh, and remove glPolygonMode everywhere (also glLineWidth).
+- [ ] Replace context->gl.. with GL.  This will be a static interface.  It allows us to remove all the proc junk from GLContext.
+	- [ ] 
+- [x] Test the c# lexer.
 
 - [ ] For proper code page conversion, change all the following to use wint_t instead of "char"
 	- [ ] remove t_char

@@ -16,6 +16,7 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
+#include "../base/GraphicsWindow.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/UiControls.h"
@@ -68,12 +69,15 @@ void Scene::afterAttachedToWindow() {
   //***POSSIBLE DISCARD***
   BRLogInfo("Making Flying Camera");
   createFlyingCamera();
+  Gu::checkErrorsDbg();
 
   BRLogInfo("Making UI");
   createUi();
+  Gu::checkErrorsDbg();
 
   BRLogInfo("..ParticleManager");
   _pParticleManager = std::make_shared<ParticleManager>(getWindow()->getContext());
+  Gu::checkErrorsDbg();
 }
 void Scene::createUi() {
   string_t DEBUG_FONT = "Lato-Regular.ttf";
@@ -81,6 +85,7 @@ void Scene::createUi() {
   AssertOrThrow2(getWindow() != nullptr);
 
   _pUiScreen = UiScreen::create(getWindow());
+  Gu::checkErrorsDbg();
 
   //skins first
   std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
@@ -88,6 +93,7 @@ void Scene::createUi() {
   pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
 
   _pUiScreen->getTex()->loadImages();
+  Gu::checkErrorsDbg();
 
   //debug label
   _pDebugLabel = UiLabel::create("", debugTextSkin);
@@ -98,14 +104,17 @@ void Scene::createUi() {
   _pDebugLabel->height() = "1800px";
   _pDebugLabel->enableWordWrap();
   _pUiScreen->addChild(_pDebugLabel);
+  Gu::checkErrorsDbg();
 
   //Cursor 
   std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
   cs->width() = "32px";
   cs->height() = "auto"; // Auto?
   _pUiScreen->setCursor(cs);
+  Gu::checkErrorsDbg();
 
   _pUiScreen->getTex()->compile();
+  Gu::checkErrorsDbg();
 }
 void Scene::update(float delta) {
   if (_pPhysicsWorld != nullptr) {
@@ -117,7 +126,7 @@ void Scene::update(float delta) {
   //if (_pLightManager != nullptr) {
   //  _pLightManager->update(getWindow()->getDelta()->get());
   //}
-  
+
 
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
@@ -158,15 +167,15 @@ void Scene::createFlyingCamera() {
   setActiveCamera(cn);
 
   attachChild(cn);
-   // cn->init();
+  // cn->init();
 
-   //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
-   //updateCameraPosition();
-   //_vMoveVel.construct(0, 0, 0);
-   //_pCamera->setPos(vec3(30, 30, 30));
-   //_pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-   //_vCamNormal = _pCamera->getViewNormal();
-   //_vCamPos = _pCamera->getPos();
+  //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+  //updateCameraPosition();
+  //_vMoveVel.construct(0, 0, 0);
+  //_pCamera->setPos(vec3(30, 30, 30));
+  //_pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
+  //_vCamNormal = _pCamera->getViewNormal();
+  //_vCamPos = _pCamera->getPos();
 #else
   //Sort of also a scripting test.
   std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
@@ -201,42 +210,23 @@ void Scene::debugChangeRenderState() {
     _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
   }
   if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F7)) {
-    //if (Gu::getFrameSync()->isEnabled()) {
-    //  Gu::getFrameSync()->disable();
-    //}
-    //else {
-    //  Gu::getFrameSync()->enable();
-    //}
+    if (getWindow()->getFrameSync()->isEnabled()) {
+      getWindow()->getFrameSync()->disable();
+    }
+    else {
+      getWindow()->getFrameSync()->enable();
+    }
   }
-  //if (Gu::getFingers()->keyPressOrDown(SDL_SCANCODE_F10)) {
-  //    if (_iF10Pressed == 0) {
-  //        _iF10Pressed = Gu::getMicroSeconds();
-  //    }
-  //    if (Gu::getMicroSeconds() - _iF10Pressed > 1000000) {
-  //        _pWorld25->getConfig()->setRenderBlocks(!_pWorld25->getConfig()->getRenderBlocks());
-  //        BroLogInfo("Block Mode turned " + (_pWorld25->getConfig()->getRenderBlocks() ? "On" : "Off"));
-  //        BroLogInfo("Remaking all grid meshes... be patient.");
-  //        _pWorld25->remakeGridMeshes();
-  //        _iF10Pressed = 0;
-  //    }
-  //}
-  //else {
-  //    _iF10Pressed = 0;
-  //}
 
-
-
-#ifdef BR2_OS_WINDOWS
     //#ifdef _DEBUG
     //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
   if (_bDebugShowWireframe == true) {
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glPolygonMode(GL_BACK, GL_LINE);
+    Gu::getCoreContext()->setPolygonMode(PolygonMode::Line);
   }
   else {
-    glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_FILL);
+    Gu::getCoreContext()->setPolygonMode(PolygonMode::Fill);
   }
+
   if (_bDebugClearWhite == true) {
     //  Graphics->getClearR() = 1.f;
     //  Graphics->getClearG() = 1.f;
@@ -250,7 +240,6 @@ void Scene::debugChangeRenderState() {
     //  Graphics->getClearA() = 1.0f;
   }
   //#endif
-#endif
   if (_bDebugDisableCull == true) {
     glDisable(GL_CULL_FACE);
   }
@@ -531,7 +520,7 @@ void Scene::mouseWheel(int amount) {
   // if not hovered over toolbelt, this will zoom the camera in the game world.
 
 }
-uint64_t Scene::getFrameNumber(){
+uint64_t Scene::getFrameNumber() {
   return getWindow()->getFpsMeter()->getFrameNumber();
 }
 

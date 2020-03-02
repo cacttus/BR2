@@ -110,7 +110,9 @@ void LightManager::updateRenderData() {
 }
 
 void LightManager::update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf) {
+  Gu::checkErrorsDbg();
   setupLights(pf, mf);
+  Gu::checkErrorsDbg();
   updateRenderData();
 }
 // - Main function to be called on the scene to set up all the lights.
@@ -129,6 +131,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
   _vecGpuShadowBoxes.clear();
   _vecGpuShadowFrustums.clear();
 
+  Gu::checkErrorsDbg();
   //Note: we collect all lights in the physics world collection step.
   //Update all lights that collide with the main frustum
   for (std::pair<float, std::shared_ptr<LightNodePoint>> p : physics->getRenderBucket()->getPointLights()) {
@@ -142,6 +145,7 @@ void LightManager::setupLights(std::shared_ptr<ShadowBox> pf, std::shared_ptr<Sh
       _vecGpuPointLights.push_back(*(pPointLight->getGpuLight().get()));
     }
   }
+  Gu::checkErrorsDbg();
   for (std::pair<float, std::shared_ptr<LightNodeDir>> p : physics->getRenderBucket()->getDirLights()) {
     std::shared_ptr<LightNodeDir> pDirLight = p.second;
     if (_pGpuDeferredParams->_iDirLightCount < nMaxDirLights) {

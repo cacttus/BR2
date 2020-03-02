@@ -5,6 +5,18 @@
 * Fixed StringUtil's isDelim.
 * Added a simple, silly bool unit test lambdas to the main method so we can easily drop a unit test in main() if needed.
 * Tested the lexer and fixed one bug.  Lexer appears to work for simple CS scripts.
+* Had context issues, so worked on creating valid contexts.
+* Added forward compatible boolean to context.
+* Fixed various GL compatibility issues.
+* Tested on laptop and found support for 16-bit depth only.
+* Made the context creation support a lot more contexts with more verbose context creation logging.
+* **By default, we enabled forward compatibility.  It is supposed to imporove performance.**
+* Fixed issues with core context methods getting called as well.
+	* Note if enabling forward compat or core context, we curently don't support rendering line or point in UtilMesh.
+* Fixed depth buffer problems.
+* Fixed context creation for all subsystems.
+	* The problem with context creation is that we needed to destroy an SDL window before attempting to create a new context.
+
 
 *2/27/20*
 

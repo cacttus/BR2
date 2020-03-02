@@ -16,9 +16,13 @@ namespace BR2 {
 *  @brief Handles the OpenGL API.
 */
 class OpenGLApi : public GraphicsApi {
+
 public:
   OpenGLApi();
   virtual ~OpenGLApi() override;
+
+  const int c_iCurrentOpenGLVersion = 4;
+  const int c_iCurrentOpenGLSubVersion = 5;
 
   virtual std::shared_ptr<GraphicsWindow> createWindow(std::string title) override;
   virtual void makeCurrent(SDL_Window* win) override;

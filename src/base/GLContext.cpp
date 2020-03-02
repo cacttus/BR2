@@ -15,6 +15,7 @@
 #include "../base/SDLUtils.h"
 #include "../base/oglErr.h"
 #include "../base/GraphicsWindow.h"
+#include "../base/EngineConfig.h"
 #include "../math/MathAll.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ParticleManager.h"
@@ -31,43 +32,52 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-
 GLContext::GLContext(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLProfile> profile, SDL_Window* sdl_win) : GraphicsContext(api) {
   _profile = profile;
   _pSDLWindow = sdl_win;
 
   _context = SDL_GL_CreateContext(sdl_win);
   if (!_context) {
-    BRThrowException("SDL_GL_CreateContext() error" + SDL_GetError());
-  }
-
-  int ver, subver, shad_ver, shad_subver;
-  getOpenGLVersion(ver, subver, shad_ver, shad_subver);
-
-  //Make sure we have a good depth value.
-  int iDepth = 0;
-  SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &iDepth);
-  if (!(iDepth >= 24 && ver >= profile->_iMinVersion && ver >= profile->_iMinSubVersion)) {
-    BRLogInfo("OpenGL config profile didn't work. Trying next profile.");
-    SDL_GL_DeleteContext(_context);
+    //Eat the "context failed" error.  It's not informative.
+    SDLUtils::checkSDLErr(false, false);
+    _bValid = false;
   }
   else {
-    int tmp = 24;
-    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &tmp);
-    _iSupportedDepthSize = tmp;
+    int ver, subver, shad_ver, shad_subver;
+    getOpenGLVersion(ver, subver, shad_ver, shad_subver);
 
-    checkForOpenGlMinimumVersion(profile->_iMinVersion, profile->_iMinSubVersion);
-
-    if (!loadOpenGLFunctions()) {
-      BRLogError("Failed to load context.");
-      SDL_GL_DeleteContext(_context);
+    //Make sure we have a good depth value.
+    int iDepth = 0;
+    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &iDepth);
+    _iSupportedDepthSize = iDepth;
+    if (iDepth < profile->_iDepthBits) {
+      BRLogWarn("Depth buffer size " + profile->_iDepthBits = " not supported in profile.");
+      _bValid = false;
     }
-    else {
-      //Quick GL test.
-      glUseProgram(0);
+    else if (checkOpenGlMinimumVersionInfo(profile->_iMinVersion, profile->_iMinSubVersion)) {
+      printHelpfulDebug();
 
-      //Check that OpenGL initialized successfully
-      loadCheckProc();
+      if (profile->_iMSAABuffers == 0) {
+        Gu::getEngineConfig()->setEnableMsaa(false);
+        BRLogWarn("This configuration did not support MSAA.");
+      }
+
+      if (!loadOpenGLFunctions()) {
+        BRLogError("Failed to load context.");
+        SDL_GL_DeleteContext(_context);
+        _bValid = false;
+      }
+      else {
+        _bForwardCompatible = profile->_bForwardCompatible;
+
+        //Quick GL test.
+        glUseProgram(0);
+
+        //Check that OpenGL initialized successfully
+        loadCheckProc();
+
+        _bValid = true;
+      }
     }
   }
 }
@@ -77,13 +87,20 @@ GLContext::~GLContext() {
     SDL_GL_DeleteContext(_context);
   }
 }
-
-//std::shared_ptr<GraphicsWindow> GLContext::create(std::shared_ptr<GraphicsApi> api, GLProfile& profile) {
-//
-//  return true;
-//}
-//
-
+void GLContext::setPolygonMode(PolygonMode p) {
+  if (Gu::getCoreContext()->getForwardCompatible() == false) {
+    GLenum mode = GL_FILL;
+    if (p == PolygonMode::Line) { mode = GL_LINE; }
+    else if (p == PolygonMode::Point) { mode = GL_POINT; }
+    //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
+    glPolygonMode(GL_FRONT, mode);
+    glPolygonMode(GL_BACK, mode);
+  }
+  else {
+    //Uh..No
+    BRLogErrorOnce("glPolygonMode not supported in forward compatibility context.");
+  }
+}
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
   //Enable runtime errors.
   return OglErr::chkErrRt(shared_from_this(), bDoNotBreak, doNotLog);
@@ -159,7 +176,6 @@ Gu::debugBreak(); \
 
   SDLGLP(glUniform1i, PFNGLUNIFORM1IPROC, "glUniform1i");
 
-
   SDLGLP(glUniform1iv, PFNGLUNIFORM1IVPROC, "glUniform1iv");
   SDLGLP(glUniform2iv, PFNGLUNIFORM2IVPROC, "glUniform2iv");
   SDLGLP(glUniform3iv, PFNGLUNIFORM3IVPROC, "glUniform3iv");
@@ -174,7 +190,6 @@ Gu::debugBreak(); \
   SDLGLP(glUniform2uiv, PFNGLUNIFORM2UIVPROC, "glUniform2uiv");
   SDLGLP(glUniform3uiv, PFNGLUNIFORM3UIVPROC, "glUniform3uiv");
   SDLGLP(glUniform4uiv, PFNGLUNIFORM4UIVPROC, "glUniform4uiv");
-
 
   //Framebuffers
   SDLGLP(glBindFramebuffer, PFNGLBINDFRAMEBUFFERPROC, "glBindFramebuffer");
@@ -248,11 +263,12 @@ Gu::debugBreak(); \
   return bValid;
 }
 void GLContext::setLineWidth(float w) {
-#ifdef COMPATIBILITY_PROFILE_ENABLED
-  glLineWidth(w);
-#else
-  BRLogErrorOnce("glLineWidth not supported");
-#endif
+  if (getForwardCompatible()) {
+    BRLogErrorOnce("glLineWidth not supported in forward compatible mode.");
+  }
+  else {
+    glLineWidth(w);
+  }
 }
 
 void GLContext::pushCullFace() {
@@ -381,7 +397,7 @@ void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
   char* tmp;
   string_t glver;
   string_t glslver;
-  ver = subver = shad_ver = shad_subver = -1;
+  ver = subver = shad_ver = shad_subver = 0;
 
   tmp = (char*)glGetString(GL_VERSION);
   if (tmp != nullptr) {
@@ -389,13 +405,6 @@ void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
   }
   else {
     glver = "";
-  }
-  tmp = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-  if (tmp != nullptr) {
-    glslver = tmp;
-  }
-  else {
-    glslver = "";
   }
 
   std::vector<string_t> sv;
@@ -411,52 +420,50 @@ void GLContext::getOpenGLVersion(int& ver, int& subver, int& shad_ver, int& shad
   else {
     BRLogError("Failed to get OpenGL version.");
   }
-  if (glslver.length() > 0) {
-    sv = StringUtil::split(glslver, '.');
-    if (sv.size() < 2) {
-      BRThrowException("Failed to get OpenGL Shade version. Got '" + glslver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
+  if (ver > 3) {
+    //This will fail if we try to get an OpenGL version greater than what is supported, returning GL 1.1.  Shade is only supported on GL > 2.1.
+    tmp = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    if (tmp != nullptr) {
+      glslver = tmp;
     }
-    shad_ver = TypeConv::strToInt(sv[0]);
-    shad_subver = TypeConv::strToInt(sv[1]);
+    else {
+      glslver = "";
+    }
+    if (glslver.length() > 0) {
+      sv = StringUtil::split(glslver, '.');
+      if (sv.size() < 2) {
+        BRThrowException("Failed to get OpenGL Shade version. Got '" + glslver + "'.  Check that you have OpenGL installed on your machine. You may have to update your 'graphics driver'.");
+      }
+      shad_ver = TypeConv::strToInt(sv[0]);
+      shad_subver = TypeConv::strToInt(sv[1]);
+    }
+    else {
+      BRLogWarn("Failed to get OpenGL Shade version.");
+    }
   }
-  else {
-    BRLogError("Failed to get OpenGL Shade version.");
-  }
-}
-void GLContext::checkForOpenGlMinimumVersion(int required_version, int required_subversion) {
-  string_t rver = Stz "" + required_version + "." + required_subversion;
 
-  //GLint iMajor, iMinor;
-  //glGetIntegerv(GL_MAJOR_VERSION, &iMajor);
-  //glGetIntegerv(GL_MINOR_VERSION, &iMinor);
-  //After 3.0 we no longer support glGetString
+}
+bool GLContext::checkOpenGlMinimumVersionInfo(int required_version, int required_subversion) {
+  string_t rver = Stz "" + required_version + "." + required_subversion;
   int ver, subver, shad_ver, shad_subver;
   getOpenGLVersion(ver, subver, shad_ver, shad_subver);
 
-  string_t vendor = string_t((char*)glGetString(GL_VENDOR));
-  string_t renderer = string_t((char*)glGetString(GL_RENDERER));
-
-  BRLogInfo("\n"
-    + "   OpenGL version " + ver + "." + subver + ".\n"
-    + "   GLSL version:          " + shad_ver + "." + shad_subver + "\n"
-    + "   GPU:         " + renderer + "\n"
-    + "   GPU Vendor:  " + vendor + "\n"
-  );
-
   if (ver < required_version || (ver >= required_subversion && subver < required_subversion)) {
-    BRThrowException(Stz "\n"
-      + "The game could not find the latest version of OpenGL Shading Language.\n\n"
-      + "Possible Problems could be:\n\n"
-      + "   1) The primary graphics card is incorrect,\n\n"
-      + "   2) The graphics driver is out of date,\n\n"
-      + "   3) Your Graphics card is old.\n\n"
-      + " This application requires OpenGL version " + rver + ".\n"
-      + " The system has detected OpenGL version " + ver + "." + subver + ".\n"
-      + " Update your graphics driver by going to www.nvidia.com, www.ati.com or www.intel.com.\n\n"
+    return false;
+  }
+  else {
+    string_t vendor = string_t((char*)glGetString(GL_VENDOR));
+    string_t renderer = string_t((char*)glGetString(GL_RENDERER));
+
+    BRLogInfo("\n"
+      + "   OpenGL version " + ver + "." + subver + ".\n"
+      + "   GLSL version:          " + shad_ver + "." + shad_subver + "\n"
+      + "   GPU:         " + renderer + "\n"
+      + "   GPU Vendor:  " + vendor + "\n"
     );
   }
 
-
+  return true;
 }
 
 
@@ -487,6 +494,20 @@ void GLContext::printHelpfulDebug() {
   SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &tmp);
   BRLogInfo("SDL_GL_ACCELERATED_VISUAL: " + tmp);
 
+  SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &tmp);
+  BRLogInfo("SDL_GL_CONTEXT_PROFILE_MASK: " + tmp);
+  SDL_GL_GetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, &tmp);
+  BRLogInfo("SDL_GL_SHARE_WITH_CURRENT_CONTEXT: " + tmp);
+  SDL_GL_GetAttribute(SDL_GL_CONTEXT_FLAGS, &tmp);
+  BRLogInfo("SDL_GL_CONTEXT_FLAGS: " + tmp);
+
+  SDL_GL_GetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, &tmp);
+  BRLogInfo("SDL_GL_FRAMEBUFFER_SRGB_CAPABLE: " + tmp);
+  SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &tmp);
+  BRLogInfo("SDL_GL_MULTISAMPLESAMPLES: " + tmp);
+  SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &tmp);
+  BRLogInfo("SDL_GL_MULTISAMPLEBUFFERS: " + tmp);
+
   SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &tmp);
   BRLogInfo("SDL_GL_RED_SIZE: " + tmp);
   SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &tmp);
@@ -502,39 +523,52 @@ void GLContext::setWindowAndOpenGLFlags(std::shared_ptr<GLProfile> prof) {
   SDL_GL_ResetAttributes();
   SDLUtils::checkSDLErr();
 
+  //We want SRGB in the final render, so this should be requested.
+  SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, prof->_bSRGB);
+  SDLUtils::checkSDLErr();
+
+  //Context sharing will be necessary with multiple-window rendering (we are required to create 1 context per window)
+  SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+  SDLUtils::checkSDLErr();
+
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
   SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-  //SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, _pGlState->gl_accum_red_size);
-  //SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, _pGlState->gl_accum_green_size);
-  //SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, _pGlState->gl_accum_blue_size);
-  //SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, _pGlState->gl_accum_alpha_size);
+
+  //Not sure, imagine we'd use our own buffer blending to create a VR scene.
   //SDL_GL_SetAttribute(SDL_GL_STEREO, _pGlState->gl_stereo);
 
+  if (prof->_iMinVersion > 0 && prof->_iMinSubVersion > 0) {
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, prof->_iMinVersion);
+    SDLUtils::checkSDLErr();
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, prof->_iMinSubVersion);
+    SDLUtils::checkSDLErr();
+  }
 
-  //SDL_GL_SetAttribute(SDL_GL_RETAINED_BACKING, 0);//deprecated
-
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, prof->_iMinVersion);
-  SDLUtils::checkSDLErr();
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, prof->_iMinSubVersion);
-  SDLUtils::checkSDLErr();
+  //Desktop Debug = Compatibility, Runtime = Core, Phone = ES
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, prof->_iProfile);
   SDLUtils::checkSDLErr();
 
-  //only on GL 3.0 - disables all deprecates tudff - slight performance gain?
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-
+  int debug_flag = 0;
 #ifdef _DEBUG
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-  SDLUtils::checkSDLErr();
+  debug_flag = SDL_GL_CONTEXT_DEBUG_FLAG;
 #endif
 
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, prof->_iDepthBits);
+  //Only in GL 3.0 (apparently)
+  //Forward compatible deprecates old funcionality for a gain in speed (apparently)
+  //https://wiki.libsdl.org/SDL_GLcontextFlag#SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, debug_flag | (prof->_bForwardCompatible ? SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG : 0));
   SDLUtils::checkSDLErr();
+
+  //Depth size is finicky. Sometimes it will only give us 16 bits. Trying to set stencil to zero MIGHT help
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
   SDLUtils::checkSDLErr();
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, prof->_iDepthBits);
+  SDLUtils::checkSDLErr();
+  //Attempt to zero out the stencil buffer to request a 32b depth.
+
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -543,8 +577,13 @@ void GLContext::setWindowAndOpenGLFlags(std::shared_ptr<GLProfile> prof) {
   SDLUtils::checkSDLErr();
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
   SDLUtils::checkSDLErr();
-  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, _pGlState->gl_multisamplebuffers);
-  // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _pGlState->gl_multisamplesamples);
+
+  //Multisampling
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, prof->_iMSAASamples);
+  SDLUtils::checkSDLErr();
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, prof->_iMSAABuffers);
+  SDLUtils::checkSDLErr();
+
 }
 
 

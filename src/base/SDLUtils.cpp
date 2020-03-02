@@ -47,15 +47,15 @@ SDL_Surface* SDLUtils::createSurfaceFromImage(const std::shared_ptr<Img32> pImag
 
   return pSurface;
 }
-void SDLUtils::checkSDLErr(bool doNotLog) {
+void SDLUtils::checkSDLErr(bool bLog, bool bBreak) {
   //Do SDL errors here as well
   const char* c;
   while ((c = SDL_GetError()) != nullptr && *c != 0) {
-    if (doNotLog == false) {
+    if (bLog == true) {
       BRLogError("SDL: " + c);
     }
 
-    if (Gu::getEngineConfig()->getBreakOnSDLError() == true) {
+    if (Gu::getEngineConfig()->getBreakOnSDLError() == true && bBreak) {
       Gu::debugBreak();
     }
     SDL_ClearError();

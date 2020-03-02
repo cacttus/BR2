@@ -1,4 +1,5 @@
 #include "../base/GLContext.h"
+#include "../base/Gu.h"
 #include "../model/UtilMeshBox.h"
 #include "../model/MeshUtils.h"
 
@@ -22,7 +23,7 @@ void UtilMeshBox::generate() {
 }
 void UtilMeshBox::preDraw() {
   if (_blnWireFrame == true) {
-    glPolygonMode(GL_FRONT, GL_LINE); //GfxPolygonMode::PolygonModeWireframe);
+    Gu::getCoreContext()->setPolygonMode(PolygonMode::Line); //GfxPolygonMode::PolygonModeWireframe);
   }
 
   getContext()->setLineWidth(1.0);
@@ -31,7 +32,7 @@ void UtilMeshBox::preDraw() {
 void UtilMeshBox::postDraw() {
   //if(_blnWireFrame==true)
   //    Gd::popPolygonMode();
-  glPolygonMode(GL_FRONT, GL_FILL);
+  Gu::getCoreContext()->setPolygonMode(PolygonMode::Fill); //GfxPolygonMode::PolygonModeWireframe);
 
   //CRITICAL we set these to null.
   //_verts = NULL;

@@ -17,7 +17,6 @@ namespace BR2 {
 */
 class RenderUtils : public VirtualMemory {
 public:
-  static void setLineWidth(float width);
   //Conversion
   static string_t openGlTypeToString(GLenum type);//TODO: move this to the GL hardware or Gd::..
 

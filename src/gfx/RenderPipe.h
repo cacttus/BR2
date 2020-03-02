@@ -88,7 +88,6 @@ protected:
 
   void saveScreenshot(std::shared_ptr<LightManager> lightman);
   void copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted);
-  void debugForceSetPolygonMode();
   void releaseFbosAndMesh();
   void setShadowUf(std::shared_ptr<LightManager> lightman);
 

@@ -285,6 +285,8 @@ bool Gu::saveImage(std::string path, std::shared_ptr<Img32> spec) {
   }
   free(buffer);//lodepng_free
 
+  Gu::checkErrorsDbg();
+
   return bRet;
 }
 void Gu::freeImage(std::shared_ptr<Img32> b) {

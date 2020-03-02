@@ -36,6 +36,7 @@ void MtTex::freeTmp() {
 #pragma region MtTexPatch
 void MtTexPatch::addTexImage(std::string img, int32_t iPatch) {
   std::shared_ptr<MtTex> mt = std::make_shared<MtTex>(img, iPatch);
+  Gu::checkErrorsDbg();
   _vecTexs.push_back(mt);
 }
 void MtTexPatch::loadData() {
@@ -451,6 +452,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
 
   //Tex size
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint*)&_iMaxTexSize);
+  Gu::checkErrorsDbg();
 
   int32_t iImageSize = _iStartWH;
   int32_t nFailures = 0;
@@ -514,6 +516,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
     BRLogInfo("Copying Sub-Images..");
     for (std::shared_ptr<MtTex> tex : vecTexs) {
       _pMaster->copySubImageFrom(tex->node()->_b2Rect._p0, ivec2(0, 0), ivec2(tex->getWidth(), tex->getHeight()), tex->img());
+      Gu::checkErrorsDbg();
 
       if (StringUtil::contains("acme", StringUtil::lowercase(tex->imgName()))) {
         int n = 0;
@@ -538,7 +541,6 @@ std::shared_ptr<Img32> MegaTex::compile() {
   BRLogInfo("Creating GPU Texture.");
   create(_pMaster->getData()->ptr(), iImageSize, iImageSize, false, false, false);
   oglSetFilter(TexFilter::e::Nearest);
-
 
 
   return _pMaster;

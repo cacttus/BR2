@@ -24,7 +24,7 @@
   <ShadowMapResolution value="256"/>
   <ShadowMapMaxInfluences value="4"/>
   <MaxPointLightShadowDistance value="2000"/>
-  <EnableMSAA value="false"/>
+  <EnableMSAA value="true"/>
   <MSAASamples value="2"/>
   <NumTextQuads value="256"/>
   <BreakOnSDLError value="true"/>

@@ -22,13 +22,13 @@ int main(int argc, char** argv) {
     ar->runApp(Gu::argsToVectorOfString(argc, argv),
           std::vector<std::function<bool()>>({
           []() {
-          const string_t strtest = "using System; namespace MyNS { class MyCL{int[] x = new int[]; int b(float a ){ return b + a*(2*(3+.0006d); }} }";
+          //const string_t strtest = "using System; namespace MyNS { class MyCL{int[] x = new int[]; int b(float a ){ return b + a*(2*(3+.0006d); }} }";
 
-          std::vector<CSToken*> toks = CSharpScript::lexTest(strtest);
-          string_t str = CSharpScript::tokensToString(toks);
-          std::cout << str << std::endl;
+          //std::vector<CSToken*> toks = CSharpScript::lexTest(strtest);
+          //string_t str = CSharpScript::tokensToString(toks);
+          //std::cout << str << std::endl;
 
-          Gu::debugBreak();
+          //Gu::debugBreak();
           return true;
           }
         })

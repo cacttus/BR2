@@ -2,7 +2,6 @@
 #include "../base/CSharp.h"
 #include "../base/Logger.h"
 #include "../base/HashMap.h"
-#include "../base/TextParser.h"
 #include <unordered_map>
 #include <algorithm>
 namespace BR2 {
@@ -76,8 +75,6 @@ enum class CSTokenType {
   //////////////////////////////////////////////////////////////////////////
   // Tokens
   TokensStart,
-  //Tab, Space, //unnecessary
-  Whitespace,
   Class, Struct, Enum,
   If, While, For, Do,
   Public, Private, Protected,
@@ -108,6 +105,7 @@ enum class CSTokenType {
 
   //////////////////////////////////////////////////////////////////////////
   //Grammar 
+  Whitespace,
   DataType, //int, float, class..
   String, //""
   StringLiteral, //''
@@ -118,7 +116,7 @@ enum class CSTokenType {
 };
 typedef CSTokenType LT;
 
-
+class CSharpNamespace;
 class CSRuntimeContext;
 class CSharpVariable;
 class CSharpStruct;
@@ -127,7 +125,7 @@ class CSharpParameter;
 class CSharpScope;
 class CSharpStatement;
 class CSharpTerm;
-
+class CSRuntimeContext;
 
 
 class CSToken {
@@ -162,7 +160,7 @@ public:
 
   CSLexer(string_t filename, string_t code) {
     _strFile = filename;
-    _tp = std::make_shared<TextParser>(const_cast<char*>(code.c_str()));
+    _code = code;
     makeTable();
   }
   virtual ~CSLexer() override {
@@ -187,28 +185,26 @@ public:
   }
 
   void lex() {
-    char c = ' ';
-    while (_tp->eof() == false) {
-      c = _tp->charAt();
+    for (int c : _code) {
+      if (c == '\n') {
+        _line++;
+        _char = 0;
+      }
+      _char++;
 
-      if (_tp->eof()) {
-        break;
-      }
-      else {
-        matchToken(c);
-        _token += c;
-        _tp->inc();
-      }
+      matchToken(c);
+      _token += c;
     }
 
     if (_token.length()) {
-      matchToken(c);
+      //If we have a pending token, then cut it, and test it, using EOF.
+      matchToken('\0');
     }
   }
 
 private:
   void lex_error(string_t err) {
-    BRLogError("" + _strFile + " (" + _tp->linenum() + "," + _tp->charnum() + "): error: " + err);
+    BRLogError("" + _strFile + " (" + _line + "," + _char + "): error: " + err);
   }
   void makeTable() {
 #define MPA(str,sym) do{ _tokenTable.push_back(new TokenTableEntry(str, CSTokenType::sym)); _tokenHashTable.insert(std::make_pair(str,CSTokenType::sym)); } while(0);
@@ -236,12 +232,12 @@ private:
     MPA("@", VerbatimLiteral);
 
     //sort table by grammatical superset
-    std::sort(_tokenTable.begin(), _tokenTable.end(), [](const TokenTableEntry* lhs, const TokenTableEntry* rhs) {
-      return lhs->str().compare(rhs->str());
-      });
+    //std::sort(_tokenTable.begin(), _tokenTable.end(), [](const TokenTableEntry* lhs, const TokenTableEntry* rhs) {
+    //  return lhs->str().compare(rhs->str());
+    //  });
 
     //TODO: check sort is descending
-    Gu::debugBreak();
+    //Gu::debugBreak();
 
     //validate table
     int c = (int)CSTokenType::TokensEnd - (int)CSTokenType::TokensStart;
@@ -393,10 +389,21 @@ private:
   string_t _strFile = "<invalid>";
 
   bool _bEscape = false;
-  std::shared_ptr<TextParser> _tp = nullptr;
+
+  string_t _code = "";
+  int32_t _line = 1;
+  int32_t _char = 1;
 };
 
-
+//Base class for where we are in the file/line
+//Likely, we'll store file/line inside the classes themselves, negating the need for a RUntimeContext and CompileCOntext to share base
+class CSharpContext : public VirtualMemoryShared<CSharpContext> {
+public:
+  CSharpContext() {}
+  virtual ~CSharpContext() override {}
+  virtual void init() = 0;
+  virtual void error(string_t err) = 0;
+};
 
 class CSCallstack : public VirtualMemoryShared<CSRuntimeContext> {
 public:
@@ -428,16 +435,6 @@ private:
   std::vector<std::shared_ptr<CSharpVariable>> _callstack; //Callstack.
   std::shared_ptr<CSRuntimeContext> _pContext = nullptr;
 };
-
-//Base class for where we are in the file/line
-//Likely, we'll store file/line inside the classes themselves, negating the need for a RUntimeContext and CompileCOntext to share base
-class CSharpContext : public VirtualMemoryShared<CSharpContext> {
-public:
-  CSharpContext() {}
-  virtual ~CSharpContext() override {}
-  virtual void init() = 0;
-  virtual void error(string_t err) = 0;
-};
 class CSRuntimeContext : public CSharpContext {
 public:
   void init() {
@@ -455,7 +452,9 @@ std::shared_ptr<CSharpVariable> CSCallstack::top() {
   if (_callstack.size() == 0) {
     _pContext->error("Stack Underflow.");
   }
+  return *(_callstack.end());
 }
+
 
 //Language definition classes, class, method, property, code block, variables, statements.
 class CSharpLanguage : public VirtualMemory {
@@ -489,18 +488,14 @@ typedef uint64_t CSharpTypeHash;
 //Class Or struct base
 class CSharpStruct : public CSharpLanguage {
 public:
-  CSharpStruct(std::shared_ptr<CSharpNamespace> ns, string_t struct_name) {
-    _iTypeHash = Hash::computeStringHash64bit(struct_name);
-    _namespace = ns;
-  }
+  CSharpStruct(std::shared_ptr<CSharpNamespace> ns, string_t struct_name);
 
   std::shared_ptr<CSharpNamespace> getNamespace() { return _namespace; }
 
   HashMap<string_t> aliases() { return _aliases; }
-  Hash32 typeHash() { return _iTypeHash; }
+  CSharpTypeHash typeHash() { return _iTypeHash; }
   string_t getIdentifier() { return _identifier; }
   CSharpDataType getType() { return _eDataType; }
-
 
   std::map<CSharpOperator, std::map<CSharpTypeHash, std::shared_ptr<CSharpMethod>>> operators() { return _operators; }
   std::vector<std::function<void()>> cpp_lambdas() { return _cpp_lambdas; }
@@ -537,6 +532,7 @@ public:
     else if (_eDataType == CSharpDataType::Class) {
       return "Class";
     }
+    BRThrowNotImplementedException();
   }
 private:
   std::map<CSharpOperator, std::map< CSharpTypeHash, std::shared_ptr<CSharpMethod> > > _operators;
@@ -574,6 +570,11 @@ private:
 //  }
 //private:
 //};
+
+CSharpStruct::CSharpStruct(std::shared_ptr<CSharpNamespace> ns, string_t struct_name) {
+  _iTypeHash = Hash::computeStringHash64bit(struct_name);
+  _namespace = ns;
+}
 
 
 
@@ -976,7 +977,7 @@ std::vector<CSToken*> CSharpScript::lexTest(string_t str) {
   CSLexer* lex = new CSLexer("testFile.cs", str);
   lex->lex();
   lex->removeWsTokens();
-  
+
   return lex->parsedTokens();
 }
 string_t cstoken_to_string(CSTokenType tt) {
@@ -1097,7 +1098,7 @@ std::shared_ptr<CSharpScript> CSharpScript::compile(std::shared_ptr<CSharpCompil
     //std::shared_ptr<CSharpContext> context = std::make_shared<CSharpContext>();
 
 
-
+  return nullptr;
 }
 //This is the start method that's in C++
 void CSharpScript::start() {

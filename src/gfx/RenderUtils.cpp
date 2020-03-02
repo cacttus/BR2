@@ -20,12 +20,6 @@
 
 namespace BR2 {
 
-void RenderUtils::setLineWidth(float width) {
-  //This is deprecated. so, idk.
-  Gu::getCoreContext()->setLineWidth(width);
-  //This is deprecated..?
- // Gd::setLineWidth(width);
-}
 void RenderUtils::resetRenderState() {
   RenderUtils::debugGetRenderState();
   {
@@ -275,7 +269,7 @@ void RenderUtils::drawGridShader(std::shared_ptr<CameraNode> cam, float r, float
   delete pGrid;
 }
 void RenderUtils::drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared_ptr<FrustumBase> pf, vec4& avColor) {
-  setLineWidth(3.0f);
+  Gu::getCoreContext()->setLineWidth(3.0f);
 
   UtilMeshInline mi(Gu::getCoreContext());
   Color4f c4 = avColor;
@@ -295,7 +289,7 @@ void RenderUtils::drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntr), c4), v_v3c4(pf->PointAt(fpt_nbr), c4));
   }
   mi.end(cam);
-  setLineWidth(1.0f);
+  Gu::getCoreContext()->setLineWidth(1.0f);
 
 }
 #pragma endregion
