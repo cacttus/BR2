@@ -4,6 +4,7 @@
 
 * Fixed StringUtil's isDelim.
 * Added a simple, silly bool unit test lambdas to the main method so we can easily drop a unit test in main() if needed.
+* Tested the lexer and fixed one bug.  Lexer appears to work for simple CS scripts.
 
 *2/27/20*
 
