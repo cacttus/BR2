@@ -888,7 +888,7 @@ std::shared_ptr<MeshSpec> MeshUtils::makeCrossboardXY(float xscale, float yscale
 }
 
 void MeshUtils::finalizeSpec(std::shared_ptr<MeshSpec> ms, vec3* minV, vec3* maxV) {
-  //TODO: remove the contact box crap (opr is  it needed for OBBs? )
+  //TODO: remove the contact box (opr is  it needed for OBBs? )
   //_pContactManager->generateDefaultBoundaryContactBoxForMesh(ms, minV, maxV);
   //ms->computeMinimax();
 }

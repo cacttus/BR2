@@ -9,6 +9,8 @@
 	* Async logging may cause loss of log messages when app fails critically.
 	* Essentially, it is only necessary for seriously needed performance gains.
 * Removing console colors from the base header appears to have decreased compile time somewhat
+* Added log_async=true to allow async logging in SERIOUS PERFORMANCE CASES ONLY.
+	* We don't want async logging by default, could make errors difficult.
 
 *3/1/20*
 

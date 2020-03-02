@@ -172,7 +172,6 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
       mb->parseErr(("Action was null."));
     }
     else {
-      //Parse crap
       string_t strType = mb->getCleanToken(tokens, iind);
       int iTime = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
       string_t strData = mb->getCleanToken(tokens, iind);

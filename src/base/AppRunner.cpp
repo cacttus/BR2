@@ -324,7 +324,7 @@ void AppRunner::runApp(const std::vector<string_t>& args, std::vector< std::func
   FileSystem::init(args[0]);
 
   //Start logger
-  Gu::createLogger("./logs/", false);
+  Gu::createLogger("./logs/", args);
 
   _pint->loadAppPackage();
 

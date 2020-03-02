@@ -19,7 +19,7 @@ namespace BR2 {
 class Logger_Internal;
 class Logger : public OperatingSystemMemory {
 public:
-  Logger(bool async);
+  Logger(bool async, bool disabled = false);
   virtual ~Logger() override;
 
   void init(string_t cacheFolder);
@@ -46,7 +46,7 @@ public:
 
   string_t getLogPath();
 private:
-  std::shared_ptr<Logger_Internal> _pint = nullptr;
+  Logger_Internal* _pint = nullptr;
 };
 
 }//ns game

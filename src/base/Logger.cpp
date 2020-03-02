@@ -16,12 +16,10 @@
 #include <future>
 #include <algorithm>
 
-
 #define SetLoggerColor_Error() ConsoleColorRed()
 #define SetLoggerColor_Info() ConsoleColorGray()
 #define SetLoggerColor_Debug() ConsoleColorCyan()
 #define SetLoggerColor_Warn() ConsoleColorYellow()
-
 
 namespace BR2 {
 class Logger_Internal {
@@ -29,13 +27,13 @@ public:
   typedef enum { Debug, Info, Warn, Error, }LogLevel;
   string_t _logDir;
   string_t _logFileName;
-  bool _bAsync = false;
+  std::atomic_bool _bAsync = false;
 
   std::vector<std::string> _toLog;
 
-  bool _bEnabled = false;
-  bool _bLogToFile = false;
-  bool _bLogToConsole = false;
+  std::atomic_bool _bEnabled = true;
+  std::atomic_bool _bLogToFile = true;
+  std::atomic_bool _bLogToConsole = true;
 
   std::atomic_bool _bSuppressLineFileDisplay = false;
   std::mutex _mtLogStackAccess;
@@ -103,44 +101,61 @@ void Logger_Internal::processLogs_Async() {
     logs.swap(_toLog);
   }
 
-  string_t appended;
+  string_t appended = "";
   for (string_t m : logs) {
-    if (_bLogToConsole) {
-      Gu::print(m);
-    }
+    appended += m;
 
-    if (_bLogToFile) {
-      if (!FileSystem::fileExists(_logDir)) {
-        FileSystem::createDirectoryRecursive(FileSystem::getPathFromPath(_logDir));
-        FileSystem::createFile(_logDir, false, false);
+    if (_bLogToConsole) {
+      if (m.find(" DBG ") != std::string::npos) {
+        SetLoggerColor_Debug();
       }
-      //  OperatingSystem::suppressError(183,"Suppressing windows dumb 'append' error 183",false);
-      std::ofstream _fileHandle;
-      _fileHandle.open(_logDir.c_str(), std::ofstream::app);
-      if (_fileHandle.fail() == false) {
-        _fileHandle.write(m.c_str(), (std::streamsize)m.length());
-        _fileHandle.close();
+      else if (m.find(" ERR ") != std::string::npos) {
+        SetLoggerColor_Error();
+      }
+      else if (m.find(" WRN ") != std::string::npos) {
+        SetLoggerColor_Warn();
       }
       else {
-        //Ignore log writes.  Not app critical
-        //Debug only . This is not necessarily an error.
-        //We could wait for the file to become available by write-checking
-        //it a couple of times
-        Gu::debugBreak();
+        SetLoggerColor_Info();
       }
+      Gu::print(m);
     }
-    if (_bLogToConsole) {
-      SetLoggerColor_Info();
-    }
-
+  }
+  if (_bLogToConsole) {
+    SetLoggerColor_Info();
   }
 
+  if (_bLogToFile) {
+    if (!FileSystem::fileExists(_logDir)) {
+      FileSystem::createDirectoryRecursive(FileSystem::getPathFromPath(_logDir));
+      FileSystem::createFile(_logDir, false, false);
+    }
+    //  OperatingSystem::suppressError(183,"Suppressing windows dumb 'append' error 183",false);
+    std::ofstream _fileHandle;
+    _fileHandle.open(_logDir.c_str(), std::ofstream::app);
+    if (_fileHandle.fail() == false) {
+      _fileHandle.write(appended.c_str(), (std::streamsize)appended.length());
+      _fileHandle.close();
+    }
+    else {
+      //Ignore log writes.  Not app critical
+      //Debug only . This is not necessarily an error.
+      //We could wait for the file to become available by write-checking
+      //it a couple of times
+      Gu::debugBreak();
+    }
+  }
+
+
+
 }
+
 //////////////////////////////////////////////////////////////////////////
 
-Logger::Logger(bool async) {
-  _pint = std::make_shared<Logger_Internal>();
+Logger::Logger(bool async, bool disabled) {
+  _pint = new Logger_Internal();
   _pint->_bAsync = async;
+  _pint->_bEnabled = !disabled;
 }
 Logger::~Logger() {
   //kill thread.
@@ -152,25 +167,28 @@ void Logger::init(string_t cache) {
   string_t cache_rooted = FileSystem::getRootedPath(cache);
   _pint->_logDir = FileSystem::combinePath(cache_rooted, _pint->_logFileName);
 
-  //*Note: do not call the #define shortcuts here.
-  logInfo(Stz  "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
-
   //Run async, if applicable
   if (_pint->_bAsync) {
     //https://thispointer.com/c11-how-to-stop-or-terminate-a-thread/
-    std::weak_ptr<Logger_Internal> gw = _pint;
-    std::thread th([gw]() {
-      while (std::shared_ptr<Logger_Internal> li = gw.lock()) {
+
+    Logger_Internal* li = _pint;
+
+    std::thread th([li]() {
+      while (true) {
+        li->processLogs_Async();
         if (li->_kill) {
           break;
         }
-        li->processLogs_Async();
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
       }
+      //delete in this thread.
+      delete li;
       });
     th.detach();
   }
 
+  //*Note: do not call the #define shortcuts here.
+  logInfo(Stz(_pint->_bAsync ? "Async " : "") + "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
 }
 string_t Logger::getLogPath() { return _pint->_logDir; }
 void Logger::logDebug(const char* msg) {
@@ -205,10 +223,6 @@ void Logger::logDebug(string_t msg) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Debug();
-  }
-
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Debug), NULL);
 }
 void Logger::logDebug(string_t msg, int line, char* file) {
@@ -238,9 +252,6 @@ void Logger::logError(string_t msg, int line, char* file, BR2::Exception* e, boo
   if (_pint->_bEnabled == false) {
     return;
   }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Error();
-  }
 
   _pint->addLineFileToMsg(msg, line, file);
 
@@ -254,18 +265,14 @@ void Logger::logInfo(string_t msg) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Info();
-  }
+
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Info), NULL);
 }
 void Logger::logInfo(string_t msg, int line, char* file) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Info();
-  }
+
   _pint->addLineFileToMsg(msg, line, file);
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Info), NULL);
 }
@@ -273,17 +280,12 @@ void Logger::logWarn(string_t msg, BR2::Exception* e) {
   if (_pint->_bEnabled == false) {
     return;
   }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Warn();
-  }
+
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Warn), e);
 }
 void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e) {
   if (_pint->_bEnabled == false) {
     return;
-  }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Warn();
   }
   _pint->addLineFileToMsg(msg, line, file);
   _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Warn), e);
