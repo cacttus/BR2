@@ -19,7 +19,9 @@ namespace BR2 {
 class Logger_Internal;
 class Logger : public OperatingSystemMemory {
 public:
-  Logger(bool async, bool disabled = false);
+  Logger(bool async
+    
+    , bool disabled = false);
   virtual ~Logger() override;
 
   void init(string_t cacheFolder);

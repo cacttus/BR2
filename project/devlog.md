@@ -3,11 +3,10 @@
 *3/2/20*
 
 * Implemented async logging.
-	* Async logging decreases startup time by about 2 seconds, vs 4, not really necessary.
-	* Disabling console logging doesn't increase performance much either.
-	* Only one console per process, so either way, we need to share the console window.
-	* Async logging may cause loss of log messages when app fails critically.
+	* Async logging decreases startup time by about 2 seconds, vs 4.
+	* Async logging may cause loss of log messages when app fails critically, so you can disable it.
 	* Essentially, it is only necessary for seriously needed performance gains.
+	* If anything, async logging lets us halt the console window and let the app keep running.
 * Removing console colors from the base header appears to have decreased compile time somewhat
 * Added log_async=true to allow async logging in SERIOUS PERFORMANCE CASES ONLY.
 	* We don't want async logging by default, could make errors difficult.

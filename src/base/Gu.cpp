@@ -170,8 +170,14 @@ void Gu::createLogger(string_t logfile_dir, const std::vector<string_t>& args) {
   if (Gu::checkArg(args, "log_async", "true")) {
     log_async = true;
   }
+  else if (Gu::checkArg(args, "log_async", "false")) {
+    log_async = false;
+  }
   if (Gu::checkArg(args, "log_disable", "true")) {
     disabled = true;
+  }
+  else if (Gu::checkArg(args, "log_disable", "false")) {
+    disabled = false;
   }
   Gu::_pLogger = std::make_shared<Logger>(log_async, disabled);
   Gu::_pLogger->init(logfile_dir);

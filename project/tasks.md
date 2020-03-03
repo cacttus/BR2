@@ -1,7 +1,14 @@
 # Mine City Task Log
 
 ## BR0 to BR2 Upgrade
-- [ ] Make logging async.
+- [x] Make logging async.
+- [ ] Replace name in headers
+- [ ] Add World25 back, and render globs
+	- [ ] Move most of this to scene, likely, it would benefit us to create a separate class for Glob generation.
+	- [ ] move "getcellorobjectunderray" straight back to scene
+- [ ] Fix Viewport scaling issue.
+	- [ ] Fix text.
+
 - [ ] Support line and point in UtilMesh, and remove glPolygonMode everywhere (also glLineWidth).
 - [ ] Replace context->gl.. with GL.  This will be a static interface.  It allows us to remove all the proc junk from GLContext.
 	- [ ] 

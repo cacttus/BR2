@@ -24,7 +24,7 @@
 namespace BR2 {
 class Logger_Internal {
 public:
-  typedef enum { Debug, Info, Warn, Error, }LogLevel;
+  enum class LogLevel { Debug, Info, Warn, Error, };
   string_t _logDir;
   string_t _logFileName;
   std::atomic_bool _bAsync = false;
@@ -145,9 +145,6 @@ void Logger_Internal::processLogs_Async() {
       Gu::debugBreak();
     }
   }
-
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////

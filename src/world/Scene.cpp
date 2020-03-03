@@ -320,8 +320,6 @@ void Scene::drawDeferred(RenderParams& rp) {
 
   Perf::popPerf();
 }
-
-
 void Scene::drawForward(RenderParams& rp) {
   //Meshes
   for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
@@ -332,6 +330,7 @@ void Scene::drawForward(RenderParams& rp) {
   drawBackgroundImage();
 
   RenderUtils::drawAxisShader(getActiveCamera());
+  RenderUtils::drawGridShader(getActiveCamera());
 }
 void Scene::drawBackgroundImage() {
   if (_pQuadMeshBackground == nullptr) {

@@ -1247,7 +1247,6 @@ vec3 PhysicsWorld::i3tov3Node(const ivec3& iNode) {
 
   return vOut;
 }
-
 void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
   AssertOrThrow2(parms->_pFrustum != nullptr);
   AssertOrThrow2(parms->_pRenderBucket != nullptr);
