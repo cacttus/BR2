@@ -29,6 +29,8 @@
 #include "../world/PhysicsGridAwareness.h"
 #include "../world/RenderBucket.h"
 #include "../world/Scene.h"
+#include "../world/GameFile.h"
+#include "../world/WorldMaker.h"
 
 
 namespace BR2 {
@@ -41,7 +43,6 @@ PhysicsWorld::~PhysicsWorld() {
   //DEL_MEM(_pRenderBucket);
   //DEL_MEM(_pRenderBucket);
 }
-
 std::shared_ptr<PhysicsWorld> PhysicsWorld::create(std::shared_ptr<Scene> s, float fNodeWidth, float fNodeHeight, vec3& vUp,
   MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
   MpInt mpNodesY, uint32_t iGridCountLimit) {
@@ -64,6 +65,46 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   _pWorldBox = std::make_unique<Box3f>();
   _pWorldBox->_min = _pWorldBox->_max = vec3(0, 0, 0);
   _pRenderBucket = std::make_shared<RenderBucket>();
+
+  _pGameFile = std::make_shared<GameFile>();
+  _pConfig = _pGameFile->getW25Config();
+
+  //  //Shader
+  //  BRLogInfo("World25 - Making Shaders");
+  //  makeShaders();
+  //
+  //  BRLogInfo("World25 - Making Atlas");
+  //  makeAtlas();//**MUST COME FIRST because it establishes the TILE ids.
+  //  
+  //  ///need to load the file before the UI
+  //  ///make Asset Images
+  //  ///_pApp->createAssetWindow(imgs)
+  //  
+  //
+  //  BRLogInfo("World25 - Making Mesh Conf");
+  //  _pMeshMaker = std::make_shared<W25MeshMaker>(_pWorldAtlas);//Must come before grid
+  //  _pMeshMaker->init();
+  //
+  BRLogInfo("World25 - Making Dungeons");
+  _pWorldMaker = std::make_shared<WorldMaker>(getThis<PhysicsWorld>(), _pGameFile->getBucket(), _pGameFile->getLairSpecs(), _pGameFile->getWalkerSpecs());
+  //
+  //  t_timeval _tvInitTime = Gu::getMicroSeconds();
+  //
+  //  BRLogInfo("World25 - Making sky");
+  //  makeSky();
+  //
+  //  //*Make the first grid for the player's pos.
+  //  BRLogInfo("World25 - Initializing");
+  //  initializeWorldGrid();
+  //
+  //  convertMobs();
+  //
+  //  createHandCursor();
+  //
+  //  Gu::checkErrorsRt();
+
+
+
 }
 void PhysicsWorld::getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ p1, bool bLimitByWorldBox) {
   //CreateCellsForVolume.
@@ -236,8 +277,6 @@ void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Bo
       }
     }
   }
-
-
 }
 void PhysicsWorld::calcGridManifold(std::shared_ptr<PhysicsGrid> pGrid) {
   //do this when we add grids so that teh grids can 'capture' objects that weren't added.
@@ -405,7 +444,6 @@ void PhysicsWorld::collisionLoopDual(float delta) {
 
 }
 void PhysicsWorld::postCollide(uint64_t frameId, bool bAccel) {
-
   std::set<std::shared_ptr<PhysicsNode>> vecFinalActive;
   int32_t  nIter2 = 0;
   for (std::shared_ptr<PhysicsNode> ob : _vecActiveFrame) {
@@ -1223,7 +1261,7 @@ void PhysicsWorld::makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_pt
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::loadGrid(const ivec3& pos) {
   std::shared_ptr<PhysicsGrid> p = nullptr;
-  BRLogWarnCycle("TODO: implement World25::loadGrid here");
+  p =std::dynamic_pointer_cast<PhysicsGrid>(_pWorldMaker->loadGrid(pos));
   return p;
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::getNodeForPoint(vec3& pt) {

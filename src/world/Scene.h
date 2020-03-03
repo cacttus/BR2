@@ -57,6 +57,7 @@ public:
   void mouseWheel(int amount);
   uint64_t getFrameNumber();
 
+
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
   std::shared_ptr<LightNodePoint> createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);
@@ -82,6 +83,7 @@ private:
   std::shared_ptr<ParticleManager> _pParticleManager = nullptr;
   //The default fly camera must always be available.
 //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
+  std::shared_ptr<GameFile> _pGameFile = nullptr;
 
   //Test data.
   std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
@@ -95,6 +97,7 @@ private:
   void debugChangeRenderState();
   void drawBackgroundImage();
   void createFlyingCamera();
+  void loadGameFile();
 
 };
 

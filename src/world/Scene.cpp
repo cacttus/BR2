@@ -44,11 +44,14 @@ std::shared_ptr<Scene> Scene::create() {
 Scene::Scene() : SceneNode(nullptr) {
 }
 Scene::~Scene() {
-  //_pScreen = nullptr;
   _pLightManager = nullptr;
 }
 void Scene::init() {
   BRLogInfo("Making PhysicsWorld");
+
+  std::shared_ptr<PhysicsWorldCreate> c;
+
+
   _pPhysicsWorld = PhysicsWorld::create(getThis<Scene>(),
     BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
     BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
@@ -62,6 +65,15 @@ void Scene::init() {
   _pRenderBucket = std::make_shared<RenderBucket>();
 
   SceneNode::init();
+}
+void Scene::loadGameFile() {
+  //Called when we change to edit mode.
+  string_t strObFileName = Gu::getPackage()->makeAssetPath("game.dat");
+  BRLogInfo("World25 - Parsing Spec File '" + strObFileName + "'");
+
+  _pGameFile = std::make_shared<ObFile>(getThis<AppBase>());
+  _pGameFile->loadAndParse(strObFileName);
+
 }
 void Scene::afterAttachedToWindow() {
   //Lazy init, requires our window to be set before creating.

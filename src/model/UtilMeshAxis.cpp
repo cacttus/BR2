@@ -5,10 +5,10 @@
 #include "../model/IndexBufferData.h"
 namespace BR2 {
 UtilMeshAxis::UtilMeshAxis(std::shared_ptr<GLContext> ctx, float scale, float lineWidth, mat4& xform) :
-  UtilMesh(ctx, v_v3c4x2::getVertexFormat(), nullptr),
-  _scale(scale),
-  _lineWidth(lineWidth),
-  _mTransform(xform) {
+  UtilMesh(ctx, v_v3c4x2::getVertexFormat(), nullptr) {
+  _scale = scale;
+  _lineWidth = lineWidth;
+  _mTransform = xform;
 }
 UtilMeshAxis::~UtilMeshAxis() {
 }

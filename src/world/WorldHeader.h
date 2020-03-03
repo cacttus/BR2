@@ -35,6 +35,9 @@ class RenderBucket;
 class Scene;
 class Component;
 
+class GameFile;
+class WorldMaker;
+
 class BoxCollision : public VirtualMemory {
 public:
   std::shared_ptr<PhysicsNode> _ob1;

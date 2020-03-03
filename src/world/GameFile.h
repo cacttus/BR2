@@ -13,9 +13,9 @@
 #define __GAMESAVEFILE_15139585672481540946_H__
 
 #include "../base/PoundFile.h"
-#include "../bottle/BottleHeader.h"
+#include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *    @class GameSaveFile
 *    @brief
@@ -23,17 +23,17 @@ namespace Game {
 */
 class GameFile : public PoundFile {
     //Inherited
-    virtual void pkp(std::vector<t_string>& tokens);
+    virtual void pkp(std::vector<string_t>& tokens);
     virtual void preLoad();
     virtual void postLoad();
 
-    t_string _strWorldName;
+    string_t _strWorldName;
 public:
     GameFile();
     virtual ~GameFile() override;
 
-    t_string getWorldName() { return _strWorldName;}
-    OVERRIDES void save(t_string loc, std::shared_ptr<World25> pw); 
+    string_t getWorldName() { return _strWorldName;}
+    void save(string_t loc, std::shared_ptr<PhysicsWorld> pw);
 
 };
 

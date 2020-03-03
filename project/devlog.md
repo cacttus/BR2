@@ -10,6 +10,10 @@
 * Removing console colors from the base header appears to have decreased compile time somewhat
 * Added log_async=true to allow async logging in SERIOUS PERFORMANCE CASES ONLY.
 	* We don't want async logging by default, could make errors difficult.
+* --
+* Added createNode back to PhysicsWorld from World25
+* Added WorldMaker, GameFile.
+
 
 *3/1/20*
 

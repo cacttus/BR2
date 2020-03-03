@@ -1,12 +1,7 @@
 /**
-*
-*    @file ObFile.h
-*    @date March 30, 2017
-*    @author Derek Page
-*
-*    © 2017
-*
-*
+*  @file ObFile.h
+*  @date March 30, 2017
+*  @author Derek Page
 */
 #pragma once
 #ifndef __OBFILE_1490906948419075780_H__
@@ -16,7 +11,10 @@
 #include "../bottle/BottleHeader.h"
 
 namespace BR2 {
-
+/**
+*  @file GameFile
+*  @brief
+*/
 class ObFile : public PoundFile {
   typedef std::map<Hash32, std::shared_ptr<SpriteSpec>> MotionSpecMap;
 public:

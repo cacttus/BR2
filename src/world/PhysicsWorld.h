@@ -10,6 +10,18 @@
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
+class PhysicsWorldCreate {
+public:
+  float _fNodeWidth;
+  float _fNodeHeight;
+  vec3 _vUp;
+  MpFloat _awarenessXZ;// awXZ
+  float _awarenessXZInc;// awXZInc;
+  MpFloat _awarenessY;// awY;
+  float _awarenessYInc;// awYInc,
+    MpInt _mpNodesY;
+  uint32_t _iGridCountLimit;
+};
 /**
 *  @class PhysicsWorld
 *  @brief Operates on the world grid and manages the entire physical world and objects and collisions.
@@ -19,6 +31,7 @@ class PhysicsWorld : public VirtualMemoryShared<PhysicsWorld> {
 public:
   typedef std::map<ivec3*, std::shared_ptr<PhysicsGrid>, ivec3::Vec3xCompLess> GridMap;
   typedef std::map<NodeId, std::shared_ptr<PhysicsNode>> ObjMap;
+
   static void limitVelocity(vec3& __inout_ v);
   static void limitAccelleration(vec3& __inout_ va);
   static float getGravityAmount() { return -0.98f; }
@@ -39,6 +52,7 @@ public:
 
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();
   std::multimap<float, std::shared_ptr<SceneNode>>& getVisibleNodes();
+  std::shared_ptr<Scene> getScene() { return _pScene; }
   float getNodeWidth()const { return _fNodeWidth; }
   float getNodeHeight()const { return _fNodeHeight; }
   ivec3 v3Toi3Node(vec3& v);
@@ -81,7 +95,6 @@ public:
   virtual void drawForward();
   virtual void drawDeferred();
   virtual void drawTransparent();
-  std::shared_ptr<Scene> getScene() { return _pScene; }
 
 protected:
   GridMap& getGrids() { return _gridMap; }
@@ -110,6 +123,7 @@ private:
   std::unique_ptr<Box3f> _pWorldBox = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
+  std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
 
   virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
     MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
