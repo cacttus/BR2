@@ -66,8 +66,8 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   _pWorldBox->_min = _pWorldBox->_max = vec3(0, 0, 0);
   _pRenderBucket = std::make_shared<RenderBucket>();
 
-  _pGameFile = std::make_shared<GameFile>();
-  _pConfig = _pGameFile->getW25Config();
+  //Scene has GameFile on it
+  _pConfig = getScene()->getGameFile()->getW25Config();
 
   //  //Shader
   //  BRLogInfo("World25 - Making Shaders");

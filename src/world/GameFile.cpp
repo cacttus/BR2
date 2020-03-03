@@ -1,9 +1,9 @@
 
 #include "../base/DiskFile.h"
 #include "../world/GameFile.h"
-//#include "../bottle/WorldMaker.h"
+#include "../world/WorldMaker.h"
 #include "../world/PhysicsWorld.h"
-//#include "../bottle/Lair.h"
+#include "../world/Lair.h"
 
 namespace BR2 {
 GameFile::GameFile() {
@@ -51,7 +51,6 @@ void GameFile::save(string_t loc, std::shared_ptr<PhysicsWorld> pw) {
   }
   df.writeTextLine(Stz "g_world \"" + pw->getWorldName() + "\"");
   df.writeTextLine("g_end");
-  //df.writeTextLine(TStr("#Derek Page ", dateTimeToStr(getDateTime())));
   ////sprite image size
   //df.writeTextLine(TStr("isw ", _pSpriteSpec->getSize().x));
   //df.writeTextLine(TStr("ish ", _pSpriteSpec->getSize().y));

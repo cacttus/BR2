@@ -81,8 +81,9 @@ public:
   void unloadWorld();
   std::shared_ptr<PhysicsGrid> getNodeForPoint(vec3& pt);
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
-
+  std::shared_ptr<WorldMaker> getWorldMaker() { return _pWorldMaker; }
   std::shared_ptr<PhysicsNode> findNode(string_t specName);
+  string_t getWorldName() { return _worldName; }
   template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node) {
     for (auto a : _mapObjects) {
       if (a.second->findNode(node)) {
@@ -106,6 +107,7 @@ protected:
 private:
   float _fNodeWidth = 0;
   float _fNodeHeight = 0;
+  string_t _worldName = "MyWorld";
   //*New Grid stuff
   GridMap _gridMap;
   ObjMap _mapObjects;

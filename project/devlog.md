@@ -13,7 +13,11 @@
 * --
 * Added createNode back to PhysicsWorld from World25
 * Added WorldMaker, GameFile.
-
+* Moved many /bottle/ classes to /world/.  
+* The system does not compile due to some architecture changes we need to make.  
+	* It is likely better we split PhysicsWorld and World25 as their concerns are separated 
+		* World25 - Concerned with efficiently generating a world mesh toplology, generating its structure, and managing the textures (grass,dirt..) that go with it.
+		* PhysicsWorld - Concerned with colliding physical objects in the game world with themselves, and the BlockNodes.
 
 *3/1/20*
 

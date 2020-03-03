@@ -1,24 +1,18 @@
 /**
-*
-*    @file MotionBucket.h
-*    @date March 9, 2017
-*    @author Derek Page
-*
-*    © 2017
-*
-*
+*  @file MotionBucket.h
+*  @date March 9, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __MOTIONBUCKET_14890899642435083547_H__
 #define __MOTIONBUCKET_14890899642435083547_H__
 
-#include "../bottle/BottleHeader.h"
+#include "../world/WorldHeader.h"
 
 namespace BR2 {
 #define MOTION25_INVALID_FRAME 0
 #define TILE_MASK_BLANK (-1)
 #define TILE_MASK_NONE (0)
-
 
 //holds all motions and compile into a single atlas.
 //Only create one of these

@@ -3,17 +3,18 @@
 #include "../base/FileSystem.h"
 #include "../world/WorldMaker.h"
 #include "../world/PhysicsWorld.h"
-//#include "../bottle/WorldMaker.h"
-//#include "../bottle/Lair.h"
-//#include "../bottle/WorldGrid.h"
-//#include "../bottle/WipGrid.h"
-//#include "../bottle/World25.h"
-//#include "../bottle/W25Config.h"
-//#include "../bottle/WorldCellFile.h"
-//#include "../bottle/BottleRoom.h"
-//#include "../bottle/Lair.h"
-//#include "../bottle/SpriteBucket.h"
-//#include "../bottle/Tile25Spec.h"
+#include "../world/WorldMaker.h"
+#include "../world/Lair.h"
+//#include "../world/World25.h"
+#include "../world/W25Config.h"
+//#include "../world/BottleRoom.h"
+#include "../world/Lair.h"
+#include "../world/SpriteBucket.h"
+#include "../world/Tile25Spec.h"
+#include "../world/WorldCellFile.h"
+#include "../world/WorldGrid.h"
+#include "../world/WipGrid.h"
+
 
 namespace BR2 {
 WorldMaker::WorldMaker(std::shared_ptr<PhysicsWorld> pw, std::vector<LairSpec*>& mapLairs, std::vector<WalkerSpec*>& mapWalkers) {
@@ -49,13 +50,7 @@ WorldMaker::~WorldMaker() {
     delete s;
   }
 }
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
 void WorldMaker::initialize() {
-
 }
 LairSpec* WorldMaker::getLairSpecById(Hash32 id) {
   std::map<Hash32, LairSpec*>::iterator it = _mapLairSpecs.find(id);
@@ -131,11 +126,9 @@ string_t WorldMaker::getWorldGridsDir(string_t strGameName, string_t strWorldNam
   return ddir;
 }
 std::shared_ptr<PhysicsGrid> WorldMaker::loadGrid(ivec3(v)) {
-
   string_t strFileName = makeGridFileName(_pWorld25->getRoom()->getGameName(), _pWorld25->getWorldName(), v.x, v.y, v.z);
 
   return loadGridFromFile(strFileName);
-
 }
 std::shared_ptr<PhysicsGrid> WorldMaker::loadGridFromFile(string_t strFileNamePath) {
   ivec3 vPos;

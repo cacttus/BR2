@@ -32,7 +32,8 @@
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
-#include "../bottle/BottleUtils.h"
+#include "../world/ObFile.h"
+#include "../world/BottleUtils.h"
 
 
 namespace BR2 {

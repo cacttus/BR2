@@ -5,12 +5,10 @@
 #include "../base/GLContext.h"
 #include "../base/PoundFile.h"
 #include "../base/Img32.h"
-
 #include "../gfx/Atlas.h"
-
-#include "../bottle/SpriteBucket.h"
-#include "../bottle/ObFile.h"
-#include "../bottle/Tile25Spec.h"
+#include "../world/SpriteBucket.h"
+#include "../world/ObFile.h"
+#include "../world/Tile25Spec.h"
 
 namespace BR2 {
 

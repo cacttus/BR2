@@ -10,10 +10,8 @@
 #include "../model/TileMesh25.h"
 #include "../world/PhysicsGrid.h"
 #include "../world/PhysicsWorld.h"
-#include "../bottle/BottleUtils.h"
-
-#include "../bottle/SpriteBucket.h"
-#include "../bottle/BottleUtils.h"
+#include "../world/SpriteBucket.h"
+#include "../world/BottleUtils.h"
 
 namespace BR2 {
 

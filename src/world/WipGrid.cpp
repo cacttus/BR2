@@ -1,72 +1,67 @@
-#include "../bottle/WipGrid.h"
-#include "../bottle/BottleUtils.h"
-#include "../bottle/World25.h"
-#include "../bottle/WorldGrid.h"
-#include "../bottle/W25MeshMaker.h"
-#include "../bottle/W25Config.h"
-#include "../bottle/WorldCell.h"
-#include "../bottle/Lair.h"
-#include "../bottle/SpriteBucket.h"
-#include "../bottle/Tile25Spec.h"
+#include "../world/WipGrid.h"
+#include "../world/BottleUtils.h"
+#include "../world/WorldGrid.h"
+#include "../world/W25Config.h"
+#include "../world/Lair.h"
+#include "../world/SpriteBucket.h"
+#include "../world/Tile25Spec.h"
+#include "../world/WorldCell.h"
+#include "../world/W25MeshMaker.h"
 /*
 gen all base land (no caves)
 2 gen "sea" in land where y < 0 - don't gen water where there is solid land
 3 - then make caves - this will prevent water from filling caves
 4 - Then Iterate tiles Top - Down
     calc sunlight for each.
-
 */
-
-namespace Game {
-///////////////////////////////////////////////////////////////////
+namespace BR2 {
 WipGrid::WipGrid(ivec3& viPos, LairSpec* pLair, int iSeed) :
-    EasyNoise(iSeed), _pLair(pLair), _viPos(viPos) {
-   // _iNoiseArrSize = CongaUtils::getNumValsPerNode();
-    _iGDataSize = BottleUtils::getNumCellsPerNode();  
-    _pGData = new GData[_iGDataSize];
+  EasyNoise(iSeed), _pLair(pLair), _viPos(viPos) {
+  // _iNoiseArrSize = CongaUtils::getNumValsPerNode();
+  _iGDataSize = BottleUtils::getNumCellsPerNode();
+  _pGData = new GData[_iGDataSize];
   //  _pNoiseValues = new NoiseData[_iNoiseArrSize];
 
 }
 WipGrid::~WipGrid() {
-    delete [] _pGData;
+  delete[] _pGData;
   //  DEL_MEM(_pNoiseValues);
 }
-///////////////////////////////////////////////////////////////////
-void WipGrid::clear(Tile25Spec* pt){
-    AssertOrThrow2(pt!=nullptr);
-    //memset(_pGData, 0, sizeof(GData) * _iGDataSize);
-    //_pGData = new GData[_iGDataSize];
-    int ix = (int)BottleUtils::getNumCellsWidth();
-    int iy = (int)BottleUtils::getNumCellsWidth();
-    int iz = (int)BottleUtils::getNumCellsWidth();
+void WipGrid::clear(Tile25Spec* pt) {
+  AssertOrThrow2(pt != nullptr);
+  //memset(_pGData, 0, sizeof(GData) * _iGDataSize);
+  //_pGData = new GData[_iGDataSize];
+  int ix = (int)BottleUtils::getNumCellsWidth();
+  int iy = (int)BottleUtils::getNumCellsWidth();
+  int iz = (int)BottleUtils::getNumCellsWidth();
 
-    //Create both the sea and the land.
-    for (int zz = 0; zz < iz; ++zz) {
+  //Create both the sea and the land.
+  for (int zz = 0; zz < iz; ++zz) {
     for (int yy = 0; yy < iy; ++yy) {
-    for (int xx = 0; xx < ix; ++xx) {
+      for (int xx = 0; xx < ix; ++xx) {
         int ind = BottleUtils::getCellIndexFori3(xx, yy, zz);
 
         _pGData[ind]._tile[GridMeshLayer::e::Opaque] = pt->getTileIndex();
         _pGData[ind]._geom[GridMeshLayer::e::Opaque] = W25GEOM_SOLID;
         _pGData[ind]._tile[GridMeshLayer::e::Transparent] = pt->getTileIndex();
         _pGData[ind]._geom[GridMeshLayer::e::Transparent] = W25GEOM_EMPTY;
-      //  for (int mat = 0; mat < MaxMatters; ++mat) {
-            //W25Geom g = genGeom(xx, yy, zz, (MatterMode::e)mat);
+        //  for (int mat = 0; mat < MaxMatters; ++mat) {
+              //W25Geom g = genGeom(xx, yy, zz, (MatterMode::e)mat);
 
-       //     if(yy < -powf((float)xx, 2) + (float)iy  ){
-        //         = W25GEOM_SOLID;
-     //       }
-     //       else {
-     //           _pGData[ind]._geom[mat] = 0;
-      //      }
-            
-      //  }
-        //float f = Random::nextFloat(-1,1);
-        //float f = 0.0f;// = genPointLocal(xx, yy, zz, (MatterMode::e)mat);
-        //setDv(xx, yy, zz, f, (MatterMode::e)mat);
+         //     if(yy < -powf((float)xx, 2) + (float)iy  ){
+          //         = W25GEOM_SOLID;
+       //       }
+       //       else {
+       //           _pGData[ind]._geom[mat] = 0;
+        //      }
+
+        //  }
+          //float f = Random::nextFloat(-1,1);
+          //float f = 0.0f;// = genPointLocal(xx, yy, zz, (MatterMode::e)mat);
+          //setDv(xx, yy, zz, f, (MatterMode::e)mat);
+      }
     }
-    }
-    }
+  }
 }
 //void WipGrid::generate() {
 //
@@ -75,15 +70,15 @@ void WipGrid::clear(Tile25Spec* pt){
 //    compile();
 //}
 void WipGrid::makeCell(int ix, int iy, int iz, WorldCell* __in_ pc) {
-    int ind = BottleUtils::getCellIndexFori3(ix, iy, iz);
-    GData gd = _pGData[ind];
+  int ind = BottleUtils::getCellIndexFori3(ix, iy, iz);
+  GData gd = _pGData[ind];
 
-    for(int iMatter=0; iMatter<GridMeshLayer::e::MaxMatters; ++iMatter) {
-        pc->setGeom((GridMeshLayer::e)iMatter, gd._geom[iMatter]);
-    }
-    for (int iMatter = 0; iMatter<GridMeshLayer::e::MaxMatters; ++iMatter) {
-        pc->setTile((GridMeshLayer::e)iMatter, gd._tile[iMatter]);
-    }
+  for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
+    pc->setGeom((GridMeshLayer::e)iMatter, gd._geom[iMatter]);
+  }
+  for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
+    pc->setTile((GridMeshLayer::e)iMatter, gd._tile[iMatter]);
+  }
 
 }
 //void WipGrid::makeLandAndSea() {

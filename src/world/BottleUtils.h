@@ -7,12 +7,12 @@
 #ifndef __UTILS_14848788182400156280_H__
 #define __UTILS_14848788182400156280_H__
 
-#include "../bottle/BottleHeader.h"
+#include "../world/WorldHeader.h"
 
 namespace BR2 {
 /**
 *  @class BottleUtils
-*  @brief
+*  @brief Utility class for the bottle topology engine.
 */
 class BottleUtils : public VirtualMemory {
 public:

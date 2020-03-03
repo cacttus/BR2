@@ -7,9 +7,9 @@
 #ifndef __BLOCKNODE_14937714702398736072_H__
 #define __BLOCKNODE_14937714702398736072_H__
 
-#include "../bottle/BottleHeader.h"
+#include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class BlockNode
 *  @brief Global Node structure for grids.

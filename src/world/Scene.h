@@ -38,6 +38,7 @@ public:
   std::shared_ptr<GLContext> getContext();
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
   std::vector<std::shared_ptr<CameraNode>> getAllCameras();
+  std::shared_ptr<ObFile> getGameFile() { return _pGameFile; }
   void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow = x; }
   void setActiveCamera(std::shared_ptr<CameraNode> x) { _pActiveCamera = x; }
@@ -83,7 +84,7 @@ private:
   std::shared_ptr<ParticleManager> _pParticleManager = nullptr;
   //The default fly camera must always be available.
 //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
-  std::shared_ptr<GameFile> _pGameFile = nullptr;
+  std::shared_ptr<ObFile> _pGameFile = nullptr;
 
   //Test data.
   std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;

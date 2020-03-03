@@ -1,19 +1,19 @@
 /**
 *  @file ObFile.h
 *  @date March 30, 2017
-*  @author Derek Page
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __OBFILE_1490906948419075780_H__
 #define __OBFILE_1490906948419075780_H__
 
 #include "../base/PoundFile.h"
-#include "../bottle/BottleHeader.h"
+#include "../world/WorldHeader.h"
 
 namespace BR2 {
 /**
-*  @file GameFile
-*  @brief
+*  @file ObFile
+*  @brief The main file for game settings.
 */
 class ObFile : public PoundFile {
   typedef std::map<Hash32, std::shared_ptr<SpriteSpec>> MotionSpecMap;

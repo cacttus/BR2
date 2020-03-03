@@ -1,34 +1,30 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
-
 #include "../math/MathAll.h"
-
 #include "../gfx/FrustumBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/Atlas.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/ShaderBase.h"
-
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/VboData.h"
 #include "../model/IboData.h"
+#include "../world/W25GridMesh.h"
+//#include "../world/World25.h"
+#include "../world/WorldGrid.h"
+#include "../world/WorldCell.h"
+#include "../world/BlockNode.h"
+#include "../world/BottleUtils.h"
+#include "../world/W25MeshMaker.h"
 
-#include "../bottle/W25GridMesh.h"
-#include "../bottle/World25.h"
-#include "../bottle/WorldGrid.h"
-#include "../bottle/WorldCell.h"
-#include "../bottle/BlockNode.h"
-#include "../bottle/BottleUtils.h"
-#include "../bottle/W25MeshMaker.h"
-
-
-namespace Game {
-W25GridMesh::W25GridMesh(std::shared_ptr<WorldGrid> pGrid, GridMeshLayer::e eMatter) :
-  _eMatterMode(eMatter), _pGrid(pGrid) {
+namespace BR2 {
+W25GridMesh::W25GridMesh(std::shared_ptr<WorldGrid> pGrid, GridMeshLayer::e eMatter) {
+  _eMatterMode = eMatter;
+  _pGrid = pGrid;
 }
 W25GridMesh::~W25GridMesh() {
   _pMesh = nullptr;
@@ -69,15 +65,13 @@ void W25GridMesh::updateTopology() {
           );
           //       }
         }
-
-
       }
 
       //We can just copy the whole thing to the GPU for now.  That's quick.  It's the freaking fillMesh() that is slow.
       sendMeshToGpu();
     }
 #ifdef _DEBUG
-    BroLogDebug(_pGrid->getGridPos().toString() + " -> Redo " + _setTopoMod.size() +
+    BRLogDebug(_pGrid->getGridPos().toString() + " -> Redo " + _setTopoMod.size() +
       ((_setTopoMod.size() == 1 && (*_setTopoMod.begin() == nullptr)) ? " grids " : " cells: ") + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
 #endif
     _setTopoMod.clear();
@@ -97,7 +91,7 @@ void W25GridMesh::draw(RenderParams& rp, int& iDbgNumTrisDrawn) {
     }
 
     uint32_t pid = getMesh()->getPickId();
-    rp.getShader()->setUf("_ufPickId", (void*)&pid);
+    rp.getShader()->setUf("_ufPickId", (void*)& pid);
     rp.setMesh(getMesh());
     rp.draw();
     //pShader->draw(getMesh(), -1, GL_TRIANGLES, ps);

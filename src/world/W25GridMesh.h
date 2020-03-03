@@ -7,9 +7,9 @@
 #ifndef __W25GRIDMESH_14937925164018290644_H__
 #define __W25GRIDMESH_14937925164018290644_H__
 
-#include "../bottle/BottleHeader.h"
+#include "../world/WorldHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
 *  @class W25GridMesh
 *  @brief
