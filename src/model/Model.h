@@ -23,8 +23,8 @@ public:
   KeyFrame(mat4& mat, int32_t iSeq);
   KeyFrame(vec3& p, quat& r, vec3& s, int32_t iSeq);
   KeyFrame() {} //deserialize ctor
-  //KeyFrame(std::shared_ptr<ActionKeys> pa, mat4& mat, int iSeq, vec2& cp, KeyframeInterpolation::e cpType, vec2& l_h, t_string l_t, vec2&  r_h, t_string r_t);
-  //KeyFrame(std::shared_ptr<ActionKeys> pa, vec3& p, quat& r, vec3& s, int iSeq, vec2& cp, KeyframeInterpolation::e cpType, vec2& l_h, t_string l_t, vec2&  r_h, t_string r_t);
+  //KeyFrame(std::shared_ptr<ActionKeys> pa, mat4& mat, int iSeq, vec2& cp, KeyframeInterpolation::e cpType, vec2& l_h, string_t l_t, vec2&  r_h, string_t r_t);
+  //KeyFrame(std::shared_ptr<ActionKeys> pa, vec3& p, quat& r, vec3& s, int iSeq, vec2& cp, KeyframeInterpolation::e cpType, vec2& l_h, string_t l_t, vec2&  r_h, string_t r_t);
   virtual ~KeyFrame() override;
 
   //  Quaternion& getQuat() { return _mQuat; }
@@ -58,15 +58,14 @@ private:
   int32_t _iSequenceKeyFrame;//the keyframe that we loaded from the file
 
  // vec2 vCurveGraphPoint;       //TODO: this will implement bezier later
-  //t_string strCurveType;
+  //string_t strCurveType;
   //vec2 vCurveLeftHandle; //TODO: this will implement bezier later
-  //t_string strCurveLeftHandleType;
+  //string_t strCurveLeftHandleType;
   //vec2 vCurveRightHandle;//TODO: this will implement bezier later
- // t_string strCurverRightHandleType;
-  //KeyFrame(std::shared_ptr<ActionKeys> pa,  int iSeq, vec2& cp, KeyframeInterpolation::e cpType, vec2& l_h, t_string l_t, vec2&  r_h, t_string r_t);
+ // string_t strCurverRightHandleType;
+  //KeyFrame(std::shared_ptr<ActionKeys> pa,  int iSeq, vec2& cp, KeyframeInterpolation::e cpType, vec2& l_h, string_t l_t, vec2&  r_h, string_t r_t);
   mat4 compile(vec3& p, quat& r, vec3& s);
   KeyFrame(int32_t iSeq);
-
 };
 
 /**
@@ -93,12 +92,11 @@ private:
   string_t _strObjectName;//armature or mesh
   Hash32 _iNameHashed;
   std::vector<std::shared_ptr<KeyFrame>> _vecKeys;
-  //t_string _sName;
+  //string_t _sName;
 
   std::shared_ptr<KeyFrame> getAFrame(std::shared_ptr<Animator> tl);
   std::shared_ptr<KeyFrame> getBFrame(std::shared_ptr<Animator> tl);
   // void slerpKeys(float ct, std::shared_ptr<KeyFrame> f1, std::shared_ptr<KeyFrame> f2, mat4& mOut);
-
 };
 /**
 *    @class ActionGroup
@@ -174,10 +172,6 @@ private:
   PlayState::e _eState = PlayState::e::Stopped;
   std::shared_ptr<ActionGroup> _pAction = nullptr;
 };
-
-/**
-*    @class BoneSpec
-*/
 class BoneSpec : public BaseSpec {
 public:
   //typedef std::set<Hash32> AnimMap; //map of animation name hash to animation
@@ -187,7 +181,7 @@ public:
   virtual ~BoneSpec() override;
   void setParent(std::shared_ptr<BoneSpec> bs);
   void addChild(std::shared_ptr<BoneSpec> bs);
-  //t_string getParentName() { return _sParentName; }
+  //string_t getParentName() { return _sParentName; }
   vec3 getTail() { return _vTail; }
   vec3 getHead() { return _vHead; }
   void setHead(vec3& v) { _vHead = v; }
@@ -205,16 +199,13 @@ private:
   std::shared_ptr<BoneSpec> _pParent = nullptr;
 
   //  AnimMap _setActions; // map of animation to ID.
-    //t_string _sParentName;
+    //string_t _sParentName;
   vec3 _vHead;
   vec3 _vTail;
 
   Hash32 getHashedBoneName() { return _iBoneName; }
   std::shared_ptr<BoneSpec> getParent() { return _pParent; }
 };
-
-//. BoneSpec or  BoneSpec, or et..
-//**This was BoneRef
 class BoneNode : public SceneNode {
 public:
   BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
@@ -240,13 +231,7 @@ private:
   bool _bAdded = false;
   std::shared_ptr<ArmatureNode> _pArmatureNode = nullptr;
   //  mat4 _mBone;
-
-
 };
-
-/**
-*    @Container for a bone armature, also parses it from the mobstr file
-*/
 class Armature : public BaseSpec {
 public:
   typedef std::map<int32_t, std::shared_ptr<BoneSpec>> BoneCache; //bones  map<Bone ID, Bone*>
@@ -275,11 +260,10 @@ private:
 
   //std::set<Hash32> _setActions;
 
- // void processKeyframes(std::shared_ptr<BoneSpec> pb, t_string animName);
+ // void processKeyframes(std::shared_ptr<BoneSpec> pb, string_t animName);
   void compileHierarchy();
   std::shared_ptr<BoneSpec> getCachedBoneByName(string_t name);
 };
-
 class ArmatureNode : public SceneNode {
 public:
   ArmatureNode(std::shared_ptr<Armature> ps);
@@ -300,14 +284,17 @@ private:
   void drawBones(std::shared_ptr<UtilMeshInline> mi, std::shared_ptr<BoneNode> bn, Color4f& c);
 protected:
   virtual void init() override;
-
 };
 
-class ModelSpec : public PhysicsSpec {
+#pragma region WorldObjectSpec
+class WorldObjectSpec : public PhysicsSpec {
 public:
-  ModelSpec() {}//serialize only.
-  ModelSpec(string_t name, int32_t frameRate);
-  virtual ~ModelSpec();
+  WorldObjectSpec() {}//serialize only.
+  WorldObjectSpec(string_t name, int32_t frameRate);
+  virtual ~WorldObjectSpec();
+
+  static std::shared_ptr<WorldObjectSpec> create(std::string mobFolder, uint32_t typeID, std::string friendlyName, std::string strBox, std::string strPlace);
+
   int32_t getFrameRate() { return _iFrameRate; }
   std::vector<std::shared_ptr<MeshSpec>>& getMeshes() { return _vecMeshes; }
   std::vector<std::shared_ptr<Armature>>& getArmatures() { return _vecArmatures; }
@@ -334,21 +321,44 @@ private:
   std::shared_ptr<BoneSpec> getBoneByArmJointOffset(int32_t ijo);
   std::string _strFriendlyName;
 
-};
-//*Fuck ok so m44 the issue here is that the node3base is also used by GridObj.
-//So we would need PixObj : ModelNode.. but ModelNode is a created instance..
-class ModelNode : public PhysicsNode {
+  //WorldObj integration
 public:
-  ModelNode(std::shared_ptr<ModelSpec>);
-  static std::shared_ptr<ModelNode> create(std::shared_ptr<ModelSpec>);
-  virtual ~ModelNode();
+  string_t getFriendlyName() { return _strFriendlyName; }
+  string_t getMobName() { return _strMobName; }
+  uint32_t getTypeId() { return _iTypeId; }
+
+  //std::shared_ptr<WorldObjectSpec> getOrLoadModel();
+  std::shared_ptr<WorldObject> createInstance(std::shared_ptr<PhysicsWorld> w, vec3& r3Pos);
+
+private:
+  vec3 _vBoxFit;
+  string_t _strMobName;
+  //std::shared_ptr<ModelSpec> _pModelSpec = nullptr; this is the same thing
+  uint32_t _iTypeId;
+  std::string _strFriendlyName;
+  std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> _placeOptions;//indexed by side
+
+  static vec3 boxFit(vec3& vBoxFit);
+  static std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> parsePlacementOptions(std::string strPlace);
+  static vec3 parseBoxFit(std::string strBox);
+  void place(const vec3& r3, vec3& outPos, vec4& outRot);
+};
+#pragma endregion
+
+#pragma region WorldObject
+class WorldObject : public PhysicsNode {
+public:
+  WorldObject(std::shared_ptr<WorldObjectSpec>);
+  virtual ~WorldObject();
+  
+  static std::shared_ptr<WorldObject> create(std::shared_ptr<WorldObjectSpec> spec);
 
   void playAction(string_t name);
   bool isPlaying();
   bool isPlaying(string_t actName);
   void stopAction(string_t actName);
   void stopAllActions();
-  std::shared_ptr<ModelSpec> getModelSpec();
+  std::shared_ptr<WorldObjectSpec> getModelSpec();
   void attachToNode(std::shared_ptr<SceneNode> pNode) { _pWorldNode = pNode; }
   //This is the physics update.  It's the main update.  modelNode drops animation on subsequent nodes.
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
@@ -361,6 +371,7 @@ protected:
   virtual void init() override;
 
 private:
+  string_t _mobName = "";
   std::vector<std::shared_ptr<MeshNode>> _vecMeshes;
   std::vector<std::shared_ptr<ArmatureNode>> _vecArmatures;
   std::shared_ptr<SceneNode> _pWorldNode = nullptr; // Reference to the world node *not owned
@@ -372,7 +383,7 @@ private:
   std::shared_ptr<Animator> getAnimator(string_t actName);
   void buildNodeParents();
 };
-
+#pragma endregion
 
 }//ns Game
 

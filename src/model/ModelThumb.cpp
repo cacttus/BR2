@@ -21,7 +21,7 @@ namespace BR2 {
 ///////////////////////////////////////////////////////////////////
 //We need to generate 8 thumbs.
 
-std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<ModelSpec> mod, int32_t iThumbSize) {
+std::shared_ptr<Img32> ModelThumb::genThumb(std::shared_ptr<WorldObjectSpec> mod, int32_t iThumbSize) {
   ////Create Lights + Camera
   //std::shared_ptr<RenderViewport> pv = std::make_shared<RenderViewport>(iThumbSize, iThumbSize);
   //std::shared_ptr<CameraNode> pThumbCam = CameraNode::create(pv);

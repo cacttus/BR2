@@ -1,31 +1,22 @@
 # Mine City Task Log
 
 ## BR0 to BR2 Upgrade
-- [ ] Replace BottleUtils constants with PhysicsWorldCreate
+- [ ] Conversion of ModelNode to SceneNode
+	- [ ] Replace all of ModelNode with SceneNode
+		*WorldObj from Bottle now becomes SceneNode
 
-- [x] Make logging async.
+- [ ] Replace BottleUtils constants with PhysicsWorldCreate
 - [ ] Replace name in headers
-- [ ] Add World25 back, and render globs
+
+- [ ] World25 Migration
 	- [ ] Move most of this to scene, likely, it would benefit us to create a separate class for Glob generation.
 	- [ ] move "getcellorobjectunderray" straight back to scene
-- [ ] Fix Viewport scaling issue.
-	- [ ] Fix text.
-
-- [ ] Support line and point in UtilMesh, and remove glPolygonMode everywhere (also glLineWidth).
-- [ ] Replace context->gl.. with GL.  This will be a static interface.  It allows us to remove all the proc junk from GLContext.
-	- [ ] 
-- [x] Test the c# lexer.
-
-- [ ] For proper code page conversion, change all the following to use wint_t instead of "char"
-	- [ ] remove t_char
-	- [ ] TextParser
-	- [ ] StringUtil
-	- [ ] DiskFile
-	- [ ] remove t_byte SHOULD keep a 'byte' type though.  Make good decisions here.
+	- [ ] TODO: make Armature, and mesh Components of the WorldObject
 
 - [ ] Figure out some way to prevent recursive node updating for SceneNode, this has been causing MULTILPE issues.
 
-- [ ] **CRITICAL** Squashed viewport Bug
+- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
+	- [ ] Fix UI text squashing bug.
 	- [x] Implement the updated viewport class from the engine.
 		- [x] Make sure it has width/height defined.
 	- [x] Update everywhere where viewport is referenced.
@@ -63,7 +54,11 @@
 - [ ] CSharp inline *minimal* scripts.
 	* This should fix the camera, so we can easily add the bottle topologizer.
 	- [x] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
-	- [ ] Update FlyingCameraControls so that it runs as a script.
+	- [x] Test the c# lexer.
+	- [ ] Implement a parser
+	- [ ] Finish the C# class-based scripting implementation.
+	- [ ] Test a script.
+	- [ ] Update FlyingCameraControls so that it runs in the new script-component system.
 		- [ ] Make Cameras work with the Scene() and get their update() methods called
 		- [ ] This would make the flying controls run as a script IN the node as a component instead of AROUND
 			*Currently FlyingCameraControls run on top of the camera 
@@ -167,6 +162,14 @@ The system will be rewritten in 3 areas:
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 - [ ] Remove SDLGLIncludes from headers.  (It includes Windows.h)
 - [ ] Further optimize engine building by implementing PIMPL in headers with big include files (such as SDL).
+- [ ] Support line and point in UtilMesh, and remove glPolygonMode everywhere (also glLineWidth).
+- [ ] Replace context->gl.. with GL.  This will be a static interface.  It allows us to remove all the proc junk from GLContext.
+- [ ] For proper code page conversion, change all the following to use wint_t instead of "char"
+	- [ ] remove t_char
+	- [ ] TextParser
+	- [ ] StringUtil
+	- [ ] DiskFile
+	- [ ] remove t_byte SHOULD keep a 'byte' type though.  Make good decisions here.
 
 ## Delayed / Shelved 
 - [ ] ~~Multiple Window Rendering~~

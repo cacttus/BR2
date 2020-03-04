@@ -82,7 +82,7 @@
     <ClCompile Include="src\gfx\GpuQuad3.cpp" />
     <ClCompile Include="src\gfx\GraphicsApi.cpp" />
     <ClCompile Include="src\gfx\GraphicsContext.cpp" />
-    <ClCompile Include="src\gfx\HappySky.cpp" />
+    <ClCompile Include="src\gfx\SkyBox.cpp" />
     <ClCompile Include="src\gfx\LightManager.cpp" />
     <ClCompile Include="src\gfx\LightNode.cpp" />
     <ClCompile Include="src\gfx\MegaTex.cpp" />
@@ -269,7 +269,7 @@
     <ClInclude Include="src\gfx\GpuQuad3.h" />
     <ClInclude Include="src\gfx\GraphicsApi.h" />
     <ClInclude Include="src\gfx\GraphicsContext.h" />
-    <ClInclude Include="src\gfx\HappySky.h" />
+    <ClInclude Include="src\gfx\SkyBox.h" />
     <ClInclude Include="src\gfx\LightManager.h" />
     <ClInclude Include="src\gfx\LightNode.h" />
     <ClInclude Include="src\gfx\MegaTex.h" />

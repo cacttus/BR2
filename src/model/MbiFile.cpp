@@ -43,7 +43,7 @@ void MbiFile::postLoad() {
   //Compute Bone Boxes
   //Debug: we'll do this every time becasue FUCK!s
   BRLogInfo("  Making Bone Boxes..");
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  for (std::shared_ptr<WorldObjectSpec> ms : _vecModels) {
     ms->cacheMeshBones();
   }
 
@@ -82,7 +82,7 @@ bool MbiFile::loadAndParse(string_t file) {
   int32_t nModels;
   fb->readInt32(nModels);
   for (int32_t iModel = 0; iModel < nModels; ++iModel) {
-    std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>();
+    std::shared_ptr<WorldObjectSpec> ms = std::make_shared<WorldObjectSpec>();
     ms->deserialize(fb);
     _vecModels.push_back(ms);
 
@@ -112,7 +112,7 @@ bool MbiFile::loadAndParse(string_t file) {
   }
   //Resolve textures.
   BRLogInfo("  Resolving textures..");
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  for (std::shared_ptr<WorldObjectSpec> ms : _vecModels) {
     for (std::shared_ptr<MeshSpec> mesh : ms->getMeshes()) {
       if (mesh->getMaterial() != nullptr) {
         for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : mesh->getMaterial()->getTextureSlots()) {
@@ -170,13 +170,13 @@ void MbiFile::save(string_t file) {
 
   //models
   fb->writeInt32((int32_t)_vecModels.size());
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  for (std::shared_ptr<WorldObjectSpec> ms : _vecModels) {
     ms->serialize(fb);
   }
 
   //Collect textures
   std::map<Hash32, std::shared_ptr<Texture2DSpec>> texs;
-  for (std::shared_ptr<ModelSpec> ms : _vecModels) {
+  for (std::shared_ptr<WorldObjectSpec> ms : _vecModels) {
     for (std::shared_ptr<MeshSpec> mesh : ms->getMeshes()) {
       if (mesh->getMaterial() != nullptr) {
         for (std::pair<TextureChannel::e, std::shared_ptr<TextureSlot>> p : mesh->getMaterial()->getTextureSlots()) {

@@ -10,7 +10,8 @@
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
-class PhysicsWorldCreate {
+class PhysicsWorldStats {
+  //This should be a non-static implementation of BottleUtils
 public:
   float _fNodeWidth;
   float _fNodeHeight;
@@ -21,6 +22,7 @@ public:
   float _awarenessYInc;// awYInc,
     MpInt _mpNodesY;
   uint32_t _iGridCountLimit;
+  
 };
 /**
 *  @class PhysicsWorld
@@ -48,6 +50,8 @@ public:
   //virtual void drawForward();
   void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
 
+  ivec3 v3Toi3CellLocal(vec3& v);
+
   void collectVisibleNodes(BvhCollectionParams* collectionParams);
 
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();
@@ -58,7 +62,7 @@ public:
   ivec3 v3Toi3Node(vec3& v);
   vec3 i3tov3Node(const ivec3& iNode);
   std::shared_ptr<PhysicsGrid> getNodeAtPos(ivec3& pos);
-
+  std::shared_ptr<W25MeshMaker> getMeshMaker() { return _pMeshMaker; }
   bool unstick_objs(std::shared_ptr<PhysicsNode> objA, std::shared_ptr<PhysicsNode> objB, Box3f* in_bA, Box3f* in_bB);
 
   void refreshCache();
@@ -126,6 +130,18 @@ private:
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
   std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
+  std::shared_ptr<W25MeshMaker> _pMeshMaker=nullptr;
+  std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
+  std::shared_ptr<Material> _pWorldMaterial = nullptr;
+  std::shared_ptr<ShaderBase> _pTileShader = nullptr;
+  std::shared_ptr<ShaderBase> _pGridShader = nullptr;
+  std::shared_ptr<SkyBox> _pSkyBox = nullptr;
+  std::shared_ptr<Atlas> _pSkyAtlas = nullptr;
+  void makeAtlas();
+  void makeShaders();
+  void makeSky();
+  void convertMobs();
+  void createHandCursor();
 
   virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
     MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,

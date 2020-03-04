@@ -99,7 +99,6 @@ void World25::init(std::shared_ptr<ObFile> obFile) {
   _pGameFile = obFile;
   _pConfig = _pGameFile->getW25Config();
 
-
   //Shader
   BRLogInfo("World25 - Making Shaders");
   makeShaders();

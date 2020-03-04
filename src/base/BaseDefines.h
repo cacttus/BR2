@@ -10,9 +10,7 @@
 #include "../base/MachineTypes.h"
 
 namespace BR2 {
-//Operating System global defines
-//We can use either SDL's defines, or use the defines in the expected OS headers
-// BR2_OS_WINDOWS, BR2_OS_ANDROID, BRO_OS_LINUX, BR2_OS_IOS, BRO_OS_OSX
+
 #define MUST_OVERRIDE virtual
 #define SHADOWS
 
@@ -67,23 +65,8 @@ namespace BR2 {
 #define __byval_
 #endif
 
-//Note: this must remain a uint32_t, we serialize it as a uint32_t
-typedef uint32_t Hash32;
-typedef uint64_t NodeId;
-#define NO_NODE_ID (0)
+//////////////////////////////////////////////////////////////////////////
 
-////String
-//#ifdef USE_STD_STRING
-//typedef std::string string_t;
-//#else
-//#include "../base/StringWrapper.h"
-//#endif
-typedef std::wstring wstring_t;
-typedef std::string string_t;
-
-/************************************************************************/
-/* Enums                                                                */
-/************************************************************************/
 enum class FrameState { None, SyncBegin, Update, Render, SyncEnd };
 
 namespace ColorSpace { typedef enum { Linear, SRGB } e; }
@@ -104,9 +87,8 @@ namespace RenderSystem { typedef enum { OpenGL, Vulkan } e; }
 enum class LineBreak { Unix, DOS };
 //namespace LineBreak { typedef enum { Unix, DOS }e; }
 
-/************************************************************************/
-/* Forward Decl                                                         */
-/************************************************************************/
+//////////////////////////////////////////////////////////////////////////
+
 class SoundSpec;
 class SoundInst;
 class Sequence;
@@ -141,14 +123,11 @@ class FrameSync;
 class ProjectFile;
 class CSharpScript;
 class GraphicsWindow;
-
-
 class WindowManager;
 class CSharpScript;
 class CSharpCompiler;
 class Packet;
 class ApplicationPackage;
-//Classes that will be removed
 
 template < class Tx >
 class DynamicBuffer;
@@ -162,6 +141,7 @@ class HashMapItem;
 template < class Tx >
 class HashMap;
 
+//////////////////////////////////////////////////////////////////////////
 
 typedef uint64_t t_timeval;
 typedef string_t DiskLoc;
@@ -172,9 +152,22 @@ typedef std::vector<char> ByteBuffer;
 typedef GameMemory PureMemory;//Pure memory without a VPtr
 typedef PureMemory GpuMemory; //Pure memory without a VPtr
 
-/************************************************************************/
-/* Base Classes                                                         */
-/************************************************************************/
+//Note: this must remain a uint32_t, we serialize it as a uint32_t
+typedef uint32_t Hash32;
+typedef uint64_t NodeId;
+#define NO_NODE_ID (0)
+
+////String
+//#ifdef USE_STD_STRING
+//typedef std::string string_t;
+//#else
+//#include "../base/StringWrapper.h"
+//#endif
+typedef std::wstring wstring_t;
+typedef std::string string_t;
+
+//////////////////////////////////////////////////////////////////////////
+
 class GameMemory : DOES_NOT_INHERIT {
 public:
   NOT_VIRTUAL ~GameMemory() DOES_NOT_OVERRIDE {} // Upon tests - this also will get called when the class is deleted.

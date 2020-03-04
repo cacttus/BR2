@@ -195,7 +195,7 @@ WorldCell* BlockNode::makeCell(int xx, int yy, int zz, WorldCellFile* pFile,
     pRet = new WorldCell(xx, yy, zz, this, pd->_iSolid, pd->_iLiquid);
   }
   else {
-    BroThrowNotImplementedException();
+    BRThrowNotImplementedException();
   }
 
   for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {

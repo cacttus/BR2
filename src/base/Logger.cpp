@@ -174,6 +174,8 @@ void Logger::init(string_t cache) {
       while (true) {
         li->processLogs_Async();
         if (li->_kill) {
+          //Try to get the remaining "crash" logs if we crashed
+          li->processLogs_Async();
           break;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -185,7 +187,13 @@ void Logger::init(string_t cache) {
   }
 
   //*Note: do not call the #define shortcuts here.
-  logInfo(Stz(_pint->_bAsync ? "Async " : "") + "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
+  if (_pint->_bAsync) {
+    logInfo(Stz "*Async* Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
+    logInfo(Stz "  Note, async Logging may lose logs during crashes, to disable async logging run " + Gu::getPackage()->getAppName() + " with the command line flag log_async=false");
+  }
+  else {
+    logInfo("Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
+  }
 }
 string_t Logger::getLogPath() { return _pint->_logDir; }
 void Logger::logDebug(const char* msg) {

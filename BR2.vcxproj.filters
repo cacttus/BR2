@@ -183,9 +183,6 @@
     <ClCompile Include="src\gfx\GraphicsContext.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\HappySky.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\gfx\LightManager.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
@@ -510,6 +507,9 @@
     <ClCompile Include="src\world\WorldCell.cpp">
       <Filter>world</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\SkyBox.cpp">
+      <Filter>gfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -717,9 +717,6 @@
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\GraphicsContext.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gfx\HappySky.h">
       <Filter>gfx</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\LightManager.h">
@@ -1129,6 +1126,9 @@
     </ClInclude>
     <ClInclude Include="src\world\WorldCell.h">
       <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\SkyBox.h">
+      <Filter>gfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

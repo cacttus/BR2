@@ -1,5 +1,16 @@
 
 # Mine City Devlog
+
+*3/3/20*
+
+* Round 2 of Bottle migration
+	* Renamed ModelNode -> SceneNode for the combination of SceneNode and Model
+	* Renamed ModelSpec -> SceneNodeSpec
+		* Model node wasn't a needed structure, now we have a reason to have it.
+		* TODO: make Armature, and mesh Components of the WorldObject
+		* TODO: Remove WorldObj typedef.  This is a shortcut for the integraiton.
+* We need to do away with the spec system, it adds extra overhead like simple node copying or bound box computation.
+
 *3/2/20*
 
 * Implemented async logging.

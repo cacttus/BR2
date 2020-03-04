@@ -62,7 +62,7 @@ protected:
   void setParentType(ParentType::e pt) { _eParentType = pt; }
 };
 /**
-*    @class BaseNode
+*    @class SceneNode
 *    @brief The base of the node system.
 */
 class SceneNode : public TreeNode {
@@ -96,6 +96,9 @@ public:
   virtual void drawUI(RenderParams& rp) override {}
   
   void addComponent(std::shared_ptr<Component> comp);
+
+  std::shared_ptr<SceneNode> clone();
+  void copy(std::shared_ptr<SceneNode> other);
 
   template < typename Tx > std::shared_ptr<Tx> getData() {
     return std::dynamic_pointer_cast<Tx>(_pSpec);

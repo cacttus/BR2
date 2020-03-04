@@ -18,7 +18,7 @@ ModelCache::ModelCache(std::shared_ptr<GLContext> pc) : _pContext(pc) {
     //default material is the initial blender params.
 }
 ModelCache::~ModelCache() {
-    std::map<Hash32, std::shared_ptr<ModelSpec>>::iterator it = _mapModels.begin();
+    std::map<Hash32, std::shared_ptr<WorldObjectSpec>>::iterator it = _mapModels.begin();
     /*for (; it != _mapModels.end(); it++) {
         std::shared_ptr<ModelSpec> ms = it->second;
         DEL_MEM(ms);
@@ -31,10 +31,10 @@ ModelCache::~ModelCache() {
     //}
 }
 ///////////////////////////////////////////////////////////////////
-void ModelCache::addSpec(std::shared_ptr<ModelSpec> ms) {
+void ModelCache::addSpec(std::shared_ptr<WorldObjectSpec> ms) {
     Hash32 h = ms->getNameHashed();
 
-    std::map<Hash32, std::shared_ptr<ModelSpec>>::iterator it = _mapModels.find(h);
+    std::map<Hash32, std::shared_ptr<WorldObjectSpec>>::iterator it = _mapModels.find(h);
     if (it == _mapModels.end()) {
         _mapModels.insert(std::make_pair(h, ms));
     }
@@ -42,11 +42,11 @@ void ModelCache::addSpec(std::shared_ptr<ModelSpec> ms) {
         BRLogError("Tried to add duplicate model name '" + ms->getName() + "'");
     }
 }
-std::shared_ptr<ModelSpec> ModelCache::getModelByName(string_t name) {
+std::shared_ptr<WorldObjectSpec> ModelCache::getModelByName(string_t name) {
     Hash32 h = STRHASH(name);
     return getModelByName(h);
 }
-std::shared_ptr<ModelSpec> ModelCache::getModelByName(Hash32 hash) {
+std::shared_ptr<WorldObjectSpec> ModelCache::getModelByName(Hash32 hash) {
     auto it = _mapModels.find(hash);
     if (it != _mapModels.end()) {
         return it->second;
@@ -108,9 +108,9 @@ string_t ModelCache::getFilePathForMobName(string_t mobName, bool bUseBinary) {
 
     return filename;
 }
-std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(string_t mobName, bool bUseBinary) {
+std::shared_ptr<WorldObjectSpec> ModelCache::getOrLoadModel(string_t mobName, bool bUseBinary) {
 
-    std::shared_ptr<ModelSpec> ms = getModelByName(STRHASH(mobName));
+    std::shared_ptr<WorldObjectSpec> ms = getModelByName(STRHASH(mobName));
     if (ms == nullptr) {
         string_t filename = getFilePathForMobName(mobName, bUseBinary);
         if (FileSystem::fileExists(filename) == false) {
@@ -146,7 +146,7 @@ std::shared_ptr<ModelSpec> ModelCache::getOrLoadModel(string_t mobName, bool bUs
 string_t ModelCache::debugPrintAllModelNames() {
     string_t strOut = ("Loaded:\n");
 
-    for (std::pair<Hash32, std::shared_ptr<ModelSpec>> p : _mapModels) {
+    for (std::pair<Hash32, std::shared_ptr<WorldObjectSpec>> p : _mapModels) {
         strOut += Stz "   " + p.second->getName()+ "\n";
     }
     strOut += ("In Dir:\n");
@@ -193,14 +193,14 @@ void ModelCache::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::st
         BRLogInfo("Convert: Loading MOB " + strMobName);
         MobFile mf;
         mf.loadAndParse(filepathText);
-        for (std::shared_ptr<ModelSpec> ms : mf.getModelSpecs()) {
+        for (std::shared_ptr<WorldObjectSpec> ms : mf.getModelSpecs()) {
             ms->postMobConversion();
             ms->setFriendlyName(strFriendlyName);
         }
 
         BRLogInfo("Convert: Saving MOB " + strMobName);
         MbiFile mb;
-        for (std::shared_ptr<ModelSpec> ms : mf.getModelSpecs()) {
+        for (std::shared_ptr<WorldObjectSpec> ms : mf.getModelSpecs()) {
             mb.getModelSpecs().push_back(ms);
         }
         mb.save(filepathBin);
@@ -208,7 +208,7 @@ void ModelCache::convertMobToBin(string_t strMobName, bool bOnlyIfNewer, std::st
     }
 }
 void ModelCache::unloadModel(string_t strMobName, bool bErrorIfFailed) {
-    std::map<Hash32, std::shared_ptr<ModelSpec>>::iterator it = _mapModels.find(STRHASH(strMobName));
+    std::map<Hash32, std::shared_ptr<WorldObjectSpec>>::iterator it = _mapModels.find(STRHASH(strMobName));
 
     if (it == _mapModels.end()) {
         if(bErrorIfFailed)

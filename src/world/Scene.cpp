@@ -50,7 +50,7 @@ Scene::~Scene() {
 void Scene::init() {
   BRLogInfo("Making PhysicsWorld");
 
-  std::shared_ptr<PhysicsWorldCreate> c;
+  std::shared_ptr<PhysicsWorldStats> c;
 
 
   _pPhysicsWorld = PhysicsWorld::create(getThis<Scene>(),

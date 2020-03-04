@@ -187,7 +187,7 @@ void MeshSpec::printWeightBuffersToStdout() {
   //}
 
 }
-void MeshSpec::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
+void MeshSpec::allocSkinMobFile(std::shared_ptr<WorldObjectSpec> ms) {
   if (false) {
     printWeightsToStdout();
   }
@@ -557,7 +557,7 @@ void MeshSpec::calculateVertexNormals() {
 //        _pMaterial->addTextureBinding(tmn, TextureChannel::e::Channel1);
 //    }
 //}
-void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
+void MeshSpec::fillWeightBuffersMob(std::shared_ptr<WorldObjectSpec> ms) {
 
   // Debug values
   int32_t minOrd = 100000;
@@ -722,7 +722,7 @@ void MeshSpec::fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms) {
   //**We no longer need _vecWeights;
  // _vecWeightsMob.resize(0);
 }
-int32_t MeshSpec::getGpuJointOrdinal(std::shared_ptr<ModelSpec> ms, int32_t arm, int32_t joint) {
+int32_t MeshSpec::getGpuJointOrdinal(std::shared_ptr<WorldObjectSpec> ms, int32_t arm, int32_t joint) {
   //**This must corespond to ArmatureNode : _vecNodesOrdered
   //Because we allow multiple armatures now we have to sort our buffers by [Arm1, [bone,bone]... Arm2 [bone, bone]..]
 
@@ -742,7 +742,7 @@ int32_t MeshSpec::getGpuJointOrdinal(std::shared_ptr<ModelSpec> ms, int32_t arm,
   return -1;//Not Found
 }
 
-void MeshSpec::testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
+void MeshSpec::testAccess(std::shared_ptr<WorldObjectSpec> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
   GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights) {
   if (_eSkinStatus != MeshSkinStatus::e::Uninitialized) {
     return;

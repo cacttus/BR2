@@ -18,9 +18,7 @@
 namespace Game {
 /**
 *    @class World25d
-*    @brief
-*
-*    Makes no sense for Widget to inherit from Node3Base  But whatever.
+*    @brief deleting this.
 */
 class World25 : public PhysicsWorld {
 public:

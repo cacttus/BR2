@@ -187,7 +187,7 @@ bool SceneNode::isLightNode() {
   return getThis<LightNodeBase>() != nullptr;
 }
 bool SceneNode::isModelNode() {
-  return getThis<ModelNode>() != nullptr;
+  return getThis<WorldObject>() != nullptr;
 }
 void SceneNode::setLocalBind() {
   //Node3base* pParent = SafeCast(getParent(), Node3base*);
@@ -494,5 +494,12 @@ std::shared_ptr<Scene> SceneNode::getScene() {
   std::shared_ptr<Scene> x = findParent<Scene>();
   return x;
 }
+std::shared_ptr<SceneNode> SceneNode::clone() {
+
+}
+void SceneNode::copy(std::shared_ptr<SceneNode> other) {
+
+}
+
 
 }//ns Game

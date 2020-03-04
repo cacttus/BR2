@@ -16,7 +16,7 @@ namespace BR2 {
 */
 class ModelThumb : public VirtualMemory {
 public:
-    static std::shared_ptr<Img32> genThumb(std::shared_ptr<ModelSpec> mod, int32_t iThumbSize);
+    static std::shared_ptr<Img32> genThumb(std::shared_ptr<WorldObjectSpec> mod, int32_t iThumbSize);
 };
 
 }//ns Game

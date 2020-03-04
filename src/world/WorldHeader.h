@@ -13,44 +13,8 @@ namespace BR2 {
 #define PHY_MIN_VEL_LEN_2 (0.00003f)
 #define PHY_DELTA_P_LEN_2 (0.000003f)
 #define PHY_COLLIDE_PADDING_EPSILON (0.0003f)
-//Do not change order
-namespace PhysicsGridSide { typedef enum { gL, gR, gB, gT, gA, gF, gC } e; }
-namespace PhysicsShapeType { typedef enum { None, Hull, Sphere, AABox } e; }
-
-class BoxCollision;
-class PhysicsNode;
-class CheckedSet;
-class StuckPair;
-class GridManifold;
-class NodeManifold;
-class PhysicsGrid;
-class PhysicsWorld;
-class PhysicsGridAwareness;
-class PhysicsShape;
-class SphereShape;
-class HullShape;
-class RenderBucket;
-class BvhCollectionParams;
-class RenderBucket;
-class Scene;
-class Component;
-
-
-//////////////////////////////////////////////////////////////////////////
-// Added from BottleHeader - TODO organize this code into the WorldHeader
-
-//typedef uint32_t World25GridId;
-//We store materials in the hash32
-//typedef Hash32 WorldCellSize;
-//typedef uint64_t PixObjId;
-//#define W25_NO_OBJECT_ID 0
-//Serialized Types.
-typedef uint8_t TileId8;
-typedef v_v3i2n3 W25MeshVert;
-
 //*Note; if updating this make sure to update the vertex shader v3c3x2_tileshader uniform buffer _ufGpuSprites.
 #define W25_MAX_GPU_SPRITES 128
-
 #define NO_CELL_SPRITE 0
 //Conga File version
 //0x50534404 - positions were grid based
@@ -58,8 +22,17 @@ typedef v_v3i2n3 W25MeshVert;
 #define CONGA_GRID_FILE_VERSION 0x5044000A   /*5044xxxx  xxxx = 0000,0001,.. = 0.0, 0.1, etc*/
 //version of the sprites.dat file for holding sprite 
 #define CONGA_SPRITE_FILE_VERSION "0.02"
-
 #define PIX_OBJ_TYPE_INVALID 0
+#define W25GEOM_EMPTY 0
+#define W25TILE_EMPTY 0
+#define W25GEOM_SOLID 0xFF
+
+//////////////////////////////////////////////////////////////////////////
+
+//Do not change order
+namespace PhysicsGridSide { typedef enum { gL, gR, gB, gT, gA, gF, gC } e; }
+namespace PhysicsShapeType { typedef enum { None, Hull, Sphere, AABox } e; }
+
 namespace GridShow { typedef enum { None, Top, TopSideBot } e; }
 namespace BR2Mode { typedef enum { Play, WorldSelect } e; }
 namespace DrawType { typedef enum { Sprite, Box5, Mesh, Model, MaxDrawTypes } e; }
@@ -94,39 +67,6 @@ typedef enum { Left, Right, Bottom, Top, Back, Front, CrossA, CrossB, CrossC, Cr
 namespace W25SidePlace {
 typedef enum { Top, Bot, Side, Cross, Count } e;
 };
-//W25Geom - The geom is 8 bits corresponding to 8 corners of a cube.
-//These determine the configuration.  All corners that are '1' are solid, inside the world.
-//Each World Block has 2 geoms, 1 for opaque, 1 for transparent
-//Corners that are '0' are empty or reside on the surface.
-//Ordering (LHS): 0 = x=0y=0z=0 
-//                1 = x=1y=0z=0
-//                2 = x=0y=1z=0
-//                3 = x=1y=1z=0
-//                4 = x=0y=0z=1
-//                5 = x=1y=0z=1
-//                6 = x=0y=1z=1
-//                7 = x=1y=1z=1
-//Cube Side Order: left, Right, bottom, top, back front (-x, +x, -y +y, -z +z)
-typedef uint8_t W25Geom;
-typedef uint8_t W25Tile;
-#define W25GEOM_EMPTY 0
-#define W25TILE_EMPTY 0
-#define W25GEOM_SOLID 0xFF
-
-static bool w25_get(W25Geom g, int i) {
-  return (g & (1 << i)) != 0;
-}
-static void w25_set(W25Geom& g, int i) {
-  //  if(b) {
-  g = g | (1 << i);
-  //  }
-  //  else {
-  //      g = g & ~(1 << i);
-  //  }
-}
-static void w25_clr(W25Geom& g, int i) {
-  g = g & ~(1 << i);
-}
 // Texture configuration
 namespace W25Sc {
 typedef enum {
@@ -151,7 +91,7 @@ typedef enum {
 }e;
 }
 
-typedef Hash32 PixObjType;
+//////////////////////////////////////////////////////////////////////////
 
 //#define PHY_STATIC_MASS (-1.0f);
 
@@ -174,7 +114,7 @@ class SpriteSpec;
 //class World25Light    ;
 //class World25LightData;
 class GodCam;
-//class WorldObject;
+class WorldObject;
 class Goal25;
 class Brain25;
 class Goal25MoveTo;
@@ -202,16 +142,63 @@ class MorphTile;
 class ClimateParams;
 class LairTile;
 class LairWalker;
-class World25;
+//class World25;
 class SnakeMaker;
 class Walker;
 class WorldEditor;
 class W25GridMesh;
 //typedef Hash32 LairId;
-class WorldObj;
+//class WorldObj;
 class WorldEditState;
 class GameUi;
 class GameFile;
+class BoxCollision;
+class PhysicsNode;
+class CheckedSet;
+class StuckPair;
+class GridManifold;
+class NodeManifold;
+class PhysicsGrid;
+class PhysicsWorld;
+class PhysicsGridAwareness;
+class PhysicsShape;
+class SphereShape;
+class HullShape;
+class RenderBucket;
+class BvhCollectionParams;
+class RenderBucket;
+class Scene;
+class Component;
+
+//////////////////////////////////////////////////////////////////////////
+
+typedef Hash32 PixObjType;
+typedef  WorldObject WorldObj;
+typedef uint8_t W25Geom;
+typedef uint8_t W25Tile;
+typedef uint8_t TileId8;
+typedef v_v3i2n3 W25MeshVert;
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
+static bool w25_get(W25Geom g, int i) {
+  return (g & (1 << i)) != 0;
+}
+static void w25_set(W25Geom& g, int i) {
+  //  if(b) {
+  g = g | (1 << i);
+  //  }
+  //  else {
+  //      g = g & ~(1 << i);
+  //  }
+}
+static void w25_clr(W25Geom& g, int i) {
+  g = g & ~(1 << i);
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 class World25Plane : public Plane3f {
   vec3 _u, _v;
@@ -320,13 +307,6 @@ class BlockInfo {
   vec3 _pick_n;//Normal to picked surface
   vec3 _pick_pt;//origin
 };
-
-
-//////////////////////////////////////////////////////////////////////////
-
-
-
-
 
 class BoxCollision : public VirtualMemory {
 public:

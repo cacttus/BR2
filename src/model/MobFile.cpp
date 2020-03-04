@@ -81,7 +81,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
   _vecModelSpecs.clear();
   for (std::shared_ptr<ModDataLoad> mdd : _setModData) {
     //Create Model Spec
-    std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>(mdd->_strModName, mdd->_iFrameRate);
+    std::shared_ptr<WorldObjectSpec> ms = std::make_shared<WorldObjectSpec>(mdd->_strModName, mdd->_iFrameRate);
     _vecModelSpecs.push_back(ms);
     Gu::getModelCache()->addSpec(ms);
 

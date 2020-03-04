@@ -18,10 +18,10 @@ namespace BR2 {
 */
 class MeshNode : public SceneNode {
 public:
-  static std::shared_ptr<MeshNode> create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
+  static std::shared_ptr<MeshNode> create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<WorldObject> mn);
   static std::shared_ptr<MeshNode> create(std::shared_ptr<MeshSpec> pd);
 
-  MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
+  MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<WorldObject> mn);
   MeshNode(std::shared_ptr<MeshSpec> pd);
   virtual ~MeshNode() override;
 
@@ -44,7 +44,7 @@ public:
 
 protected:
   uint32_t _iPickId = PICK_ID_NOT_SET; //Pick Id must be separate from NodeId because non-node things can be picked.
-  std::shared_ptr<ModelNode> _pModelNode = nullptr;
+  std::shared_ptr<WorldObject> _pModelNode = nullptr;
   std::shared_ptr<Material> _pMaterial = nullptr;
   std::shared_ptr<ShaderStorageBuffer> _pArmJoints = nullptr; //Skin 12/9/2017
   std::vector<std::shared_ptr<BoneNode>> _vecBoneNodesOrdered;//Bone nodes ordered by, for each armature, Armature ID, then Bone ID 
