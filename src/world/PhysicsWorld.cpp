@@ -75,6 +75,12 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   _pWorldBox->_min = _pWorldBox->_max = vec3(0, 0, 0);
   _pRenderBucket = std::make_shared<RenderBucket>();
 
+  _pWorld25Plane = std::make_shared<World25Plane>();
+  _pWorld25Plane->n = vec3(0, 1, 0);
+  _pWorld25Plane->d = 0;
+  _pWorld25Plane->getBasisU() = vec3(1, 0, 0);
+  _pWorld25Plane->getBasisV() = vec3(0, 0, 1);
+
   //Scene has GameFile on it
  // _pConfig = getScene()->getGameFile()->getW25Config();
 
@@ -94,8 +100,7 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   _pMeshMaker = std::make_shared<W25MeshMaker>(_pWorldAtlas);//Must come before grid
   _pMeshMaker->init();
 
-  BRLogInfo("PhysidsWorld - Making Dungeons");
-  _pWorldMaker = std::make_shared<WorldMaker>(getThis<PhysicsWorld>(), getScene()->getGameFile()->getBucket(), getScene()->getGameFile()->getLairSpecs(), getScene()->getGameFile()->getWalkerSpecs());
+
   //
   //  t_timeval _tvInitTime = Gu::getMicroSeconds();
   //
@@ -103,14 +108,22 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   makeSky();
   //
   //  //*Make the first grid for the player's pos.
-  BRLogInfo("PhysidsWorld - Initializing");
+  //BRLogInfo("PhysidsWorld - Initializing");
   //initializeWorldGrid(); //appears unused
 
+  BRLogInfo("Converting Mobs");
   convertMobs();
 
+  BRLogInfo("Creating Objects");
   createHandCursor();
 
   Gu::checkErrorsRt();
+}
+void PhysicsWorld::createNewWorld() {
+  //This is called by woreldmaker.. not sure how we'll handle this.
+  //Probably clear all globs and all waiting.
+  //Delete all items from Scene
+  BRThrowNotImplementedException();
 }
 void PhysicsWorld::makeAtlas() {
 #define MA_P(x) getRoom()->makeAssetPath(x)
@@ -161,9 +174,12 @@ void PhysicsWorld::makeSky() {
   _pSkyBox->init(_pSkyAtlas, 400, true);
 }
 void PhysicsWorld::convertMobs() {
-  for (std::shared_ptr<WorldObj> ws : getScene()->getGameFile()->getMobSpecs()) {
+  for (std::shared_ptr<WorldObjectSpec> ws : getScene()->getGameFile()->getMobSpecs()) {
     Gu::getModelCache()->convertMobToBin(ws->getMobName(), true, ws->getFriendlyName());
   }
+}
+std::shared_ptr<W25Config> PhysicsWorld::getConfig() {
+  return getScene()->getGameFile()->getW25Config();
 }
 void PhysicsWorld::createHandCursor() {
   std::shared_ptr<WorldObjectSpec> ms;
@@ -183,8 +199,8 @@ void PhysicsWorld::createHandCursor() {
   */
   //makeObj("cuddles_01b", vec3(-6, 0, 6), vec3(0.6f, 0.6f, 0.6f), "cuddles_01b.Idle");
 
+  getScene()->createObj("skeledug", vec3(BottleUtils::getCellWidth(), BottleUtils::getCellHeight() * 8, BottleUtils::getCellWidth()));
 
-  makeObj("skeledug", vec3(BottleUtils::getCellWidth(), BottleUtils::getCellHeight() * 8, BottleUtils::getCellWidth()));
   //   makeObj("grave_0", vec3(-10, 0, -10), vec3(1.2f, 1.2f, 1.2f), vec4(0, 1, 0, 0), "");
   //   wo = makeObj("chest_0", vec3(10, 0, -10), vec3(0.8f, 0.8f, 0.8f), vec4(0, 1, 0, 0), "");
   //   //*Chest "open" animation.
@@ -201,7 +217,7 @@ void PhysicsWorld::createHandCursor() {
 
   //    wo = makeObj("Tall_Lamp", vec3(0, 0, 0), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "");
    // if (wo != nullptr) {
-  std::shared_ptr<LightNodePoint> lp = makePointLight(vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
+  std::shared_ptr<LightNodePoint> lp = getScene()->createPointLight(vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
   //     wo->attachChild(lp);
       // turnOffLamp();//Default turn if otf
 //   }
@@ -216,10 +232,8 @@ void PhysicsWorld::createHandCursor() {
    // makeObj("appletree", vec3(-15, 0, -15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
    // makeObj("appletree", vec3(15, 0, -15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
   // makeObj("box_norm", vec3(3, 1, -3), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "box_norm.Rotate");
-  makeObj("box_glass", vec3(0, BottleUtils::getCellHeight() * 8, 0));
+  getScene()->createObj("box_glass", vec3(0, BottleUtils::getCellHeight() * 8, 0));
 }
-
-
 void PhysicsWorld::getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ p1, bool bLimitByWorldBox) {
   //CreateCellsForVolume.
   *p0 = v3Toi3Node(c->_min);
@@ -252,8 +266,8 @@ ivec3 PhysicsWorld::v3Toi3Node(vec3& v) {
   return v3Toi3Any(v, 1.0f / _fNodeWidth, 1.0f / _fNodeHeight);
 }
 ivec3 PhysicsWorld::v3Toi3CellLocal(vec3& v) {
-  ivec3 v = v3Toi3Any(v, BottleUtils::getCellWidth_1(), BottleUtils::getCellHeight_1());
-  return v;
+  ivec3 vr = v3Toi3Any(v, BottleUtils::getCellWidth_1(), BottleUtils::getCellHeight_1());
+  return vr;
 }
 ivec3 PhysicsWorld::v3Toi3Any(vec3& v, float w1, float h1) {
   ivec3 ret;
@@ -308,6 +322,46 @@ void PhysicsWorld::debugMakeSureNoDupes(const ivec3& vv) {
     }
   }
 
+}
+void PhysicsWorld::loadWorld() {
+  if (_bAsyncGen == false) {
+    t_timeval tv;
+    std::set<std::shared_ptr<WorldGrid>> grids;
+
+    BRLogInfo("Loading..");
+    tv = Gu::getMicroSeconds();
+    {
+      _pWorldMaker->loadAllGrids(grids);
+    }
+    BRLogInfo(".." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
+    BRLogInfo("Generating " + grids.size() + " grids..");
+    tv = Gu::getMicroSeconds();
+    {
+      BRLogInfo("Add..");
+      for (std::shared_ptr<WorldGrid> pg : grids) {
+        addGrid(pg, pg->getGridPos());
+        // pg->linkGrids();
+      }
+      BRLogInfo("Stage 1..");
+      for (std::shared_ptr<WorldGrid> pg : grids) {
+        pg->generateStage1Sync();
+      }
+      BRLogInfo("Post 1..");
+      for (std::shared_ptr<WorldGrid> pg : grids) {
+        pg->postGenerateStage1();
+      }
+      BRLogInfo("Stage 2..");
+      for (std::shared_ptr<WorldGrid> pg : grids) {
+        pg->generateStage2Sync();
+      }
+      BRLogInfo("Post 2..");
+      for (std::shared_ptr<WorldGrid> pg : grids) {
+        pg->postGenerateStage2();
+        Gu::print(pg->getGenProfileString());
+      }
+    }
+    BRLogInfo(grids.size() + " grids.." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
+  }
 }
 void PhysicsWorld::unloadWorld() {
   for (ivec3* iv : _setEmpty) {

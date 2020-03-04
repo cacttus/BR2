@@ -12,6 +12,8 @@
 
 namespace BR2 {
 LightManager::LightManager(std::shared_ptr<Scene> pScene) {
+  BRLogInfo("Creating LightManager");
+
   _pScene = pScene;
   _pGpuDeferredParams = std::make_shared<GpuDeferredParams>();
 

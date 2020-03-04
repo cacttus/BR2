@@ -32,7 +32,7 @@ namespace BR2 {
 //Do not change order
 namespace PhysicsGridSide { typedef enum { gL, gR, gB, gT, gA, gF, gC } e; }
 namespace PhysicsShapeType { typedef enum { None, Hull, Sphere, AABox } e; }
-
+enum class GameMode { Play, WorldSelect };
 namespace GridShow { typedef enum { None, Top, TopSideBot } e; }
 namespace BR2Mode { typedef enum { Play, WorldSelect } e; }
 namespace DrawType { typedef enum { Sprite, Box5, Mesh, Model, MaxDrawTypes } e; }

@@ -21,8 +21,9 @@
 #include "../world/W25Config.h"
 
 namespace BR2 {
-ObFile::ObFile() {
+ObFile::ObFile(std::shared_ptr<Scene> ps) {
   _pBucket = std::make_shared<SpriteBucket>();
+  _pScene = ps;
 }
 ObFile::~ObFile() {
 }
@@ -141,13 +142,13 @@ void ObFile::parseMobs(std::vector<string_t>& tokens) {
     string_t friendlyName = getCleanToken(tokens, iind);
 
     //Find Duplicate
-    for (std::shared_ptr<WorldObj> ws : _vecWorldObjs) {
+    for (std::shared_ptr<WorldObjectSpec> ws : _vecWorldObjs) {
       if (StringUtil::equalsi(ws->getMobName(), mobFolder)) {
         parseErr(Stz "Duplicate mob file found in game config " + mobFolder, true, true);
       }
     }
 
-    std::shared_ptr<WorldObj> pObj = WorldObj::create(mobFolder, typeID, friendlyName, strBox, strPlace);
+    std::shared_ptr<WorldObjectSpec> pObj = WorldObjectSpec::create(mobFolder, typeID, friendlyName, strBox, strPlace);
     _vecWorldObjs.push_back(pObj);
 
   }

@@ -6,6 +6,7 @@
 #include "../base/GLContext.h"
 #include "../base/ApplicationPackage.h"
 #include "../math/Algorithm.h"
+#include "../math/Box3x.h"
 #include "../gfx/Texture2DSpec.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
@@ -22,6 +23,7 @@
 #include "../model/UtilMeshInline.h"
 #include "../model/FragmentBufferData.h"
 #include "../model/OBB.h"
+#include "../world/BottleUtils.h"
 
 namespace BR2 {
 #pragma region KeyFrame
@@ -658,8 +660,6 @@ void ArmatureNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
 #pragma endregion
 
 #pragma region WorldObjectSpec
-//This will become SceneNodeSpec
-
 WorldObjectSpec::WorldObjectSpec(string_t name, int32_t frameRate) : PhysicsSpec(name), _iFrameRate(frameRate) {
   //_iNameHash = STRHASH(name);
 }
@@ -679,6 +679,16 @@ WorldObjectSpec::~WorldObjectSpec() {
   _mapArmaturesOrdered.clear();
   //_vecMeshes.clear();
   //_vecArmatures.clear();
+}
+
+std::shared_ptr<WorldObjectSpec> WorldObjectSpec::create(std::string mobFolder, uint32_t typeID, std::string friendlyName, std::string strBox, std::string strPlace) {
+  std::shared_ptr<WorldObjectSpec> ob = std::make_shared<WorldObjectSpec>();
+  ob->_iTypeId = typeID;
+  ob->_strMobName = mobFolder;
+  ob->_placeOptions = WorldObjectSpec::parsePlacementOptions(strPlace);
+  ob->_vBoxFit = WorldObjectSpec::parseBoxFit(strBox);
+
+  return ob;
 }
 void WorldObjectSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   BRLogInfo("Reading Model..");
@@ -810,6 +820,7 @@ std::shared_ptr<BoneSpec> WorldObjectSpec::getBoneByArmJointOffset(int32_t ijo) 
   }
   return nullptr;
 }
+
 //
 //
 //std::shared_ptr<WorldObjectSpec> WorldObject::getOrLoadModel() {
@@ -819,198 +830,11 @@ std::shared_ptr<BoneSpec> WorldObjectSpec::getBoneByArmJointOffset(int32_t ijo) 
 //  }
 //  return _pModelSpec;
 //}
-vec3 WorldObjectSpec::boxFit(vec3& vBoxFit) {
-  //Perform the "box fit" routine.
-  //Returns a scale that we apply to the model.
-  vec3 vR3siz;
-  vR3siz.x = getBoundBoxObject()->getWidth();
-  vR3siz.y = getBoundBoxObject()->getHeight();
-  vR3siz.z = getBoundBoxObject()->getDepth();
-  vec3 vBf;
-  vBf.x = (vBoxFit.x < 0) ? (1.0f) : ((float)vBoxFit.x);
-  vBf.y = (vBoxFit.y < 0) ? (1.0f) : ((float)vBoxFit.y);
-  vBf.z = (vBoxFit.z < 0) ? (1.0f) : ((float)vBoxFit.z);
-  vec3 vGSiz;
-  //These should become getScene()->getPhysicsWorld()->parameters()->getCellWidth() 3/3/20
-  vGSiz.x = vBf.x * BottleUtils::getCellWidth();
-  vGSiz.y = vBf.y * BottleUtils::getCellHeight();//I'm not sure if we should use "height"
-  vGSiz.z = vBf.z * BottleUtils::getCellWidth();
 
-  vec3 vScale = vGSiz / vR3siz;
-
-  return vScale;
-}
-vec3 WorldObjectSpec::parseBoxFit(std::string strBox) {
-  // prase the box fit
-  vec3 vBoxFit(-1, -1, -1);
-  float tmp = 0;
-  bool err = false;
-  std::vector<std::string> s = StringUtil::split(strBox, std::vector<char>{','});
-  if (s.size() != 3) {
-    err = true;
-  }
-  else {
-    for (int i = 0; i < 3; ++i) {
-      s[i] = StringUtil::trim(s[i]);
-    }
-    if (!StringUtil::equalsi(s[0], "x")) {
-      if (TypeConv::strToFloat(s[0], tmp)) {
-        vBoxFit.x = tmp;
-      }
-      else {
-        err = true;
-      }
-    }
-    if (!StringUtil::equalsi(s[1], "x")) {
-      if (TypeConv::strToFloat(s[2], tmp)) {
-        vBoxFit.y = tmp;
-      }
-      else {
-        err = true;
-      }
-    }
-    if (!StringUtil::equalsi(s[2], "x")) {
-      if (TypeConv::strToFloat(s[2], tmp)) {
-        vBoxFit.z = tmp;
-      }
-      else {
-        err = true;
-      }
-    }
-  }
-
-  if (err) {
-    BRLogError("Failed to parse boxfit" + strBox);
-    Gu::debugBreak();
-  }
-  return vBoxFit;
-}
-std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> WorldObj::parsePlacementOptions(std::string strPlace) {
-  //Muckass parse routine, but whatever
-  std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> options;
-  PlaceMode::e eMode = PlaceMode::e::None;
-  std::vector<std::string> sPlace = StringUtil::split(strPlace, std::vector<char>{','});
-  W25SidePlace::e place = W25SidePlace::e::Top;
-
-  //s0-3, e0-3, v0-3, c
-  for (std::string s : sPlace) {
-    bool bValid = true;
-
-    s = StringUtil::trim(s);
-    if (s.length() > 0) {
-      if (s[0] == 'n') { eMode = PlaceMode::e::None; }
-      else if (s[0] == 'o') { eMode = PlaceMode::e::Orient; }
-
-      else if (s[0] == 'T') { place = W25SidePlace::e::Top; }
-      else if (s[0] == 'B') { place = W25SidePlace::e::Bot; }
-      else if (s[0] == 'S') { place = W25SidePlace::e::Side; }
-      else if (s[0] == 'X') { place = W25SidePlace::e::Cross; }
-
-      else if (s[0] == 's') {
-        //0-3, sub-squares
-      }
-      else if (s[0] == 'e') {
-        //0-3, 4 edge verts (along edges, vetex is on center)
-      }
-      else if (s[0] == 'c') {
-        //center of tile
-      }
-      else if (s[0] == 'v') {
-        //corners 0-3
-      }
-      ////Look for ranges in the form like 'v0-v10'
-      //std::string range = s.substr(1);//remove 'v' or 's'
-      //std::string si0 = "", si1 = "";
-      //size_t ioff = range.find('-');
-      //if (ioff != std::string::npos) {
-      //    si0 = range.substr(0, ioff);
-      //    si1 = range.substr(ioff + 1, range.length() - ioff - 1);
-      //}
-      //else {
-      //    si0 = range;
-      //}
-      ////Convert index range
-      //int32_t i0 = -1, i1 = -1;
-      //if (si0 != "") {
-      //    if (TypeConv::strToInt(si0, i0) == false) {
-      //        bValid = false;
-      //    }
-      //}
-      //if (si1 != "") {
-      //    if (TypeConv::strToInt(si1, i1) == false) {
-      //        bValid = false;
-      //    }
-      //}
-      ////Add 26 to the placement option if we're a square side (total of 50)
-      //if (s[0] == 's') {
-      //    if (i0 != -1) {
-      //        if (i0 >= 0 && i0 < 24) {
-      //            i0 += 26;
-      //        }
-      //        else {
-      //            bValid = false;
-      //        }
-      //    }
-      //    if (i1 != -1) {
-      //        if (i1 >= 0 && i1 < 24) {
-      //            i1 += 26;
-      //        }
-      //        else {
-      //            bValid = false;
-      //        }
-      //    }
-      //}
-      //else if (s[0] == 'v') {
-      //    if (i0 != -1) {
-      //        if (i0 >= 0 && i0 < 26) {
-      //        }
-      //        else {
-      //            bValid = false;
-      //        }
-      //    }
-      //    if (i1 != -1) {
-      //        if (i1 >= 0 && i1 < 26) {
-      //        }
-      //        else {
-      //            bValid = false;
-      //        }
-      //    }
-      //}
-      //if (bValid) {
-      //    if (i0 != -1 && i1 != -1) {
-      //        //Add the range i0 -  i1
-      //        if (i0 < i1) {
-      //            for (int ind = i0; ind < i1; ind++) {
-      //                options.insert(std::make_pair(ind, eMode));
-      //            }
-      //        }
-      //        else {
-      //            bValid = false;
-      //        }
-      //    }
-      //    else if (i0 != -1) {
-      //        options.insert(std::make_pair(i0, eMode));
-      //    }
-      //    else {
-      //        bValid = false;
-      //    }
-      //}
-    }
-    else {
-      bValid = false;
-    }
-    if (bValid == false) {
-      BRLogError("Invalid placement position '" + s + "'");
-      Gu::debugBreak();
-    }
-  }
-
-  return options;
-}
 #pragma endregion
 
 #pragma region WorldObject
-std::shared_ptr<WorldObject> WorldObject::create(std::shared_ptr<ModelSpec> ps) {
+std::shared_ptr<WorldObject> WorldObject::create(std::shared_ptr<WorldObjectSpec> ps) {
   std::shared_ptr<WorldObject> m = std::make_shared<WorldObject>(ps);
   m->init();
   m->stopAllActions();
@@ -1140,7 +964,6 @@ std::shared_ptr<SceneNode> WorldObject::getNodeByName(string_t name) {
   }
   return it->second;
 }
-
 std::shared_ptr<WorldObjectSpec> WorldObject::getModelSpec() {
   return std::dynamic_pointer_cast<WorldObjectSpec>(SceneNode::getSpec());
 }
@@ -1224,7 +1047,6 @@ void WorldObject::drawForward(RenderParams& rp) {
 
   // mi.setModelMatrix(getFinal());
 }
-
 void WorldObject::playAction(string_t actName) {
   Hash32 anh = STRHASH(actName);
   std::map<Hash32, std::shared_ptr<Animator>>::iterator it = _mapAnimators.find(anh);
@@ -1289,7 +1111,6 @@ void WorldObject::stopAction(string_t actName) {
     //DEL_MEM(a);
   }
 }
-
 void WorldObjectSpec::cacheMeshBones() {
   //BoneBoxes BoneBox
   //Stores all bones that affect a mesh in a cache for the mesh.
@@ -1356,37 +1177,9 @@ void WorldObject::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extr
 
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
-#pragma endregion
-
-//////////////////////////////////////////////////////////////////////////
-
-//ModelNode -> WorldObject
-//WorldObj -> WorldObject
-//ModelSpec -> WorldObjectSpec
-
-//This is all WorldObj stuff that needs to become WorldOBjectSpec
-
-std::shared_ptr<WorldObjectSpec> WorldObjectSpec::create(std::string mobFolder, uint32_t typeID, std::string friendlyName, std::string strBox, std::string strPlace) {
-  std::shared_ptr<WorldObjectSpec> ob = std::make_shared<WorldObjectSpec>();
-  ob->_iTypeId = typeID;
-  ob->_strMobName = mobFolder;
-  ob->_placeOptions = parsePlacementOptions(strPlace);
-  ob->_vBoxFit = parseBoxFit(strBox);
-
-  return ob;
-}
-std::shared_ptr<WorldObject> WorldObjectSpec::createInstance(std::shared_ptr<Scene> pWorld, vec3& r3Pos) {
-  std::shared_ptr<WorldObjectSpec> ms = getOrLoadModel();
-
-  vec3 vScale = boxFit(ms, _vBoxFit);
-
-  vec3 vPos;
-  vec4 vRot;
-  place(r3Pos, vPos, vRot);
-
-  return nullptr;// pWorld->makeObj(ms, vPos, vRot, vScale, std::string(""));
-}
 void WorldObject::place(const vec3& r3, vec3& outPos, vec4& outRot) {
+  //TODO:
+  BRThrowNotImplementedException();
   //what's this do, well, we have a "grid" of positions on each "minecraft cube"
   //snaps the given point to that grid BASED on the points we've configured for this.
 
@@ -1421,8 +1214,197 @@ void WorldObject::place(const vec3& r3, vec3& outPos, vec4& outRot) {
   //    Gu::debugBreak();
   //}
 }
+vec3 WorldObject::boxFit(vec3& vBoxFit) {
+  //Perform the "box fit" routine.
+  //Returns a scale that we apply to the model.
+  vec3 vR3siz;
+  vR3siz.x = getBoundBoxObject()->getWidth();
+  vR3siz.y = getBoundBoxObject()->getHeight();
+  vR3siz.z = getBoundBoxObject()->getDepth();
+  vec3 vBf;
+  vBf.x = (vBoxFit.x < 0) ? (1.0f) : ((float)vBoxFit.x);
+  vBf.y = (vBoxFit.y < 0) ? (1.0f) : ((float)vBoxFit.y);
+  vBf.z = (vBoxFit.z < 0) ? (1.0f) : ((float)vBoxFit.z);
+  vec3 vGSiz;
+  //These should become getScene()->getPhysicsWorld()->parameters()->getCellWidth() 3/3/20
+  vGSiz.x = vBf.x * BottleUtils::getCellWidth();
+  vGSiz.y = vBf.y * BottleUtils::getCellHeight();//I'm not sure if we should use "height"
+  vGSiz.z = vBf.z * BottleUtils::getCellWidth();
+
+  vec3 vScale = vGSiz / vR3siz;
+
+  return vScale;
+}
+vec3 WorldObjectSpec::parseBoxFit(std::string strBox) {
+  // prase the box fit
+  vec3 vBoxFit(-1, -1, -1);
+  float tmp = 0;
+  bool err = false;
+  std::vector<std::string> s = StringUtil::split(strBox, std::vector<char>{','});
+  if (s.size() != 3) {
+    err = true;
+  }
+  else {
+    for (int i = 0; i < 3; ++i) {
+      s[i] = StringUtil::trim(s[i]);
+    }
+    if (!StringUtil::equalsi(s[0], "x")) {
+      if (TypeConv::strToFloat(s[0], tmp)) {
+        vBoxFit.x = tmp;
+      }
+      else {
+        err = true;
+      }
+    }
+    if (!StringUtil::equalsi(s[1], "x")) {
+      if (TypeConv::strToFloat(s[2], tmp)) {
+        vBoxFit.y = tmp;
+      }
+      else {
+        err = true;
+      }
+    }
+    if (!StringUtil::equalsi(s[2], "x")) {
+      if (TypeConv::strToFloat(s[2], tmp)) {
+        vBoxFit.z = tmp;
+      }
+      else {
+        err = true;
+      }
+    }
+  }
+
+  if (err) {
+    BRLogError("Failed to parse boxfit" + strBox);
+    Gu::debugBreak();
+  }
+  return vBoxFit;
+}
+std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> WorldObjectSpec::parsePlacementOptions(std::string strPlace) {
+  //Parse the placement options.
+  std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> options;
+  PlaceMode::e eMode = PlaceMode::e::None;
+  std::vector<std::string> sPlace = StringUtil::split(strPlace, std::vector<char>{','});
+  W25SidePlace::e place = W25SidePlace::e::Top;
+
+  //s0-3, e0-3, v0-3, c
+  for (std::string s : sPlace) {
+    bool bValid = true;
+
+    s = StringUtil::trim(s);
+    if (s.length() > 0) {
+      if (s[0] == 'n') { eMode = PlaceMode::e::None; }
+      else if (s[0] == 'o') { eMode = PlaceMode::e::Orient; }
+
+      else if (s[0] == 'T') { place = W25SidePlace::e::Top; }
+      else if (s[0] == 'B') { place = W25SidePlace::e::Bot; }
+      else if (s[0] == 'S') { place = W25SidePlace::e::Side; }
+      else if (s[0] == 'X') { place = W25SidePlace::e::Cross; }
+
+      else if (s[0] == 's') {
+        //0-3, sub-squares
+      }
+      else if (s[0] == 'e') {
+        //0-3, 4 edge verts (along edges, vetex is on center)
+      }
+      else if (s[0] == 'c') {
+        //center of tile
+      }
+      else if (s[0] == 'v') {
+        //corners 0-3
+      }
+      ////Look for ranges in the form like 'v0-v10'
+      //std::string range = s.substr(1);//remove 'v' or 's'
+      //std::string si0 = "", si1 = "";
+      //size_t ioff = range.find('-');
+      //if (ioff != std::string::npos) {
+      //    si0 = range.substr(0, ioff);
+      //    si1 = range.substr(ioff + 1, range.length() - ioff - 1);
+      //}
+      //else {
+      //    si0 = range;
+      //}
+      ////Convert index range
+      //int32_t i0 = -1, i1 = -1;
+      //if (si0 != "") {
+      //    if (TypeConv::strToInt(si0, i0) == false) {
+      //        bValid = false;
+      //    }
+      //}
+      //if (si1 != "") {
+      //    if (TypeConv::strToInt(si1, i1) == false) {
+      //        bValid = false;
+      //    }
+      //}
+      ////Add 26 to the placement option if we're a square side (total of 50)
+      //if (s[0] == 's') {
+      //    if (i0 != -1) {
+      //        if (i0 >= 0 && i0 < 24) {
+      //            i0 += 26;
+      //        }
+      //        else {
+      //            bValid = false;
+      //        }
+      //    }
+      //    if (i1 != -1) {
+      //        if (i1 >= 0 && i1 < 24) {
+      //            i1 += 26;
+      //        }
+      //        else {
+      //            bValid = false;
+      //        }
+      //    }
+      //}
+      //else if (s[0] == 'v') {
+      //    if (i0 != -1) {
+      //        if (i0 >= 0 && i0 < 26) {
+      //        }
+      //        else {
+      //            bValid = false;
+      //        }
+      //    }
+      //    if (i1 != -1) {
+      //        if (i1 >= 0 && i1 < 26) {
+      //        }
+      //        else {
+      //            bValid = false;
+      //        }
+      //    }
+      //}
+      //if (bValid) {
+      //    if (i0 != -1 && i1 != -1) {
+      //        //Add the range i0 -  i1
+      //        if (i0 < i1) {
+      //            for (int ind = i0; ind < i1; ind++) {
+      //                options.insert(std::make_pair(ind, eMode));
+      //            }
+      //        }
+      //        else {
+      //            bValid = false;
+      //        }
+      //    }
+      //    else if (i0 != -1) {
+      //        options.insert(std::make_pair(i0, eMode));
+      //    }
+      //    else {
+      //        bValid = false;
+      //    }
+      //}
+    }
+    else {
+      bValid = false;
+    }
+    if (bValid == false) {
+      BRLogError("Invalid placement position '" + s + "'");
+      Gu::debugBreak();
+    }
+  }
+
+  return options;
+}
 
 
+#pragma endregion
 
 
 }//ns Game

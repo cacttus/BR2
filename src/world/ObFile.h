@@ -18,12 +18,12 @@ namespace BR2 {
 class ObFile : public PoundFile {
   typedef std::map<Hash32, std::shared_ptr<SpriteSpec>> MotionSpecMap;
 public:
-  ObFile();
+  ObFile(std::shared_ptr<Scene> ps);
   virtual ~ObFile() override;
 
   std::vector<WalkerSpec*>& getWalkerSpecs() { return _vecWalkers; }
   std::vector<LairSpec*>& getLairSpecs() { return _vecLairs; }
-  std::vector<std::shared_ptr<WorldObj>>& getMobSpecs() { return _vecWorldObjs; }
+  std::vector<std::shared_ptr<WorldObjectSpec>>& getMobSpecs() { return _vecWorldObjs; }
 
   std::shared_ptr<W25Config> getW25Config() { return _pW25Config; }
   //std::vector<WorldObjectSpec*>& getPixObjSpecs() { return _vecPixObjSpecs; }
@@ -33,22 +33,24 @@ public:
   std::shared_ptr<SpriteBucket> getBucket() { return _pBucket; }
 
 protected:
-  virtual void pkp(std::vector<string_t>& tokens);
-  virtual void preLoad();
-  virtual void postLoad();
+  std::shared_ptr<Scene> _pScene=nullptr;
   std::shared_ptr<SpriteBucket> _pBucket = nullptr;
   std::vector<std::shared_ptr<SpriteSpec>> _vecMotionSpecs;
-  std::vector<std::shared_ptr<WorldObj>> _vecWorldObjs;
+  std::vector<std::shared_ptr<WorldObjectSpec>> _vecWorldObjs;
   std::vector<Tile25Spec*> _vecTileSpecs;
   std::vector<WalkerSpec*> _vecWalkers;
   std::vector<LairSpec*> _vecLairs;
   std::vector<MorphTile*> _vecMorphTiles;
   MorphTile* _pCurMorphTile = nullptr;
-  std::shared_ptr<WorldObj> _pCurObjSpec = nullptr;
+  std::shared_ptr<WorldObjectSpec> _pCurObjSpec = nullptr;
   bool _bCurSpecValid = true;
   LairSpec* _pCurLairSpec = nullptr;
   WalkerSpec* _pCurWalkerSpec = nullptr;
   std::shared_ptr<W25Config> _pW25Config = nullptr;
+
+  virtual void pkp(std::vector<string_t>& tokens);
+  virtual void preLoad();
+  virtual void postLoad();
 
   void parseConfig(std::vector<string_t>& tokens);
   void parseVer(std::vector<string_t>& tokens);
@@ -81,7 +83,6 @@ protected:
   WalkerSpec* getWalkerSpecByName(string_t n);
   std::map<PlaceIndex, PlaceMode::e> parsePlacementOptions(std::string strPlace);
   ivec3 parseBoxFit(std::string boxFit);
-
 
 };
 

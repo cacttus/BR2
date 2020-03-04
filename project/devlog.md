@@ -10,6 +10,10 @@
 		* TODO: make Armature, and mesh Components of the WorldObject
 		* TODO: Remove WorldObj typedef.  This is a shortcut for the integraiton.
 * We need to do away with the spec system, it adds extra overhead like simple node copying or bound box computation.
+* I believe modelcache is necessary as we want to be able to preload models without rendering them (then again, we could just add them to the scene and hide them, but that feels sloppy).
+* renamed getAssetsFolder -> getDataFolder
+
+* Moved all game Creation to WorldMaker
 
 *3/2/20*
 

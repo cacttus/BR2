@@ -13,6 +13,7 @@
 #include "../model/SceneNode.h"
 #include "../world/PhysicsNode.h"
 
+#include <array>
 namespace BR2 {
 /**
 *  @class KeyFrame
@@ -310,6 +311,8 @@ public:
   std::shared_ptr<Img32> getThumb() { return _pThumb; }
   std::string getFriendlyName() { return _strFriendlyName; }
   void setFriendlyName(std::string s) { _strFriendlyName = s; }
+  string_t getMobName() { return _strMobName; }
+  uint32_t getTypeId() { return _iTypeId; }
 
 private:
   int32_t _iFrameRate = 24;
@@ -320,28 +323,12 @@ private:
   std::shared_ptr<Img32> _pThumb = nullptr;
   std::shared_ptr<BoneSpec> getBoneByArmJointOffset(int32_t ijo);
   std::string _strFriendlyName;
-
-  //WorldObj integration
-public:
-  string_t getFriendlyName() { return _strFriendlyName; }
-  string_t getMobName() { return _strMobName; }
-  uint32_t getTypeId() { return _iTypeId; }
-
-  //std::shared_ptr<WorldObjectSpec> getOrLoadModel();
-  std::shared_ptr<WorldObject> createInstance(std::shared_ptr<PhysicsWorld> w, vec3& r3Pos);
-
-private:
-  vec3 _vBoxFit;
   string_t _strMobName;
-  //std::shared_ptr<ModelSpec> _pModelSpec = nullptr; this is the same thing
   uint32_t _iTypeId;
-  std::string _strFriendlyName;
+  vec3 _vBoxFit;
   std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> _placeOptions;//indexed by side
-
-  static vec3 boxFit(vec3& vBoxFit);
   static std::array<std::vector<PlaceMode::e>, W25SidePlace::e::Count> parsePlacementOptions(std::string strPlace);
   static vec3 parseBoxFit(std::string strBox);
-  void place(const vec3& r3, vec3& outPos, vec4& outRot);
 };
 #pragma endregion
 
@@ -367,6 +354,9 @@ public:
   std::vector<std::shared_ptr<ArmatureNode>>& getArmatureNodes() { return _vecArmatures; }
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
 
+  void place(const vec3& r3, vec3& outPos, vec4& outRot);
+  vec3 boxFit(vec3& vBoxFit);
+
 protected:
   virtual void init() override;
 
@@ -382,6 +372,16 @@ private:
   void addNodeToCache(std::shared_ptr<SceneNode> bn);
   std::shared_ptr<Animator> getAnimator(string_t actName);
   void buildNodeParents();
+
+  //WorldObj
+public:
+
+  //std::shared_ptr<WorldObjectSpec> getOrLoadModel();
+  //std::shared_ptr<WorldObject> createInstance(std::shared_ptr<PhysicsWorld> w, vec3& r3Pos);
+
+private:
+
+
 };
 #pragma endregion
 

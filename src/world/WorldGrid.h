@@ -21,7 +21,7 @@ namespace BR2 {
 */
 class WorldGrid : public PhysicsGrid {
 public:
-  WorldGrid(std::shared_ptr<World25> pworld, ivec3& viPos, bool bEmpty);
+  WorldGrid(std::shared_ptr<PhysicsWorld> pworld, ivec3& viPos, bool bEmpty);
   virtual ~WorldGrid() override;
 
   void setQueued() { _eGenState = GridGenState::e::Queued; }
@@ -140,8 +140,6 @@ private:
   void redoSide(PhysicsGridSide::e eSide, BlockNode* pParent = nullptr);
   void iterateCells(std::function<void(WorldCell*)> func, BlockNode* parent = nullptr);
   void beginGenAsync(std::function<void()> func);
-
-
 };
 
 }//ns Game

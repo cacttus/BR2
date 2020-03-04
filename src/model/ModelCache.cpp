@@ -29,8 +29,8 @@ ModelCache::~ModelCache() {
     //for (std::pair<Hash32, std::shared_ptr<ActionGroup>> p1 : _mapActions) {
     //    DEL_MEM(p1.second);
     //}
+    
 }
-///////////////////////////////////////////////////////////////////
 void ModelCache::addSpec(std::shared_ptr<WorldObjectSpec> ms) {
     Hash32 h = ms->getNameHashed();
 

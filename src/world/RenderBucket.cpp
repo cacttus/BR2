@@ -1,5 +1,6 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
+#include "../base/Logger.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
@@ -13,6 +14,7 @@
 
 namespace BR2 {
 RenderBucket::RenderBucket() {
+  BRLogInfo("Creating Render Bucket");
 }
 RenderBucket::~RenderBucket() {
 }

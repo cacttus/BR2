@@ -20,9 +20,8 @@ public:
   float _awarenessXZInc;// awXZInc;
   MpFloat _awarenessY;// awY;
   float _awarenessYInc;// awYInc,
-    MpInt _mpNodesY;
+  MpInt _mpNodesY;
   uint32_t _iGridCountLimit;
-  
 };
 /**
 *  @class PhysicsWorld
@@ -44,8 +43,8 @@ public:
   virtual ~PhysicsWorld() override;
 
   static std::shared_ptr<PhysicsWorld> create(std::shared_ptr<Scene>, float fNodeWidth, float fNodeHeight, vec3& vUp,
-      MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
-      MpInt mpNodesY, uint32_t iGridCountLimit);
+    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
+    MpInt mpNodesY, uint32_t iGridCountLimit);
   virtual void update(float delta);
   //virtual void drawForward();
   void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
@@ -75,6 +74,9 @@ public:
   std::shared_ptr<PhysicsNode> getObj(NodeId obid);
   void activate(std::shared_ptr<PhysicsNode> pPhy);
   void refreshObjectManifold(std::shared_ptr<PhysicsNode> ob);
+  void createNewWorld();
+
+  std::shared_ptr<SpriteBucket> getSpriteBucket() { return _pSpriteBucket; }
 
   size_t  getNumGrids() { return _gridMap.size(); }
   void clearObjectManifoldAndRemoveFromGrid(std::shared_ptr<PhysicsNode> ob);
@@ -82,10 +84,15 @@ public:
   void getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ p1, bool bLimitByWorldBox);
   void addGrid(std::shared_ptr<PhysicsGrid> pGrid, const ivec3& cv);
   void debugMakeSureNoDupes(const ivec3& vv);
+  
+  void loadWorld();
   void unloadWorld();
+
   std::shared_ptr<PhysicsGrid> getNodeForPoint(vec3& pt);
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
-  std::shared_ptr<WorldMaker> getWorldMaker() { return _pWorldMaker; }
+  std::shared_ptr<Atlas> getWorldAtlas() { return _pWorldAtlas; }
+  std::shared_ptr<W25Config> getConfig();
+
   std::shared_ptr<PhysicsNode> findNode(string_t specName);
   string_t getWorldName() { return _worldName; }
   template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node) {
@@ -100,6 +107,7 @@ public:
   virtual void drawForward();
   virtual void drawDeferred();
   virtual void drawTransparent();
+  std::shared_ptr<World25Plane> getWorld25Plane() { return _pWorld25Plane; }
 
 protected:
   GridMap& getGrids() { return _gridMap; }
@@ -129,14 +137,16 @@ private:
   std::unique_ptr<Box3f> _pWorldBox = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
-  std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
-  std::shared_ptr<W25MeshMaker> _pMeshMaker=nullptr;
+  std::shared_ptr<W25MeshMaker> _pMeshMaker = nullptr;
   std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
   std::shared_ptr<Material> _pWorldMaterial = nullptr;
   std::shared_ptr<ShaderBase> _pTileShader = nullptr;
   std::shared_ptr<ShaderBase> _pGridShader = nullptr;
   std::shared_ptr<SkyBox> _pSkyBox = nullptr;
   std::shared_ptr<Atlas> _pSkyAtlas = nullptr;
+  std::shared_ptr<SpriteBucket> _pSpriteBucket = nullptr;
+  std::shared_ptr<World25Plane> _pWorld25Plane;
+
   void makeAtlas();
   void makeShaders();
   void makeSky();

@@ -13,7 +13,7 @@
 namespace BR2 {
 /**
 *  @class ModelCache
-*  @brief simple mod cahce
+*  @brief Loads models.
 */
 class ModelCache : public VirtualMemory {
 public:

@@ -495,9 +495,10 @@ std::shared_ptr<Scene> SceneNode::getScene() {
   return x;
 }
 std::shared_ptr<SceneNode> SceneNode::clone() {
-
+  BRThrowNotImplementedException();
 }
 void SceneNode::copy(std::shared_ptr<SceneNode> other) {
+  BRThrowNotImplementedException();
 
 }
 

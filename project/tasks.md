@@ -1,19 +1,51 @@
 # Mine City Task Log
 
-## BR0 to BR2 Upgrade
-- [ ] Conversion of ModelNode to SceneNode
-	- [ ] Replace all of ModelNode with SceneNode
-		*WorldObj from Bottle now becomes SceneNode
+## World25 Integration
 
-- [ ] Replace BottleUtils constants with PhysicsWorldCreate
+- [ ] FIRST implement World25 INTO physicsworld directly, 
+	- [ ] Compile, Run.. test
+		 - [ ] Test model loading
+		 - [ ] Test glob rendering
+- [ ] Separate PhysicsWorld physics & collision routines into GameWorld & PhysicsManager
+	* GameWorld responsible for the BVH hierarchy, globs, terrain creation, and multithreading the creation.
+	* PhysicsManager responsible for collision detection and response (which may not be needed if we're using the envisioned game design).
+	- [ ] Scene->GameWorld  Scene->PhysicsManager
+		* PhysicsManager->getScene()->getGameWorld->getGlobs.
+		* Or add the globs to the physicsManager as nodes..
+- [ ] Replace BottleUtils constants with PhysicsWorldCreate paramater structure.
+	- [ ] Reference this structure everywhere instead of BottleUtils::
+- [ ] move "getcellorobjectunderray" straight back to scene
+
+## Engine & Code Cleanup 
+
 - [ ] Replace name in headers
+- [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (reorg) 
+- [ ] See if we can make ParticleManager part of PhysicsWorld (reorg)
+- [ ] Remove Graphics and Config defines in Gu (reorg)
+- [x] Remove AppMain, and AppBase, and Package (reorg)
+	- [x] Merge Appbase & Scene
+	- [x] Remove AppBase
+	- [x] Add ApplicationPackage back.
+	- [x] Create new Scene() 
+	- [x] Attach Scene to GraphicsWindow.	
+- [ ] move to /gfx  (reorg)
+	- [ ] graphicswindow
+	- [ ] glcontext
+- [ ] Scene -> PhysicsWorld integration (reorg)
+	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
+	- [x] Move all object creation to Scene
+	- [ ] Move ALL drawing to Scene
+	- [ ] Link PhysicsWorld and Scene objs (somehow), hopefully by NOT DUPLICATING DATA between PhysicsWorld and Scene
+		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
+	- [ ] Do the same with LightManager.
 
-- [ ] World25 Migration
-	- [ ] Move most of this to scene, likely, it would benefit us to create a separate class for Glob generation.
-	- [ ] move "getcellorobjectunderray" straight back to scene
-	- [ ] TODO: make Armature, and mesh Components of the WorldObject
+## Sprite Management
 
-- [ ] Figure out some way to prevent recursive node updating for SceneNode, this has been causing MULTILPE issues.
+- [ ] SpriteBucket needs to be more of a global class.  Like SpriteManager.
+
+## Models
+
+- [ ] Test loading a model with the old system.
 
 - [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
 	- [ ] Fix UI text squashing bug.
@@ -25,32 +57,8 @@
 	- [ ] Fixed the squashed UI image problems.
 		- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
-- [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (reorg) 
-- [ ] Move ModelCache's model load methods into ApplicationPackage (reorg)
-- [ ] See if we can make ParticleManager part of PhysicsWorld (reorg)
-- [ ] Remove Graphics and Config defines in Gu (reorg)
-
-- [x] Remove AppMain, and AppBase, and Package (reorg)
-	- [x] Merge Appbase & Scene
-	- [x] Remove AppBase
-	- [x] Add ApplicationPackage back.
-	- [x] Create new Scene() 
-	- [x] Attach Scene to GraphicsWindow.	
-
-- [ ] move to /gfx  (reorg)
-	- [ ] graphicswindow
-	- [ ] glcontext
-
-- [ ] Scene -> PhysicsWorld integration (reorg)
-	* PhysicsWorld is *basically* Scene, but with extra stuff.  Their data are the same (nodes).
-	- [x] Move all object creation to Scene
-	- [ ] Move ALL drawing to Scene
-	- [ ] Link PhysicsWorld and Scene objs (somehow), hopefully by NOT DUPLICATING DATA between PhysicsWorld and Scene
-		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
-	- [ ] Do the same with LightManager.
-
-
 ## Bottle World
+
 - [ ] CSharp inline *minimal* scripts.
 	* This should fix the camera, so we can easily add the bottle topologizer.
 	- [x] Update FlyCameraControls (flycam) from previous release and use CSharpScript to control it.
@@ -69,7 +77,16 @@
 - [ ] Move object creation in PhysicsManager to Scene.
 	- [ ] Compile, Run.
 
+	
+## Bugs
+
+- [ ] Figure out some way to prevent recursive node updating for SceneNode, this has been causing MULTILPE issues.
+
+
+# Future Phases (May be out of date)
+
 ## Scene System
+
 * The goal here is to create a more 'common' game engine architecture, similar to Blender and Unity design.  We want to be able to quickly add nodes
 to scenes and reference their shared `data` components via instancing.  Our current "Spec" system for creating node clones is sloppy, and doesn't make sense as a lot of the "spec" data are not resource intensive
 and don not need to be shared.  Secondly, we want to have a component-based system, where we may have multiple 'nodes' per WorldObject (GameObject in Unity). We
@@ -95,6 +112,11 @@ The system will be rewritten in 3 areas:
 		* Subclass ColliderComponent into SphereComponent, and HullComponent.
 			* We will only have 2 colliders for this game, there doesn't need to be more (yet).
 
+## Model system
+
+- [ ] Model Loading
+	- [ ] Change ModelCache to ModLoader
+	- [ ] Move ModelCache's model load methods into ApplicationPackage (reorg)
 - [ ] Implement GLTF file loader. (Replace MBI files with GLTF binary)
 	- [ ] Test, by using a GLTF model from Blender.
 - [ ] Remove WorldObject inheritence, and use Component model.
@@ -117,7 +139,9 @@ The system will be rewritten in 3 areas:
 - [ ] Componentize "Model" class, and put it in a logical place, such as on the Armature, or as a "component"
 - [ ] *Dynamic skinning* where, mesh skin is a *component* and their *skin* is a separate component on WorldObject that points to the given mesh. We should copy Blender's data format.  Armature is a child of the object.
 
+
 ## Mine City Phase I
+
 - [ ] UI System tasks
 	- [ ] Simplify the UI to work with the UI design for this game.  (Which should update UI performance)\
 	- [ ] Implement hard coded x/y locations.  
@@ -156,7 +180,7 @@ The system will be rewritten in 3 areas:
 
 # Backlog
 
-## Engine Enhancements, Unrelated to Game
+## Engine Enhancements
 - [ ] CMake integration. Test on iOS, Linux, Android.
 - [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
@@ -172,9 +196,8 @@ The system will be rewritten in 3 areas:
 	- [ ] remove t_byte SHOULD keep a 'byte' type though.  Make good decisions here.
 
 ## Delayed / Shelved 
-- [ ] ~~Multiple Window Rendering~~
+- [ ] Multiple Window Rendering
 	* This isn't necessary for the purpose of completing the game.
-	- [ ] ~~Remove Vulkan~~
 	- [ ] ~~Hard code GL context. Remove GraphicsContext~~
 	- [ ] ~~Add GL Context to all required Classes~~
 	- [ ] ~~Compile, Run.~~
@@ -182,7 +205,7 @@ The system will be rewritten in 3 areas:
 	* Although 'logical' this is not possible with modern GPUs, as we'd end up having to create separate RenderPipe's per Camera, since, the Viewport Width/Height determines the RenderPipe Width/Height. *Nor* are framebuffers shared across GL contexts, *and* we are running these contexts asynchronously. Each renderpipe uses more than 8 1080p surfaces.  Obviously, we'd end up with memory or performance issues.  The solution, is to share camera viewport.  Maybe, in the future, when GPUs can handle such intensity.
 - [ ] Combine RenderSettings with EngineConfig.  Puts all engine settings in one place.
 
-### Wishlist (TODO tasks, not directly relevant to project)
+## Wishlist (TODO tasks, not directly relevant to project)
 - [ ] Integrate SDL_Touch with the engine, making 
 - [ ] Instead of hard code vertex interleaved formats, allow us to supply multiple buffers for the vertex components (n,v,t..) for each component
 - [ ] Move all STL header files DOWN into the respective CPP files that need them. This will speed-up compilation time a lot.
@@ -191,4 +214,4 @@ The system will be rewritten in 3 areas:
 - [ ] Keyframe Bezier curve handles, and bezier interpolation (see KeyFrame)
 - [ ] Remove WorldObject class inheritance, and favor composition like Unity does.  Managers will hold onto components.
 	- [ ] WorldObject will be composited by other items and not inherited.
-
+- [ ] Vuklan support.  This is "half" implemented.  ALL GP systems need to be subclassed.  This is a very big effort.

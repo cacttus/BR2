@@ -18,13 +18,12 @@
 #include "../model/MeshNode.h"
 #include "../world/Manifold.h"
 #include "../world/SpriteBucket.h"
-//#include "../world/World25.h"
-//#include "../world/WorldObj.h"
+#include "../world/PhysicsWorld.h"
+#include "../model/Model.h"
 #include "../world/WorldGrid.h"
 #include "../world/BottleUtils.h"
 #include "../world/WorldCellFile.h"
 #include "../world/WipGrid.h"
-
 #include "../world/W25Config.h"
 #include "../world/Lair.h"
 #include "../world/WorldMaker.h"
@@ -32,9 +31,10 @@
 #include "../world/W25GridMesh.h"
 #include "../world/W25MeshMaker.h"
 #include "../world/WorldCell.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
-WorldGrid::WorldGrid(std::shared_ptr<World25> pworld, ivec3& viPos, bool bEmpty) :
+WorldGrid::WorldGrid(std::shared_ptr<PhysicsWorld> pworld, ivec3& viPos, bool bEmpty) :
   PhysicsGrid(pworld, viPos, BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), bEmpty),
   _pWorld25(pworld) {
 }
@@ -43,14 +43,11 @@ WorldGrid::~WorldGrid() {
   //**No need to delete WorldCell, Gn2 deletes all of this
   DEL_MEM(_pRoot);
 }
-///////////////////////////////////////////////////////////////////
 void WorldGrid::initSync() {
   //All meshes must be created because meshes "class" handles meshes now.
   for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
     _pMeshes[iMatter] = std::make_shared<W25GridMesh>(getThis<WorldGrid>(), (GridMeshLayer::e) iMatter);
   }
-
-
 }
 void WorldGrid::getCellData(BlockNode* parent, WorldCellFile* __out pFile) {
   WorldCellData* pd;
@@ -93,7 +90,7 @@ void WorldGrid::getCellData(BlockNode* parent, WorldCellFile* __out pFile) {
 void WorldGrid::consolidate() {
   // return;
 
-   //New fn. 
+   //New fn.
    //Remove empty nodes.
   bool bEmpty = true;
   _nPruned = 0;
@@ -151,9 +148,8 @@ void WorldGrid::createAllCells(WorldCellFile* pFile, World25GridGen::e eGen, Wip
   _nCells = 0;
   _pRoot->createCells(pFile, iCell, eGen, pDat, getThis<WorldGrid>(), _nVertexCount, _nCells);
 
-
   //We were allocating HUGE vectors for solid volumes because
-  // 48 * 4096 = 190000,  We usually only have 5-6k vertexes, 
+  // 48 * 4096 = 190000,  We usually only have 5-6k vertexes,
   // So this will limit it.
   for (int iM = 0; iM < GridMeshLayer::e::MaxMatters; ++iM) {
     if (_nVertexCount[iM] > 7000) {
@@ -235,24 +231,20 @@ void WorldGrid::drawGrid(RenderParams& rp, int32_t& __out_ dbgNumTrisDrawn) {
     return;
   }
 
-  std::shared_ptr<FrustumBase> pf = Gu::getCamera()->getFrustum();
+  std::shared_ptr<FrustumBase> pf = rp.getCamera()->getFrustum();
   for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
     if (_pMeshes[iMatter] != nullptr) {
       if (_pMeshes[iMatter]->getMesh() != nullptr) {
-
-
         //**TODO: Toggle show grid based on whether we are picking opaque / transparent polygons.
-
 
         //This MUST match or we'll get jacked up results.
         uint32_t pick = _pMeshes[iMatter]->getMesh()->getPickId();
-        rp.getShader()->setUf("_ufPickId", (void*)& pick);
+        rp.getShader()->setUf("_ufPickId", (void*)&pick);
         rp.setMesh(_pMeshes[iMatter]->getMesh());
         rp.draw();
       }
     }
   }
-
 }
 std::shared_ptr<World25Plane> WorldGrid::getWorld25Plane() {
   return _pWorld25->getWorld25Plane();
@@ -301,7 +293,6 @@ void WorldGrid::settleLiquids() {
         settleLiquidsNeighbor(pc, PhysicsGridSide::e::gR);
         settleLiquidsNeighbor(pc, PhysicsGridSide::e::gA);
         settleLiquidsNeighbor(pc, PhysicsGridSide::e::gF);
-
       }
     }
   }
@@ -337,7 +328,6 @@ void WorldGrid::spreadLiquid(int ic, WorldCell* pc, int ni, WorldCell* pn, W25Ge
       pn->setTile(GridMeshLayer::e::Transparent, pc->getTile(GridMeshLayer::e::Transparent));
     }
   }
-
 }
 void WorldGrid::getLocalCellRangeForBox(Box3f& box, ivec3& p0, ivec3& p1) {
   vec3 origin = this->getOriginR3();
@@ -352,7 +342,7 @@ void WorldGrid::getLocalCellRangeForBox(Box3f& box, ivec3& p0, ivec3& p1) {
 
   int ciMaxCellsXYZ = (int)BottleUtils::getNumCellsWidth(); // 1 bil
 
-  //**So invalid intervals are bound to happen here because the input bound box is 
+  //**So invalid intervals are bound to happen here because the input bound box is
   //likely going to be outside the range of this node.
   //To fix this we adjust the intervals here.
   if (p0.x < 0) p0.x = 0;
@@ -466,8 +456,6 @@ void WorldGrid::getObjData(WorldCellFile* pFile) {
     //We must push back an invalid ID to keep the data in sync
     pFile->getObjects().push_back(obd);
   }
-
-
 }
 void WorldGrid::raycastCells(Ray_t* pr, std::multimap<float, WorldCell*>& outCells) {
   if (!getGenerated()) {
@@ -490,7 +478,7 @@ void WorldGrid::beginGenAsync(std::function<void()> func) {
     try {
       func();
     }
-    catch (Game::Exception* ex) {
+    catch (Exception * ex) {
       //Thread was killed
       if (that->getKilled()) {
         BRLogInfo("Grid generation cancelled.");
@@ -498,7 +486,6 @@ void WorldGrid::beginGenAsync(std::function<void()> func) {
       else {
         BRLogInfo("During Grid generation, There was an error somewhere.");
       }
-
     }
     return true;
     });
@@ -536,7 +523,6 @@ void WorldGrid::checkKilled() {
   }
 }
 bool WorldGrid::getIsGenerating() {
-
   if (_genFuture.valid()) {
     std::future_status status = _genFuture.wait_for(std::chrono::milliseconds(0));
 
@@ -631,13 +617,10 @@ void WorldGrid::debugVerifyAllInternalCellsLinked(BlockNode* parent) {
           }
         }
       }
-
     }
     });
-
 }
 void WorldGrid::redoNeighborConfigs() {
-
   for (int iNeighbor = 0; iNeighbor < c_nNeighbors; ++iNeighbor) {
     std::shared_ptr<WorldGrid> gn = std::dynamic_pointer_cast<WorldGrid>(getNeighbor(iNeighbor));
     //Both this grid and the other must redo their sides.
@@ -650,7 +633,6 @@ void WorldGrid::redoNeighborConfigs() {
   }
 }
 void WorldGrid::redoSide(PhysicsGridSide::e eSide, BlockNode* parent) {
-
   iterateCells([this, eSide](WorldCell* pc) {
     if (pc->isBorderSide(eSide)) {
       //We shouldn't have to redo the neighbor cells, since we're only culling the given side.
@@ -1083,13 +1065,10 @@ void WorldGrid::makeMesh(bool bAsync) {
   _tvMesh = (Gu::getMicroSeconds() - tv) / 1000;
 }
 void WorldGrid::updateTopology() {
-
-
   //Update the grid topology without redoing "the whole thing"
   for (size_t i = 0; i < GridMeshLayer::e::MaxMatters; ++i) {
     _pMeshes[i]->updateTopology();
   }
-
 }
 void WorldGrid::updateRedoMeshForCell(WorldCell* pc, bool bNeighbors) {
   //All matters
@@ -1107,13 +1086,4 @@ void WorldGrid::updateRedoMesh(GridMeshLayer::e eMatter) {
 std::shared_ptr<MeshNode> WorldGrid::getMesh() {
   return _pMeshes[GridMeshLayer::e::Opaque]->getMesh();
 }
-
-
-
-
 }//ns Game
-
-
-
-
-

@@ -9,6 +9,7 @@
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
 #include "../base/InputManager.h"
+#include "../base/GraphicsWindow.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
@@ -16,7 +17,6 @@
 #include "../gfx/ShaderBase.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
-#include "../base/GraphicsWindow.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderUtils.h"
 #include "../gfx/UiControls.h"
@@ -26,6 +26,7 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/MegaTex.h"
+#include "../model/ModelCache.h"
 #include "../model/MeshUtils.h"
 #include "../model/Model.h"
 #include "../model/MeshNode.h"
@@ -34,6 +35,7 @@
 #include "../world/Scene.h"
 #include "../world/ObFile.h"
 #include "../world/BottleUtils.h"
+#include "../world/WorldMaker.h"
 
 
 namespace BR2 {
@@ -50,20 +52,14 @@ Scene::~Scene() {
 void Scene::init() {
   BRLogInfo("Making PhysicsWorld");
 
-  std::shared_ptr<PhysicsWorldStats> c;
-
-
   _pPhysicsWorld = PhysicsWorld::create(getThis<Scene>(),
     BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
     BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
     BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
     BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
-
-  BRLogInfo("..LightManager");
   _pLightManager = std::make_shared<LightManager>(getThis<Scene>());
-
-  BRLogInfo("..Render Bucket");
   _pRenderBucket = std::make_shared<RenderBucket>();
+  _pWorldMaker = std::make_shared<WorldMaker>(getThis<PhysicsWorld>(), getScene()->getGameFile()->getBucket(), getScene()->getGameFile()->getLairSpecs(), getScene()->getGameFile()->getWalkerSpecs());
 
   SceneNode::init();
 }
@@ -72,7 +68,7 @@ void Scene::loadGameFile() {
   string_t strObFileName = Gu::getPackage()->makeAssetPath("game.dat");
   BRLogInfo("World25 - Parsing Spec File '" + strObFileName + "'");
 
-  _pGameFile = std::make_shared<ObFile>(getThis<AppBase>());
+  _pGameFile = std::make_shared<ObFile>(getThis<Scene>());
   _pGameFile->loadAndParse(strObFileName);
 
 }
@@ -140,6 +136,13 @@ void Scene::update(float delta) {
   //  _pLightManager->update(getWindow()->getDelta()->get());
   //}
 
+  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_K)) {
+    if (_eGameMode != GameMode::Play) {
+      BRLogInfo("Creating a new game.");
+      _pWorldMaker->loadOrCreateGame("Test");
+      _eGameMode = GameMode::Play;
+    }
+  }
 
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
@@ -448,16 +451,19 @@ void Scene::drawDebugText() {
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pUiScreen->screenChanged(w, h);
 }
-//std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
-//  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
-//  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-//  
-//  attachChild(mn);
-//
-//  return mn;
-//}
-//std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action) {
-//  std::shared_ptr<ModelNode> mn = createObj(ms);
+std::shared_ptr<WorldObject> Scene::createObj(string_t name, vec3& boxFit) {
+  std::shared_ptr<WorldObjectSpec> s = Gu::getModelCache()->getOrLoadModel(name);
+  
+  std::shared_ptr<WorldObject> mn = std::make_shared<WorldObject>(s);
+  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
+  mn->boxFit(std::move(boxFit));
+
+  attachChild(mn);
+
+  return mn;
+}
+//std::shared_ptr<WorldObject> Scene::createObj(std::shared_ptr<WorldObjectSpec> ms, vec3& pos, vec4& rot, vec3& scale, std::string action) {
+//  std::shared_ptr<WorldObject> mn = createObj(ms);
 //
 //  mn->stopAllActions();
 //  if (StringUtil::isNotEmpty(action)) {
@@ -535,5 +541,74 @@ void Scene::mouseWheel(int amount) {
 uint64_t Scene::getFrameNumber() {
   return getWindow()->getFpsMeter()->getFrameNumber();
 }
+
+
+
+
+
+
+
+
+
+
+
+void Scene::updateTouch() {
+  //meh
+  //toggleDebug(pFingers);
+
+  ////Camera
+  //if (_eGameMode == GameMode::e::WorldSelect) {
+  //  _pFlyCam->update(pFingers, delta);
+  //}
+  //else if (_eGameMode == GameMode::e::Play) {
+  //  if (Gu::getCamera() == _pFlyCam->getCam()) {
+  //    _pFlyCam->update(pFingers, delta);
+  //  }
+  //  else {
+  //    _pSnapRooter->update(pFingers, delta);
+  //  }
+  //}
+
+  ////Touch World
+  //if (_eGameMode == GameMode::e::WorldSelect) {
+  //  _pWorldSelect->updateTouch(pFingers, delta);
+  //}
+  //else {
+
+  //  _pWorld25->updateTouch(pFingers);
+
+  //  handleGameModeControls(pFingers);
+
+  //  if (Gu::getCamera() == _pFlyCam->getCam()) {
+  //    _pFlyCam->moveCameraWSAD(pFingers, delta);
+  //  }
+  //  else {
+  //    _pSnapRooter->moveCameraWSAD(pFingers, delta);
+  //  }
+
+
+  //  if (!Gu::getGui()->getIsPicked()) {
+  //    _pWorldEditor->editWorld(pFingers);
+  //  }
+  //}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }//ns BR2

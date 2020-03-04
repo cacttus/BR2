@@ -14,11 +14,14 @@
 #include "../world/WorldCellFile.h"
 #include "../world/WorldGrid.h"
 #include "../world/WipGrid.h"
+#include "../world/PhysicsGrid.h"
+#include "../world/GameFile.h"
 
 
 namespace BR2 {
 WorldMaker::WorldMaker(std::shared_ptr<PhysicsWorld> pw, std::vector<LairSpec*>& mapLairs, std::vector<WalkerSpec*>& mapWalkers) {
-  _pMotionBucket = pb;
+  BRLogInfo("Creating WorldMaker");
+
   _pWorld25 = pw;
 
   if (mapLairs.size() == 0) {
@@ -100,8 +103,6 @@ string_t WorldMaker::makeGridFileName(string_t strGameName, string_t strWorldNam
 
   string_t ddir = getWorldGridsDir(strGameName, strWorldName);
 
-
-
   FileSystem::createDirectoryRecursive(ddir);
 
   fmt = ddir + "/" + buf + ".g";
@@ -117,16 +118,13 @@ string_t WorldMaker::getWorldGridsDir(string_t strGameName, string_t strWorldNam
     BRThrowException("World name was not selected.");
   }
 
-  string_t ddir =
-    _pWorld25->getRoom()->getWorldDirectory(
-      strGameName,
-      strWorldName);
+  string_t ddir = getWorldDirectory(strGameName, strWorldName);
 
   ddir = FileSystem::combinePath(ddir, "/g");
   return ddir;
 }
 std::shared_ptr<PhysicsGrid> WorldMaker::loadGrid(ivec3(v)) {
-  string_t strFileName = makeGridFileName(_pWorld25->getRoom()->getGameName(), _pWorld25->getWorldName(), v.x, v.y, v.z);
+  string_t strFileName = makeGridFileName(getGameName(), getWorldName(), v.x, v.y, v.z);
 
   return loadGridFromFile(strFileName);
 }
@@ -145,7 +143,7 @@ std::shared_ptr<PhysicsGrid> WorldMaker::loadGridFromFile(string_t strFileNamePa
     string_t i2 = strFile.substr(c_iGlobDigits * 2, c_iGlobDigits);
     vPos.construct(TypeConv::strToInt(i0), TypeConv::strToInt(i1), TypeConv::strToInt(i2));
 
-    pg = std::make_shared<PhysicsGrid>(_pWorld25, vPos, false);
+    pg = std::make_shared<WorldGrid>(_pWorld25, vPos, false);
     pg->initSync();
     pg->expand();
     pg->createAllCells(&wFile, World25GridGen::e::Load, nullptr);
@@ -162,8 +160,8 @@ void WorldMaker::saveGrid(std::shared_ptr<PhysicsGrid> g) {
   //t_timeval tv = Gu::getMicroSeconds();
   //{
   string_t st = makeGridFileName(
-    _pWorld25->getRoom()->getGameName(),
-    _pWorld25->getWorldName(),
+    getGameName(),
+    getWorldName(),
     g->getGridPos().x,
     g->getGridPos().y,
     g->getGridPos().z);
@@ -205,7 +203,7 @@ void WorldMaker::makeNewWorld() {
 
   vv.push_back(ivec3(0, 0, 0));
 
-  std::shared_ptr<PhysicsGrid> pg;
+  std::shared_ptr<WorldGrid> pg;
 
   _pCurrentLair = _mapLairSpecs.begin()->second;
 
@@ -220,7 +218,7 @@ void WorldMaker::makeNewWorld() {
     WipGrid* wg = new WipGrid(v, this->_pCurrentLair, 0);
     wg->clear(tileGrass);
 
-    pg = std::make_shared<PhysicsGrid>(_pWorld25, v, false);
+    pg = std::make_shared<WorldGrid>(_pWorld25, v, false);
     pg->initSync();
     pg->expand();
 
@@ -232,11 +230,9 @@ void WorldMaker::makeNewWorld() {
     //delete pg;
     //grids.insert(pg);
   }
-
-
 }
 void WorldMaker::loadAllGrids(std::set<std::shared_ptr<PhysicsGrid>>& __out_ grids) {
-  string_t gridsDir = getWorldGridsDir(_pWorld25->getRoom()->getGameName(), _pWorld25->getWorldName());
+  string_t gridsDir = getWorldGridsDir(getGameName(), getWorldName());
   std::vector<string_t> files;
 
   FileSystem::getAllFiles(gridsDir, files);
@@ -244,8 +240,132 @@ void WorldMaker::loadAllGrids(std::set<std::shared_ptr<PhysicsGrid>>& __out_ gri
     std::shared_ptr<PhysicsGrid> pg = loadGridFromFile(file);
     grids.insert(pg);
   }
-
 }
+
+
+void WorldMaker::constructWorld() {
+  //I don't think this method is necessary now that PhysicsWorld is persistent.
+  BRLogInfo("Making world.");
+  {
+    t_timeval t0 = Gu::getMicroSeconds();
+    /*_pWorld25 = std::make_shared<World25>();
+    Gu::getGraphicsContext()->setPhysicsWorld(_pWorld25);
+    _pWorld25->init(_pGameFile);*/
+
+    //_pWorld25->createNewWorld();
+
+    BRLogInfo("Finished.." + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
+  }
+}
+
+string_t WorldMaker::getGameDirectory(string_t gameName) {
+  return FileSystem::combinePath(_strGameSaveDir, gameName);
+}
+string_t WorldMaker::getWorldDirectory(string_t gameName, string_t worldName) {
+  return FileSystem::combinePath(getGameDirectory(gameName), worldName);
+}
+string_t WorldMaker::getNewWorldName(string_t gameName) {
+  //Get highest world number
+  string_t gameDir = getGameDirectory(gameName);
+  std::vector<string_t> dirs;
+  FileSystem::getAllDirs(gameDir, dirs);
+  int32_t iHigh = 0;
+  for (string_t dirPath : dirs) {
+    int32_t i;
+    string_t dir = FileSystem::getDirectoryFromPath(dirPath);
+    if (dir.length() > 1) {
+      dir = dir.substr(1);
+      if (TypeConv::strToInt(dir, i)) {
+        iHigh = MathUtils::brMax(i, iHigh);
+      }
+      else {
+        BRLogWarn("Dir '" + dir + "' is not a valid world name");
+      }
+    }
+    else {
+      BRLogWarn("Dir '" + dir + "' is not a valid world name");
+
+    }
+
+  }
+
+  iHigh++;//increment for next world.
+
+  char buf[256];
+  memset(buf, 0, 256);
+
+  const int ciWorldDigits = 6;
+  string_t fmt = Stz"w%0" + ciWorldDigits + "d";
+  snprintf(buf, 256, fmt.c_str(), iHigh);
+
+  string_t wn(buf);
+  return wn;
+}
+bool WorldMaker::loadOrCreateGame(string_t gameName) {
+  unloadGame();
+
+  _strGameName = gameName;
+
+  string_t gameDir = getGameDirectory(gameName);
+  string_t gameFileDir = FileSystem::combinePath(gameDir, "game.dat");
+
+  if (FileSystem::directoryExists(gameDir)) {
+    //later
+    BRLogInfo("Loading game " + gameName);
+
+    if (FileSystem::fileExists(gameFileDir)) {
+
+      GameFile gf;
+      gf.loadAndParse(gameFileDir);
+      if (StringUtil::isEmpty(gf.getWorldName())) {
+        BRLogError("World name was empty.");
+        Gu::debugBreak();
+        return false;
+      }
+      else {
+        _pWorld25->createNewWorld(gf.getWorldName());
+      }
+    }
+    else {
+      BRLogError("Game file '" + gameFileDir + "' not found.");
+      Gu::debugBreak();
+      return false;
+    }
+  }
+  else {
+    FileSystem::createDirectoryRecursive(gameDir);
+
+    //Create initial world
+    string_t worldName = getNewWorldName(gameName);
+    string_t worldPath = getWorldDirectory(gameName, worldName);
+    FileSystem::createDirectoryRecursive(worldPath);
+
+    //create game & save file
+    //THIS does nothing in bottle
+    //_pWorld25->initWorld(worldName);
+    
+    _pWorld25->createNewWorld();
+
+    GameFile gf;
+    gf.save(gameFileDir, _pWorld25);
+  }
+
+  _pWorld25->loadWorld();
+  // updateGameModeChanged();
+  return true;
+}
+void WorldMaker::unloadGame() {
+  _pWorld25->unloadWorld();
+}
+void WorldMaker::createGameSaveDir() {
+  _strGameSaveDir = makeAssetPath("games");
+  // string_t ddir = "";
+  if (!FileSystem::createDirectoryRecursive(_strGameSaveDir)) {
+    BRLogError("Failed to create game save directory " + _strGameSaveDir);
+  }
+}
+
+
 
 
 }//ns game

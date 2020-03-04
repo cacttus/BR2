@@ -283,7 +283,7 @@ W25Plane::e W25MeshMaker::getOppPlaneIndex(W25Plane::e iNeighbor) {
   else if (iNeighbor == W25Plane::e::CrossB) { return  W25Plane::e::CrossC; }
   else if (iNeighbor == W25Plane::e::CrossC) { return  W25Plane::e::CrossB; }
   else if (iNeighbor == W25Plane::e::CrossD) { return  W25Plane::e::CrossA; }
-  BroThrowNotImplementedException();
+  BRThrowNotImplementedException();
 }
 void W25MeshMaker::addAsTriangles(WorldCell* gc,
   vec3& vBase, W25Geom c_geom, int eSide, GridMeshLayer::e eMatterMode, int32_t iGpuTileId,
