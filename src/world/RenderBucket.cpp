@@ -1,20 +1,18 @@
 #include "../base/Gu.h"
-#include "../base/GLContext.h"
-#include "../base/Logger.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/LightNode.h"
-#include "../gfx/RenderSettings.h"
+#include "../base/GLContext.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshSpec.h"
 #include "../model/Material.h"
 #include "../world/PhysicsGrid.h"
 #include "../world/RenderBucket.h"
+#include "../gfx/LightNode.h"
+#include "../gfx/RenderSettings.h"
 
 namespace BR2 {
 RenderBucket::RenderBucket() {
-  BRLogInfo("Creating Render Bucket");
 }
 RenderBucket::~RenderBucket() {
 }

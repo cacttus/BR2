@@ -12,7 +12,8 @@
 namespace BR2 {
 /**
 *  @class PhysicsGrid
-*  @brief This is a cell in a cell grid managed by the physics system. A box in 3D space which is a "cell" that physics uses to optimize collisions.
+*  @brief This is a cell in a cell grid managed by the physics system.
+*     A box in 3D space which is a "cell" that physics uses to optimize collisions
 */
 class PhysicsGrid : public VirtualMemoryShared<PhysicsGrid> {
 public:

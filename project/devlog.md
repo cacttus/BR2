@@ -1,6 +1,11 @@
 
 # Mine City Devlog
 
+*3/4/20*
+
+* Undid the previous changes and added /bottle/ back to the solution (better than reintegrating all of it).
+* Commenting out the BottleRoom main class CPP.  Most of this will be moved to scene and such.
+
 *3/3/20*
 
 * Round 2 of Bottle migration

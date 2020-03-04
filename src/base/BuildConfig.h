@@ -38,9 +38,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 // OPERATING SYSTEM
-//We can use either SDL's defines, or use the defines in the expected OS headers
-// BR2_OS_WINDOWS, BR2_OS_ANDROID, BRO_OS_LINUX, BR2_OS_IOS, BRO_OS_OSX
-
 #ifdef _WIN32  
 //Note Win64 is defined WITH win32
 #define BR2_OS_WINDOWS

@@ -9,18 +9,19 @@
 
 #include "../bottle/BottleHeader.h"
 
-namespace Game {
+namespace BR2 {
 /**
-*  @class WorldMaker
+*    The former lair manager.
+* This makes the dungeons "lairs".
 */
 class WorldMaker : public VirtualMemory {
 public:
-  WorldMaker(std::shared_ptr<PhysicsWorld> pWorld25, std::shared_ptr<SpriteBucket> pBucket, std::vector<LairSpec*>& mapLairs, std::vector<WalkerSpec*>& mapWalkers);
+  WorldMaker(std::shared_ptr<World25> pWorld25, std::shared_ptr<SpriteBucket> pBucket, std::vector<LairSpec*>& mapLairs, std::vector<WalkerSpec*>& mapWalkers);
   virtual ~WorldMaker() override;
   void initialize();
 
   FORCE_INLINE size_t getNumLairSpecs() { return _mapLairSpecs.size(); }
-  FORCE_INLINE std::map<Hash32, LairSpec*>& getLairSpecs() { return _mapLairSpecs; }
+  FORCE_INLINE  std::map<Hash32, LairSpec*>& getLairSpecs() { return _mapLairSpecs; }
 
   LairSpec* getCurrentLair() { return _pCurrentLair; }
   void selectRandomLair();
@@ -29,6 +30,7 @@ public:
   void saveGrid(std::shared_ptr<WorldGrid>);
 
   void makeNewWorld();
+
   void loadAllGrids(std::set<std::shared_ptr<WorldGrid>>& __out_ grids);
 private:
   const int c_iGlobDigits = 4;
@@ -50,9 +52,6 @@ private:
   string_t getWorldGridsDir(string_t strGameName, string_t strWorldName);
   std::shared_ptr<WorldGrid> loadGridFromFile(string_t strFileName);
 };
-
 }//ns game
-
-
 
 #endif

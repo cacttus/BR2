@@ -1,5 +1,4 @@
 /**
-/**
 *
 *  @file Scene.h
 *  @date February 9, 2020
@@ -39,8 +38,6 @@ public:
   std::shared_ptr<GLContext> getContext();
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
   std::vector<std::shared_ptr<CameraNode>> getAllCameras();
-  std::shared_ptr<ObFile> getGameFile() { return _pGameFile; }
-  std::shared_ptr<WorldMaker> getWorldMaker() { return _pWorldMaker; }
   void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow = x; }
   void setActiveCamera(std::shared_ptr<CameraNode> x) { _pActiveCamera = x; }
@@ -59,11 +56,11 @@ public:
   void afterAttachedToWindow();
   void mouseWheel(int amount);
   uint64_t getFrameNumber();
-  
+
+  //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
+  //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
   std::shared_ptr<LightNodePoint> createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);
   std::shared_ptr<LightNodeDir> createDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled);
-  std::shared_ptr<WorldObject> createObj(string_t name, vec3& boxFit);
-  //std::shared_ptr<WorldObject> createObj(std::shared_ptr<WorldObjectSpec> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
 
 private:
   bool _bDebugDisableCull = false;
@@ -85,14 +82,10 @@ private:
   std::shared_ptr<ParticleManager> _pParticleManager = nullptr;
   //The default fly camera must always be available.
 //std::shared_ptr<FlyingCameraControls> _pFlyCam = nullptr;
-  std::shared_ptr<ObFile> _pGameFile = nullptr;
-  std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
 
   //Test data.
   std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
-
-  GameMode _eGameMode = GameMode::WorldSelect;
 
   void init();
   void createUi();
@@ -102,8 +95,6 @@ private:
   void debugChangeRenderState();
   void drawBackgroundImage();
   void createFlyingCamera();
-  void loadGameFile();
-  void updateTouch();
 
 };
 

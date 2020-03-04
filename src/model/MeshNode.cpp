@@ -38,7 +38,7 @@ namespace BR2 {
 MeshNode::MeshNode(std::shared_ptr<MeshSpec> ms) : MeshNode(ms, nullptr) {
   // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
 }
-MeshNode::MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<WorldObject> mn) : SceneNode(ps) {
+MeshNode::MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(ps) {
   _pModelNode = mn;
 }
 MeshNode::~MeshNode() {
@@ -48,7 +48,7 @@ MeshNode::~MeshNode() {
   _vecBoneNodesOrdered.resize(0);
   _vecArmaturesOrdered.resize(0);
 }
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<WorldObject> mn) {
+std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) {
   std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(ps, mn);
   m->init();
   return m;

@@ -81,7 +81,7 @@ void MobFile::cacheObjectsAndComputeBoxes() {
   _vecModelSpecs.clear();
   for (std::shared_ptr<ModDataLoad> mdd : _setModData) {
     //Create Model Spec
-    std::shared_ptr<WorldObjectSpec> ms = std::make_shared<WorldObjectSpec>(mdd->_strModName, mdd->_iFrameRate);
+    std::shared_ptr<ModelSpec> ms = std::make_shared<ModelSpec>(mdd->_strModName, mdd->_iFrameRate);
     _vecModelSpecs.push_back(ms);
     Gu::getModelCache()->addSpec(ms);
 
@@ -172,6 +172,7 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
       mb->parseErr(("Action was null."));
     }
     else {
+      //Parse crap
       string_t strType = mb->getCleanToken(tokens, iind);
       int iTime = TypeConv::strToInt(mb->getCleanToken(tokens, iind));
       string_t strData = mb->getCleanToken(tokens, iind);

@@ -40,7 +40,7 @@ public:
   string_t makeAssetPath(string_t folder, string_t file);
 
   bool isPackage();
-  string_t getDataFolder();
+  string_t getAssetsFolder();
   string_t getScriptsFolder();
   string_t getIconPath();
   string_t getShadersFolder();

@@ -1,8 +1,7 @@
 /**
-*
-*    @file WorldNode.h
-*    @date January 4, 2018
-
+*  @file WorldNode.h
+*  @date January 4, 2018
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __WORLDNODE_1515084453509352717_H__
@@ -11,8 +10,9 @@
 #include "../model/Model.h"
 #include "../bottle/BottleHeader.h"
 
-namespace Game {
-//This is likely going to go away.  ModelNode will likely be the "base obj"
+#include <array>
+
+namespace BR2 {
 //s0-3, e0-3, v0-3, c
 //s0,s1,s2,s3 e0,e1,e2,e3, v0,v1,v2,v3, c
 //proxy class to modify modelNodes loaded.
@@ -23,15 +23,15 @@ public:
   virtual ~WorldObj() override {}
 
   static std::shared_ptr<WorldObj> WorldObj::create(std::string mobFolder, uint32_t typeID, std::string friendlyName, std::string strBox, std::string strPlace);
-  t_string getFriendlyName() { return _strFriendlyName; }
-  t_string getMobName() { return _strMobName; }
+  string_t getFriendlyName() { return _strFriendlyName; }
+  string_t getMobName() { return _strMobName; }
   uint32_t getTypeId() { return _iTypeId; }
   std::shared_ptr<ModelSpec> getOrLoadModel();
-  std::shared_ptr<ModelNode> createInstance(std::shared_ptr<World25> w, vec3& r3Pos);
 
+  std::shared_ptr<ModelNode> createInstance(std::shared_ptr<World25> w, vec3& r3Pos);
 private:
   vec3 _vBoxFit;
-  t_string _strMobName;
+  string_t _strMobName;
   std::shared_ptr<ModelSpec> _pModelSpec = nullptr;
   uint32_t _iTypeId;
   std::string _strFriendlyName;

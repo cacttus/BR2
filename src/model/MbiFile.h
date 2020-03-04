@@ -22,11 +22,11 @@ public:
   MbiFile();
   virtual ~MbiFile() override;
 
-  std::vector<std::shared_ptr<WorldObjectSpec>>& getModelSpecs() { return _vecModels; }
+  std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModels; }
   bool loadAndParse(string_t file);
   void save(string_t file);
 private:
-  std::vector<std::shared_ptr<WorldObjectSpec>> _vecModels;
+  std::vector<std::shared_ptr<ModelSpec>> _vecModels;
   void parseErr(string_t str, bool bDebugBreak, bool bFatal);
   std::shared_ptr<BinaryFile> _pFile = nullptr;
   string_t _fileLoc;

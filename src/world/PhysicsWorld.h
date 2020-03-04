@@ -10,19 +10,6 @@
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
-class PhysicsWorldStats {
-  //This should be a non-static implementation of BottleUtils
-public:
-  float _fNodeWidth;
-  float _fNodeHeight;
-  vec3 _vUp;
-  MpFloat _awarenessXZ;// awXZ
-  float _awarenessXZInc;// awXZInc;
-  MpFloat _awarenessY;// awY;
-  float _awarenessYInc;// awYInc,
-  MpInt _mpNodesY;
-  uint32_t _iGridCountLimit;
-};
 /**
 *  @class PhysicsWorld
 *  @brief Operates on the world grid and manages the entire physical world and objects and collisions.
@@ -32,7 +19,6 @@ class PhysicsWorld : public VirtualMemoryShared<PhysicsWorld> {
 public:
   typedef std::map<ivec3*, std::shared_ptr<PhysicsGrid>, ivec3::Vec3xCompLess> GridMap;
   typedef std::map<NodeId, std::shared_ptr<PhysicsNode>> ObjMap;
-
   static void limitVelocity(vec3& __inout_ v);
   static void limitAccelleration(vec3& __inout_ va);
   static float getGravityAmount() { return -0.98f; }
@@ -43,25 +29,22 @@ public:
   virtual ~PhysicsWorld() override;
 
   static std::shared_ptr<PhysicsWorld> create(std::shared_ptr<Scene>, float fNodeWidth, float fNodeHeight, vec3& vUp,
-    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
-    MpInt mpNodesY, uint32_t iGridCountLimit);
+      MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
+      MpInt mpNodesY, uint32_t iGridCountLimit);
   virtual void update(float delta);
   //virtual void drawForward();
   void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
-
-  ivec3 v3Toi3CellLocal(vec3& v);
 
   void collectVisibleNodes(BvhCollectionParams* collectionParams);
 
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();
   std::multimap<float, std::shared_ptr<SceneNode>>& getVisibleNodes();
-  std::shared_ptr<Scene> getScene() { return _pScene; }
   float getNodeWidth()const { return _fNodeWidth; }
   float getNodeHeight()const { return _fNodeHeight; }
   ivec3 v3Toi3Node(vec3& v);
   vec3 i3tov3Node(const ivec3& iNode);
   std::shared_ptr<PhysicsGrid> getNodeAtPos(ivec3& pos);
-  std::shared_ptr<W25MeshMaker> getMeshMaker() { return _pMeshMaker; }
+
   bool unstick_objs(std::shared_ptr<PhysicsNode> objA, std::shared_ptr<PhysicsNode> objB, Box3f* in_bA, Box3f* in_bB);
 
   void refreshCache();
@@ -74,9 +57,6 @@ public:
   std::shared_ptr<PhysicsNode> getObj(NodeId obid);
   void activate(std::shared_ptr<PhysicsNode> pPhy);
   void refreshObjectManifold(std::shared_ptr<PhysicsNode> ob);
-  void createNewWorld();
-
-  std::shared_ptr<SpriteBucket> getSpriteBucket() { return _pSpriteBucket; }
 
   size_t  getNumGrids() { return _gridMap.size(); }
   void clearObjectManifoldAndRemoveFromGrid(std::shared_ptr<PhysicsNode> ob);
@@ -84,17 +64,11 @@ public:
   void getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ p1, bool bLimitByWorldBox);
   void addGrid(std::shared_ptr<PhysicsGrid> pGrid, const ivec3& cv);
   void debugMakeSureNoDupes(const ivec3& vv);
-  
-  void loadWorld();
   void unloadWorld();
-
   std::shared_ptr<PhysicsGrid> getNodeForPoint(vec3& pt);
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
-  std::shared_ptr<Atlas> getWorldAtlas() { return _pWorldAtlas; }
-  std::shared_ptr<W25Config> getConfig();
 
   std::shared_ptr<PhysicsNode> findNode(string_t specName);
-  string_t getWorldName() { return _worldName; }
   template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node) {
     for (auto a : _mapObjects) {
       if (a.second->findNode(node)) {
@@ -103,13 +77,16 @@ public:
     }
     return false;
   }
-  virtual void drawShadows();
-  virtual void drawForward();
-  virtual void drawDeferred();
-  virtual void drawTransparent();
-  std::shared_ptr<World25Plane> getWorld25Plane() { return _pWorld25Plane; }
+  virtual void drawShadows(RenderParams& rp);
+  virtual void drawForward(RenderParams& rp);
+  virtual void drawDeferred(RenderParams& rp);
+  virtual void drawTransparent(RenderParams& rp);
+  std::shared_ptr<Scene> getScene() { return _pScene; }
 
 protected:
+  virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
+    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
+    MpInt mpNodesY, uint32_t iGridCountLimit);
   GridMap& getGrids() { return _gridMap; }
 
   virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos);
@@ -119,7 +96,6 @@ protected:
 private:
   float _fNodeWidth = 0;
   float _fNodeHeight = 0;
-  string_t _worldName = "MyWorld";
   //*New Grid stuff
   GridMap _gridMap;
   ObjMap _mapObjects;
@@ -137,25 +113,8 @@ private:
   std::unique_ptr<Box3f> _pWorldBox = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr;
-  std::shared_ptr<W25MeshMaker> _pMeshMaker = nullptr;
-  std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
-  std::shared_ptr<Material> _pWorldMaterial = nullptr;
-  std::shared_ptr<ShaderBase> _pTileShader = nullptr;
-  std::shared_ptr<ShaderBase> _pGridShader = nullptr;
-  std::shared_ptr<SkyBox> _pSkyBox = nullptr;
-  std::shared_ptr<Atlas> _pSkyAtlas = nullptr;
-  std::shared_ptr<SpriteBucket> _pSpriteBucket = nullptr;
-  std::shared_ptr<World25Plane> _pWorld25Plane;
 
-  void makeAtlas();
-  void makeShaders();
-  void makeSky();
-  void convertMobs();
-  void createHandCursor();
 
-  virtual void init(float fNodeWidth, float fNodeHeight, vec3& vUp,
-    MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
-    MpInt mpNodesY, uint32_t iGridCountLimit);
   void updateWorldBox();
   void sortObjects_CalculateSpeedboxes_And_CollectManifolds();
   void collisionLoopDual(float delta);

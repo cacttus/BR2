@@ -35,9 +35,7 @@ public:
   static std::shared_ptr<Net> getNet();
   static std::shared_ptr<GLContext> getCoreContext();
 
-  static bool checkArg(const std::vector<string_t>& args, string_t key, string_t value);
-
-  static void createLogger(string_t logfile_dir, const std::vector<string_t>& args);
+  static void createLogger(string_t logfile_dir);
   static void initGlobals(const std::vector<std::string>& args);
   static void createManagers();
   static void updateManagers();

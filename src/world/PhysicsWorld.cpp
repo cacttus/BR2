@@ -5,23 +5,18 @@
 #include "../base/FpsMeter.h"
 #include "../base/Hash.h"
 #include "../base/GLContext.h"
-#include "../base/ApplicationPackage.h"
 #include "../gfx/GraphicsContext.h"
 #include "../math/CollisionEquations.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/LightNode.h"
-#include "../model/Material.h"
 #include "../gfx/LightManager.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
-#include "../gfx/Atlas.h"
 #include "../gfx/ShadowBox.h"
-#include "../gfx/SkyBox.h"
 #include "../gfx/RenderParams.h"
 #include "../gfx/RenderSettings.h"
 #include "../model/MeshUtils.h"
-#include "../model/ModelCache.h"
 #include "../model/MeshNode.h"
 #include "../model/UtilMeshInline.h"
 #include "../model/Model.h"
@@ -34,13 +29,7 @@
 #include "../world/PhysicsGridAwareness.h"
 #include "../world/RenderBucket.h"
 #include "../world/Scene.h"
-#include "../world/GameFile.h"
-#include "../world/WorldMaker.h"
-#include "../world/BottleUtils.h"
-#include "../world/ObFile.h"
-#include "../world/W25Config.h"
-#include "../world/SpriteBucket.h"
-#include "../world/W25MeshMaker.h"
+
 
 namespace BR2 {
 PhysicsWorld::PhysicsWorld(std::shared_ptr<Scene> pscene) {
@@ -52,6 +41,7 @@ PhysicsWorld::~PhysicsWorld() {
   //DEL_MEM(_pRenderBucket);
   //DEL_MEM(_pRenderBucket);
 }
+
 std::shared_ptr<PhysicsWorld> PhysicsWorld::create(std::shared_ptr<Scene> s, float fNodeWidth, float fNodeHeight, vec3& vUp,
   MpFloat awXZ, float awXZInc, MpFloat awY, float awYInc,
   MpInt mpNodesY, uint32_t iGridCountLimit) {
@@ -74,165 +64,6 @@ void PhysicsWorld::init(float fNodeWidth, float fNodeHeight, vec3& vUp,
   _pWorldBox = std::make_unique<Box3f>();
   _pWorldBox->_min = _pWorldBox->_max = vec3(0, 0, 0);
   _pRenderBucket = std::make_shared<RenderBucket>();
-
-  _pWorld25Plane = std::make_shared<World25Plane>();
-  _pWorld25Plane->n = vec3(0, 1, 0);
-  _pWorld25Plane->d = 0;
-  _pWorld25Plane->getBasisU() = vec3(1, 0, 0);
-  _pWorld25Plane->getBasisV() = vec3(0, 0, 1);
-
-  //Scene has GameFile on it
- // _pConfig = getScene()->getGameFile()->getW25Config();
-
-  //Shader
-  BRLogInfo("World25 - Making Shaders");
-  makeShaders();
-
-  BRLogInfo("World25 - Making Atlas");
-  makeAtlas();//**MUST COME FIRST because it establishes the TILE ids.
-//  
-//  ///need to load the file before the UI
-//  ///make Asset Images
-//  ///_pApp->createAssetWindow(imgs)
-//  
-//
-  BRLogInfo("PhysidsWorld - Making Mesh Conf");
-  _pMeshMaker = std::make_shared<W25MeshMaker>(_pWorldAtlas);//Must come before grid
-  _pMeshMaker->init();
-
-
-  //
-  //  t_timeval _tvInitTime = Gu::getMicroSeconds();
-  //
-  BRLogInfo("PhysidsWorld - Making sky");
-  makeSky();
-  //
-  //  //*Make the first grid for the player's pos.
-  //BRLogInfo("PhysidsWorld - Initializing");
-  //initializeWorldGrid(); //appears unused
-
-  BRLogInfo("Converting Mobs");
-  convertMobs();
-
-  BRLogInfo("Creating Objects");
-  createHandCursor();
-
-  Gu::checkErrorsRt();
-}
-void PhysicsWorld::createNewWorld() {
-  //This is called by woreldmaker.. not sure how we'll handle this.
-  //Probably clear all globs and all waiting.
-  //Delete all items from Scene
-  BRThrowNotImplementedException();
-}
-void PhysicsWorld::makeAtlas() {
-#define MA_P(x) getRoom()->makeAssetPath(x)
-  //Init Particles
-  BRLogInfo("Making Woorld tex.");
-
-  getScene()->getGameFile()->getBucket()->loadMotions(getScene()->getGameFile());
-  int nFrames = getScene()->getGameFile()->getBucket()->getNumUniqueFrames();
-  float fsq = sqrtf((float)nFrames);
-  int iSize = (int)ceilf(fsq);
-
-  BRLogInfo("Sprite Map Size = " + iSize + "x" + iSize);
-
-  ivec2 gsiz(iSize, iSize);
-  _pWorldAtlas = std::make_shared<Atlas>(Gu::getCoreContext(), "W25Atlas", gsiz);
-
-  //add sprite animations to the atlas.    
-  getScene()->getGameFile()->getBucket()->addToAtlas(_pWorldAtlas);
-  _pWorldAtlas->compileFiles(false);
-
-  //Make material
-  _pWorldMaterial = std::make_shared<Material>();
-  _pWorldMaterial->setSpecHardness(190);
-  _pWorldMaterial->setDiffuse(vec4(1, 1, 1, 1));
-  _pWorldMaterial->setSpec(vec4(1, 1, 1, 0.1));
-  _pWorldMaterial->addTextureBinding(_pWorldAtlas, TextureChannel::e::Channel0, TextureType::e::Color, 1.0f);
-}
-void PhysicsWorld::makeShaders() {
-  _pTileShader = Gu::getShaderMaker()->makeShader(
-    std::vector<string_t>{"d_v3i2n3_tileshader.vs", "d_v3i2n3_tileshader.ps"}
-  );
-  _pGridShader = Gu::getShaderMaker()->makeShader(
-    std::vector<string_t>{"d_v3n3_grid.vs", "d_v3n3_grid.gs", "d_v3n3_grid.ps"}
-  );
-}
-void PhysicsWorld::makeSky() {
-  BRLogInfo("Making sky.");
-  ivec2 gsiz;
-  gsiz.construct(2, 2);
-  _pSkyBox = std::make_shared<SkyBox>();
-  _pSkyAtlas = std::make_shared<Atlas>("SkyBoxAtlas", gsiz);
-  _pSkyAtlas->addImage(0, Gu::getPackage()->makeAssetPath("tex", "tx-sb-top.png"));  //top
-  _pSkyAtlas->addImage(1, Gu::getPackage()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
-  _pSkyAtlas->addImage(2, Gu::getPackage()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
-  _pSkyAtlas->addImage(3, Gu::getPackage()->makeAssetPath("tex", "tx-sb-bot.png"));  //bot
-  _pSkyAtlas->compileFiles(true, true);
-  _pSkyAtlas->oglSetFilter(TexFilter::e::Linear);
-  _pSkyBox->init(_pSkyAtlas, 400, true);
-}
-void PhysicsWorld::convertMobs() {
-  for (std::shared_ptr<WorldObjectSpec> ws : getScene()->getGameFile()->getMobSpecs()) {
-    Gu::getModelCache()->convertMobToBin(ws->getMobName(), true, ws->getFriendlyName());
-  }
-}
-std::shared_ptr<W25Config> PhysicsWorld::getConfig() {
-  return getScene()->getGameFile()->getW25Config();
-}
-void PhysicsWorld::createHandCursor() {
-  std::shared_ptr<WorldObjectSpec> ms;
-  std::shared_ptr<WorldObj> s;
-  //////////////////////////////////////////////////////////////////////////
-  std::shared_ptr<WorldObject> wo;
-  /*
-  find chest
-  open
-  get gem
-  buy ice cavern = gem x 1
-  place ice cavern
-  click ice cavern
-  enter ice cavern
-  load ice cavern world.
-
-  */
-  //makeObj("cuddles_01b", vec3(-6, 0, 6), vec3(0.6f, 0.6f, 0.6f), "cuddles_01b.Idle");
-
-  getScene()->createObj("skeledug", vec3(BottleUtils::getCellWidth(), BottleUtils::getCellHeight() * 8, BottleUtils::getCellWidth()));
-
-  //   makeObj("grave_0", vec3(-10, 0, -10), vec3(1.2f, 1.2f, 1.2f), vec4(0, 1, 0, 0), "");
-  //   wo = makeObj("chest_0", vec3(10, 0, -10), vec3(0.8f, 0.8f, 0.8f), vec4(0, 1, 0, 0), "");
-  //   //*Chest "open" animation.
-  //   wo->playAction("chest_0.bar_bot.open");
-  //   wo->playAction("chest_0.bar_top.open");
-  //   wo->playAction("chest_0.lock.open");
-  //   wo->playAction("chest_0.top.open");
-  //   wo->playAction("chest_0.bottom.open");
-  //   wo = makeObj("gem_0", vec3(4, 0, 4), vec3(0.8f, 0.8f, 0.8f), vec4(0, 1, 0, 0), "gem_0.rotate");
-  //
-  //  wo = makeObj("coin_0", vec3(4, 1, 12), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "coin_0.Rotate");
-  //  wo = makeObj("coin_1", vec3(7, 1, 9), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "coin_1.rotate");
-  wo = nullptr;
-
-  //    wo = makeObj("Tall_Lamp", vec3(0, 0, 0), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "");
-   // if (wo != nullptr) {
-  std::shared_ptr<LightNodePoint> lp = getScene()->createPointLight(vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
-  //     wo->attachChild(lp);
-      // turnOffLamp();//Default turn if otf
-//   }
-
-   //DebugHelper::debugHeapBegin(true);
-
- //  makeDirLight(wo->getPos() + vec3(5, 5, 5), std::move(wo->getPos()), 25.0f, vec4(1, 1, 1, 1), "", true);
-
-   // makeObj("bush_0", vec3(0, 0, -8), vec3(1, 1, 1), vec4(0, 1, 0, 0), "");
-   // makeObj("appletree", vec3(15, 0, 15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
-   // makeObj("appletree", vec3(-15, 0, 15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
-   // makeObj("appletree", vec3(-15, 0, -15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
-   // makeObj("appletree", vec3(15, 0, -15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
-  // makeObj("box_norm", vec3(3, 1, -3), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "box_norm.Rotate");
-  getScene()->createObj("box_glass", vec3(0, BottleUtils::getCellHeight() * 8, 0));
 }
 void PhysicsWorld::getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ p1, bool bLimitByWorldBox) {
   //CreateCellsForVolume.
@@ -264,10 +95,6 @@ void PhysicsWorld::getNodeRangeForBox(Box3f* c, ivec3* __out_ p0, ivec3* __out_ 
 }
 ivec3 PhysicsWorld::v3Toi3Node(vec3& v) {
   return v3Toi3Any(v, 1.0f / _fNodeWidth, 1.0f / _fNodeHeight);
-}
-ivec3 PhysicsWorld::v3Toi3CellLocal(vec3& v) {
-  ivec3 vr = v3Toi3Any(v, BottleUtils::getCellWidth_1(), BottleUtils::getCellHeight_1());
-  return vr;
 }
 ivec3 PhysicsWorld::v3Toi3Any(vec3& v, float w1, float h1) {
   ivec3 ret;
@@ -322,46 +149,6 @@ void PhysicsWorld::debugMakeSureNoDupes(const ivec3& vv) {
     }
   }
 
-}
-void PhysicsWorld::loadWorld() {
-  if (_bAsyncGen == false) {
-    t_timeval tv;
-    std::set<std::shared_ptr<WorldGrid>> grids;
-
-    BRLogInfo("Loading..");
-    tv = Gu::getMicroSeconds();
-    {
-      _pWorldMaker->loadAllGrids(grids);
-    }
-    BRLogInfo(".." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
-    BRLogInfo("Generating " + grids.size() + " grids..");
-    tv = Gu::getMicroSeconds();
-    {
-      BRLogInfo("Add..");
-      for (std::shared_ptr<WorldGrid> pg : grids) {
-        addGrid(pg, pg->getGridPos());
-        // pg->linkGrids();
-      }
-      BRLogInfo("Stage 1..");
-      for (std::shared_ptr<WorldGrid> pg : grids) {
-        pg->generateStage1Sync();
-      }
-      BRLogInfo("Post 1..");
-      for (std::shared_ptr<WorldGrid> pg : grids) {
-        pg->postGenerateStage1();
-      }
-      BRLogInfo("Stage 2..");
-      for (std::shared_ptr<WorldGrid> pg : grids) {
-        pg->generateStage2Sync();
-      }
-      BRLogInfo("Post 2..");
-      for (std::shared_ptr<WorldGrid> pg : grids) {
-        pg->postGenerateStage2();
-        Gu::print(pg->getGenProfileString());
-      }
-    }
-    BRLogInfo(grids.size() + " grids.." + (Gu::getMicroSeconds() - tv) / 1000 + "ms");
-  }
 }
 void PhysicsWorld::unloadWorld() {
   for (ivec3* iv : _setEmpty) {
@@ -449,6 +236,8 @@ void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Bo
       }
     }
   }
+
+
 }
 void PhysicsWorld::calcGridManifold(std::shared_ptr<PhysicsGrid> pGrid) {
   //do this when we add grids so that teh grids can 'capture' objects that weren't added.
@@ -616,6 +405,7 @@ void PhysicsWorld::collisionLoopDual(float delta) {
 
 }
 void PhysicsWorld::postCollide(uint64_t frameId, bool bAccel) {
+
   std::set<std::shared_ptr<PhysicsNode>> vecFinalActive;
   int32_t  nIter2 = 0;
   for (std::shared_ptr<PhysicsNode> ob : _vecActiveFrame) {
@@ -1433,7 +1223,7 @@ void PhysicsWorld::makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_pt
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::loadGrid(const ivec3& pos) {
   std::shared_ptr<PhysicsGrid> p = nullptr;
-  p = std::dynamic_pointer_cast<PhysicsGrid>(_pWorldMaker->loadGrid(pos));
+  BRLogWarnCycle("TODO: implement World25::loadGrid here");
   return p;
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::getNodeForPoint(vec3& pt) {
@@ -1457,6 +1247,7 @@ vec3 PhysicsWorld::i3tov3Node(const ivec3& iNode) {
 
   return vOut;
 }
+
 void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
   AssertOrThrow2(parms->_pFrustum != nullptr);
   AssertOrThrow2(parms->_pRenderBucket != nullptr);
@@ -1672,17 +1463,15 @@ std::shared_ptr<PhysicsNode> PhysicsWorld::findNode(string_t specName) {
   }
   return nullptr;
 }
-void PhysicsWorld::drawShadows() {
-
+void PhysicsWorld::drawShadows(RenderParams& rp) {
 }
-void PhysicsWorld::drawForward() {
-  RenderParams rp;
+void PhysicsWorld::drawForward(RenderParams& rp) {
   for (std::pair<float, std::shared_ptr<SceneNode>> p : getVisibleNodes()) {
     std::shared_ptr<SceneNode> pm = p.second;
     pm->drawForward(rp);
   }
 }
-void PhysicsWorld::drawDeferred() {
+void PhysicsWorld::drawDeferred(RenderParams& rp) {
   Perf::pushPerf();
 
   Gu::getCoreContext()->pushDepthTest();
@@ -1745,7 +1534,7 @@ void PhysicsWorld::drawDeferred() {
 
   Perf::popPerf();
 }
-void PhysicsWorld::drawTransparent() {
+void PhysicsWorld::drawTransparent(RenderParams& rp) {
   Perf::pushPerf();
 
   Gu::getCoreContext()->pushDepthTest();

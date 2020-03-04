@@ -1,12 +1,7 @@
 /**
-*
-*    @file World25d.h
-*    @date March 2, 2017
-*    @author Derek Page
-*
-*    © 2017
-*
-*
+*  @file World25d.h
+*  @date March 2, 2017
+*  @author MetalMario971
 */
 #pragma once
 #ifndef __WORLD25D_14884745582594951236_H__
@@ -15,23 +10,27 @@
 
 #include "../world/PhysicsWorld.h"
 #include "../bottle/BottleHeader.h"
-namespace Game {
+namespace BR2 {
 /**
 *    @class World25d
-*    @brief deleting this.
+*    @brief
+*
+*    Makes no sense for Widget to inherit from Node3Base  But whatever.
 */
 class World25 : public PhysicsWorld {
 public:
-    // typedef std::map<ivec3*, std::shared_ptr<WorldGrid>, ivec3::Vec3xCompLess> GridMap;
+  // typedef std::map<ivec3*, std::shared_ptr<WorldGrid>, ivec3::Vec3xCompLess> GridMap;
+
 public:
-  World25();
+  World25(std::shared_ptr<Scene> pscene);
   virtual ~World25() override;
 
-  void init(std::shared_ptr<ObFile> obFile);
-  void updateTouch(std::shared_ptr<Fingers> pFingers);
+  void init(std::shared_ptr<ObFile> ob);
+
+  void updateTouch(std::shared_ptr<InputManager> pFingers);
   virtual void update(float delta) override;
-  virtual void drawDeferred() override;
-  virtual void drawForward() override;
+  virtual void drawDeferred(RenderParams& rp) override;
+  virtual void drawForward(RenderParams& rp) override;
 
   //*Raycast Tests**
   Ray_t getMouseRay(vec2& vMouse);
@@ -59,6 +58,7 @@ public:
   t_timeval getAverageOfflineDuration() { return _tvAverageOffline; }
   std::shared_ptr<WorldMaker> getWorldMaker() { return _pWorldMaker; }
   std::shared_ptr<W25Config> getConfig() { return _pConfig; }
+  std::shared_ptr<BottleRoom> getRoom();
 
   void createObjFromFile(World25ObjectData* obData);//, WorldCell* pDestCell, int32_t iStackIndex);
   void remakeGridMeshes();
@@ -70,73 +70,72 @@ public:
   void createNewWorld();
   void loadWorld();
   string_t getWorldName() { return _strWorldName; }
-  std::shared_ptr<BottleRoom> getRoom();
   vec3 i3tov3Cell(const ivec3& iNode, const ivec3& iCell);
   ivec3 v3Toi3CellLocal(vec3& v);
   GridShow::e toggleShowGrid();
+
 private:
-    bool _bAsyncGen = false;
-    void turnOffLamp();
-    void turnOffSun();
-    std::shared_ptr<Material> _pWorldMaterial = nullptr;
-    std::set<std::shared_ptr<WorldGrid>> _setGenStage1;
-    std::set<std::shared_ptr<WorldGrid>> _setGenStage2;
+  bool _bAsyncGen = false;
+  void turnOffLamp();
+  void turnOffSun();
+  std::shared_ptr<Material> _pWorldMaterial = nullptr;
+  std::set<std::shared_ptr<WorldGrid>> _setGenStage1;
+  std::set<std::shared_ptr<WorldGrid>> _setGenStage2;
 
-    std::shared_ptr<LightNodePoint> _pLight0 = nullptr;
-    std::shared_ptr<LightNodePoint> _pLight1 = nullptr;
-    std::shared_ptr<LightNodePoint> _pLight2 = nullptr;
+  std::shared_ptr<LightNodePoint> _pLight0 = nullptr;
+  std::shared_ptr<LightNodePoint> _pLight1 = nullptr;
+  std::shared_ptr<LightNodePoint> _pLight2 = nullptr;
 
-    std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
-    std::shared_ptr<World25Plane> _pWorld25Plane = nullptr;
-    std::shared_ptr<ShaderBase> _pTileShader = nullptr;
-    std::shared_ptr<ShaderBase> _pGridShader = nullptr;
+  std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
+  std::shared_ptr<World25Plane> _pWorld25Plane = nullptr;
+  std::shared_ptr<ShaderBase> _pTileShader = nullptr;
+  std::shared_ptr<ShaderBase> _pGridShader = nullptr;
 
-    std::shared_ptr<HappySky> _pSkyBox = nullptr;
-    std::shared_ptr<Atlas> _pSkyAtlas = nullptr;
-    bool _bDisableLighting = true;
-    std::shared_ptr<W25MeshMaker> _pMeshMaker = nullptr;
-    std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
-    int32_t _nMeshTrisFrame = 0;
-    int32_t _nQuadTrisFrame = 0;
-    t_timeval _tvAverageOffline = 0;
-    std::shared_ptr<W25Config> _pConfig;
-    int64_t _iMarchStamp = 1;
+  std::shared_ptr<HappySky> _pSkyBox = nullptr;
+  std::shared_ptr<Atlas> _pSkyAtlas = nullptr;
+  bool _bDisableLighting = true;
+  std::shared_ptr<W25MeshMaker> _pMeshMaker = nullptr;
+  std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
+  int32_t _nMeshTrisFrame = 0;
+  int32_t _nQuadTrisFrame = 0;
+  t_timeval _tvAverageOffline = 0;
+  std::shared_ptr<W25Config> _pConfig;
+  int64_t _iMarchStamp = 1;
 
-    string_t _strGameName;//Portals 12/22/17
-    string_t _strWorldName;
-    std::shared_ptr<ObFile> _pGameFile = nullptr;
-    GridShow::e _eShowGrid = GridShow::e::None;
+  string_t _strGameName;//Portals 12/22/17
+  string_t _strWorldName;
+  std::shared_ptr<ObFile> _pGameFile = nullptr;
+  GridShow::e _eShowGrid = GridShow::e::None;
 
-    void updateHandCursorAndAddToRenderList(float);
-    void generateStage1(std::vector<std::shared_ptr<WorldGrid>>& vecGen, bool synchronous);
-    void generateStage2();
-    void postGenerateNodes();
+  void updateHandCursorAndAddToRenderList(float);
+  void generateStage1(std::vector<std::shared_ptr<WorldGrid>>& vecGen, bool synchronous);
+  void generateStage2();
+  void postGenerateNodes();
 
-    void notifyStage1Complete(std::shared_ptr<WorldGrid> pg);
-    void attemptStage2(std::shared_ptr<WorldGrid> pg);
+  void notifyStage1Complete(std::shared_ptr<WorldGrid> pg);
+  void attemptStage2(std::shared_ptr<WorldGrid> pg);
 
-    void makeShaders();
-    void initializeWorldGrid();
+  void makeShaders();
+  void initializeWorldGrid();
 
-    void makeSky();
-    void settleLiquids(bool bForce);
-    void updateAwarenessSpheroidAxis(float& fAwareness, float minR, float maxR, float increment);
-    void makeAtlas();
-    void updateAndCopyVisibleObjects(float delta, std::multimap<float, std::shared_ptr<ModelNode>> vecCollected);
-    void collectObjects(std::multimap<float, std::shared_ptr<ModelNode>>& vecCollected);
-    WorldCell* getBaseCellAtRay(Ray_t* pr);
-    WorldCell* getMidCellAtRay(Ray_t* pr);
-    void updateTopology();
+  void makeSky();
+  void settleLiquids(bool bForce);
+  void updateAwarenessSpheroidAxis(float& fAwareness, float minR, float maxR, float increment);
+  void makeAtlas();
+  void updateAndCopyVisibleObjects(float delta, std::multimap<float, std::shared_ptr<ModelNode>> vecCollected);
+  void collectObjects(std::multimap<float, std::shared_ptr<ModelNode>>& vecCollected);
+  WorldCell* getBaseCellAtRay(Ray_t* pr);
+  WorldCell* getMidCellAtRay(Ray_t* pr);
+  void updateTopology();
 
-    void drawSky();
-    void drawWorld();
-    void createHandCursor();
- 
-    void convertMobs();
+  void drawSky(RenderParams& rp);
+  void drawWorld(RenderParams& rp);
+  void createHandCursor();
+
+  void convertMobs();
 protected:
-    virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos) override;
-    //virtual std::shared_ptr<PhysicsGrid> makeGrid(ivec3& cv, bool bEmpty) override;
-
+  virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos) override;
+  //virtual std::shared_ptr<PhysicsGrid> makeGrid(ivec3& cv, bool bEmpty) override;
 
 };
 

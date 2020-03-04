@@ -38,7 +38,7 @@ public:
   std::vector<VertexWeightMob>& getWeightsMob() { return _vecWeightsMob; }
   std::set<std::shared_ptr<BoneSpec>>& getBoneCache() { return _boneCache; }
 
-  void allocSkinMobFile(std::shared_ptr<WorldObjectSpec> ms); //This is called separately in the MOB loader.
+  void allocSkinMobFile(std::shared_ptr<ModelSpec> ms); //This is called separately in the MOB loader.
 
   bool getHideRender() { return _bHideRender; }
   void setHideRender(bool b) { _bHideRender = b; }
@@ -96,10 +96,10 @@ protected:
 
 
 
-  void fillWeightBuffersMob(std::shared_ptr<WorldObjectSpec> ms);
+  void fillWeightBuffersMob(std::shared_ptr<ModelSpec> ms);
   //void collectArmatures(std::shared_ptr<ModelSpec> ms);
-  int32_t getGpuJointOrdinal(std::shared_ptr<WorldObjectSpec> ms, int32_t arm, int32_t joint);
-  void testAccess(std::shared_ptr<WorldObjectSpec> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
+  int32_t getGpuJointOrdinal(std::shared_ptr<ModelSpec> ms, int32_t arm, int32_t joint);
+  void testAccess(std::shared_ptr<ModelSpec> ms, GpuAnimatedMeshWeightData* weightOffsetsGpu, size_t weightOffsetsGpuSize,
     GpuAnimatedMeshWeight* weightsGpu, size_t weightsGpuSize, std::vector<VertexWeightMob>* vecWeights);
   int32_t vertexFormatToInt32();
   void int32ToVertexFormat(int32_t i);

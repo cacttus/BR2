@@ -1,25 +1,8 @@
 #include "../bottle/Goal25.h"
 
-
-namespace Game {
-///////////////////////////////////////////////////////////////////
-Goal25::Goal25(Brain25* pBrain) : _pBrain(pBrain)
-{
-
+namespace BR2 {
+Goal25::Goal25(Brain25* pBrain) : _pBrain(pBrain) {
 }
-Goal25::~Goal25()
-{
-
+Goal25::~Goal25() {
 }
-///////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
 }//ns Game

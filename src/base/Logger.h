@@ -19,7 +19,7 @@ namespace BR2 {
 class Logger_Internal;
 class Logger : public OperatingSystemMemory {
 public:
-  Logger(bool async, bool disabled = false);
+  Logger();
   virtual ~Logger() override;
 
   void init(string_t cacheFolder);
@@ -46,7 +46,7 @@ public:
 
   string_t getLogPath();
 private:
-  Logger_Internal* _pint = nullptr;
+  std::unique_ptr<Logger_Internal> _pint = nullptr;
 };
 
 }//ns game
@@ -72,5 +72,11 @@ BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL ); \
 BR2::Gu::getLogger()->logError(x,__LINE__,__FILE__, aex )
 #define BRLogWarnCycle(x) BR2::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, NULL, 60)
 #define BRLogErrorCycle(x) BR2::Gu::getLogger()->logErrorCycle(Stz x, __LINE__, __FILE__, NULL, 60)
+
+#define SetLoggerColor_Error() ConsoleColorRed()
+#define SetLoggerColor_Info() ConsoleColorGray()
+#define SetLoggerColor_Debug() ConsoleColorCyan()
+#define SetLoggerColor_Warn() ConsoleColorYellow()
+
 
 #endif

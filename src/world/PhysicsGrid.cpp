@@ -6,13 +6,15 @@
 #include "../world/PhysicsNode.h"
 #include "../gfx/ShaderMaker.h"
 
+
 namespace BR2 {
-PhysicsGrid::PhysicsGrid(std::shared_ptr<PhysicsWorld> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty) {
+PhysicsGrid::PhysicsGrid(std::shared_ptr<PhysicsWorld> pw, const ivec3& viPos, float fNodeWidth, float fNodeHeight, bool bEmpty) : _bEmpty(bEmpty),
+_pPhysicsWorld(pw), _viPos(viPos) {
   _fNodeHeight = fNodeHeight;
   _fNodeWidth = fNodeWidth;
-  _bEmpty = bEmpty;
-  _pPhysicsWorld = pw;
-  _viPos = viPos;
+
+
+  //New Box
   _pBoundBox = new Box3f();
 
   pw->getNodeBoxForGridPos(viPos, *_pBoundBox);
@@ -26,6 +28,7 @@ PhysicsGrid::PhysicsGrid(std::shared_ptr<PhysicsWorld> pw, const ivec3& viPos, f
 PhysicsGrid::~PhysicsGrid() {
   DEL_MEM(_pBoundBox);
   //DEL_MEM(_pManifold);
+
 }
 std::shared_ptr<PhysicsGrid> PhysicsGrid::getNeighborOffset(float off_x, float off_y, float off_z) {
   vec3 pt = getBoundBox()->center();
@@ -110,6 +113,7 @@ void PhysicsGrid::setGridNeighbor(std::shared_ptr<PhysicsGrid> pNeighbor, Physic
   _pNeighbor[eNeighbor] = pNeighbor;
 }
 void PhysicsGrid::linkToGrid(std::shared_ptr<PhysicsGrid> pNeighbor, PhysicsGridSide::e eNeighbor) {
+
   //We were getting this becvause of the w/h mixup
   AssertOrThrow2(pNeighbor != shared_from_this());
 
@@ -159,4 +163,6 @@ vec3 PhysicsGrid::getOriginR3() {
   ret.z = (float)_viPos.z * _pPhysicsWorld->getNodeWidth();
   return ret;
 }
+
+
 }//ns Game

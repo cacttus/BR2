@@ -110,31 +110,7 @@ bool Gu::is64Bit() {
     BRThrowNotImplementedException();
   }
 }
-
-//**TODO Move to AppRunner
-void parsearg(std::string arg, string_t& __out_ out_key, string_t& __out_ out_value) {
-  bool isvalue = false;
-  std::string key = "";
-  std::string value = "";
-  //**TODO Move this to AppRunner
-
-  for (int i = 0; i < arg.length(); ++i) {
-    if (arg[i] == '=') {
-      isvalue = true;
-    }
-    else if (isvalue) {
-      value += arg[i];
-    }
-    else {
-      key += arg[i];
-    }
-    //**TODO Move to AppRunner
-  }
-
-  out_key = StringUtil::trim(key);
-  out_value = StringUtil::trim(value);
-}
-void processArg(std::string key, std::string value) {
+void parsearg(std::string key, std::string value) {
   if (key == "--show-console") {
     Gu::getEngineConfig()->setShowConsole(BR2::TypeConv::strToBool(value));
     BRLogInfo("Overriding show console window: " + value);
@@ -147,39 +123,29 @@ void processArg(std::string key, std::string value) {
     BRLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
   }
 }
-bool Gu::checkArg(const std::vector<string_t>& args, string_t inkey, string_t invalue) {
-  string_t key, value;
-  for (std::string arg : args) {
-    parsearg(arg, key, value);
-    if (StringUtil::equalsi(key, inkey)) {
-      if (StringUtil::equalsi(value, invalue)) {
-        return true;
-      }
-      else {
-        return false;
-      }
-      break;
+//**TODO Move this crap to AppRunner
+void parsearg(std::string arg) {
+  bool isvalue = false;
+  std::string key = "";
+  std::string value = "";
+  //**TODO Move this crap to AppRunner
+
+  for (int i = 0; i < arg.length(); ++i) {
+    if (arg[i] == '=') {
+      isvalue = true;
     }
+    else if (isvalue) {
+      value += arg[i];
+    }
+    else {
+      key += arg[i];
+    }
+    //**TODO Move this crap to AppRunner
   }
-  return false;
+  parsearg(key, value);
 }
-void Gu::createLogger(string_t logfile_dir, const std::vector<string_t>& args) {
-  //These are essentially the system defaults
-  bool log_async = true;
-  bool disabled = false;
-  if (Gu::checkArg(args, "log_async", "true")) {
-    log_async = true;
-  }
-  else if (Gu::checkArg(args, "log_async", "false")) {
-    log_async = false;
-  }
-  if (Gu::checkArg(args, "log_disable", "true")) {
-    disabled = true;
-  }
-  else if (Gu::checkArg(args, "log_disable", "false")) {
-    disabled = false;
-  }
-  Gu::_pLogger = std::make_shared<Logger>(log_async, disabled);
+void Gu::createLogger(string_t logfile_dir) {
+  Gu::_pLogger = std::make_shared<Logger>();
   Gu::_pLogger->init(logfile_dir);
 }
 void Gu::initGlobals(const std::vector<std::string>& args) {
@@ -189,14 +155,13 @@ void Gu::initGlobals(const std::vector<std::string>& args) {
   //Override EngineConfig
   for (std::string arg : args) {
     //TODO: skip arg 0 (app)
-    string_t key, value;
-    parsearg(arg, key, value);
-    processArg(key, value);
+    parsearg(arg);
   }
 
   //Setup Global Configuration
   getLogger()->enableLogToFile(Gu::getEngineConfig()->getEnableLogToFile());
   getLogger()->enableLogToConsole(Gu::getEngineConfig()->getEnableLogToConsole());
+
 
   //Print some environment Diagnostics
   BRLogInfo(Stz  "Operating System: " + Gu::getOperatingSystemName());
@@ -223,9 +188,7 @@ void Gu::loadConfig(const std::vector<std::string>& args) {
 
   //Override the EngineConfig
   for (std::string arg : args) {
-    string_t key, value;
-    parsearg(arg, key, value);
-    processArg(key, value);
+    parsearg(arg);//TODO: skip arg 0 (app)
   }
 
 }

@@ -7,13 +7,13 @@
 #include "../model/Material.h"
 #include "../model/VaoDataGeneric.h"
 #include "../model/MeshNode.h"
-#include "../model/MeshSpec.h"
+#include "../model/MeshData.h"
 #include "../model/VertexFormat.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/RenderParams.h"
 
 namespace BR2 {
-SkyBox::SkyBox() {
+SkyBox::SkyBox(std::shared_ptr<GLContext> ctx) : GLFramework(ctx) {
 }
 SkyBox::~SkyBox() {
 }
@@ -81,14 +81,14 @@ void SkyBox::init(std::shared_ptr<Atlas> pAtlas, float fBoxDiagonalSize2, bool b
     }
   }
 
-  std::shared_ptr<MeshSpec> ms = std::make_shared<MeshSpec>(
+  std::shared_ptr<MeshData> ms = std::make_shared<MeshData>(getContext(),
     (void*)verts.data(), verts.size(),
     (void*)inds.data(), inds.size(), v_v3n3x2::getVertexFormat(), nullptr);
-  std::shared_ptr<Material> mt = std::make_shared<Material>();
+  std::shared_ptr<Material> mt = std::make_shared<Material>(getContext());
   mt->addTextureBinding(_pAtlas, TextureChannel::Channel0, TextureType::e::Color, 1.0f);
   ms->setMaterial(mt);
 
-  _pMesh = MeshNode::create(ms);
+  _pMesh = std::make_shared<MeshNode>(getContext(),ms);
 
 
 }
@@ -130,13 +130,13 @@ void SkyBox::side(std::vector<v_v3n3x2>* verts, std::vector<v_index32>* inds,
 
 }
 void SkyBox::draw(RenderParams& rp) {
-  Graphics->pushCullFace();
-  Graphics->pushBlend();
+  getContext()->pushCullFace();
+  getContext()->pushBlend();
   //We can't disable depth testing here unless we put an additional forward stage before thed eferred stage.
  // Gu::pushDepthTest();
   {
-    Graphics->enableCullFace(false);
-    Graphics->enableBlend(false);
+    getContext()->enableCullFace(false);
+    getContext()->enableBlend(false);
     //glDisable(GL_CULL_FACE);
     //glDisable(GL_BLEND);
 
@@ -156,12 +156,12 @@ void SkyBox::draw(RenderParams& rp) {
 
 
     // //rp.addTexture(_pAtlas);
-    //// rp.addTexture(Gu::getTexCache()->getOrLoad("./data-dc/spr/barrier-1.png"));
+    //// rp.addTexture(GLContext::getTexCache()()->getOrLoad("./data-dc/spr/barrier-1.png"));
     // rp.setMesh(_pMesh);
     // rp.draw();
   }
-  Graphics->popCullFace();
-  Graphics->popBlend();
+  getContext()->popCullFace();
+  getContext()->popBlend();
   //  Gu::popDepthTest();
 
 }
@@ -173,4 +173,4 @@ void SkyBox::draw(RenderParams& rp) {
 
 
 
-}//ns Game
+}//ns BR2

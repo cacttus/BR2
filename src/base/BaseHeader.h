@@ -8,6 +8,7 @@
 #define __BASEHEADER_1478973884162863251_H__
 
 #include "../base/BaseDefines.h"
+#include "../base/ConsoleColors.h"
 
 namespace BR2 {
 

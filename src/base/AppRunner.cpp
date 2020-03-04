@@ -324,11 +324,11 @@ void AppRunner::runApp(const std::vector<string_t>& args, std::vector< std::func
   FileSystem::init(args[0]);
 
   //Start logger
-  Gu::createLogger("./logs/", args);
+  Gu::createLogger("./logs/");
 
   _pint->loadAppPackage();
 
-  //Load Engine Config, and make globals
+  //**Must come first before other logic
   Gu::initGlobals(args);
   {
     _pint->initSDLAndCreateGraphicsApi();

@@ -7,19 +7,12 @@
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/BottleUtils.h"
 
-
-namespace Game {
-//////////////////////////////////////////////////////////////////2/
-Goal25MoveTo::Goal25MoveTo(Brain25* pBrain, WorldCell* q) : Goal25(pBrain)
-{
-    _pDestinationQuad = q;
+namespace BR2 {
+Goal25MoveTo::Goal25MoveTo(Brain25* pBrain, WorldCell* q) : Goal25(pBrain) {
+  _pDestinationQuad = q;
 }
-Goal25MoveTo::~Goal25MoveTo()
-{
-
+Goal25MoveTo::~Goal25MoveTo() {
 }
-///////////////////////////////////////////////////////////////////
-
 void Goal25MoveTo::execute(float delta) {
   //  WorldCell* pCurrentQuad;
   //  WorldCell* pTargetQuad;
@@ -49,12 +42,11 @@ void Goal25MoveTo::execute(float delta) {
                     _bSet = true;
                 }
                 _iLastHopCount = 0;
-            
-                //**SO - This is if we are using AI - 
+
+                //**SO - This is if we are using AI -
                 //For now circumvent any path finding and just use linear movement.
                 //pWorldGrid->getShortestPath(pCurrentQuad, _pDestinationQuad, pTargetQuad, _iLastHopCount);
                 pTargetQuad = _pDestinationQuad;
-
 
                 if (_bSet) {
                     //Set speed if the hop count wasn't set.
@@ -136,11 +128,10 @@ void Goal25MoveTo::execute(float delta) {
             pGridObj->getPhy()->setVelocity((objPos - _vFinalPos).normalize() * newLen);
         }
     }*/
-
 }
 void Goal25MoveTo::exit() {
-    //**Make sure to reset the state or else we will screw up.
-    std::shared_ptr<ModelNode> pGridObj = getBrain()->getPixObj();
+  //**Make sure to reset the state or else we will screw up.
+  std::shared_ptr<ModelNode> pGridObj = getBrain()->getPixObj();
   //  WorldCell* cur = getBrain()->getWorld25()->getObjQuad(pGridObj);
   //  if (_pCurrentTarget != nullptr) {
   //      _pCurrentTarget->getGrid()->getWorld25()->updateLights();
@@ -234,7 +225,6 @@ void Goal25MoveTo::exit() {
 //    _pFuncEnd();
 //}
 
-
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -242,50 +232,35 @@ void Goal25MoveTo::exit() {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 Goal25Animate::Goal25Animate(Brain25* pBrain, std::shared_ptr<SpriteSpec> ps, float speed, bool loop) :
-_fSpeed(speed)
-, _bLoop(loop)
-, _pSpec(ps)
-, Goal25(pBrain)
-{
-
+  _fSpeed(speed)
+  , _bLoop(loop)
+  , _pSpec(ps)
+  , Goal25(pBrain) {
 }
 Goal25Animate::~Goal25Animate() {
 }
 void Goal25Animate::execute(float delta) {
-    std::shared_ptr<ModelNode> ob = getBrain()->getPixObj();
+  std::shared_ptr<ModelNode> ob = getBrain()->getPixObj();
 
-    //Motion25Spec* pCurSpec = nullptr;
-    //if (ob->getCurrentMotion() != nullptr) {
-    //    pCurSpec = ob->getCurrentMotion()->getSpec();
-    //}
-    //
-    //if (pCurSpec != _pSpec) {
-    //    ob->setMotion(_pSpec, _pSpec->getDefaultDuration(), _pSpec->getDefaultLoop());
-    //}
+  //Motion25Spec* pCurSpec = nullptr;
+  //if (ob->getCurrentMotion() != nullptr) {
+  //    pCurSpec = ob->getCurrentMotion()->getSpec();
+  //}
+  //
+  //if (pCurSpec != _pSpec) {
+  //    ob->setMotion(_pSpec, _pSpec->getDefaultDuration(), _pSpec->getDefaultLoop());
+  //}
 
-
-
-    //
-    //    
-    //     std::shared_ptr<Animator> pAnim = getBrain()->getPixObj()->getAnimator();
-    //if (pAnim->getAnimationId() != _iAnimId) {
-    //    //TODO: use player speed here.
-    //    pAnim->reset();
-    //    pAnim->setDuration(_fSpeed);
-    //    pAnim->setAnimationId(_iAnimId);
-    //    pAnim->setLoop(_bLoop);
-    //    pAnim->start();
-    //}
+  //
+  //
+  //     std::shared_ptr<Animator> pAnim = getBrain()->getPixObj()->getAnimator();
+  //if (pAnim->getAnimationId() != _iAnimId) {
+  //    //TODO: use player speed here.
+  //    pAnim->reset();
+  //    pAnim->setDuration(_fSpeed);
+  //    pAnim->setAnimationId(_iAnimId);
+  //    pAnim->setLoop(_bLoop);
+  //    pAnim->start();
+  //}
 }
-
-
-
-
-
-
-
-
-
-
-
 }//ns Game

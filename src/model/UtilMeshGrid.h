@@ -16,7 +16,10 @@ namespace BR2 {
 */
 class UtilMeshGrid : public UtilMesh {
 public:
-  UtilMeshGrid(std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f, int32_t nSlices = 60, float fSliceWidth = 20.0f, Vector3& center = Vector3(0, 0, 0));
+  UtilMeshGrid(std::shared_ptr<GLContext> pc, float r = 1.0f, float g = 1.0f, float b = 1.0f,
+    int32_t nSlices = 60,
+    float fSliceWidth = 20.0f,
+    Vector3& center = Vector3(0, 0, 0));
   virtual ~UtilMeshGrid() override;
 
   virtual void generate() override;
@@ -30,7 +33,6 @@ private:
   Vec3f _center;
   float _lineWidth;
 };
-
 
 }//ns game
 

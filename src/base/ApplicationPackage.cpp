@@ -162,7 +162,7 @@ ApplicationPackage::~ApplicationPackage() {
   _pint = nullptr;
 }
 bool ApplicationPackage::isPackage() { return _pint->_bIsPacked; }
-string_t ApplicationPackage::getDataFolder() { return _pint->_strAssetsDir; }
+string_t ApplicationPackage::getAssetsFolder() { return _pint->_strAssetsDir; }
 string_t ApplicationPackage::getScriptsFolder() { return _pint->_strScriptsFolder; }
 string_t ApplicationPackage::getSoundsFolder() { return _pint->_strSoundsFolder; }
 string_t ApplicationPackage::getFontsFolder() { return _pint->_strFontsFolder; }
@@ -191,11 +191,11 @@ void ApplicationPackage::load(string_t file_path) {
   }
 }
 string_t ApplicationPackage::makeAssetPath(string_t file) {
-  string_t ret = FileSystem::combinePath(getDataFolder(), file);
+  string_t ret = FileSystem::combinePath(getAssetsFolder(), file);
   return ret;
 }
 string_t ApplicationPackage::makeAssetPath(string_t folder, string_t file) {
-  string_t fold = FileSystem::combinePath(getDataFolder(), folder);
+  string_t fold = FileSystem::combinePath(getAssetsFolder(), folder);
   string_t ret = FileSystem::combinePath(fold, file);
   return ret;
 }

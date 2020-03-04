@@ -1495,7 +1495,7 @@ void UiImage::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& i
 #pragma region UiGlyph
 std::shared_ptr<UiGlyph> UiGlyph::create(uint32_t iChar) {
   std::shared_ptr<UiGlyph> g = std::make_shared<UiGlyph>();
-  //Avoid any init becuase we're SUPER SLOW
+  //Avoid any init crap becuase we're SUPER SLOW
 
   //g->init();
   //g->setName("G");//**Save space?

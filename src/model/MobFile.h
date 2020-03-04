@@ -140,14 +140,14 @@ public:
   virtual ~MobFile() override;
 
   string_t getMobDir();
-  std::vector<std::shared_ptr<WorldObjectSpec>>& getModelSpecs() { return _vecModelSpecs; }
+  std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModelSpecs; }
 private:
   float _fVersion = 0.02f;
 
   //*Technically we shouldn't have multiple MOD datas per file, but just adding
   //this as a swet lets us do that.  
   std::set<std::shared_ptr<ModDataLoad>> _setModData;
-  std::vector<std::shared_ptr<WorldObjectSpec>> _vecModelSpecs;
+  std::vector<std::shared_ptr<ModelSpec>> _vecModelSpecs;
 
   std::shared_ptr<ModDataLoad> _pCurModDataLoad = nullptr;
 

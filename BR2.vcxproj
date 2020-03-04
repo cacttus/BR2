@@ -66,6 +66,8 @@
     <ClCompile Include="src\base\TypeConv.cpp" />
     <ClCompile Include="src\base\VulkanWindow.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
+    <ClCompile Include="src\bottle\BottleUtils.cpp" />
+    <ClCompile Include="src\bottle\SpriteBucket.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
@@ -82,7 +84,7 @@
     <ClCompile Include="src\gfx\GpuQuad3.cpp" />
     <ClCompile Include="src\gfx\GraphicsApi.cpp" />
     <ClCompile Include="src\gfx\GraphicsContext.cpp" />
-    <ClCompile Include="src\gfx\SkyBox.cpp" />
+    <ClCompile Include="src\gfx\HappySky.cpp" />
     <ClCompile Include="src\gfx\LightManager.cpp" />
     <ClCompile Include="src\gfx\LightNode.cpp" />
     <ClCompile Include="src\gfx\MegaTex.cpp" />
@@ -155,14 +157,9 @@
     <ClCompile Include="src\model\VertexFormat.cpp" />
     <ClCompile Include="src\model\VertexTypes.cpp" />
     <ClCompile Include="src\world\BaseCollider.cpp" />
-    <ClCompile Include="src\world\BlockNode.cpp" />
-    <ClCompile Include="src\world\BottleUtils.cpp" />
     <ClCompile Include="src\world\Component.cpp" />
-    <ClCompile Include="src\world\GameFile.cpp" />
-    <ClCompile Include="src\world\Lair.cpp" />
     <ClCompile Include="src\world\Manifold.cpp" />
     <ClCompile Include="src\world\NodeUtils.cpp" />
-    <ClCompile Include="src\world\ObFile.cpp" />
     <ClCompile Include="src\world\PhysicsGrid.cpp" />
     <ClCompile Include="src\world\PhysicsGridAwareness.cpp" />
     <ClCompile Include="src\world\PhysicsNode.cpp" />
@@ -170,17 +167,6 @@
     <ClCompile Include="src\world\PhysicsWorld.cpp" />
     <ClCompile Include="src\world\RenderBucket.cpp" />
     <ClCompile Include="src\world\Scene.cpp" />
-    <ClCompile Include="src\world\SpriteBucket.cpp" />
-    <ClCompile Include="src\world\Tile25Spec.cpp" />
-    <ClCompile Include="src\world\W25Config.cpp" />
-    <ClCompile Include="src\world\W25GridMesh.cpp" />
-    <ClCompile Include="src\world\W25MeshMaker.cpp" />
-    <ClCompile Include="src\world\WalkerSpec.cpp" />
-    <ClCompile Include="src\world\WipGrid.cpp" />
-    <ClCompile Include="src\world\WorldCell.cpp" />
-    <ClCompile Include="src\world\WorldCellFile.cpp" />
-    <ClCompile Include="src\world\WorldGrid.cpp" />
-    <ClCompile Include="src\world\WorldMaker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\Allocator.h" />
@@ -248,6 +234,11 @@
     <ClInclude Include="src\base\VulkanWindow.h" />
     <ClInclude Include="src\base\WindowsIncludes.h" />
     <ClInclude Include="src\base\XmlFile.h" />
+    <ClInclude Include="src\bottle\BottleHeader.h" />
+    <ClInclude Include="src\bottle\BottleUtils.h" />
+    <ClInclude Include="src\bottle\ObFile.h" />
+    <ClInclude Include="src\bottle\SpriteBucket.h" />
+    <ClInclude Include="src\bottle\Tile25Spec.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />
@@ -269,7 +260,7 @@
     <ClInclude Include="src\gfx\GpuQuad3.h" />
     <ClInclude Include="src\gfx\GraphicsApi.h" />
     <ClInclude Include="src\gfx\GraphicsContext.h" />
-    <ClInclude Include="src\gfx\SkyBox.h" />
+    <ClInclude Include="src\gfx\HappySky.h" />
     <ClInclude Include="src\gfx\LightManager.h" />
     <ClInclude Include="src\gfx\LightNode.h" />
     <ClInclude Include="src\gfx\MegaTex.h" />
@@ -362,14 +353,9 @@
     <ClInclude Include="src\model\VertexFormat.h" />
     <ClInclude Include="src\model\VertexTypes.h" />
     <ClInclude Include="src\world\BaseCollider.h" />
-    <ClInclude Include="src\world\BlockNode.h" />
-    <ClInclude Include="src\world\BottleUtils.h" />
     <ClInclude Include="src\world\Component.h" />
-    <ClInclude Include="src\world\GameFile.h" />
-    <ClInclude Include="src\world\Lair.h" />
     <ClInclude Include="src\world\Manifold.h" />
     <ClInclude Include="src\world\NodeUtils.h" />
-    <ClInclude Include="src\world\ObFile.h" />
     <ClInclude Include="src\world\PhysicsGrid.h" />
     <ClInclude Include="src\world\PhysicsGridAwareness.h" />
     <ClInclude Include="src\world\PhysicsNode.h" />
@@ -377,18 +363,7 @@
     <ClInclude Include="src\world\PhysicsWorld.h" />
     <ClInclude Include="src\world\RenderBucket.h" />
     <ClInclude Include="src\world\Scene.h" />
-    <ClInclude Include="src\world\SpriteBucket.h" />
-    <ClInclude Include="src\world\Tile25Spec.h" />
-    <ClInclude Include="src\world\W25Config.h" />
-    <ClInclude Include="src\world\W25GridMesh.h" />
-    <ClInclude Include="src\world\W25MeshMaker.h" />
-    <ClInclude Include="src\world\WalkerSpec.h" />
-    <ClInclude Include="src\world\WipGrid.h" />
-    <ClInclude Include="src\world\WorldCell.h" />
-    <ClInclude Include="src\world\WorldCellFile.h" />
-    <ClInclude Include="src\world\WorldGrid.h" />
     <ClInclude Include="src\world\WorldHeader.h" />
-    <ClInclude Include="src\world\WorldMaker.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project\design.md" />
@@ -459,7 +434,7 @@
     <OutDir>.\bin\</OutDir>
     <TargetName>Br2_x64d</TargetName>
     <IncludePath>.\external\SDL2_net;.\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;$(IncludePath)</IncludePath>
-    <IntDir>.\tmp\core\debug64</IntDir>
+    <IntDir>.\tmp\br2\debug64</IntDir>
     <LibraryPath>.\lib\;.\external\Mono\lib\;.\external\LunarG\VulkanSDK\1.1.114.0\Lib\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -474,7 +449,7 @@
     <OutDir>.\bin\</OutDir>
     <TargetName>Br2_x64r</TargetName>
     <IncludePath>.\external\SDL2_net;.\external\SDL2\include;.\external\LunarG\VulkanSDK\1.1.114.0\Include;$(IncludePath)</IncludePath>
-    <IntDir>.\tmp\core\release64</IntDir>
+    <IntDir>.\tmp\br2\release64</IntDir>
     <LibraryPath>.\lib;.\external\Mono\lib;.\external\LunarG\VulkanSDK\1.1.114.0\Lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -512,7 +487,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2_x64d.lib;SDL2_Net_x64d.lib;opengl32.lib;vulkan-1.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>bottle_x64d.lib;SDL2_x64d.lib;SDL2_Net_x64d.lib;opengl32.lib;vulkan-1.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -559,7 +534,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2_x64r.lib;SDL2_Net_x64r.lib;vulkan-1.lib;opengl32.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>bottle_x64d.lib; SDL2_x64r.lib;SDL2_Net_x64r.lib;vulkan-1.lib;opengl32.lib;ws2_32.lib;winmm.lib;imm32.lib;version.lib;dbghelp.lib;setupapi.lib;iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
