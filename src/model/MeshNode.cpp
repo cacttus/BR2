@@ -62,7 +62,12 @@ void MeshNode::init() {
   SceneNode::init();
 
   //    _pVaoData = std::make_shared<VaoDataGeneric>(pContext, ps->getVertexFormat());
-  setHidden(getMeshSpec()->getHideRender());
+  if (getMeshSpec()->getHideRender()) {
+    show();
+  }
+  else { 
+    hide(); 
+  }
 
   //#ifdef _DEBUG
   //    setVisible(true);

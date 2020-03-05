@@ -3,7 +3,7 @@
 #include "../base/Gu.h"
 
 //unit test includes
-#include "../base/CSharpScript.h"
+#include "../world/CSharpScript.h"
 #include <iostream>
 
 

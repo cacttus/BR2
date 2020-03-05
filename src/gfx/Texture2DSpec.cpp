@@ -68,8 +68,9 @@ int32_t Texture2DSpec::generateMipmapLevels() {
   // - Create log2 mipmaps
   int numMipMaps = 0;
   int x = MathUtils::brMax(getWidth(), getHeight());
-  for (; x; x = x >> 1)
+  for (; x; x = x >> 1) {
     numMipMaps++;
+  }
   return numMipMaps;
 }
 // - Make the texture known to OpenGL

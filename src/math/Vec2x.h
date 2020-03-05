@@ -109,7 +109,6 @@ public:
       return lhs->compareTo(rhs);
     }
   };
-
 };
 //////////////////////////////////////////////////////////////////////////
 // Constructors
@@ -137,7 +136,6 @@ void Vec2x<Tx>::construct(const Tx& dx, const Tx& dy) {
   x = dx;
   y = dy;
 }
-
 
 template < class Tx >
 Vec2x<Tx> Vec2x<Tx>::Vec2x_MIN() {
@@ -219,8 +217,8 @@ Vec2x<Tx> Vec2x<Tx>::cross(const Vec2x<Tx>& v1) const {
   throw 0;
   //    BroThrowNotImplementedException();
       //vt.x = (y * v1.z) - (v1.y * z);
-      //vt.y = (z * v1.x) - (v1.z * x);                        
-      //vt.z = (x * v1.y) - (v1.x * y);    
+      //vt.y = (z * v1.x) - (v1.z * x);
+      //vt.z = (x * v1.y) - (v1.x * y);
 
   return vt;
 }
@@ -340,22 +338,6 @@ Vec2x<Tx>& Vec2x<Tx>::operator/=(const Tx& f) {
   return *this;
 }
 
-//
-//
-//
-//template < class Tx >
-//const Vec2x<Tx> Vec2x<Tx>::operator*(const Matrix3x3 &m) const
-//{
-////#if _MATH_USE_ROW_VECTORS
-//
-//    Vec2x<Tx> tmp = *this;
-//    tmp*=m;
-//    return tmp;
-//}
-
-//
-//
-//
 template < class Tx >
 Vec2x<Tx> Vec2x<Tx>::operator+(const Vec2x<Tx>& v) const {
   Vec2x<Tx> tmp = *this;
@@ -463,7 +445,7 @@ bool Vec2x<Tx>::compareTo(const Vec2x<Tx>* rhs) const {
   else {
     if (lhs->y < rhs->y)
       return true;
-    else //if(lhs->y > rhs->y) 
+    else //if(lhs->y > rhs->y)
       return false;
   }
 }
@@ -482,7 +464,5 @@ STATIC FORCE_INLINE string_t tstr(const vec2& x) { return x.toString(); }
 STATIC FORCE_INLINE string_t tstr(const ivec2& x) { return x.toString(); }
 STATIC FORCE_INLINE string_t tstr(const uvec2& x) { return x.toString(); }
 }//ns game
-
-
 
 #endif

@@ -1,6 +1,28 @@
 # Mine City Task Log
 
+
+- [ ] Implement the STL math functions in MathHeader
+
+## Controller System
+- [ ] Fix issues with Input for multiple windows
+	* Mouse wheel for example would get set in the input manager.
+	- [ ] Remove Global Input Manager
+	
+- [ ] Make WorldSelect part of the UI system.  (Remove it from BottleScript.h) 
+	* either remove the WorldSelect class, or turn it into a UI "script".
+
+- [ ] The current system for controls isn't generic.  We directly map everything to WSAD. We need a 'controller' class like the Helix library has.
+	* The goal of the Controller class is to move the Joystick, Dpad, etc, with the implementation, meaning if the user presses W on the keyboard, the Joystick will move directly up, since the keyboard lacks a joystick.
+	* `class Controller`
+	* `  Joystick _pJoystick` --> Maps to WSAD or a controller DPAd
+	* `  DPad _pDPad` --> Maps to WSAD, or a controller DPAD
+	* `class KeyboardController : Controller` --> the Joystick control would be driven by the mouse
+	* `class GameController : Controller`
+
 ## World25 Integration
+- [ ] Implement GodCam as a script.
+- [ ] PhysicsWorld is now referenced in World25, this lets us turn BottleRoom into a script run on Scene.
+- [ ] Make Atlas's "gsiz" paramater automatic.  Meaning, allow the atlas to automatically pack itself (like MegaTex does). Essentially turn Atlas into MegaTex.
 
 - [ ] FIRST implement World25 INTO physicsworld directly, 
 	- [ ] Compile, Run.. test

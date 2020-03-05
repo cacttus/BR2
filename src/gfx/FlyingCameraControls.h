@@ -9,28 +9,21 @@
 
 #include "../gfx/GfxHeader.h"
 #include "../world/WorldHeader.h"
-#include "../base/CSharpScript.h"
+#include "../world/CSharpScript.h"
 
 namespace BR2 {
 /**
 *  @class FlyingCameraControls
 *  @brief A camera that lets you fly around.  This is actually a control class for the camera and not the camera itself.
 */
-class FlyingCameraControls : public CSharpScript {
+class FlyingCameraControls : public Script {
 public:
   FlyingCameraControls();
   virtual ~FlyingCameraControls() override;
 
-  virtual void afterAdded() override;
-  virtual void start() override;
-  virtual void update(float delta) override;
-
-  void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
-  void userZoom(float amt);
-  void update(std::shared_ptr<InputManager> pInput, float dt);
-  //void setActive();
-
-  void setPosAndLookAt(vec3&& pos, vec3&& lookat);
+  virtual void onStart() override;
+  virtual void onUpdate(float delta) override;
+  virtual void onExit() override;
 
 private:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
@@ -51,6 +44,9 @@ private:
   void rotateCameraNormal(float rotX, float rotY);
   void updateCameraPosition();
   void updateRotate(std::shared_ptr<InputManager> pInput);
+  void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
+  void update(std::shared_ptr<InputManager> pInput, float dt);
+  void setPosAndLookAt(vec3&& pos, vec3&& lookat);
 };
 
 }//ns BR2

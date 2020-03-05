@@ -42,7 +42,7 @@ void WorldEditor::init() {
     _pSelector->setPos(std::move(vec3(0, 0, 0)));
     _pSelector->playAction("hover_1.Rotate");
 
-    _pSelector->setHidden(true);
+    _pSelector->show();
     _pWorld25->addObj(_pSelector, false, false);
     std::shared_ptr<LightNodePoint> pl = _pWorld25->getScene()->createPointLight(vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
     pl->getShadowBox()->getSmallBoxSize() = 0.03f;
@@ -97,10 +97,10 @@ void WorldEditor::editWorld(std::shared_ptr<InputManager> pFingers) {
       _pSelector->setRot(vec4(0, 1, 0, 0));
     }
 
-    _pSelector->setHidden(false);
+    _pSelector->hide();
   }
   else {
-    _pSelector->setHidden(true);
+    _pSelector->show();
   }
 }
 void WorldEditor::drawForward() {

@@ -6,6 +6,12 @@
 * Undid the previous changes and added /bottle/ back to the solution (better than reintegrating all of it).
 * Commenting out the BottleRoom main class CPP.  Most of this will be moved to scene and such.
 
+* We will make PhysicsWorld be referenced by World25 instead of being inherited.
+* Renamed BottleRoom -> BottleScript.
+	* Scene will still create the base PhysicsManager
+* Replaced many math functions with STL math functions in MathHeader using a define flag to turn them on/off
+	* TODO: Test and make sure the STL matches what was there before.
+
 *3/3/20*
 
 * Round 2 of Bottle migration

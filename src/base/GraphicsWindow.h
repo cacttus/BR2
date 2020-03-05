@@ -35,8 +35,6 @@ public:
   virtual int32_t getHeight() override;
   string_t getTitle();
   
-  void mouseWheel(int amount);
-
   SDL_Window* getSDLWindow();
   std::shared_ptr<RenderViewport> getViewport();
   std::shared_ptr<RenderPipe> getRenderPipe();
@@ -45,6 +43,7 @@ public:
   std::shared_ptr<Delta> getDelta();
   std::shared_ptr<FpsMeter> getFpsMeter();
   uint64_t getFrameNumber();
+  std::shared_ptr<InputManager> getInput();
 
   void setScene(std::shared_ptr<Scene> scene);
 private:

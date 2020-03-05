@@ -7,11 +7,8 @@ InputManager::InputManager() {
   for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
     _kbKeys[i] = BR2::ButtonState::Up;
   }
-  _eRmb = _eLmb = BR2::ButtonState::Up;
-
 }
 InputManager::~InputManager() {
-
 }
 void InputManager::init() {
   _vMousePos = 0.0f;
@@ -85,6 +82,7 @@ void InputManager::postUpdate() {
     updateButtState(_kbKeys[i]);
   }
 
+  _iMouseWheel = 0;
   _vLastMousePos = _vMousePos;
 }
 void InputManager::updateButtState(BR2::ButtonState::e& eState) {

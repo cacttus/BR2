@@ -39,6 +39,9 @@ private:
   std::shared_ptr<GraphicsContext> _pCoreContext = nullptr;
   bool handleSDLEvents();
   bool handleEvents(SDL_Event* event);
+
+  std::shared_ptr<InputManager> getInputForWindow(uint32_t sdl_windowId);
+
 };
 
 }//ns Game

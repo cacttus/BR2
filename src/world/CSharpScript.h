@@ -7,7 +7,7 @@
 #ifndef __CSHARPSCRIPT_15665746341154937548_H__
 #define __CSHARPSCRIPT_15665746341154937548_H__
 
-#include "../world/Component.h"
+#include "../world/Script.h"
 
 namespace BR2 {
 class CSToken;
@@ -24,12 +24,13 @@ public:
   bool _bGatheredClasses = false;
 private:
 };
+
 /**
 *  @class CSharpScript
 *  @brief A minimally functional C Sharp script.
 */
 class CSharpScript_Internal;
-class CSharpScript : public Component {
+class CSharpScript : public Script {
 public:
   CSharpScript();
   virtual ~CSharpScript() override;
@@ -40,9 +41,9 @@ public:
   static void initScriptSystem();
   static std::shared_ptr<CSharpScript> compile(std::shared_ptr<CSharpCompileContext> files);
 
-  virtual void start();
-  virtual void update(float delta);
-  virtual void exit() {}
+  virtual void onStart() override;
+  virtual void onUpdate(float delta) override;
+  virtual void onExit() override;
 private:
   std::unique_ptr<CSharpScript_Internal> _pint = nullptr;
 };

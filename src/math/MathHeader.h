@@ -14,14 +14,19 @@
 
 //No includes
 #include "../base/BaseHeader.h"
-namespace BR2 {
-//////////////////////////////////////////////////////////////////////////
 
-//define for float instead of double data structres
-#define _MATH_USE_FLOAT_VECTORS 1
-#define _MATH_USE_FLOAT_MATRICES 1
-// - If this is defined then any undefined operations will throw an erorr.
-#define _MATH_USE_ROW_VECTORS 1
+#ifdef BR_MATH_USE_STL
+#include <algorithm>
+
+//TODO: we have to replace the defines everywhere.
+#define brMax(a,b) std::max((a), (b))
+#define brMin(a,b) std::min((a), (b))
+#define brClamp(x,a,b) std::clamp((x), (a), (b));
+
+#endif
+
+namespace BR2 {
+//Define this to use the STL for max, min, etc.
 
 #ifndef _MATH_DEFINES_DEFINED
 #define _MATH_DEFINES_DEFINED
@@ -262,7 +267,6 @@ class MathUtils : public VirtualMemory {
 public:
   //juvenile sqrt optimization - simply removes the prolog
   //approx 30% faster than sqrtf
-  //#ifdef BRO_X64
   FORCE_INLINE static bool isEven(int32_t i) {
     return ((i % 2) == 0);
   }
@@ -287,22 +291,6 @@ public:
   FORCE_INLINE static double sqrd(double x) {
     return x * x;
   }
-  //Round is defined in the new MSVC lib.
-  FORCE_INLINE static float round(float in) {
-    return (in >= 0.5000f) ? (ceilf(in)) : (floorf(in));
-  }
-  FORCE_INLINE static double round(double in) {
-    return (in >= 0.5000) ? (ceil(in)) : (floor(in));
-  }
-  //http://stackoverflow.com/questions/3237247/c-rounding-to-the-nths-place
-  FORCE_INLINE static float round(float value, int precision) {
-    const int adjustment = (int)pow(10, precision);
-    return floorf(value * (adjustment)+0.5f) / adjustment;
-  }
-  FORCE_INLINE static double round(double value, int precision) {
-    const int adjustment = (int)pow(10, precision);
-    return floor(value * (adjustment)+0.5f) / adjustment;
-  }
   FORCE_INLINE static float degToRad(float d) {
 
     return (float)((d * (float)(M_PI)) / (float)180.0);
@@ -315,6 +303,25 @@ public:
   }
   FORCE_INLINE static uint32_t getNumberOfDigits(uint32_t i) {
     return i > 0 ? (int)log10((double)i) + 1 : 1;
+  }
+#ifndef BR_MATH_USE_STL
+  //Round is defined in the new MSVC lib.
+  FORCE_INLINE static float round(float in) {
+    return (in >= 0.5000f) ? (ceilf(in)) : (floorf(in));
+  }
+  FORCE_INLINE static double round(double in) {
+    return (in >= 0.5000) ? (ceil(in)) : (floor(in));
+  }
+  FORCE_INLINE static float round(float value, int precision) {
+    //http://stackoverflow.com/questions/3237247/c-rounding-to-the-nths-place
+    //TODO: std::round()
+    const int adjustment = (int)pow(10, precision);
+    return floorf(value * (adjustment)+0.5f) / adjustment;
+  }
+  FORCE_INLINE static double round(double value, int precision) {
+    //TODO: std::round()
+    const int adjustment = (int)pow(10, precision);
+    return floor(value * (adjustment)+0.5f) / adjustment;
   }
   //btMin/max copied from bullet.
   template <class T>
@@ -341,6 +348,7 @@ public:
   FORCE_INLINE static const T& brClamp(const T& x, const T& a, const T& b) {
     return brMin(b, brMax(x, a));
   }
+#endif
   FORCE_INLINE static float brSign(const float& val) {
     return (float)((float)(0.0f < val) - (float)(val < 0.0f));
   }

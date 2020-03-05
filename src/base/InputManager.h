@@ -43,22 +43,26 @@ public:
   void setKeyUp(SDL_Scancode kc);
   void setLmbState(ButtonState::e bs);
   void setRmbState(ButtonState::e bs);
+  void setMouseWheel(int x) { _iMouseWheel = x; }
 
   void preUpdate(); //before frame
   void postUpdate(); //after frame
   void updateButtState(BR2::ButtonState::e& eState);
 
-
   ButtonState::e getLmbState() { return _eLmb; }
   ButtonState::e getRmbState() { return _eRmb; }
   ButtonState::e getMmbState() { return _eMmb; }
+  int getMouseWheel() { return _iMouseWheel; }
 
   void warpMouse(int x, int y);
 private:
-  ButtonState::e _eRmb, _eLmb, _eMmb;
+  ButtonState::e _eRmb = BR2::ButtonState::Up;
+  ButtonState::e _eLmb = BR2::ButtonState::Up;
+  ButtonState::e _eMmb = BR2::ButtonState::Up;
   ButtonState::e _kbKeys[SDL_NUM_SCANCODES];
   vec2 _vLastMousePos;
   vec2 _vMousePos;
+  int _iMouseWheel;
 
   // bool _bMouseWarped = false;
 

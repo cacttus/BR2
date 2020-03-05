@@ -21,6 +21,7 @@ public:
   static std::shared_ptr<CameraNode> getActiveCamera(std::shared_ptr<SceneNode> lm);
   static std::shared_ptr<PhysicsWorld> getPhysicsWorld(std::shared_ptr<SceneNode> lm);
   static std::shared_ptr<Picker> getPicker(std::shared_ptr<SceneNode> lm);
+  static std::shared_ptr<Scene> getScene(std::shared_ptr<SceneNode> lm);
 };
 
 }//ns Game

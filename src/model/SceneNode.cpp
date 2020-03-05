@@ -17,6 +17,7 @@
 #include "../world/RenderBucket.h"
 #include "../world/Component.h"
 #include "../world/Scene.h"
+#include "../world/NodeUtils.h"
 
 namespace BR2 {
 BaseSpec::BaseSpec(string_t strName) {
@@ -113,6 +114,11 @@ void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
     Gu::debugBreak();
     return;
   }
+
+  if (isHidden()) {
+    //Do nothing, do not update, do not execute scripts.
+    return;
+  }
   //    clearShadowInfluences();
   //We shouldn't need this
   //if (pParent == nullptr) {
@@ -145,7 +151,7 @@ void SceneNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>&
 }
 void SceneNode::updateComponents(float delta) {
   for (auto comp : _vecComponents) {
-    comp->update(delta);
+    comp->onUpdate(delta);
   }
 }
 
@@ -484,11 +490,12 @@ void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
   }
 }
 void SceneNode::addComponent(std::shared_ptr<Component> comp) {
-  comp->setNode(getThis<SceneNode>());
+  comp->_pWorldObject = getThis<SceneNode>();
+  comp->_pScene = NodeUtils::getScene(getThis<SceneNode>());
   _vecComponents.push_back(comp); 
 
-  comp->afterAdded();
-  //this->afterAdded();
+  comp->onAddedToNode();
+  //this->onComponentAdded();
 }
 std::shared_ptr<Scene> SceneNode::getScene() {
   std::shared_ptr<Scene> x = findParent<Scene>();

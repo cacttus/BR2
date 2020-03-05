@@ -24,7 +24,7 @@
 #include "../bottle/WorldGrid.h"
 #include "../bottle/WorldCell.h"
 #include "../bottle/BottleUtils.h"
-#include "../bottle/BottleRoom.h"
+#include "../bottle/BottleScript.h"
 #include "../bottle/WorldCellFile.h"
 #include "../bottle/WipGrid.h"
 #include "../bottle/W25MeshMaker.h"

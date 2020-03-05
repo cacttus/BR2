@@ -30,7 +30,6 @@
 #include "../world/RenderBucket.h"
 #include "../world/Scene.h"
 
-
 namespace BR2 {
 PhysicsWorld::PhysicsWorld(std::shared_ptr<Scene> pscene) {
   _pScene = pscene;
@@ -100,7 +99,7 @@ ivec3 PhysicsWorld::v3Toi3Any(vec3& v, float w1, float h1) {
   ivec3 ret;
   float ex, ey, ez;
 
-  ex = v.x * w1; //** w1 is the RECIPROCAL width of the cell/node 
+  ex = v.x * w1; //** w1 is the RECIPROCAL width of the cell/node
   ey = v.y * h1;
   ez = v.z * w1;
 
@@ -141,14 +140,12 @@ void PhysicsWorld::updateWorldBox() {
   }
 }
 void PhysicsWorld::debugMakeSureNoDupes(const ivec3& vv) {
-
   for (GridMap::iterator it = _gridMap.begin(); it != _gridMap.end(); it++) {
     ivec3* v = it->first;
     if (v->x == vv.x && v->y == vv.y && v->z == vv.z) {
       BRThrowException("Duplicate node found.");
     }
   }
-
 }
 void PhysicsWorld::unloadWorld() {
   for (ivec3* iv : _setEmpty) {
@@ -192,7 +189,6 @@ void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Bo
           ivec3 cell_p0, cell_p1;
           addNodeToGrid(ob, pGrid);
 
-
           //Invalid ranges here we'll simply ignore them, because they're going to happen.
           //pGrid->getLocalCellRangeForBox(c, cell_p0, cell_p1);
           //for (int32_t cell_z = cell_p0.z; cell_z <= cell_p1.z; ++cell_z) {
@@ -220,11 +216,9 @@ void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Bo
           //        // Gu::debugBreak();
           //    }
 
-
           //}
           //}
           //}
-
         }
         else {
           //if (Gu::getFpsMeter()->frameMod(30)) {
@@ -236,8 +230,6 @@ void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Bo
       }
     }
   }
-
-
 }
 void PhysicsWorld::calcGridManifold(std::shared_ptr<PhysicsGrid> pGrid) {
   //do this when we add grids so that teh grids can 'capture' objects that weren't added.
@@ -402,10 +394,8 @@ void PhysicsWorld::collisionLoopDual(float delta) {
   }
   collide();
   postCollide(frameId, false);
-
 }
 void PhysicsWorld::postCollide(uint64_t frameId, bool bAccel) {
-
   std::set<std::shared_ptr<PhysicsNode>> vecFinalActive;
   int32_t  nIter2 = 0;
   for (std::shared_ptr<PhysicsNode> ob : _vecActiveFrame) {
@@ -448,7 +438,7 @@ void PhysicsWorld::postCollide(uint64_t frameId, bool bAccel) {
       }*/
 
       if (bAccel) {
-        //Acc step.  Add the final ACc to the velocity 
+        //Acc step.  Add the final ACc to the velocity
         ob->setVelocity(ob->getVelocity() + v_cur);
       }
 
@@ -470,7 +460,6 @@ void PhysicsWorld::postCollide(uint64_t frameId, bool bAccel) {
       vecFinalActive.insert(ob);
     }
 
-
     ob->validateSanePhysics();
     nIter2++;
   }
@@ -480,7 +469,7 @@ void PhysicsWorld::postCollide(uint64_t frameId, bool bAccel) {
 }
 FORCE_INLINE void limit_ax(float& __inout_ v_ax, float amt, bool& bActive) {
   float vsl;
-  //v_ax = velocity along axis. 
+  //v_ax = velocity along axis.
   // if v_ax ^2 > amt^2 then we are active.
   vsl = v_ax * v_ax;
   if (vsl < amt) {
@@ -578,7 +567,6 @@ int32_t PhysicsWorld::unstick() {
   CheckedSet setChecked;
 
   for (std::shared_ptr<PhysicsNode> objA : _vecActiveFrame) {
-
     //**First collide with ground plane.
     std::set<std::shared_ptr<PhysicsGrid>>::iterator gridIt = objA->getManifold()->getGrids()->begin();
     for (; gridIt != objA->getManifold()->getGrids()->end(); gridIt++) {
@@ -611,11 +599,8 @@ int32_t PhysicsWorld::unstick() {
           }
           numComparisons++;
         }
-
       }
     }
-
-
   }
   setChecked.clear();
 
@@ -633,7 +618,6 @@ bool PhysicsWorld::unstick_objs(std::shared_ptr<PhysicsNode> objA, std::shared_p
 
     vec3 ar_pad = ar + PHY_COLLIDE_PADDING_EPSILON;
     vec3 br_pad = br + PHY_COLLIDE_PADDING_EPSILON;
-
 
     //TODO:
     //this algorithm only works if the two cube centers are not at teh same position
@@ -733,7 +717,7 @@ void PhysicsWorld::unstick_if_moved(std::shared_ptr<PhysicsNode> obA, std::share
     //formula uses a velocity that points AWAY from the given cube.
     unstick_ob_v2(p_new_a, v_tmp_a * -1.0f, bA, bB, move_t, ob_fric_a, v_new_a);
 
-    //*wE NEED TO S 
+    //*wE NEED TO S
     obA->setTempPos(p_new_a);
     obA->setTempVelocity(v_new_a);
   }
@@ -742,11 +726,10 @@ void PhysicsWorld::unstick_if_moved(std::shared_ptr<PhysicsNode> obA, std::share
     obB->setTempPos(p_new_b);
     obB->setTempVelocity(v_new_b);
   }
-
 }
 void PhysicsWorld::unstick_ob_v2(vec3& ob_in_p, vec3& ob_in_v, Box3f* boxA, Box3f* boxB,
   float move_t, float ob_friction, vec3& __out_ out_new_v) {
-  //The position must already be added by ct, and 
+  //The position must already be added by ct, and
   //Assume the bounding boxes are recalculated
 
   vec3 plane_n;
@@ -843,8 +826,6 @@ int32_t PhysicsWorld::collect_and_resolve_collisions() {
           }
           setChecked.addPair(objA, objB);
           numComparisons++;
-
-
         }
       }
     }
@@ -875,7 +856,7 @@ int32_t PhysicsWorld::collisionTestBox(std::shared_ptr<PhysicsNode> objA, std::s
   if (objB->getBoundBoxObject() && objA->getBoundBoxObject()) {
     if (objA->getBoundBoxObject()->cubeIntersect_EasyOut_Inclusive(objB->getBoundBoxObject())) {
       //already touching
-      //Note here that we won't hit this but we'll still be collided because of the 
+      //Note here that we won't hit this but we'll still be collided because of the
       // box "padding" above.
       int nnn = 0;
       nnn++;
@@ -946,7 +927,6 @@ int32_t PhysicsWorld::collisionTestBox(std::shared_ptr<PhysicsNode> objA, std::s
 #endif
     return 0;
   }
-
 }
 int32_t PhysicsWorld::stabalizeCollisionSystem(std::multimap<float, BoxCollision>& vecBoxCollisions) {
   // Staballize
@@ -1034,7 +1014,6 @@ void PhysicsWorld::bb_resolve_setup_data(std::shared_ptr<PhysicsNode> obA, std::
     p_new_b = obB->getBoundBoxObject()->center();
   }
 
-
   //calc new vel
   if (obA->getIsStatic() == false) {
     //We multiply the velocity by -1 to invert it, since the "stuck"
@@ -1048,12 +1027,11 @@ void PhysicsWorld::bb_resolve_setup_data(std::shared_ptr<PhysicsNode> obA, std::
     obB->setTempPos(p_new_b);
     obB->setTempVelocity(v_new_b);
   }
-
 }
 void PhysicsWorld::bb_move_and_slide(const vec3& ob_last_p, const vec3& ob_last_v,
   const vec3& ob_new_p, const vec3& ob_move_v, Box3f* boxA, Box3f* boxB,
   float move_t, float ob_friction, vec3& __out_ out_new_v, const int ax_t0) {
-  //The position must already be added by ct, and 
+  //The position must already be added by ct, and
   //Assume the bounding boxes are recalculated
 
   vec3 plane_n;
@@ -1105,7 +1083,7 @@ bool PhysicsWorld::collideMesh(std::shared_ptr<PhysicsNode> ob, vec3* verts, siz
   v_index32 ind[3];
   vec3 v[3];
 
-  //loop triangles 
+  //loop triangles
   for (int iInd = iOff; iInd < iCount; iInd += 3) {
     ind[0] = *(inds + iInd + 0);
     ind[1] = *(inds + iInd + 1);
@@ -1115,7 +1093,6 @@ bool PhysicsWorld::collideMesh(std::shared_ptr<PhysicsNode> ob, vec3* verts, siz
     v[2] = *(MeshUtils::getVertexElementOffset(verts, ind[2], vOffBytes, vStrideBytes, vCount));
 
     if (Ceq::triangleAabbTest(v, obBox->_min, obBox->_max)) {
-
     }
   }
 
@@ -1134,7 +1111,6 @@ void PhysicsWorld::refreshObjectManifold(std::shared_ptr<PhysicsNode> ob) {
     //    _pWorld25->delObj(ob->getId());
     //}
   }
-
 }
 void PhysicsWorld::limitVelocity(vec3& __inout_ v) {
   float c_maxVelLength = 1.0; //meters per second squared.
@@ -1170,7 +1146,6 @@ void PhysicsWorld::makeGrid() {
   , p0, p1);
 
   vecGen.resize(0);
-
 }
 void PhysicsWorld::sweepGridBox(std::function<void(ivec3&)> func, ivec3& viMin, ivec3& viMax) {
   int yi = _mpNodesY.getMin();
@@ -1210,16 +1185,12 @@ void PhysicsWorld::makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_pt
   //Second, if the grid isn't
   //generated/ing, then put it in the generation queue.
   if (pGrid == nullptr) {
-
     //find grid.  if we can't find then add to "empty" set of ivec3
     if (_setEmpty.find(&cv) == _setEmpty.end()) {
-
       pGrid = loadGrid(cv);//May return nullptr for empty grid
       addGrid(pGrid, cv);
     }
   }
-
-
 }
 std::shared_ptr<PhysicsGrid> PhysicsWorld::loadGrid(const ivec3& pos) {
   std::shared_ptr<PhysicsGrid> p = nullptr;
@@ -1275,7 +1246,7 @@ void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
   //Add meshes to render bucket
   int32_t dbgHidden = 0;
   for (std::pair<NodeId, std::shared_ptr<PhysicsNode>> p : _mapObjects) {
-    if (p.second->getHidden() == false) {
+    if (p.second->isHidden() == false) {
       if (parms->_pFrustum->hasBox(p.second->getBoundBoxObject())) {
         float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - p.second->getBoundBoxObject()->center()).length2();
         parms->_pRenderBucket->addObj(p.second);
@@ -1285,7 +1256,6 @@ void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
       }
     }
   }
-
 }
 void PhysicsWorld::sweepGridFrustum(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2) {
   vec3 cp = pf->getNearPlaneCenterPoint();
@@ -1334,7 +1304,6 @@ void PhysicsWorld::sweepGridFrustum(std::function<void(ivec3&)> func, std::share
           toCheck.push_back(v3Toi3Node(n[3]));
           toCheck.push_back(v3Toi3Node(n[4]));
           toCheck.push_back(v3Toi3Node(n[5]));
-
         }
         else {
           int nnn = 0;
@@ -1348,7 +1317,6 @@ void PhysicsWorld::sweepGridFrustum(std::function<void(ivec3&)> func, std::share
     }
   }
 
-
   for (ivec3* vi : checked) {
     delete vi;
   }
@@ -1357,8 +1325,8 @@ void PhysicsWorld::sweepGridFrustum_r(std::function<void(ivec3&)> func, std::sha
   vec3& pt, std::set<ivec3*, ivec3::Vec3xCompLess>& grids, int32_t& iDebugSweepCount) {
   //What this does:
   //for point P - snap to the ivec3 grid.
-  // check if box intersects frustum, 
-  // repeat for all 6 neighbors 
+  // check if box intersects frustum,
+  // repeat for all 6 neighbors
   // *we don't use physicsgrid here!*  it's a 'virtual' box because the grids are not contiguous
   // Testing: enters about 400 times.
 
@@ -1408,7 +1376,6 @@ void PhysicsWorld::sweepGridFrustum_r(std::function<void(ivec3&)> func, std::sha
   //        nnn++;
   //    }
   //}
-
 }
 
 //void World25::getAllNodesForRayBoxSLOW(Ray_t* pr, float fBoxWidth2, float fBoxHeight2,
@@ -1487,7 +1454,7 @@ void PhysicsWorld::drawDeferred(RenderParams& rp) {
     //so -- this is a huge task and it's nto really needed yet.
     //**
 
-    //If we don't have skin, draw instanced, 
+    //If we don't have skin, draw instanced,
     //if we have skin draw normally.
     //_pRenderBucket->sortAndDrawMeshes(
     //    [](std::shared_ptr<VertexFormat> vf) {
@@ -1556,8 +1523,5 @@ void PhysicsWorld::drawTransparent(RenderParams& rp) {
   Gu::getCoreContext()->popDepthTest();
 
   Perf::popPerf();
-
 }
-
-
 }//ns Game

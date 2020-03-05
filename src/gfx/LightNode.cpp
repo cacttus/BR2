@@ -86,7 +86,7 @@ void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator
   LightNodeBase::update(delta, mapAnimators);
 }
 void LightNodeDir::cullShadowVolumesAsync(CullParams& cp) {
-  if (getHidden() == true) {
+  if (isHidden() == true) {
     return;
   }
   Perf::pushPerf();
@@ -153,7 +153,7 @@ void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animat
   LightNodeBase::update(delta, mapAnimators);
 }
 void LightNodePoint::cullShadowVolumesAsync(CullParams& cp) {
-  if (getHidden() == true) {
+  if (isHidden() == true) {
     return;
   }
   Perf::pushPerf();

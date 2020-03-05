@@ -15,10 +15,7 @@ FlyingCameraControls::FlyingCameraControls() {
 }
 FlyingCameraControls::~FlyingCameraControls() {
 }
-void FlyingCameraControls::afterAdded() {
-  start();
-}
-void FlyingCameraControls::start() {
+void FlyingCameraControls::onStart() {
 
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (cam == nullptr) {
@@ -35,11 +32,12 @@ void FlyingCameraControls::start() {
   //cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
   _vCamNormal = cam->getViewNormal();
   _vCamPos = cam->getPos();
-
 }
-void FlyingCameraControls::update(float delta) {
+void FlyingCameraControls::onUpdate(float delta) {
   update(Gu::getInputManager(), delta);
   moveCameraWSAD(Gu::getInputManager(), delta);
+}
+void FlyingCameraControls::onExit() {
 }
 void FlyingCameraControls::moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
@@ -88,8 +86,6 @@ void FlyingCameraControls::updateCameraPosition() {
   vec3 vLookat = _vCamPos + _vCamNormal;
   cam->setPos(std::move(_vCamPos));
   cam->setLookAt(std::move(vLookat));
-}
-void FlyingCameraControls::userZoom(float amt) {
 }
 void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
@@ -216,9 +212,6 @@ void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
 
   updateCameraPosition();
 }
-//void FlyingCameraControls::setActive() {
-//  getWorldObject()->getScene()->setCamera(_pCamera);
-//}
 void FlyingCameraControls::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
   _vCamPos = pos;
   _vCamNormal = (lookat - pos).normalize();

@@ -31,69 +31,50 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
 
 |  Folder | Contents|
 |---------|----------------------------------------------------------------------------------------------------------
-|  base   | graphs, generic systems, memory, buffers, networking, events and OS interface.
-|  ext    | *Lightweight* external libraries.  (Large API's reside in ./external).
-|  gfx    | GPU, graphics classes, image manipulation,  materials, lighting, framebuffers, shaders.
-|  math   | vectors, matrices, boxes, geometry, hulls, algorithms.
-|  model  | meshes, animation, models, characters, skeletons, bones.
-|  world  | physics, scenegraph. 
+|  base   | graphs, generic systems, memory, buffers, networking, events and OS interface.							|
+|  ext    | *Lightweight* external libraries.  (Large API's reside in ./external).									|
+|  gfx    | GPU, graphics classes, image manipulation,  materials, lighting, framebuffers, shaders.					|
+|  math   | vectors, matrices, boxes, geometry, hulls, algorithms.													|
+|  model  | meshes, animation, models, characters, skeletons, bones.												|
+|  world  | physics, scenegraph. 																					|
+|  bottle  | contains world rendering data.                                                                         |
 
 | Class            | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|     AppRunner    |  Initializes and creates the application                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-|     Package      |    Holds application and project state inforamtion.  Contains all scenes, models, meshes and textures and packages them into one executable.                                                                                                                                                                                                                                                                                                              |
-|     Scene         | A scene for all items in the currently loaded game world.  Areas are separated into scenes in order to minimize memory footprint.  In the case of the designed game, scene differentiation is really unnecessary, as the world is "minecraft" infinite and it loads dynamically.  However, for a more linear game model the Scene would be used to separate game areas in order to reduce memory footprint.                                                       |
-|     Gu            | Global utility class used to access commonly used pieces of the engine (textures, meshes) through simple static methods.                                                      |
-|     GLContext     | OpenGL context.  There may be more than one OpenGL context in the engine.  "Sharable" items are shared across contexts, including textures, meshes and shaders.                                                 |
-|   Managers | All managers control their respective system.  PhysicsManager, InputManager, WorldManager, ModelManger, TexCache (TextureManager), ShaderMaker (ShaderManager) .. etc.
+|     Package      |  There is only 1 package at a time in the BR2 engine.  Application and project state inforamtion are stored here.  Contains all scenes, models, meshes and textures and packages them into one executable.                                                                                                                                                                                                                                                                                                              |
+|     Window       |  Windows are the root of the rendering system. Each window gets its own rendering pipeline, and graphics context.						|
+|     Context      | Rendering context.  1 Global context, and multiple additional contexts are possible.  Items shared across contexts include textures, meshes and shaders.                                                 |
+|     Scene        | Scenegraph for all items in the currently loaded game world.  Areas are separated into scenes in order to minimize memory footprint.  In the case of the designed game, scene differentiation is really unnecessary, as the world is "minecraft" infinite and it loads dynamically.  However, for a more linear game model the Scene would be used to separate game areas in order to reduce memory footprint.                                                       |
+|     Gu           | Global utility class used to access commonly used pieces of the engine (textures, meshes) through simple static methods.                                                      |
 
-## New Design (2020)
-* Scene
-	* .. nodes
-		* SceneNode
-			 * .. components
-			 * MeshComponent : Component
-			 * CollisionShape : Component
-			 * CSharpScript : Component
-		* CameraNode : SceneNode
-		* LightNode : SceneNode
-	* PhysicsManager
-
-## Classes
+## Class Hierarchy
 
 * Gu
-    * Package (1)
-    * GLContext (1+)
-	    * Texture Manager (1, static)
-		* Mesh Manager (1, static)
-        * ShaderManager (1, static)
-        * FrameSync (1)
-        * Delta (1)
-        * RenderPipeline (1) 
-	* Window Manager (1)
-        * GraphicsWindow (1+)
-			* RenderPipe (1)
-				* Picker (1)
-            * UiScreen (1)
-			* PhysicsWorld (1)
-		    * GLContext (1, ref)
-            * Scene (1)
-				* LightNode (1*)
-					* :PointLight
-					* :DirLight
-				* CameraNode (1*, only 1 active at a time)
-				* PhysicsNode (1*) 
-				* MeshNode (1*)
-				* ModelNode (1*)
-                * SceneNode (1*)
-					* Component (1*)
-						* CollisionShape
-						* CSharpScript
-						* :BaseNode (inherited)
-							* :TreeNode (inherited)
-								* :Drawable (inherited)
-									* :VMS (inherited)
-         * `step(delta) \\Steps the graphics context, engine, and simulation`
+	* Texture Manager (1, GLOBAL)
+	* Mesh Manager (1, GLOBAL)
+	* ShaderManager (1, GLOBAL)
+    * Package (1, GLOBAL)
+	* GraphicsApi (1, GLOBAL)
+		* Context (1+)
+			* GraphicsWindow (1)
+				* FrameSync (1)
+				* Delta (1)
+				* RenderPipe (1)
+					* Picker (1)
+				* UiScreen (1)
+				* PhysicsWorld (1)
+				* Scene (1)
+					* LightNode (1*)
+						* :PointLight
+						* :DirLight
+					* CameraNode (1*, only 1 active at a time)
+					* PhysicsNode (1*) 
+					* MeshNode (1*)
+					* ModelNode (1*)
+					* SceneNode (1*)
+						* Component (1*)
+							* BottleScript (1)
+								* World25 (1)
 
 ## Notes
 

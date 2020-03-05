@@ -7,7 +7,7 @@
 #include "../bottle/World25.h"
 #include "../bottle/W25Config.h"
 #include "../bottle/WorldCellFile.h"
-#include "../bottle/BottleRoom.h"
+#include "../bottle/BottleScript.h"
 #include "../bottle/Lair.h"
 #include "../bottle/SpriteBucket.h"
 #include "../bottle/Tile25Spec.h"

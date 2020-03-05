@@ -18,6 +18,8 @@
 #include "../gfx/RenderPipe.h"
 #include "../base/SDLIncludes.h"
 #include "../world/Scene.h"
+#include "../bottle/BottleScript.h"
+
 
 namespace BR2 {
 #pragma region GraphicsWindow_Internal
@@ -31,6 +33,8 @@ public:
   std::shared_ptr<FrameSync> _pFrameSync = nullptr;
   std::shared_ptr<FpsMeter> _pFpsMeter = nullptr;
   std::shared_ptr<Delta> _pDelta = nullptr;
+  std::shared_ptr<InputManager> _pInput = nullptr;
+
   FrameState _eFrameState = FrameState::None;
 
   SDL_Window* _pSDLWindow = nullptr;
@@ -167,67 +171,7 @@ void GraphicsWindow::init() {
   _pint->_pFrameSync = std::make_shared<FrameSync>(getThis<GraphicsWindow>());
   _pint->_pDelta = std::make_shared<Delta>();
   _pint->_pFpsMeter = std::make_shared<FpsMeter>();
-}
-std::shared_ptr<GraphicsWindow> GraphicsWindow::create(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win) {
-  std::shared_ptr<GraphicsWindow> w = std::make_shared<GraphicsWindow>(api, ct, win);
-  w->init();
-  return w;
-}
-uint64_t GraphicsWindow::getFrameNumber() { return _pint->_pFpsMeter->getFrameNumber(); }
-int32_t GraphicsWindow::getWidth() { return _pint->_iLastWidth; }
-int32_t GraphicsWindow::getHeight() { return _pint->_iLastHeight; }
-SDL_Window* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
-std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
-std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
-std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
-std::shared_ptr<FrameSync> GraphicsWindow::getFrameSync() { return _pint->_pFrameSync; }
-std::shared_ptr<Delta> GraphicsWindow::getDelta() { return _pint->_pDelta; }
-std::shared_ptr<FpsMeter> GraphicsWindow::getFpsMeter() { return _pint->_pFpsMeter; }
-void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) {
-  scene->setWindow(getThis<GraphicsWindow>());
-  _pint->_pScene = scene;
-  scene->afterAttachedToWindow();
-}
-void GraphicsWindow::step() {
-  _pint->_pDelta->update();
-  _pint->_pFpsMeter->update();
-
-  if (_pint->_pScene == nullptr) {
-    setScene(Scene::create());
-  }
-
-  _pint->beginRender();
-  {
-    if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F11)) {
-      _pint->toggleFullscreen();
-    }
-
-    _pint->setFrameState(FrameState::SyncBegin);
-    _pint->_pFrameSync->syncBegin();
-    {
-      if (getScene() != nullptr) {
-        _pint->setFrameState(FrameState::Update);
-        _pint->_pScene->update(_pint->_pDelta->get());
-
-        _pint->setFrameState(FrameState::Render);
-        PipeBits p;
-        p.set();
-        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), p);
-      }
-      else {
-        BRLogErrorCycle("Scene was not set on graphics window " + getTitle());
-      }
-    }
-    _pint->setFrameState(FrameState::SyncEnd);
-    _pint->_pFrameSync->syncEnd();
-  }
-
-  _pint->endRender();
-}
-void GraphicsWindow::idle(int64_t us) {
-  if (_pint->_pScene != nullptr) {
-    _pint->_pScene->idle(us);
-  }
+  _pint->_pInput = std::make_shared<InputManager>();
 }
 void GraphicsWindow::initRenderSystem() {
   if (_pint->_pSDLWindow == nullptr) {
@@ -265,15 +209,76 @@ void GraphicsWindow::initRenderSystem() {
 
   _pint->printHelpfulDebug();
 }
-void GraphicsWindow::mouseWheel(int amount) {
+void GraphicsWindow::step() {
+  _pint->_pDelta->update();
+  _pint->_pFpsMeter->update();
+
+  if (_pint->_pScene == nullptr) {
+    std::shared_ptr<Scene> pscene = Scene::create();
+    pscene->addComponent(std::make_shared<BottleScript>());
+    setScene(pscene);
+  }
+
+  _pint->beginRender();
+  {
+    if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F11)) {
+      _pint->toggleFullscreen();
+    }
+
+    _pint->setFrameState(FrameState::SyncBegin);
+    _pint->_pFrameSync->syncBegin();
+    {
+      if (getScene() != nullptr) {
+        _pint->setFrameState(FrameState::Update);
+        _pint->_pScene->update(_pint->_pDelta->get());
+
+        _pint->setFrameState(FrameState::Render);
+        PipeBits p;
+        p.set();
+        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), p);
+      }
+      else {
+        BRLogErrorCycle("Scene was not set on graphics window " + getTitle());
+      }
+    }
+    _pint->setFrameState(FrameState::SyncEnd);
+    _pint->_pFrameSync->syncEnd();
+  }
+
+  _pint->endRender();
+}
+void GraphicsWindow::idle(int64_t us) {
   if (_pint->_pScene != nullptr) {
-    _pint->_pScene->mouseWheel(amount);
+    _pint->_pScene->idle(us);
   }
 }
 string_t GraphicsWindow::getTitle() {
   string_t st(SDL_GetWindowTitle(_pint->_pSDLWindow));
   return st;
 }
+std::shared_ptr<GraphicsWindow> GraphicsWindow::create(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win) {
+  std::shared_ptr<GraphicsWindow> w = std::make_shared<GraphicsWindow>(api, ct, win);
+  w->init();
+  return w;
+}
+uint64_t GraphicsWindow::getFrameNumber() { return _pint->_pFpsMeter->getFrameNumber(); }
+int32_t GraphicsWindow::getWidth() { return _pint->_iLastWidth; }
+int32_t GraphicsWindow::getHeight() { return _pint->_iLastHeight; }
+SDL_Window* GraphicsWindow::getSDLWindow() { return _pint->_pSDLWindow; }
+std::shared_ptr<RenderViewport> GraphicsWindow::getViewport() { return _pint->_pViewport; }
+std::shared_ptr<RenderPipe> GraphicsWindow::getRenderPipe() { return _pint->_pRenderPipe; }
+std::shared_ptr<Scene> GraphicsWindow::getScene() { return _pint->_pScene; }
+std::shared_ptr<FrameSync> GraphicsWindow::getFrameSync() { return _pint->_pFrameSync; }
+std::shared_ptr<Delta> GraphicsWindow::getDelta() { return _pint->_pDelta; }
+std::shared_ptr<FpsMeter> GraphicsWindow::getFpsMeter() { return _pint->_pFpsMeter; }
+std::shared_ptr<InputManager> GraphicsWindow::getInput() { return _pint->_pInput; }
+
+void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) {
+  scene->setWindow(getThis<GraphicsWindow>());
+  _pint->_pScene = scene;
+  scene->afterAttachedToWindow();
+}
+
 
 
 #pragma endregion

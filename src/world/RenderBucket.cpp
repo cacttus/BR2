@@ -53,7 +53,7 @@ void RenderBucket::addGrid(std::shared_ptr<PhysicsGrid> bn) {
 }
 void RenderBucket::collect(std::shared_ptr<SceneNode> bn) {
   //collects renderable items into specific buffers
-  if (bn->getHidden() == false) {
+  if (bn->isHidden() == false) {
     float fDist = distToCam(bn->getBoundBoxObject());
     if (std::dynamic_pointer_cast<LightNodeDir>(bn) != nullptr) {
       _mapDirLights.insert(std::make_pair(fDist, std::dynamic_pointer_cast<LightNodeDir>(bn)));

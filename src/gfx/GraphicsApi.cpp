@@ -1,17 +1,20 @@
-#include "../gfx/GraphicsApi.h"
 #include "../base/oglErr.h"
 #include "../base/Logger.h"
 #include "../base/EngineConfig.h"
 #include "../base/Gu.h"
 #include "../base/SDLUtils.h"
+#include "../base/GLContext.h"
 #include "../base/GraphicsWindow.h"
 #include "../base/DebugHelper.h"
 #include "../base/Delta.h"
 #include "../base/Perf.h"
 #include "../base/InputManager.h"
 #include "../base/GLContext.h"
+#include "../gfx/GraphicsApi.h"
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderPipe.h"
+
+#include <SDL_video.h>
 
 namespace BR2 {
 
@@ -74,16 +77,38 @@ bool GraphicsApi::handleSDLEvents() {
   }
   return done;
 }
+std::shared_ptr<InputManager> GraphicsApi::getInputForWindow(uint32_t sdl_windowId) {
+  for (std::shared_ptr<GraphicsContext> ct : _contexts) {
+    Uint32 wid = SDL_GetWindowID(ct->getGraphicsWindow()->getSDLWindow());
+    if (sdl_windowId == wid) {
+      return ct->getGraphicsWindow()->getInput();
+    }
+  }
+  return nullptr;
+}
+
 bool GraphicsApi::handleEvents(SDL_Event* event) {
-  static SDL_MouseMotionEvent lastEvent;
+  // Return false when we get a window_close message, or need to exit the app.
   int n = 0;
   vec2 delta;
   SDL_Scancode keyCode;
-  std::shared_ptr<InputManager> pFingers = Gu::getInputManager();
 
   if (event == nullptr) {
     return true;
   }
+
+  std::shared_ptr<InputManager> pInput = nullptr;
+  if (event->window.windowID) {
+    pInput = getInputForWindow(event->window.windowID);
+    AssertOrThrow2(pInput != nullptr);
+  }
+  else {
+    //This failed.  
+    BRLogError("Invalid code here, we need to get the window from the given sdl event.");
+    Gu::debugBreak();
+    return true;
+  }
+
 
   switch (event->type) {
   case SDL_MOUSEMOTION:
@@ -91,33 +116,33 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
     break;
   case SDL_KEYDOWN:
     keyCode = event->key.keysym.scancode;
-    pFingers->setKeyDown(keyCode);
+    pInput->setKeyDown(keyCode);
     break;
   case SDL_KEYUP:
     keyCode = event->key.keysym.scancode;
-    pFingers->setKeyUp(keyCode);
+    pInput->setKeyUp(keyCode);
     break;
   case SDL_MOUSEBUTTONDOWN:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
-      pFingers->setLmbState(ButtonState::Press);
+      pInput->setLmbState(ButtonState::Press);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
-      pFingers->setRmbState(ButtonState::Press);
+      pInput->setRmbState(ButtonState::Press);
       break;
     }
     break;
   case SDL_MOUSEBUTTONUP:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
-      pFingers->setLmbState(ButtonState::Release);
+      pInput->setLmbState(ButtonState::Release);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
-      pFingers->setRmbState(ButtonState::Release);
+      pInput->setRmbState(ButtonState::Release);
       break;
     }
     break;
@@ -130,14 +155,8 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
     break;
   case SDL_MOUSEWHEEL:
     if (event->wheel.y != 0) {
-
       int n = MathUtils::brMin(10, MathUtils::brMax(-10, event->wheel.y));
-
-      for (std::shared_ptr<GraphicsContext> ct : _contexts) {
-        std::shared_ptr<GraphicsWindow> w = ct->getGraphicsWindow();
-        w->mouseWheel(n);
-      }
-
+      pInput->setMouseWheel(n);
     }
     if (event->wheel.x != 0) {
       n++;

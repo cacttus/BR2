@@ -1,4 +1,4 @@
-#include "../base/CSharpScript.h"
+#include "../world/CSharpScript.h"
 #include "../base/CSharp.h"
 #include "../base/Logger.h"
 #include "../base/HashMap.h"
@@ -1101,7 +1101,7 @@ std::shared_ptr<CSharpScript> CSharpScript::compile(std::shared_ptr<CSharpCompil
   return nullptr;
 }
 //This is the start method that's in C++
-void CSharpScript::start() {
+void CSharpScript::onStart() {
   //**If the compiled script has a start method, run that, otherwise run the _start lambda on this (c++) script.
 
   //if (_start == nullptr) {
@@ -1113,7 +1113,7 @@ void CSharpScript::start() {
   //  _start.execute(context);
   //}
 }
-void CSharpScript::update(float dt) {
+void CSharpScript::onUpdate(float dt) {
   //if (_update == nullptr) {
   //  BRLogErrorCycle("Script could not execute, no Start method was found");
   //}
@@ -1125,6 +1125,8 @@ void CSharpScript::update(float dt) {
   //  context->getCallstack().push_back(delta);//*Push this parameter on the stack so Update() will receive it.
   //  _update.execute(context);
   //}
+}
+void CSharpScript::onExit() {
 }
 #pragma endregion
 

@@ -527,7 +527,8 @@ void World25::updateTouch(std::shared_ptr<InputManager> pFingers) {
 void World25::turnOffSun() {
   std::shared_ptr<LightNodeDir> light = nullptr;
   if (findNode<LightNodeDir>(light)) {
-    light->setHidden(!light->getHidden());
+    if (light->isHidden()) { light->show(); }
+    else { light->hide(); }
   }
 }
 void World25::turnOffLamp() {
@@ -535,7 +536,8 @@ void World25::turnOffLamp() {
   if (mn != nullptr) {
     std::shared_ptr<LightNodePoint> light = nullptr;
     if (mn->findNode<LightNodePoint>(light)) {
-      light->setHidden(!light->getHidden());
+      if (light->isHidden()) { light->show(); }
+      else { light->hide(); }
     }
   }
 }

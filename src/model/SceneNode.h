@@ -69,13 +69,9 @@ class SceneNode : public TreeNode {
 public:
   SceneNode(std::shared_ptr<BaseSpec>);
   virtual ~SceneNode() override;
-
-  void setHidden(bool bHidden) {
-    _bHidden = bHidden;
-  }
-  bool getHidden() {
-    return _bHidden;
-  }
+  void show() { _bHidden = false; }
+  void hide() { _bHidden = true; }
+  bool isHidden() { return _bHidden; }
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
   void compileWorldMatrix();
@@ -94,7 +90,7 @@ public:
   virtual void drawNonDepth(RenderParams& rp) override;
   virtual void drawTransparent(RenderParams& rp) override;
   virtual void drawUI(RenderParams& rp) override {}
-  
+
   void addComponent(std::shared_ptr<Component> comp);
 
   template < typename Tx > std::shared_ptr<Tx> getData() {
@@ -192,7 +188,7 @@ private:
 };
 
 
-template < typename Tx > 
+template < typename Tx >
 bool SceneNode::findNode(std::shared_ptr<Tx>& __out_ node) {
   //Find a node (starting at this node) which matches the given node type: Tx
   std::shared_ptr<Tx> pc = std::dynamic_pointer_cast<Tx>(shared_from_this());

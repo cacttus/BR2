@@ -23,7 +23,6 @@
     <ClCompile Include="src\base\AppRunner.cpp" />
     <ClCompile Include="src\base\BinaryFile.cpp" />
     <ClCompile Include="src\base\Crc32.cpp" />
-    <ClCompile Include="src\base\CSharpScript.cpp" />
     <ClCompile Include="src\base\DateTime.cpp" />
     <ClCompile Include="src\base\DebugHelper.cpp" />
     <ClCompile Include="src\base\Delta.cpp" />
@@ -66,8 +65,34 @@
     <ClCompile Include="src\base\TypeConv.cpp" />
     <ClCompile Include="src\base\VulkanWindow.cpp" />
     <ClCompile Include="src\base\XmlFile.cpp" />
+    <ClCompile Include="src\bottle\BlockNode.cpp" />
+    <ClCompile Include="src\bottle\BottleScript.cpp" />
+    <ClCompile Include="src\bottle\bottletest.cpp" />
     <ClCompile Include="src\bottle\BottleUtils.cpp" />
+    <ClCompile Include="src\bottle\Brain25.cpp" />
+    <ClCompile Include="src\bottle\GameFile.cpp" />
+    <ClCompile Include="src\bottle\GameUi.cpp" />
+    <ClCompile Include="src\bottle\Goal25.cpp" />
+    <ClCompile Include="src\bottle\Goal25MoveTo.cpp" />
+    <ClCompile Include="src\bottle\Goal25Think.cpp" />
+    <ClCompile Include="src\bottle\GodCamScript.cpp" />
+    <ClCompile Include="src\bottle\Lair.cpp" />
+    <ClCompile Include="src\bottle\ObFile.cpp" />
     <ClCompile Include="src\bottle\SpriteBucket.cpp" />
+    <ClCompile Include="src\bottle\Tile25Spec.cpp" />
+    <ClCompile Include="src\bottle\W25Config.cpp" />
+    <ClCompile Include="src\bottle\W25GridMesh.cpp" />
+    <ClCompile Include="src\bottle\W25MeshMaker.cpp" />
+    <ClCompile Include="src\bottle\WalkerSpec.cpp" />
+    <ClCompile Include="src\bottle\WipGrid.cpp" />
+    <ClCompile Include="src\bottle\World25.cpp" />
+    <ClCompile Include="src\bottle\WorldCell.cpp" />
+    <ClCompile Include="src\bottle\WorldCellFile.cpp" />
+    <ClCompile Include="src\bottle\WorldEditor.cpp" />
+    <ClCompile Include="src\bottle\WorldEditState.cpp" />
+    <ClCompile Include="src\bottle\WorldGrid.cpp" />
+    <ClCompile Include="src\bottle\WorldMaker.cpp" />
+    <ClCompile Include="src\bottle\WorldObj.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
@@ -120,6 +145,7 @@
     <ClCompile Include="src\math\BoxUtils.cpp" />
     <ClCompile Include="src\math\CollisionEquations.cpp" />
     <ClCompile Include="src\math\ConvexAlgorithms.cpp" />
+    <ClCompile Include="src\math\MathUtils.cpp" />
     <ClCompile Include="src\math\Matrix3x3.cpp" />
     <ClCompile Include="src\math\Minimax.cpp" />
     <ClCompile Include="src\math\Plane3.cpp" />
@@ -158,6 +184,7 @@
     <ClCompile Include="src\model\VertexTypes.cpp" />
     <ClCompile Include="src\world\BaseCollider.cpp" />
     <ClCompile Include="src\world\Component.cpp" />
+    <ClCompile Include="src\world\CSharpScript.cpp" />
     <ClCompile Include="src\world\Manifold.cpp" />
     <ClCompile Include="src\world\NodeUtils.cpp" />
     <ClCompile Include="src\world\PhysicsGrid.cpp" />
@@ -167,6 +194,7 @@
     <ClCompile Include="src\world\PhysicsWorld.cpp" />
     <ClCompile Include="src\world\RenderBucket.cpp" />
     <ClCompile Include="src\world\Scene.cpp" />
+    <ClCompile Include="src\world\Script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\Allocator.h" />
@@ -179,7 +207,6 @@
     <ClInclude Include="src\base\ConsoleColors.h" />
     <ClInclude Include="src\base\Crc32.h" />
     <ClInclude Include="src\base\CSharp.h" />
-    <ClInclude Include="src\base\CSharpScript.h" />
     <ClInclude Include="src\base\DateTime.h" />
     <ClInclude Include="src\base\DebugHelper.h" />
     <ClInclude Include="src\base\Delta.h" />
@@ -234,11 +261,34 @@
     <ClInclude Include="src\base\VulkanWindow.h" />
     <ClInclude Include="src\base\WindowsIncludes.h" />
     <ClInclude Include="src\base\XmlFile.h" />
+    <ClInclude Include="src\bottle\BlockNode.h" />
     <ClInclude Include="src\bottle\BottleHeader.h" />
+    <ClInclude Include="src\bottle\BottleScript.h" />
     <ClInclude Include="src\bottle\BottleUtils.h" />
+    <ClInclude Include="src\bottle\Brain25.h" />
+    <ClInclude Include="src\bottle\GameFile.h" />
+    <ClInclude Include="src\bottle\GameUi.h" />
+    <ClInclude Include="src\bottle\Goal25.h" />
+    <ClInclude Include="src\bottle\Goal25MoveTo.h" />
+    <ClInclude Include="src\bottle\Goal25Think.h" />
+    <ClInclude Include="src\bottle\GodCamScript.h" />
+    <ClInclude Include="src\bottle\Lair.h" />
     <ClInclude Include="src\bottle\ObFile.h" />
     <ClInclude Include="src\bottle\SpriteBucket.h" />
     <ClInclude Include="src\bottle\Tile25Spec.h" />
+    <ClInclude Include="src\bottle\W25Config.h" />
+    <ClInclude Include="src\bottle\W25GridMesh.h" />
+    <ClInclude Include="src\bottle\W25MeshMaker.h" />
+    <ClInclude Include="src\bottle\WalkerSpec.h" />
+    <ClInclude Include="src\bottle\WipGrid.h" />
+    <ClInclude Include="src\bottle\World25.h" />
+    <ClInclude Include="src\bottle\WorldCell.h" />
+    <ClInclude Include="src\bottle\WorldCellFile.h" />
+    <ClInclude Include="src\bottle\WorldEditor.h" />
+    <ClInclude Include="src\bottle\WorldEditState.h" />
+    <ClInclude Include="src\bottle\WorldGrid.h" />
+    <ClInclude Include="src\bottle\WorldMaker.h" />
+    <ClInclude Include="src\bottle\WorldObj.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />
@@ -354,6 +404,7 @@
     <ClInclude Include="src\model\VertexTypes.h" />
     <ClInclude Include="src\world\BaseCollider.h" />
     <ClInclude Include="src\world\Component.h" />
+    <ClInclude Include="src\world\CSharpScript.h" />
     <ClInclude Include="src\world\Manifold.h" />
     <ClInclude Include="src\world\NodeUtils.h" />
     <ClInclude Include="src\world\PhysicsGrid.h" />
@@ -363,6 +414,7 @@
     <ClInclude Include="src\world\PhysicsWorld.h" />
     <ClInclude Include="src\world\RenderBucket.h" />
     <ClInclude Include="src\world\Scene.h" />
+    <ClInclude Include="src\world\Script.h" />
     <ClInclude Include="src\world\WorldHeader.h" />
   </ItemGroup>
   <ItemGroup>

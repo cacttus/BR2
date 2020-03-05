@@ -11,7 +11,6 @@
 #include "../base/GraphicsWindow.h"
 #include "../gfx/UiControls.h"   
 #include "../gfx/Picker.h"   
-#include "../gfx/ParticleManager.h"   
 #include "../gfx/GraphicsContext.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/CameraNode.h"
@@ -37,7 +36,6 @@ GraphicsContext::~GraphicsContext() {
 std::shared_ptr<CameraNode> GraphicsContext::getActiveCamera() {
   return getGraphicsWindow()->getScene()->getActiveCamera();
 }
-
 std::shared_ptr<GraphicsWindow> GraphicsContext::getGraphicsWindow() {
   if (_pWindow == nullptr) {
     //We must lazy initialize window because we want to pass context to window, but need context first.

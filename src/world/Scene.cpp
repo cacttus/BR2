@@ -13,6 +13,7 @@
 #include "../gfx/ShadowBox.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/RenderViewport.h"
+#include "../gfx/Atlas.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
@@ -63,6 +64,7 @@ void Scene::init() {
 
   SceneNode::init();
 }
+ 
 void Scene::afterAttachedToWindow() {
   //Lazy init, requires our window to be set before creating.
   //**NOTE** we may not need this in the future if we're going turn flyihg camera to script.
@@ -75,9 +77,7 @@ void Scene::afterAttachedToWindow() {
   createUi();
   Gu::checkErrorsDbg();
 
-  BRLogInfo("..ParticleManager");
-  _pParticleManager = std::make_shared<ParticleManager>(getWindow()->getContext());
-  Gu::checkErrorsDbg();
+  makeParticles();
 }
 void Scene::createUi() {
   string_t DEBUG_FONT = "Lato-Regular.ttf";
@@ -131,6 +131,7 @@ void Scene::update(float delta) {
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 void Scene::idle(int64_t us) {
+
 }
 std::shared_ptr<GLContext> Scene::getContext() {
   std::shared_ptr<GraphicsWindow> w = getWindow();
@@ -160,13 +161,11 @@ void Scene::createFlyingCamera() {
 
 #ifdef NOSCRIPT
   BRLogInfo("Creating Fly Camera.");
-  std::shared_ptr<CameraNode> cn = CameraNode::create(_pGraphicsWindow->getViewport());
+  _pDefaultCamera = CameraNode::create(_pGraphicsWindow->getViewport());
   std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
-  cn->addComponent(css);
-
-  setActiveCamera(cn);
-
-  attachChild(cn);
+  _pDefaultCamera->addComponent(css);
+  setActiveCamera(_pDefaultCamera);
+  attachChild(_pDefaultCamera);
   // cn->init();
 
   //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
@@ -514,14 +513,24 @@ bool Scene::detachChild(std::shared_ptr<TreeNode> pChild) {
 
   return ret;
 }
-void Scene::mouseWheel(int amount) {
-  //We can send this to a script, and also use custom commands if needed.
-  //Likely, this is going to switch items on the toolbelt if hovered, AND
-  // if not hovered over toolbelt, this will zoom the camera in the game world.
 
-}
 uint64_t Scene::getFrameNumber() {
   return getWindow()->getFpsMeter()->getFrameNumber();
 }
+void Scene::makeParticles() {
+  ivec2 gsiz(4, 4);
+  std::shared_ptr<Atlas> _pParticlesAtlas = std::make_shared<Atlas>(Gu::getCoreContext(), "W25Particles", gsiz);
+  _pParticlesAtlas ->addImage(0, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
+  _pParticlesAtlas ->addImage(1, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
+  _pParticlesAtlas ->addImage(2, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
+  _pParticlesAtlas ->addImage(3, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
+  _pParticlesAtlas ->compileFiles();
+
+  BRLogInfo("..ParticleManager");
+  _pParticleManager = std::make_shared<ParticleManager>(getWindow()->getContext());
+  _pParticleManager->init(_pParticlesAtlas, BottleUtils::c_iMaxParticles);
+  Gu::checkErrorsDbg();
+}
+
 
 }//ns BR2

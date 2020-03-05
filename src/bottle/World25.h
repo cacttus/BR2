@@ -12,16 +12,13 @@
 #include "../bottle/BottleHeader.h"
 namespace BR2 {
 /**
-*    @class World25d
-*    @brief
-*
-*    Makes no sense for Widget to inherit from Node3Base  But whatever.
+*  @class World25d
+*  @brief Manages the Bottle world grid hierarchy, and physics interaction with world.  Inherits generic physics management for iterative physics solutions.
 */
 class World25 : public PhysicsWorld {
 public:
-  // typedef std::map<ivec3*, std::shared_ptr<WorldGrid>, ivec3::Vec3xCompLess> GridMap;
 
-public:
+  /* TODO: Pass PhysicsWorld in as a member*/
   World25(std::shared_ptr<Scene> pscene);
   virtual ~World25() override;
 
@@ -58,7 +55,7 @@ public:
   t_timeval getAverageOfflineDuration() { return _tvAverageOffline; }
   std::shared_ptr<WorldMaker> getWorldMaker() { return _pWorldMaker; }
   std::shared_ptr<W25Config> getConfig() { return _pConfig; }
-  std::shared_ptr<BottleRoom> getRoom();
+  std::shared_ptr<BottleScript> getRoom() { return _pBottleRoom; }
 
   void createObjFromFile(World25ObjectData* obData);//, WorldCell* pDestCell, int32_t iStackIndex);
   void remakeGridMeshes();
@@ -74,37 +71,39 @@ public:
   ivec3 v3Toi3CellLocal(vec3& v);
   GridShow::e toggleShowGrid();
 
+protected:
+  virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos) override;
+
 private:
   bool _bAsyncGen = false;
-  void turnOffLamp();
-  void turnOffSun();
-  std::shared_ptr<Material> _pWorldMaterial = nullptr;
-  std::set<std::shared_ptr<WorldGrid>> _setGenStage1;
-  std::set<std::shared_ptr<WorldGrid>> _setGenStage2;
 
+  std::shared_ptr<Material> _pWorldMaterial = nullptr;
   std::shared_ptr<LightNodePoint> _pLight0 = nullptr;
   std::shared_ptr<LightNodePoint> _pLight1 = nullptr;
   std::shared_ptr<LightNodePoint> _pLight2 = nullptr;
-
   std::shared_ptr<Atlas> _pWorldAtlas = nullptr;
   std::shared_ptr<World25Plane> _pWorld25Plane = nullptr;
   std::shared_ptr<ShaderBase> _pTileShader = nullptr;
   std::shared_ptr<ShaderBase> _pGridShader = nullptr;
-
   std::shared_ptr<HappySky> _pSkyBox = nullptr;
   std::shared_ptr<Atlas> _pSkyAtlas = nullptr;
-  bool _bDisableLighting = true;
   std::shared_ptr<W25MeshMaker> _pMeshMaker = nullptr;
   std::shared_ptr<WorldMaker> _pWorldMaker = nullptr;
+  std::shared_ptr<BottleScript> _pBottleRoom = nullptr;
+  std::shared_ptr<W25Config> _pConfig = nullptr;
+  std::shared_ptr<ObFile> _pGameFile = nullptr;
+
+  std::set<std::shared_ptr<WorldGrid>> _setGenStage1;
+  std::set<std::shared_ptr<WorldGrid>> _setGenStage2;
+
+  bool _bDisableLighting = true;
+  
   int32_t _nMeshTrisFrame = 0;
   int32_t _nQuadTrisFrame = 0;
   t_timeval _tvAverageOffline = 0;
-  std::shared_ptr<W25Config> _pConfig;
   int64_t _iMarchStamp = 1;
-
   string_t _strGameName;//Portals 12/22/17
   string_t _strWorldName;
-  std::shared_ptr<ObFile> _pGameFile = nullptr;
   GridShow::e _eShowGrid = GridShow::e::None;
 
   void updateHandCursorAndAddToRenderList(float);
@@ -117,6 +116,9 @@ private:
 
   void makeShaders();
   void initializeWorldGrid();
+
+  void turnOffLamp();
+  void turnOffSun();
 
   void makeSky();
   void settleLiquids(bool bForce);
@@ -133,8 +135,7 @@ private:
   void createHandCursor();
 
   void convertMobs();
-protected:
-  virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos) override;
+
   //virtual std::shared_ptr<PhysicsGrid> makeGrid(ivec3& cv, bool bEmpty) override;
 
 };

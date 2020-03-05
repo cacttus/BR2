@@ -28,11 +28,11 @@ public:
   void update(float delta);
   void updateWidthHeight(int32_t w, int32_t h, bool bForce);
 
-  //std::shared_ptr<UiScreen> getUiScreen() { return _pScreen; }
+  std::shared_ptr<UiScreen> getUiScreen() { return _pUiScreen; }
   std::shared_ptr<PhysicsWorld> getPhysicsManager() { return _pPhysicsWorld; }
   std::shared_ptr<CameraNode> getActiveCamera() { return _pActiveCamera; }
   //**TODO: we need to differentiate the different cameras by keeping exactly one camera defined as the "main player camera"
-  std::shared_ptr<CameraNode> getPlayerCamera() { return _pActiveCamera; }
+  std::shared_ptr<CameraNode> getDefaultCamera() { return _pDefaultCamera; }
   std::shared_ptr<LightManager> getLightManager() { return _pLightManager; }
   std::shared_ptr<GraphicsWindow> getWindow() { return _pGraphicsWindow; }
   std::shared_ptr<GLContext> getContext();
@@ -54,7 +54,6 @@ public:
   virtual bool detachChild(std::shared_ptr<TreeNode> pChild) override;
 
   void afterAttachedToWindow();
-  void mouseWheel(int amount);
   uint64_t getFrameNumber();
 
   //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
@@ -77,6 +76,7 @@ private:
   std::shared_ptr<PhysicsWorld> _pPhysicsWorld = nullptr;
   std::shared_ptr<UiScreen> _pUiScreen = nullptr;
   std::shared_ptr<CameraNode> _pActiveCamera = nullptr;
+  std::shared_ptr<CameraNode> _pDefaultCamera = nullptr;
   std::shared_ptr<GraphicsWindow> _pGraphicsWindow = nullptr;
   std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
   std::shared_ptr<ParticleManager> _pParticleManager = nullptr;
@@ -86,6 +86,7 @@ private:
   //Test data.
   std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
   std::shared_ptr<Texture2DSpec> _pTex = nullptr;
+  std::shared_ptr<Atlas> _pParticlesAtlas = nullptr;
 
   void init();
   void createUi();
@@ -95,11 +96,8 @@ private:
   void debugChangeRenderState();
   void drawBackgroundImage();
   void createFlyingCamera();
-
+  void makeParticles();
 };
-
 }//ns BR2
-
-
 
 #endif
