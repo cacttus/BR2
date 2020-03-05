@@ -57,7 +57,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
   cam->getViewport()->bind(_pWindow);
 
   if (_pPicker != nullptr) {
-    _pPicker->update(Gu::getInputManager());
+    _pPicker->update(getWindow()->getInput());
   }
   if (cam == nullptr) {
     BRLogErrorOnce("Camera was not set for renderScene");
@@ -289,13 +289,14 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePat
   _pShadowFrustumMaster->init();
 
   if (StringUtil::isNotEmpty(strEnvTexturePath)) {
-    _pEnvTex = Gu::getTexCache()->getOrLoad(strEnvTexturePath, false, true, true);
+    _pEnvTex = Gu::getTexCache()->getOrLoad(TexFile("renderpipe_env_tex",strEnvTexturePath), false, true, true);
   }
 }
 
 void RenderPipe::saveScreenshot(std::shared_ptr<LightManager> lightman) {
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F9)) {
-    if (Gu::getInputManager()->shiftHeld()) {
+  
+  if (Gu::getGlobalInput()->keyPress(SDL_SCANCODE_F9)) {
+    if (Gu::getGlobalInput()->shiftHeld()) {
       BRLogInfo("[RenderPipe] Saving all MRTs.");
       //Save all deferred textures
       int iTarget;

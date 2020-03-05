@@ -68,7 +68,7 @@ void ShaderCompiler::loadSource_r(std::shared_ptr<ShaderSubProgram> pSubProg, st
   greatestModifyTime = MathUtils::brMax(modTime, greatestModifyTime);
 
   // - Load all source bytes
-  std::shared_ptr<BinaryFile> bf = std::make_shared<BinaryFile>();
+  std::shared_ptr<BinaryFile> bf = std::make_shared<BinaryFile>(c_strShaderFileVersion);
   //Allocator<char> data;
   loadSourceData(location, bf);
 

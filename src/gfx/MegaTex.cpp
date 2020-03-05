@@ -93,7 +93,7 @@ std::vector<std::shared_ptr<Img32>> MtTexPatch::parseImagePatch(std::string file
     //save images (and master
     Gu::saveImage("./data/cache/saved_9P_master.png", master);
     for (int n = 0; n < ret.size(); ++n) {
-      std::shared_ptr<Texture2DSpec> tex = std::make_shared<Texture2DSpec>(ret[n], Gu::getCoreContext(), TexFilter::e::Nearest);
+      std::shared_ptr<Texture2DSpec> tex = std::make_shared<Texture2DSpec>(getName(), ret[n], Gu::getCoreContext(), TexFilter::e::Nearest);
       RenderUtils::saveTexture(std::move(Stz"./data/cache/saved_9P_" + n + ".png"), tex->getGlId(), GL_TEXTURE_2D);
     }
   }
@@ -107,7 +107,6 @@ MtFont::~MtFont() {
   //shouldn't get called
   int nn = 0;
   nn++;
-
 }
 void MtFont::loadData() {
   createFont();
@@ -119,7 +118,7 @@ void MtFont::createFont() {
 
   BRLogInfo("Creating font '" + getName() + "'. size=" + _atlasWidth + "x" + _atlasHeight + ".  Baked Char Size =" + _iBakedCharSizePixels);
 
-  _pFontBuffer = std::make_shared<BinaryFile>();
+  _pFontBuffer = std::make_shared<BinaryFile>("<none>");
   if (Gu::getPackage()->getFile(getName(), _pFontBuffer) == false) {
     BRLogError("Failed to get font file '" + getName() + "'");
     Gu::debugBreak();
@@ -163,8 +162,6 @@ void MtFont::createFont() {
       nn++;
     }
   }
-
-
 
   //pack the image into a bitmap **nice version**
   std::unique_ptr<uint8_t[]> atlasData = std::make_unique<uint8_t[]>(_atlasWidth * _atlasHeight);
@@ -251,7 +248,7 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
 
   //**TExs
   //Scale hte returned texcoodrs from [0,1] to the width of the baked texture
-  float tw = getTexs()[0]->uv1().x - getTexs()[0]->uv0().x;//top left, origin 
+  float tw = getTexs()[0]->uv1().x - getTexs()[0]->uv0().x;//top left, origin
   float th = getTexs()[0]->uv0().y - getTexs()[0]->uv1().y;//This is flipped; We are in OpenGL tcoords, however our origin is at the top left
 
   //Scale
@@ -289,7 +286,6 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
   fAdvWidth *= fScale;
   fBearing *= fScale;
 
-
   //Kerning, adds to padding not really necessary but, I assume it makes fonts look better rarely
   float fKern = 0.0f;
   if (cCodePrev >= 0) {
@@ -300,24 +296,20 @@ void MtFont::getCharQuad(int32_t cCode, int32_t cCodePrev, FontSize fontSize, fl
   }
   advWidth += fKern;
 
-
   //Compute the glyph padding values, and spaceing
   //for some reason space has a negative x0
   padLeft = fBearing;// leftSideBearing is the offset from the current horizontal position to the left edge of the character
   padRight = fAdvWidth - outWidth;// advanceWidth is the offset from the current horizontal position to the next horizontal position
 
-  //Position character vertically                                
+  //Position character vertically
   //The ascent + descent of the character is wherever the quad is above, or below zero (zero is the baseline, we pass it in with curY)
   //_fAscent adn _fDescent are the scaled MAXIMUM ascent + descent of the font.  So the math here is correct
   padBot = (fabsf(_fDescent) - fabsf(stbQuad.y1));// usually negative
-  padTop = (fabsf(_fAscent) - fabsf(stbQuad.y0));// 
+  padTop = (fabsf(_fAscent) - fabsf(stbQuad.y0));//
   padBot *= fScale;
   padTop *= fScale;
-
-
 }
 float MtFont::fontSizeToFontScale(float fs) {
-
   //Incorrect but I'm just,, o
   //Dividing by _ascent gives us a larger font than the actual extent.
   return fs / (float)_iBakedCharSizePixels;
@@ -333,20 +325,22 @@ float MtFont::fontSizeToFontScale(float fs) {
 #pragma endregion
 
 #pragma region MegaTex
+MegaTex::MegaTex(string_t name, std::shared_ptr<GLContext> ct, bool bCache) : Texture2DSpec(name, ct) {
+  _bCache = bCache;
+}
+MegaTex::~MegaTex() {
+}
 std::shared_ptr<MtFont> MegaTex::getFont(std::string fn) {
   std::string low = StringUtil::lowercase(fn);
 
   Hash32 h = STRHASH(low);
   auto f = _mapTexs.find(h);
   if (f == _mapTexs.end()) {
-    if (_bImagesLoaded == true) {
-      BRLogError("Images were already loaded while loading '" + fn + "'! Or the font path was incorrect (makeAssetPath used?)");
-
-      Gu::debugBreak();
-      nullptr;
-    }
+    _eState = MegaTexCompileState::Dirty;
     std::shared_ptr<MtFont> mtf = std::make_shared<MtFont>(fn, h);
     _mapTexs.insert(std::make_pair(h, mtf));
+    _eState = MegaTexCompileState::Dirty;
+
     f = _mapTexs.find(h);
   }
 
@@ -370,13 +364,13 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::shared_ptr<Img32> tx) {
 std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, bool bPreloaded, bool bLoadNow) {
   //nPatches - number of patches to expect - this is more of a debug thing to prevent invalid patches
   //bPreloaded - if we already loaded the image (skips validation and texture coords)
-  //bLoadNow - Load the image immediately in this function (skips validation of texture coords) 
+  //bLoadNow - Load the image immediately in this function (skips validation of texture coords)
   AssertOrThrow2(nPatches > 0);
   std::string imgNameLow = StringUtil::lowercase(img);
 
   if (bPreloaded == false) {
     if (!FileSystem::fileExists(imgNameLow)) {
-      BRLogError("Image file " + img + " did not exis, when compiling MegaTex.");
+      BRLogError("Image file " + img + " did not exist, compiling MegaTex.");
       return nullptr;
     }
   }
@@ -386,18 +380,12 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
   std::map<Hash32, std::shared_ptr<MtTexPatch>>::iterator it;
   it = _mapTexs.find(hImg);
   if (it == _mapTexs.end()) {
-    if (_bImagesLoaded == true && bPreloaded == false && bLoadNow == false) {
-      BRLogError("Images were already loaded while loading '" + img + "'! Or the texture path was incorrect (makeAssetPath used?)!");
-      Gu::debugBreak();
-      return nullptr;
-    }
-    //Add the new texure
     ret = std::make_shared<MtTexPatch>(imgNameLow, hImg);
     for (int i = 0; i < nPatches; ++i) {
       ret->addTexImage(img, i);//we could do "preloaded' as a bool, but it's probably nto necessary
     }
     _mapTexs.insert(std::make_pair(hImg, ret));
-
+    _eState = MegaTexCompileState::Dirty;
 
     if (bLoadNow) {
       ret->loadData();
@@ -406,32 +394,28 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
     it = _mapTexs.find(hImg);
   }
 
-
-
   //**MUST return nPatches number of textures, never return a different number
   AssertOrThrow2(ret && (ret->getTexs().size() == (size_t)nPatches));
 
   return ret;
 }
-
 void MegaTex::loadImages() {
   BRLogInfo("Mega Tex: Loading " + _mapTexs.size() + " images.");
 
   for (auto p : _mapTexs) {
     std::shared_ptr<MtTexPatch> mtt = p.second;
     mtt->loadData();
-  }//For Loop
+  }
 
-  _bImagesLoaded = true;
+  //_bImagesLoaded = true;
 }
-
-
 std::shared_ptr<Img32> MegaTex::compile() {
   //Images should be loaded here with loadImages()
   //This is required because we use images sizes when constructing the gui
+  _eState = MegaTexCompileState::Compiling;
 
   //Flatten Patches into individual images
-  BRLogInfo("Mega Tex: Flattening " + _mapTexs.size() + " images.");
+  BRLogDebug("Mega Tex: Flattening " + _mapTexs.size() + " images.");
   std::vector<std::shared_ptr<MtTex>> vecTexs;
   for (auto texPair : _mapTexs) {
     for (auto tex : texPair.second->getTexs()) {
@@ -440,7 +424,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
   }
 
   //Sort by wh - speeds up + saves room
-  BRLogInfo("Mega Tex: Sorting " + vecTexs.size() + ".");
+  BRLogDebug("MegaTex - Mega Tex: Sorting " + vecTexs.size() + ".");
   struct {
     bool operator()(std::shared_ptr<MtTex> a, std::shared_ptr<MtTex> b) const {
       float f1 = a->getWidth() * a->getHeight();
@@ -459,7 +443,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
 
   //Expand rect and grow by 128 if we fail,  this is a pretty quick procedure, so we
   //don't have to worry about sizes.
-  BRLogInfo("Making space for " + vecTexs.size() + " texs.");
+  BRLogDebug("MegaTex - Making space for " + vecTexs.size() + " texs.");
   while (iImageSize <= _iMaxTexSize) {
     //Root
     _pRoot = std::make_shared<MtNode>();
@@ -497,10 +481,10 @@ std::shared_ptr<Img32> MegaTex::compile() {
 
   if (iImageSize > _iMaxTexSize) {
     //Failure
-    BRLogError("Failed to compose mega texture, too many textures and not enough texture space.");
+    BRLogError("MegaTex - Failed to compose mega texture, too many textures and not enough texture space.");
   }
   else {
-    BRLogInfo("Successful. Tex size=" + iImageSize + ".. Creating Bitmap..");
+    BRLogDebug("MegaTex - Successful. Tex size=" + iImageSize + ".. Creating Bitmap..");
 
     //Compose Master Image
     _pMaster = std::make_shared<Img32>();
@@ -513,7 +497,7 @@ std::shared_ptr<Img32> MegaTex::compile() {
     float imgW = (float)iImageSize;
     float imgH = (float)iImageSize;
 
-    BRLogInfo("Copying Sub-Images..");
+    BRLogDebug("MegaTex - Copying Sub-Images..");
     for (std::shared_ptr<MtTex> tex : vecTexs) {
       _pMaster->copySubImageFrom(tex->node()->_b2Rect._p0, ivec2(0, 0), ivec2(tex->getWidth(), tex->getHeight()), tex->img());
       Gu::checkErrorsDbg();
@@ -531,17 +515,22 @@ std::shared_ptr<Img32> MegaTex::compile() {
       //Free the image and node, we don't need it
       tex->freeTmp();
     }
-    std::string imgName = "./data/cache/ui_master.png";
-    BRLogInfo("Saving " + imgName + "...");
-    Gu::saveImage(imgName, _pMaster);
+    if (_bCache) {
+      std::string imgName = "./data/cache/ui_master.png";
+      BRLogDebug("MegaTex - Caching - Saving '" + imgName + "' to disk...");
+      Gu::saveImage(imgName, _pMaster);
+    }
+    else {
+      BRLogDebug("MegaTex caching is disabled for this texture '" + this->getName() + "'.");
+    }
   }
 
-
   //Now finally create
-  BRLogInfo("Creating GPU Texture.");
+  BRLogDebug("MegaTex - Creating GPU Texture.");
   create(_pMaster->getData()->ptr(), iImageSize, iImageSize, false, false, false);
-  oglSetFilter(TexFilter::e::Nearest);
+  setFilter(TexFilter::e::Nearest);
 
+  _eState = MegaTexCompileState::Compiled;
 
   return _pMaster;
 }
@@ -570,7 +559,7 @@ std::shared_ptr<MtNode> MtNode::plop(std::shared_ptr<MtTex> tex) {
       return nullptr;
     }
     if (tex->getWidth() == bw && tex->getHeight() == bh) {
-      //prefect fit 
+      //prefect fit
       _pTex = tex;
       return getThis<MtNode>();
     }
@@ -609,14 +598,29 @@ std::shared_ptr<MtNode> MtNode::plop(std::shared_ptr<MtTex> tex) {
         _b2Rect.bottom()
       );
     }
-
     return _pChild[0]->plop(tex);
   }
-
-
-
 }
+void MegaTex::update() {
+  if (_eState == MegaTexCompileState::Dirty || _eState == MegaTexCompileState::NotCompiled) {
+    loadImages();
+    compile();
+  }
+}
+bool MegaTex::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
+  update();
+  if (_eState == MegaTexCompileState::NotCompiled) {
+    BRLogWarnCycle("MegaTex was not compiled.  Make sure to update() MegaTex.");
+  }
+  else {
+    if (_eState == MegaTexCompileState::Dirty) {
+      BRLogWarnCycle("MegaTex was dirty before rendering.");
+    }
+    return Texture2DSpec::bind(eChannel, pShader, bIgnoreIfNotFound);
+  }
+
+  return false;
+}
+
 #pragma endregion
-
-
 }//ns Game

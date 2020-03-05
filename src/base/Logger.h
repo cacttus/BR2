@@ -13,13 +13,12 @@
 namespace BR2 {
 /**
 *  @class Logger
-*  @brief Logs information to a text file or console.
-*  @note Logger is initially disabled.
+*  @brief Logs to a text file in /log/ and/or the console.
 */
 class Logger_Internal;
 class Logger : public OperatingSystemMemory {
 public:
-  Logger();
+  Logger(bool async, bool disabled = false);
   virtual ~Logger() override;
 
   void init(string_t cacheFolder);
@@ -34,8 +33,8 @@ public:
 
   void logError(string_t msg, int line, char* file, BR2::Exception* e = NULL, bool hideStackTrace = false);    // - Log an error with exception contents.
   void logWarn(string_t msg, int line, char* file, BR2::Exception* e = NULL);    // - Log an error with exception contents.
-  void logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
-  void logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60);    // - Log an error with exception contents.
+  void logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60, bool force = false);    // - Log an error with exception contents.
+  void logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e = NULL, int iCycle = 60, bool force = false);    // - Log an error with exception contents.
   void logDebug(string_t msg, int line, char* file);
   void logInfo(string_t msg, int line, char* file);
 
@@ -46,37 +45,48 @@ public:
 
   string_t getLogPath();
 private:
-  std::unique_ptr<Logger_Internal> _pint = nullptr;
+  Logger_Internal* _pint = nullptr;
 };
-
 }//ns game
 
-
-//Macros
 #define BRLogDebug(x) BR2::Gu::getLogger()->logDebug(Stz x,__LINE__,__FILE__ )
 #define BRLogInfo(x) BR2::Gu::getLogger()->logInfo(Stz x,__LINE__,__FILE__ )
 #define BRLogWarn(x) BR2::Gu::getLogger()->logWarn(Stz x,__LINE__,__FILE__, NULL )
 #define BRLogError(x) BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL )
 #define BRLogErrorNoStack(x) BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL, true)
+#define BRLogErrorEx(x, aex) BR2::Gu::getLogger()->logError(x,__LINE__,__FILE__, aex )
 
 #define BRLogErrorOnce(x) \
 { \
-static bool _logged = false; \
-if(_logged == false) { \
-_logged = true; \
-BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, NULL ); \
+static bool ___logged_ = false; \
+if(___logged_ == false) { \
+___logged_ = true; \
+BR2::Gu::getLogger()->logError(Stz x,__LINE__,__FILE__, nullptr ); \
 } \
-} 
-
-#define BRLogErrorEx(x, aex) \
-BR2::Gu::getLogger()->logError(x,__LINE__,__FILE__, aex )
-#define BRLogWarnCycle(x) BR2::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, NULL, 60)
-#define BRLogErrorCycle(x) BR2::Gu::getLogger()->logErrorCycle(Stz x, __LINE__, __FILE__, NULL, 60)
-
-#define SetLoggerColor_Error() ConsoleColorRed()
-#define SetLoggerColor_Info() ConsoleColorGray()
-#define SetLoggerColor_Debug() ConsoleColorCyan()
-#define SetLoggerColor_Warn() ConsoleColorYellow()
-
+}
+#define BRLogDebugOnce(x) \
+{ \
+static bool ___logged_ = false; \
+if(___logged_ == false) { \
+___logged_ = true; \
+BR2::Gu::getLogger()->logDebug(Stz x,__LINE__,__FILE__); \
+} \
+}
+#define BRLogWarnCycle(x)\
+{\
+static bool ___logged_ = true;\
+BR2::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, nullptr, 60, ___logged_);\
+if (___logged_ == true) {\
+    ___logged_ = false;\
+}\
+}
+#define BRLogErrorCycle(x)\
+{\
+static bool ___logged_ = true;\
+BR2::Gu::getLogger()->logWarnCycle(Stz x, __LINE__, __FILE__, nullptr, 60, ___logged_);\
+if (___logged_ == true) {\
+    ___logged_ = false;\
+}\
+}
 
 #endif

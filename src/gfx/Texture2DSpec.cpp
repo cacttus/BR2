@@ -1,5 +1,5 @@
-
 #include "../base/GlobalIncludes.h"
+#include "../base/Logger.h"
 #include "../base/GLContext.h"
 #include "../base/Img32.h"
 #include "../base/Gu.h"
@@ -11,20 +11,25 @@
 #include "../gfx/RenderUtils.h"
 
 namespace BR2 {
-Texture2DSpec::Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : _pContext(ctx) {
+Texture2DSpec::Texture2DSpec(string_t name, std::shared_ptr<GLContext> ct) : _pContext(ct) {
+  _strName = name;
+}
+Texture2DSpec::Texture2DSpec(string_t name, string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV) : _pContext(ctx) {
+  _strName = name;
   load(loc, bRepeatU, bRepeatV);
 }
-Texture2DSpec::Texture2DSpec(const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : _pContext(ctx) {
+Texture2DSpec::Texture2DSpec(string_t name, const std::shared_ptr<Img32>sp, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter) : _pContext(ctx) {
+  _strName = name;
   create((unsigned char*)sp->getData()->ptr(), sp->getWidth(), sp->getHeight(), false, false, false);
-  oglSetFilter(eFilter);
+  setFilter(eFilter);
 }
-Texture2DSpec::Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps) : _pContext(ctx) {
+Texture2DSpec::Texture2DSpec(string_t name, std::shared_ptr<GLContext> ctx, unsigned char* texData, int iWidth, int iHeight, bool mipmaps) : _pContext(ctx) {
+  _strName = name;
   create(texData, iWidth, iHeight, mipmaps, false, false);
 }
 Texture2DSpec::~Texture2DSpec() {
   dispose();
 }
-
 void Texture2DSpec::load(string_t imgLoc, bool bRepeatU, bool bRepeatV) {
   _strLocation = imgLoc;
   std::shared_ptr<Img32> sp = Gu::loadImage(imgLoc);
@@ -36,24 +41,30 @@ void Texture2DSpec::load(string_t imgLoc, bool bRepeatU, bool bRepeatV) {
     _bLoadFailed = true;
   }
 }
-
 void Texture2DSpec::calculateTextureFormat() {
   //All textures are 32 bit
   //AssertOrThrow2(getBytesPerPixel() == 4);
   _eTextureFormat = (GL_RGBA);
   _eTextureMipmapFormat = GL_RGBA8;
-
 }
-void Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
-
-  std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glActiveTexture(GL_TEXTURE0 + eChannel);
-  glBindTexture(GL_TEXTURE_2D, getGlId());
-
-  if (pShader != nullptr) {
-    //Some cases, we just need to call glBindTexture..
-    //But this should almost always be set.
-    pShader->setTextureUf(eChannel, bIgnoreIfNotFound);
+bool Texture2DSpec::bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound) {
+  if (getGlId() == 0) {
+    //https://stackoverflow.com/questions/1108589/is-0-a-valid-opengl-texture-id
+    BRLogErrorCycle("Texture was not created on the GPU.");
+    Gu::debugBreak();
+    return false;
   }
+  else {
+    std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glActiveTexture(GL_TEXTURE0 + eChannel);
+    glBindTexture(GL_TEXTURE_2D, getGlId());
+
+    if (pShader != nullptr) {
+      //Some cases, we just need to call glBindTexture..
+      //But this should almost always be set.
+      pShader->setTextureUf(eChannel, bIgnoreIfNotFound);
+    }
+  }
+  return true;
 }
 void Texture2DSpec::unbind() {
   //  if (_iChannel == 0) {
@@ -107,7 +118,6 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
     int numMipMaps = generateMipmapLevels();
     _pContext->glTexStorage2D(GL_TEXTURE_2D, numMipMaps, _eTextureMipmapFormat, getWidth(), getHeight());
     _pContext->chkErrRt();
-
   }
   else {
     _pContext->glTexStorage2D(GL_TEXTURE_2D, 1, _eTextureMipmapFormat, getWidth(), getHeight());
@@ -126,7 +136,6 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
   );
 
   _pContext->chkErrRt();
-
 
   // Specify Parameters
   if (bRepeatU) {
@@ -159,7 +168,6 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
   //    Gu::checkErrors();
   //}
 
-
   // - Generate the mipmaps
   if (genMipmaps) {
     //GL 3.0 mipmaps
@@ -169,13 +177,10 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
 
   //Unbind so we don't modify it
   glBindTexture(GL_TEXTURE_2D, 0);
-
-
 }
 void Texture2DSpec::dispose() {
   glDeleteTextures(1, &_glId);
 }
-
 void Texture2DSpec::setWrapU(TexWrap::e wrap) {
   bind(TextureChannel::e::Channel0, nullptr);
   if (wrap == TexWrap::e::Clamp) {
@@ -202,7 +207,7 @@ void Texture2DSpec::setWrapV(TexWrap::e wrap) {
   }
   unbind();
 }
-void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
+void Texture2DSpec::setFilter(TexFilter::e filter) {
   _eFilter = filter;
   bind(TextureChannel::e::Channel0, nullptr);
   Gu::checkErrorsDbg();
@@ -241,11 +246,12 @@ void Texture2DSpec::oglSetFilter(TexFilter::e filter) {
 bool Texture2DSpec::getTextureDataFromGpu(std::shared_ptr<Img32> __out_ image) {
   return RenderUtils::getTextureDataFromGpu(image, _glId, GL_TEXTURE_2D);
 }
-
 void Texture2DSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   std::shared_ptr<Img32> img = std::make_shared<Img32>();
   getTextureDataFromGpu(img);
 
+  fb->writeVersion();
+  fb->writeString(std::move(_strName));
   fb->writeString(std::move(_strLocation));
   fb->writeUint32(getWidth());
   fb->writeUint32(getHeight());
@@ -257,7 +263,8 @@ void Texture2DSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   fb->write((const char*)img->getData()->ptr(), img->getData()->byteSize());
 }
 void Texture2DSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
-
+  fb->readVersion();
+  fb->readString(_strName);
   fb->readString(_strLocation);
   uint32_t iWidth;
   fb->readUint32(iWidth);
@@ -278,6 +285,4 @@ void Texture2DSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
 
   create(data, iWidth, iHeight, bHasMipmaps, bRepeatU, bRepeatV);
 }
-
-
 }//ns game

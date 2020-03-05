@@ -124,7 +124,7 @@ void Material::addTextureBinding(std::shared_ptr<Texture2DSpec> ptm, TextureChan
     BRLogWarn("Texture channel " + (int)channel + " already used in material " + getName());
   }
 
-  if (ptm->getIsTransparent()) {
+  if (ptm->getTransparent()) {
     _nTransparentTextureCount++;
   }
   std::shared_ptr<TextureSlot> ts = std::make_shared<TextureSlot>();
@@ -141,7 +141,7 @@ void Material::removeTextureBinding(std::shared_ptr<Texture2DSpec> ptm) {
   for (; ite != _mapTextureBindings.end(); ite++) {
 
     if (ite->second->_pTex == ptm) {
-      if (ite->second->_pTex->getIsTransparent()) {
+      if (ite->second->_pTex->getTransparent()) {
         _nTransparentTextureCount--;
       }
 

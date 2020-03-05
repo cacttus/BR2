@@ -18,7 +18,7 @@
 
 namespace BR2 {
 MbiFile::MbiFile() {
-  _pFile = std::make_shared<BinaryFile>();
+  _pFile = std::make_shared<BinaryFile>(c_strMbiVersion);
 }
 MbiFile::~MbiFile() {
   _pFile = nullptr;
@@ -50,7 +50,7 @@ void MbiFile::postLoad() {
 }
 bool MbiFile::loadAndParse(string_t file) {
   _fileLoc = file;
-  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
+  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>(c_strMbiVersion);
   Gu::getPackage()->getFile(file, fb, false);
 
   //    return false;
@@ -71,10 +71,7 @@ bool MbiFile::loadAndParse(string_t file) {
   }
 
   //version
-  float version;
-  fb->readFloat(version);
-  if (version != c_fVersion) {
-    parseErr(Stz "Version mismatch loaded " + version + " expected " + c_fVersion, true, false);
+  if (!fb->readVersion()) {
     return false;
   }
 
@@ -100,13 +97,13 @@ bool MbiFile::loadAndParse(string_t file) {
     Hash32 hTex;
     fb->readUint32(hTex);
 
-    std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>(Gu::getCoreContext());
+    std::shared_ptr<Texture2DSpec> pTex = std::make_shared<Texture2DSpec>("<unset>",Gu::getCoreContext());
     pTex->deserialize(fb);
     if (Gu::getTexCache()->add(pTex->getLocation(), pTex, false) == false) {
       string_t loc = pTex->getLocation();
       //DEL_MEM(pTex);
       pTex = nullptr;
-      pTex = Gu::getTexCache()->getOrLoad(loc);
+      pTex = Gu::getTexCache()->getOrLoad(TexFile(loc));
     }
     texs.insert(std::make_pair(hTex, pTex));
   }
@@ -156,7 +153,7 @@ bool MbiFile::loadAndParse(string_t file) {
 }
 void MbiFile::save(string_t file) {
   _fileLoc = file;
-  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
+  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>(c_strMbiVersion);
   fb->rewind();
 
   //header
@@ -171,7 +168,7 @@ void MbiFile::save(string_t file) {
   }
 
   //version
-  fb->writeFloat(std::move(c_fVersion));
+  fb->writeVersion();
 
   //models
   fb->writeInt32((int32_t)_vecModels.size());

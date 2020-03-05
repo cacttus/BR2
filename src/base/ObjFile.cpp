@@ -23,7 +23,7 @@ ObjFile::~ObjFile() {
   clearVertexCache();
 }
 void ObjFile::load(string_t& strFilePath, bool flipWinding) {
-  BinaryFile bufferedFile;
+  BinaryFile bufferedFile(c_strVersion);
   uint32_t iLastGroupOffset;    // - For NON relative vertexes (ones with no '-' in front of their indexes we have
 
   _sFileName = strFilePath;

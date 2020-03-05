@@ -1,11 +1,11 @@
 /**
-*  @file GodCam.h
+*  @file RTSCamScript.h
 *  @date March 31, 2017
 *  @author MetalMario971
 */
 #pragma once
-#ifndef __SNAPROOTER_14910183031818674424_H__
-#define __SNAPROOTER_14910183031818674424_H__
+#ifndef __RTSCAMSCRIPT_14910183031818674424_H__
+#define __RTSCAMSCRIPT_14910183031818674424_H__
 
 #include "../bottle/BottleHeader.h"
 #include "../base/TouchInfo.h"
@@ -13,13 +13,13 @@
 
 namespace BR2 {
 /**
-*  @class GodCam
+*  @class RTSCamScript
 *  @brief An script to control a 2d-ish rotatable camera for viewing the world as an RTS.
 */
-class GodCamScript : public Script {
+class RTSCamScript : public Script {
 public:
-  GodCamScript();
-  virtual ~GodCamScript() override;
+  RTSCamScript();
+  virtual ~RTSCamScript() override;
 
   virtual void onStart() override;
   virtual void onUpdate(float dt) override;

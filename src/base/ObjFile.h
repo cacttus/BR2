@@ -25,6 +25,7 @@ namespace BR2 {
 *   No need for the conversion overhead.
 */
 class ObjFile : public VirtualMemoryShared<ObjFile> {
+  string_t c_strVersion = "0.03";
 public:
   ObjFile(std::shared_ptr<GLContext> ctx);
   virtual ~ObjFile() override;

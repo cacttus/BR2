@@ -102,32 +102,38 @@ private:
   std::shared_ptr<Img32> createFontImage(std::unique_ptr<uint8_t[]>& pData);
 };
 /**
-*    @class MegaTex
-*    @brief Composes mega textures (non-uniform grid atlas)
+*  @class MegaTex
+*  @brief Composes mega textures (non-uniform grid atlas)
 */
 class MegaTex : public Texture2DSpec {
+  enum class MegaTexCompileState { NotCompiled, Dirty, Compiling, Compiled };
 public:
-  MegaTex(std::shared_ptr<GLContext> ct) : Texture2DSpec(ct) {}
-  virtual ~MegaTex() override {}
+  MegaTex(string_t name, std::shared_ptr<GLContext> ct, bool bCache);
+  virtual ~MegaTex() override;
+
+  void update();
 
   std::shared_ptr<MtTexPatch> getTex(std::shared_ptr<Img32> tx);
   std::shared_ptr<MtTexPatch> getTex(std::string img, int32_t nPatches = 1, bool bPreloaded = false, bool bLoadNow = false);
   std::shared_ptr<MtFont> getFont(std::string fontName);
+
+  virtual bool bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound = false)  override;
+
   void loadImages();
   std::shared_ptr<Img32> compile();
+
 private:
   //All images correspond to one or more textures due to "9-patch" and "3-patch" texs.
   std::map<Hash32, std::shared_ptr<MtTexPatch>> _mapTexs;
-  //std::map<Hash32, std::shared_ptr<MtFont>> _mapFonts;
-
-  Box2i _b2GrowRect; // Grow this to crop the image.
-  int32_t _iStartWH = 256;//Starting tex size
-  int32_t _iGrowWH = 128;//Grow by this much (pixels)
+  Box2i _b2GrowRect;
+  int32_t _iStartWH = 256;
+  int32_t _iGrowWH = 128;
   int32_t _iMaxTexSize = 0;
   std::shared_ptr<Img32> _pMaster = nullptr;
   std::shared_ptr<MtNode> _pRoot = nullptr;
-
-  bool _bImagesLoaded = false;
+  MegaTexCompileState _eState = MegaTexCompileState::NotCompiled;
+  bool _bCache = false;
+  //bool _bImagesLoaded = false;
 };
 
 }//ns Game

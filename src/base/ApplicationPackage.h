@@ -24,6 +24,7 @@ public:
 */
 class ApplicationPackage_Internal;
 class ApplicationPackage : public VirtualMemory {
+  string_t c_strVersion = "0.01";
 public:
   ApplicationPackage();
   virtual ~ApplicationPackage() override;

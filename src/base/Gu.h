@@ -24,7 +24,7 @@ public:
   static std::shared_ptr<ApplicationPackage> getPackage();
   static std::shared_ptr<ModelCache> getModelCache();
   static std::shared_ptr<Sequencer> getSequencer();
-  static std::shared_ptr<InputManager> getInputManager();
+  static std::shared_ptr<InputManager> getGlobalInput();
   static std::shared_ptr<SoundCache> getSoundCache();
   static std::shared_ptr<ShaderMaker> getShaderMaker();
   static std::shared_ptr<TexCache> getTexCache();
@@ -35,7 +35,8 @@ public:
   static std::shared_ptr<Net> getNet();
   static std::shared_ptr<GLContext> getCoreContext();
 
-  static void createLogger(string_t logfile_dir);
+  static void createLogger(string_t logfile_dir, const std::vector<string_t>& args);
+  static bool checkArg(const std::vector<string_t>& args, string_t key, string_t value);
   static void initGlobals(const std::vector<std::string>& args);
   static void createManagers();
   static void updateManagers();
@@ -91,13 +92,15 @@ public:
       eValue = (Tx)0;
     }
   }
+
+
 private:
   static void loadConfig(const std::vector<std::string>& args);
 
   static std::shared_ptr<TexCache> _pTexCache;
   static std::shared_ptr<ParticleManager> _pParty;
   static std::shared_ptr<Sequencer> _pSequencer;
-  static std::shared_ptr<InputManager> _pInputManager;
+  static std::shared_ptr<InputManager> _pGlobalInput;
   static std::shared_ptr<SoundCache> _pSoundCache;
   static std::shared_ptr<ShaderMaker> _pShaderMaker;
   static std::shared_ptr<ModelCache> _pModelCache;
@@ -111,6 +114,7 @@ private:
 
 #define Graphics Gu::getCoreContext()
 #define Config Gu::getEngineConfig()
+
 
 
 }//ns Game

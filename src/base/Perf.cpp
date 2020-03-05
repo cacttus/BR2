@@ -12,7 +12,7 @@ std::stack<Stopwatch> Perf::_stopw;
 string_t Perf::_strCachedProf = "";
 
 void Perf::beginPerf() {
-  if (Gu::getInputManager()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift)) {
+  if (Gu::getGlobalInput()->keyPressOrDown(SDL_SCANCODE_F1, KeyMod::e::Shift)) {
     if (g_bPerfFrame == 0) {
       g_bPerfFrame = 1;
     }

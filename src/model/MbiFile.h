@@ -14,10 +14,10 @@ namespace BR2 {
 /**
 *  @class MbiFile
 *  @brief Mob Binary file.  The main file for all models.
+*   TODO: When we release this, we must implement multiple file version importers for backwards compat.
 */
 class MbiFile : public VirtualMemory {
 public:
-  const float c_fVersion = 0.3f;
 public:
   MbiFile();
   virtual ~MbiFile() override;
@@ -26,11 +26,13 @@ public:
   bool loadAndParse(string_t file);
   void save(string_t file);
 private:
+  const string_t c_strMbiVersion = "0.03";
   std::vector<std::shared_ptr<ModelSpec>> _vecModels;
-  void parseErr(string_t str, bool bDebugBreak, bool bFatal);
   std::shared_ptr<BinaryFile> _pFile = nullptr;
   string_t _fileLoc;
+   
   void postLoad();
+  void parseErr(string_t str, bool bDebugBreak, bool bFatal);
 };
 
 }//ns Game

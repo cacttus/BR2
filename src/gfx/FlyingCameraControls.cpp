@@ -34,8 +34,14 @@ void FlyingCameraControls::onStart() {
   _vCamPos = cam->getPos();
 }
 void FlyingCameraControls::onUpdate(float delta) {
-  update(Gu::getInputManager(), delta);
-  moveCameraWSAD(Gu::getInputManager(), delta);
+  std::shared_ptr<InputManager> im = getNode()->getInput();
+  if (im) {
+    update(im, delta);
+    moveCameraWSAD(im, delta);
+  }
+  else {
+    BRLogErrorCycle("Node input could not be found.");
+  }
 }
 void FlyingCameraControls::onExit() {
 }

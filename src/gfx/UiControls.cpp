@@ -6,18 +6,18 @@
 #include "../base/FpsMeter.h"
 #include "../math/Box2x.h"
 #include "../math/Vec4x.h"
-#include "../base/GraphicsWindow.h"  
+#include "../base/GraphicsWindow.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderPipe.h"
-#include "../gfx/RenderViewport.h"  
-#include "../gfx/CameraNode.h"  
+#include "../gfx/RenderViewport.h"
+#include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/Picker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/ShaderMaker.h"
-#include "../gfx/RenderUtils.h" 
+#include "../gfx/RenderUtils.h"
 #include "../gfx/UiControls.h"
 #include "../gfx/MegaTex.h"
 #include "../gfx/RenderSettings.h"
@@ -203,7 +203,6 @@ void UiElement::doMouseEvents(std::shared_ptr<InputManager> pFingers) {
      //        }
      //    }
      //}
-
 }
 void UiElement::update(std::shared_ptr<InputManager> pFingers) {
   if (getLayoutVisible() == false || getRenderVisible() == false) {
@@ -246,7 +245,7 @@ bool UiElement::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiSc
             //Else pick all children to find the pick root
             for (auto it = getChildren().rbegin(); it != getChildren().rend(); it++) {
               std::shared_ptr<UiElement> ele = it->second;
-              if (ele->pick(fingers,pscreen) == true) {
+              if (ele->pick(fingers, pscreen) == true) {
                 //We pick the first child in the TOP level sort order
                 //If we hit it, break out because we don't want to pick children underneath
                 bPicked = true;
@@ -291,7 +290,7 @@ void UiElement::computepad_unit(float& pt, float dim, uDim& ud) {
 void UiElement::performLayout(std::shared_ptr<UiScreen> s, bool bForce) {
   //thinking of ditching generic layout and going for a manual approach
   //each element has its own performlayout, and we just do it based on that.
-  //remove display(), position() 
+  //remove display(), position()
   //remove uDim = replace with float. make it a fixed size.
   // width, height and position is all a fixed size.
   // we compute them in the performlaout of parent containers.
@@ -311,10 +310,8 @@ void UiElement::performLayout(std::shared_ptr<UiScreen> s, bool bForce) {
   //        }
   //        else if (position() == UiPositionMode::e::Static) {
   //            if(display()==UiDisplayMode::e::InlineNoWrap || display()==UiDisplayMode::e::InlineWrap){
-
   //            }
   //            else if(display() == UiDisplayMode::e::Block) {
-
   //            }
   //            //otherwise our width fills parent, however..
   //            //what about layouts?
@@ -338,17 +335,14 @@ void UiElement::performLayout(std::shared_ptr<UiScreen> s, bool bForce) {
   computeContentQuad();
 }
 void UiElement::performLayoutChildren(std::shared_ptr<UiScreen> s, bool bForce) {
-
   for (auto p : getChildren()) {
     std::shared_ptr<UiElement> ele = p.second;
 
     if (ele->getLayoutVisible()) {
-
       ele->performLayout(s, bForce);
       layoutEleQuad(s, ele);
     }
   }
-
 }
 void UiElement::positionChildren(bool bForce) {
   //Naive caching - scrolling is still slow
@@ -433,8 +427,6 @@ void UiElement::positionChildren(bool bForce) {
     }
   }
 
-
-
   //if (StringUtil::contains(_strName, "ContentContainer")) {
   //    if (_b2ContentQuad.width() <= 0.001) {
   //        int n = 0;
@@ -483,7 +475,6 @@ void UiElement::computeContentQuad() {
       fright = MathUtils::brMax(fright, left().px() + effR);
       fbottom = MathUtils::brMax(fbottom, top().px() + effT);
 
-
       //expand contenet quad
       _b2ContentQuad.genExpandByPoint(vec2(fright, fbottom));
 
@@ -495,10 +486,8 @@ void UiElement::computeContentQuad() {
         int nnn = 0;
         nnn++;
       }
-
     }
   }
-
 }
 void UiElement::validateDims() {
   //this is needed in case you set any of the fixed position attributes to something like a percent
@@ -520,8 +509,6 @@ void UiElement::validateDims() {
     UiScreen::error("Ui Element right was not a pixel unit");
     right() = uDim(0, UiDimUnit::e::Pixel);
   }
-
-
 }
 void UiElement::layoutLayer(std::vector<std::shared_ptr<UiElement>> stats) {
   //Calc width with all static blocks using 0 width for autos (expandable blocks).
@@ -533,7 +520,7 @@ void UiElement::layoutLayer(std::vector<std::shared_ptr<UiElement>> stats) {
     fTotalHeight += vecLines[vecLines.size() - 1]._height;
   }
 
-  //auto heights are confusing.  So the problem is that the height of a line is indeterminate.  We build the form by widths of elements and 
+  //auto heights are confusing.  So the problem is that the height of a line is indeterminate.  We build the form by widths of elements and
   //wrap when we reach the end.   What's the actual height of the line?  What we say is *Any line that has at least one
   //*auto height is an auto height line, thus the whole line's height gets auto*
   //3/4 technically auto height should always shrink whether we are inline, or block element
@@ -582,9 +569,7 @@ void UiElement::layoutLayer(std::vector<std::shared_ptr<UiElement>> stats) {
     for (std::shared_ptr<UiElement> ele : line._eles) {
       calcStaticElement(ele, vecLines2, auto_width, auto_height);
     }
-
   }
-
 }
 void UiElement::computePositionalElement(std::shared_ptr<UiElement> ele) {
   //*No padding
@@ -606,7 +591,7 @@ void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<Ui
   float myWidth = right().px() - left().px();
   UiLine* line = &vecLines[vecLines.size() - 1];
 
-  //Autos get zero first so we an compute the fixed 
+  //Autos get zero first so we an compute the fixed
   //statics then we go throguh here again and assign them computed values
 
   float wpx = 0, hpx = 0;
@@ -622,7 +607,7 @@ void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<Ui
   //Remove unnecessary padding to prevent auto and % widths from growing
  // float parent_w = getParent()->right().px() - getParent()->left().px();
  // float parent_h = getParent()->bottom().px() - getParent()->top().px();
- // 
+ //
  // wpx + pl + pr
 
   //*Padding
@@ -669,7 +654,6 @@ void UiElement::calcStaticElement(std::shared_ptr<UiElement> ele, std::vector<Ui
   line->_eles.push_back(ele);
 }
 void UiElement::computewh(float& __out_ wpx, float& __out_ hpx) {
-
   //Width
   wpx = 0;
   // float effPadLR = padLeft().px() + padRight().px();
@@ -731,7 +715,6 @@ void UiElement::computewh(float& __out_ wpx, float& __out_ hpx) {
 float UiElement::getAutoWidth() {
   if (display() == UiDisplayMode::e::Block) {
     if (position() == UiPositionMode::e::Relative) {
-
     }
     //fill 100% of parent
   //  float w = getParent()->getComputedQuad()->width()
@@ -812,7 +795,7 @@ void UiElement::computeQuads(std::shared_ptr<UiScreen> pscreen, float final_r, f
 
 void UiElement::applyMinMax(float& wpx, float& hpx) {
   //TODO: so this should allow for % width/height of parent to be
-  //min/max but that's fucking confusing.  Is it needed? 
+  //min/max but that's fucking confusing.  Is it needed?
   float minw = minWidth().px();
   float maxw = maxWidth().px();
   float minh = minHeight().px();
@@ -831,7 +814,6 @@ void UiElement::applyMinMax(float& wpx, float& hpx) {
   if (hpx < minh) {
     hpx = minh;
   }
-
 }
 void UiElement::setLayoutChanged(bool bChildren) {
   _bLayoutChanged = true;
@@ -909,7 +891,6 @@ void UiElement::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
       }
     }
   }
-
 }
 void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, bool bPickedOnly, std::shared_ptr<UiScreen> pscreen) {
   if (bPickedOnly && (_iPickedFrameId != pscreen->getFrameNumber())) {
@@ -1086,7 +1067,7 @@ void UiElement::enableDrag(UiDragInfo::DragFunc func) {
     [winw](UiEventId::e ev, void* pv) {
       if (std::shared_ptr<UiElement> w = winw.lock()) {
         w->_pDragInfo->_bDragStart = true;
-        w->_pDragInfo->_vDragStart = Gu::getInputManager()->getMousePos();
+        w->_pDragInfo->_vDragStart = w->getScreen()->getWindow()->getInput()->getMousePos();
         // w->_pDragInfo->_b2StartBox = w->getComputedQuad();
       }
     }));
@@ -1118,7 +1099,6 @@ void UiElement::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>&
       }
     }
   }
-
 }
 void UiElement::setClick(MouseFunc cc) {
   //Makei t so we can only have 1 click event
@@ -1284,8 +1264,6 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     return;
   }
 
-
-
   if (_eSizeModeX == UiImageSizeMode::e::Expand) {
     _q2Tex._p0.x = _pTexture->tex()->uv0().x;
     _q2Tex._p1.x = _pTexture->tex()->uv1().x;
@@ -1378,7 +1356,6 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     v._texsiz.y = fabsf(v._tex.w - v._tex.y);//y is flipfloped again
   }
 
-
   //**Texture Adjust - modulating repeated textures causes seaming issues, especially with texture filtering
   //adjust the texture coordinates by some pixels to account for that.  0.5f seems to work well.
   static float pixAdjust = 0.51f;  // # of pixels to adjust texture by
@@ -1425,7 +1402,6 @@ void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>
     ((int)(vc.w * 255.0f) << 8);
   inds.push_back((v_index32)verts.size());
   verts.push_back(v);
-
 }
 bool UiImage::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) {
   if (getLayoutVisible()) {
@@ -1434,7 +1410,6 @@ bool UiImage::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScre
         uint32_t pixid = getPicker()->getSelectedPixelId();
         if (pixid != 0) {
           if (pixid == _iPickId) {
-
             _iPickedFrameId = pscreen->getFrameNumber();
 
             return true;
@@ -1491,7 +1466,6 @@ void UiImage::performLayout(std::shared_ptr<UiScreen> s, bool bForce) {
 void UiImage::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
   getQuadVerts(verts, inds, b2ClipRect);
   UiElement::regenMesh(verts, inds, b2ClipRect);
-
 }
 
 #pragma endregion
@@ -1507,7 +1481,7 @@ std::shared_ptr<UiGlyph> UiGlyph::create(uint32_t iChar) {
 }
 void UiGlyph::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
   //Skips UiImage PerformLayout
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
 }
 void UiGlyph::regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
   getQuadVerts(verts, inds, b2ClipRect);
@@ -1527,14 +1501,12 @@ std::shared_ptr<UiLabel> UiLabel::create(std::string text, std::shared_ptr<UiLab
 void UiLabel::init() {
   UiElement::init();
   setName("UiLabel");
-
 }
 void UiLabel::setText(std::string s) {
   _strText = s;
 }
 
 void UiLabel::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-
   if (_pFontInfo != nullptr) {
     //glyph creation is in performlayout because the HEIGHT of the label needs to be
     //calculated first
@@ -1549,19 +1521,17 @@ void UiLabel::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
     }
 #endif
 
-
     // This has to come before performlayout in order to get the correct width.
     createGlyphs();
   }
   //Use the system to flow the layout.
   t_timeval us0 = Gu::getMicroSeconds();
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
   t_timeval us1 = Gu::getMicroSeconds() - us0;
   int nn = 0;
   nn++;
 }
 void UiLabel::update(std::shared_ptr<InputManager> pFingers) {
-
   if (StringUtil::equals(_strTextLast, _strText) == false) {
     _strTextLast = _strText;
     setLayoutChanged();
@@ -1680,7 +1650,6 @@ void UiLabel::createGlyphs() {
    // g->top() = g->top().px() + fontHeight; // add max height to the top element
    // g->bottom() = g->bottom().px() + fontHeight; // add max height to the top element
 
-
     nCh++;
   }
 
@@ -1688,9 +1657,6 @@ void UiLabel::createGlyphs() {
     labelWidth = 0.0f;//hasn't happened yet
   }
   minWidth() = uDim(labelWidth, UiDimUnit::e::Pixel);
-
-
-
 }
 
 #pragma endregion
@@ -1715,13 +1681,11 @@ void UiButtonBase::init() {
     });
   setHover([weak_p]() {
     if (std::shared_ptr<UiButtonBase> bt = weak_p.lock()) {
-
       bt->showHover();
     }
     });
 }
 void UiButtonBase::update(std::shared_ptr<InputManager> pFingers) {
-
   if (getPickedLastFrame() == false) {
     showUp();
   }
@@ -1827,7 +1791,7 @@ void UiGridRow::resizeCols() {
   }
 }
 void UiGridRow::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -1847,7 +1811,7 @@ std::shared_ptr<UiElement> UiGrid::getCell(size_t iRow, size_t iCol) {
   return  _rows[iRow]->getCol(iCol);
 }
 void UiGrid::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
 }
 std::shared_ptr<UiGridRow> UiGrid::addRow(int nr, int nc, bool bAutoSizeRows, uint32_t iSort) {
   std::vector<std::shared_ptr<UiGridRow>> added;
@@ -1999,7 +1963,6 @@ void Ui9Grid::init() {
   c->addChild(_pContentContainer, UiScreen::sortLayer(Ui9Grid::getContentSortLayer()));
 }
 void Ui9Grid::set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer) {
-
   for (int j = 0; j < 3; ++j) {
     for (int i = 0; i < 3; ++i) {
       size_t ioff = Ui9Grid::cellOff(i, j);
@@ -2009,7 +1972,7 @@ void Ui9Grid::set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer) {
       if (wpx == 0 || hpx == 0) {
         static int xx = 0;
         if (xx == 0) {
-          //**If this hits, likely you created a UiTex AFTER you called the MegaTex::loadImages().. 
+          //**If this hits, likely you created a UiTex AFTER you called the MegaTex::loadImages()..
           // we need image sizes when craeating the gui, after the skin.
           //The order 100% NEEEDED - but it's more sane to do it this way to vet out visual bugs down the road
           Gu::debugBreak();
@@ -2050,7 +2013,6 @@ void Ui9Grid::set9GridImages(std::shared_ptr<Ui9Tex> texs, uint32_t iLayer) {
       getCell(j, i)->addChild(img, iLayer);
     }
   }
-
 }
 void Ui9Grid::iterateCells(std::function<void(std::shared_ptr<UiElement>)> f) {
   for (int j = 0; j < 3; ++j) {
@@ -2115,7 +2077,6 @@ void Ui9Grid::update(std::shared_ptr<InputManager> pFingers) {
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiFlexButton
 std::shared_ptr<UiFlexButton> UiFlexButton::create(std::shared_ptr<UiFlexButtonSkin> skin) {
-
   std::shared_ptr<UiFlexButton> ret = std::make_shared<UiFlexButton>();
   ret->_pGrid = Ui9Grid::create(skin->_border);
   ret->_pGrid->width() = "100%";
@@ -2134,7 +2095,6 @@ void UiFlexButton::init() {
   setName("UiFlexButton");
 }
 void UiFlexButton::setButtonImages(std::shared_ptr<Ui9Tex> vecUp, std::shared_ptr<Ui9Tex> vecHv, std::shared_ptr<Ui9Tex> vecDn) {
-
   _pGrid->set9GridImages(vecUp, UiButtonBase::layerIdUp());
   _pGrid->set9GridImages(vecHv, UiButtonBase::layerIdHover());
   _pGrid->set9GridImages(vecDn, UiButtonBase::layerIdDown());
@@ -2191,7 +2151,6 @@ void UiFlexButton::setLabel(std::string strText, std::shared_ptr<UiLabelSkin> la
     topPad->width() = "100%";
     topPad->height() = "auto"; //100%
     getContentContainer()->addChild(topPad);
-
 
     if (labelFont != nullptr) {
       _pLabelSkin = labelFont;
@@ -2284,7 +2243,7 @@ void UiScrubGenThumb::update(std::shared_ptr<InputManager> pFingers) {
   //Set final height
   *pWorH = uDim(fBarWorH, UiDimUnit::e::Pixel);
 
-  //Send this value to the window'        
+  //Send this value to the window'
   float fTopOrLeft = pTorL->px();
   float diff = (fMaxWOrH - fBarWorH);
   if (diff != 0) {
@@ -2293,7 +2252,6 @@ void UiScrubGenThumb::update(std::shared_ptr<InputManager> pFingers) {
   else {
     _fScrollPct = 0.0f;
   }
-
 }
 void UiScrubGenThumb::setBarSizePct(float pos01) {
   if (pos01 < 0.0f || pos01 > 1.0f) {
@@ -2303,7 +2261,7 @@ void UiScrubGenThumb::setBarSizePct(float pos01) {
   _fBarSizePct = pos01;
 }
 void UiScrubGenThumb::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
 }
 float UiScrubGenThumb::getScrollPct() {
   return _fScrollPct;
@@ -2392,7 +2350,7 @@ void UiScrollbarThumb::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGenThumb::update(pFingers);
 }
 void UiScrollbarThumb::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiScrubGenThumb::performLayout(pscreen,bForce);
+  UiScrubGenThumb::performLayout(pscreen, bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -2436,7 +2394,7 @@ void UiScrollbar::update(std::shared_ptr<InputManager> pFingers) {
   UiScrubGen::update(pFingers);
 }
 void UiScrollbar::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiScrubGen::performLayout(pscreen,bForce);
+  UiScrubGen::performLayout(pscreen, bForce);
 }
 std::shared_ptr<UiScrubGenThumb> UiScrollbar::createThumb() {
   std::shared_ptr<UiScrollbarThumb> thumb = UiScrollbarThumb::create(_pSkin);
@@ -2497,7 +2455,7 @@ void UiCheckbox::update(std::shared_ptr<InputManager> pFingers) {
   UiElement::update(pFingers);
 }
 void UiCheckbox::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
 }
 void UiCheckbox::setChecked(bool b) {
   _bChecked = b;
@@ -2531,7 +2489,6 @@ void UiSliderThumb::init() {
   UiScrubGenThumb::init();
 }
 void UiSliderThumb::update(std::shared_ptr<InputManager> pFingers) {
-
   //Update height of TB thumb to match parent height.
   if (_eOrientation == Orientation::e::Horizontal) {
     float h = height().px();
@@ -2545,13 +2502,12 @@ void UiSliderThumb::update(std::shared_ptr<InputManager> pFingers) {
   }
   else { throw 0; }
 
-
   UiScrubGenThumb::update(pFingers);
 }
 void UiSliderThumb::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiScrubGenThumb::performLayout(pscreen,bForce);
+  UiScrubGenThumb::performLayout(pscreen, bForce);
 }
-#pragma endregion 
+#pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiSlider
 std::shared_ptr<UiSlider> UiSlider::create(std::shared_ptr<UiSliderSkin> pSkin, UiScrubGen::ScrollFunc sf) {
@@ -2602,7 +2558,6 @@ void UiSlider::update(std::shared_ptr<InputManager> pFingers) {
   else { throw 0; }
 }
 void UiSlider::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-
   // a little padding for the left/right of the track makes it look better
   if (_eOrientation == Orientation::e::Horizontal) {
     float wh = getComputedQuad().width();
@@ -2621,9 +2576,7 @@ void UiSlider::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
     _pImage->padBottom() = uDim(imagePad, UiDimUnit::e::Pixel);
   }
 
-  UiScrubGen::performLayout(pscreen,bForce);
-
-
+  UiScrubGen::performLayout(pscreen, bForce);
 }
 std::shared_ptr<UiScrubGenThumb> UiSlider::createThumb() {
   std::shared_ptr<UiSliderThumb> thumb = UiSliderThumb::create(_pSkin);
@@ -2738,7 +2691,6 @@ void UiDropdown::setSelectedItem(std::shared_ptr<UiElement> item) {
   _pSelected = item;
 }
 void UiDropdown::addItem(std::shared_ptr<UiElement> item, bool bFitHeight) {
-
   item->position() = UiPositionMode::e::Static;
   if (bFitHeight) {
     //*For labels..
@@ -2767,8 +2719,7 @@ void UiDropdown::addItem(std::shared_ptr<UiElement> item, bool bFitHeight) {
   }
 }
 void  UiDropdown::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  Ui9Grid::performLayout(pscreen,bForce);
-
+  Ui9Grid::performLayout(pscreen, bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -2809,7 +2760,6 @@ void UiContainer::init() {
   std::shared_ptr<UiElement> c3 = r1->addCol();//Corner
   c1->width() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
   c1->height() = uDim(_fBorderWidthPx, UiDimUnit::e::Pixel);
-
 }
 std::shared_ptr<UiElement> UiContainer::getContentContainer() {
   return getCell(0, 0);
@@ -2867,12 +2817,10 @@ void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
       if (pScrollbar->getOrientation() == Orientation::e::Vertical) {
         b1wh = b1.height();
         b2wh = b2.height();
-
       }
       else if (pScrollbar->getOrientation() == Orientation::e::Horizontal) {
         b1wh = b1.width();
         b2wh = b2.width();
-
       }
       //#1 set bar size
       //Calculate the width/hight of the thumb bar relative to the scroll percentage. (Zero for trackbar)
@@ -2901,7 +2849,6 @@ void UiContainer::enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin) {
           cWorH = &cont->height();
         }
         else if (pScrollbar->getOrientation() == Orientation::e::Horizontal) {
-
           ccWh = cont->getContentQuad().width();
           if (cont->getParent()) {
             pwh = cont->getParent()->getComputedQuad().width();
@@ -2979,7 +2926,6 @@ void UiWindow::init() {
   width() = "300px";
   height() = "400px";
 
-
   //Create background
   _pBackground = Ui9Grid::create(_pWindowSkin->_pBorder);
   _pBackground->set9GridImages(_pWindowSkin->_pBorderImgs);
@@ -3032,7 +2978,6 @@ void UiWindow::init() {
     }
   };
   setPress(bringToFront);
-
 }
 void UiWindow::setTitleLabel(std::string lbl) {
   _lblTitle->setText(lbl);
@@ -3051,7 +2996,6 @@ void UiWindow::enableResize() {
 }
 
 void UiWindow::enableDrag() {
-
   //Use weak ptr to avoid circular reference
   std::weak_ptr<UiWindow> win = getThis<UiWindow>();
   UiDragInfo::DragFunc moveFunc = [win](vec2& dxy) {
@@ -3072,12 +3016,12 @@ void UiWindow::enableDrag() {
   setLayoutChanged();
 }
 bool UiWindow::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScreen> pscreen) {
-  bool b = UiElement::pick(fingers,pscreen);
+  bool b = UiElement::pick(fingers, pscreen);
 
   return b;
 }
 void UiWindow::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
 }
 void UiWindow::enableVScrollbar() {
   _pContainer->enableScrollbar(_pWindowSkin->_pVScroll);
@@ -3096,7 +3040,6 @@ std::shared_ptr<UiToolbar> UiToolbar::create(std::shared_ptr<UiToolbarSkin> skin
   // ui->_pBorder = skin->_pWindowSkin->_pBorder;
   ui->init();
   return ui;
-
 }
 void UiToolbar::init() {
   UiWindow::init();
@@ -3111,13 +3054,12 @@ void UiToolbar::init() {
   left() = uDim(getScreen()->getDesignSize().getWidth() * 0.1f, UiDimUnit::e::Pixel);
   width() = "auto";//uDim(getScreen()->getDesignSize().getWidth() * 0.8f, UiDimUnit::e::Pixel);
   height() = "auto";//uDim(getScreen()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
-
 }
 void UiToolbar::update(std::shared_ptr<InputManager> pFingers) {
   UiWindow::update(pFingers);
 }
 void UiToolbar::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiElement::performLayout(pscreen,bForce);
+  UiElement::performLayout(pscreen, bForce);
   for (auto p : getChildren()) {
     std::shared_ptr<UiElement> e = p.second;
   }
@@ -3140,7 +3082,7 @@ void UiCursor::init() {
   UiImage::init();
 }
 void UiCursor::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
-  UiImage::performLayout(pscreen,bForce);
+  UiImage::performLayout(pscreen, bForce);
 }
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
@@ -3161,9 +3103,7 @@ public:
   std::shared_ptr<MeshNode> _pMesh = nullptr;
   std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
   //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;
-
 };
-
 
 UiScreen::UiScreen(std::shared_ptr<GraphicsWindow> pw) : UiElement() {
   _pint = std::make_unique<UiScreen_Internal>();
@@ -3183,7 +3123,6 @@ std::shared_ptr<UiCursor> UiScreen::getCursor() { return _pint->_pCursor; }
 std::shared_ptr<MegaTex> UiScreen::getTex() { return _pint->_pTex; }
 std::shared_ptr<GraphicsWindow> UiScreen::getWindow() { return _pint->_pWindow; }
 
-
 void UiScreen::init() {
   //Note:this init() is lazy and happens way after Gui2d is allocated
   UiElement::init();
@@ -3195,7 +3134,7 @@ void UiScreen::init() {
   minWidth() = maxWidth() = _pint->_designSize.getWidth() - 1;//right();
   minHeight() = maxHeight() = _pint->_designSize.getHeight() - 1;//bottom();
   setName("Gui2d");
-  _pint->_pTex = std::make_shared<MegaTex>(getWindow()->getContext());
+  _pint->_pTex = std::make_shared<MegaTex>("Ui Texture", getWindow()->getContext(), true);
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
@@ -3206,8 +3145,10 @@ void UiScreen::init() {
       v_GuiVert::getVertexFormat(), nullptr)
   );
 }
-
 void UiScreen::update(std::shared_ptr<InputManager> pInputManager) {
+  //Compile megatex if changed.
+  getTex()->update();
+
   UiElement::update(pInputManager);//Note: due to buttons resetting themselves update() must come before pick()
 
  // if (Gu::getFpsMeter()->frameMod(2)) {
@@ -3215,12 +3156,16 @@ void UiScreen::update(std::shared_ptr<InputManager> pInputManager) {
   // }
 
    //Updating this per frame to indicate if the GUI is picked.
-  _pint->_bIsPicked = pick(pInputManager,getThis<UiScreen>());
+  _pint->_bIsPicked = pick(pInputManager, getThis<UiScreen>());
 }
 void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
-  _pint->_pCursor->left() = pInputManager->getMousePos().x;
-  _pint->_pCursor->top() = pInputManager->getMousePos().y;
-
+  if (_pint->_pCursor) {
+    _pint->_pCursor->left() = pInputManager->getMousePos().x;
+    _pint->_pCursor->top() = pInputManager->getMousePos().y;
+  }
+  else {
+    BRLogDebugOnce("Cursor was not set in UiScreen. (not necessarily an error, but a debug error).");
+  }
   // if(_updateFuture.valid() == false) {
      //  std::weak_ptr<Gui2d> gw = getThis<Gui2d>();
 
@@ -3235,9 +3180,12 @@ void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
   }
 
   //Cursor
-  computePositionalElement(_pint->_pCursor);
-  UiElement::layoutEleQuad(getThis<UiScreen>(), _pint->_pCursor);
-  _pint->_pCursor->performLayout(getThis<UiScreen>(), false);
+  if (_pint->_pCursor) {
+    computePositionalElement(_pint->_pCursor);
+    UiElement::layoutEleQuad(getThis<UiScreen>(), _pint->_pCursor);
+    _pint->_pCursor->performLayout(getThis<UiScreen>(), false);
+  }
+
   //        }
    //       return true;
    //   });
@@ -3249,7 +3197,6 @@ void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
   //       _updateFuture.get();//Sets to invalid
   //   }
  // }
-
 }
 void UiScreen::updateMesh() {
   Box2f b = getGLRasterQuad();
@@ -3258,9 +3205,10 @@ void UiScreen::updateMesh() {
   UiElement::regenMesh(verts, inds, b);
 
   //CURSOR
-  b = getGLRasterQuad();
-  _pint->_pCursor->regenMeshExposed(verts, inds, b);
-  //CURSOR
+  if (_pint->_pCursor) {
+    b = getGLRasterQuad();
+    _pint->_pCursor->regenMeshExposed(verts, inds, b);
+  }
 
   _pint->_pMesh->getMeshSpec()->getVaoData()->getVbo()->allocate(verts.size());
   _pint->_pMesh->getMeshSpec()->getVaoData()->getVbo()->copyDataClientServer(verts.size(), verts.data());
@@ -3284,20 +3232,25 @@ void UiScreen::drawForward(RenderParams& rp, Box2f& b2ClipRect) {
   rp.setMesh(_pint->_pMesh);
   rp.setDrawMode(GL_POINTS);
   rp.draw();
-
   //*Debug
   UiElement::drawDebug(rp, getThis<UiScreen>());
 }
 void UiScreen::hideCursor() {
-  _pint->_pCursor->setLayoutVisible(false);
+  if (_pint->_pCursor) {
+    _pint->_pCursor->setLayoutVisible(false);
+  }
 }
 void UiScreen::showCursor() {
-  _pint->_pCursor->setLayoutVisible(true);
+  if (_pint->_pCursor) {
+    _pint->_pCursor->setLayoutVisible(true);
+  }
 }
 void UiScreen::setCursor(std::shared_ptr<UiCursor> c) {
   //Do not add the cursor
   _pint->_pCursor = c;
-  c->position() = UiPositionMode::Relative;
+  if (_pint->_pCursor) {
+    _pint->_pCursor->position() = UiPositionMode::Relative;
+  }
   //updateCursorPos(Gu::getInputManager()->getMousePos());
 }
 void UiScreen::debugForceLayoutChanged() {
@@ -3305,7 +3258,7 @@ void UiScreen::debugForceLayoutChanged() {
   _pint->_bDebugForceLayoutChange = true;
 }
 void UiScreen::performForcedLayout() {
-  performLayout(getThis<UiScreen>(),true);
+  performLayout(getThis<UiScreen>(), true);
 }
 void UiScreen::error(std::string errMsg) {
   BRLogError(errMsg);
@@ -3329,7 +3282,5 @@ uint64_t UiScreen::getFrameNumber() {
   return getWindow()->getFpsMeter()->getFrameNumber();
 }
 
-
 #pragma endregion
-
 }//ns Game

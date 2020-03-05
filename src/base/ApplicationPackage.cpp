@@ -201,7 +201,7 @@ string_t ApplicationPackage::makeAssetPath(string_t folder, string_t file) {
 }
 void ApplicationPackage::build(std::string exeLoc) {
   _pint->_strExeLoc = exeLoc;
-  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
+  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>(c_strVersion);
   _pint->loadExe(fb);
 
   int32_t tmp;
@@ -261,7 +261,7 @@ string_t ApplicationPackage::debugPrint() {
     ret += "  Loc:" + fe->_strLoc;
     ret += "  Off:" + fe->_iOff;
     ret += " Size: " + fe->_iSize;
-    std::shared_ptr<BinaryFile> tmp = std::make_shared<BinaryFile>();
+    std::shared_ptr<BinaryFile> tmp = std::make_shared<BinaryFile>(c_strVersion);
     if (getFile(fe->_strLoc, tmp)) {
       ret += " Data: " + tmp->toString();
     }

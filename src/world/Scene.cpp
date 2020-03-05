@@ -35,7 +35,6 @@
 #include "../world/Scene.h"
 #include "../bottle/BottleUtils.h"
 
-
 namespace BR2 {
 std::shared_ptr<Scene> Scene::create() {
   std::shared_ptr<Scene> s = std::make_shared<Scene>();
@@ -86,9 +85,7 @@ void Scene::afterAttachedToWindow() {
       node->afterAddedToScene(scene);
     }
     return true;
-  });
-
-  
+    });
 }
 void Scene::createUi() {
   string_t DEBUG_FONT = "Lato-Regular.ttf";
@@ -98,33 +95,34 @@ void Scene::createUi() {
   _pUiScreen = UiScreen::create(getWindow());
   Gu::checkErrorsDbg();
 
-  //Removing the 'built-in' UI due to the compile and load() conflicts due to GameUi
+  //Removing the 'built-in' UI due to the compile and load() conflicts due to GameUiaxis
   //skins first
-  //std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
-  //std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
-  //pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
+  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
+  std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+  pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
 
+  //debug label
+  _pDebugLabel = UiLabel::create("", debugTextSkin);
+  _pDebugLabel->position() = UiPositionMode::e::Relative;
+  _pDebugLabel->left() = "20px";
+  _pDebugLabel->top() = "100px";
+  _pDebugLabel->width() = "200px";
+  _pDebugLabel->height() = "1800px";
+  _pDebugLabel->enableWordWrap();
+  _pUiScreen->addChild(_pDebugLabel);
+  Gu::checkErrorsDbg();
+
+  //Cursor
+  std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
+  cs->width() = "32px";
+  cs->height() = "auto"; // Auto?
+  _pUiScreen->setCursor(cs);
+  Gu::checkErrorsDbg();
+
+
+  //Removing loadImages and compile fom MegaTex
   //_pUiScreen->getTex()->loadImages();
-  //Gu::checkErrorsDbg();
-
-  ////debug label
-  //_pDebugLabel = UiLabel::create("", debugTextSkin);
-  //_pDebugLabel->position() = UiPositionMode::e::Relative;
-  //_pDebugLabel->left() = "20px";
-  //_pDebugLabel->top() = "100px";
-  //_pDebugLabel->width() = "200px";
-  //_pDebugLabel->height() = "1800px";
-  //_pDebugLabel->enableWordWrap();
-  //_pUiScreen->addChild(_pDebugLabel);
-  //Gu::checkErrorsDbg();
-
-  ////Cursor 
-  //std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
-  //cs->width() = "32px";
-  //cs->height() = "auto"; // Auto?
-  //_pUiScreen->setCursor(cs);
-  //Gu::checkErrorsDbg();
-
+//Gu::checkErrorsDbg();
   //_pUiScreen->getTex()->compile();
   //Gu::checkErrorsDbg();
 }
@@ -139,11 +137,9 @@ void Scene::update(float delta) {
   //  _pLightManager->update(getWindow()->getDelta()->get());
   //}
 
-
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 void Scene::idle(int64_t us) {
-
 }
 std::shared_ptr<GLContext> Scene::getContext() {
   std::shared_ptr<GraphicsWindow> w = getWindow();
@@ -180,7 +176,7 @@ void Scene::createFlyingCamera() {
   attachChild(_pDefaultCamera);
   // cn->init();
 
-  //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
+  //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.
   //updateCameraPosition();
   //_vMoveVel.construct(0, 0, 0);
   //_pCamera->setPos(vec3(30, 30, 30));
@@ -194,33 +190,34 @@ void Scene::createFlyingCamera() {
   std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
   cam->addComponent(script);
 #endif
-
 }
 void Scene::debugChangeRenderState() {
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F1)) {
-    if (Gu::getInputManager()->shiftHeld()) {
+  std::shared_ptr<InputManager> inp = getInput();
+
+  if (inp->keyPress(SDL_SCANCODE_F1)) {
+    if (inp->shiftHeld()) {
       _bDebugDisableShadows = !_bDebugDisableShadows;
     }
     else {
       _bShowDebugText = !_bShowDebugText;
     }
   }
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F2)) {
+  if (inp->keyPress(SDL_SCANCODE_F2)) {
     _bDrawDebug = !_bDrawDebug;
   }
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F3)) {
+  if (inp->keyPress(SDL_SCANCODE_F3)) {
     _bDebugDisableCull = !_bDebugDisableCull;
   }
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F4)) {
+  if (inp->keyPress(SDL_SCANCODE_F4)) {
     _bDebugShowWireframe = !_bDebugShowWireframe;
   }
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F5)) {
+  if (inp->keyPress(SDL_SCANCODE_F5)) {
     _bDebugClearWhite = !_bDebugClearWhite;
   }
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F6)) {
+  if (inp->keyPress(SDL_SCANCODE_F6)) {
     _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
   }
-  if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F7)) {
+  if (inp->keyPress(SDL_SCANCODE_F7)) {
     if (getWindow()->getFrameSync()->isEnabled()) {
       getWindow()->getFrameSync()->disable();
     }
@@ -230,7 +227,7 @@ void Scene::debugChangeRenderState() {
   }
 
   //#ifdef _DEBUG
-  //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
+  //These must be #ifdef out because glPolygonMOde is not present in gl330 core
   if (_bDebugShowWireframe == true) {
     Gu::getCoreContext()->setPolygonMode(PolygonMode::Line);
   }
@@ -284,7 +281,7 @@ void Scene::drawDeferred(RenderParams& rp) {
     //so -- this is a huge task and it's nto really needed yet.
     //**
 
-    //If we don't have skin, draw instanced, 
+    //If we don't have skin, draw instanced,
     //if we have skin draw normally.
     //_pRenderBucket->sortAndDrawMeshes(
     //    [](std::shared_ptr<VertexFormat> vf) {
@@ -331,8 +328,6 @@ void Scene::drawDeferred(RenderParams& rp) {
 
   Perf::popPerf();
 }
-
-
 void Scene::drawForward(RenderParams& rp) {
   //Meshes
   for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
@@ -343,12 +338,13 @@ void Scene::drawForward(RenderParams& rp) {
   drawBackgroundImage();
 
   RenderUtils::drawAxisShader(getActiveCamera());
+  RenderUtils::drawGridShader(getActiveCamera());
 }
 void Scene::drawBackgroundImage() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(Gu::getPackage()->makeAssetPath("textures", "test_tex3.png"));
+    _pTex = Gu::getTexCache()->getOrLoad(TexFile("test_bk",Gu::getPackage()->makeAssetPath("textures", "test_tex3.png")));
   }
   std::shared_ptr<CameraNode> bc = getActiveCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
@@ -393,7 +389,7 @@ void Scene::drawTransparent(RenderParams& rp) {
   Perf::popPerf();
 }
 void Scene::drawUI(RenderParams& rp) {
-  _pUiScreen->update(Gu::getInputManager());
+  _pUiScreen->update(getInput());
   _pUiScreen->drawForward();
 }
 void Scene::draw2d() {
@@ -452,7 +448,7 @@ void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
 //std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
 //  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
 //  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-//  
+//
 //  attachChild(mn);
 //
 //  return mn;
@@ -547,6 +543,4 @@ void Scene::makeParticles() {
   _pParticleManager->init(_pParticlesAtlas, BottleUtils::c_iMaxParticles);
   Gu::checkErrorsDbg();
 }
-
-
 }//ns BR2

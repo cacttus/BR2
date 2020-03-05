@@ -1,5 +1,21 @@
 # Mine City Task Log
 
+- [ ] To use image sizes in gui, use Img32::peek() to get stats
+- [ ] Alter Global Input manager to remove the Mouse from it.  Mouse doesn't make sense globally.
+
+
+- [ ] Binary File Version Backwards Compatibility
+	- [ ] Implement binary file backwards compatibility by adding multiple versions to the importer (branch at ->readVersion).  This may be assisted by breaking the files up into "sections". Implement in:
+		- [ ] Mbi serializer
+		- [ ] Texture Serializer
+
+- [ ] Implement Default Materials
+	- [ ] Remove all "textures" from BR, and implement ONLY materials.
+	- [ ] If any texure fails to bind, OR there is an error binding, or creating, Material, log an error and bind Gu::getModelCache()->getDefaultMaterial()
+
+- [ ] Make PhysicsWorld only operate on Shape components.  
+	* Right now there is a huge bug in Physicsworld where it operates on ALL SceneNode derivations.  This means you may have multiple of the same thing added to physicsworld.
+
 - [ ] Fix the onAddedToNode code to work only when the root scene() has been attached to the Window()
 
 - [ ] (CRITICAL) Deleted the Async Logger on accident.  Add it back (previous checkin).

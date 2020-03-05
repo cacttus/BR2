@@ -4,6 +4,7 @@
 #include "../base/Gu.h"
 #include "../base/GLContext.h"
 #include "../base/EngineConfig.h"
+#include "../base/GraphicsWindow.h"
 #include "../math/MathAll.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/LightNode.h"
@@ -78,7 +79,56 @@ SceneNode::~SceneNode() {
   DEL_MEM(_pBox);
   DEL_MEM(_pOBB);
 }
-///////////////////////////////////////////////////////////////////
+NodeId SceneNode::getId() {
+  return _iNodeId;
+}
+OBB* SceneNode::getOBB() {
+  return _pOBB;
+}
+Box3f* SceneNode::getBoundBoxObject() {
+  return _pBox;
+}
+const vec3& SceneNode::getPos() {
+  return _vPos;
+}
+void SceneNode::setPos(const vec3&& p) {
+  _vLastPos = _vPos;
+  _vPos = p;
+  _bTransformChanged = true;
+}
+vec3 SceneNode::getViewNormal() {
+  return _vViewNormal;
+}
+void SceneNode::setViewNormal(vec3& p) {
+  _vViewNormal = p;
+  _bTransformChanged = true;
+}
+void SceneNode::setScale(vec3& v) {
+  _vScale = v;
+  _bTransformChanged = true;
+}
+vec3 SceneNode::getScale() {
+  return _vScale;
+}
+bool SceneNode::getTransformChanged() {
+  return _bTransformChanged;
+}
+void SceneNode::setRot(vec4&& axis_angle_radians) {
+  _vRotationNormal = axis_angle_radians.xyz();
+  _fRotation = axis_angle_radians.w;
+}
+std::shared_ptr<BaseSpec> SceneNode::getSpec() {
+  return _pSpec;
+}
+mat4& SceneNode::getLocal() {
+  return _mLocal;
+}
+mat4& SceneNode::getWorld() {
+  return _mWorld;
+}
+mat4& SceneNode::getAnimated() {
+  return _mAnimated;
+}
 string_t SceneNode::getSpecName() {
   if (getSpec()) {
     return getSpec()->getName();
@@ -98,6 +148,27 @@ Hash32 SceneNode::getSpecNameHashed() {
     Gu::debugBreak();
     return 0;
   }
+}
+vec3 SceneNode::getVelocity() {
+  return _velocity;
+}
+void SceneNode::setVelocity(vec3& vel) {
+  _velocity = vel;
+}
+void SceneNode::setBoneParent(std::shared_ptr<BoneNode> bn) {
+  _pBoneParent = bn;
+}
+std::shared_ptr<BoneNode> SceneNode::getBoneParent() {
+  return _pBoneParent;
+}
+void SceneNode::show() {
+  _bHidden = false;
+}
+void SceneNode::hide() {
+  _bHidden = true;
+}
+bool SceneNode::isHidden() {
+  return _bHidden;
 }
 void SceneNode::init() {
   // ** WHY IS THIS HERE? -- READ BELOW ** 
@@ -492,7 +563,7 @@ void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
 void SceneNode::addComponent(std::shared_ptr<Component> comp) {
   comp->_pWorldObject = getThis<SceneNode>();
 
-  _vecComponents.push_back(comp); 
+  _vecComponents.push_back(comp);
 
   //If we are added to the scene, and to the window, then start the component.
   //Scenes only "work" when they are added to window.
@@ -532,5 +603,16 @@ void SceneNode::endComponent(std::shared_ptr<Component> c) {
   c->onExit();
   c->_pScene = nullptr;
 }
+std::shared_ptr<InputManager> SceneNode::getInput() {
+  //Returns the given WINDOW input for this node.
+  auto sc = getScene();
+  if (sc) {
+    auto w = sc->getWindow();
+    if (w) {
+      return w->getInput();
+    }
+  }
 
+  return nullptr;
+}
 }//ns Game

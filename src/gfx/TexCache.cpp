@@ -1,6 +1,7 @@
 #include "../base/Hash.h"
 #include "../base/Gu.h"
 #include "../base/Logger.h"
+#include "../base/FileSystem.h"
 #include "../gfx/TexCache.h"
 #include "../gfx/Texture2DSpec.h"
 
@@ -23,6 +24,18 @@ const std::string TexCache::GrassWd = "./data/tx-gs.png";
 const std::string TexCache::RopeWd = "./data/tx64-rope.png";
 const std::string TexCache::LadderWd = "./data/tx64-ladder.png";
 
+#pragma region TexFile
+TexFile::TexFile(string_t loc) {
+_loc = loc;
+_name = FileSystem::getFileNameFromPath(loc);
+}
+TexFile::TexFile(string_t name, string_t loc) {
+  _name = name;
+  _loc = loc;
+}
+#pragma endregion
+
+#pragma region TexCache
 TexCache::TexCache(std::shared_ptr<GLContext> ct) : _pContext(ct) {
   int iWidthHeight = 1;
   vec4 v(1, 1, 1, 1);
@@ -68,33 +81,25 @@ bool TexCache::add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bError
   _cache.insert(std::make_pair(ih, ss));
   return true;
 }
-///////////////////////////////////////////////////////////////////
-std::vector<std::shared_ptr<Texture2DSpec>> TexCache::getOrLoad(std::vector<std::string> texName, bool bIsGenerated, bool bRepeatU, bool bRepeatV) {
-  std::vector<std::shared_ptr<Texture2DSpec>> out;
-  for (std::string str : texName) {
-    std::shared_ptr<Texture2DSpec> tx = getOrLoad(str, bIsGenerated, bRepeatU, bRepeatV);
-    out.push_back(tx);
-  }
-  return out;
-}
-std::shared_ptr<Texture2DSpec> TexCache::getOrLoad(std::string texName, bool bIsGenerated, bool bRepeatU, bool bRepeatV) {
+
+std::shared_ptr<Texture2DSpec> TexCache::getOrLoad(TexFile tc, bool bIsGenerated, bool bRepeatU, bool bRepeatV) {
   std::shared_ptr<Texture2DSpec> ret = nullptr;
 
-  int32_t ih = Hash::computeStringHash32bit(texName, 0);
+  int32_t ih = Hash::computeStringHash32bit(tc._loc, 0);
   TexMap::iterator ite = _cache.find(ih);
 
   if (ite != _cache.end()) {
     ret = ite->second;
   }
   else if (bIsGenerated == false) {
-    ret = std::make_shared<Texture2DSpec>(texName, _pContext, bRepeatU, bRepeatV);
+    ret = std::make_shared<Texture2DSpec>(tc._name, tc._loc, _pContext, bRepeatU, bRepeatV);
     _cache.insert(std::make_pair(ih, ret));
   }
 
   return ret;
 }
 std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss) {
-  std::shared_ptr<Texture2DSpec> pRet = std::make_shared<Texture2DSpec>(ss, _pContext);
+  std::shared_ptr<Texture2DSpec> pRet = std::make_shared<Texture2DSpec>(name, ss, _pContext);
   add(name, pRet);
 
   return pRet;
@@ -113,6 +118,7 @@ std::shared_ptr<Texture2DSpec> TexCache::addAsGeneratedImage(string_t name, cons
 //    }
 //    _pBound = tex;
 //}
+#pragma endregion
 
 
 

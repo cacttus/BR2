@@ -151,7 +151,7 @@ class Sprite;
 class SpriteSpec;
 //class World25Light    ;
 //class World25LightData;
-class GodCamScript;
+class RTSCamScript;
 //class WorldObject;
 class Goal25;
 class Brain25;

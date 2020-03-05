@@ -75,7 +75,7 @@
     <ClCompile Include="src\bottle\Goal25.cpp" />
     <ClCompile Include="src\bottle\Goal25MoveTo.cpp" />
     <ClCompile Include="src\bottle\Goal25Think.cpp" />
-    <ClCompile Include="src\bottle\GodCamScript.cpp" />
+    <ClCompile Include="src\bottle\RTSCamScript.cpp" />
     <ClCompile Include="src\bottle\Lair.cpp" />
     <ClCompile Include="src\bottle\ObFile.cpp" />
     <ClCompile Include="src\bottle\SpriteBucket.cpp" />
@@ -271,7 +271,7 @@
     <ClInclude Include="src\bottle\Goal25.h" />
     <ClInclude Include="src\bottle\Goal25MoveTo.h" />
     <ClInclude Include="src\bottle\Goal25Think.h" />
-    <ClInclude Include="src\bottle\GodCamScript.h" />
+    <ClInclude Include="src\bottle\RTSCamScript.h" />
     <ClInclude Include="src\bottle\Lair.h" />
     <ClInclude Include="src\bottle\ObFile.h" />
     <ClInclude Include="src\bottle\SpriteBucket.h" />

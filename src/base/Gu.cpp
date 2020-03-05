@@ -12,9 +12,9 @@
 #include "../base/DebugHelper.h"
 #include "../base/BinaryFile.h"
 #include "../base/GraphicsWindow.h"
+#include "../base/InputManager.h"
 #include "../base/FpsMeter.h"
 #include "../base/FrameSync.h"
-#include "../base/InputManager.h"
 #include "../base/ApplicationPackage.h"
 #include "../base/Logger.h"
 #include "../base/Sequencer.h"
@@ -63,7 +63,6 @@ extern "C" {
 namespace BR2 {
 std::shared_ptr<TexCache> Gu::_pTexCache = nullptr;
 std::shared_ptr<Sequencer> Gu::_pSequencer = nullptr;
-std::shared_ptr<InputManager> Gu::_pInputManager = nullptr;
 std::shared_ptr<SoundCache> Gu::_pSoundCache = nullptr;
 std::shared_ptr<ShaderMaker> Gu::_pShaderMaker = nullptr;
 std::shared_ptr<ModelCache> Gu::_pModelCache = nullptr;
@@ -73,20 +72,29 @@ std::shared_ptr<GraphicsApi> Gu::_pGraphicsApi = nullptr;
 std::shared_ptr<Logger> Gu::_pLogger = nullptr;
 std::shared_ptr<EngineConfig> Gu::_pEngineConfig = nullptr;
 std::shared_ptr<Net> Gu::_pNet = nullptr;
+std::shared_ptr<InputManager> Gu::_pGlobalInput = nullptr;
 
-std::shared_ptr<RenderSettings> Gu::getRenderSettings() { return _pRenderSettings; }
-std::shared_ptr<ApplicationPackage> Gu::getPackage() { return _pPackage; }
-std::shared_ptr<ModelCache> Gu::getModelCache() { return _pModelCache; }
-std::shared_ptr<Sequencer> Gu::getSequencer() { return _pSequencer; }
-std::shared_ptr<InputManager> Gu::getInputManager() { return _pInputManager; }
-std::shared_ptr<SoundCache> Gu::getSoundCache() { return _pSoundCache; }
-std::shared_ptr<TexCache> Gu::getTexCache() { return _pTexCache; }
-std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return _pShaderMaker; }
-std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return _pEngineConfig; }
-std::shared_ptr<Logger> Gu::getLogger() { return _pLogger; }
-std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return _pGraphicsApi; }
-std::shared_ptr<EngineConfig> Gu::getConfig() { return _pEngineConfig; }
-std::shared_ptr<Net> Gu::getNet() { return _pNet; }
+template < class Tx >
+std::shared_ptr<Tx> GetExistingManager(std::shared_ptr<Tx> tt) {
+  AssertOrThrow2(tt != nullptr);
+  //**TODO: verify that the calling thread is the main thread.  Deadlocks has been causing issues.
+  return tt;
+}
+
+std::shared_ptr<RenderSettings> Gu::getRenderSettings() { return GetExistingManager(_pRenderSettings); }
+std::shared_ptr<ApplicationPackage> Gu::getPackage() { return GetExistingManager(_pPackage); }
+std::shared_ptr<ModelCache> Gu::getModelCache() { return GetExistingManager(_pModelCache); }
+std::shared_ptr<Sequencer> Gu::getSequencer() { return GetExistingManager(_pSequencer); }
+std::shared_ptr<SoundCache> Gu::getSoundCache() { return GetExistingManager(_pSoundCache); }
+std::shared_ptr<TexCache> Gu::getTexCache() { return GetExistingManager(_pTexCache); }
+std::shared_ptr<ShaderMaker> Gu::getShaderMaker() { return GetExistingManager(_pShaderMaker); }
+std::shared_ptr<EngineConfig> Gu::getEngineConfig() { return GetExistingManager(_pEngineConfig); }
+std::shared_ptr<Logger> Gu::getLogger() { return GetExistingManager(_pLogger); }
+std::shared_ptr<GraphicsApi> Gu::getGraphicsApi() { return GetExistingManager(_pGraphicsApi); }
+std::shared_ptr<EngineConfig> Gu::getConfig() { return GetExistingManager(_pEngineConfig); }
+std::shared_ptr<Net> Gu::getNet() { return GetExistingManager(_pNet); }
+std::shared_ptr<InputManager> Gu::getGlobalInput() { return GetExistingManager(_pGlobalInput); }
+
 std::shared_ptr<GLContext> Gu::getCoreContext() {
   std::shared_ptr<GraphicsApi> api = Gu::getGraphicsApi();
   std::shared_ptr<OpenGLApi> oglapi = std::dynamic_pointer_cast<OpenGLApi>(Gu::getGraphicsApi());
@@ -123,12 +131,12 @@ void parsearg(std::string key, std::string value) {
     BRLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
   }
 }
-//**TODO Move this crap to AppRunner
-void parsearg(std::string arg) {
+//**TODO Move to AppRunner
+void parsearg(std::string arg, string_t& __out_ out_key, string_t& __out_ out_value) {
   bool isvalue = false;
   std::string key = "";
   std::string value = "";
-  //**TODO Move this crap to AppRunner
+  //**TODO Move this to AppRunner
 
   for (int i = 0; i < arg.length(); ++i) {
     if (arg[i] == '=') {
@@ -140,13 +148,59 @@ void parsearg(std::string arg) {
     else {
       key += arg[i];
     }
-    //**TODO Move this crap to AppRunner
+    //**TODO Move to AppRunner
   }
-  parsearg(key, value);
+
+  out_key = StringUtil::trim(key);
+  out_value = StringUtil::trim(value);
 }
-void Gu::createLogger(string_t logfile_dir) {
-  Gu::_pLogger = std::make_shared<Logger>();
+bool Gu::checkArg(const std::vector<string_t>& args, string_t inkey, string_t invalue) {
+  string_t key, value;
+  for (std::string arg : args) {
+    parsearg(arg, key, value);
+    if (StringUtil::equalsi(key, inkey)) {
+      if (StringUtil::equalsi(value, invalue)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+      break;
+    }
+  }
+  return false;
+}
+void Gu::createLogger(string_t logfile_dir, const std::vector<string_t>& args) {
+  //These are essentially the system defaults
+  bool log_async = true;
+  bool disabled = false;
+  if (Gu::checkArg(args, "log_async", "true")) {
+    log_async = true;
+  }
+  else if (Gu::checkArg(args, "log_async", "false")) {
+    log_async = false;
+  }
+  if (Gu::checkArg(args, "log_disable", "true")) {
+    disabled = true;
+  }
+  else if (Gu::checkArg(args, "log_disable", "false")) {
+    disabled = false;
+  }
+  Gu::_pLogger = std::make_shared<Logger>(log_async, disabled);
   Gu::_pLogger->init(logfile_dir);
+}
+void processArg(std::string key, std::string value) {
+  if (key == "--show-console") {
+    Gu::getEngineConfig()->setShowConsole(BR2::TypeConv::strToBool(value));
+    BRLogInfo("Overriding show console window: " + value);
+  }
+  else if (key == "--game-host") {
+    Gu::getEngineConfig()->setGameHostAttached(BR2::TypeConv::strToBool(value));
+    BRLogInfo("Overriding game host: " + value);
+  }
+  else {
+    BRLogWarn("Unrecognized parameter '" + key + "' value ='" + value + "'");
+  }
 }
 void Gu::initGlobals(const std::vector<std::string>& args) {
   //Config
@@ -154,8 +208,9 @@ void Gu::initGlobals(const std::vector<std::string>& args) {
 
   //Override EngineConfig
   for (std::string arg : args) {
-    //TODO: skip arg 0 (app)
-    parsearg(arg);
+    string_t key, value;
+    parsearg(arg, key, value);
+    processArg(key, value);
   }
 
   //Setup Global Configuration
@@ -188,7 +243,9 @@ void Gu::loadConfig(const std::vector<std::string>& args) {
 
   //Override the EngineConfig
   for (std::string arg : args) {
-    parsearg(arg);//TODO: skip arg 0 (app)
+    string_t key, value;
+    parsearg(arg, key, value);
+    processArg(key, value);
   }
 
 }
@@ -208,7 +265,7 @@ void Gu::deleteManagers() {
   _pEngineConfig = nullptr;
 
   //System Level
-  _pInputManager = nullptr;
+  _pGlobalInput = nullptr;
   _pPackage = nullptr;
   _pLogger = nullptr;
   _pNet = nullptr;
@@ -231,7 +288,7 @@ std::shared_ptr<Img32> Gu::loadImage(std::string imgLoc) {
  // uint32_t imgSize;
   std::shared_ptr<Img32> ret = nullptr;
 
-  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>();
+  std::shared_ptr<BinaryFile> fb = std::make_shared<BinaryFile>("<none>");
   if (Gu::getPackage()->getFile(imgLoc, fb)) {
     //decode
     err = lodepng_decode32(&image, &width, &height, (unsigned char*)fb->getData().ptr(), fb->getData().count());
@@ -562,14 +619,12 @@ void Gu::createManagers() {
   BRLogInfo("GLContext - Building ApplicationPackage");
   _pPackage = std::make_shared<ApplicationPackage>();
   _pPackage->build(FileSystem::getExecutableFullPath());
-
   BRLogInfo("GLContext - Creating TexCache");
   _pTexCache = std::make_shared<TexCache>(Gu::getCoreContext());
   BRLogInfo("GLContext - Creating Sequencer");
   _pSequencer = std::make_shared<Sequencer>();
-  BRLogInfo("GLContext - Creating Fingers");
-  _pInputManager = std::make_shared<InputManager>();
-  _pInputManager->init();
+  BRLogInfo("GLContext - Creating Global Input");
+  _pGlobalInput = std::make_shared<InputManager>();
   BRLogInfo("GLContext - Creating SoundCache");
   _pSoundCache = std::make_shared<SoundCache>();
   BRLogInfo("GLContext - Creating ShaderMaker & base shaders");
@@ -593,6 +648,7 @@ void Gu::updateManagers() {
     _pNet->update();
   }
 
+  Gu::checkErrorsDbg();
 }
 void Gu::sleepThread(uint64_t milliseconds) {
   std::this_thread::sleep_for(std::chrono::milliseconds(50));

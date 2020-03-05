@@ -17,33 +17,31 @@ namespace BR2 {
 */
 class Texture2DSpec : public VirtualMemoryShared<Texture2DSpec> {
 public:
-  Texture2DSpec(std::shared_ptr<GLContext> ct) : _pContext(ct) {}
-  Texture2DSpec(string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV);
-  Texture2DSpec(const std::shared_ptr<Img32>, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter = TexFilter::e::Nearest);
-  Texture2DSpec(std::shared_ptr<GLContext> ctx, unsigned  char* texData, int iWidth, int iHeight, bool mipmaps);
+  Texture2DSpec(string_t name, std::shared_ptr<GLContext> ct);
+  Texture2DSpec(string_t name, string_t loc, std::shared_ptr<GLContext> ctx, bool bRepeatU, bool bRepeatV);
+  Texture2DSpec(string_t name, const std::shared_ptr<Img32>, std::shared_ptr<GLContext> ctx, TexFilter::e eFilter = TexFilter::e::Nearest);
+  Texture2DSpec(string_t name, std::shared_ptr<GLContext> ctx, unsigned  char* texData, int iWidth, int iHeight, bool mipmaps);
   virtual ~Texture2DSpec() override;
 
+  void create(unsigned char* imageData, uint32_t w, uint32_t h, bool genMipmaps, bool bRepeatU, bool bRepeatV);
+  void dispose();
+  virtual bool bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound = false);
+  void unbind();
+  void calculateTextureFormat();
+
+  string_t getName() { return _strName; }
   string_t getLocation() { return _strLocation; }
   GLuint getGlId() { return _glId; }
-  bool getIsTransparent() { return _bTransparent; }
-  void setIsTransparent(bool b) { _bTransparent = b; }
-  void create(unsigned char* imageData, uint32_t w, uint32_t h, bool genMipmaps, bool bRepeatU, bool bRepeatV);
-  void calculateTextureFormat();
-  void dispose();
-  void bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound = false);
-  void unbind();
+  bool getTransparent() { return _bTransparent; }
+  void setTransparent(bool b) { _bTransparent = b; }
   uint32_t getWidth() { return _iWidth; }
   uint32_t getHeight() { return _iHeight; }
   float getSizeRatio() { return _fSizeRatio; }
-  // uint32_t getChannel(){ return _iChannel; }//**TODO: REMOVE ** all meshses should use materials and texture slots** 12/8/2017
-
-  void oglSetFilter(TexFilter::e filter); // false = nearest
-  TexFilter::e oglGetFilter() { return _eFilter; } // false = nearest
+  void setFilter(TexFilter::e filter); // false = nearest
+  TexFilter::e getFilter() { return _eFilter; } // false = nearest
   void setWrapU(TexWrap::e wrap);
   void setWrapV(TexWrap::e wrap);
-
   bool getTextureDataFromGpu(std::shared_ptr<Img32>  __out_ image);
-  static bool getTextureDataFromGpu(std::shared_ptr<Img32>  __out_ image, GLuint iGLTexId);
 
   void serialize(std::shared_ptr<BinaryFile> fb);
   void deserialize(std::shared_ptr<BinaryFile> fb);
@@ -52,28 +50,23 @@ protected:
   std::shared_ptr<GLContext> _pContext = nullptr;
 
 private:
-  GLuint _glId;    // - Texture ID assigned by OpenGL
+  GLuint _glId = 0;    // - Texture ID assigned by OpenGL
   GLenum _eTextureFormat = 0;
   GLenum _eTextureMipmapFormat = 0;
   uint32_t _iWidth = 0;
   uint32_t _iHeight = 0;
   float _fSizeRatio = 0.0f;
-  string_t _strLocation;
+  string_t _strLocation = "";
+  TexFilter::e _eFilter;
+  string_t _strName = "";
   bool _bHasMipmaps = false;
   bool _bRepeatU = false;
   bool _bRepeatV = false;
   bool _bLoadFailed = false;
-
-  void load(string_t loc, bool bRepeatU, bool bRepeatV);
-  void load(std::shared_ptr<Img32> s);
-  void flipImage(unsigned char* image, int w, int h);
-  int32_t generateMipmapLevels();
   bool _bTransparent = false;
 
-  TexFilter::e _eFilter;
-
-  int32_t texFormatToInt(GLenum);
-  GLenum intToTexFormat(int32_t);
+  void load(string_t loc, bool bRepeatU, bool bRepeatV);
+  int32_t generateMipmapLevels();
 };
 
 

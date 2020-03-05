@@ -150,7 +150,6 @@ void GraphicsWindow_Internal::endRender() {
 }
 #pragma endregion
 
-
 #pragma region GraphicsWindow
 //Called exclusively by the graphics API
 GraphicsWindow::GraphicsWindow(std::shared_ptr<GraphicsApi> api, std::shared_ptr<GLContext> ct, SDL_Window* win) : RenderTarget(ct) {
@@ -210,6 +209,7 @@ void GraphicsWindow::initRenderSystem() {
   _pint->printHelpfulDebug();
 }
 void GraphicsWindow::step() {
+  getInput()->preUpdate();
   _pint->_pDelta->update();
   _pint->_pFpsMeter->update();
 
@@ -221,7 +221,7 @@ void GraphicsWindow::step() {
 
   _pint->beginRender();
   {
-    if (Gu::getInputManager()->keyPress(SDL_SCANCODE_F11)) {
+    if (getInput()->keyPress(SDL_SCANCODE_F11)) {
       _pint->toggleFullscreen();
     }
 
@@ -246,6 +246,8 @@ void GraphicsWindow::step() {
   }
 
   _pint->endRender();
+
+  getInput()->postUpdate();
 }
 void GraphicsWindow::idle(int64_t us) {
   if (_pint->_pScene != nullptr) {

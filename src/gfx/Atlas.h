@@ -43,7 +43,6 @@ private:
 class Atlas : public Texture2DSpec {
 public:
   static string_t getGeneratedFileName();
-  const string_t& getName() { return _strName; }
 
   Atlas(std::shared_ptr<GLContext> ct, string_t name, ivec2& viSpriteSize, string_t strImageLoc);
   Atlas(std::shared_ptr<GLContext> ct, string_t name, ivec2& ivGridSize);
@@ -67,7 +66,6 @@ public:
 private:
   typedef std::map<Hash32, std::shared_ptr<AtlasSprite>> ImgMap;
   ImgMap _mapImages;
-  string_t _strName;
   ivec2 _vSpriteSize;
   ivec2 _vGridSize;
   string_t _strPrecompileFileLocation;//This is only if the atlas is pre-compiled.

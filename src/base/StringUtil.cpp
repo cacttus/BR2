@@ -17,20 +17,20 @@ StringUtil::StringUtil() {
 }
 StringUtil::~StringUtil() {
 }
-int32_t StringUtil::compare(string_t a, string_t b) {
+int32_t StringUtil::compare(const string_t a, const  string_t b) {
   return a.compare(b);
 }
 bool StringUtil::charIsLetterOrNumber(char c) {
   int r = isalnum(c);
   return r != 0;
 }
-bool StringUtil::isEmpty(string_t str) {
+bool StringUtil::isEmpty(const string_t str) {
   return str.compare(string_t("")) == 0;
 }
-bool StringUtil::isNotEmpty(string_t str) {
+bool StringUtil::isNotEmpty(const string_t str) {
   return !StringUtil::isEmpty(str);
 }
-char* StringUtil::getBufferCopy(string_t str) {
+char* StringUtil::getBufferCopy(const string_t str) {
   char* buf = new char[str.length() + 1];
   memcpy(buf, str.c_str(), str.length());
   buf[str.length()] = 0;

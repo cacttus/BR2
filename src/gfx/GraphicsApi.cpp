@@ -32,6 +32,9 @@ void GraphicsApi::updateLoop() {
     return;
   }
 
+  //TODO: global input is needed.
+  //Make the main window the global input.
+
   while (true) {
     Perf::beginPerf();
     Perf::pushPerf();
@@ -40,21 +43,12 @@ void GraphicsApi::updateLoop() {
         break;//SDL_QUIT
       }
 
-      Gu::checkErrorsDbg();
-
-      Gu::getInputManager()->preUpdate();
-
-      Gu::checkErrorsDbg();
-
       Gu::updateManagers();
 
       for (std::shared_ptr<GraphicsContext> ct : _contexts) {
         std::shared_ptr<GraphicsWindow> w = ct->getGraphicsWindow();
         w->step();
       }
-
-      //Update all button states.
-      Gu::getInputManager()->postUpdate();
     }
     Perf::popPerf();
     Perf::endPerf();
@@ -99,15 +93,9 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
 
   std::shared_ptr<InputManager> pInput = getInputForWindow(event->window.windowID);
   if (pInput == nullptr) {
+    BRLogError("Window input manager could not be found.");
     return true;
   }
-  else {
-    //This failed.  
-    //BRLogError("Invalid code here, we need to get the window from the given sdl event.");
-    //Gu::debugBreak();
-    return true;
-  }
-
 
   switch (event->type) {
   case SDL_MOUSEMOTION:
@@ -116,20 +104,24 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
   case SDL_KEYDOWN:
     keyCode = event->key.keysym.scancode;
     pInput->setKeyDown(keyCode);
+    Gu::getGlobalInput()->setKeyDown(keyCode);
     break;
   case SDL_KEYUP:
     keyCode = event->key.keysym.scancode;
     pInput->setKeyUp(keyCode);
+    Gu::getGlobalInput()->setKeyUp(keyCode);
     break;
   case SDL_MOUSEBUTTONDOWN:
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
       pInput->setLmbState(ButtonState::Press);
+      Gu::getGlobalInput()->setLmbState(ButtonState::Press);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
       pInput->setRmbState(ButtonState::Press);
+      Gu::getGlobalInput()->setRmbState(ButtonState::Press);
       break;
     }
     break;
@@ -137,11 +129,13 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
     switch (event->button.button) {
     case SDL_BUTTON_LEFT:
       pInput->setLmbState(ButtonState::Release);
+      Gu::getGlobalInput()->setLmbState(ButtonState::Release);
       break;
     case SDL_BUTTON_MIDDLE:
       break;
     case SDL_BUTTON_RIGHT:
       pInput->setRmbState(ButtonState::Release);
+      Gu::getGlobalInput()->setRmbState(ButtonState::Release);
       break;
     }
     break;
@@ -156,6 +150,7 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
     if (event->wheel.y != 0) {
       int n = MathUtils::brMin(10, MathUtils::brMax(-10, event->wheel.y));
       pInput->setMouseWheel(n);
+      Gu::getGlobalInput()->setMouseWheel(n);
     }
     if (event->wheel.x != 0) {
       n++;

@@ -13,7 +13,6 @@
 
 namespace BR2 {
 MobFile::MobFile() {
-
 }
 MobFile::~MobFile() {
   _setModData.clear();
@@ -64,8 +63,6 @@ void MobFile::pkp(std::vector<string_t>& tokens) {
       }
     }
   }
-
-
 }
 void  MobFile::preLoad() {
 }
@@ -105,14 +102,11 @@ void MobFile::cacheObjectsAndComputeBoxes() {
     //Gen THumb
     std::shared_ptr<Img32> thumb = ModelThumb::genThumb(ms, Gu::getEngineConfig()->getModelThumbSize());
     ms->setThumb(thumb);
-
   }
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ModDataLoad::ModDataLoad() {
-
 }
 ModDataLoad::~ModDataLoad() {
   _setMeshSpecs.clear();
@@ -148,7 +142,6 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
       //Add this object action to the group.
       _pCurActionKeys = std::make_shared<ActionKeys>(objName);
       pGroup->addActionKeys(_pCurActionKeys);
-
     }
   }
   else if (mb->lcmp(tokens[0], "act_end", 3)) { //I.E. the motion
@@ -182,7 +175,6 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
       eInterp = KeyframeInterpolation::e::Linear;
 
       if (StringUtil::equalsi(strType, "m44")) {
-
         mat4 mat = mb->parseMat4(strData); //= bufferedFile.getTok();
         _pCurActionKeys->addKeyFrame(iTime, mat);
       }
@@ -198,13 +190,11 @@ bool ModDataLoad::tkAction(MobFile* mb, std::vector<string_t>& tokens) {
           mb->parseErr("Failed to parse keyframe PRS");
           Gu::debugBreak();
         }
-
       }
       else {
         mb->parseErr(Stz"Invalid keyframe type '" + strType + "'");
         Gu::debugBreak();
       }
-
     }
   }
   //else if (lcmp(tokens[0], "kf_end", 2)) {
@@ -290,7 +280,6 @@ ParentType::e MobFile::parseParentType(string_t strParentType) {
     parseErr(Stz "Invalid parent type '" + strParentType);
     return ParentType::e::None;
   }
-
 }
 bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
   int iind = 1;
@@ -309,13 +298,11 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
       ii++;
     }
 
-
     if (_pCurMeshData != nullptr) {
       //Do not reset hte obj data - obj file uses all verts above..
     }
     else {
       _pCurMeshData = std::make_shared<MeshSpecData>();
-
     }
     _pCurMeshData->setName(strName);
     if (StringUtil::equals(strName, strParent)) {
@@ -325,7 +312,6 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
       _pCurMeshData->setParentName(strParent);
       _pCurMeshData->setParentType(mb->parseParentType(strParentType));
     }
-
   }
   else if (mb->lcmp(tokens[0], "mpt_end", 2)) {
     if (_pCurMeshData == nullptr) {
@@ -350,7 +336,6 @@ bool ModDataLoad::tkMeshes(MobFile* mb, std::vector<string_t>& tokens) {
 
 //////////////////////////////////////////////////////////////////////////
 MeshSpecData::MeshSpecData() {
-
 }
 MeshSpecData::~MeshSpecData() {
   _vecVerts.resize(0);
@@ -414,11 +399,9 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
     _vecTCoords.push_back(v);
   }
   else if (pMobFile->lcmp(tokens[0], "vw")) {
-
     int32_t iArmCount = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
     VertexWeightMob vw;
     for (int iarm = 0; iarm < iArmCount; ++iarm) {
-
       int32_t iArmId = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
       int32_t iCount = TypeConv::strToInt(pMobFile->getCleanToken(tokens, iind));
       string_t strWeights = pMobFile->getCleanToken(tokens, iind);
@@ -436,10 +419,8 @@ bool MeshSpecData::tkObjFile(MobFile* pMobFile, std::vector<string_t>& tokens) {
   else if (pMobFile->lcmp(tokens[0], "f_shade", 2)) {
     //Obj file faces can be more than 4 indexes but we have to triangulate the model
     if (StringUtil::equalsi(tokens[1], "flat")) {
-
     }
     else if (StringUtil::equalsi(tokens[1], "flat")) {
-
     }
   }
   else if (pMobFile->lcmp(tokens[0], "f", 4)) {
@@ -493,7 +474,6 @@ bool MeshSpecData::tkMaterial(MobFile* pMobFile, std::vector<string_t>& tokens) 
     }
     else {
       _pMatData = new MatData();
-
     }
   }
   else if (pMobFile->lcmp(tokens[0], "mat_end", 2)) {
@@ -772,7 +752,6 @@ std::shared_ptr<VertexFormat> MeshSpecData::getVertexFormatForSpec(MobFile* mb) 
 }
 void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pSpec) {
   if (_pMatData != nullptr) {
-
     std::shared_ptr<Texture2DSpec> diffuse = nullptr;
     std::shared_ptr<Texture2DSpec> normal = nullptr;
     //create material
@@ -781,11 +760,10 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
     string_t path;
 
     if (StringUtil::isNotEmpty(_pMatData->_strDiffuseTex)) {
-
       //Texture should be placed in the same directory as the mob.
       path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strDiffuseTex);
       if (FileSystem::fileExists(path)) {
-        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
+        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(TexFile(path));
         mat->addTextureBinding(pTex, TextureChannel::e::Channel0, TextureType::e::Color, _pMatData->_fDiffuseTexInfluence);
       }
       else {
@@ -796,7 +774,7 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
     if (StringUtil::isNotEmpty(_pMatData->_strNormalTex)) {
       path = FileSystem::combinePath(mb->getMobDir(), _pMatData->_strNormalTex);
       if (FileSystem::fileExists(path)) {
-        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(path);
+        std::shared_ptr<Texture2DSpec> pTex = Gu::getTexCache()->getOrLoad(TexFile(path));
         mat->addTextureBinding(pTex, TextureChannel::e::Channel1, TextureType::e::Normal, _pMatData->_fNormalTexInfluence);
       }
       else {
@@ -817,16 +795,14 @@ void MeshSpecData::makeMaterialForSpec(MobFile* mb, std::shared_ptr<MeshSpec> pS
 
     pSpec->setMaterial(mat);
 
-
     _pMatData = nullptr;
   }
 }
 std::shared_ptr<PhysicsShape> MeshSpecData::makePhysicsShapeForSpec() {
   std::shared_ptr<PhysicsShape> pRet = nullptr;
-  //vec3* MeshUtils::getVertexElementOffset(vec3* verts, 
+  //vec3* MeshUtils::getVertexElementOffset(vec3* verts,
   //    size_t iElementIndex, size_t vOffBytes, size_t vStrideBytes, size_t vCount) {
-
-  //_bKinematicShape 
+  //_bKinematicShape
   //_bDynamciShape
   //if (_ePhysicsShapeType == PhysicsShapeType::e::Hull) {
   //    HullShape* hs = new HullShape(_vecMeshVerts, _vecMeshIndexes);
@@ -852,7 +828,6 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
       _vecMeshIndexes[iInd + 2] = t;
     }
     BRLogInfo("..Done. " + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
-
   }
   if (_bCalcNormals) {
     t0 = Gu::getMicroSeconds();
@@ -890,7 +865,6 @@ void MeshSpecData::copySpecFragments(std::shared_ptr<MeshSpec> pSpec) {
         _vecMeshVerts[iVert].n /= fCountPerVert[iVert];
       }
     }
-
 
     BRLogInfo("..Done. " + ((uint32_t)(Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
@@ -1027,11 +1001,6 @@ void MeshSpecData::parseWeights(MobFile* mb, VertexWeightMob& vw, int32_t iArmId
       joint = !joint;
       val = "";
     }
-
   }
-
-
-
 }
-
 }//ns Game

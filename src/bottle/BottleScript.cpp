@@ -44,7 +44,7 @@
 #include "../bottle/WorldEditState.h"
 #include "../bottle/WorldCell.h"
 #include "../bottle/WorldGrid.h"
-#include "../bottle/GodCamScript.h"
+#include "../bottle/RTSCamScript.h"
 #include "../bottle/BottleScript.h"
 #include "../bottle/W25Config.h"
 #include "../bottle/Tile25Spec.h"
@@ -85,7 +85,7 @@ void BottleScript::onStart() {
   //*Camera.  This must come first before world - because we use it
   BRLogInfo("Creating the RTS camera.");
   _pRTSCam = CameraNode::create(getScene()->getWindow()->getViewport());
-  std::shared_ptr<GodCamScript> css = std::make_shared<GodCamScript>();
+  std::shared_ptr<RTSCamScript> css = std::make_shared<RTSCamScript>();
   _pRTSCam->addComponent(css);
   getScene()->setActiveCamera(_pRTSCam);
   getScene()->attachChild(_pRTSCam);
@@ -673,7 +673,7 @@ void WorldSelect::gatherWorlds() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       _pCongaRoom->getScene()->getActiveCamera()->getViewport()->getWidth(), _pCongaRoom->getScene()->getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(Gu::getPackage()->makeAssetPath("textures", "test_tex3.png"));
+    _pTex = Gu::getTexCache()->getOrLoad(TexFile("Test tex", Gu::getPackage()->makeAssetPath("textures", "test_tex3.png")));
   }
 
   string_t gsd = _pCongaRoom->getGameSaveDir();

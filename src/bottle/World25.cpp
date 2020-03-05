@@ -329,7 +329,7 @@ void World25::makeSky() {
   _pSkyAtlas->addImage(2, Gu::getPackage()->makeAssetPath("textures", "tx-sb-side.png")); //-s0
   _pSkyAtlas->addImage(3, Gu::getPackage()->makeAssetPath("textures", "tx-sb-bot.png"));  //bot
   _pSkyAtlas->compileFiles(true, true);
-  _pSkyAtlas->oglSetFilter(TexFilter::e::Linear);
+  _pSkyAtlas->setFilter(TexFilter::e::Linear);
   _pSkyBox->init(_pSkyAtlas, 400, true);
 }
 void World25::makeShaders() {
@@ -436,7 +436,7 @@ void World25::updateAndCopyVisibleObjects(float delta, std::multimap<float, std:
 }
 void World25::updateHandCursorAndAddToRenderList(float delta) {
   std::shared_ptr<CameraNode> bc = getScene()->getActiveCamera();
-  vec2 v = Gu::getInputManager()->getMousePos();
+  vec2 v = this->getScene()->getInput()->getMousePos();
   Ray_t pr = bc->projectPoint2(v);
 
   ////if (_pHandCursor) {

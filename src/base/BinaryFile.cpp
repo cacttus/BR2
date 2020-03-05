@@ -8,186 +8,85 @@
 #include "../base/DiskFile.h"
 
 namespace BR2 {
-BinaryFile::BinaryFile() :
-  iFilePos(0) {
+
+#pragma region BinaryFile:Methods
+BinaryFile::BinaryFile(string_t file_version) {
+  _strFileVersion = file_version;
 }
-BinaryFile::BinaryFile(size_t buffer_size) :
-  iFilePos(0) {
+BinaryFile::BinaryFile(string_t file_version, size_t buffer_size) : BinaryFile(file_version) {
   _data.alloca(buffer_size);
 }
 BinaryFile::~BinaryFile() {
   _data.dealloc();
 }
-//char* BinaryFile::ptr() { return getBuffer(); }
-
-//********WRITE***********
-//********WRITE***********
-//********WRITE***********
-//void BinaryFile::writeInt32(int32_t in)
-//{
-//    *((int32_t*)getBuffer()) = in;
-//    iFilePos += sizeof(int32_t);
-//}
-//void BinaryFile::writeString(t_string& in)
-//{
-//    memcpy((void*)in.c_str(), (void*)getBuffer(), in.length());
-//    iFilePos += in.length();
-//}
-//void BinaryFile::writeByte(t_byte in)
-//{
-//    *((t_byte*)getBuffer()) = in;
-//    iFilePos += sizeof(t_byte);
-//}
-//void BinaryFile::writeBytes(t_byte* in, size_t length)
-//{
-//    if (iFilePos + length > _data.count())
-//        BroThrowException("The buffered file tried to write too much data.");
-//
-//    memcpy((void*)in, (void*)((char*)getBuffer() + iFilePos), length);
-//    iFilePos += length;
-//}
-
-
-
-
-//*******READ********
-//*******READ********
-//*******READ********
-//int32_t BinaryFile::readFloat() {
-//    float data = *((float*)getBuffer());
-//
-//    iFilePos += sizeof(float);
-//
-//    return data;
-//}
-//int32_t BinaryFile::readInt32(){
-//    int32_t data = *((int32_t*)getBuffer());
-//
-//    iFilePos += sizeof(int32_t);
-//
-//    return data;
-//}
-//t_string BinaryFile::readString(size_t length){
-//    t_string data = t_string((char*)getBuffer(), length);
-//
-//    iFilePos += length;
-//
-//    return data;
-//}
-//t_byte BinaryFile::readByte(){
-//    int8_t data = *((t_byte*)getBuffer());
-//
-//    iFilePos += sizeof(t_byte);
-//
-//    return data;
-//}
-
-//OutSize = size of output buffer we're copying to
-//readCount - number of bytes we're reading from this BinaryFile.
 void BinaryFile::validateRead(size_t outSize, size_t readCount) {
-  //AssertOrThrow2(getBuffer() != NULL);
-  //AssertOrThrow2(iFilePos < getBufferSize());
-
-  //size_t offSize = readCount;
-  //size_t outBufSize = outSize;
-  //if (outSize < readCount)
-  //{
-  //    BroThrowException(
-  //        "Buffer read overrun. Input buffer of size "
-  //        , outSize
-  //        , " could not hold file of size "
-  //        , getBufferSize()
-  //    );
-  //}
-
-  //size_t myOff = iFilePos + readCount;
-  //if (myOff > getBufferSize())
-  //{
-  //    BroThrowException("Buffer read overrun. Tried to read past end of buffer.");
-  //}
 }
-//void BinaryFile::readToEnd(StaticBuffer* pbuf)
-//{
-//    AssertOrThrow2(pbuf != NULL);
-//    size_t iReadCount = getBuffe r()->byteSize() - iFilePos;
-//
-//    //Handles most validation
-//    validateRead(pbuf->byteSize(), iReadCount);
-//
-//    readBytes(pbuf->ptr(), pbuf->byteSize(), iReadCount);
-//}
-/**
-*    @fn readBytes
-*    @brief Read some bytes from the file in the buffer.
-*    @param din [out] - pointer to a data buffer to
-*    @param in_sz size of the input buffer din
-*    @param read_sz number of bytes to read.
-*/
-//void BinaryFile::readBytes(void* pOutBuf, size_t in_sz, size_t read_sz)
-//{
-//    //Handles most validation
-//    validateRead(in_sz, read_sz);
-//
-//    char* pMyPtr = getBufferPtrOff(iFilePos);
-//
-//    memcpy_s(pOutBuf, in_sz, pMyPtr, read_sz);
-//
-//    iFilePos += read_sz;
-//}
-// - Rewind the file pointer
-void BinaryFile::rewind() { iFilePos = 0; }
-
-// - Return true if the file is at eof.
-bool BinaryFile::eof() { return iFilePos >= _data.count() || iFilePos == -1; }
-
-// - returns 0 on EOF
-// - Eat Whitespace (ALSO EATS \n, \r and spaces!!!)
+void BinaryFile::rewind() {
+  // - Rewind the file pointer
+  iFilePos = 0;
+}
+bool BinaryFile::eof() {
+  // - Return true if the file is at eof.
+  return (iFilePos >= _data.count()) || (iFilePos == -1);
+}
 bool BinaryFile::eatWs() {
-  while (StringUtil::isWs(at()))    // is char is alphanumeric
-    if (get() == -1)
+  // - returns 0 on EOF
+  // - Eat Whitespace (ALSO EATS \n, \r and spaces!!!)
+  while (StringUtil::isWs(at())) {  // is char is alphanumeric
+    if (get() == -1) {
       return 0;    // inc pointer
+    }
+  }
 
   return 1;
 }
-// - same as eatWs except it returns at newline.
 bool BinaryFile::eatWsExceptNewline() {
-  while (StringUtil::isWsExceptNewline(at()))    // is char is alphanumeric
-    if (get() == -1)
+  // - same as eatWs except it returns at newline.
+  while (StringUtil::isWsExceptNewline(at())) {   // is char is alphanumeric
+    if (get() == -1) {
       return 0;    // inc pointer
+    }
+  }
 
   return 1;
 }
-// - Eats the line past the carraige return
-//
 bool BinaryFile::eatLine() {
-  if (!eatTo('\n')) return 0;
+  // - Eats the line past the carraige return
+  if (!eatTo('\n')) {
+    return 0;
+  }
 
-  while ((at() == '\r') || (at() == '\n'))
+  while ((at() == '\r') || (at() == '\n')) {
     get();
+  }
 
   return 1;
 }
-// - eats until character (increments buffer pointer)
 bool BinaryFile::eatTo(int8_t k) {
+  // - eats until character (increments buffer pointer)
   int8_t c;
-  while ((c = at()) != k)
-    if (get() == -1) return 0;    // inc pointer
+  while ((c = at()) != k) {
+    if (get() == -1) return 0; {   // inc pointer
+    }
+  }
 
   return 1;
 }
-//- Return the next whitespace separated token
 string_t BinaryFile::getTok() {
+  //- Return the next whitespace separated token
   string_t ret;
 
-  if (!eatWs())
+  if (!eatWs()) {
     return ret;
+  }
 
   int8_t c = at();
   while (!StringUtil::isWs(at()) && !eof()) {
     c = get();
 
-    if (c == -1)
+    if (c == -1) {
       return ret;//eof
+    }
 
     ret.append(1, c);
   }
@@ -202,35 +101,40 @@ string_t BinaryFile::getTokSameLineOrReturnEmpty() {
     return ret;
 
   int8_t c = at();
-  if (c == '\n')
+  if (c == '\n') {
     return "";
+  }
 
   while (!StringUtil::isWs(at()) && !eof()) {
     c = get();
 
-    if (c == -1)
+    if (c == -1) {
       return ret;//eof
+    }
 
     ret += c;
   }
 
   return ret;
 }
-// returns character at pos
 int8_t BinaryFile::at() {
-  if (eof())
+  // returns character at pos
+  if (eof()) {
     return -1;
+  }
   return (int8_t)(*(getData().ptr() + iFilePos));
 }
 int8_t  BinaryFile::at(t_filepos _pos) {
-  if (eof())
+  if (eof()) {
     return -1;
+  }
   return (int8_t)(*(getData().ptr() + _pos));
 }
 // Returns a character or also file_eof
 int32_t BinaryFile::get() {
-  if (iFilePos == -1 || iFilePos == getData().count())
+  if (iFilePos == -1 || iFilePos == getData().count()) {
     return (int32_t)(iFilePos = -1);
+  }
   return (int32_t)(*(getData().ptr() + iFilePos++));
 }
 bool BinaryFile::loadFromDisk(string_t fileLoc, bool bAddNull) {
@@ -271,13 +175,6 @@ bool BinaryFile::loadFromDisk(string_t fileLoc, size_t offset, int64_t length, b
 
   return true;
 }
-
-
-//size_t BinaryFile::getSize()
-//{
-//    AssertOrThrow2(getBuffer() != NULL);
-//    return getBufferSize();
-//}
 std::string BinaryFile::toString() {
   std::string ret = "";
   if (!_data.isAllocated() || _data.count() <= 0) {
@@ -290,7 +187,20 @@ std::string BinaryFile::toString() {
   delete[] b2;
   return ret;
 }
-//////////////////////////////////////////////////////////////////////////
+bool BinaryFile::writeToDisk(string_t fileLoc) {
+  if (FileSystem::SDLFileWrite(fileLoc, _data.ptr(), _data.count()) == 0) {
+    return true;
+  }
+  return false;
+  //DiskFile df;
+  //df.openForWrite(DiskLoc(fileLoc), FileWriteMode::Truncate);
+  //df.write((char*)_data.ptr(), _data.count());
+  //df.close();
+}
+#pragma endregion
+
+#pragma region BinaryFile:Read
+
 void BinaryFile::readBool(bool& val, size_t offset) {
   int8_t b;
   readByte(b, offset);
@@ -399,7 +309,20 @@ RetCode BinaryFile::read(const char* buf, size_t count, size_t bufcount, size_t 
 
   return GR_OK;
 }
-//////////////////////////////////////////////////////////////////////////
+bool BinaryFile::readVersion() {
+  std::string version;
+  readString(version);
+
+  if (!StringUtil::equals(_strFileVersion, version)) {
+    BRLogError("Binary file version '" + version + "' did not match expected version '" + _strFileVersion + "'.");
+    Gu::debugBreak();
+    return false;
+  }
+  return true;
+}
+#pragma endregion
+
+#pragma region BinaryFile:Write
 void BinaryFile::writeBool(bool&& val, size_t offset) {
   int8_t b = (val > 0) ? 1 : 0;
   writeByte(std::move(b), offset);
@@ -503,19 +426,12 @@ RetCode BinaryFile::write(const char* buf, size_t count, size_t bufcount, size_t
 
   return GR_OK;
 }
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-bool BinaryFile::writeToDisk(string_t fileLoc) {
-  if (FileSystem::SDLFileWrite(fileLoc, _data.ptr(), _data.count()) == 0) {
-    return true;
-  }
-  return false;
-  //DiskFile df;
-  //df.openForWrite(DiskLoc(fileLoc), FileWriteMode::Truncate);
-  //df.write((char*)_data.ptr(), _data.count());
-  //df.close();
+
+void BinaryFile::writeVersion() {
+  writeString(std::move(_strFileVersion));
 }
+
+#pragma endregion
 
 
 }//ns game

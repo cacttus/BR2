@@ -540,16 +540,20 @@
     <ClCompile Include="src\bottle\BlockNode.cpp">
       <Filter>bottle</Filter>
     </ClCompile>
-    <ClCompile Include="src\world\Script.cpp" />
-    <ClCompile Include="src\world\CSharpScript.cpp" />
     <ClCompile Include="src\bottle\BottleScript.cpp">
-      <Filter>bottle</Filter>
-    </ClCompile>
-    <ClCompile Include="src\bottle\GodCamScript.cpp">
       <Filter>bottle</Filter>
     </ClCompile>
     <ClCompile Include="src\math\MathUtils.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\CSharpScript.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\Script.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bottle\RTSCamScript.cpp">
+      <Filter>bottle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1198,12 +1202,16 @@
     <ClInclude Include="src\bottle\BottleHeader.h">
       <Filter>bottle</Filter>
     </ClInclude>
-    <ClInclude Include="src\world\CSharpScript.h" />
-    <ClInclude Include="src\world\Script.h" />
     <ClInclude Include="src\bottle\BottleScript.h">
       <Filter>bottle</Filter>
     </ClInclude>
-    <ClInclude Include="src\bottle\GodCamScript.h">
+    <ClInclude Include="src\world\CSharpScript.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Script.h">
+      <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\RTSCamScript.h">
       <Filter>bottle</Filter>
     </ClInclude>
   </ItemGroup>

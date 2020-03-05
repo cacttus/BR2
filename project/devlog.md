@@ -1,5 +1,24 @@
 
 # Mine City Devlog
+*3/5/20*
+
+* Updated Log**Cycle to force it to log the first time it is run.
+* Added async logging back in (previous commit botched).
+* Fixed logging bug where GU was getting called in the asynchronous loop.
+* Fixed MegaTex to re-compile when it gets changed.  This makes creating the UI a LOT easier.
+* Fixed UI
+* Implemented Named Textures for easier debugging
+* Added automatic file version to BinaryFile.
+* Fixed error ambiguity when loading textures
+* **We need to fix MtTex, and UiTexs texture attributes due to loading**
+* Finished implementing Window-Centric InputManager 
+	* Each window now has its own input.  No more Gu::getInputManager
+* Added a "global" input manager to capture input from every window, note, mouse cursor position doesn't make sense in global input...'
+* Fixed bugs with input in GraphicsApi
+* World renders correctly!
+* Renamed GodCam(script) to RTSCamScript
+* TODO: currently there is a bug where FlyingCameraControls are conflicting with RTSCam
+
 
 *3/4/20*
 
@@ -21,7 +40,7 @@
 	* Mob->Mbi convert correctly now.
 * Commented out GameUi - it was just too much for right now.
 * PhysicsNode::attachChild needs to be moved to after root attachment.  Currently there is a bug where adding a point light to the hover box throws an exception, since 
-the physics manager is not found.  This is because it's trying to run its start code when it is not rooted to the window, or even the Scene.
+the physics manager is not found.  This is because it's trying to run its start code when it is not rooted tffo the window, or even the Scene.
 
 *3/3/20*
 

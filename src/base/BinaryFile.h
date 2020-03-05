@@ -1,5 +1,8 @@
-//5/22/2010
-
+/**
+*  @file BinaryFile.h
+*  @date 5/22/2010
+*  @author MetalMario971
+*/
 #pragma once
 #ifndef __BUFFERED_FILE_H__
 #define __BUFFERED_FILE_H__
@@ -15,15 +18,15 @@ namespace BR2 {
 *  @class BinaryFile
 *  @brief Binary parsed file which is loaded into a static buffer in memory via the memory manager.
 */
-class BinaryFile : public VirtualMemory { 
+class BinaryFile : public VirtualMemory {
 public:
-    enum { file_eof = -1 };
-    typedef int32_t t_filepos;
+  enum { file_eof = -1 };
+  typedef int32_t t_filepos;
 public:
   Allocator<char>& getData() { return _data; }
 
-  BinaryFile();
-  BinaryFile(size_t buffer_size);
+  BinaryFile(string_t file_version);
+  BinaryFile(string_t file_version, size_t buffer_size);
   virtual ~BinaryFile() override;
 
   void reallocBuffer(size_t i) { _data.alloca(i); }
@@ -41,6 +44,7 @@ public:
   bool eatLine();    // - Eats past \n and \r
   bool eatTo(int8_t c);
   bool eof();
+  string_t getVersion() { return _strFileVersion; }
 
   // - Read
   void readBool(bool& val, size_t offset = memsize_max);
@@ -57,6 +61,7 @@ public:
   void readString(std::string& val, size_t offset = memsize_max);
   void readMat4(mat4& val, size_t offset = memsize_max);
   void read(const char* buf, size_t bufsiz, size_t offset = memsize_max);
+  bool readVersion();
 
   void writeBool(bool&& val, size_t offset = memsize_max);
   void writeVec2(vec2&& val, size_t offset = memsize_max);
@@ -71,6 +76,7 @@ public:
   void writeFloat(const float&& val, size_t offset = memsize_max);
   void writeString(std::string&& val, size_t offset = memsize_max);
   void writeMat4(mat4&& val, size_t offset = memsize_max);
+  void writeVersion();
 
   void write(const char* buf, size_t bufsiz, size_t offset = memsize_max);
 
@@ -80,13 +86,15 @@ public:
   bool writeToDisk(string_t fileLoc);        // - Read a part of the file.
 
   std::string toString();
-private:
-    Allocator<char> _data;
-    size_t iFilePos;
 
-    void validateRead(size_t outSize, size_t readCount);
-    RetCode read(const char* buf, size_t count, size_t bufcount, size_t offset);
-    RetCode write(const char* buf, size_t count, size_t bufcount, size_t offset);
+private:
+  Allocator<char> _data;
+  size_t iFilePos = 0;
+  string_t _strFileVersion = "<not_set>";
+
+  void validateRead(size_t outSize, size_t readCount);
+  RetCode read(const char* buf, size_t count, size_t bufcount, size_t offset);
+  RetCode write(const char* buf, size_t count, size_t bufcount, size_t offset);
 };
 
 }//ns game

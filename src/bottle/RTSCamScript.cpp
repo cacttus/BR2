@@ -4,17 +4,17 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderViewport.h"
 #include "../base/TouchInfo.h"
-#include "../bottle/GodCamScript.h"
+#include "../bottle/RTSCamScript.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../bottle/BottleUtils.h"
 
 namespace BR2 {
-GodCamScript::GodCamScript() {
+RTSCamScript::RTSCamScript() {
 }
-GodCamScript::~GodCamScript() {
+RTSCamScript::~RTSCamScript() {
 }
-void GodCamScript::onStart() {
+void RTSCamScript::onStart() {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (cam == nullptr) {
     BRLogError("Script could not start, object node was not set.");
@@ -27,18 +27,23 @@ void GodCamScript::onStart() {
   _vLookAt.construct(0, 0, 0);
   updateCameraPosition(cam);
 }
-void GodCamScript::onUpdate(float dt) {
+void RTSCamScript::onUpdate(float dt) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (!cam) {
     return;
   }
-
   updateRotateAndZoom(cam, dt);
-  updateTouches(cam, Gu::getInputManager(), dt);
+  std::shared_ptr<InputManager> im = getNode()->getInput();
+  if (im) {
+    updateTouches(cam, getNode()->getInput(), dt);
+  }
+  else {
+    BRLogErrorCycle("Node input could not be found.");
+  }
 }
-void GodCamScript::onExit() {
+void RTSCamScript::onExit() {
 }
-void GodCamScript::updateTouches(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float dt) {
+void RTSCamScript::updateTouches(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float dt) {
   ButtonState::e eLmb = pFingers->getLmbState();
   ButtonState::e eRmb = pFingers->getRmbState();
   vec2 vMouse = pFingers->getMousePos();
@@ -95,7 +100,7 @@ void GodCamScript::updateTouches(std::shared_ptr<CameraNode> cam, std::shared_pt
 //        _bUnsnapY = _bUnsnapX = false;
 //    }
 //}
-void GodCamScript::userRotateAndZoom(std::shared_ptr<CameraNode> cam, vec2& v, vec2& vMouse, vec2& vLast, float perUnitRotationRads, float perUnitZoom) {
+void RTSCamScript::userRotateAndZoom(std::shared_ptr<CameraNode> cam, vec2& v, vec2& vMouse, vec2& vLast, float perUnitRotationRads, float perUnitZoom) {
   //Calculate snap controls - so that clicking the user doesn't incidedntally rotate/zoom the camera.
   vec2 vdelta = _curTouchRmb.getMousePosPress() - vMouse;
   float fZoomControlY = cam->getViewport()->getHeight() * 0.07f; //1%
@@ -121,7 +126,7 @@ void GodCamScript::userRotateAndZoom(std::shared_ptr<CameraNode> cam, vec2& v, v
     _fZoomVel = MathUtils::brClamp(_fZoomVel, _fZoomVelMin, _fZoomVelMax);
   }
 }
-void GodCamScript::updateRotateAndZoom(std::shared_ptr<CameraNode> cam, float delta) {
+void RTSCamScript::updateRotateAndZoom(std::shared_ptr<CameraNode> cam, float delta) {
   float stop_e = 0.000001f;
 
   if (_fRotationVel * _fRotationVel > 0.0f) {
@@ -144,7 +149,7 @@ void GodCamScript::updateRotateAndZoom(std::shared_ptr<CameraNode> cam, float de
     }
   }
 }
-void GodCamScript::doRotate(std::shared_ptr<CameraNode> cam, float dRot) {
+void RTSCamScript::doRotate(std::shared_ptr<CameraNode> cam, float dRot) {
   mat4 rot = mat4::getRotationRad(dRot, vec3(0, 1, 0));
 
   vec3 origPos = cam->getPos();
@@ -160,7 +165,7 @@ void GodCamScript::doRotate(std::shared_ptr<CameraNode> cam, float dRot) {
   updateCameraPosition(cam); // Recalc the camera position.
   //updateCameraFollow();
 }
-void GodCamScript::doRotateZ(std::shared_ptr<CameraNode> cam, float dRot) {
+void RTSCamScript::doRotateZ(std::shared_ptr<CameraNode> cam, float dRot) {
   vec3 rn = cam->getRightNormal();
 
   mat4 rot = mat4::getRotationRad(dRot, rn);
@@ -178,13 +183,13 @@ void GodCamScript::doRotateZ(std::shared_ptr<CameraNode> cam, float dRot) {
   updateCameraPosition(cam); // Recalc the camera position.
                           //updateCameraFollow();
 }
-void GodCamScript::doZoom(std::shared_ptr<CameraNode> cam, float amt) {
+void RTSCamScript::doZoom(std::shared_ptr<CameraNode> cam, float amt) {
   float fZoomVal = 3.0;
   _fCamDist -= amt * fZoomVal;
 
   updateCameraPosition(cam); // Recalc the camera position.
 }
-void GodCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
+void RTSCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
   if (_fCamDist >= _fCamDistMax) {
     _fCamDist = _fCamDistMax;
   }
@@ -197,7 +202,7 @@ void GodCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
   cam->setLookAt(std::move(_vLookAt));
 }
 
-void GodCamScript::moveCameraWSAD(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float delta) {
+void RTSCamScript::moveCameraWSAD(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float delta) {
   //**Camera
   //Damp Slows us a bit when we zoom out.
   float damp = fabsf(_fCamDist) * 0.001f;
@@ -270,7 +275,7 @@ void GodCamScript::moveCameraWSAD(std::shared_ptr<CameraNode> cam, std::shared_p
   }
   updateCameraPosition(cam);
 }
-void GodCamScript::setTarget(std::shared_ptr<CameraNode> cam, vec3& v) {
+void RTSCamScript::setTarget(std::shared_ptr<CameraNode> cam, vec3& v) {
   _vLookAt = v;
   updateCameraPosition(cam);
 }

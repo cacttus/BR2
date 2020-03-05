@@ -29,7 +29,6 @@ class PhysicsNode : public SceneNode {
 public:
   PhysicsNode(std::shared_ptr<PhysicsSpec>);
   virtual ~PhysicsNode();
-  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild) override;
 
   std::shared_ptr<GridManifold> getManifold() { return _pManifold; }
   void setTemps(vec3& vAccel, uint64_t frameId);
@@ -67,6 +66,10 @@ public:
   //void setAccelleration(vec3& v) { _vAccel = v; }
   void validateSanePhysics();
   //void unstickFrom(Phy25* other);
+
+  virtual void afterAddedToScene(std::shared_ptr<Scene> scene) override;
+  virtual void afterRemovedFromScene(std::shared_ptr<Scene> scene) override;
+
 protected:
   virtual void init() override;
 

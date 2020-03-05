@@ -11,13 +11,19 @@
 #include "../gfx/GfxHeader.h"
 
 namespace BR2 {
+class TexFile {
+public:
+  string_t _name;
+  string_t _loc;
+  TexFile(string_t loc);
+  TexFile(string_t name, string_t loc);
+};
 /**
 *  @class TexCache
 *  @brief Caches loaded textures.
 */
 class TexCache : public VirtualMemory {
 public:
-
   ///Initialize in CPP file
   static const std::string WorldGrass;
   static const std::string WorldDirt;
@@ -35,9 +41,7 @@ public:
 
   TexCache(std::shared_ptr<GLContext> ctx);
   virtual ~TexCache() override;
-  std::shared_ptr<Texture2DSpec> getOrLoad(std::string texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
-  std::vector<std::shared_ptr<Texture2DSpec>> getOrLoad(std::vector<std::string> texName, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
-  //void bindIfDifferent(std::shared_ptr<Texture2DSpec> tex);
+  std::shared_ptr<Texture2DSpec> getOrLoad(TexFile tc, bool bIsGenerated = false, bool bRepeatU = false, bool bRepeatV = false);
   bool add(string_t name, std::shared_ptr<Texture2DSpec> ss, bool bErrorIfFound = true);
   std::shared_ptr<Texture2DSpec> addAsGeneratedImage(string_t name, const std::shared_ptr<Img32> ss);
   GLuint getDummy1x1TextureCube() { return _i1x1DummyCubeTexture; }

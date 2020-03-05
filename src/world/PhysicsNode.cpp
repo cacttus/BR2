@@ -32,22 +32,30 @@ void PhysicsNode::setVelocity(vec3& v) {
   _vVelocity = v;
   //Don't update anything here. we set this often.
 }
-std::shared_ptr<TreeNode> PhysicsNode::attachChild(std::shared_ptr<TreeNode> pChild) {
-  //Should move this to "afterChildInserted
-  if (std::dynamic_pointer_cast<PhysicsNode>(pChild) != nullptr) {
-    std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(getThis<SceneNode>());
-    //*Make sure the node is not in the scene.
-    physics->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
-  }
-  else {
-    //This is not an error - like ArmatureNode will come here it's not a physicsnode.
-    //THis is just an extra safe check I guess
-    //cast fail
-//    Gu::debugBreak();
-  }
-  return TreeNode::attachChild(pChild);
-}
 
+void PhysicsNode::afterAddedToScene(std::shared_ptr<Scene> scene) {
+  //Should move this to "afterChildInserted
+
+  SceneNode::afterAddedToScene(scene);
+
+// I think this method prevented PhysicsWorld from operating on root nodes (that have components) not every scenenode in the hierarhcy
+// TODO: PhysicsWorld should only operate on Shape Components anyway..
+
+//  if (std::dynamic_pointer_cast<PhysicsNode>(pChild) != nullptr) {
+//    std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(getThis<SceneNode>());
+//    //*Make sure the node is not in the scene.
+//    physics->tryRemoveObj(std::dynamic_pointer_cast<PhysicsNode>(pChild));
+//  }
+//  else {
+//    //This is not an error - like ArmatureNode will come here it's not a physicsnode.
+//    //THis is just an extra safe check I guess
+//    //cast fail
+////    Gu::debugBreak();
+//  }
+}
+void PhysicsNode::afterRemovedFromScene(std::shared_ptr<Scene> scene) {
+
+}
 void PhysicsSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   BaseSpec::serialize(fb);
 }

@@ -78,6 +78,11 @@ void UiDragInfo::update(std::shared_ptr<InputManager> pFingers) {
 }
 
 #pragma region uDim
+float uDim::px(float p) {
+  _eDimUnit = UiDimUnit::e::Pixel;
+  _units = p;
+  return _units;
+}
 bool UiParser::parseSize(std::string cssSize, float& __out_ fsize, UiDimUnit::e& __out_ eunit) {
   std::string num;
   std::string unit;

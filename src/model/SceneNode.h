@@ -69,16 +69,10 @@ class SceneNode : public TreeNode {
 public:
   SceneNode(std::shared_ptr<BaseSpec>);
   virtual ~SceneNode() override;
-  void show() { _bHidden = false; }
-  void hide() { _bHidden = true; }
-  bool isHidden() { return _bHidden; }
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
-  void compileWorldMatrix();
   virtual void calcBoundBox();
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad);
-  void setBoneParent(std::shared_ptr<BoneNode> bn) { _pBoneParent = bn; }
-  std::shared_ptr<BoneNode> getBoneParent() { return _pBoneParent; }
 
   virtual void afterAddedToScene(std::shared_ptr<Scene> scene);
   virtual void afterRemovedFromScene(std::shared_ptr<Scene> scene);
@@ -92,43 +86,29 @@ public:
   virtual void drawUI(RenderParams& rp) override {}
 
   void addComponent(std::shared_ptr<Component> comp);
+  void compileWorldMatrix();
 
-  template < typename Tx > std::shared_ptr<Tx> getData() {
-    return std::dynamic_pointer_cast<Tx>(_pSpec);
-  }
-  NodeId getId() { return _iNodeId; }
-  OBB* getOBB() { return _pOBB; }
-  Box3f* getBoundBoxObject() { return _pBox; }
-  const vec3& getPos() { return _vPos; }
-  void setPos(const vec3&& p) {
-    _vLastPos = _vPos;
-    _vPos = p;
-    _bTransformChanged = true;
-  }
-  vec3 getViewNormal() { return _vViewNormal; }
-  void setViewNormal(vec3& p) {
-    _vViewNormal = p;
-    _bTransformChanged = true;
-  }
-  void setScale(vec3& v) {
-    _vScale = v;
-    _bTransformChanged = true;
-  }
-  vec3 getScale() { return _vScale; }
-
-  bool getTransformChanged() { return _bTransformChanged; }
-  //  void resetTransformChanged() { _bTransformChanged = false; }
-
-  void setRot(vec4&& axis_angle_radians) {
-    _vRotationNormal = axis_angle_radians.xyz();
-    _fRotation = axis_angle_radians.w;
-  }
   std::shared_ptr<Scene> getScene();
-  std::shared_ptr<BaseSpec> getSpec() { return _pSpec; }
-  mat4& getLocal() { return _mLocal; }
-  mat4& getWorld() { return _mWorld; }
-  mat4& getAnimated() { return _mAnimated; }
-  //mat4& getFinal() {return _mFinal;}
+  std::shared_ptr<InputManager> getInput(); 
+  NodeId getId();
+  OBB* getOBB();
+  Box3f* getBoundBoxObject();
+  const vec3& getPos();
+  void setPos(const vec3&& p);
+  vec3 getViewNormal();
+  void setViewNormal(vec3& p);
+  void setScale(vec3& v);
+  vec3 getScale();
+  bool getTransformChanged();
+  void setRot(vec4&& axis_angle_radians);
+  std::shared_ptr<BaseSpec> getSpec();
+  mat4& getLocal();
+  mat4& getWorld();
+  mat4& getAnimated();
+  vec3 getVelocity();
+  void setVelocity(vec3& vel);
+  void setBoneParent(std::shared_ptr<BoneNode> bn);
+  std::shared_ptr<BoneNode> getBoneParent();
   bool isMeshNode();
   bool isBoneNode();
   bool isArmatureNode();
@@ -138,6 +118,11 @@ public:
   bool isCameraNode();
   string_t getSpecName();
   Hash32 getSpecNameHashed();
+  vec3 getFinalPos();
+  void show();
+  void hide();
+  bool isHidden();
+
   void drawBoxes(std::shared_ptr<UtilMeshInline> mi);
   void drawBox(std::shared_ptr<UtilMeshInline> mi);
   void drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_ptr<UtilMeshInline> mi);
@@ -145,12 +130,10 @@ public:
   void drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi);
   //void addShadowInfluence(std::shared_ptr<ShadowBox> psb);
   //void clearShadowInfluences();
-  vec3 getFinalPos();
   void collect(std::shared_ptr<RenderBucket> rb);
-  template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node);
 
-  vec3 getVelocity() { return _velocity; }
-  void setVelocity(vec3& vel) { _velocity = vel; }
+  template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node);
+  template < typename Tx > std::shared_ptr<Tx> getData() {return std::dynamic_pointer_cast<Tx>(_pSpec);}
 
 protected:
   void setLocalBind();
@@ -160,8 +143,6 @@ protected:
   virtual void init();
 protected:
   std::vector<std::shared_ptr<Component>> _vecComponents;
-
-
   std::shared_ptr<BaseSpec> _pSpec = nullptr;
   Box3f* _pBox = nullptr;
   OBB* _pOBB = nullptr;

@@ -8,10 +8,11 @@
 #include "../gfx/TexCache.h"
 
 namespace BR2 {
-Atlas::Atlas(std::shared_ptr<GLContext> ct, string_t na, ivec2& ivGridSize) : _strName(na), Texture2DSpec(ct) {
+Atlas::Atlas(std::shared_ptr<GLContext> ct, string_t na, ivec2& ivGridSize) : Texture2DSpec(na, ct) {
   _vGridSize = ivGridSize; //_pSpriteMap->getGridDimensions();
 }
-Atlas::Atlas(std::shared_ptr<GLContext> ct, string_t na, ivec2& viSpriteSize, string_t strImageLoc) : _strName(na), Texture2DSpec(ct), _strPrecompileFileLocation(strImageLoc) {
+Atlas::Atlas(std::shared_ptr<GLContext> ct, string_t na, ivec2& viSpriteSize, string_t strImageLoc) : Texture2DSpec(na, ct) {
+  _strPrecompileFileLocation = strImageLoc;
   _vSpriteSize = viSpriteSize;
   //_vGridSize = ivGridSize; //_pSpriteMap->getGridDimensions();
 }
@@ -39,10 +40,8 @@ std::shared_ptr<Img32> Atlas::tryGetCachedImage() {
   t_timeval t0 = Gu::getMicroSeconds();
   BRLogInfo("Loading cached image '" + getCachedImageFilePath() + "'...");
   {
-
     greatestDependencyModifyTime = cacheGetGreatestModifyTimeForAllDependencies();
     cachedImageModifyTime = FileSystem::getLastModifyTime(cachedImageLoc);
-
 
     if (greatestDependencyModifyTime <= cachedImageModifyTime) {
       bi = Gu::loadImage(cachedImageLoc);
@@ -75,7 +74,7 @@ time_t Atlas::cacheGetGreatestModifyTimeForAllDependencies() {
     if (ite->second->getIsGenerated() == false) {
       //  spriteFileLoc = getAtlasSpriteFullpath(ite->second);
       if (FileSystem::fileExists(strPath) == false) {
-        BRLogError(_strName + " atlas file '" + strPath + "' does not exist.");
+        BRLogError(getName() + " atlas file '" + strPath + "' does not exist.");
         Gu::debugBreak();
         return 0;
       }
@@ -137,7 +136,7 @@ void Atlas::compileFiles(bool bMipmaps, bool saveAndLoad) {
   std::shared_ptr<Img32> sp = nullptr;
 
   //OKAY SO THE PROBLEM HERE IS THE SPRITES AND VIGRIDPOS DON"T GET SET!
-//   if(saveAndLoad) { 
+//   if(saveAndLoad) {
 //       sp = tryGetCachedImage();
 //   }
 
@@ -146,14 +145,12 @@ void Atlas::compileFiles(bool bMipmaps, bool saveAndLoad) {
     BRLogInfo("Composing image '" + getCachedImageFilePath() + "'...");
     {
       sp = composeImage(saveAndLoad);
-
     }
     BRLogInfo("Finished.." + (uint32_t)((Gu::getMicroSeconds() - t0) / 1000) + "ms");
   }
 
   printInfoAndErrors(sp);
   finishCompile(sp, bMipmaps);
-
 }
 void Atlas::finishCompile(std::shared_ptr<Img32> sp, bool bMipmaps) {
   //Create the texture
@@ -262,7 +259,6 @@ std::shared_ptr<Img32> Atlas::composeImage(bool bCache) {
     Gu::saveImage(strFileName, masterImage);
   }
 
-
   return masterImage;
 }
 string_t Atlas::getCachedImageFilePath() {
@@ -277,7 +273,6 @@ void Atlas::getTCoords(Hash32 emat, vec2* __out_ bl, vec2* __out_ br, vec2* __ou
   getTCoords(&(sp->_viGridPos), bl, br, tl, tr, bHalfPixelPadding);
 }
 void Atlas::getTCoords(ivec2* viGridPos, vec2* __out_ bl, vec2* __out_ br, vec2* __out_ tl, vec2* __out_ tr, bool bHalfPixelPadding) {
-
   //Note: Changes to atlas - The atlas was flipped around.
   float sprW = (float)_vSpriteSize.x / (float)getWidth();
   float sprH = (float)_vSpriteSize.y / (float)getHeight();
@@ -296,7 +291,6 @@ void Atlas::getTCoords(ivec2* viGridPos, vec2* __out_ bl, vec2* __out_ br, vec2*
 
   tr->x = tx + sprW;
   tr->y = ty + sprH;
-
 }
 std::shared_ptr<AtlasSprite> Atlas::getSprite(Hash32 en) {
   ImgMap::iterator it = _mapImages.find(en);
@@ -304,13 +298,11 @@ std::shared_ptr<AtlasSprite> Atlas::getSprite(Hash32 en) {
     return nullptr;
   }
   return it->second;
-
 }
 int32_t Atlas::getLinearTileOffset(Hash32 frameId) {
   std::shared_ptr<AtlasSprite> sp = getSprite(frameId);
   AssertOrThrow2(sp != nullptr);
   int32_t ret = sp->_viGridPos.y * _vGridSize.x + sp->_viGridPos.x;
-
 
   int32_t dbg_x = ret % _vGridSize.x;
   int32_t dbg_y = ret / _vGridSize.x;
@@ -319,7 +311,6 @@ int32_t Atlas::getLinearTileOffset(Hash32 frameId) {
 }
 
 void Atlas::printInfoAndErrors(std::shared_ptr<Img32> sp) {
-
   GLint iMaxTextureSiz;//, maxColorAttachments;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &iMaxTextureSiz);
   //Some atlas infor.
@@ -342,19 +333,5 @@ void Atlas::printInfoAndErrors(std::shared_ptr<Img32> sp) {
   if (sp->getWidth() > iMaxTextureSiz) {
     BRThrowException("Atlas: " + getName() + "The generated texture size is " + sp->getWidth() + ". Your graphics card can't handle texture sizes above " + iMaxTextureSiz + ".  TODO: Implement shrinkage.");
   }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }//ns Game

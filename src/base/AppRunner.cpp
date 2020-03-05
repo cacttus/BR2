@@ -307,7 +307,8 @@ void AppRunner_Internal::loadAppPackage() {
     Gu::setPackage(pack);
   }
   else {
-    BRLogInfo("Package could not be loaded.  Folder not selected, or invalid path.");
+    BRLogWarn("Package could not be loaded.  Folder not selected, or invalid path.");
+    BRLogDebug("We do not yet support packages.");
   }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -324,11 +325,11 @@ void AppRunner::runApp(const std::vector<string_t>& args, std::vector< std::func
   FileSystem::init(args[0]);
 
   //Start logger
-  Gu::createLogger("./logs/");
+  Gu::createLogger("./logs/", args);
 
   _pint->loadAppPackage();
 
-  //**Must come first before other logic
+  //Load Engine Config, and make globals
   Gu::initGlobals(args);
   {
     _pint->initSDLAndCreateGraphicsApi();

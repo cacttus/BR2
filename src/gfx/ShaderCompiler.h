@@ -29,6 +29,7 @@ public:
 
 private:
   typedef std::vector<ShaderIncludeRef> IncludeVec;
+  string_t c_strShaderFileVersion = "0.01";
   std::shared_ptr<GLContext> _pContext = nullptr;
   char** ySrcPtr;    // - The pointer to a the source code.
   ShaderStatus::e _loadStatus;    //for temp errors

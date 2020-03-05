@@ -20,11 +20,11 @@ class StringUtil : public VirtualMemory {
 public:
   StringUtil();
   virtual ~StringUtil() DOES_NOT_OVERRIDE;
-  static int32_t compare(string_t a, string_t b);
+  static int32_t compare(const string_t a, const  string_t b);
   static bool charIsLetterOrNumber(char c);
-  static bool isEmpty(string_t str);
-  static bool isNotEmpty(string_t str);
-  static char* getBufferCopy(string_t str);
+  static bool isEmpty(const string_t str);
+  static bool isNotEmpty(const string_t str);
+  static char* getBufferCopy(const string_t str);
   static string_t createStringFromChars(char* c1, ...);
   static string_t uppercase(const string_t in);
   static string_t lowercase(const  string_t in);

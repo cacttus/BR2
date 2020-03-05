@@ -37,9 +37,43 @@ bool UiSkinElement::setAndValid(std::shared_ptr<UiSkinElement> ele) {
 #pragma  endregion
 
 #pragma region UiTex
-int32_t UiTex::getWidth() { return _pTex->getWidth(); }
-int32_t UiTex::getHeight() { return _pTex->getHeight(); }
-float UiTex::getSizeRatio() { return _pTex->getSizeRatio(); }
+int32_t UiTex::getWidth() {
+
+  //W/H is no longer valid since MtTex is automatically loaded, and compiled (making the UI easier to create).
+  // We need a "peek" funciton, and to store _width, _height on UiTex, such as 
+  // if(_width==-1
+  //  if(pTex == nullptr)
+  //    _width = peekWH(&_width, &_height, texture_Location)
+  //       ..
+  //  else
+  //    _width = _pTex->getWidth()
+  //    _height = _pTex->getHeight()
+  //    _sizeR = _pTex->getSizeRatio()
+
+  if (_pTex) {
+    return _pTex->getWidth();
+  }
+
+  BRThrowNotImplementedException();
+}
+int32_t UiTex::getHeight() {
+  if (_pTex) {
+    return _pTex->getHeight();
+  }
+  //See above
+  BRThrowNotImplementedException();
+
+}
+float UiTex::getSizeRatio() {
+  //See above
+  // w / h
+  if (_pTex) {
+    return _pTex->getSizeRatio();
+  }
+  //See above
+  BRThrowNotImplementedException();
+
+}
 void UiTex::setWrapU(TexWrap::e eWrap) { _pTex->setWrapU(eWrap); }
 void UiTex::setWrapV(TexWrap::e eWrap) { _pTex->setWrapV(eWrap); }
 
