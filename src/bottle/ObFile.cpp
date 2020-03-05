@@ -177,7 +177,7 @@ void ObFile::parseSprites(std::vector<string_t>& tokens) {
 
         //Attempt to find absolute path.  If we can't find, then attempt to append path.
         if (!FileSystem::fileExists(path)) {
-          path = Gu::getPackage()->makeAssetPath("spr", path);
+          path = Gu::getPackage()->makeAssetPath("sprites", path);
         }
         if (FileSystem::fileExists(path)) {
 
@@ -187,7 +187,7 @@ void ObFile::parseSprites(std::vector<string_t>& tokens) {
           files.push_back(path);
         }
         else {
-          files.push_back(Gu::getPackage()->makeAssetPath("spr", "default.png"));
+          files.push_back(Gu::getPackage()->makeAssetPath("sprites", "default.png"));
           BRLogError(name + ": Failed to find Sprite path: '" + path + "'. A default sprite will show.");
           Gu::debugBreak();
         }

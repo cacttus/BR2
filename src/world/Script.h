@@ -19,13 +19,6 @@ public:
   Script();
   virtual ~Script() override;
 
-  //Called after added to node.
-  virtual void onStart() = 0;
-  //Called every *update* frame
-  virtual void onUpdate(float dt) = 0;
-  //Called after removed from node, just before node is destroyed
-  virtual void onExit() = 0;
-
   virtual void onDrawShadow(RenderParams& rp) {}
   virtual void onDrawDeferred(RenderParams& rp) {}
   virtual void onDrawForward(RenderParams& rp) {}
@@ -37,7 +30,6 @@ public:
   virtual void onScreenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) {}
   virtual void onServerPacketReceived(std::shared_ptr<Packet> pack) {}
 
-  virtual void onAddedToNode() override;
 };
 
 }//ns Game

@@ -1,5 +1,8 @@
 # Mine City Task Log
 
+- [ ] Fix the onAddedToNode code to work only when the root scene() has been attached to the Window()
+
+- [ ] (CRITICAL) Deleted the Async Logger on accident.  Add it back (previous checkin).
 
 - [ ] Implement the STL math functions in MathHeader
 

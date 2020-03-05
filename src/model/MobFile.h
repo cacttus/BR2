@@ -141,6 +141,7 @@ public:
 
   string_t getMobDir();
   std::vector<std::shared_ptr<ModelSpec>>& getModelSpecs() { return _vecModelSpecs; }
+  ParentType::e parseParentType(string_t pt);
 private:
   float _fVersion = 0.02f;
 
@@ -148,19 +149,13 @@ private:
   //this as a swet lets us do that.  
   std::set<std::shared_ptr<ModDataLoad>> _setModData;
   std::vector<std::shared_ptr<ModelSpec>> _vecModelSpecs;
-
   std::shared_ptr<ModDataLoad> _pCurModDataLoad = nullptr;
 
   //Inherited
-  virtual void pkp(std::vector<string_t>& tokens);
-  virtual void preLoad();
-  virtual void postLoad();
+  virtual void pkp(std::vector<string_t>& tokens) override;
+  virtual void preLoad() override;
+  virtual void postLoad(bool success) override;
   void cacheObjectsAndComputeBoxes();
-  // ObjDataLoad* _pObjDataLoad = nullptr;
-public:
-  // void load(t_string& strFilePath, bool flipWinding);
-   //std::vector<std::shared_ptr<MeshSpec>>& getMeshSpecs() { return _vecMeshes; }
-  ParentType::e parseParentType(string_t pt);
 };
 
 }//ns Game

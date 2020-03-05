@@ -69,9 +69,10 @@ void MobFile::pkp(std::vector<string_t>& tokens) {
 }
 void  MobFile::preLoad() {
 }
-void  MobFile::postLoad() {
-
-  cacheObjectsAndComputeBoxes();
+void  MobFile::postLoad(bool success) {
+  if (success) {
+    cacheObjectsAndComputeBoxes();
+  }
 }
 string_t MobFile::getMobDir() {
   string_t path = FileSystem::getPathFromPath(this->_fileLoc);

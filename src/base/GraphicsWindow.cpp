@@ -215,8 +215,8 @@ void GraphicsWindow::step() {
 
   if (_pint->_pScene == nullptr) {
     std::shared_ptr<Scene> pscene = Scene::create();
-    pscene->addComponent(std::make_shared<BottleScript>());
     setScene(pscene);
+    pscene->addComponent(std::make_shared<BottleScript>());
   }
 
   _pint->beginRender();

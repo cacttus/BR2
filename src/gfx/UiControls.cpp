@@ -9,6 +9,7 @@
 #include "../base/GraphicsWindow.h"  
 #include "../gfx/TexCache.h"
 #include "../gfx/CameraNode.h"
+#include "../gfx/RenderPipe.h"
 #include "../gfx/RenderViewport.h"  
 #include "../gfx/CameraNode.h"  
 #include "../gfx/FrustumBase.h"
@@ -48,6 +49,9 @@ UiElement::~UiElement() {
 }
 void UiElement::init() {
   setName("UiElement");
+}
+std::shared_ptr<Picker> UiElement::getPicker() {
+  return getScreen()->getWindow()->getRenderPipe()->getPicker();
 }
 std::shared_ptr<UiScreen> UiElement::getScreen() {
   //TODO: we need to pass the Screen to eadch element (and update the nodes when attached, as neceswsary), or, alternatively

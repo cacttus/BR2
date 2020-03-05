@@ -95,8 +95,8 @@ void BottleScript::onStart() {
 
   //Must come after camera created
   constructWorld();
-  _pGameUi = std::make_shared<GameUi>();
-  _pGameUi->constructUI(getThis<BottleScript>());
+  //_pGameUi = std::make_shared<GameUi>();
+  //_pGameUi->constructUI(getThis<BottleScript>());
 
   //Must come last.
  // setDebugMode();
@@ -363,109 +363,109 @@ void BottleScript::drawDebugText() {
   int dy = 16;//Also the font size
   int cy = 0;
 
-  _pGameUi->clearDebugText();
-  if (_bShowDebugText) {
-    size_t nGrids = _pWorld25->getNumGrids();
-    size_t nObjs = _pWorld25->numObjects();
-
-    size_t iVisibleGrids = _pWorld25->getVisibleGrids().size();
-    size_t iVisibleNodes = _pWorld25->getVisibleNodes().size();
-    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-    int32_t nMeshTris = _pWorld25->getMeshTrisFrame();
-    int32_t nQuadTris = _pWorld25->getQuadTrisFrame();
-    size_t nGenGrids = _pWorld25->getNumGridsGenerating();
-    t_timeval iAvgOffline = _pWorld25->getAverageOfflineDuration();
-    std::shared_ptr<SpriteBucket> mbt = _pWorld25->getSpriteBucket();
-
-#define DBGL(...) _pGameUi->dbgLine(StringUtil::format(__VA_ARGS__))
-    DBGL("%.2f", getScene()->getWindow()->getFpsMeter()->getFps());
-
-    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-    DBGL("Global");
-    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-    DBGL("  Vsync: %s", (getScene()->getWindow()->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-
-    DBGL("  Active Camera: %s", getScene()->getActiveCamera()->getPos().toString(5).c_str());
-    DBGL("  Avg. Offline: %i", (iAvgOffline), "us");
-
-    DBGL("  Num Grids: %i", nGrids);
-    DBGL("  Generating: %i", nGenGrids);
-    DBGL("  Num Objects: %i", nObjs);
-
-    //    _pContext->getTextBoss()->setColor(vec4(0, b, 0, 1));
-    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
-    DBGL("Frame Info ");
-    DBGL("  Vis. Objects: %i", iVisibleNodes);
-    DBGL("  Vis. Grids: %i", iVisibleGrids);
-    DBGL("  Vis. Lights: %i", iVisibleLights);
-    DBGL("  Terrain Tris: %i", nMeshTris);
-    DBGL("  Object Quad Tris: %i", nQuadTris);
-
-    //    _pContext->getTextBoss()->setColor(vec4(0, b, b, 1));
-    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
-    DBGL("Physics ");
-    DBGL("  Active Objs: %i", _pWorld25->numActiveObjects());
-
-    //    //**Focus Object
-    //    std::shared_ptr<WorldObject> ob = std::dynamic_pointer_cast<WorldObject>(_pWorld25->getObj(_iFocusCharacter));
-    //    if (ob != nullptr) {
-    //        vec3 cv = ob->getVelocity();
-    //        vec3 cp = ob->getPos();
-    //        //vec3 ca = ob->getTempAccelleration();
-
-    //        _pContext->getTextBoss()->pstrb(TStr("  Char Pos: ",
-    //            cp.toString()), bx, by + cy); cy += dy;
-
-    //        _pContext->getTextBoss()->pstrb(TStr("  Char Vel: ",
-    //            cv.toString(5)), bx, by + cy); cy += dy;
-    //        _pContext->getTextBoss()->pstrb(TStr("  Char Vel Len: ",
-    //            cv.length()), bx, by + cy); cy += dy;
-    //        //_pContext->getTextBoss()->pstrb(TStr("  Char Acc: ",
-    //        //    ca.toString(5)), bx, by + cy); cy += dy;
-    //        //_pContext->getTextBoss()->pstrb(TStr("  Char Acc Len: ",
-    //        //    ca.length()), bx, by + cy); cy += dy;
-    //    }
-    //    _pContext->getTextBoss()->setColor(vec4(b, b, b, 1));
-    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
-    //    //**Hovered tile
-    //    WorldCell* pht = _pWorldEditState->getHoveredTile();
-    //    if (pht != nullptr) {
-    //        int32_t pt_t_s;
-    //        string_t pt_t_n_s;
-    //        int32_t pt_t_l;
-    //        string_t pt_t_n_l;
-    //        if (mbt->getTileById(pht->getTile(MatterMode::e::Solid)) != nullptr) {
-    //            pt_t_s = mbt->getTileById(pht->getTile(MatterMode::e::Solid))->getTileIndex();
-    //            pt_t_n_s = mbt->getTileById(pht->getTile(MatterMode::e::Solid))->getName();
-    //        }
-    //        else {
-    //            pt_t_s = 0;
-    //            pt_t_n_s = "";
-    //        }
-    //        if (mbt->getTileById(pht->getTile(MatterMode::e::Liquid)) != nullptr) {
-    //            pt_t_l = mbt->getTileById(pht->getTile(MatterMode::e::Liquid))->getTileIndex();
-    //            pt_t_n_l = mbt->getTileById(pht->getTile(MatterMode::e::Liquid))->getName();
-    //        }
-    //        else {
-    //            pt_t_l = 0;
-    //            pt_t_n_l = "";
-    //        }
-    //        W25Geom pt_s = pht->getGeom(MatterMode::e::Solid);
-    //        W25Geom pt_l = pht->getGeom(MatterMode::e::Liquid);
-
-    //        _pContext->getTextBoss()->pstrb(TStr("Tile Info "), bx, by + cy); cy += dy;
-    //        _pContext->getTextBoss()->pstrb(TStr("  Solid: ", pt_s, " -> ", StringUtil::uppercase(StringUtil::toHex(pt_s, true))), bx, by + cy); cy += dy;
-    //        _pContext->getTextBoss()->pstrb(TStr("  Solid Tile: ", pt_t_s, " -> '", pt_t_n_s, "'"), bx, by + cy); cy += dy;
-    //        _pContext->getTextBoss()->pstrb(TStr("  Liquid: ", pt_l, " -> ", StringUtil::uppercase(StringUtil::toHex(pt_l, true))), bx, by + cy); cy += dy;
-    //        _pContext->getTextBoss()->pstrb(TStr("  Liquid Tile: ", pt_t_l, " -> '", pt_t_n_l, "'"), bx, by + cy); cy += dy;
-    //    }
-  }
-  _pGameUi->endDebugText();
+//  _pGameUi->clearDebugText();
+//  if (_bShowDebugText) {
+//    size_t nGrids = _pWorld25->getNumGrids();
+//    size_t nObjs = _pWorld25->numObjects();
+//
+//    size_t iVisibleGrids = _pWorld25->getVisibleGrids().size();
+//    size_t iVisibleNodes = _pWorld25->getVisibleNodes().size();
+//    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+//    int32_t nMeshTris = _pWorld25->getMeshTrisFrame();
+//    int32_t nQuadTris = _pWorld25->getQuadTrisFrame();
+//    size_t nGenGrids = _pWorld25->getNumGridsGenerating();
+//    t_timeval iAvgOffline = _pWorld25->getAverageOfflineDuration();
+//    std::shared_ptr<SpriteBucket> mbt = _pWorld25->getSpriteBucket();
+//
+//#define DBGL(...) _pGameUi->dbgLine(StringUtil::format(__VA_ARGS__))
+//    DBGL("%.2f", getScene()->getWindow()->getFpsMeter()->getFps());
+//
+//    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
+//    DBGL("Global");
+//    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
+//    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
+//    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
+//    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
+//    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
+//    DBGL("  Vsync: %s", (getScene()->getWindow()->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+//    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
+//
+//    DBGL("  Active Camera: %s", getScene()->getActiveCamera()->getPos().toString(5).c_str());
+//    DBGL("  Avg. Offline: %i", (iAvgOffline), "us");
+//
+//    DBGL("  Num Grids: %i", nGrids);
+//    DBGL("  Generating: %i", nGenGrids);
+//    DBGL("  Num Objects: %i", nObjs);
+//
+//    //    _pContext->getTextBoss()->setColor(vec4(0, b, 0, 1));
+//    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
+//    DBGL("Frame Info ");
+//    DBGL("  Vis. Objects: %i", iVisibleNodes);
+//    DBGL("  Vis. Grids: %i", iVisibleGrids);
+//    DBGL("  Vis. Lights: %i", iVisibleLights);
+//    DBGL("  Terrain Tris: %i", nMeshTris);
+//    DBGL("  Object Quad Tris: %i", nQuadTris);
+//
+//    //    _pContext->getTextBoss()->setColor(vec4(0, b, b, 1));
+//    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
+//    DBGL("Physics ");
+//    DBGL("  Active Objs: %i", _pWorld25->numActiveObjects());
+//
+//    //    //**Focus Object
+//    //    std::shared_ptr<WorldObject> ob = std::dynamic_pointer_cast<WorldObject>(_pWorld25->getObj(_iFocusCharacter));
+//    //    if (ob != nullptr) {
+//    //        vec3 cv = ob->getVelocity();
+//    //        vec3 cp = ob->getPos();
+//    //        //vec3 ca = ob->getTempAccelleration();
+//
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Char Pos: ",
+//    //            cp.toString()), bx, by + cy); cy += dy;
+//
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Char Vel: ",
+//    //            cv.toString(5)), bx, by + cy); cy += dy;
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Char Vel Len: ",
+//    //            cv.length()), bx, by + cy); cy += dy;
+//    //        //_pContext->getTextBoss()->pstrb(TStr("  Char Acc: ",
+//    //        //    ca.toString(5)), bx, by + cy); cy += dy;
+//    //        //_pContext->getTextBoss()->pstrb(TStr("  Char Acc Len: ",
+//    //        //    ca.length()), bx, by + cy); cy += dy;
+//    //    }
+//    //    _pContext->getTextBoss()->setColor(vec4(b, b, b, 1));
+//    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
+//    //    //**Hovered tile
+//    //    WorldCell* pht = _pWorldEditState->getHoveredTile();
+//    //    if (pht != nullptr) {
+//    //        int32_t pt_t_s;
+//    //        string_t pt_t_n_s;
+//    //        int32_t pt_t_l;
+//    //        string_t pt_t_n_l;
+//    //        if (mbt->getTileById(pht->getTile(MatterMode::e::Solid)) != nullptr) {
+//    //            pt_t_s = mbt->getTileById(pht->getTile(MatterMode::e::Solid))->getTileIndex();
+//    //            pt_t_n_s = mbt->getTileById(pht->getTile(MatterMode::e::Solid))->getName();
+//    //        }
+//    //        else {
+//    //            pt_t_s = 0;
+//    //            pt_t_n_s = "";
+//    //        }
+//    //        if (mbt->getTileById(pht->getTile(MatterMode::e::Liquid)) != nullptr) {
+//    //            pt_t_l = mbt->getTileById(pht->getTile(MatterMode::e::Liquid))->getTileIndex();
+//    //            pt_t_n_l = mbt->getTileById(pht->getTile(MatterMode::e::Liquid))->getName();
+//    //        }
+//    //        else {
+//    //            pt_t_l = 0;
+//    //            pt_t_n_l = "";
+//    //        }
+//    //        W25Geom pt_s = pht->getGeom(MatterMode::e::Solid);
+//    //        W25Geom pt_l = pht->getGeom(MatterMode::e::Liquid);
+//
+//    //        _pContext->getTextBoss()->pstrb(TStr("Tile Info "), bx, by + cy); cy += dy;
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Solid: ", pt_s, " -> ", StringUtil::uppercase(StringUtil::toHex(pt_s, true))), bx, by + cy); cy += dy;
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Solid Tile: ", pt_t_s, " -> '", pt_t_n_s, "'"), bx, by + cy); cy += dy;
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Liquid: ", pt_l, " -> ", StringUtil::uppercase(StringUtil::toHex(pt_l, true))), bx, by + cy); cy += dy;
+//    //        _pContext->getTextBoss()->pstrb(TStr("  Liquid Tile: ", pt_t_l, " -> '", pt_t_n_l, "'"), bx, by + cy); cy += dy;
+//    //    }
+//  }
+//  _pGameUi->endDebugText();
 }
 void BottleScript::testDraw2d() {
   /*  vec3 vv = vec3(100, 100, 0);
@@ -651,7 +651,7 @@ void BottleScript::onIdle(t_timeval us) {
 }
 
 //string_t BottleRoom::getIconFullPath() {
-//  return Gu::getPackage()->makeAssetPath("tex", "icon.png");
+//  return Gu::getPackage()->makeAssetPath("textures", "icon.png");
 //}
 //string_t BottleRoom::getConfigPath() {
 //  return Gu::getPackage()->makeAssetPath("", "config.xml");
@@ -673,7 +673,7 @@ void WorldSelect::gatherWorlds() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       _pCongaRoom->getScene()->getActiveCamera()->getViewport()->getWidth(), _pCongaRoom->getScene()->getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(Gu::getPackage()->makeAssetPath("tex", "test_tex3.png"));
+    _pTex = Gu::getTexCache()->getOrLoad(Gu::getPackage()->makeAssetPath("textures", "test_tex3.png"));
   }
 
   string_t gsd = _pCongaRoom->getGameSaveDir();

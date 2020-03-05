@@ -595,13 +595,13 @@ void WorldEditor::editBlockVertex(EditTool::e eEditTool, GridMeshLayer::e eMatte
 }
 void WorldEditor::playEditSound(GridMeshLayer::e eMatterMode, bool bDelete) {
   if (bDelete) {
-    Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("snd", "s-delete.ogg"));
+    Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("sounds", "s-delete.ogg"));
   }
   else if (eMatterMode == GridMeshLayer::e::Opaque) {
-    Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("snd", "s-block-low.ogg"));
+    Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("sounds", "s-block-low.ogg"));
   }
   else if (eMatterMode == GridMeshLayer::e::Transparent) {
-    Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("snd", "s-water-splash.ogg"));
+    Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("sounds", "s-water-splash.ogg"));
   }
   //    }
   //    else if (eEditMode == EditMode::e::Vertex || eEditMode == EditMode::e::VertexGroup) {

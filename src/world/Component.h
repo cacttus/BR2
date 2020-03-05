@@ -11,6 +11,7 @@
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
+enum class AttachState { NotAttached, Attached, Detached };
 /**
 *  @class Component
 *  @brief Component of a gameobject.
@@ -21,8 +22,13 @@ public:
   Component();
   virtual ~Component() override;
 
-  virtual void onAddedToNode() = 0;
+  //Called after added to node.
+  virtual void onStart() = 0;
+  //Called every *update* frame
   virtual void onUpdate(float dt) = 0;
+  //Called after removed from node, just before node is destroyed
+  virtual void onExit() = 0;
+
 
   template < class Tx = SceneNode >
   std::shared_ptr<Tx> getNode() { return std::dynamic_pointer_cast<Tx>(_pWorldObject); }
@@ -31,6 +37,7 @@ public:
 private:
   std::shared_ptr<SceneNode> _pWorldObject = nullptr;
   std::shared_ptr<Scene> _pScene = nullptr; //This is a shortcut for the scene node which we will access a lot.
+  AttachState _eAttachState = AttachState::NotAttached;
 };
 
 }//ns BR2

@@ -43,7 +43,7 @@ void GameUi::constructUI(std::shared_ptr<BottleScript> r) {
     std::shared_ptr<UiScreen> screen = r->getScene()->getUiScreen();
     GameUi::createDummySkin();
 
-    std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(r->getScene()->getUiScreen(), Gu::getPackage()->makeAssetPath("fnt", DEBUG_FONT), "20px");
+    std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(r->getScene()->getUiScreen(), Gu::getPackage()->makeAssetPath("fonts", DEBUG_FONT), "20px");
 
 
     screen->getTex()->loadImages();
@@ -184,7 +184,7 @@ std::shared_ptr<UiAssetItem> UiAssetItem::create(std::shared_ptr<GameUi> gi, std
   coinImg->padLeft() = "20px";
   coinImg->padRight() = "10px";
   c2->addChild(coinImg);
-  std::shared_ptr<UiLabel> coinCost = UiLabel::create("4", UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fnt", SUB_FONT)));
+  std::shared_ptr<UiLabel> coinCost = UiLabel::create("4", UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fonts", SUB_FONT)));
   coinCost->display() = (UiDisplayMode::e::InlineNoWrap);
   coinCost->width() = "auto";
   coinCost->height() = "100%";
@@ -219,7 +219,7 @@ void GameUi::createDummySkin() {
 
   std::shared_ptr<UiScreen> screen = getScript()->getScene()->getUiScreen();
 
-  std::shared_ptr<UiLabelSkin> lbl = UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fnt", SUB_FONT));
+  std::shared_ptr<UiLabelSkin> lbl = UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fonts", SUB_FONT));
 
   //**Chinese font test.
   //std::shared_ptr<UiLabelSkin> lbl2 = UiLabelSkin::create(makeAssetPath("fnt", "simhei-chinese.ttf"));
@@ -267,7 +267,7 @@ void GameUi::createDummySkin() {
   std::shared_ptr<UiDropdwonSkin> dd = std::make_shared<UiDropdwonSkin>();
   dd->_pBorder = UiBorderDim::create("4px", "4px", "4px", "4px");
   dd->_pBorderImgs = Ui9Tex::create(screen, Gu::getPackage()->makeAssetPath("ui", "wings-box-9p.png"));
-  dd->_pFont = UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fnt", SUB_FONT));
+  dd->_pFont = UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fonts", SUB_FONT));
   dd->_arrow = UiTex::create(screen, Gu::getPackage()->makeAssetPath("ui", "wings-dd-arrow.png"));
   dd->_pArrowButtonSkin = std::make_shared<UiFlexButtonSkin>();
   *dd->_pArrowButtonSkin = *fb;
@@ -278,7 +278,7 @@ void GameUi::createDummySkin() {
   cbs->_pFlexButtonSkin = std::make_shared<UiFlexButtonSkin>();
   *cbs->_pFlexButtonSkin = *fb;
   cbs->_pFlexButtonSkin->_border = UiBorderDim::create("6px", "6px", "6px", "6px");
-  cbs->_pLabelFont = UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fnt", CHECKBOX_FONT));
+  cbs->_pLabelFont = UiLabelSkin::create(screen, Gu::getPackage()->makeAssetPath("fonts", CHECKBOX_FONT));
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -289,7 +289,7 @@ void GameUi::createDummySkin() {
   *_pGuiSkin->pToolbarSkin->_pWindowSkin = *ws;
 
 
-  _pGuiSkin->pButtonClickSound = Gu::getPackage()->makeAssetPath("snd", "click_0.ogg");
+  _pGuiSkin->pButtonClickSound = Gu::getPackage()->makeAssetPath("sounds", "click_0.ogg");
 
   _pGuiSkin->pDropdownSkin = dd;
   _pGuiSkin->pCheckboxSkin = cbs;
@@ -546,7 +546,7 @@ std::shared_ptr<UiWindow> GameUi::createConfigWindow() {
   winConfig->hide();
   
   std::shared_ptr<SKIN_TEMP> gg = _pGuiSkin;
-  std::shared_ptr<UiLabelSkin> skHead = UiLabelSkin::create(_pScript->getScene()->getUiScreen(), Gu::getPackage()->makeAssetPath("fnt", SUB_FONT), "40px");
+  std::shared_ptr<UiLabelSkin> skHead = UiLabelSkin::create(_pScript->getScene()->getUiScreen(), Gu::getPackage()->makeAssetPath("fonts", SUB_FONT), "40px");
 
   //Dropdown
   std::function<void(std::vector<std::string> items)> makeDD =

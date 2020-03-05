@@ -491,15 +491,46 @@ void SceneNode::collect(std::shared_ptr<RenderBucket> rb) {
 }
 void SceneNode::addComponent(std::shared_ptr<Component> comp) {
   comp->_pWorldObject = getThis<SceneNode>();
-  comp->_pScene = NodeUtils::getScene(getThis<SceneNode>());
+
   _vecComponents.push_back(comp); 
 
-  comp->onAddedToNode();
-  //this->onComponentAdded();
+  //If we are added to the scene, and to the window, then start the component.
+  //Scenes only "work" when they are added to window.
+  auto s = NodeUtils::getScene(getThis<SceneNode>());
+  if (s) {
+    auto w = s->getWindow();
+    if (w) {
+      startComponent(comp, s);
+    }
+  }
 }
 std::shared_ptr<Scene> SceneNode::getScene() {
   std::shared_ptr<Scene> x = findParent<Scene>();
   return x;
+}
+void SceneNode::afterAddedToScene(std::shared_ptr<Scene> scene) {
+  //This all must get called when the scene is rooted.
+  for (std::shared_ptr<Component> c : _vecComponents) {
+    startComponent(c, scene);
+  }
+}
+void SceneNode::afterRemovedFromScene(std::shared_ptr<Scene> scene) {
+  for (std::shared_ptr<Component> c : _vecComponents) {
+    endComponent(c);
+  }
+}
+void SceneNode::startComponent(std::shared_ptr<Component> c, std::shared_ptr<Scene> s) {
+  AssertOrThrow2(s != nullptr);
+  AssertOrThrow2(c != nullptr);
+
+  c->_pScene = s;
+  c->onStart();
+}
+void SceneNode::endComponent(std::shared_ptr<Component> c) {
+  AssertOrThrow2(c != nullptr);
+
+  c->onExit();
+  c->_pScene = nullptr;
 }
 
 }//ns Game

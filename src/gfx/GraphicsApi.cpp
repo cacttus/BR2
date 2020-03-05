@@ -97,15 +97,14 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
     return true;
   }
 
-  std::shared_ptr<InputManager> pInput = nullptr;
-  if (event->window.windowID) {
-    pInput = getInputForWindow(event->window.windowID);
-    AssertOrThrow2(pInput != nullptr);
+  std::shared_ptr<InputManager> pInput = getInputForWindow(event->window.windowID);
+  if (pInput == nullptr) {
+    return true;
   }
   else {
     //This failed.  
-    BRLogError("Invalid code here, we need to get the window from the given sdl event.");
-    Gu::debugBreak();
+    //BRLogError("Invalid code here, we need to get the window from the given sdl event.");
+    //Gu::debugBreak();
     return true;
   }
 

@@ -6,8 +6,5 @@ Script::Script() {
 }
 Script::~Script() {
 }
-void Script::onAddedToNode() {
-  onStart();
-}
 
 }//ns Game

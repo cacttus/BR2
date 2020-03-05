@@ -36,7 +36,7 @@ private:
   std::map<Hash32, std::shared_ptr<ModelSpec>> _mapModels;
   //std::map<int32_t, std::shared_ptr<Armature>> _mapArmaturesOrdered;
   //std::map<Hash32, std::shared_ptr<ActionGroup>> _mapActions;
-  string_t getFilePathForMobName(string_t mobName, bool bBinary);
+  string_t getFilePathForMobName(string_t mobName, bool bBinary, bool own_folder = true);
   std::shared_ptr<Material> _pDefaultMaterial = nullptr;
 
 

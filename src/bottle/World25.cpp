@@ -69,7 +69,7 @@ World25::World25(std::shared_ptr<Scene> pscene) : PhysicsWorld(pscene) {
   _pWorld25Plane->getBasisU() = vec3(1, 0, 0);
   _pWorld25Plane->getBasisV() = vec3(0, 0, 1);
 
-  Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("snd", "nature_0.ogg"), SoundPlayInfo(true, 0.1f));
+  Gu::getSoundCache()->tryPlay(Gu::getPackage()->makeAssetPath("sounds", "nature_0.ogg"), SoundPlayInfo(true, 0.1f));
   //_pNoiseField = new W25NoiseField(this, 999); // Test value
 
 //  _pObjectQuads = new TileMesh25(getContext(), 8192);
@@ -324,10 +324,10 @@ void World25::makeSky() {
   gsiz.construct(2, 2);
   _pSkyBox = std::make_shared<HappySky>();
   _pSkyAtlas = std::make_shared<Atlas>(Gu::getCoreContext(), "SkyBoxAtlas", gsiz);
-  _pSkyAtlas->addImage(0, Gu::getPackage()->makeAssetPath("tex", "tx-sb-top.png"));  //top
-  _pSkyAtlas->addImage(1, Gu::getPackage()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
-  _pSkyAtlas->addImage(2, Gu::getPackage()->makeAssetPath("tex", "tx-sb-side.png")); //-s0
-  _pSkyAtlas->addImage(3, Gu::getPackage()->makeAssetPath("tex", "tx-sb-bot.png"));  //bot
+  _pSkyAtlas->addImage(0, Gu::getPackage()->makeAssetPath("textures", "tx-sb-top.png"));  //top
+  _pSkyAtlas->addImage(1, Gu::getPackage()->makeAssetPath("textures", "tx-sb-side.png")); //-s0
+  _pSkyAtlas->addImage(2, Gu::getPackage()->makeAssetPath("textures", "tx-sb-side.png")); //-s0
+  _pSkyAtlas->addImage(3, Gu::getPackage()->makeAssetPath("textures", "tx-sb-bot.png"));  //bot
   _pSkyAtlas->compileFiles(true, true);
   _pSkyAtlas->oglSetFilter(TexFilter::e::Linear);
   _pSkyBox->init(_pSkyAtlas, 400, true);

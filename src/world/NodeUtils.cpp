@@ -10,20 +10,23 @@
 
 namespace BR2 {
 std::shared_ptr<Scene> NodeUtils::getScene(std::shared_ptr<SceneNode> lm) {
-  std::shared_ptr<Scene> s = nullptr;
-  std::shared_ptr<SceneNode> p = nullptr;
+  std::shared_ptr<TreeNode> p = std::dynamic_pointer_cast<TreeNode>(lm);
 
-  while (true) {
-    std::shared_ptr<SceneNode> sn = std::dynamic_pointer_cast<SceneNode>(lm->getParent());
+  for (int i = 0; i < 999999; ++i) {
+    std::shared_ptr<SceneNode> sn = std::dynamic_pointer_cast<SceneNode>(p);
     if (sn != nullptr) {
-      s = std::dynamic_pointer_cast<Scene>(lm->getParent());
+      std::shared_ptr<Scene> s = std::dynamic_pointer_cast<Scene>(p);
       if (s != nullptr) {
-        break;
+        return s;
       }
     }
+    else {
+      break;
+    }
+    p = sn->getParent();
   }
 
-  return s;
+  return nullptr;
 }
 std::shared_ptr<CameraNode> NodeUtils::getActiveCamera(std::shared_ptr<LightManager> lm) {
   return lm->getScene()->getActiveCamera();

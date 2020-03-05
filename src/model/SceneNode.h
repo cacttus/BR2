@@ -80,8 +80,8 @@ public:
   void setBoneParent(std::shared_ptr<BoneNode> bn) { _pBoneParent = bn; }
   std::shared_ptr<BoneNode> getBoneParent() { return _pBoneParent; }
 
-  virtual void afterAddedToScene(std::shared_ptr<Scene> scene) {} // Override to perform logic after node added to scene. ** this is recursive on all children
-  virtual void afterRemovedFromScene(std::shared_ptr<Scene> scene) {} // Override to perform logic after node added to scene. ** this is recursive on all children
+  virtual void afterAddedToScene(std::shared_ptr<Scene> scene);
+  virtual void afterRemovedFromScene(std::shared_ptr<Scene> scene);
 
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp) override;
@@ -161,6 +161,7 @@ protected:
 protected:
   std::vector<std::shared_ptr<Component>> _vecComponents;
 
+
   std::shared_ptr<BaseSpec> _pSpec = nullptr;
   Box3f* _pBox = nullptr;
   OBB* _pOBB = nullptr;
@@ -185,6 +186,8 @@ private:
   bool _bTransformChanged = true;
   bool _bInitialized = false;
   void updateComponents(float delta);
+  void startComponent(std::shared_ptr<Component> c, std::shared_ptr<Scene> s);
+  void endComponent(std::shared_ptr<Component> c);
 };
 
 

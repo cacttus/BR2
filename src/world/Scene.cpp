@@ -64,7 +64,7 @@ void Scene::init() {
 
   SceneNode::init();
 }
- 
+
 void Scene::afterAttachedToWindow() {
   //Lazy init, requires our window to be set before creating.
   //**NOTE** we may not need this in the future if we're going turn flyihg camera to script.
@@ -78,6 +78,17 @@ void Scene::afterAttachedToWindow() {
   Gu::checkErrorsDbg();
 
   makeParticles();
+
+  //Activate all nodes by traversing this parent root.
+  std::shared_ptr<Scene> scene = getThis<Scene>();
+  scene->iterateBreadthFirst<SceneNode>([scene](std::shared_ptr<SceneNode> node) {
+    if (node != scene) {
+      node->afterAddedToScene(scene);
+    }
+    return true;
+  });
+
+  
 }
 void Scene::createUi() {
   string_t DEBUG_FONT = "Lato-Regular.ttf";
@@ -87,34 +98,35 @@ void Scene::createUi() {
   _pUiScreen = UiScreen::create(getWindow());
   Gu::checkErrorsDbg();
 
+  //Removing the 'built-in' UI due to the compile and load() conflicts due to GameUi
   //skins first
-  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
-  std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
-  pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
+  //std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
+  //std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
+  //pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
 
-  _pUiScreen->getTex()->loadImages();
-  Gu::checkErrorsDbg();
+  //_pUiScreen->getTex()->loadImages();
+  //Gu::checkErrorsDbg();
 
-  //debug label
-  _pDebugLabel = UiLabel::create("", debugTextSkin);
-  _pDebugLabel->position() = UiPositionMode::e::Relative;
-  _pDebugLabel->left() = "20px";
-  _pDebugLabel->top() = "100px";
-  _pDebugLabel->width() = "200px";
-  _pDebugLabel->height() = "1800px";
-  _pDebugLabel->enableWordWrap();
-  _pUiScreen->addChild(_pDebugLabel);
-  Gu::checkErrorsDbg();
+  ////debug label
+  //_pDebugLabel = UiLabel::create("", debugTextSkin);
+  //_pDebugLabel->position() = UiPositionMode::e::Relative;
+  //_pDebugLabel->left() = "20px";
+  //_pDebugLabel->top() = "100px";
+  //_pDebugLabel->width() = "200px";
+  //_pDebugLabel->height() = "1800px";
+  //_pDebugLabel->enableWordWrap();
+  //_pUiScreen->addChild(_pDebugLabel);
+  //Gu::checkErrorsDbg();
 
-  //Cursor 
-  std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
-  cs->width() = "32px";
-  cs->height() = "auto"; // Auto?
-  _pUiScreen->setCursor(cs);
-  Gu::checkErrorsDbg();
+  ////Cursor 
+  //std::shared_ptr<UiCursor> cs = UiCursor::create(pCursorSkin);
+  //cs->width() = "32px";
+  //cs->height() = "auto"; // Auto?
+  //_pUiScreen->setCursor(cs);
+  //Gu::checkErrorsDbg();
 
-  _pUiScreen->getTex()->compile();
-  Gu::checkErrorsDbg();
+  //_pUiScreen->getTex()->compile();
+  //Gu::checkErrorsDbg();
 }
 void Scene::update(float delta) {
   if (_pPhysicsWorld != nullptr) {
@@ -217,8 +229,8 @@ void Scene::debugChangeRenderState() {
     }
   }
 
-    //#ifdef _DEBUG
-    //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
+  //#ifdef _DEBUG
+  //These must be #ifdef out because glPolygonMOde is not present in gl330 core 
   if (_bDebugShowWireframe == true) {
     Gu::getCoreContext()->setPolygonMode(PolygonMode::Line);
   }
@@ -404,33 +416,35 @@ void Scene::drawDebugText() {
   int dy = 16;//Also the font size
   int cy = 0;
 
-  if (_pDebugLabel != nullptr) {
-    _pDebugLabel->setText("Debug\n");
-  }
-  if (_bShowDebugText) {
-    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+  //Commented out in favor of GameUi
 
-#define DBGL(...) if (_pDebugLabel != nullptr) { \
-      std::string dtxt = _pDebugLabel->getText(); \
-      dtxt += (__VA_ARGS__);\
-      dtxt += "\r\n"; \
-      _pDebugLabel->setText(dtxt); \
-      }
-
-      //DBGL("%.2f", Gu::getFpsMeter()->getFps());
-
-      //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-    DBGL("Global");
-    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-
-    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
-  }
+//  if (_pDebugLabel != nullptr) {
+//    _pDebugLabel->setText("Debug\n");
+//  }
+//  if (_bShowDebugText) {
+//    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+//
+//#define DBGL(...) if (_pDebugLabel != nullptr) { \
+//      std::string dtxt = _pDebugLabel->getText(); \
+//      dtxt += (__VA_ARGS__);\
+//      dtxt += "\r\n"; \
+//      _pDebugLabel->setText(dtxt); \
+//      }
+//
+//      //DBGL("%.2f", Gu::getFpsMeter()->getFps());
+//
+//      //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
+//    DBGL("Global");
+//    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
+//    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
+//    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
+//    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
+//    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
+//    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
+//    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
+//
+//    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
+  //}
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pUiScreen->screenChanged(w, h);
@@ -490,11 +504,13 @@ std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild) {
 
   std::shared_ptr<TreeNode> ret = TreeNode::attachChild(pChild);
 
-  std::shared_ptr<Scene> scene = getThis<Scene>();
-  pChild->iterateBreadthFirst<SceneNode>([scene](std::shared_ptr<SceneNode> node) {
-    node->afterAddedToScene(scene);
-    return true;
-    });
+  if (getWindow()) {
+    std::shared_ptr<Scene> scene = getThis<Scene>();
+    pChild->iterateBreadthFirst<SceneNode>([scene](std::shared_ptr<SceneNode> node) {
+      node->afterAddedToScene(scene);
+      return true;
+      });
+  }
 
   return ret;
 }
@@ -520,11 +536,11 @@ uint64_t Scene::getFrameNumber() {
 void Scene::makeParticles() {
   ivec2 gsiz(4, 4);
   std::shared_ptr<Atlas> _pParticlesAtlas = std::make_shared<Atlas>(Gu::getCoreContext(), "W25Particles", gsiz);
-  _pParticlesAtlas ->addImage(0, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
-  _pParticlesAtlas ->addImage(1, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
-  _pParticlesAtlas ->addImage(2, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
-  _pParticlesAtlas ->addImage(3, Gu::getPackage()->makeAssetPath("spr", "sp-particle.png"));
-  _pParticlesAtlas ->compileFiles();
+  _pParticlesAtlas->addImage(0, Gu::getPackage()->makeAssetPath("sprites", "sp-particle.png"));
+  _pParticlesAtlas->addImage(1, Gu::getPackage()->makeAssetPath("sprites", "sp-particle.png"));
+  _pParticlesAtlas->addImage(2, Gu::getPackage()->makeAssetPath("sprites", "sp-particle.png"));
+  _pParticlesAtlas->addImage(3, Gu::getPackage()->makeAssetPath("sprites", "sp-particle.png"));
+  _pParticlesAtlas->compileFiles();
 
   BRLogInfo("..ParticleManager");
   _pParticleManager = std::make_shared<ParticleManager>(getWindow()->getContext());

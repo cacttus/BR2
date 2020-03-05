@@ -20,14 +20,28 @@ std::shared_ptr<WorldObj> WorldObj::create(std::string mobFolder, uint32_t typeI
 }
 std::shared_ptr<ModelNode> WorldObj::createInstance(std::shared_ptr<World25> pWorld, vec3& r3Pos) {
   std::shared_ptr<ModelSpec> ms = getOrLoadModel();
+  if (ms != nullptr) {
+    vec3 vScale = boxFit(ms, _vBoxFit);
+    
+    //Does nothing
+    //vec3 vPos;
+    //vec4 vRot;
+    //place(r3Pos, vPos, vRot);
 
-  vec3 vScale = boxFit(ms, _vBoxFit);
 
-  vec3 vPos;
-  vec4 vRot;
-  place(r3Pos, vPos, vRot);
+    std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
+    mn->setScale(vScale);
 
-  return nullptr;// pWorld->makeObj(ms, vPos, vRot, vScale, std::string(""));
+    return mn;
+    //mn->setPos(vPos);
+    //mn->setRot(vRot);
+  }
+  else {
+    BRLogError("Failed to load model.");
+    Gu::debugBreak();
+  }
+
+  return nullptr;
 }
 void WorldObj::place(const vec3& r3, vec3& outPos, vec4& outRot) {
   //what's this do, well, we have a "grid" of positions on each "minecraft cube"
@@ -67,8 +81,7 @@ void WorldObj::place(const vec3& r3, vec3& outPos, vec4& outRot) {
 
 std::shared_ptr<ModelSpec> WorldObj::getOrLoadModel() {
   if (_pModelSpec == nullptr) {
-    std::shared_ptr<ModelSpec> ms = Gu::getModelCache()->getOrLoadModel(_strMobName, true);
-    _pModelSpec = ms;
+    _pModelSpec = Gu::getModelCache()->getOrLoadModel(_strMobName, true);
   }
   return _pModelSpec;
 }

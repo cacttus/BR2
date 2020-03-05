@@ -145,7 +145,6 @@ void Texture2DSpec::create(unsigned char* imageData, uint32_t w, uint32_t h, boo
   if (genMipmaps) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
   }
   else {
     //Default to nearest filtering * this is needed because the

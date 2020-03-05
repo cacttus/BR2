@@ -165,6 +165,11 @@ void MbiFile::save(string_t file) {
   fb->writeByte('I');
   fb->writeByte('H');
 
+  if (file.find("skele") != std::string::npos) {
+    int n = 0;
+    n++;
+  }
+
   //version
   fb->writeFloat(std::move(c_fVersion));
 

@@ -449,6 +449,8 @@ void MeshNode::afterAddedToScene(std::shared_ptr<Scene> scene) {
   else {
     BRLogError("Could not set pick ID for node... afterAddedToScene SHOULD be called on all child nodes attached to the root added..");
   }
+
+  SceneNode::afterAddedToScene(scene);
 }
 
 void MeshNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {

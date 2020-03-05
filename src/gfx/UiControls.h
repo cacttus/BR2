@@ -53,10 +53,7 @@ public:
 
   void enableDrag(UiDragInfo::DragFunc func);
 
-  std::shared_ptr<Picker> getPicker() { 
-    BRThrowNotImplementedException();
-    return nullptr; 
-  }
+  std::shared_ptr<Picker> getPicker();
 
   void setName(std::string n) { _strName = n; }
   virtual void init();
