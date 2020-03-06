@@ -36,7 +36,7 @@
 
 namespace BR2 {
 WorldGrid::WorldGrid(std::shared_ptr<World25> pworld, ivec3& viPos, bool bEmpty) :
-  PhysicsGrid(pworld, viPos, BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), bEmpty),
+  PhysicsGrid(pworld->getPhysics(), viPos, BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), bEmpty),
   _pWorld25(pworld) {
 }
 WorldGrid::~WorldGrid() {

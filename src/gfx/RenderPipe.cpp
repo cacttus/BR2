@@ -82,6 +82,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
   _bRenderInProgress = true;
   {
     RenderParams rp;
+    rp.setCamera(cam);
 
     //This doesn't conform ot the new ability to render individual objects.
     //This draws all scene shadows

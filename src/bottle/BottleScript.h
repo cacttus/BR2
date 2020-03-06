@@ -38,12 +38,14 @@ public:
   virtual void onUpdate(float dt) override;
   virtual void onExit() override;
   virtual void onIdle(t_timeval ms) override;
+
   virtual void onDrawShadow(RenderParams& rp) override;
   virtual void onDrawDeferred(RenderParams& rp) override;
   virtual void onDrawForward(RenderParams& rp) override;
   virtual void onDrawDebug(RenderParams& rp) override;
   virtual void onDrawNonDepth(RenderParams& rp) override;
   virtual void onDrawTransparent(RenderParams& rp) override;
+
   //virtual void onDrawUi(RenderParams& rp) override;
   virtual void onScreenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) override;
  /// virtual void onServerPacketReceived(std::shared_ptr<Packet> pack) override;
@@ -81,13 +83,6 @@ private:
   std::shared_ptr<TouchInfo> _curTouchLmb = nullptr;
   std::shared_ptr<TouchInfo> _lastTouchLmb = nullptr;
 
-  bool _bDebugDisableCull = false;
-  bool _bDrawDebug = false;
-  bool _bShowDebugText = true;
-  bool _bDebugShowWireframe = true;
-  bool _bDebugClearWhite = false;
-  bool _bDebugDisableShadows = false;
-  bool _bDebugDisableDepthTest = false;
   NodeId _iFocusCharacter = NO_NODE_ID;
   GameScreen::e _eGameScreen = GameScreen::e::Title;
   GameMode _eGameMode = GameMode::Play;
@@ -104,7 +99,6 @@ private:
   void toggleDebug(std::shared_ptr<InputManager> pFingers);
   void loadGameFile();
   void handleGameModeControls(std::shared_ptr<InputManager>);
-  void debugChangeRenderState();
   void unloadGame();
   string_t getNewWorldName(string_t gameName);
   void constructWorld();

@@ -4,6 +4,9 @@
 #include "../gfx/RenderViewport.h"
 #include "../base/Gu.h"
 #include "../world/Scene.h"
+#include "../model/MeshNode.h"
+#include "../model/UtilMeshInline.h"
+#include "../model/MeshSpec.h"
 
 namespace BR2 {
 CameraNode::CameraNode(string_t name, std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(name, nullptr) {
@@ -21,6 +24,44 @@ std::shared_ptr<CameraNode> CameraNode::create(string_t name, std::shared_ptr<Re
   std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(name, ppViewport);
   cn->init();
   return cn;
+}
+void CameraNode::init() {
+  PhysicsNode::init();
+//  TODO:
+}
+void CameraNode::drawForward(RenderParams& rp) {
+  Gu::getCoreContext()->setLineWidth(3.0f);
+
+  std::shared_ptr<FrustumBase> pf = _pMainFrustum;
+  UtilMeshInline mi(Gu::getCoreContext());
+
+  //Limit the distance of the frustum to fixed units
+  float limit_length = 1;
+  float depth = (pf->getZFar() - pf->getZNear());
+  float lengthmuil = limit_length / (depth - limit_length);
+  vec3 ftl = pf->PointAt(fpt_ntl) + (pf->PointAt(fpt_ftl) - pf->PointAt(fpt_ntl)) * lengthmuil;
+  vec3 ftr = pf->PointAt(fpt_ntr) + (pf->PointAt(fpt_ftr) - pf->PointAt(fpt_ntr)) * lengthmuil;
+  vec3 fbl = pf->PointAt(fpt_nbl) + (pf->PointAt(fpt_fbl) - pf->PointAt(fpt_nbl)) * lengthmuil;
+  vec3 fbr = pf->PointAt(fpt_nbr) + (pf->PointAt(fpt_fbr) - pf->PointAt(fpt_nbr)) * lengthmuil;
+
+  Color4f c4(1, 1, 0, 1);
+  mi.begin(GL_LINES);
+  {
+    mi.vt2(v_v3c4(pf->PointAt(fpt_ntl), c4), v_v3c4(ftl, c4));// Edges
+    mi.vt2(v_v3c4(pf->PointAt(fpt_nbr), c4), v_v3c4(fbr, c4));
+    mi.vt2(v_v3c4(pf->PointAt(fpt_nbl), c4), v_v3c4(fbl, c4));
+    mi.vt2(v_v3c4(pf->PointAt(fpt_ntr), c4), v_v3c4(ftr, c4));
+    mi.vt2(v_v3c4(ftl, c4), v_v3c4(ftr, c4));// Far Quad
+    mi.vt2(v_v3c4(fbl, c4), v_v3c4(fbr, c4));
+    mi.vt2(v_v3c4(ftl, c4), v_v3c4(fbl, c4));
+    mi.vt2(v_v3c4(ftr, c4), v_v3c4(fbr, c4));
+    mi.vt2(v_v3c4(pf->PointAt(fpt_ntl), c4), v_v3c4(pf->PointAt(fpt_ntr), c4));// Near Quad
+    mi.vt2(v_v3c4(pf->PointAt(fpt_nbl), c4), v_v3c4(pf->PointAt(fpt_nbr), c4));
+    mi.vt2(v_v3c4(pf->PointAt(fpt_ntl), c4), v_v3c4(pf->PointAt(fpt_nbl), c4));
+    mi.vt2(v_v3c4(pf->PointAt(fpt_ntr), c4), v_v3c4(pf->PointAt(fpt_nbr), c4));
+  }
+  mi.end(getThis<CameraNode>());
+  Gu::getCoreContext()->setLineWidth(1.0f);
 }
 Ray_t CameraNode::projectPoint2(vec2& mouse) {
   Ray_t pr;
@@ -48,8 +89,6 @@ ProjectedRay CameraNode::projectPoint(vec2& mouse) {
 
   return pr;
 }
-//////////////////////////////////////////////////////////////////////////
-
 void CameraNode::setFOV(t_radians fov) {
   _f_hfov = fov;
   //_pViewport->updateChanged(true);
@@ -100,6 +139,8 @@ vec3 CameraNode::getLookAtOffset() {
   return vec3(0, 14, 0);
 }
 void CameraNode::zoom(float amt) {
+  //This is useless now that we have scripts, however, this is a cool function that zooms camera with mouse wheel, so we could
+  //use it in a script somewhere.
   vec3 newP;
 
   _fCurZoomDist += -amt;
@@ -129,9 +170,6 @@ void CameraNode::zoom(float amt) {
   minPt += getLookAtOffset();
   maxPt += getLookAtOffset();
 
-  //minPt = _vLookAt + _vViewNormal * -_fMinZoomDist;
-  //maxPt = _vLookAt + _vViewNormal * -_fMaxZoomDist;
-
   float tVal = (_fCurZoomDist - _fMinZoomDist) / (_fMaxZoomDist - _fMinZoomDist);
 
   vec3 finalPt;
@@ -140,10 +178,7 @@ void CameraNode::zoom(float amt) {
     Alg::cerp_1D(minPt.y, maxPt.y, tVal),
     Alg::cerp_1D(minPt.z, maxPt.z, tVal));
 
-
-
   newP = _vLookAt + finalPt;
-  // newP = getPos()+ _vViewNormal * amt;
 
   setPos(std::move(newP));
 }

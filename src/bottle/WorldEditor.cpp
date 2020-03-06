@@ -14,6 +14,8 @@
 #include "../model/MeshNode.h"
 #include "../model/ModelCache.h"
 #include "../model/MeshSpec.h"
+#include "../world/PhysicsWorld.h"
+#include "../world/Scene.h"
 #include "../bottle/World25.h"
 #include "../bottle/WorldGrid.h"
 #include "../bottle/WorldCell.h"
@@ -22,7 +24,6 @@
 #include "../bottle/WorldEditState.h"
 #include "../bottle/WorldObj.h"
 #include "../bottle/W25Config.h"
-#include "../world/Scene.h"
 
 namespace BR2 {
 WorldEditor::WorldEditor(std::shared_ptr<World25> pWorld) {
@@ -43,7 +44,7 @@ void WorldEditor::init() {
     _pSelector->playAction("hover_1.Rotate");
 
     _pSelector->show();
-    _pWorld25->addObj(_pSelector, false, false);
+    _pWorld25->getPhysics()->addObj(_pSelector, false, false);
     std::shared_ptr<LightNodePoint> pl = _pWorld25->getScene()->createPointLight(vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
     pl->getShadowBox()->getSmallBoxSize() = 0.03f;
     _pSelector->attachChild(std::dynamic_pointer_cast<TreeNode>(pl));

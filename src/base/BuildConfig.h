@@ -25,11 +25,14 @@
 #define __SK_DEBUG_INCLUDES__ 1
 #endif
 
+//////////////////////////////////////////////////////////////////////////
+#define PHY_MAX_BOUND_BOX_SIZE (10000.0)
+#define PHY_MAX_BOUND_BOX_VOLUME (PHY_MAX_BOUND_BOX_SIZE*PHY_MAX_BOUND_BOX_SIZE*PHY_MAX_BOUND_BOX_SIZE)
+
 
 //////////////////////////////////////////////////////////////////////////
 // Use STL math, also includes <algorithm> everywhere.
 //#define BR_MATH_USE_STL
-
 
 //////////////////////////////////////////////////////////////////////////
 //G++ / CLANG - NDEBUG is enabled by DEFAULT messing up builds.

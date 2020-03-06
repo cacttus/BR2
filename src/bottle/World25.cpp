@@ -53,7 +53,13 @@
 #define FST_PT(xx) _pContext->getCamera()->getFrustum()->PointAt(xx)
 
 namespace BR2 {
-World25::World25(std::shared_ptr<Scene> pscene, std::shared_ptr<BottleScript> pCallingScript) : PhysicsWorld(pscene) {
+World25::World25(std::shared_ptr<Scene> pscene, std::shared_ptr<BottleScript> pCallingScript) {
+  AssertOrThrow2(pscene);
+  _pScene = pscene;
+  AssertOrThrow2(pCallingScript);
+  _pPhysics = pscene->getPhysicsManager();
+  AssertOrThrow2(_pPhysics);
+
   //Validation
   _pBottleRoom = pCallingScript;
   if (!Alg::isPow2((int32_t)BottleUtils::getNumCellsWidth())) {
@@ -78,7 +84,7 @@ World25::World25(std::shared_ptr<Scene> pscene, std::shared_ptr<BottleScript> pC
   // _pSmasher = new Physics(getContext(), this, _pWorld25Plane->n);
 }
 World25::~World25() {
-  unloadWorld();
+  getPhysics()->unloadWorld();
 
   _pWorldMaker = nullptr;
   _pSkyBox = nullptr;
@@ -89,12 +95,13 @@ World25::~World25() {
   _pWorld25Plane = nullptr;
   _pWorldAtlas = nullptr; // do not delete any textures because the tex manager will delete them
 }
+
 std::shared_ptr<SpriteBucket> World25::getSpriteBucket() { return _pGameFile->getBucket(); }
 void World25::init(std::shared_ptr<ObFile> obFile) {
-  PhysicsWorld::init(BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
-    BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
-    BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
-    BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
+  //PhysicsWorld::init(BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
+  //  BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
+  //  BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
+  //  BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
   _pGameFile = obFile;
   _pConfig = _pGameFile->getW25Config();
 
@@ -210,6 +217,8 @@ void World25::createNewWorld() {
 //    return new WorldGrid(this, cv, true);
 //}
 void World25::loadWorld() {
+  //Unload whole world.
+  getPhysics()->unloadWorld();
   if (_bAsyncGen == false) {
     t_timeval tv;
     std::set<std::shared_ptr<WorldGrid>> grids;
@@ -225,7 +234,7 @@ void World25::loadWorld() {
     {
       BRLogInfo("Add..");
       for (std::shared_ptr<WorldGrid> pg : grids) {
-        addGrid(pg, pg->getGridPos());
+        _pPhysics->addGrid(pg, pg->getGridPos());
         // pg->linkGrids();
       }
       BRLogInfo("Stage 1..");
@@ -369,23 +378,14 @@ void World25::makeAtlas() {
   _pWorldMaterial->addTextureBinding(_pWorldAtlas, TextureChannel::e::Channel0, TextureType::e::Color, 1.0f);
 }
 
-//static int g_test_GatherIter = 0;
 void World25::update(float delta) {
+  //Now that physicsworld is not subclassed, this MUST be called AFTER physicsworld::update
   Perf::pushPerf();
-  PhysicsWorld::update(delta);
-  //Create new grids - Old infinite method
-  //updateAwarenessOld();
 
   updateTopology();
 
-  //Gather visible cells from char, or all if in edit mode.
-  //gatherCells();
-
   //Update Motions
   _pGameFile->getBucket()->update(delta);
-
-  //Update Physics
- // _pSmasher->update(delta);
 
   //Copy / UPdat objs
   std::multimap<float, std::shared_ptr<ModelNode>> vecCollected;
@@ -395,7 +395,7 @@ void World25::update(float delta) {
   Perf::popPerf();
 }
 void World25::updateTopology() {
-  for (std::pair<ivec3*, std::shared_ptr<PhysicsGrid>> p : getGrids()) {
+  for (std::pair<ivec3*, std::shared_ptr<PhysicsGrid>> p : _pPhysics->getGrids()) {
     std::shared_ptr<WorldGrid> pg = std::dynamic_pointer_cast<WorldGrid>(p.second);
 
     //Topology gets updated on the grid's next "topo update" step.
@@ -407,13 +407,13 @@ void World25::settleLiquids(bool bForce) {
 
   //This is now considered offline processing, but it's forced to be caleld
   if (bForce || getScene()->getWindow()->getFpsMeter()->deltaMs(lastSettle, 250 * 1000)) {
-    vec3 pos = getAwareness()->getAwarenessPos();
+    vec3 pos = _pPhysics->getAwareness()->getAwarenessPos();
     float r2XZ = BottleUtils::getBvhExpensiveUpdateRadiusXZ();
     r2XZ *= r2XZ; // r^2
     float r2Y = BottleUtils::getBvhExpensiveUpdateRadiusY();
     r2Y *= r2Y; // r^2
 
-    for (std::pair<ivec3*, std::shared_ptr<PhysicsGrid>> p : getGrids()) {
+    for (std::pair<ivec3*, std::shared_ptr<PhysicsGrid>> p : _pPhysics->getGrids()) {
       std::shared_ptr<WorldGrid> pg = std::dynamic_pointer_cast<WorldGrid>(p.second);
       if (pg->getGenerated() == true) {
         vec3 cc = pg->getNodeCenterR3();
@@ -479,25 +479,25 @@ void World25::updateHandCursorAndAddToRenderList(float delta) {
 void World25::updateTouch(std::shared_ptr<InputManager> pFingers) {
   if (pFingers->keyPress(SDL_SCANCODE_U)) {
     std::shared_ptr<LightNodeDir> ld = nullptr;
-    if (findNode<LightNodeDir>(ld)) {
+    if (_pPhysics->findNode<LightNodeDir>(ld)) {
       ld->setPos(ld->getPos() + vec3(0.2, 0, 0));
     }
   }
   if (pFingers->keyPress(SDL_SCANCODE_J)) {
     std::shared_ptr<LightNodeDir> ld = nullptr;
-    if (findNode<LightNodeDir>(ld)) {
+    if (_pPhysics->findNode<LightNodeDir>(ld)) {
       ld->setPos(ld->getPos() + vec3(-0.2, 0, 0));
     }
   }
   if (pFingers->keyPress(SDL_SCANCODE_H)) {
     std::shared_ptr<LightNodeDir> ld = nullptr;
-    if (findNode<LightNodeDir>(ld)) {
+    if (_pPhysics->findNode<LightNodeDir>(ld)) {
       ld->setPos(ld->getPos() + vec3(0, 0, -0.2));
     }
   }
   if (pFingers->keyPress(SDL_SCANCODE_K)) {
     std::shared_ptr<LightNodeDir> ld = nullptr;
-    if (findNode<LightNodeDir>(ld)) {
+    if (_pPhysics->findNode<LightNodeDir>(ld)) {
       ld->setPos(ld->getPos() + vec3(0, 0, 0.2));
     }
   }
@@ -507,9 +507,9 @@ void World25::updateTouch(std::shared_ptr<InputManager> pFingers) {
   if (pFingers->keyPress(SDL_SCANCODE_F2, KeyMod::Shift)) {
     turnOffLamp();
   }
-  if (pFingers->keyPress(SDL_SCANCODE_F3, KeyMod::Shift)) {
-    turnOffSun();
-  }
+  //if (pFingers->keyPress(SDL_SCANCODE_F3, KeyMod::Shift)) {
+  //  turnOffSun();
+  //}
   //if (pFingers->keyPress(SDL_SCANCODE_F4, KeyMod::Shift)) {
   //    vec3 v= Random::nextVec3(vec3(-10,0,-10), vec3(10,0,10));
   //    float fRot = Random::nextFloat(0.0f,(float)M_2PI);
@@ -527,13 +527,13 @@ void World25::updateTouch(std::shared_ptr<InputManager> pFingers) {
 }
 void World25::turnOffSun() {
   std::shared_ptr<LightNodeDir> light = nullptr;
-  if (findNode<LightNodeDir>(light)) {
+  if (_pPhysics->findNode<LightNodeDir>(light)) {
     if (light->isHidden()) { light->show(); }
     else { light->hide(); }
   }
 }
 void World25::turnOffLamp() {
-  std::shared_ptr<PhysicsNode> mn = findNode("Tall_Lamp");
+  std::shared_ptr<PhysicsNode> mn = _pPhysics->findNode("Tall_Lamp");
   if (mn != nullptr) {
     std::shared_ptr<LightNodePoint> light = nullptr;
     if (mn->findNode<LightNodePoint>(light)) {
@@ -628,12 +628,9 @@ void World25::drawDeferred(RenderParams& rp) {
   Perf::pushPerf();
   drawSky(rp);
   drawWorld(rp);
-  PhysicsWorld::drawDeferred(rp);
   Perf::popPerf();
 }
 void World25::drawForward(RenderParams& rp) {
-  PhysicsWorld::drawForward(rp);
-
   if (_eShowGrid != GridShow::e::None) {
     //draw grid liens
     Gu::getCoreContext()->pushBlend();
@@ -651,7 +648,7 @@ void World25::drawForward(RenderParams& rp) {
       int nSeconds = 10;
       float t = (float)(((Gu::getMicroSeconds() / 1000) % (nSeconds * 1000)) * 0.001f) / ((float)nSeconds);
       _pGridShader->setUf("_t01", (void*)&t);
-      for (std::pair<float, std::shared_ptr<PhysicsGrid>> p : getVisibleGrids()) {
+      for (std::pair<float, std::shared_ptr<PhysicsGrid>> p : _pPhysics->getVisibleGrids()) {
         std::shared_ptr<PhysicsGrid> pGrid = p.second;
         std::shared_ptr<WorldGrid> wg = std::dynamic_pointer_cast<WorldGrid>(pGrid);
 
@@ -675,8 +672,9 @@ void World25::drawSky(RenderParams& rp) {
   Gu::getCoreContext()->pushDepthTest();
   {
     glDisable(GL_DEPTH_TEST);
-    RenderParams rp(Gu::getShaderMaker()->getDiffuseShader(v_v3n3x2::getVertexFormat()));
-    _pSkyBox->draw(rp);
+    RenderParams rp2(Gu::getShaderMaker()->getDiffuseShader(v_v3n3x2::getVertexFormat()));
+    rp2.setCamera(rp.getCamera());
+    _pSkyBox->draw(rp2);
   }
   Gu::getCoreContext()->popDepthTest();
 }
@@ -706,11 +704,12 @@ void World25::drawWorld(RenderParams& rp) {
   Gu::getCoreContext()->pushBlend();
 
   RenderParams rp2(_pTileShader);
+  rp2.setCamera(rp.getCamera());
   _pWorldMaterial->bind(_pTileShader);
 
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
-  for (std::pair<float, std::shared_ptr<PhysicsGrid>> p : getVisibleGrids()) {
+  for (std::pair<float, std::shared_ptr<PhysicsGrid>> p : _pPhysics->getVisibleGrids()) {
     std::shared_ptr<PhysicsGrid> pGrid = p.second;
     std::shared_ptr<WorldGrid> wg = std::dynamic_pointer_cast<WorldGrid>(pGrid);
     wg->drawOpaque(rp2, _nMeshTrisFrame);
@@ -721,7 +720,7 @@ void World25::drawWorld(RenderParams& rp) {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   {
-    for (std::pair<float, std::shared_ptr<PhysicsGrid>> p : getVisibleGrids()) {
+    for (std::pair<float, std::shared_ptr<PhysicsGrid>> p : _pPhysics->getVisibleGrids()) {
       std::shared_ptr<PhysicsGrid> pGrid = p.second;
       std::shared_ptr<WorldGrid> wg = std::dynamic_pointer_cast<WorldGrid>(pGrid);
       wg->drawTransparent(rp2, _nMeshTrisFrame);
@@ -735,7 +734,7 @@ void World25::drawWorld(RenderParams& rp) {
 WorldCell* World25::getGlobalCellForPoint(vec3& pt) {
   ivec3 iv;
   WorldCell* pc = nullptr;
-  std::shared_ptr<WorldGrid> gn = std::dynamic_pointer_cast<WorldGrid>(getNodeForPoint(pt));
+  std::shared_ptr<WorldGrid> gn = std::dynamic_pointer_cast<WorldGrid>(_pPhysics->getNodeForPoint(pt));
 
   if (gn != nullptr) {
     pc = gn->getCellForPoint(pt);
@@ -835,34 +834,13 @@ void World25::getRaycastObjects(Ray_t* pr, std::multimap<float, std::shared_ptr<
   //*20170503 removed cell manifolds
   //TODO: fix this
   RaycastHit bh;
-  for (std::pair<float, std::shared_ptr<SceneNode>> p : getVisibleNodes()) {
+  for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysics->getVisibleNodes()) {
     std::shared_ptr<SceneNode> pn = p.second;
     std::shared_ptr<ModelNode> ob = std::dynamic_pointer_cast<ModelNode>(pn);
     if (ob && pn->getBoundBoxObject()->RayIntersect(pr, &bh)) {
       outObjs.insert(std::make_pair(bh._t, ob));
     }
   }
-
-  // std::multimap<float, WorldCell*> vecCells;
-  // getRaycastCells(pr, vecCells);
-  //
-  // std::set<std::shared_ptr<ModelNode>> setObjs;
-  // //RaycastHit bh;
-  //
-  // for (std::pair<float, WorldCell*> itc : vecCells) {
-  //     WorldCell* pCell = itc.second;
-  //     //for(std::pair<float, PixObj*> obIt : *(pCell->getCellManifold()->getObjects())) {
-  //     //    PixObj* ob = obIt.second;
-  //     //    if(setObjs.find(ob) == setObjs.end()) {
-  //     //        if(ob->getBoundBoxObject()->RayIntersect_EasyOut(pr)){
-  //     //            outObjs.insert(std::make_pair(bh._t, ob));
-  //     //            setObjs.insert(ob);
-  //     //        }
-  //     //    }
-  //     //}
-  // }
-  //
-  // setObjs.clear();
 }
 void World25::getRaycastCells(Ray_t* pr, std::multimap<float, WorldCell*>& __out_ vecCells) {
   std::multimap<float, std::shared_ptr<WorldGrid>> grids;
@@ -887,7 +865,7 @@ void World25::getRaycastCells(Ray_t* pr, std::multimap<float, WorldCell*>& __out
 
 void World25::getRaycastGrids2(Ray_t* pr, std::multimap<float, std::shared_ptr<WorldGrid>>& grids, std::shared_ptr<WorldGrid> pg, int64_t iMarchStamp) {
   RaycastHit rh;
-  for (auto p : getVisibleGrids()) {
+  for (auto p : _pPhysics->getVisibleGrids()) {
     std::shared_ptr<PhysicsGrid> g = p.second;
     if (g->getBoundBox()->RayIntersect(pr, &rh)) {
       std::shared_ptr<WorldGrid> g2 = std::dynamic_pointer_cast<WorldGrid>(g);
@@ -910,19 +888,6 @@ void World25::createObjFromFile(World25ObjectData* obData)// WorldCell* pDestCel
     Gu::debugBreak();
     return;
   }
-
-  //  WorldObjSpec* spec = getObjSpecForType(obData->_iType);
-
-    //if (spec != nullptr) {
-    //    //Pass false into this function to avoid re-activating all objects in the world.
-    //    //This causes a load performance issue. and takes around 30 seconds on my 6800K!
-    //   // std::shared_ptr<ModelNode> ob = createObj(spec, obData->_vPos, false, false);
-    //    BRThrowNotImplementedException();
-    //}
-    //else {
-    //    Gu::debugBreak();
-    //    BRLogWarn("Warning: Spec wasn't found for type number", (uint32_t)obData->_iType);
-    //}
 }
 bool World25::getCellOrObjectUnderRay(Ray_t* out_pr, std::shared_ptr<ModelNode>& out_ob, WorldCell*& out_cell) {
   //Raycast hit the grid.
@@ -1031,7 +996,7 @@ void World25::getRayHoverVertex(Ray_t* pr, WorldCell*& out_hit, int& out_vert, v
 
 void World25::remakeGridMeshes() {
   int nMesh = 0;
-  for (GridMap::iterator it = getGrids().begin(); it != getGrids().end(); it++) {
+  for (PhysicsWorld::GridMap::iterator it = _pPhysics->getGrids().begin(); it != _pPhysics->getGrids().end(); it++) {
     std::shared_ptr<WorldGrid> wg = std::dynamic_pointer_cast<WorldGrid>(it->second);
     if (wg->getIsGenerating() == false) {
       for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
@@ -1039,7 +1004,7 @@ void World25::remakeGridMeshes() {
       }
     }
     nMesh++;
-    BRLogInfo("" + nMesh + " / " + getGrids().size());
+    BRLogInfo("" + nMesh + " / " + _pPhysics->getGrids().size());
   }
 }
 
@@ -1063,14 +1028,14 @@ std::shared_ptr<PhysicsGrid> World25::loadGrid(const ivec3& pos) {
   return std::dynamic_pointer_cast<PhysicsGrid>(_pWorldMaker->loadGrid(pos));
 }
 vec3 World25::i3tov3Cell(const ivec3& iNode, const ivec3& iCell) {
-  vec3 vOut = i3tov3Node(iNode);
+  vec3 vOut = _pPhysics->i3tov3Node(iNode);
   vOut.x += BottleUtils::getCellWidth() * (float)iCell.x;
   vOut.y += BottleUtils::getCellHeight() * (float)iCell.y;
   vOut.z += BottleUtils::getCellWidth() * (float)iCell.z;
 
 #ifdef _DEBUG
   //This is called a lot so we're ifdefing it
-  vec3 vloc = vOut - i3tov3Node(iNode);
+  vec3 vloc = vOut - _pPhysics->i3tov3Node(iNode);
   ivec3 v2 = v3Toi3CellLocal(vloc);
   AssertOrThrow2(v2 == iCell);
 #endif

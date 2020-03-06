@@ -98,9 +98,15 @@ bool InputManager::keyState(SDL_Scancode key, ButtonState::e bs) {
   return _kbKeys[key] == bs;
 }
 bool InputManager::mbState(MouseButton::e eMb, ButtonState::e eBs) {
-  if (eMb == MouseButton::e::Left) { return _eLmb == eBs; }
-  else if (eMb == MouseButton::e::Right) { return _eRmb == eBs; }
-  else if (eMb == MouseButton::e::Middle) { return _eMmb == eBs; }
+  if (eMb == MouseButton::e::Left) {
+    return _eLmb == eBs;
+  }
+  else if (eMb == MouseButton::e::Right) {
+    return _eRmb == eBs;
+  }
+  else if (eMb == MouseButton::e::Middle) {
+    return _eMmb == eBs;
+  }
   return false;
 }
 bool InputManager::keyPressOrDown(SDL_Scancode kc) {
@@ -121,7 +127,6 @@ bool InputManager::mousePress(MouseButton::e eMb) {
 bool InputManager::mouseDown(MouseButton::e eMb) {
   return mbState(eMb, ButtonState::e::Down);
 }
-
 void InputManager::warpMouse(int x, int y) {
   SDL_WarpMouseInWindow(nullptr, x, y);
   //  _bMouseWarped = true;

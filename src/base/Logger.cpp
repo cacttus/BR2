@@ -23,6 +23,7 @@
 #define SetLoggerColor_Warn() ConsoleColorYellow()
 
 namespace BR2 {
+#pragma region Logger_Internal
 class Logger_Internal {
 public:
   enum class LogLevel { Debug, Info, Warn, Error, };
@@ -45,8 +46,36 @@ public:
   string_t createMessageHead(LogLevel level);
   void log(string_t msg, string_t header, BR2::Exception* e);
   void processLogs_Async();
-};
 
+  void log_cycle_mainThread(std::function<void()> f, bool,int);
+  void log_wedi_mainThread(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace, Logger_Internal::LogLevel level);
+};
+void Logger_Internal::log_wedi_mainThread(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace, Logger_Internal::LogLevel level) {
+  if (_bEnabled == false) {
+    return;
+  }
+
+  if (line >= 0) {
+    addLineFileToMsg(msg, line, file);
+  }
+
+  if (hideStackTrace == false) {
+    msg = addStackTrace(msg);
+  }
+
+  log(msg, createMessageHead(level), e);
+}
+void Logger_Internal::log_cycle_mainThread(std::function<void()> f, bool force, int iCycle) {
+  if (Gu::getCoreContext() != nullptr) {
+    if (Gu::getCoreContext()->getGraphicsWindow() != nullptr) {
+      if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()) {
+        if (force || Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()->frameMod(iCycle)) {
+          f();
+        }
+      }
+    }
+  }
+}
 string_t Logger_Internal::addStackTrace(string_t msg) {
   msg += "\r\n";
   msg += DebugHelper::getStackTrace();
@@ -74,7 +103,13 @@ string_t Logger_Internal::createMessageHead(LogLevel level) {
   return Stz "" + DateTime::timeToStr(DateTime::getTime()) + " " + str + " ";
 }
 void Logger_Internal::log(string_t msg, string_t header, BR2::Exception* e) {
-  string_t m = header + " " + msg + (e != nullptr ? (", Exception: " + e->what()) : "") + "\n";
+  string_t m = header + " " + msg;
+
+  if (e != nullptr) {
+    m += Stz ", Exception: " + e->what();
+  }
+
+  m += Stz "\n";
 
   if (_bAsync) {
     _mtLogStackAccess.lock();
@@ -149,13 +184,14 @@ void Logger_Internal::processLogs_Async() {
   logs.clear();
 }
 
-//////////////////////////////////////////////////////////////////////////
+#pragma endregion
+
+#pragma region Logger
 
 Logger::Logger(bool async, bool disabled) {
   _pint = new Logger_Internal();
   _pint->_bAsync = async;
   _pint->_bEnabled = !disabled;
-
 }
 Logger::~Logger() {
   //kill thread.
@@ -190,129 +226,38 @@ void Logger::init(string_t cache) {
   //*Note: do not call the #define shortcuts here.
   logInfo(Stz(_pint->_bAsync ? "Async " : "") + "Logger Initializing " + DateTime::dateTimeToStr(DateTime::getDateTime()));
 }
-string_t Logger::getLogPath() { return _pint->_logDir; }
-void Logger::logDebug(const char* msg) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  logDebug(string_t(msg));
-}
-void Logger::logInfo(const char* msg) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  logInfo(string_t(msg));
-}
-void Logger::logError(const char* msg, BR2::Exception* e) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  logError(string_t(msg), e);
-}
-void Logger::logWarn(const char* msg, BR2::Exception* e) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  logWarn(string_t(msg), e);
-}
-void Logger::logDebug(string_t msg) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Debug), NULL);
-}
-void Logger::logDebug(string_t msg, int line, char* file) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Debug();
-  }
-  _pint->addLineFileToMsg(msg, line, file);
-
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Debug), NULL);
-}
-void Logger::logError(string_t msg, BR2::Exception* e) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-  if (_pint->_bLogToConsole) {
-    SetLoggerColor_Error();
-  }
-
-  msg = _pint->addStackTrace(msg);
-
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Error), e);
-}
-void Logger::logError(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  _pint->addLineFileToMsg(msg, line, file);
-
-  if (hideStackTrace == false) {
-    msg = _pint->addStackTrace(msg);
-  }
-
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Error), e);
+string_t Logger::getLogPath() {
+  return _pint->_logDir;
 }
 void Logger::logInfo(string_t msg) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Info), NULL);
+  logInfo(msg, -1, "", nullptr, true);
 }
-void Logger::logInfo(string_t msg, int line, char* file) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  _pint->addLineFileToMsg(msg, line, file);
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Info), NULL);
+void Logger::logInfo(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace) {
+  _pint->log_wedi_mainThread(msg, line, file, e, hideStackTrace, Logger_Internal::LogLevel::Info);
 }
-void Logger::logWarn(string_t msg, BR2::Exception* e) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Warn), e);
+void Logger::logError(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace) {
+  _pint->log_wedi_mainThread(msg, line, file, e, hideStackTrace, Logger_Internal::LogLevel::Error);
 }
-void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e) {
-  if (_pint->_bEnabled == false) {
-    return;
-  }
-  _pint->addLineFileToMsg(msg, line, file);
-  _pint->log(msg, _pint->createMessageHead(Logger_Internal::LogLevel::Warn), e);
+void Logger::logWarn(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace) {
+  _pint->log_wedi_mainThread(msg, line, file, e, hideStackTrace, Logger_Internal::LogLevel::Warn);
+}
+void Logger::logDebug(string_t msg, int line, char* file, BR2::Exception* e, bool hideStackTrace) {
+  _pint->log_wedi_mainThread(msg, line, file, e, hideStackTrace, Logger_Internal::LogLevel::Debug);
 }
 void Logger::logWarnCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle, bool force) {
-  //prevents per-frame logging conundrum
-  if (Gu::getCoreContext() != nullptr) {
-    if (Gu::getCoreContext()->getGraphicsWindow() != nullptr) {
-      if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()) {
-        if (force || Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()->frameMod(iCycle)) {
-          logWarn(msg, line, file, e);
-        }
-      }
-    }
-  }
+  _pint->log_cycle_mainThread([&]() {
+    logWarn(msg, line, file, e);
+    }, force, iCycle);
 }
 void Logger::logErrorCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle, bool force) {
-  //prevents per-frame logging conundrum
-  if (Gu::getCoreContext() != nullptr) {
-    if (Gu::getCoreContext()->getGraphicsWindow() != nullptr) {
-      if (Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()) {
-        if (force || Gu::getCoreContext()->getGraphicsWindow()->getFpsMeter()->frameMod(iCycle)) {
-          logError(msg, line, file, e);
-        }
-      }
-    }
-  }
+  _pint->log_cycle_mainThread([&]() {
+    logError(msg, line, file, e);
+    }, force, iCycle);
+}
+void Logger::logDebugCycle(string_t msg, int line, char* file, BR2::Exception* e, int iCycle, bool force) {
+  _pint->log_cycle_mainThread([&]() {
+    logDebug(msg, line, file, e);
+    }, force, iCycle);
 }
 void Logger::enableLogToConsole(bool bLogToConsole) {
   _pint->_bLogToConsole = bLogToConsole;
@@ -322,4 +267,6 @@ void Logger::enableLogToFile(bool bLogToFile) {
   _pint->_bLogToFile = bLogToFile;
   _pint->_bEnabled = _pint->_bLogToConsole || _pint->_bLogToFile;
 }
+
+#pragma endregion
 }//ns game

@@ -33,6 +33,8 @@ public:
   void setProjectionMode(ProjectionMode::e eMode) { _eProjectionMode = eMode; }
   vec3 getLookAtOffset();
 
+  virtual void drawForward(RenderParams& rp) override;
+
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;            // - Main update function, must be called if you override it.
   void setupProjectionMatrix();// - Manipulate the view projection matrix to project points 
   void setupViewMatrix();    // - Manipulate the modelview matrix to orient the camera
@@ -46,8 +48,9 @@ public:
   std::shared_ptr<FrustumBase> getFrustum() { return _pMainFrustum; }
   bool active() { return _bRenderActive; }
 
-
 protected:
+  virtual void init() override;
+
   std::shared_ptr<RenderViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
   float _f_hfov = 60;            // - Field of view.
 
@@ -65,6 +68,8 @@ protected:
 
   vec3 _vWorldUp;
   ProjectionMode::e _eProjectionMode = ProjectionMode::e::Perspective;
+
+  std::shared_ptr<ModelNode> _pDrawFrustum = nullptr;
 };
 
 }//namespace Game

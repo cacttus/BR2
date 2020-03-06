@@ -55,15 +55,6 @@ void MeshSpec::setMaterial(std::shared_ptr<Material> m) {
 size_t MeshSpec::indexCount() { return _pVaoData->getIbo()->getNumElements(); }//_pIndexes ? _pIndexes->count() : 0; }
 size_t MeshSpec::fragCount() { return _pVaoData->getVbo()->getNumElements(); }//_pFrags ? _pFrags->count() : 0; }
 size_t MeshSpec::faceCount() { return _pVaoData->getIbo()->getNumElements() / 3; }//_pFaceNormals ? _pFaceNormals->count() : 0; }
-
-
-//void MeshSpec::tryCreateConversionMapping()
-//{
-//    if(_pConversionMapping == NULL)
-//        _pConversionMapping = new MeshConversionMapping();
-//}
-
-
 //////////////////////////////////////////////////////////////////////////
 //void MeshSpec::deleteVertexAdjacencyMap() {
 //    DEL_MEM(_pVertexAdjacencyMap);
@@ -74,29 +65,15 @@ size_t MeshSpec::faceCount() { return _pVaoData->getIbo()->getNumElements() / 3;
 //}
 void MeshSpec::allocMesh(size_t nFrags, size_t nIndexes) {
   AssertOrThrow2((nIndexes % 3) == 0);
-  AssertOrThrow2(_pVaoData != nullptr);
+  if (_pVaoData == nullptr) {
+    _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getCoreContext(), _pVertexFormat);
+  }
   _pVaoData->allocate(nFrags, nIndexes);
-
-  // allocateFragments(nFrags);
-  // allocateIndexes(nIndexes);
-  //
-  // if (use_face_normals) {
-  //     allocateFaceNormals(nIndexes / 3);
-  // }
-  //
-
-  //_face_normals.alloc(nIndexes/3);
 }
-//void MeshSpec::allocMesh(const void* pFrags, size_t nFrags, const v_index32* pIndexes, size_t nIndexes,
-//    std::vector<GpuAnimatedMeshWeightData>& weightDatas, std::vector<GpuAnimatedMeshWeight>& weights) {
-//    //New *quick* routine.
-//
-//}
 void MeshSpec::allocMesh(const void* pFrags, size_t nFrags, const void* pIndexes, size_t nIndexes, std::vector<VertexWeightMob>* vecWeights) {
   t_timeval t0 = Gu::getMicroSeconds();
 
   if (_pVaoData == nullptr) {
-    //Prevent multiple reallocations
     _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getCoreContext(), _pVertexFormat);
   }
 

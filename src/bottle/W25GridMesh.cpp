@@ -99,7 +99,8 @@ void W25GridMesh::draw(RenderParams& rp, int& iDbgNumTrisDrawn) {
     if (!pf->hasBox(getMesh()->getBoundBoxObject())) {
       static int nnnn = 0;
       if (nnnn == 0) {
-        //So this should never hit because we collect nodes..
+        //This should never hit.
+        //This means we are drawing a node that is not visible.
         Gu::debugBreak();
       }
     }

@@ -88,7 +88,7 @@ void BottleScript::onStart() {
   _pRTSCam = CameraNode::create("RTS cam", getScene()->getWindow()->getViewport());
   std::shared_ptr<RTSCamScript> css = std::make_shared<RTSCamScript>();
   _pRTSCam->addComponent(css);
-  getScene()->setActiveCamera(_pRTSCam);
+ // getScene()->setActiveCamera(_pRTSCam);
   getScene()->attachChild(_pRTSCam);
 
   //Must come before UI (assets)
@@ -136,7 +136,6 @@ void BottleScript::constructWorld() {
   {
     t_timeval t0 = Gu::getMicroSeconds();
     _pWorld25 = std::make_shared<World25>(getScene(), getThis<BottleScript>());
-    //Gu::getCoreContext()()->setPhysicsWorld(_pWorld25);
     _pWorld25->init(_pGameFile);
     BRLogInfo("Finished.." + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
   }
@@ -245,7 +244,6 @@ void BottleScript::createGameSaveDir() {
 }
 void BottleScript::onDrawForward(RenderParams& rp) {
   //Since the on.. can only be called when attached to a node, we MUST be attached to a node, AND the scene.
-  debugChangeRenderState();
 
   if (_eGameMode == GameMode::WorldSelect) {
     //This gets called before the debug.  really, we should draw this before everything.
@@ -267,7 +265,6 @@ void BottleScript::onDrawForward(RenderParams& rp) {
   }
 }
 void BottleScript::onDrawDeferred(RenderParams& rp) {
-  debugChangeRenderState();
 
   if (_eGameMode == GameMode::WorldSelect) {
   }
@@ -278,59 +275,16 @@ void BottleScript::onDrawDeferred(RenderParams& rp) {
   //sb->endRaster();
 }
 void BottleScript::onDrawTransparent(RenderParams& rp) {
-  //test
-  _pWorld25->drawTransparent(rp);
+  //_pWorld25->drawTransparent(rp);
 }
 void BottleScript::onDrawShadow(RenderParams& rp) {
   //2/16/18 this will be needed if we wnt to render individual object shadows in the future.
 }
 void BottleScript::onDrawNonDepth(RenderParams& rp) {
-  debugChangeRenderState();
   draw2d();
 }
 void BottleScript::onDrawDebug(RenderParams& rp) {
-  if (_bDrawDebug == true) {
-    //AppBase::drawDebug();
-  }
-}
-void BottleScript::debugChangeRenderState() {
-#ifdef BRO_OS_WINDOWS
-  //#ifdef _DEBUG
-  //These must be #ifdef out because glPolygonMOde is not present in gl330 core
-  if (_bDebugShowWireframe == true) {
-    glPolygonMode(GL_FRONT, GL_LINE);
-    glPolygonMode(GL_BACK, GL_LINE);
-  }
-  else {
-    glPolygonMode(GL_FRONT, GL_FILL);
-    glPolygonMode(GL_BACK, GL_FILL);
-  }
-  if (_bDebugClearWhite == true) {
-    _pContext->getClearR() = 1.f;
-    _pContext->getClearG() = 1.f;
-    _pContext->getClearB() = 1.f;
-    _pContext->getClearA() = 1.f;
-  }
-  else {
-    _pContext->getClearR() = 0.01f;
-    _pContext->getClearG() = 0.01f;
-    _pContext->getClearB() = 0.01f;
-    _pContext->getClearA() = 1.0f;
-  }
-  //#endif
-#endif
-  if (_bDebugDisableCull == true) {
-    glDisable(GL_CULL_FACE);
-  }
-  else {
-    glEnable(GL_CULL_FACE);
-  }
-  if (_bDebugDisableDepthTest == true) {
-    glDisable(GL_DEPTH_TEST);
-  }
-  else {
-    glEnable(GL_DEPTH_TEST);
-  }
+
 }
 void BottleScript::onScreenChanged(uint32_t uiWidth, uint32_t uiHeight, bool bFullscreen) {
 }
@@ -358,110 +312,7 @@ void BottleScript::drawDebugText() {
   int by = 32 + 34;// 0 is the height of the font
   int dy = 16;//Also the font size
   int cy = 0;
-
-//  _pGameUi->clearDebugText();
-//  if (_bShowDebugText) {
-//    size_t nGrids = _pWorld25->getNumGrids();
-//    size_t nObjs = _pWorld25->numObjects();
-//
-//    size_t iVisibleGrids = _pWorld25->getVisibleGrids().size();
-//    size_t iVisibleNodes = _pWorld25->getVisibleNodes().size();
-//    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-//    int32_t nMeshTris = _pWorld25->getMeshTrisFrame();
-//    int32_t nQuadTris = _pWorld25->getQuadTrisFrame();
-//    size_t nGenGrids = _pWorld25->getNumGridsGenerating();
-//    t_timeval iAvgOffline = _pWorld25->getAverageOfflineDuration();
-//    std::shared_ptr<SpriteBucket> mbt = _pWorld25->getSpriteBucket();
-//
-//#define DBGL(...) _pGameUi->dbgLine(StringUtil::format(__VA_ARGS__))
-//    DBGL("%.2f", getScene()->getWindow()->getFpsMeter()->getFps());
-//
-//    //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-//    DBGL("Global");
-//    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-//    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-//    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-//    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-//    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-//    DBGL("  Vsync: %s", (getScene()->getWindow()->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-//    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-//
-//    DBGL("  Active Camera: %s", getScene()->getActiveCamera()->getPos().toString(5).c_str());
-//    DBGL("  Avg. Offline: %i", (iAvgOffline), "us");
-//
-//    DBGL("  Num Grids: %i", nGrids);
-//    DBGL("  Generating: %i", nGenGrids);
-//    DBGL("  Num Objects: %i", nObjs);
-//
-//    //    _pContext->getTextBoss()->setColor(vec4(0, b, 0, 1));
-//    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
-//    DBGL("Frame Info ");
-//    DBGL("  Vis. Objects: %i", iVisibleNodes);
-//    DBGL("  Vis. Grids: %i", iVisibleGrids);
-//    DBGL("  Vis. Lights: %i", iVisibleLights);
-//    DBGL("  Terrain Tris: %i", nMeshTris);
-//    DBGL("  Object Quad Tris: %i", nQuadTris);
-//
-//    //    _pContext->getTextBoss()->setColor(vec4(0, b, b, 1));
-//    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
-//    DBGL("Physics ");
-//    DBGL("  Active Objs: %i", _pWorld25->numActiveObjects());
-//
-//    //    //**Focus Object
-//    //    std::shared_ptr<WorldObject> ob = std::dynamic_pointer_cast<WorldObject>(_pWorld25->getObj(_iFocusCharacter));
-//    //    if (ob != nullptr) {
-//    //        vec3 cv = ob->getVelocity();
-//    //        vec3 cp = ob->getPos();
-//    //        //vec3 ca = ob->getTempAccelleration();
-//
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Char Pos: ",
-//    //            cp.toString()), bx, by + cy); cy += dy;
-//
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Char Vel: ",
-//    //            cv.toString(5)), bx, by + cy); cy += dy;
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Char Vel Len: ",
-//    //            cv.length()), bx, by + cy); cy += dy;
-//    //        //_pContext->getTextBoss()->pstrb(TStr("  Char Acc: ",
-//    //        //    ca.toString(5)), bx, by + cy); cy += dy;
-//    //        //_pContext->getTextBoss()->pstrb(TStr("  Char Acc Len: ",
-//    //        //    ca.length()), bx, by + cy); cy += dy;
-//    //    }
-//    //    _pContext->getTextBoss()->setColor(vec4(b, b, b, 1));
-//    //    _pContext->getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += dy;
-//    //    //**Hovered tile
-//    //    WorldCell* pht = _pWorldEditState->getHoveredTile();
-//    //    if (pht != nullptr) {
-//    //        int32_t pt_t_s;
-//    //        string_t pt_t_n_s;
-//    //        int32_t pt_t_l;
-//    //        string_t pt_t_n_l;
-//    //        if (mbt->getTileById(pht->getTile(MatterMode::e::Solid)) != nullptr) {
-//    //            pt_t_s = mbt->getTileById(pht->getTile(MatterMode::e::Solid))->getTileIndex();
-//    //            pt_t_n_s = mbt->getTileById(pht->getTile(MatterMode::e::Solid))->getName();
-//    //        }
-//    //        else {
-//    //            pt_t_s = 0;
-//    //            pt_t_n_s = "";
-//    //        }
-//    //        if (mbt->getTileById(pht->getTile(MatterMode::e::Liquid)) != nullptr) {
-//    //            pt_t_l = mbt->getTileById(pht->getTile(MatterMode::e::Liquid))->getTileIndex();
-//    //            pt_t_n_l = mbt->getTileById(pht->getTile(MatterMode::e::Liquid))->getName();
-//    //        }
-//    //        else {
-//    //            pt_t_l = 0;
-//    //            pt_t_n_l = "";
-//    //        }
-//    //        W25Geom pt_s = pht->getGeom(MatterMode::e::Solid);
-//    //        W25Geom pt_l = pht->getGeom(MatterMode::e::Liquid);
-//
-//    //        _pContext->getTextBoss()->pstrb(TStr("Tile Info "), bx, by + cy); cy += dy;
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Solid: ", pt_s, " -> ", StringUtil::uppercase(StringUtil::toHex(pt_s, true))), bx, by + cy); cy += dy;
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Solid Tile: ", pt_t_s, " -> '", pt_t_n_s, "'"), bx, by + cy); cy += dy;
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Liquid: ", pt_l, " -> ", StringUtil::uppercase(StringUtil::toHex(pt_l, true))), bx, by + cy); cy += dy;
-//    //        _pContext->getTextBoss()->pstrb(TStr("  Liquid Tile: ", pt_t_l, " -> '", pt_t_n_l, "'"), bx, by + cy); cy += dy;
-//    //    }
-//  }
-//  _pGameUi->endDebugText();
+//see cut code
 }
 void BottleScript::testDraw2d() {
   /*  vec3 vv = vec3(100, 100, 0);
@@ -500,39 +351,12 @@ void BottleScript::toggleDebug(std::shared_ptr<InputManager> pFingers) {
     TOGGLECD(SDL_SCANCODE_KP_8, Gu::getRenderSettings()->getDebug()->getShowShadowBox());
     TOGGLECD(SDL_SCANCODE_KP_9, Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping());
 
-    //Debug info
-    //TODO: these should all be in rednersettings 1/22/18
-    if (pFingers->keyPress(SDL_SCANCODE_F1)) {
-      if (pFingers->shiftHeld()) {
-        _bDebugDisableShadows = !_bDebugDisableShadows;
-      }
-      else {
-        _bShowDebugText = !_bShowDebugText;
-      }
-    }
-    if (pFingers->keyPress(SDL_SCANCODE_F2)) {
-      _bDrawDebug = !_bDrawDebug;
-    }
+    //World Debug
+
     if (pFingers->keyPress(SDL_SCANCODE_F3)) {
-      _bDebugDisableCull = !_bDebugDisableCull;
+      loadOrCreateGame("TestGame");
     }
-    if (pFingers->keyPress(SDL_SCANCODE_F4)) {
-      _bDebugShowWireframe = !_bDebugShowWireframe;
-    }
-    if (pFingers->keyPress(SDL_SCANCODE_F5)) {
-      _bDebugClearWhite = !_bDebugClearWhite;
-    }
-    if (pFingers->keyPress(SDL_SCANCODE_F6)) {
-      _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
-    }
-    if (pFingers->keyPress(SDL_SCANCODE_F7)) {
-      if (getScene()->getWindow()->getFrameSync()->isEnabled()) {
-        getScene()->getWindow()->getFrameSync()->disable();
-      }
-      else {
-        getScene()->getWindow()->getFrameSync()->enable();
-      }
-    }
+
     if (pFingers->keyPressOrDown(SDL_SCANCODE_F10)) {
       if (_iF10Pressed == 0) {
         _iF10Pressed = Gu::getMicroSeconds();
@@ -548,6 +372,7 @@ void BottleScript::toggleDebug(std::shared_ptr<InputManager> pFingers) {
     else {
       _iF10Pressed = 0;
     }
+
   }
 }
 void BottleScript::updateTouch(std::shared_ptr<InputManager> pFingers, float delta) {

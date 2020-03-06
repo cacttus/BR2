@@ -29,6 +29,12 @@ public:
   //Called after removed from node, just before node is destroyed
   virtual void onExit() = 0;
 
+  virtual void onDrawForward(RenderParams& rp) {}
+  virtual void onDrawDeferred(RenderParams& rp) {}
+  virtual void onDrawShadow(RenderParams& rp) {}
+  virtual void onDrawTransparent(RenderParams& rp) {}
+  virtual void onDrawDebug(RenderParams& rp) {}
+  virtual void onDrawNonDepth(RenderParams& rp) {}
 
   template < class Tx = SceneNode >
   std::shared_ptr<Tx> getNode() { return std::dynamic_pointer_cast<Tx>(_pWorldObject); }

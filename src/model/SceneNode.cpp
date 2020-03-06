@@ -58,8 +58,6 @@ void BaseSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   fb->readVec3(std::move(_pBox->_min));
   fb->readVec3(std::move(_pBox->_max));
 }
-
-///////////////////////////////////////////////////////////////////
 SceneNode::SceneNode(string_t name, std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
   _name = name;
   _pBox = new Box3f();
@@ -171,6 +169,8 @@ void SceneNode::hide() {
 bool SceneNode::isHidden() {
   return _bHidden;
 }
+string_t SceneNode::name() { return _name; }
+
 void SceneNode::init() {
   // ** WHY IS THIS HERE? -- READ BELOW ** 
   // All nodes require separate initialization due to the fact that shared_ptr cannot pass its own reference in a constructor.
@@ -405,13 +405,13 @@ void SceneNode::applyLocalAnimation(std::shared_ptr<Animator> anm) {
     }
   }
 }
-
 void SceneNode::calcBoundBox() {
   Box3f* pBox = getBoundBoxObject();
   calcBoundBox(*pBox, getPos(), 0.0f);
 }
 void SceneNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) {
   _pOBB->setInvalid();
+  pBox.genResetLimits();
 
   if (!isBoneNode()) {
     //aggregate all boxes, don'd do that for bone nodes we need them to have local boxes
@@ -504,6 +504,9 @@ void SceneNode::drawDeferred(RenderParams& rp) {
       pc->drawDeferred(rp);
     }
   }
+  for (auto comp : _vecComponents) {
+    comp->onDrawDeferred(rp);
+  }
 }
 void SceneNode::drawForward(RenderParams& rp) {
   if (getChildren()) {
@@ -511,6 +514,9 @@ void SceneNode::drawForward(RenderParams& rp) {
       std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawForward(rp);
     }
+  }
+  for (auto comp : _vecComponents) {
+    comp->onDrawForward(rp);
   }
 }
 void SceneNode::drawShadow(RenderParams& rp) {
@@ -520,6 +526,9 @@ void SceneNode::drawShadow(RenderParams& rp) {
       pc->drawShadow(rp);
     }
   }
+  for (auto comp : _vecComponents) {
+    comp->onDrawShadow(rp);
+  }
 }
 void SceneNode::drawForwardDebug(RenderParams& rp) {
   if (getChildren()) {
@@ -527,6 +536,9 @@ void SceneNode::drawForwardDebug(RenderParams& rp) {
       std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawForwardDebug(rp);
     }
+  }
+  for (auto comp : _vecComponents) {
+    comp->onDrawDebug(rp);
   }
 }
 void SceneNode::drawNonDepth(RenderParams& rp) {
@@ -536,6 +548,9 @@ void SceneNode::drawNonDepth(RenderParams& rp) {
       pc->drawNonDepth(rp);
     }
   }
+  for (auto comp : _vecComponents) {
+    comp->onDrawNonDepth(rp);
+  }
 }
 void SceneNode::drawTransparent(RenderParams& rp) {
   if (getChildren()) {
@@ -543,6 +558,9 @@ void SceneNode::drawTransparent(RenderParams& rp) {
       std::shared_ptr<SceneNode> pc = std::dynamic_pointer_cast<SceneNode>(tn);
       pc->drawTransparent(rp);
     }
+  }
+  for (auto comp : _vecComponents) {
+    comp->onDrawTransparent(rp);
   }
 }
 vec3 SceneNode::getFinalPos() {

@@ -137,7 +137,7 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
 LightNodePoint::LightNodePoint(string_t name, bool bShadowBox) : LightNodeBase(name, bShadowBox) {
 }
 std::shared_ptr<LightNodePoint> LightNodePoint::create(string_t name, bool bhasShadowBox) {
-  std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(bhasShadowBox);
+  std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(name,bhasShadowBox);
   lp->init();
   lp->_pSpec = std::make_shared<BaseSpec>("*LightNodePoint");
   return lp;

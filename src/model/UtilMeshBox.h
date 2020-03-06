@@ -20,9 +20,9 @@ public:
   virtual ~UtilMeshBox() override;
   void setWireFrame(bool blnWireFrame) { _blnWireFrame = blnWireFrame; }
 
-  virtual void generate();
-  virtual void preDraw();
-  virtual void postDraw();
+  virtual void generate() override;
+  virtual void preDraw() override;
+  virtual void postDraw() override;
 
 private:
   float _fSize;

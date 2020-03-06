@@ -81,6 +81,7 @@ public:
   FORCE_INLINE float getVolumePositiveOnly();
   //FORCE_INLINE float distance2(Box3x* cube);
   FORCE_INLINE bool validateBoundBox();
+  FORCE_INLINE bool volumeIsNotTooBig();
   FORCE_INLINE bool validateInterval() const;
   FORCE_INLINE float getWidth() { return (_max.x - _min.x); }
   FORCE_INLINE float getHeight() { return (_max.y - _min.y); }
@@ -166,40 +167,6 @@ FORCE_INLINE bool Box3x<Tx>::cubeIntersect_EasyOut_Inclusive(Box3f* cc) {
   //Testing on MSVC this simple test beats out all 5 other tests by +- 100ms for 10m tests
   return cc->_min.x <= _max.x && cc->_min.y <= _max.y && cc->_min.z <= _max.z &&
     _min.x <= cc->_max.x && _min.y <= cc->_max.y && _min.z <= cc->_max.z;
-
-  //Old Test
-  //// 12 cmps
-  //// min > max
-  //if(cc->_min.x > _max.x)
-  //    return FALSE;
-  //if(cc->_min.y > _max.y)
-  //    return FALSE;
-  //if(cc->_min.z > _max.z)
-  //    return FALSE;
-
-  //if(_min.x > cc->_max.x)
-  //    return FALSE;
-  //if(_min.y > cc->_max.y)
-  //    return FALSE;
-  //if(_min.z > cc->_max.z)
-  //    return FALSE;
-
-  ////  max < min
-  //if(cc->_max.x < _min.x)
-  //    return FALSE;
-  //if(cc->_max.y < _min.y)
-  //    return FALSE;
-  //if(cc->_max.z < _min.z)
-  //    return FALSE;
-
-  //if(_max.x < cc->_min.x)
-  //    return FALSE;
-  //if(_max.y < cc->_min.y)
-  //    return FALSE;
-  //if(_max.z < cc->_min.z)
-  //    return FALSE;
-
-  //return TRUE;
 }
 /**
 *    @fn cubeIntersect_EasyOut
@@ -210,39 +177,6 @@ FORCE_INLINE bool Box3x<Tx>::cubeIntersect_EasyOut_Exclusive(Box3f* cc) {
   bool b = cc->_min.x < _max.x && cc->_min.y < _max.y && cc->_min.z < _max.z &&
     _min.x < cc->_max.x && _min.y < cc->_max.y && _min.z < cc->_max.z;
   return b;
-  //Old
-  //// 12 cmps
-  //// min > max
-  //if(cc->_min.x >= _max.x)
-  //    return false;
-  //if(cc->_min.y >= _max.y)
-  //    return false;
-  //if(cc->_min.z >= _max.z)
-  //    return false;
-
-  //if(_min.x >= cc->_max.x)
-  //    return false;
-  //if(_min.y >= cc->_max.y)
-  //    return false;
-  //if(_min.z >= cc->_max.z)
-  //    return false;
-
-  ////  max < min
-  //if(cc->_max.x <= _min.x)
-  //    return false;
-  //if(cc->_max.y <= _min.y)
-  //    return false;
-  //if(cc->_max.z <= _min.z)
-  //    return false;
-
-  //if(_max.x <= cc->_min.x)
-  //    return false;
-  //if(_max.y <= cc->_min.y)
-  //    return false;
-  //if(_max.z <= cc->_min.z)
-  //    return false;
-
-  //return true;
 }
 /**
 *    @fn RayIntersect
@@ -270,24 +204,28 @@ FORCE_INLINE bool Box3x<Tx>::RayIntersect(const ProjectedRay* ray, RaycastHit* b
       bh->_bHit = false;
     return false;
   }
-  if (tymin > txmin)
+  if (tymin > txmin) {
     txmin = tymin;
-  if (tymax < txmax)
+  }
+  if (tymax < txmax) {
     txmax = tymax;
+  }
 
   tzmin = (bounds(ray->Sign[2]).z - ray->Origin.z) * ray->InvDir.z;
   tzmax = (bounds(1 - ray->Sign[2]).z - ray->Origin.z) * ray->InvDir.z;
 
   if ((txmin > tzmax) || (tzmin > txmax)) {
-    if (bh != NULL)
+    if (bh != NULL) {
       bh->_bHit = false;
+    }
     return false;
   }
-  if (tzmin > txmin)
+  if (tzmin > txmin) {
     txmin = tzmin;
-  if (tzmax < txmax)
+  }
+  if (tzmax < txmax) {
     txmax = tzmax;
-
+  }
   bHit = ((txmin >= 0.0f) && (txmax <= ray->Length));
 
   //**Note changed 20151105 - this is not [0,1] this is the lenth along the line in which 
@@ -303,7 +241,6 @@ FORCE_INLINE bool Box3x<Tx>::RayIntersect(const ProjectedRay* ray, RaycastHit* b
 /**
 *    http://stackoverflow.com/questions/4578967/cube-sphere-intersection-test
 */
-
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::sphereIntersect(Vec3x<Tx>* center, float r) {
   float dist_squared = r * r;
@@ -403,9 +340,10 @@ FORCE_INLINE void Box3x<Tx>::genExpandByBox(Box3f* pc) {
 }
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::getHasVolume(float epsilon) {
-  if (getVolumePositiveOnly() == 0.0)
-    return FALSE;
-  return TRUE;
+  if (getVolumePositiveOnly() == 0.0) {
+    return false;
+  }
+  return true;
 }
 template < class Tx >
 FORCE_INLINE float Box3x<Tx>::getVolumePositiveOnly() {
@@ -417,7 +355,6 @@ FORCE_INLINE float Box3x<Tx>::getVolumePositiveOnly() {
   if (az < 0.0f) az = 0.0f;
   return ax * ay * az;
 }
-
 template < class Tx >
 FORCE_INLINE float Box3x<Tx>::getVolumeArbitrary() {
   return (_max.x - _min.x) * (_max.y - _min.y) * (_max.z - _min.z);
@@ -782,8 +719,14 @@ template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::validateBoundBox() {
   bool b1 = validateInterval();
   bool b2 = getHasVolume();
-
-  return  b1 && b2;
+  bool b3 = volumeIsNotTooBig();
+  return  b1 && b2 && b3;
+}
+template < class Tx >
+FORCE_INLINE bool Box3x<Tx>::volumeIsNotTooBig() {
+  float f = getVolumePositiveOnly();
+  bool b = f < (double)PHY_MAX_BOUND_BOX_VOLUME;
+  return b;
 }
 //Make sure the box's interval is valid
 template < class Tx >
@@ -819,7 +762,7 @@ FORCE_INLINE float Box3x<Tx>::innerRadius() {
 }
 template < class Tx >
 FORCE_INLINE string_t Box3x<Tx>::toString() {
-  return TStr("{", _min.toString(), "},{", _max.toString(), "}");
+  return Stz ("{", _min.toString(), "},{", _max.toString(), "}");
 }
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::limitSizeForEachAxis(const vec3& vBasePos, const float& fSize) {

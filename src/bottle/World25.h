@@ -15,19 +15,18 @@ namespace BR2 {
 *  @class World25d
 *  @brief Manages the Bottle world grid hierarchy, and physics interaction with world.  Inherits generic physics management for iterative physics solutions.
 */
-class World25 : public PhysicsWorld {
+class World25 : public VirtualMemoryShared<World25> {
 public:
 
   /* TODO: Pass PhysicsWorld in as a member*/
   World25(std::shared_ptr<Scene> pscene, std::shared_ptr< BottleScript> pCallingScript);
   virtual ~World25() override;
-
   void init(std::shared_ptr<ObFile> ob);
 
   void updateTouch(std::shared_ptr<InputManager> pFingers);
-  virtual void update(float delta) override;
-  virtual void drawDeferred(RenderParams& rp) override;
-  virtual void drawForward(RenderParams& rp) override;
+  void update(float delta) ;
+   void drawDeferred(RenderParams& rp) ;
+   void drawForward(RenderParams& rp) ;
 
   //*Raycast Tests**
   Ray_t getMouseRay(vec2& vMouse);
@@ -41,12 +40,14 @@ public:
   std::shared_ptr<ModelNode> getClosestObjectUnderRay(Ray_t* pr);
   WorldCell* hitCellGroundUnderRay(Ray_t* __inout_ inout_pr, bool bHitPlaneIfNoneFound);
 
+
   //Get/set cheap
   size_t getNumGridsGenerating() { return _setGenStage1.size(); }
   std::shared_ptr<World25Plane> getWorld25Plane() { return _pWorld25Plane; }
   std::shared_ptr<Atlas> getWorldAtlas() { return _pWorldAtlas; }
   std::shared_ptr<W25MeshMaker> getMeshMaker() { return _pMeshMaker; }
   std::shared_ptr<SpriteBucket> getSpriteBucket();
+  std::shared_ptr<PhysicsWorld> getPhysics() { return _pPhysics; }
 
   std::shared_ptr<ModelNode> makeObj(string_t mobName, vec3& vR3PosToSnap);
 
@@ -56,6 +57,7 @@ public:
   std::shared_ptr<WorldMaker> getWorldMaker() { return _pWorldMaker; }
   std::shared_ptr<W25Config> getConfig() { return _pConfig; }
   std::shared_ptr<BottleScript> getRoom() { return _pBottleRoom; }
+  std::shared_ptr<Scene> getScene() { return _pScene; }
 
   void createObjFromFile(World25ObjectData* obData);//, WorldCell* pDestCell, int32_t iStackIndex);
   void remakeGridMeshes();
@@ -72,7 +74,6 @@ public:
   GridShow::e toggleShowGrid();
 
 protected:
-  virtual std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos) override;
 
 private:
   bool _bAsyncGen = false;
@@ -92,6 +93,8 @@ private:
   std::shared_ptr<BottleScript> _pBottleRoom = nullptr;
   std::shared_ptr<W25Config> _pConfig = nullptr;
   std::shared_ptr<ObFile> _pGameFile = nullptr;
+  std::shared_ptr<PhysicsWorld> _pPhysics = nullptr;
+  std::shared_ptr<Scene> _pScene = nullptr;
 
   std::set<std::shared_ptr<WorldGrid>> _setGenStage1;
   std::set<std::shared_ptr<WorldGrid>> _setGenStage2;
@@ -106,6 +109,7 @@ private:
   string_t _strWorldName;
   GridShow::e _eShowGrid = GridShow::e::None;
 
+  std::shared_ptr<PhysicsGrid> loadGrid(const ivec3& pos);
   void updateHandCursorAndAddToRenderList(float);
   void generateStage1(std::vector<std::shared_ptr<WorldGrid>>& vecGen, bool synchronous);
   void generateStage2();
@@ -135,9 +139,6 @@ private:
   void createHandCursor();
 
   void convertMobs();
-
-  //virtual std::shared_ptr<PhysicsGrid> makeGrid(ivec3& cv, bool bEmpty) override;
-
 };
 
 }//ns Game

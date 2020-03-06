@@ -34,6 +34,7 @@
 #include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
 #include "../bottle/BottleUtils.h"
+#include "../bottle/World25.h"
 
 namespace BR2 {
 std::shared_ptr<Scene> Scene::create() {
@@ -41,7 +42,7 @@ std::shared_ptr<Scene> Scene::create() {
   s->init();
   return s;
 }
-Scene::Scene() : SceneNode(nullptr) {
+Scene::Scene() : SceneNode("Scene", nullptr) {
 }
 Scene::~Scene() {
   //_pScreen = nullptr;
@@ -49,11 +50,12 @@ Scene::~Scene() {
 }
 void Scene::init() {
   BRLogInfo("Making PhysicsWorld");
-  _pPhysicsWorld = PhysicsWorld::create(getThis<Scene>(),
-    BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
-    BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
-    BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
-    BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
+  _pPhysicsWorld =
+    PhysicsWorld::create(getThis<Scene>(),
+      BottleUtils::getNodeWidth(), BottleUtils::getNodeHeight(), std::move(vec3(0, 1, 0)),
+      BottleUtils::getAwarenessRadiusXZ(), BottleUtils::getAwarenessIncrementXZ(),
+      BottleUtils::getAwarenessRadiusY(), BottleUtils::getAwarenessIncrementY(),
+      BottleUtils::getNodesY(), BottleUtils::getMaxGridCount());
 
   BRLogInfo("..LightManager");
   _pLightManager = std::make_shared<LightManager>(getThis<Scene>());
@@ -63,11 +65,11 @@ void Scene::init() {
 
   SceneNode::init();
 }
-void Scene::setActiveCamera(std::shared_ptr<CameraNode> x) { 
+void Scene::setActiveCamera(std::shared_ptr<CameraNode> x) {
   if (_pActiveCamera != nullptr) {
     _pActiveCamera->_bRenderActive = false;
   }
-  _pActiveCamera = x; 
+  _pActiveCamera = x;
   _pActiveCamera->_bRenderActive = true;
 }
 
@@ -84,6 +86,16 @@ void Scene::afterAttachedToWindow() {
   Gu::checkErrorsDbg();
 
   makeParticles();
+
+  //TEst
+
+  std::shared_ptr<MeshNode> c = MeshNode::create("Ball",
+    MeshUtils::makeSphere(2, 20, 20)
+  );
+  attachChild(c);
+
+  //TEst
+
 
   //Activate all nodes by traversing this parent root.
   std::shared_ptr<Scene> scene = getThis<Scene>();
@@ -176,7 +188,7 @@ void Scene::createFlyingCamera() {
 
 #ifdef NOSCRIPT
   BRLogInfo("Creating Fly Camera.");
-  _pDefaultCamera = CameraNode::create(_pGraphicsWindow->getViewport());
+  _pDefaultCamera = CameraNode::create("FlyingCamera", _pGraphicsWindow->getViewport());
   std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
   _pDefaultCamera->addComponent(css);
   setActiveCamera(_pDefaultCamera);
@@ -201,35 +213,39 @@ void Scene::createFlyingCamera() {
 void Scene::debugChangeRenderState() {
   std::shared_ptr<InputManager> inp = getInput();
 
-  if (inp->keyPress(SDL_SCANCODE_F1)) {
-    if (inp->shiftHeld()) {
-      _bDebugDisableShadows = !_bDebugDisableShadows;
+  //TODO: these should all be in rednersettings 1/22/18
+//SHIFT + X key combos!!
+  if (inp->shiftHeld()) {
+    if (inp->keyPress(SDL_SCANCODE_F1)) {
+      if (inp->shiftHeld()) {
+        _bDebugDisableShadows = !_bDebugDisableShadows;
+      }
+      else {
+        _bShowDebugText = !_bShowDebugText;
+      }
     }
-    else {
-      _bShowDebugText = !_bShowDebugText;
+    if (inp->keyPress(SDL_SCANCODE_F2)) {
+      _bDrawDebug = !_bDrawDebug;
     }
-  }
-  if (inp->keyPress(SDL_SCANCODE_F2)) {
-    _bDrawDebug = !_bDrawDebug;
-  }
-  if (inp->keyPress(SDL_SCANCODE_F3)) {
-    _bDebugDisableCull = !_bDebugDisableCull;
-  }
-  if (inp->keyPress(SDL_SCANCODE_F4)) {
-    _bDebugShowWireframe = !_bDebugShowWireframe;
-  }
-  if (inp->keyPress(SDL_SCANCODE_F5)) {
-    _bDebugClearWhite = !_bDebugClearWhite;
-  }
-  if (inp->keyPress(SDL_SCANCODE_F6)) {
-    _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
-  }
-  if (inp->keyPress(SDL_SCANCODE_F7)) {
-    if (getWindow()->getFrameSync()->isEnabled()) {
-      getWindow()->getFrameSync()->disable();
+    if (inp->keyPress(SDL_SCANCODE_F3)) {
+      _bDebugDisableCull = !_bDebugDisableCull;
     }
-    else {
-      getWindow()->getFrameSync()->enable();
+    if (inp->keyPress(SDL_SCANCODE_F4)) {
+      _bDebugShowWireframe = !_bDebugShowWireframe;
+    }
+    if (inp->keyPress(SDL_SCANCODE_F5)) {
+      _bDebugClearWhite = !_bDebugClearWhite;
+    }
+    if (inp->keyPress(SDL_SCANCODE_F6)) {
+      _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
+    }
+    if (inp->keyPress(SDL_SCANCODE_F7)) {
+      if (getWindow()->getFrameSync()->isEnabled()) {
+        getWindow()->getFrameSync()->disable();
+      }
+      else {
+        getWindow()->getFrameSync()->enable();
+      }
     }
   }
 
@@ -334,6 +350,8 @@ void Scene::drawDeferred(RenderParams& rp) {
   getContext()->popDepthTest();
 
   Perf::popPerf();
+
+  SceneNode::drawDeferred(rp);
 }
 void Scene::drawForward(RenderParams& rp) {
   //Meshes
@@ -342,16 +360,18 @@ void Scene::drawForward(RenderParams& rp) {
     pm->drawForward(rp);
   }
 
-  drawBackgroundImage();
+  //drawBackgroundImage();
 
   RenderUtils::drawAxisShader(getActiveCamera());
   RenderUtils::drawGridShader(getActiveCamera());
+
+  SceneNode::drawForward(rp);
 }
 void Scene::drawBackgroundImage() {
   if (_pQuadMeshBackground == nullptr) {
     _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
       getActiveCamera()->getViewport()->getWidth(), getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(TexFile("test_bk",Gu::getPackage()->makeAssetPath("textures", "test_tex3.png")));
+    _pTex = Gu::getTexCache()->getOrLoad(TexFile("test_bk", Gu::getPackage()->makeAssetPath("textures", "test_tex3.png")));
   }
   std::shared_ptr<CameraNode> bc = getActiveCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
@@ -366,11 +386,15 @@ void Scene::drawBackgroundImage() {
   Gu::getShaderMaker()->getImageShader_F()->endRaster();
 }
 void Scene::drawShadow(RenderParams& rp) {
+  SceneNode::drawShadow(rp);
 }
 void Scene::drawForwardDebug(RenderParams& rp) {
+
+  SceneNode::drawForwardDebug(rp);
 }
 void Scene::drawNonDepth(RenderParams& rp) {
   draw2d();
+  SceneNode::drawNonDepth(rp);
 }
 void Scene::drawTransparent(RenderParams& rp) {
   Perf::pushPerf();
@@ -475,7 +499,7 @@ void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
 //  return mn;
 //}
 std::shared_ptr<LightNodePoint> Scene::createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled) {
-  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create(bShadowsEnabled);
+  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("PointLight", bShadowsEnabled);
   lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
   lp->setPos(std::move(pos));
   lp->setLightRadius(radius);
@@ -487,7 +511,7 @@ std::shared_ptr<LightNodePoint> Scene::createPointLight(vec3&& pos, float radius
   return lp;
 }
 std::shared_ptr<LightNodeDir> Scene::createDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled) {
-  std::shared_ptr<LightNodeDir> dir = LightNodeDir::create(bShadowsEnabled);
+  std::shared_ptr<LightNodeDir> dir = LightNodeDir::create("DirLight", bShadowsEnabled);
   dir->setMaxDistance(fDist);
   dir->setPos(std::move(pos));
   dir->setLookAt(std::move(lookAt));
@@ -502,6 +526,7 @@ std::shared_ptr<LightNodeDir> Scene::createDirLight(const vec3&& pos, const vec3
 std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild) {
   std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
   if (casted != nullptr) {
+    AssertOrThrow2(_pPhysicsWorld != nullptr);
     _pPhysicsWorld->addObj(casted, false, false);
   }
 

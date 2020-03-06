@@ -1,5 +1,19 @@
 # Mine City Task Log
 
+- [ ] Rendering Fix
+	- [ ] Fix Scene draw..() methods by removing the loop over RenderBucket 
+	- [ ] remove PhysicsWorld CULL, and perhaps the RenderBucket collection code and use something like SceneNode::_bCulled to signal that a node was culled.
+	- [ ] Physics RenderBucket collect does not respect SceneGraph (_mapObjects)  Make it iterate the scenegraph, (testing for visibility) instead of loop over a vector.
+
+- [ ] Bug in W25GridMesh::draw where we are drawing uncollected grids.  This is due to when we swap the camera.  
+The fix for this is to reset the node manifolds when the camera gets swapped.
+
+- [ ] Create Helpers
+	- [ ] Render camera frustum
+	- [ ] Render point light radius as sphere (possible circle on screne)
+	- [ ] Render Directional light normal.
+	- [ ] Render all of thse WITH MESH ON THE NODE not inline.
+
 - [ ] To use image sizes in gui, use Img32::peek() to get stats
 
 - [ ] Binary File Version Backwards Compatibility
@@ -95,6 +109,7 @@
 		- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
 ## Bottle World
+- [ ] Fix RTS cam rotation to move central to its Y axis (not aroudn the point it's looking at).  It's odd the way it rotates like that.'
 
 - [ ] CSharp inline *minimal* scripts.
 	* This should fix the camera, so we can easily add the bottle topologizer.

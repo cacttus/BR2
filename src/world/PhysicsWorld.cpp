@@ -157,6 +157,12 @@ void PhysicsWorld::unloadWorld() {
 void PhysicsWorld::reparentObjectByCustomBox(std::shared_ptr<PhysicsNode> ob, Box3f* pBox) {
   bool bSet = false;
   bool bSet2 = false;
+
+  if (!pBox->validateBoundBox()) {
+    BRLogErrorCycle("Bound box was invalid for " + ob->name() + ": " + pBox->toString());
+    Gu::debugBreak();
+    return;
+  }
   //clear
   clearObjectManifoldAndRemoveFromGrid(ob);
 
@@ -268,22 +274,6 @@ void PhysicsWorld::clearObjectManifoldAndRemoveFromGrid(std::shared_ptr<PhysicsN
   //Clear everything
   ob->getManifold()->clear();
 }
-void PhysicsWorld::refreshCache() {
-  // _vecPlayerChars.clear();
-  // _vecLights.clear();
-
-  //Hacky way to gather chars
-  //ObjMap::iterator obit = _mapObjects.begin();
-  //for (; obit != _mapObjects.end(); obit++) {
-  //    std::shared_ptr<PhysicsNode> ob = obit->second;
-  //    if (ob->getSpec()->isPlayerChar()) {
-  //        _vecPlayerChars.insert(ob);
-  //    }
-  //    if (ob->getSpec()->isEmitter()) {
-  //        _vecLights.insert(ob);
-  //    }
-  //}
-}
 bool PhysicsWorld::tryRemoveObj(std::shared_ptr<PhysicsNode> ob) {
   if (ob == nullptr) {
     BRLogError("Tried to remove a null object.");
@@ -298,7 +288,6 @@ bool PhysicsWorld::tryRemoveObj(std::shared_ptr<PhysicsNode> ob) {
     }
     clearObjectManifoldAndRemoveFromGrid(ob);
 
-    refreshCache();
     return true;
   }
   return false;
@@ -323,10 +312,6 @@ void PhysicsWorld::addObj(std::shared_ptr<PhysicsNode> ob, bool bActivate, bool 
   }
   else {
     _mapObjects.insert(std::make_pair(ob->getId(), ob));
-  }
-
-  if (bRefreshCache) {
-    refreshCache();
   }
 }
 void PhysicsWorld::activate(std::shared_ptr<PhysicsNode> ob) {
@@ -536,12 +521,14 @@ void PhysicsWorld::sortObjects_CalculateSpeedboxes_And_CollectManifolds() {
   }
 }
 void PhysicsWorld::calc_obj_manifold(std::shared_ptr<PhysicsNode> ob) {
-  //assume bound box is calculated already.
-  //ob->calcBoundBox();
-  if (ob->getBoundBoxObject()->limitSizeForEachAxis(ob->getPos(), 20000.0f)) {
-    //Restrict bound box size, this will prevent us from trying to reparent an object
-    //that has an invalid bound box
-    BRLogWarnCycle("Bound Box Of Object " + ob->getSpecName() + " was too large, >20000, check meshes to ensure box is accurate.");
+  //assume bound box is calculated already, however if it's bad fix it.
+  if (!ob->getBoundBoxObject()->validateBoundBox()) {
+    ob->calcBoundBox();
+    BRLogDebug("Fixing bound box for " + ob->name() + " box: " + ob->getBoundBoxObject()->toString());
+  }
+  if (ob->getBoundBoxObject()->limitSizeForEachAxis(ob->getPos(), PHY_MAX_BOUND_BOX_SIZE)) {
+    //Restrict bound box size, this will prevent us from trying to reparent an object that has an invalid bound box
+    BRLogDebugCycle("Bound Box Of Object " + ob->getSpecName() + " was too large, >"+ PHY_MAX_BOUND_BOX_SIZE +", check meshes to ensure box is accurate.");
   }
 
   //Update Speedbox
@@ -941,9 +928,6 @@ int32_t PhysicsWorld::stabalizeCollisionSystem(std::multimap<float, BoxCollision
     nResolved++;
   }
 
-  // _vecActiveFrame.clear();
-  //_vecActiveFrame = nextActive;
-
   return nResolved;
 }
 void PhysicsWorld::resolve_pair_t(BoxCollision& pCol) {
@@ -1177,7 +1161,6 @@ void PhysicsWorld::getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) cons
   box._max.y = (float)(pt.y + 1) * getNodeHeight();
   box._max.z = (float)(pt.z + 1) * getNodeWidth();
 }
-
 void PhysicsWorld::makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_ptr<PhysicsGrid>>& vecGenerated) {
   std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
 
@@ -1430,98 +1413,6 @@ std::shared_ptr<PhysicsNode> PhysicsWorld::findNode(string_t specName) {
   }
   return nullptr;
 }
-void PhysicsWorld::drawShadows(RenderParams& rp) {
-}
-void PhysicsWorld::drawForward(RenderParams& rp) {
-  for (std::pair<float, std::shared_ptr<SceneNode>> p : getVisibleNodes()) {
-    std::shared_ptr<SceneNode> pm = p.second;
-    pm->drawForward(rp);
-  }
-}
-void PhysicsWorld::drawDeferred(RenderParams& rp) {
-  Perf::pushPerf();
 
-  Gu::getCoreContext()->pushDepthTest();
-  Gu::getCoreContext()->pushCullFace();
-  Gu::getCoreContext()->pushBlend();
-  {
-    Gu::getCoreContext()->enableBlend(false);
-    Gu::getCoreContext()->enableCullFace(true);
-    Gu::getCoreContext()->enableDepthTest(true);
 
-    //**
-    //2/24 in order to set up the rendering system to be instanced we gotta change a lot around, like merge all the uniform buffers, skin joint buffers, and stuff.  Then reference by gl_InstanceID
-    //so -- this is a huge task and it's nto really needed yet.
-    //**
-
-    //If we don't have skin, draw instanced,
-    //if we have skin draw normally.
-    //_pRenderBucket->sortAndDrawMeshes(
-    //    [](std::shared_ptr<VertexFormat> vf) {
-    //        return Gu::getShaderMaker()->getDiffuseShader(vf);
-    //    },
-    //    [&](std::shared_ptr<ShaderBase> sb) {
-    //        sb->bind();
-    //        sb->setUf("_ufProj", (void*)&_projMatrix, 1, false);
-    //        sb->setUf("_ufView", (void*)&_viewMatrix, 1, false);
-    //        sb->setUf("_ufShadowLightPos", (void*)&vFinal, 1, false);
-    //    },
-    //    [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshNode> bn) {
-    //        RenderParams rp;
-    //        rp.setShader(sb);
-    //        bn->drawDeferred(std::move(rp));
-    //    }
-    //);
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glDisable(GL_BLEND);
-
-    ////3D Models
-    ////  glEnable(GL_BLEND);
-    ////glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //for (std::pair<float, std::shared_ptr<BaseNode>> p : getVisibleNodes()) {
-    //    std::shared_ptr<BaseNode> pm = p.second;
-    //    std::shared_ptr<WorldObject> wo = std::dynamic_pointer_cast<WorldObject>(pm);
-    //    if (wo != nullptr) {
-    //        wo->drawDeferred(std::move(rp)); //Don't pass a matrix in, the model is the same now
-    //    }
-    //}
-    //3D Models
-    //  glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    RenderParams rp;
-    for (std::pair<float, std::shared_ptr<MeshNode>> p : _pRenderBucket->getMeshes()) {
-      std::shared_ptr<MeshNode> pm = p.second;
-      pm->drawDeferred(rp);
-    }
-  }
-  Gu::getCoreContext()->popBlend();
-  Gu::getCoreContext()->popCullFace();
-  Gu::getCoreContext()->popDepthTest();
-
-  Perf::popPerf();
-}
-void PhysicsWorld::drawTransparent(RenderParams& rp) {
-  Perf::pushPerf();
-
-  Gu::getCoreContext()->pushDepthTest();
-  Gu::getCoreContext()->pushCullFace();
-  Gu::getCoreContext()->pushBlend();
-  {
-    Gu::getCoreContext()->enableDepthTest(true);
-    Gu::getCoreContext()->enableCullFace(true);
-    Gu::getCoreContext()->enableBlend(false);
-
-    RenderParams rp;
-    for (std::pair<float, std::shared_ptr<MeshNode>> p : _pRenderBucket->getMeshesTransparent()) {
-      std::shared_ptr<MeshNode> pm = p.second;
-      pm->drawTransparent(rp);
-    }
-  }
-  Gu::getCoreContext()->popBlend();
-  Gu::getCoreContext()->popCullFace();
-  Gu::getCoreContext()->popDepthTest();
-
-  Perf::popPerf();
-}
 }//ns Game

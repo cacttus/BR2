@@ -93,7 +93,20 @@ bool GraphicsApi::handleEvents(SDL_Event* event) {
 
   std::shared_ptr<InputManager> pInput = getInputForWindow(event->window.windowID);
   if (pInput == nullptr) {
-    BRLogError("Window input manager could not be found.");
+    if (event->type == SDL_AUDIODEVICEADDED) {
+      BRLogDebug("SDL_AUDIODEVICEADDED called.");
+    }
+    else {
+
+      string_t ze = Stz "Window input manager could not be found for window ID " + event->window.windowID + ". Known Ids:";
+      string_t appz = "";
+      for (auto wc : this->_contexts) {
+        ze += Stz appz + SDL_GetWindowID(wc->getGraphicsWindow()->getSDLWindow());
+        appz = ",";
+      }
+      ze += Stz  " event=" + event->type;
+      BRLogWarn(ze);
+    }
     return true;
   }
 

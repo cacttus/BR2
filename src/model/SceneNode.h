@@ -122,6 +122,7 @@ public:
   void show();
   void hide();
   bool isHidden();
+  string_t name();
 
   void drawBoxes(std::shared_ptr<UtilMeshInline> mi);
   void drawBox(std::shared_ptr<UtilMeshInline> mi);

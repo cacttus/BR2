@@ -3138,7 +3138,7 @@ void UiScreen::init() {
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
-  _pint->_pMesh = MeshNode::create(
+  _pint->_pMesh = MeshNode::create("UiScreen",
     std::make_shared<MeshSpec>(
       verts.data(), verts.size(),
       inds.data(), inds.size(),

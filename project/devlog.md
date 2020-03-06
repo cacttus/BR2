@@ -1,5 +1,26 @@
 
 # Mine City Devlog
+
+*3/6/20*
+
+* Finished the Node Naming system.
+	* We are going to get rid of (at least most of) the spec system.
+* Simplified Logger
+* Fixed boundbox calculation erorr in physics.
+* Either we need to attach World25 and use by physicsmanager OR inherit.
+	* I think use is  better.
+* Added missing begin/endEdit in MeshUtils.
+* first get stuff to render
+* then fix frutum draw in cameranode
+* Moved all drawing code to Scene (it was actually duplicated in PhysicsWorld).
+* Implemented drawing routines in Script and also moved to Component (as component is used by SceneNode, not Script);
+* Made World25 REFERENCE PhysicsManager.  
+* Changed debug key combos to use Shift (Shift+F1)
+* Note now that we manually unload the physics world, we MUST remember to add back the scene objects to PhysicsWorld (somehow) or share their data with PhysicsWorld.
+* **********Scene's drawForward, drawDeferred, .. etc are WRONG.  Currently we are using PhysicsWorld::collect then drawing in a loop, THEN WE DRAW SceneNode::drawForward .. etc.
+The fix for this is to cull objects while traversing the scenegraph's draw routine.  OR cull them with a "flag".  This will correctly implement the draw() routine.
+This effectively also (maybe) will get rid of the RenderBucket.
+
 *3/5/20*
 
 * Updated Log**Cycle to force it to log the first time it is run.

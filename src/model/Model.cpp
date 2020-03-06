@@ -312,7 +312,7 @@ BoneNode::BoneNode(string_t name, std::shared_ptr<BoneSpec> b, std::shared_ptr<A
   _mLocal.setIdentity();
 }
 std::shared_ptr<BoneNode> BoneNode::create(string_t name, std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) {
-  std::shared_ptr<BoneNode> bn = std::make_shared<BoneNode>(b, pa);
+  std::shared_ptr<BoneNode> bn = std::make_shared<BoneNode>(name, b, pa);
   bn->init();
   return bn;
 }

@@ -93,7 +93,7 @@ public:
 
   int numTrisSide(int side) {
     AssertOrThrow2(side >= 0 && side < c_nSides);
-    return _verts[side].size() / 3;
+    return _verts[side].size() / (size_t)3;
   }
   W25Geom getGeomId() {
     return _iGeomId;
