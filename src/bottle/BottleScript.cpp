@@ -54,6 +54,7 @@
 #include "../bottle/GameFile.h"
 #include "../bottle/ObFile.h"
 #include "../bottle/GameUi.h"
+#include "../bottle/WorldSelect.h"
 
 namespace BR2 {
 BottleScript::BottleScript() {
@@ -84,7 +85,7 @@ void BottleScript::onStart() {
 
   //*Camera.  This must come first before world - because we use it
   BRLogInfo("Creating the RTS camera.");
-  _pRTSCam = CameraNode::create(getScene()->getWindow()->getViewport());
+  _pRTSCam = CameraNode::create("RTS cam", getScene()->getWindow()->getViewport());
   std::shared_ptr<RTSCamScript> css = std::make_shared<RTSCamScript>();
   _pRTSCam->addComponent(css);
   getScene()->setActiveCamera(_pRTSCam);
@@ -92,6 +93,7 @@ void BottleScript::onStart() {
 
   //Must come before UI (assets)
   loadGameFile();
+
 
   //Must come after camera created
   constructWorld();
@@ -106,6 +108,21 @@ void BottleScript::onStart() {
 
   _pWorldSelect->gatherWorlds();
 }
+void BottleScript::onUpdate(float dt) {
+  if (_eGameMode == GameMode::WorldSelect) {
+    _pWorldSelect->update();
+  }
+  else {
+    _pWorld25->update(dt);
+  }
+
+  updateTouch(getScene()->getInput(), dt);
+}
+void BottleScript::onIdle(t_timeval us) {
+  _pWorld25->idleProcessing(us);
+}
+void BottleScript::onExit() {
+}
 void BottleScript::loadGameFile() {
   //Called when we change to edit mode.
   string_t strObFileName = Gu::getPackage()->makeAssetPath("game.dat");
@@ -118,13 +135,12 @@ void BottleScript::constructWorld() {
   BRLogInfo("Making world.");
   {
     t_timeval t0 = Gu::getMicroSeconds();
-    _pWorld25 = std::make_shared<World25>(getScene());
+    _pWorld25 = std::make_shared<World25>(getScene(), getThis<BottleScript>());
     //Gu::getCoreContext()()->setPhysicsWorld(_pWorld25);
     _pWorld25->init(_pGameFile);
     BRLogInfo("Finished.." + (uint32_t)(Gu::getMicroSeconds() - t0) / 1000 + "ms");
   }
 }
-
 string_t BottleScript::getGameDirectory(string_t gameName) {
   return FileSystem::combinePath(_strGameSaveDir, gameName);
 }
@@ -225,26 +241,6 @@ void BottleScript::createGameSaveDir() {
   // string_t ddir = "";
   if (!FileSystem::createDirectoryRecursive(_strGameSaveDir)) {
     BRLogError("Failed to create game save directory " + _strGameSaveDir);
-  }
-}
-//void BottleRoom::setDebugMode() {
-//  //set some debug vars to make ikte easier
-//  if (Gu::isDebug()) {
-//    _bShowDebugText = true;
-//    _bDrawDebug = false;
-//    //Keep this legit so we can test x , y
-//    _pFlyCam->setPosAndLookAt(vec3(0, 5, -20), vec3(0, 0, 0));
-//  }
-//}
-//void BottleRoom::(float dt) {
-//  update(dt);
-//}
-void BottleScript::onUpdate(float dt) {
-  if (_eGameMode == GameMode::WorldSelect) {
-    _pWorldSelect->update();
-  }
-  else {
-    _pWorld25->update(dt);
   }
 }
 void BottleScript::onDrawForward(RenderParams& rp) {
@@ -479,17 +475,6 @@ void BottleScript::testDraw2d() {
         0.f, 0.f
     );*/
 }
-
-void BottleScript::onExit() {
-}
-//void BottleScript::userZoom(int amount) {
-//  if (Gu::getCamera() == _pFlyCam->getCam()) {
-//    _pFlyCam->userZoom((float)amount);
-//  }
-//  else {
-//    _pSnapRooter->userZoom((float)amount);
-//  }
-//}
 void BottleScript::toggleDebug(std::shared_ptr<InputManager> pFingers) {
 #define TOGGLECD(y, x) if(pFingers->keyPress(y)) { ((x) = (!x)); }
   if (pFingers->modsHeld(KeyMod::Ctrl | KeyMod::AltDontCare | KeyMod::ShiftDontCare)) {
@@ -569,19 +554,6 @@ void BottleScript::updateTouch(std::shared_ptr<InputManager> pFingers, float del
   Perf::pushPerf();
   toggleDebug(pFingers);
 
-  //Camera
-  //if (_eGameMode == GameMode::WorldSelect) {
-  //  _pFlyCam->update(pFingers, delta);
-  //}
-  //else if (_eGameMode == GameMode::Play) {
-  //  if (Gu::getCamera() == _pFlyCam->getCam()) {
-  //    _pFlyCam->update(pFingers, delta);
-  //  }
-  //  else {
-  //    _pSnapRooter->update(pFingers, delta);
-  //  }
-  //}
-
   //Touch World
   if (_eGameMode == GameMode::WorldSelect) {
     _pWorldSelect->updateTouch(pFingers, delta);
@@ -591,13 +563,6 @@ void BottleScript::updateTouch(std::shared_ptr<InputManager> pFingers, float del
 
     handleGameModeControls(pFingers);
 
-    //if (Gu::getCamera() == _pFlyCam->getCam()) {
-    //  _pFlyCam->moveCameraWSAD(pFingers, delta);
-    //}
-    //else {
-    //  _pSnapRooter->moveCameraWSAD(pFingers, delta);
-    //}
-
     if (!getScene()->getUiScreen()->getIsPicked()) {
       _pWorldEditor->editWorld(pFingers);
     }
@@ -605,7 +570,6 @@ void BottleScript::updateTouch(std::shared_ptr<InputManager> pFingers, float del
 
   Perf::popPerf();
 }
-
 GridShow::e BottleScript::toggleShowGrid() {
   if (_pWorld25 != nullptr) {
     return _pWorld25->toggleShowGrid();
@@ -632,192 +596,7 @@ void BottleScript::handleGameModeControls(std::shared_ptr<InputManager> pFingers
     }
   }
 }
-//bool BottleRoom::getStartFullscreen() {
-//  return _pContext->getConfig()->getStartFullscreen();
-//}
-//uint32_t BottleRoom::getStartWidth() {
-//  return _pContext->getConfig()->getDefaultScreenWidth();
-//}
-//uint32_t BottleRoom::getStartHeight() {
-//  return _pContext->getConfig()->getDefaultScreenHeight();
-//}
-//bool BottleRoom::getForceAspectRatio() {
-//  return _pContext->getConfig()->getForceAspectRatio();
-//}
 void BottleScript::drawHover() {
 }
-void BottleScript::onIdle(t_timeval us) {
-  _pWorld25->idleProcessing(us);
-}
 
-//string_t BottleRoom::getIconFullPath() {
-//  return Gu::getPackage()->makeAssetPath("textures", "icon.png");
-//}
-//string_t BottleRoom::getConfigPath() {
-//  return Gu::getPackage()->makeAssetPath("", "config.xml");
-//}
-//string_t BottleRoom::getAssetsDir() {
-//  return "./data/";
-//}
-//void BottleScript::onServerPacketReceived(std::shared_ptr<Packet> pack) {
-//  //todo
-//}
-//////////////////////////////////////////////////////////////////////////
-WorldSelect::WorldSelect(std::shared_ptr<BottleScript> cr)  {
-  _pCongaRoom = cr;
-}
-WorldSelect::~WorldSelect() {
-  _pQuadMeshBackground = nullptr;
-}
-void WorldSelect::gatherWorlds() {
-  if (_pQuadMeshBackground == nullptr) {
-    _pQuadMeshBackground = MeshUtils::createScreenQuadMesh(
-      _pCongaRoom->getScene()->getActiveCamera()->getViewport()->getWidth(), _pCongaRoom->getScene()->getActiveCamera()->getViewport()->getHeight());
-    _pTex = Gu::getTexCache()->getOrLoad(TexFile("Test tex", Gu::getPackage()->makeAssetPath("textures", "test_tex3.png")));
-  }
-
-  string_t gsd = _pCongaRoom->getGameSaveDir();
-  FileSystem::getAllDirs(gsd, _vecWorldFolders);
-  for (size_t iw = 0; iw < _vecWorldFolders.size(); ++iw) {
-    string_t wf = _vecWorldFolders[iw];
-    wf = FileSystem::getDirectoryFromPath(FileSystem::getPathFromPath(wf));
-    _vecWorldFolders[iw] = wf;
-  }
-}
-void WorldSelect::update() {
-  if (StringUtil::isNotEmpty(_strSelectedWorld)) {
-    if (_bLoadNextFrame == false) {
-      _bLoadNextFrame = true;
-    }
-    else {
-      _pCongaRoom->loadOrCreateGame(_strSelectedWorld);
-    }
-  }
-}
-string_t WorldSelect::genNewWorldName(string_t baseName) {
-  //Get a new world name
-  string_t strNewWorld = "NewWorld";
-  int iNewWorldIdx = 0;
-  bool bFound = true;
-  string_t strNewWorldIdx;
-  int nIter = 0;
-  while (bFound) {
-    bFound = false;
-    strNewWorldIdx = strNewWorld + TypeConv::intToStr(iNewWorldIdx);
-    for (string_t wf : _vecWorldFolders) {
-      if (StringUtil::equalsi(wf, strNewWorldIdx)) {
-        bFound = true;
-        iNewWorldIdx++;
-      }
-    }
-    nIter++;
-  }
-  return strNewWorldIdx;
-}
-void WorldSelect::deleteWorld(string_t worldName) {
-  string_t gameDir = _pCongaRoom->getGameDirectory(worldName);
-  std::vector<string_t> fileExts{ ".dat", ".g" };
-  FileSystem::deleteDirectoryRecursive(gameDir, fileExts);
-}
-void WorldSelect::updateTouch(std::shared_ptr<InputManager> pFingers, float dt) {
-  //#ifdef _DEBUG
-      //Go Straight to a new world.
-  _strSelectedWorld = genNewWorldName("NewWorld");
-  //#endif
-
-  if (_eWorldSelectState == WorldSelectState::e::ConfirmDeleteAll) {
-    if (pFingers->keyPress(SDL_SCANCODE_Y)) {
-      for (string_t wf : _vecWorldFolders) {
-        deleteWorld(wf);
-      }
-      gatherWorlds();
-      _eWorldSelectState = WorldSelectState::Select;
-    }
-    else if (pFingers->keyPress(SDL_SCANCODE_N)) {
-      _eWorldSelectState = WorldSelectState::Select;
-    }
-  }
-  else if (_eWorldSelectState == WorldSelectState::e::Select) {
-    if (pFingers->keyPress(SDL_SCANCODE_0)) {
-      _eWorldSelectState = WorldSelectState::e::ConfirmDeleteAll;
-    }
-    else if (pFingers->keyPress(SDL_SCANCODE_1)) {
-      _strSelectedWorld = genNewWorldName("NewWorld");
-    }
-    else {
-      for (int32_t ikey = SDL_SCANCODE_1; ikey <= SDL_SCANCODE_9; ++ikey) {
-        if (pFingers->keyPress((SDL_Scancode)ikey)) {
-          size_t ind = ikey - SDL_SCANCODE_1 - 1;
-          if (ind < _vecWorldFolders.size()) {
-            _strSelectedWorld = _vecWorldFolders[ind];
-          }
-        }
-      }
-    }
-  }
-}
-void WorldSelect::draw2d() {
-  drawText();
-  // _pContext->getTextBoss()->pstrb(TStr("0: New World"), bx, by + cy); cy += 30;
-}
-void WorldSelect::drawBackgroundImage() {
-  std::shared_ptr<CameraNode> bc = _pCongaRoom->getScene()->getActiveCamera();
-  Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport()->getWidth(), bc->getViewport()->getHeight());
-  {
-    //We want depth test so we can see what's in front.
-    //glEnable(GL_DEPTH_TEST);
-    _pTex->bind(TextureChannel::e::Channel0, Gu::getShaderMaker()->getImageShader_F());
-
-    Gu::getShaderMaker()->getImageShader_F()->draw(_pQuadMeshBackground);
-  }
-  Gu::getShaderMaker()->getImageShader_F()->endRaster();
-}
-void WorldSelect::drawText() {
-  //int bx = 40;
-  //int by = 40;
-  //int cx = 0;
-  //int cy = 0;
-  //if (StringUtil::isNotEmpty(_strSelectedWorld)) {
-  //    FontSize iFontHeight = 40;
-  //    Box2f quad;
-
-  //    Gu::getTextBoss()->setFontSize(iFontHeight);
-  //    Gu::getTextBoss()->setColor(vec4(0.9877, 0.9778, 0.969, 1));
-
-  //    string_t strLoad = TStr("Loading ", _strSelectedWorld, "..");
-
-  //    float dx = Gu::getTextBoss()->getCenteredTextX(strLoad);
-  //    float dy = Gu::getTextBoss()->getCenteredTextY(strLoad);
-
-  //    Gu::getTextBoss()->pstrb(TStr(strLoad), dx, dy);
-  //}
-  //else {
-  //    Gu::getTextBoss()->setColor(vec4(0.9877, 0.9778, 0.969, 1));
-  //    Gu::getTextBoss()->setFont(std::string("Nunito"));
-
-  //    //Title - testing centering
-  //    Gu::getTextBoss()->setFontSize(40);
-  //    string_t strTitle = "Animal Motors v0.01";
-  //    float titleX = Gu::getTextBoss()->getCenteredTextX(strTitle);
-  //    Gu::getTextBoss()->pstrb(TStr(strTitle), titleX, by + cy); cy += 40;
-
-  //    Gu::getTextBoss()->setFontSize(30);
-  //    if (_eWorldSelectState == WorldSelectState::Select) {
-  //        Gu::getTextBoss()->pstrb(TStr("Select World by typing key"), bx, by + cy); cy += 30;
-  //        Gu::getTextBoss()->setFontSize(28);
-  //        Gu::getTextBoss()->pstrb(TStr("1: *New World*"), bx, by + cy); cy += 30;
-
-  //        for (size_t n = 0; n < _vecWorldFolders.size(); ++n) {
-  //            Gu::getTextBoss()->pstrb(TStr(n + 2, " :", _vecWorldFolders[n], "   ", (int)STRHASH(_vecWorldFolders[n]) % 100, "%%"), bx, by + cy); cy += 30;
-  //        }
-  //        Gu::getTextBoss()->pstrb(TStr(""), bx, by + cy); cy += 30;
-  //        Gu::getTextBoss()->pstrb(TStr("0: **Delete All Worlds"), bx, by + cy); cy += 30;
-  //    }
-  //    else  if (_eWorldSelectState == WorldSelectState::ConfirmDeleteAll) {
-  //        Gu::getTextBoss()->pstrb(TStr("Delete All Worlds ? (Y/N)"), bx, by + cy); cy += 30;
-  //        Gu::getTextBoss()->setFontSize(28);
-  //    }
-  //}
-}
 }//ns Game

@@ -40,7 +40,7 @@ public:
   std::vector<std::shared_ptr<CameraNode>> getAllCameras();
   void setPhysicsWorld(std::shared_ptr<PhysicsWorld> p) { _pPhysicsWorld = p; }
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow = x; }
-  void setActiveCamera(std::shared_ptr<CameraNode> x) { _pActiveCamera = x; }
+  void setActiveCamera(std::shared_ptr<CameraNode> x);
 
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp)override;

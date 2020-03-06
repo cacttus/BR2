@@ -38,7 +38,7 @@ void WorldEditor::init() {
   );*/
   std::shared_ptr<ModelSpec> pSel = Gu::getModelCache()->getOrLoadModel("hover_1");
   if (pSel != nullptr) {
-    _pSelector = ModelNode::create(pSel);
+    _pSelector = ModelNode::create(pSel->getName(),pSel);
     _pSelector->setPos(std::move(vec3(0, 0, 0)));
     _pSelector->playAction("hover_1.Rotate");
 

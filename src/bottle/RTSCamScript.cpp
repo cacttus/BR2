@@ -30,15 +30,19 @@ void RTSCamScript::onStart() {
 void RTSCamScript::onUpdate(float dt) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (!cam) {
+    BRLogErrorCycle("Node not found.");
     return;
   }
-  updateRotateAndZoom(cam, dt);
-  std::shared_ptr<InputManager> im = getNode()->getInput();
-  if (im) {
-    updateTouches(cam, getNode()->getInput(), dt);
-  }
-  else {
-    BRLogErrorCycle("Node input could not be found.");
+  if (cam->active()) {
+    updateRotateAndZoom(cam, dt);
+    std::shared_ptr<InputManager> im = getNode()->getInput();
+    if (im) {
+      updateTouches(cam, getNode()->getInput(), dt);
+      moveCameraWSAD(cam, im, dt);
+    }
+    else {
+      BRLogErrorCycle("Node input could not be found.");
+    }
   }
 }
 void RTSCamScript::onExit() {

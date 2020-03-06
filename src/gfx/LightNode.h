@@ -19,9 +19,8 @@ namespace BR2 {
 */
 class LightNodeBase : public PhysicsNode {
 public:
-  LightNodeBase(bool bShadow);
+  LightNodeBase(string_t name, bool bShadow);
   virtual ~LightNodeBase() override;
-
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void cullShadowVolumesAsync(CullParams& cp) = 0;
@@ -47,8 +46,8 @@ private:
 */
 class LightNodeDir : public LightNodeBase {
 public:
-  LightNodeDir(bool bShadow);
-  static std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow);
+  LightNodeDir(string_t name, bool bShadow);
+  static std::shared_ptr<LightNodeDir> LightNodeDir::create(string_t name, bool bShadow);
   virtual ~LightNodeDir() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
@@ -82,9 +81,9 @@ private:
 */
 class LightNodePoint : public LightNodeBase {
 public:
-  LightNodePoint(bool bhasShadowBox);
-  static std::shared_ptr<LightNodePoint> create(bool bhasShadowBox);
+  LightNodePoint(string_t name, bool bhasShadowBox);
   virtual ~LightNodePoint() override;
+  static std::shared_ptr<LightNodePoint> create(string_t name,bool bhasShadowBox);
 
   std::shared_ptr<ShadowBox> getShadowBox() { return _pShadowBox; }
 

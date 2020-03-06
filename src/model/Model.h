@@ -217,8 +217,8 @@ private:
 //**This was BoneRef
 class BoneNode : public SceneNode {
 public:
-  BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
-  static std::shared_ptr<BoneNode> create(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
+  BoneNode(string_t name, std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
+  static std::shared_ptr<BoneNode> create(string_t name, std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa);
 
   virtual ~BoneNode() override;
   //   mat4& getBoneMat() { return _mBone; }
@@ -282,8 +282,8 @@ private:
 
 class ArmatureNode : public SceneNode {
 public:
-  ArmatureNode(std::shared_ptr<Armature> ps);
-  static std::shared_ptr<ArmatureNode> create(std::shared_ptr<Armature> ps);
+  ArmatureNode(string_t name, std::shared_ptr<Armature> ps);
+  static std::shared_ptr<ArmatureNode> create(string_t name, std::shared_ptr<Armature> ps);
   virtual ~ArmatureNode();
   // void addMeshNode(std::shared_ptr<MeshNode> mn) { _vecMeshes.push_back(mn); }
   std::shared_ptr<BoneNode> getRoot() { return _pBoneRoot; }
@@ -339,8 +339,8 @@ private:
 //So we would need PixObj : ModelNode.. but ModelNode is a created instance..
 class ModelNode : public PhysicsNode {
 public:
-  ModelNode(std::shared_ptr<ModelSpec>);
-  static std::shared_ptr<ModelNode> create(std::shared_ptr<ModelSpec>);
+  ModelNode(string_t name, std::shared_ptr<ModelSpec>);
+  static std::shared_ptr<ModelNode> create(string_t name, std::shared_ptr<ModelSpec>);
   virtual ~ModelNode();
 
   void playAction(string_t name);

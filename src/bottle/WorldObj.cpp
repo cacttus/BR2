@@ -29,7 +29,7 @@ std::shared_ptr<ModelNode> WorldObj::createInstance(std::shared_ptr<World25> pWo
     //place(r3Pos, vPos, vRot);
 
 
-    std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
+    std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms->getName(), ms);
     mn->setScale(vScale);
 
     return mn;

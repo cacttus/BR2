@@ -93,6 +93,7 @@
     <ClCompile Include="src\bottle\WorldGrid.cpp" />
     <ClCompile Include="src\bottle\WorldMaker.cpp" />
     <ClCompile Include="src\bottle\WorldObj.cpp" />
+    <ClCompile Include="src\bottle\WorldSelect.cpp" />
     <ClCompile Include="src\ext\lodepng.cpp" />
     <ClCompile Include="src\ext\pugixml\pugixml.cpp" />
     <ClCompile Include="src\ext\stb_vorbis.c" />
@@ -289,6 +290,7 @@
     <ClInclude Include="src\bottle\WorldGrid.h" />
     <ClInclude Include="src\bottle\WorldMaker.h" />
     <ClInclude Include="src\bottle\WorldObj.h" />
+    <ClInclude Include="src\bottle\WorldSelect.h" />
     <ClInclude Include="src\ext\dirent.h" />
     <ClInclude Include="src\ext\libc.h" />
     <ClInclude Include="src\ext\lodepng.h" />

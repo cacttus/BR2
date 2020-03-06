@@ -67,7 +67,7 @@ protected:
 */
 class SceneNode : public TreeNode {
 public:
-  SceneNode(std::shared_ptr<BaseSpec>);
+  SceneNode(string_t name, std::shared_ptr<BaseSpec>);
   virtual ~SceneNode() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
@@ -163,6 +163,7 @@ protected:
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
   vec3 _vPos;
+  string_t _name;
   vec3 _vLastPos;
   bool _bTransformChanged = true;
   bool _bInitialized = false;

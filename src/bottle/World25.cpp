@@ -53,8 +53,9 @@
 #define FST_PT(xx) _pContext->getCamera()->getFrustum()->PointAt(xx)
 
 namespace BR2 {
-World25::World25(std::shared_ptr<Scene> pscene) : PhysicsWorld(pscene) {
+World25::World25(std::shared_ptr<Scene> pscene, std::shared_ptr<BottleScript> pCallingScript) : PhysicsWorld(pscene) {
   //Validation
+  _pBottleRoom = pCallingScript;
   if (!Alg::isPow2((int32_t)BottleUtils::getNumCellsWidth())) {
     BRThrowException("Cells width was not a power of 2.");
   }

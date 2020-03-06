@@ -35,10 +35,10 @@
 #include <iostream>
 
 namespace BR2 {
-MeshNode::MeshNode(std::shared_ptr<MeshSpec> ms) : MeshNode(ms, nullptr) {
+MeshNode::MeshNode(string_t name, std::shared_ptr<MeshSpec> ms) : MeshNode(name, ms, nullptr) {
   // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
 }
-MeshNode::MeshNode(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(ps) {
+MeshNode::MeshNode(string_t name, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(name,ps) {
   _pModelNode = mn;
 }
 MeshNode::~MeshNode() {
@@ -48,13 +48,13 @@ MeshNode::~MeshNode() {
   _vecBoneNodesOrdered.resize(0);
   _vecArmaturesOrdered.resize(0);
 }
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) {
-  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(ps, mn);
+std::shared_ptr<MeshNode> MeshNode::create(string_t name, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) {
+  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(name,ps, mn);
   m->init();
   return m;
 }
-std::shared_ptr<MeshNode> MeshNode::create(std::shared_ptr<MeshSpec> pd) {
-  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(pd);
+std::shared_ptr<MeshNode> MeshNode::create(string_t name, std::shared_ptr<MeshSpec> pd) {
+  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(name,pd);
   m->init();
   return m;
 }

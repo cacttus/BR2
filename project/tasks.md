@@ -1,8 +1,6 @@
 # Mine City Task Log
 
 - [ ] To use image sizes in gui, use Img32::peek() to get stats
-- [ ] Alter Global Input manager to remove the Mouse from it.  Mouse doesn't make sense globally.
-
 
 - [ ] Binary File Version Backwards Compatibility
 	- [ ] Implement binary file backwards compatibility by adding multiple versions to the importer (branch at ->readVersion).  This may be assisted by breaking the files up into "sections". Implement in:
@@ -23,20 +21,18 @@
 - [ ] Implement the STL math functions in MathHeader
 
 ## Controller System
-- [ ] Fix issues with Input for multiple windows
-	* Mouse wheel for example would get set in the input manager.
-	- [ ] Remove Global Input Manager
-	
 - [ ] Make WorldSelect part of the UI system.  (Remove it from BottleScript.h) 
-	* either remove the WorldSelect class, or turn it into a UI "script".
+	- [ ] Allow for Ui Scripts.
+	- [ ] Make UiScreen part of the node system.
 
 - [ ] The current system for controls isn't generic.  We directly map everything to WSAD. We need a 'controller' class like the Helix library has.
 	* The goal of the Controller class is to move the Joystick, Dpad, etc, with the implementation, meaning if the user presses W on the keyboard, the Joystick will move directly up, since the keyboard lacks a joystick.
-	* `class Controller`
+	* `class GamePad`
 	* `  Joystick _pJoystick` --> Maps to WSAD or a controller DPAd
 	* `  DPad _pDPad` --> Maps to WSAD, or a controller DPAD
-	* `class KeyboardController : Controller` --> the Joystick control would be driven by the mouse
-	* `class GameController : Controller`
+	* `class KeyboardController : GamePad` --> the Joystick control would be driven by the mouse
+	* `class GameController : GamePad`
+- [ ] Alter Global Input manager to remove the Mouse from it.  Mouse doesn't make sense globally.
 
 ## World25 Integration
 - [ ] Implement GodCam as a script.

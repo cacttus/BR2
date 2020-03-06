@@ -63,6 +63,13 @@ void Scene::init() {
 
   SceneNode::init();
 }
+void Scene::setActiveCamera(std::shared_ptr<CameraNode> x) { 
+  if (_pActiveCamera != nullptr) {
+    _pActiveCamera->_bRenderActive = false;
+  }
+  _pActiveCamera = x; 
+  _pActiveCamera->_bRenderActive = true;
+}
 
 void Scene::afterAttachedToWindow() {
   //Lazy init, requires our window to be set before creating.

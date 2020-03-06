@@ -19,7 +19,7 @@ class World25 : public PhysicsWorld {
 public:
 
   /* TODO: Pass PhysicsWorld in as a member*/
-  World25(std::shared_ptr<Scene> pscene);
+  World25(std::shared_ptr<Scene> pscene, std::shared_ptr< BottleScript> pCallingScript);
   virtual ~World25() override;
 
   void init(std::shared_ptr<ObFile> ob);

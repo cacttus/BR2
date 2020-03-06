@@ -3,27 +3,24 @@
 #include "../gfx/FrustumBase.h"
 #include "../gfx/RenderViewport.h"
 #include "../base/Gu.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
-CameraNode::CameraNode(std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(nullptr),
-_pViewport(ppViewport) {
+CameraNode::CameraNode(string_t name, std::shared_ptr<RenderViewport> ppViewport) : PhysicsNode(name, nullptr) {
+  _pViewport = ppViewport;
   _vWorldUp.construct(0, 1, 0);
-
   _pMainFrustum = std::make_shared<FrustumBase>(ppViewport, _f_hfov);
   _vUp = vec3(0, 1, 0);
   _vLookAt = vec3(0, 0, 0);
   setPos(vec3(-100, -100, -100));
-
 }
-std::shared_ptr<CameraNode> CameraNode::create(std::shared_ptr<RenderViewport> ppViewport) {
-  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(ppViewport);
+CameraNode::~CameraNode() {
+  //DEL_MEM(_pMainFrustum);
+}
+std::shared_ptr<CameraNode> CameraNode::create(string_t name, std::shared_ptr<RenderViewport> ppViewport) {
+  std::shared_ptr<CameraNode> cn = std::make_shared<CameraNode>(name, ppViewport);
   cn->init();
   return cn;
-}
-
-CameraNode::~CameraNode() {
-  //DEL_MEM(_boundEllipsoid);
-  //DEL_MEM(_pMainFrustum);
 }
 Ray_t CameraNode::projectPoint2(vec2& mouse) {
   Ray_t pr;

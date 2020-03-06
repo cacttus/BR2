@@ -17,7 +17,9 @@
 #include "../world/Scene.h"
 
 namespace BR2 {
-LightNodeBase::LightNodeBase(bool bShadow) : _bEnableShadows(bShadow), PhysicsNode(nullptr) {
+#pragma region LightNodeBase
+LightNodeBase::LightNodeBase(string_t name, bool bShadow) : PhysicsNode(name, nullptr) {
+  _bEnableShadows = bShadow;
   _color = vec4(1, 1, 1, 1);
   //    _vSpecColor = vec3(1, 1, 1);
 }
@@ -40,11 +42,15 @@ bool LightNodeBase::getIsShadowsEnabled() {
   return _bEnableShadows && (Gu::getEngineConfig()->getEnableObjectShadows() ||
     Gu::getEngineConfig()->getEnableTerrainShadows());
 }
-LightNodeDir::LightNodeDir(bool bShadow) : LightNodeBase(bShadow) {
+
+#pragma endregion
+
+#pragma region LightNodeDir
+LightNodeDir::LightNodeDir(string_t name, bool bShadow) : LightNodeBase(name, bShadow) {
 
 }
-std::shared_ptr<LightNodeDir> LightNodeDir::create(bool bShadow) {
-  std::shared_ptr<LightNodeDir> lp = std::make_shared<LightNodeDir>(bShadow);
+std::shared_ptr<LightNodeDir> LightNodeDir::create(string_t name, bool bShadow) {
+  std::shared_ptr<LightNodeDir> lp = std::make_shared<LightNodeDir>(name, bShadow);
   lp->init();
   lp->_pSpec = std::make_shared<BaseSpec>("*LightNodeDir");
 
@@ -126,10 +132,11 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
 
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
-//////////////////////////////////////////////////////////////////////////
-LightNodePoint::LightNodePoint(bool bShadowBox) : LightNodeBase(bShadowBox) {
+#pragma endregion
+#pragma region LightNodePoint
+LightNodePoint::LightNodePoint(string_t name, bool bShadowBox) : LightNodeBase(name, bShadowBox) {
 }
-std::shared_ptr<LightNodePoint> LightNodePoint::create(bool bhasShadowBox) {
+std::shared_ptr<LightNodePoint> LightNodePoint::create(string_t name, bool bhasShadowBox) {
   std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(bhasShadowBox);
   lp->init();
   lp->_pSpec = std::make_shared<BaseSpec>("*LightNodePoint");
@@ -232,6 +239,6 @@ void LightNodePoint::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float e
 
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
-
+#pragma endregion
 
 }//ns game

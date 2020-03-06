@@ -18,6 +18,11 @@
 * World renders correctly!
 * Renamed GodCam(script) to RTSCamScript
 * TODO: currently there is a bug where FlyingCameraControls are conflicting with RTSCam
+* Added name requirement to all nodes
+
+Essentially setActiveCamera should do 2 things
+	store that THIS is the current camera that is getting rendered to.
+	allow it to gather input.
 
 
 *3/4/20*

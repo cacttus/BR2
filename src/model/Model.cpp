@@ -306,12 +306,12 @@ void BoneSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   fb->writeVec3(std::move(_vTail));
 }
 //////////////////////////////////////////////////////////////////////////
-BoneNode::BoneNode(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) : SceneNode(b) {
+BoneNode::BoneNode(string_t name, std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) : SceneNode(name, b) {
   _pBone = b;
   _pArmatureNode = pa;
   _mLocal.setIdentity();
 }
-std::shared_ptr<BoneNode> BoneNode::create(std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) {
+std::shared_ptr<BoneNode> BoneNode::create(string_t name, std::shared_ptr<BoneSpec> b, std::shared_ptr<ArmatureNode> pa) {
   std::shared_ptr<BoneNode> bn = std::make_shared<BoneNode>(b, pa);
   bn->init();
   return bn;
@@ -549,10 +549,10 @@ void Armature::compileHierarchy() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-ArmatureNode::ArmatureNode(std::shared_ptr<Armature> ps) : SceneNode(ps) {
+ArmatureNode::ArmatureNode(string_t name, std::shared_ptr<Armature> ps) : SceneNode(name, ps) {
 }
-std::shared_ptr<ArmatureNode> ArmatureNode::create(std::shared_ptr<Armature> ps) {
-  std::shared_ptr<ArmatureNode> a = std::make_shared<ArmatureNode>(ps);
+std::shared_ptr<ArmatureNode> ArmatureNode::create(string_t name, std::shared_ptr<Armature> ps) {
+  std::shared_ptr<ArmatureNode> a = std::make_shared<ArmatureNode>(name, ps);
   a->init();
   return a;
 }
@@ -585,7 +585,7 @@ void ArmatureNode::init() {
 }
 void ArmatureNode::build(std::shared_ptr<BoneSpec> b, std::shared_ptr<BoneNode> bParent, std::vector<std::shared_ptr<BoneNode>>& vecBonesUnordered) {
   AssertOrThrow2(b != nullptr);
-  std::shared_ptr<BoneNode> new_bn = BoneNode::create(b, getThis<ArmatureNode>());//getThis<BoneNode>(); 
+  std::shared_ptr<BoneNode> new_bn = BoneNode::create(b->getName(), b, getThis<ArmatureNode>());//getThis<BoneNode>(); 
   vecBonesUnordered.push_back(new_bn);
 
   if (bParent == nullptr) {
@@ -807,15 +807,15 @@ std::shared_ptr<BoneSpec> ModelSpec::getBoneByArmJointOffset(int32_t ijo) {
   return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
-std::shared_ptr<ModelNode> ModelNode::create(std::shared_ptr<ModelSpec> ps) {
-  std::shared_ptr<ModelNode> m = std::make_shared<ModelNode>(ps);
+std::shared_ptr<ModelNode> ModelNode::create(string_t name, std::shared_ptr<ModelSpec> ps) {
+  std::shared_ptr<ModelNode> m = std::make_shared<ModelNode>(name, ps);
   m->init();
   m->stopAllActions();
   m->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
   return m;
 }
 
-ModelNode::ModelNode(std::shared_ptr<ModelSpec> pModelSpec) : PhysicsNode(pModelSpec) {
+ModelNode::ModelNode(string_t name, std::shared_ptr<ModelSpec> pModelSpec) : PhysicsNode(name, pModelSpec) {
 
 }
 ModelNode::~ModelNode() {
@@ -836,7 +836,7 @@ void ModelNode::init() {
   PhysicsNode::init();
   //Create armatures
   for (std::shared_ptr<Armature> pArmSpec : getData<ModelSpec>()->getArmatures()) {
-    std::shared_ptr<ArmatureNode> pArmNode = ArmatureNode::create(pArmSpec);
+    std::shared_ptr<ArmatureNode> pArmNode = ArmatureNode::create(pArmSpec->getName(), pArmSpec);
     _vecArmatures.push_back(pArmNode);
     addNodeToCache(pArmNode);
     //Also add all bones in the case of bone parents..
@@ -846,7 +846,7 @@ void ModelNode::init() {
   }
   //Create meshes
   for (std::shared_ptr<MeshSpec> pMeshSpec : getData<ModelSpec>()->getMeshes()) {
-    std::shared_ptr<MeshNode> pMeshnode = MeshNode::create(pMeshSpec, getThis<ModelNode>());
+    std::shared_ptr<MeshNode> pMeshnode = MeshNode::create(pMeshSpec->getName(), pMeshSpec, getThis<ModelNode>());
     _vecMeshes.push_back(pMeshnode);
     addNodeToCache(pMeshnode);
   }

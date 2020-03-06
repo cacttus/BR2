@@ -27,7 +27,7 @@ public:
 //collide with the World Node plane so we need a separate box that isn't an object.
 class PhysicsNode : public SceneNode {
 public:
-  PhysicsNode(std::shared_ptr<PhysicsSpec>);
+  PhysicsNode(string_t name, std::shared_ptr<PhysicsSpec>);
   virtual ~PhysicsNode();
 
   std::shared_ptr<GridManifold> getManifold() { return _pManifold; }

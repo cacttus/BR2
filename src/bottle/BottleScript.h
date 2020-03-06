@@ -11,36 +11,10 @@
 #include "../world/Script.h"
 
 namespace BR2 {
-class SKIN_TEMP;
-
-/////////////////////////////////x/////////////////////////////////////////
-namespace WorldSelectState { typedef enum { Select, ConfirmDeleteAll } e; }
-
-//Essentially, this is just a UIScreen
-class WorldSelect : public VirtualMemory {
-public:
-  WorldSelect(std::shared_ptr<BottleScript> cr);
-  virtual ~WorldSelect() override;
-
-  void gatherWorlds();
-  void drawBackgroundImage();
-  void draw2d();
-  void update();
-  void updateTouch(std::shared_ptr<InputManager>, float dt);
-
-private:
-  std::shared_ptr<MeshNode> _pQuadMeshBackground = nullptr;
-  std::shared_ptr<BottleScript> _pCongaRoom = nullptr;
-  std::vector<string_t> _vecWorldFolders;
-  WorldSelectState::e _eWorldSelectState = WorldSelectState::e::Select;
-  std::shared_ptr<Texture2DSpec> _pTex = nullptr;
-  string_t _strSelectedWorld = "";
-  bool _bLoadNextFrame = false;
-  string_t genNewWorldName(string_t baseName);
-  void deleteWorld(string_t worldName);
-  void drawText();
-};
-//////////////////////////////////////////////////////////////////////////
+/**
+*  @class BottleScript
+*  @brief This is the main Scene script that runs the bottle voxel engine.
+*/
 class BottleScript : public Script {
 public:
   BottleScript();

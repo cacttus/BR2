@@ -189,6 +189,7 @@ class W25GridMesh;
 class WorldObj;
 class WorldEditState;
 class GameUi;
+class WorldSelect;
 
 
 class World25Plane : public Plane3f {

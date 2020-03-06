@@ -555,6 +555,9 @@
     <ClCompile Include="src\bottle\RTSCamScript.cpp">
       <Filter>bottle</Filter>
     </ClCompile>
+    <ClCompile Include="src\bottle\WorldSelect.cpp">
+      <Filter>bottle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -1212,6 +1215,9 @@
       <Filter>world</Filter>
     </ClInclude>
     <ClInclude Include="src\bottle\RTSCamScript.h">
+      <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bottle\WorldSelect.h">
       <Filter>bottle</Filter>
     </ClInclude>
   </ItemGroup>

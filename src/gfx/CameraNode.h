@@ -18,10 +18,11 @@ namespace BR2 {
 *  @brief Base class for cameras in the GL. Superclass of @cBaseCamera2D, @cBaseCamera3D
 */
 class CameraNode : public PhysicsNode {
+  friend class Scene;
 public:
-  CameraNode(std::shared_ptr<RenderViewport> ppViewport);
-  static std::shared_ptr<CameraNode> create(std::shared_ptr<RenderViewport> ppViewport);
+  CameraNode(string_t name, std::shared_ptr<RenderViewport> ppViewport);
   virtual ~CameraNode() override;
+  static std::shared_ptr<CameraNode> create(string_t name, std::shared_ptr<RenderViewport> ppViewport);
 
   void zoom(float amt);
   const vec3& getLookAt() { return _vLookAt; }
@@ -43,6 +44,8 @@ public:
   const vec3& getRightNormal() { return _vRight; }
   const vec3& getUpNormal() { return _vUp; }
   std::shared_ptr<FrustumBase> getFrustum() { return _pMainFrustum; }
+  bool active() { return _bRenderActive; }
+
 
 protected:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;        // - Viewport is a class because the values might change.
@@ -54,6 +57,7 @@ protected:
   vec3 _vLookAt;
   vec3 _vUp;
   vec3 _vRight;
+  bool _bRenderActive = false;
 
   float _fMinZoomDist = 20.0f;
   float _fMaxZoomDist = 500.0f;

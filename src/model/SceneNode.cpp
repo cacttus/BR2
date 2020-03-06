@@ -60,7 +60,8 @@ void BaseSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
 }
 
 ///////////////////////////////////////////////////////////////////
-SceneNode::SceneNode(std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
+SceneNode::SceneNode(string_t name, std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
+  _name = name;
   _pBox = new Box3f();
   _pOBB = new OBB();
   _vPos = vec3(0, 0, 0);
