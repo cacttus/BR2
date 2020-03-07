@@ -56,7 +56,7 @@ void UiDragInfo::update(std::shared_ptr<InputManager> pFingers) {
     }
     else {
       //Check for mouse delta to prevent unnecessary updates.
-      vec2 dp = pFingers->getMousePos() - _vDragStart;
+      vec2 dp = pFingers->getMousePos_Relative() - _vDragStart;
       if (MathUtils::fuzzyEquals(dp.x, 0.0f) == false || MathUtils::fuzzyEquals(dp.y, 0.0f) == false) {
         _bDrag = true;
       }
@@ -71,7 +71,7 @@ void UiDragInfo::update(std::shared_ptr<InputManager> pFingers) {
         _func(dp);
 
         //Reset drag start
-        _vDragStart = pFingers->getMousePos();
+        _vDragStart = pFingers->getMousePos_Relative();
       }
     }
   }

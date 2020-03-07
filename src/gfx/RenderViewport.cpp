@@ -12,7 +12,6 @@ public:
   Box3i _lastRect;
   ViewportConstraint _constraint;
 };
-
 RenderViewport::RenderViewport(int32_t w, int32_t h, ViewportConstraint constraint) {
   _pint = std::make_unique<RenderViewport_Internal>();
 
@@ -89,7 +88,6 @@ int32_t RenderViewport::getX() {
 int32_t RenderViewport::getY() {
   return _pint->_rect._min.y;
 }
-
 float RenderViewport::getAspectRatio() {
   float ar = 0;
   if (getHeight() == 0) {
@@ -100,22 +98,6 @@ float RenderViewport::getAspectRatio() {
   }
   return ar;
 }
-bool RenderViewport::containsPointRelativeToWindow(vec2& mp) {
-  if (mp.x < 0.0f) {
-    return false;
-  }
-  if (mp.x > getWidth() - 1) {
-    return false;
-  }
-  if (mp.y < 0.0f) {
-    return false;
-  }
-  if (mp.y > getHeight() - 1) {
-    return false;
-  }
-  return true;
-}
-
 
 
 }//ns BR2

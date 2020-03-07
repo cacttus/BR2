@@ -44,6 +44,7 @@ public:
 
   std::multimap<float, std::shared_ptr<LightNodePoint>>& getPointLights() { return _mapPointLights; }
   std::multimap<float, std::shared_ptr<LightNodeDir>>& getDirLights() { return _mapDirLights; }
+  std::multimap<float, std::shared_ptr<LightNodeBase>>& getLights() { return _mapLights; }
   std::multimap<float, std::shared_ptr<MeshNode>>& getMeshes() { return _mapMeshes; }
   std::multimap<float, std::shared_ptr<MeshNode>>& getMeshesTransparent() { return _mapMeshesTransparent; }
   std::multimap<float, std::shared_ptr<SceneNode>>& getObjs() { return _mapObjs; }
@@ -55,6 +56,7 @@ private:
   std::multimap<float, std::shared_ptr<PhysicsGrid>> _mapGrids;
   std::multimap<float, std::shared_ptr<LightNodePoint>> _mapPointLights;
   std::multimap<float, std::shared_ptr<LightNodeDir>> _mapDirLights;
+  std::multimap<float, std::shared_ptr<LightNodeBase>> _mapLights;
   std::multimap<float, std::shared_ptr<MeshNode>> _mapMeshes;
   std::multimap<float, std::shared_ptr<MeshNode>> _mapMeshesTransparent;
   RenderMap _renderMap;

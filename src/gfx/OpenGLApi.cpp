@@ -37,7 +37,9 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title) {
 
   //For debugging and such we can use compatibility.  Otherwise it is probably best to use the core profile (assuming it may increase performance).
 #ifdef _DEBUG
-  iProfile = SDL_GL_CONTEXT_PROFILE_CORE;// SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;
+  //iProfile = SDL_GL_CONTEXT_PROFILE_ES; // Es - Subset of base opengl functions
+  iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Deprecated Functions are allowed
+  //iProfile = SDL_GL_CONTEXT_PROFILE_CORE;// No Deprecated functions allowed;
 #else
   iProfile = SDL_GL_CONTEXT_PROFILE_CORE;
 #endif

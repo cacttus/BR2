@@ -333,10 +333,11 @@ private:
   std::shared_ptr<Img32> _pThumb = nullptr;
   std::shared_ptr<BoneSpec> getBoneByArmJointOffset(int32_t ijo);
   std::string _strFriendlyName;
-
 };
-//*Fuck ok so m44 the issue here is that the node3base is also used by GridObj.
-//So we would need PixObj : ModelNode.. but ModelNode is a created instance..
+/**
+*  @fn ModelNode
+*  @brief Root node for models.  TODO: merge with SceneNode
+*/
 class ModelNode : public PhysicsNode {
 public:
   ModelNode(string_t name, std::shared_ptr<ModelSpec>);

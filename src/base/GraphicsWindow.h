@@ -44,6 +44,8 @@ public:
   std::shared_ptr<FpsMeter> getFpsMeter();
   uint64_t getFrameNumber();
   std::shared_ptr<InputManager> getInput();
+  FrameState getFrameState();
+  bool containsPoint_Global2D(const vec2& mp);
 
   void setScene(std::shared_ptr<Scene> scene);
 private:

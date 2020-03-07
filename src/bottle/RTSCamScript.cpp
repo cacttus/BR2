@@ -1,6 +1,7 @@
 #include "../base/GLContext.h"
 #include "../base/Logger.h"
 #include "../base/InputManager.h"
+#include "../base/GraphicsWindow.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderViewport.h"
 #include "../base/TouchInfo.h"
@@ -8,6 +9,7 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
 #include "../bottle/BottleUtils.h"
+#include "../world/Scene.h"
 
 namespace BR2 {
 RTSCamScript::RTSCamScript() {
@@ -50,8 +52,8 @@ void RTSCamScript::onExit() {
 void RTSCamScript::updateTouches(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float dt) {
   ButtonState::e eLmb = pFingers->getLmbState();
   ButtonState::e eRmb = pFingers->getRmbState();
-  vec2 vMouse = pFingers->getMousePos();
-  vec2 vLast = pFingers->getLastMousePos();
+  vec2 vMouse = pFingers->getMousePos_Relative();
+  vec2 vLast = pFingers->getLastMousePos_Relative();
   t_timeval us = Gu::getMicroSeconds();
 
   //RMB
@@ -249,19 +251,21 @@ void RTSCamScript::moveCameraWSAD(std::shared_ptr<CameraNode> cam, std::shared_p
   float wa = vw * amt;
   float ha = vh * amt;
 
-  vec2 mp = pFingers->getMousePos();
+  vec2 mp = pFingers->getMousePos_Relative();
 
-  if (mp.x < wa) {
-    moveLeft();
-  }
-  if (mp.y < ha) {
-    moveUp();
-  }
-  if (mp.x > vw - wa) {
-    moveRight();
-  }
-  if (mp.y > vh - ha) {
-    moveDown();
+  if (getScene()->getWindow()->containsPoint_Global2D(std::move(pFingers->getMousePos_Global()))) {
+    if (mp.x < wa) {
+      moveLeft();
+    }
+    if (mp.y < ha) {
+      moveUp();
+    }
+    if (mp.x > vw - wa) {
+      moveRight();
+    }
+    if (mp.y > vh - ha) {
+      moveDown();
+    }
   }
 
   //Keyboard

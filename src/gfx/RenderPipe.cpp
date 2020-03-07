@@ -27,168 +27,21 @@
 #include "../model/MeshUtils.h"
 #include "../model/VertexFormat.h"
 #include "../world/Scene.h"
+#include "../world/RenderBucket.h"
 
 namespace BR2 {
 RenderPipe::RenderPipe(std::shared_ptr<GLContext> ct, std::shared_ptr<GraphicsWindow> w) : GLFramework(ct) {
   _vClear = vec4(0, 0, 0, 1);
   _pWindow = w;
-
 }
 RenderPipe::~RenderPipe() {
   releaseFbosAndMesh();
-}
-
-void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<CameraNode> cam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits) {
-  if (cam == nullptr) {
-    BRLogWarn("camera not set in RenderPipe::renderScene()");
-    return;
-  }
-  if (toDraw == nullptr) {
-    BRLogWarn("toDraw not set in RenderPipe::renderScene()");
-    return;
-  }
-  if (lightman == nullptr) {
-    BRLogWarn("lightmanager not set in RenderPipe::renderScene()");
-    return;
-  }
-
-  Gu::checkErrorsDbg();
-
-  cam->getViewport()->bind(_pWindow);
-
-  if (_pPicker != nullptr) {
-    _pPicker->update(getWindow()->getInput());
-  }
-  if (cam == nullptr) {
-    BRLogErrorOnce("Camera was not set for renderScene");
-    return;
-  }
-  if (cam->getViewport() == nullptr) {
-    BRLogErrorOnce("Camera Viewport was not set for renderScene");
-    return;
-  }
-  std::shared_ptr<RenderViewport> pv = cam->getViewport();
-  if (pv->getWidth() != _iLastWidth || pv->getHeight() != _iLastHeight) {
-    init(pv->getWidth(), pv->getHeight(), "");
-  }
-
-
-  //Only render one thing at a tiem to prevent corrupting the pipe
-  if (_bRenderInProgress == true) {
-    BRLogError("Tried to render something while another render was currently in progress.");
-    return;
-  }
-
-  _bRenderInProgress = true;
-  {
-    RenderParams rp;
-    rp.setCamera(cam);
-
-    //This doesn't conform ot the new ability to render individual objects.
-    //This draws all scene shadows
-    //If we want shadows in the thumbnails, we'll need to fix this to be able to render
-    //individual object shadows
-    if (pipeBits.test(PipeBit::e::Shadow)) {
-      beginRenderShadows();
-      {
-        Gu::checkErrorsDbg();
-        //**This shouldn't be an option ** 
-        //Curetly we update lights at the same time as shadows.  this is erroneous
-        if (pipeBits.test(PipeBit::e::Shadow)) {
-          renderShadows(lightman, cam);
-        }
-      }
-      endRenderShadows();
-    }
-    _pMsaaForward->clearFb();
-
-    //1. 3D, Deferred lighting
-    if (pipeBits.test(PipeBit::e::Deferred)) {
-      beginRenderDeferred();
-      {
-        toDraw->drawDeferred(rp);
-      }
-      endRenderDeferred();
-
-      //Blit to forward FB
-      blitDeferredRender(lightman, cam);
-
-      if (pipeBits.test(PipeBit::e::Transparent)) {
-        toDraw->drawTransparent(rp);
-      }
-    }
-
-    //2. Forward Rendering
-    if (pipeBits.test(PipeBit::e::Forward)) {
-      beginRenderForward();
-
-      toDraw->drawForward(rp);
-
-      //2.1 - Debug
-      if (pipeBits.test(PipeBit::e::Debug)) {
-        toDraw->drawForwardDebug(rp);
-      }
-
-      //2.2 - DOF
-      if (pipeBits.test(PipeBit::e::DepthOfField)) {
-        postProcessDOF(lightman, cam);
-      }
-
-      //Rebind Forward FBO
-      beginRenderForward();
-
-      //3. Orthographic, Behind the UI 
-      if (pipeBits.test(PipeBit::e::NonDepth)) {
-        toDraw->drawNonDepth(rp);
-      }
-
-      //4. The UI
-      if (pipeBits.test(PipeBit::e::UI_Overlay)) {
-        toDraw->drawUI(rp);
-      }
-
-
-      endRenderForward();
-    }
-    //
-    //      beginRenderTransparent();
-    //      {
-    //          //TP uses the forward texture.
-    //        //   toDraw->drawTransparent(rp);
-    //      }
-    //      endRenderTransparent();
-
-
-    if (pipeBits.test(PipeBit::e::BlitFinal)) {
-      endRenderAndBlit(lightman, cam);
-    }
-  }
-  _bRenderInProgress = false;
-}
-const vec4& RenderPipe::getClear() {
-  return _vClear;
-}
-void RenderPipe::setClear(vec4& v) {
-  _vClear = v;
-  if (_pBlittedForward) {
-    _pBlittedForward->setClear(_vClear);
-  }
-  else {
-    BRLogError("Framebuffer was null when setting clear color.");
-  }
-  if (_pBlittedDeferred) {
-    _pBlittedDeferred->setClear(_vClear);
-  }
-  else {
-    BRLogError("Framebuffer was null when setting clear color.");
-  }
 }
 void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath) {
   BRLogInfo("[RenderPipe] Initializing.");
   if (iWidth <= 0 || iHeight <= 0) {
     BRLogError("[RenderPipe] Got framebuffer of width or height < 0" + iWidth + "," + iHeight);
   }
-
 
   //Enable some stuff.
 #ifdef _DEBUG
@@ -265,6 +118,9 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePat
 
   _pDOFFbo = std::make_shared<DOFFbo>(getContext(), iWidth, iHeight);
 
+  //Pick
+  _pPicker = std::make_shared<Picker>(getContext(), getThis<RenderPipe>());
+
   //Multisample
   if (_bMsaaEnabled == true) {
     BRLogInfo("[RenderPipe] Creating deferred MSAA lighting buffer");
@@ -290,12 +146,177 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePat
   _pShadowFrustumMaster->init();
 
   if (StringUtil::isNotEmpty(strEnvTexturePath)) {
-    _pEnvTex = Gu::getTexCache()->getOrLoad(TexFile("renderpipe_env_tex",strEnvTexturePath), false, true, true);
+    _pEnvTex = Gu::getTexCache()->getOrLoad(TexFile("renderpipe_env_tex", strEnvTexturePath), false, true, true);
+  }
+}
+
+void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<CameraNode> cam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits) {
+  //Input: Camera, Node
+  //Output: Rendered scene image
+  //Light Manager may not really be necessary.
+  //TODO: to make this even more generic, have another function accept just scene, then loop over all scene cameras and call this.
+  //this is redundant but could be used for some effects like mirrors, or portals.
+  if (cam == nullptr) {
+    BRLogWarn("camera not set in RenderPipe::renderScene()");
+    return;
+  }
+  if (toDraw == nullptr) {
+    BRLogWarn("toDraw not set in RenderPipe::renderScene()");
+    return;
+  }
+  if (lightman == nullptr) {
+    BRLogWarn("lightmanager not set in RenderPipe::renderScene()");
+    return;
+  }
+
+  Gu::checkErrorsDbg();
+
+  cam->getViewport()->bind(_pWindow);
+
+  _pPicker->update(getWindow()->getInput());
+  if (cam == nullptr) {
+    BRLogErrorOnce("Camera was not set for renderScene");
+    return;
+  }
+  if (cam->getViewport() == nullptr) {
+    BRLogErrorOnce("Camera Viewport was not set for renderScene");
+    return;
+  }
+  std::shared_ptr<RenderViewport> pv = cam->getViewport();
+  if (pv->getWidth() != _iLastWidth || pv->getHeight() != _iLastHeight) {
+    init(pv->getWidth(), pv->getHeight(), "");
+  }
+
+  //Only render one thing at a tiem to prevent corrupting the pipe
+  if (_bRenderInProgress == true) {
+    BRLogError("Tried to render something while another render was currently in progress.");
+    return;
+  }
+
+  //Cull objects
+  //CullParams cparm;
+  //cparm.setFrustum(cam->getFrustum());
+  //cparm.setRenderBucket(std::make_shared<RenderBucket>());
+  //toDraw->cull(cparm);
+
+  //We might just store cull checked lists on the frustum itself.
+
+  //BRLogWarnCycle("TODO: perform light culling here.");
+  //for (auto light_pair : cparm.getRenderBucket()->getDirLights()) {
+  //  std::shared_ptr<LightNodeDir> light = light_pair.second;
+  //  if (light->getIsShadowsEnabled()) {
+  //    light->cullShadowVolumesAsync()
+  //    CullParams light_parm;
+  //    cp.setFrustum(cam);
+  //    cp.setRenderBucket(std::make_shared<RenderBucket>());
+  //    toDraw->cull(cparm);
+  //  }
+  //}
+
+  _bRenderInProgress = true;
+  {
+    RenderParams rp;
+    rp.setCamera(cam);
+
+    //This doesn't conform ot the new ability to render individual objects.
+    //This draws all scene shadows
+    //If we want shadows in the thumbnails, we'll need to fix this to be able to render
+    //individual object shadows
+    if (pipeBits.test(PipeBit::e::Shadow)) {
+      beginRenderShadows();
+      {
+        Gu::checkErrorsDbg();
+        //**This shouldn't be an option **
+        //Curetly we update lights at the same time as shadows.  this is erroneous
+        if (pipeBits.test(PipeBit::e::Shadow)) {
+          renderShadows(lightman, cam);
+        }
+      }
+      endRenderShadows();
+    }
+    _pMsaaForward->clearFb();
+
+    //1. 3D, Deferred lighting
+    if (pipeBits.test(PipeBit::e::Deferred)) {
+      beginRenderDeferred();
+      {
+        toDraw->drawDeferred(rp);
+      }
+      endRenderDeferred();
+
+      //Blit to forward FB
+      blitDeferredRender(lightman, cam);
+
+      if (pipeBits.test(PipeBit::e::Transparent)) {
+        toDraw->drawTransparent(rp);
+      }
+    }
+
+    //2. Forward Rendering
+    if (pipeBits.test(PipeBit::e::Forward)) {
+      beginRenderForward();
+
+      toDraw->drawForward(rp);
+
+      //2.1 - Debug
+      if (pipeBits.test(PipeBit::e::Debug)) {
+        toDraw->drawForwardDebug(rp);
+      }
+
+      //2.2 - DOF
+      if (pipeBits.test(PipeBit::e::DepthOfField)) {
+        postProcessDOF(lightman, cam);
+      }
+
+      //Rebind Forward FBO
+      beginRenderForward();
+
+      //3. Orthographic, Behind the UI
+      if (pipeBits.test(PipeBit::e::NonDepth)) {
+        toDraw->drawNonDepth(rp);
+      }
+
+      //4. The UI
+      if (pipeBits.test(PipeBit::e::UI_Overlay)) {
+        toDraw->drawUI(rp);
+      }
+
+      endRenderForward();
+    }
+    //
+    //      beginRenderTransparent();
+    //      {
+    //          //TP uses the forward texture.
+    //        //   toDraw->drawTransparent(rp);
+    //      }
+    //      endRenderTransparent();
+
+    if (pipeBits.test(PipeBit::e::BlitFinal)) {
+      endRenderAndBlit(lightman, cam);
+    }
+  }
+  _bRenderInProgress = false;
+}
+const vec4& RenderPipe::getClear() {
+  return _vClear;
+}
+void RenderPipe::setClear(vec4& v) {
+  _vClear = v;
+  if (_pBlittedForward) {
+    _pBlittedForward->setClear(_vClear);
+  }
+  else {
+    BRLogError("Framebuffer was null when setting clear color.");
+  }
+  if (_pBlittedDeferred) {
+    _pBlittedDeferred->setClear(_vClear);
+  }
+  else {
+    BRLogError("Framebuffer was null when setting clear color.");
   }
 }
 
 void RenderPipe::saveScreenshot(std::shared_ptr<LightManager> lightman) {
-  
   if (Gu::getGlobalInput()->keyPress(SDL_SCANCODE_F9)) {
     if (Gu::getGlobalInput()->shiftHeld()) {
       BRLogInfo("[RenderPipe] Saving all MRTs.");
@@ -351,7 +372,6 @@ void RenderPipe::saveScreenshot(std::shared_ptr<LightManager> lightman) {
         RenderUtils::saveTexture(std::move(fname), pTarget->getGlTexId(), pTarget->getTextureTarget());
         BRLogInfo("[RenderPipe] Screenshot '" + fname + "' saved");
       }
-
     }
     else {
       //Basic Forward Screenshot
@@ -397,7 +417,6 @@ void RenderPipe::copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::sha
       getContext()->chkErrDbg();
     }
     getContext()->chkErrDbg();
-
   }
 }
 void RenderPipe::resizeScreenBuffers(int32_t w, int32_t h) {
@@ -407,27 +426,24 @@ void RenderPipe::resizeScreenBuffers(int32_t w, int32_t h) {
 }
 
 void RenderPipe::beginRenderShadows() {
+  Gu::checkErrorsDbg();
   //See GLLightManager in BRO
   getContext()->pushDepthTest();
   getContext()->pushBlend();
   getContext()->pushCullFace();
-
-  Gu::checkErrorsDbg();
   glCullFace(GL_FRONT);
-  Gu::checkErrorsDbg();
   glEnable(GL_DEPTH_TEST);
-  Gu::checkErrorsDbg();
   glEnable(GL_CULL_FACE);
-  Gu::checkErrorsDbg();
   glDisable(GL_BLEND);
   Gu::checkErrorsDbg();
 }
 void RenderPipe::endRenderShadows() {
-
+  Gu::checkErrorsDbg();
   glCullFace(GL_BACK);
   getContext()->popDepthTest();
   getContext()->popBlend();
   getContext()->popCullFace();
+  Gu::checkErrorsDbg();
 }
 void RenderPipe::renderShadows(std::shared_ptr<LightManager> lightman, std::shared_ptr<CameraNode> cam) {
   lightman->update(_pShadowBoxFboMaster, _pShadowFrustumMaster);
@@ -455,7 +471,6 @@ void RenderPipe::endRenderForward() {
 void RenderPipe::enableDisablePipeBits() {
   //TODO: make sure the given input window is in focus.
   //if (_pWindow!=nullptr && _pWindow->hasFocus()) {
-
   //    if (Gu::getFingers()->keyPress(SDL_SCANCODE_F8)) {
   //        Gu::incrementEnum<PipeBit::e>(_pipeBits, PipeBit::e::MaxPipes);
   //        if (_ePipeBit == PipeBit::e::Full) {
@@ -498,7 +513,6 @@ void RenderPipe::blitDeferredRender(std::shared_ptr<LightManager> lightman, std:
         _pDeferredShader->setTextureUf(inf->getLayoutIndex());
         getContext()->chkErrDbg();
       }
-
     }
 
     //Set the light uniform blocks for the deferred shader.
@@ -508,7 +522,6 @@ void RenderPipe::blitDeferredRender(std::shared_ptr<LightManager> lightman, std:
     getContext()->chkErrDbg();
   }
   _pDeferredShader->endRaster();
-
 }
 void RenderPipe::setShadowUf(std::shared_ptr<LightManager> lightman) {
   int32_t iMaxTexs = 0;
@@ -621,7 +634,6 @@ DOFFbo::DOFFbo(std::shared_ptr<GLContext> ctx, int32_t w, int32_t h) :GLFramewor
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   Gu::checkErrorsDbg();
   glBindTexture(GL_TEXTURE_2D, 0);
-
 }
 DOFFbo::~DOFFbo() {
   getContext()->glDeleteFramebuffers(1, &_uiDOFFboId);
@@ -632,7 +644,6 @@ void RenderPipe::postProcessDOF(std::shared_ptr<LightManager> lightman, std::sha
   //copyMsaaSamples(_pMsaaForward, _pBlittedForward);
 
   if (Gu::getRenderSettings()->getDOF()) {
-
     std::shared_ptr<ShaderBase> pDofShader = Gu::getShaderMaker()->getDepthOfFieldShader();
     if (pDofShader == nullptr || cam == nullptr) {
       BRLogErrorCycle("Error: nullptrs 348957");
@@ -702,7 +713,6 @@ void RenderPipe::postProcessDOF(std::shared_ptr<LightManager> lightman, std::sha
   }
 }
 void RenderPipe::endRenderAndBlit(std::shared_ptr<LightManager> lightman, std::shared_ptr<CameraNode> pCam) {
-
   //Do not bind anything - default framebuffer.
   Gu::getShaderMaker()->shaderBound(nullptr);//Unbind and reset shader.
   getContext()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -736,10 +746,8 @@ void RenderPipe::endRenderAndBlit(std::shared_ptr<LightManager> lightman, std::s
     getContext()->chkErrDbg();
   }
   _pForwardShader->endRaster();
-
 }
 void RenderPipe::createQuadMesh(int w, int h) {
-
   //    DEL_MEM(_pQuadMesh);
   _pQuadMesh = nullptr;
   _pQuadMesh = MeshUtils::createScreenQuadMesh(w, h);
@@ -825,10 +833,6 @@ std::shared_ptr<Img32> RenderPipe::getResultAsImage() {
 //     //the GL tex image must be flipped to show upriht/
 // }
 
-
   return bi;
 }
-
-
-
 }//ns game

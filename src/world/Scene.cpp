@@ -23,7 +23,7 @@
 #include "../gfx/UiControls.h"
 #include "../gfx/GraphicsApi.h"
 #include "../gfx/ParticleManager.h"
-#include "../gfx/FlyingCameraControls.h"
+#include "../gfx/FreeCameraScript.h"
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/MegaTex.h"
@@ -89,7 +89,7 @@ void Scene::afterAttachedToWindow() {
 
   //TEst
 
-  std::shared_ptr<MeshNode> c = MeshNode::create("Ball",
+  std::shared_ptr<MeshNode> c = MeshNode::create("Ball", true,
     MeshUtils::makeSphere(2, 20, 20)
   );
   attachChild(c);
@@ -146,6 +146,8 @@ void Scene::createUi() {
   //Gu::checkErrorsDbg();
 }
 void Scene::update(float delta) {
+  debugChangeRenderState();
+
   if (_pPhysicsWorld != nullptr) {
     _pPhysicsWorld->update(getWindow()->getDelta()->get());
   }
@@ -158,6 +160,10 @@ void Scene::update(float delta) {
 
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
+//void Scene::cull(CullParams& cp) {
+//  SceneNode::cull(cp);
+//}
+
 void Scene::idle(int64_t us) {
 }
 std::shared_ptr<GLContext> Scene::getContext() {
@@ -189,7 +195,7 @@ void Scene::createFlyingCamera() {
 #ifdef NOSCRIPT
   BRLogInfo("Creating Fly Camera.");
   _pDefaultCamera = CameraNode::create("FlyingCamera", _pGraphicsWindow->getViewport());
-  std::shared_ptr<FlyingCameraControls> css = std::make_shared<FlyingCameraControls>();
+  std::shared_ptr<FreeCameraScript> css = std::make_shared<FreeCameraScript>();
   _pDefaultCamera->addComponent(css);
   setActiveCamera(_pDefaultCamera);
   attachChild(_pDefaultCamera);
@@ -287,83 +293,14 @@ void Scene::debugChangeRenderState() {
 void Scene::drawDeferred(RenderParams& rp) {
   //TODO:
   //Deferred rendering goes here.
-  debugChangeRenderState();
-
-  Perf::pushPerf();
-
-  getContext()->pushDepthTest();
-  getContext()->pushCullFace();
-  getContext()->pushBlend();
-  {
-    getContext()->enableBlend(false);
-    getContext()->enableCullFace(true);
-    getContext()->enableDepthTest(true);
-
-    //**
-    //2/24 in order to set up the rendering system to be instanced we gotta change a lot around, like merge all the uniform buffers, skin joint buffers, and stuff.  Then reference by gl_InstanceID
-    //so -- this is a huge task and it's nto really needed yet.
-    //**
-
-    //If we don't have skin, draw instanced,
-    //if we have skin draw normally.
-    //_pRenderBucket->sortAndDrawMeshes(
-    //    [](std::shared_ptr<VertexFormat> vf) {
-    //        return getContext()->getShaderManager()->getDiffuseShader(vf);
-    //    },
-    //    [&](std::shared_ptr<ShaderBase> sb) {
-    //        sb->bind();
-    //        sb->setUf("_ufProj", (void*)&_projMatrix, 1, false);
-    //        sb->setUf("_ufView", (void*)&_viewMatrix, 1, false);
-    //        sb->setUf("_ufShadowLightPos", (void*)&vFinal, 1, false);
-    //    },
-    //    [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshNode> bn) {
-    //        RenderParams rp;
-    //        rp.setShader(sb);
-    //        bn->drawDeferred(std::move(rp));
-    //    }
-    //);
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glDisable(GL_BLEND);
-
-    ////3D Models
-    ////  glEnable(GL_BLEND);
-    ////glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //for (std::pair<float, std::shared_ptr<BaseNode>> p : getVisibleNodes()) {
-    //    std::shared_ptr<BaseNode> pm = p.second;
-    //    std::shared_ptr<WorldObject> wo = std::dynamic_pointer_cast<WorldObject>(pm);
-    //    if (wo != nullptr) {
-    //        wo->drawDeferred(std::move(rp)); //Don't pass a matrix in, the model is the same now
-    //    }
-    //}
-    //3D Models
-    //  glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    RenderParams rp;
-    for (std::pair<float, std::shared_ptr<MeshNode>> p : _pRenderBucket->getMeshes()) {
-      std::shared_ptr<MeshNode> pm = p.second;
-      pm->drawDeferred(rp);
-    }
-  }
-  getContext()->popBlend();
-  getContext()->popCullFace();
-  getContext()->popDepthTest();
-
-  Perf::popPerf();
-
   SceneNode::drawDeferred(rp);
 }
 void Scene::drawForward(RenderParams& rp) {
   //Meshes
-  for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
-    std::shared_ptr<SceneNode> pm = p.second;
-    pm->drawForward(rp);
-  }
-
-  //drawBackgroundImage();
-
-  RenderUtils::drawAxisShader(getActiveCamera());
-  RenderUtils::drawGridShader(getActiveCamera());
+  //for (std::pair<float, std::shared_ptr<SceneNode>> p : _pPhysicsWorld->getVisibleNodes()) {
+  //  std::shared_ptr<SceneNode> pm = p.second;
+  //  pm->drawForward(rp);
+  //}
 
   SceneNode::drawForward(rp);
 }
@@ -389,6 +326,9 @@ void Scene::drawShadow(RenderParams& rp) {
   SceneNode::drawShadow(rp);
 }
 void Scene::drawForwardDebug(RenderParams& rp) {
+
+  RenderUtils::drawAxisShader(getActiveCamera());
+  RenderUtils::drawGridShader(getActiveCamera());
 
   SceneNode::drawForwardDebug(rp);
 }
@@ -498,39 +438,15 @@ void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
 //
 //  return mn;
 //}
-std::shared_ptr<LightNodePoint> Scene::createPointLight(vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled) {
-  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("PointLight", bShadowsEnabled);
-  lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
-  lp->setPos(std::move(pos));
-  lp->setLightRadius(radius);
-  lp->setLightColor(std::move(color));
 
-  lp->getShadowBox()->getSmallBoxSize() = 0.6f;
-  attachChild(lp);
-
-  return lp;
-}
-std::shared_ptr<LightNodeDir> Scene::createDirLight(const vec3&& pos, const vec3&& lookAt, float fDist, const vec4&& color, const string_t action, bool bShadowsEnabled) {
-  std::shared_ptr<LightNodeDir> dir = LightNodeDir::create("DirLight", bShadowsEnabled);
-  dir->setMaxDistance(fDist);
-  dir->setPos(std::move(pos));
-  dir->setLookAt(std::move(lookAt));
-  dir->setLightColor(std::move(color));
-  //dir->getSpecExp() = 50.109f;
-  dir->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
-
-  attachChild(dir);
-
-  return dir;
-}
-std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild) {
+std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild, bool bValidate) {
   std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
   if (casted != nullptr) {
     AssertOrThrow2(_pPhysicsWorld != nullptr);
     _pPhysicsWorld->addObj(casted, false, false);
   }
 
-  std::shared_ptr<TreeNode> ret = TreeNode::attachChild(pChild);
+  std::shared_ptr<TreeNode> ret = TreeNode::attachChild(pChild, bValidate);
 
   if (getWindow()) {
     std::shared_ptr<Scene> scene = getThis<Scene>();

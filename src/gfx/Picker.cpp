@@ -28,7 +28,7 @@ uint32_t Picker::genPickId() {
   return _iid;
 }
 void Picker::update(std::shared_ptr<InputManager> pFingers) {
-  updatePickedPixel((int32_t)pFingers->getMousePos().x, (int32_t)pFingers->getMousePos().y);
+  updatePickedPixel((int32_t)pFingers->getMousePos_Relative().x, (int32_t)pFingers->getMousePos_Relative().y);
 }
 void Picker::updatePickedPixel(int32_t x, int32_t y) {
   //vec2 mp = Gu::GetMousePosInWindow();

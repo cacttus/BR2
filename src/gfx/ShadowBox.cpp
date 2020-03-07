@@ -293,14 +293,11 @@ void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
   int iStartDebug = 0;
   // Update the shadow box.
   pShadowBoxMaster->beginRenderShadowBox();
-  //beginRenderShadowBox();
   {
     for (int iFace = iStartDebug; iFace < 6; ++iFace) {
       _pint->_pShadowBoxSide[iFace]->renderShadows(pShadowBoxMaster, _pint->_bForceUpdate);
-      //_pShadowBoxSide[iFace]->renderShadows(shared_from_this(), _bForceUpdate);
     }
   }
-  //endRenderShadowBox();
   pShadowBoxMaster->endRenderShadowBox();
 
   // Copy and blend this into 

@@ -62,10 +62,7 @@ void runtimeAssertion(string_t str);
 #define BRThrowDeprecatedException() throw new DeprecatedException()
 #define VerifyOrThrow(expr,x) do { if(!(expr)) BRThrowException(x); } while(0)
 #define CheckGpuErrorsDbg() Gu::checkErrors()
-
 #define Phase1NotImplemented() BRThrowNotImplementedException()
-
-
 #define ShowMessageBoxOnce(msg) { \
 static bool __show=false; \
 if(__show==false) { \
@@ -75,6 +72,30 @@ Gu::showMessageBox(msg, "Error"); \
 }; \
 __show=true; \
 }
+
+/************************************************************************/
+/* Casting                                                              */
+/************************************************************************/
+
+template < typename Tx, typename Ty >
+inline Tx brSafeCast(Ty pb) {
+  //Note:
+  // If this is giving compile errors make sure you
+  // included both the .h definition files of the casted
+  // object types.
+  Tx ret = dynamic_cast<Tx>(pb);
+  if (pb != nullptr && ret == nullptr) {
+    throw 0;
+  }
+  //    AssertOrThrow2(ret!=NULL);
+  return ret;
+}
+#define SafeCast(pObj, pType) BRSafeCast<pType>(pObj)
+#define UnsafeCast(pObj, pType) reinterpret_cast<pType>(pObj)
+
+/************************************************************************/
+/* Class                                                                */
+/************************************************************************/
 
 /**
 *  @class GLFramework
@@ -107,8 +128,9 @@ public:
 
 }//ns BR2
 
-//////////////////////////////////////////////////////////////////////////
-// SDL Defines
+/************************************************************************/
+/* SDL Defines                                                          */
+/************************************************************************/
 struct SDL_Window;
 union SDL_Event;
 

@@ -16,10 +16,10 @@ namespace BR2 {
 *  @class FlyingCameraControls
 *  @brief A camera that lets you fly around.  This is actually a control class for the camera and not the camera itself.
 */
-class FlyingCameraControls : public Script {
+class FreeCameraScript : public Script {
 public:
-  FlyingCameraControls();
-  virtual ~FlyingCameraControls() override;
+  FreeCameraScript();
+  virtual ~FreeCameraScript() override;
 
   virtual void onStart() override;
   virtual void onUpdate(float delta) override;

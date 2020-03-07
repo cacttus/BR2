@@ -84,7 +84,7 @@ public:
   LightNodePoint(string_t name, bool bhasShadowBox);
   virtual ~LightNodePoint() override;
   static std::shared_ptr<LightNodePoint> create(string_t name,bool bhasShadowBox);
-
+  static std::shared_ptr<LightNodePoint> create(string_t name, vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled);
   std::shared_ptr<ShadowBox> getShadowBox() { return _pShadowBox; }
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
@@ -100,7 +100,6 @@ public:
   float getLightRadius1_2() { return _f_1_Radius_2; }
   float getLightRadius();
   void setLightRadius(float r);
-
 
 protected:
   virtual void init() override;

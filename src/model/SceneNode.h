@@ -62,8 +62,8 @@ protected:
   void setParentType(ParentType::e pt) { _eParentType = pt; }
 };
 /**
-*    @class BaseNode
-*    @brief The base of the node system.
+*  @class BaseNode
+*  @brief The base of the node system.
 */
 class SceneNode : public TreeNode {
 public:
@@ -77,6 +77,7 @@ public:
   virtual void afterAddedToScene(std::shared_ptr<Scene> scene);
   virtual void afterRemovedFromScene(std::shared_ptr<Scene> scene);
 
+  //virtual void cull(CullParams& pf);
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp) override;
   virtual void drawShadow(RenderParams& rp) override;
@@ -122,8 +123,9 @@ public:
   void show();
   void hide();
   bool isHidden();
-  string_t name();
+  bool isCulled();
 
+  void collect(std::shared_ptr<RenderBucket> rb);
   void drawBoxes(std::shared_ptr<UtilMeshInline> mi);
   void drawBox(std::shared_ptr<UtilMeshInline> mi);
   void drawBoneBindBoxes(std::shared_ptr<ArmatureNode> an, std::shared_ptr<UtilMeshInline> mi);
@@ -131,17 +133,11 @@ public:
   void drawBoneBoxes(std::shared_ptr<UtilMeshInline> mi);
   //void addShadowInfluence(std::shared_ptr<ShadowBox> psb);
   //void clearShadowInfluences();
-  void collect(std::shared_ptr<RenderBucket> rb);
+  //void collect(std::shared_ptr<RenderBucket> rb);
 
   template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node);
   template < typename Tx > std::shared_ptr<Tx> getData() {return std::dynamic_pointer_cast<Tx>(_pSpec);}
 
-protected:
-  void setLocalBind();
-  void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
-  void applyLocalAnimation(std::shared_ptr<Animator>);
-  void applyParent();
-  virtual void init();
 protected:
   std::vector<std::shared_ptr<Component>> _vecComponents;
   std::shared_ptr<BaseSpec> _pSpec = nullptr;
@@ -158,16 +154,22 @@ protected:
   std::shared_ptr<BoneNode> _pBoneParent = nullptr;
   //  std::set<std::shared_ptr<ShadowBox>> _setShadowInfluences;
   bool _bHidden = false;
-
+  bool _bCulled = false;
   vec3 _velocity;
+
+  void setLocalBind();
+  void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
+  void applyLocalAnimation(std::shared_ptr<Animator>);
+  void applyParent();
+  virtual void init();
 
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
   vec3 _vPos;
-  string_t _name;
   vec3 _vLastPos;
   bool _bTransformChanged = true;
   bool _bInitialized = false;
+
   void updateComponents(float delta);
   void startComponent(std::shared_ptr<Component> c, std::shared_ptr<Scene> s);
   void endComponent(std::shared_ptr<Component> c);

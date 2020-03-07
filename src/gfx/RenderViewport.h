@@ -22,11 +22,7 @@ enum class ViewportConstraint {
 class RenderViewport_Internal;
 class RenderViewport : public VirtualMemoryShared<RenderViewport> {
 public:
-  RenderViewport(
-    int32_t w
-    , int32_t h
-    , ViewportConstraint constraint = ViewportConstraint::AdjustHeight
-  );
+  RenderViewport(int32_t w, int32_t h, ViewportConstraint constraint = ViewportConstraint::AdjustHeight);
   virtual ~RenderViewport() override;
 
   void bind(std::shared_ptr<RenderTarget> target);
@@ -39,7 +35,6 @@ public:
   int32_t getX();
   int32_t getY();
   float getAspectRatio();
-  bool containsPointRelativeToWindow(vec2& mp);
   void updateBox(std::shared_ptr<RenderTarget> target);
 
 private:

@@ -293,7 +293,7 @@ void World25::createHandCursor() {
 
   //    wo = makeObj("Tall_Lamp", vec3(0, 0, 0), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "");
    // if (wo != nullptr) {
-  std::shared_ptr<LightNodePoint> lp = getScene()->createPointLight(vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
+  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("light",vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
   //     wo->attachChild(lp);
       // turnOffLamp();//Default turn if otf
 //   }
@@ -382,6 +382,11 @@ void World25::update(float delta) {
   //Now that physicsworld is not subclassed, this MUST be called AFTER physicsworld::update
   Perf::pushPerf();
 
+
+  //Objs, Meshes
+  _nMeshTrisFrame = 0;
+  _nQuadTrisFrame = 0;
+
   updateTopology();
 
   //Update Motions
@@ -437,7 +442,7 @@ void World25::updateAndCopyVisibleObjects(float delta, std::multimap<float, std:
 }
 void World25::updateHandCursorAndAddToRenderList(float delta) {
   std::shared_ptr<CameraNode> bc = getScene()->getActiveCamera();
-  vec2 v = this->getScene()->getInput()->getMousePos();
+  vec2 v = this->getScene()->getInput()->getMousePos_Relative();
   Ray_t pr = bc->projectPoint2(v);
 
   ////if (_pHandCursor) {
@@ -627,7 +632,7 @@ void World25::postGenerateNodes() {
 void World25::drawDeferred(RenderParams& rp) {
   Perf::pushPerf();
   drawSky(rp);
-  drawWorld(rp);
+  drawWorldDeferred(rp);
   Perf::popPerf();
 }
 void World25::drawForward(RenderParams& rp) {
@@ -678,27 +683,15 @@ void World25::drawSky(RenderParams& rp) {
   }
   Gu::getCoreContext()->popDepthTest();
 }
-void World25::drawWorld(RenderParams& rp) {
+void World25::drawWorldDeferred(RenderParams& rp) {
   static GpuTile gpuTiles[W25_MAX_GPU_SPRITES];
   _pGameFile->getBucket()->getGpuTiles(_pWorldAtlas, gpuTiles);
-
-  //Objs, Meshes
-  _nMeshTrisFrame = 0;
-  _nQuadTrisFrame = 0;
-
-  ivec4 gridwh;
-  gridwh.x = _pWorldAtlas->getGridSize().x;
-  gridwh.y = _pWorldAtlas->getGridSize().y;
-  gridwh.z = _pWorldAtlas->getSpriteSize().x;
-  gridwh.w = _pWorldAtlas->getSpriteSize().y;
 
   // _pTileShader->setFreebieDirLightUf();
   _pTileShader->setCameraUf(rp.getCamera());
   _pTileShader->setAtlasUf(_pWorldAtlas);
-  //_pTileShader->setLightUf();
 
   Gu::getShaderMaker()->setUfBlock("GpuSprites", gpuTiles, W25_MAX_GPU_SPRITES * sizeof(GpuTile));
-  //setTileUf(_pTileShader); //**Also we might do this for sprites too
 
   Gu::getCoreContext()->pushCullFace();
   Gu::getCoreContext()->pushBlend();
@@ -715,6 +708,27 @@ void World25::drawWorld(RenderParams& rp) {
     wg->drawOpaque(rp2, _nMeshTrisFrame);
   }
 
+  Gu::getCoreContext()->popBlend();
+  Gu::getCoreContext()->popCullFace();
+}
+void World25::drawTransparent(RenderParams& rp) {
+  static GpuTile gpuTiles[W25_MAX_GPU_SPRITES];
+  _pGameFile->getBucket()->getGpuTiles(_pWorldAtlas, gpuTiles);
+
+
+  // _pTileShader->setFreebieDirLightUf();
+  _pTileShader->setCameraUf(rp.getCamera());
+  _pTileShader->setAtlasUf(_pWorldAtlas);
+
+  Gu::getShaderMaker()->setUfBlock("GpuSprites", gpuTiles, W25_MAX_GPU_SPRITES * sizeof(GpuTile));
+
+  Gu::getCoreContext()->pushCullFace();
+  Gu::getCoreContext()->pushBlend();
+
+  RenderParams rp2(_pTileShader);
+  rp2.setCamera(rp.getCamera());
+  _pWorldMaterial->bind(_pTileShader);
+
   //*NOTE this should be moved to the transparent drawing of teh deferred.
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
@@ -730,7 +744,6 @@ void World25::drawWorld(RenderParams& rp) {
   Gu::getCoreContext()->popBlend();
   Gu::getCoreContext()->popCullFace();
 }
-
 WorldCell* World25::getGlobalCellForPoint(vec3& pt) {
   ivec3 iv;
   WorldCell* pc = nullptr;

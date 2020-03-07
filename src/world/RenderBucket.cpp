@@ -21,6 +21,7 @@ bool RenderBucket::hasItems() {
     (_mapObjs.size() > 0) ||
     (_mapGrids.size() > 0) ||
     (_mapDirLights.size() > 0) ||
+    (_mapLights.size() > 0) ||
     (_mapPointLights.size() > 0) ||
     (_mapMeshes.size() > 0)
     ;
@@ -30,6 +31,7 @@ void RenderBucket::clear(std::shared_ptr<CameraNode> visible_camera) {
   _mapGrids.clear();
 
   _mapDirLights.clear();
+  _mapLights.clear();
   _mapPointLights.clear();
   _mapMeshes.clear();
   _vCachedCamPos = visible_camera->getFinalPos();
@@ -39,12 +41,12 @@ float RenderBucket::distToCam(Box3f* bn) {
   return dist;
 }
 void RenderBucket::addObj(std::shared_ptr<SceneNode> bn) {
-
   //float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - pGrid->getNodeCenterR3()).length2();
   float dist = distToCam(bn->getBoundBoxObject());
   _mapObjs.insert(std::make_pair(dist, bn));
 
   //collect the meshes, and sort them
+  //TODO remove this in favor of adding meshes (etc) to the modelnode.
   bn->collect(getThis<RenderBucket>());
 }
 void RenderBucket::addGrid(std::shared_ptr<PhysicsGrid> bn) {
@@ -57,9 +59,11 @@ void RenderBucket::collect(std::shared_ptr<SceneNode> bn) {
     float fDist = distToCam(bn->getBoundBoxObject());
     if (std::dynamic_pointer_cast<LightNodeDir>(bn) != nullptr) {
       _mapDirLights.insert(std::make_pair(fDist, std::dynamic_pointer_cast<LightNodeDir>(bn)));
+      _mapLights.insert(std::make_pair(fDist, std::dynamic_pointer_cast<LightNodeBase>(bn)));
     }
     else if (std::dynamic_pointer_cast<LightNodePoint>(bn) != nullptr) {
       _mapPointLights.insert(std::make_pair(fDist, std::dynamic_pointer_cast<LightNodePoint>(bn)));
+      _mapLights.insert(std::make_pair(fDist, std::dynamic_pointer_cast<LightNodeBase>(bn)));
     }
     else if (std::dynamic_pointer_cast<MeshNode>(bn) != nullptr) {
       std::shared_ptr<MeshNode> mn = std::dynamic_pointer_cast<MeshNode>(bn);

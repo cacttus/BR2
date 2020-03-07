@@ -90,7 +90,7 @@ void HappySky::init(std::shared_ptr<Atlas> pAtlas, float fBoxDiagonalSize2, bool
   mt->addTextureBinding(_pAtlas, TextureChannel::Channel0, TextureType::e::Color, 1.0f);
   ms->setMaterial(mt);
 
-  _pMesh = MeshNode::create("sky",ms);
+  _pMesh = MeshNode::create("sky", false, ms);
 
 
 }

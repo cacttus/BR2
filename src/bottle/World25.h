@@ -26,7 +26,8 @@ public:
   void updateTouch(std::shared_ptr<InputManager> pFingers);
   void update(float delta) ;
    void drawDeferred(RenderParams& rp) ;
-   void drawForward(RenderParams& rp) ;
+   void drawForward(RenderParams& rp);
+   void drawTransparent(RenderParams& rp);
 
   //*Raycast Tests**
   Ray_t getMouseRay(vec2& vMouse);
@@ -135,7 +136,7 @@ private:
   void updateTopology();
 
   void drawSky(RenderParams& rp);
-  void drawWorld(RenderParams& rp);
+  void drawWorldDeferred(RenderParams& rp);
   void createHandCursor();
 
   void convertMobs();

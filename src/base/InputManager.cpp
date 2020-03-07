@@ -11,8 +11,11 @@ InputManager::InputManager() {
 InputManager::~InputManager() {
 }
 void InputManager::init() {
-  _vMousePos = 0.0f;
-  _vLastMousePos = 0.0f;
+  _vMousePos_relative = 0.0f;
+  _vLastMousePos_relative = 0.0f;
+  _vMousePos_global = 0.0f;
+  _vLastMousePos_global = 0.0f;
+
   _eRmb = _eLmb = _eMmb = ButtonState::e::Up;
   //Pre + Post update to prevent garbage
   preUpdate();
@@ -69,9 +72,14 @@ void InputManager::setRmbState(ButtonState::e bs) {
 }
 void InputManager::preUpdate() {
   int ix, iy;
+  //Note: obviously if we can't tell that mouse is in window, we will have input issues.
   SDL_GetMouseState(&ix, &iy);
-  _vMousePos.x = (float)ix;
-  _vMousePos.y = (float)iy;
+  _vMousePos_relative.x = (float)ix;
+  _vMousePos_relative.y = (float)iy;
+
+  SDL_GetGlobalMouseState(&ix, &iy);
+  _vMousePos_global.x = (float)ix;
+  _vMousePos_global.y = (float)iy;
 }
 void InputManager::postUpdate() {
   //Updates the button state per frame
@@ -83,7 +91,8 @@ void InputManager::postUpdate() {
   }
 
   _iMouseWheel = 0;
-  _vLastMousePos = _vMousePos;
+  _vLastMousePos_relative = _vMousePos_relative;
+  _vLastMousePos_global = _vMousePos_global;
 }
 void InputManager::updateButtState(BR2::ButtonState::e& eState) {
   if (eState == BR2::ButtonState::e::Press) {

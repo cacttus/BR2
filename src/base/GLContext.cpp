@@ -88,7 +88,7 @@ GLContext::~GLContext() {
   }
 }
 void GLContext::setPolygonMode(PolygonMode p) {
-  if (Gu::getCoreContext()->getForwardCompatible() == false) {
+  if (Gu::getCoreContext()->getForwardCompatible() == true) {
     GLenum mode = GL_FILL;
     if (p == PolygonMode::Line) { mode = GL_LINE; }
     else if (p == PolygonMode::Point) { mode = GL_POINT; }
@@ -98,7 +98,7 @@ void GLContext::setPolygonMode(PolygonMode p) {
   }
   else {
     //Uh..No
-    BRLogErrorOnce("glPolygonMode not supported in forward compatibility context.");
+    BRLogErrorOnce("glPolygonMode not supported in core compatibility context.");
   }
 }
 bool GLContext::chkErrRt(bool bDoNotBreak, bool doNotLog) {
@@ -263,8 +263,8 @@ Gu::debugBreak(); \
   return bValid;
 }
 void GLContext::setLineWidth(float w) {
-  if (getForwardCompatible()) {
-    BRLogErrorOnce("glLineWidth not supported in forward compatible mode.");
+  if (getForwardCompatible()==false) {
+    BRLogErrorOnce("glLineWidth not supported in core mode.");
   }
   else {
     glLineWidth(w);

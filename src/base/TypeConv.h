@@ -19,6 +19,10 @@ namespace BR2 {
 #define FORCE_INLINE inline
 #endif
 
+/**
+*  @class TypeConv
+*  @brief Wrapper for STL type casts, and some unorthodox casts.
+*/
 class TypeConv {
 public:
   //ToVal

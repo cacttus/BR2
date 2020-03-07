@@ -234,7 +234,7 @@ bool UiElement::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiSc
   if (getLayoutVisible() == true) {
     if (getRenderVisible() == true) {
       if (getIsPickEnabled() == true) {
-        if (q.containsPointInclusive(fingers->getMousePos())) {
+        if (q.containsPointInclusive(fingers->getMousePos_Relative())) {
           _iPickedFrameId = pscreen->getFrameNumber();
 
           if (getPickRoot()) {
@@ -1067,7 +1067,7 @@ void UiElement::enableDrag(UiDragInfo::DragFunc func) {
     [winw](UiEventId::e ev, void* pv) {
       if (std::shared_ptr<UiElement> w = winw.lock()) {
         w->_pDragInfo->_bDragStart = true;
-        w->_pDragInfo->_vDragStart = w->getScreen()->getWindow()->getInput()->getMousePos();
+        w->_pDragInfo->_vDragStart = w->getScreen()->getWindow()->getInput()->getMousePos_Relative();
         // w->_pDragInfo->_b2StartBox = w->getComputedQuad();
       }
     }));
@@ -3138,7 +3138,7 @@ void UiScreen::init() {
 
   std::vector<v_GuiVert> verts;
   std::vector<v_index32> inds;
-  _pint->_pMesh = MeshNode::create("UiScreen",
+  _pint->_pMesh = MeshNode::create("UiScreen", false,
     std::make_shared<MeshSpec>(
       verts.data(), verts.size(),
       inds.data(), inds.size(),
@@ -3160,8 +3160,8 @@ void UiScreen::update(std::shared_ptr<InputManager> pInputManager) {
 }
 void UiScreen::updateLayout(std::shared_ptr<InputManager> pInputManager) {
   if (_pint->_pCursor) {
-    _pint->_pCursor->left() = pInputManager->getMousePos().x;
-    _pint->_pCursor->top() = pInputManager->getMousePos().y;
+    _pint->_pCursor->left() = pInputManager->getMousePos_Relative().x;
+    _pint->_pCursor->top() = pInputManager->getMousePos_Relative().y;
   }
   else {
     BRLogDebugOnce("Cursor was not set in UiScreen. (not necessarily an error, but a debug error).");

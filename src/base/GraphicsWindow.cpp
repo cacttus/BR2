@@ -51,6 +51,7 @@ public:
   void toggleFullscreen();
   void setFrameState(FrameState e) { _eFrameState = e; }
 };
+
 void GraphicsWindow_Internal::toggleFullscreen() {
   if (_bFullscreen == false) {
     //get the fullscreen resolution
@@ -203,10 +204,14 @@ void GraphicsWindow::initRenderSystem() {
     _pint->toggleFullscreen();
   }
 
+  BRLogInfo("Creating Render Pipeline");
   _pint->_pRenderPipe = std::make_shared<RenderPipe>(getContext(), getThis<GraphicsWindow>());
   _pint->_pRenderPipe->init(getViewport()->getWidth(), getViewport()->getHeight(), Gu::getPackage()->makeAssetPath(Gu::getPackage()->getEnvTextureFolder()));
 
   _pint->printHelpfulDebug();
+}
+FrameState GraphicsWindow::getFrameState() {
+  return _pint->_eFrameState;
 }
 void GraphicsWindow::step() {
   getInput()->preUpdate();
@@ -280,6 +285,38 @@ void GraphicsWindow::setScene(std::shared_ptr<Scene> scene) {
   _pint->_pScene = scene;
   scene->afterAttachedToWindow();
 }
+bool GraphicsWindow::containsPoint_Global2D(const vec2& mp) {
+
+  //TDOO: store these values per frame in this window
+ // int top, left, bot, right;
+ // int ret = SDL_GetWindowBordersSize(getSDLWindow(), &top, &left, &bot, &right);
+  int posx, posy;
+  SDL_GetWindowPosition(getSDLWindow(), &posx, &posy);
+  int sizx, sizy;
+  SDL_GetWindowSize(getSDLWindow(), &sizx, &sizy);
+
+  int client_left = posx;
+  int client_top = posy;
+  int client_right = client_left + sizx ;
+  int client_bot = client_top + sizy ;
+
+  //mp must be a GLOBAL point (mouse pos) getting INputManager::getMousePos_Global
+  if (mp.x < client_top) {
+    return false;
+  }
+  if (mp.y < client_left) {
+    return false;
+  }
+  if (mp.x > client_right - 1) {
+    return false;
+  }
+  if (mp.y > client_bot - 1) {
+    return false;
+  }
+  return true;
+}
+
+
 
 
 

@@ -45,25 +45,19 @@ void WorldEditor::init() {
 
     _pSelector->show();
     _pWorld25->getPhysics()->addObj(_pSelector, false, false);
-    std::shared_ptr<LightNodePoint> pl = _pWorld25->getScene()->createPointLight(vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
+    std::shared_ptr<LightNodePoint> pl = LightNodePoint::create("light",vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
     pl->getShadowBox()->getSmallBoxSize() = 0.03f;
     _pSelector->attachChild(std::dynamic_pointer_cast<TreeNode>(pl));
   }
 
-  //v_v3n3 frag;
-  //frag.n = 0;
-  //frag.v = 0;
-  //int32_t ind = 0;
-  //_pHoverDot = std::make_shared<MeshNode>(std::make_shared<MeshSpec>(
-  //    (void*)&frag, 1, (void*)&ind, 1, v_v3n3::getVertexFormat(), nullptr
-  //    ));
+
 }
 
 void WorldEditor::editWorld(std::shared_ptr<InputManager> pFingers) {
   ButtonState::e eLmb = pFingers->getLmbState();
   ButtonState::e eRmb = pFingers->getRmbState();
-  vec2 vMouse = pFingers->getMousePos();
-  vec2 vLast = pFingers->getLastMousePos();
+  vec2 vMouse = pFingers->getMousePos_Relative();
+  vec2 vLast = pFingers->getLastMousePos_Relative();
 
   //Update shift edit
   if (pFingers->shiftHeld() == false) {
@@ -283,7 +277,7 @@ void WorldEditor::addDrityCell(std::shared_ptr<WorldGrid> pg, WorldCell* pc) {
 void WorldEditor::editWorldUpdateHover(std::shared_ptr<InputManager> pFingers) {
   EditMode::e eEditMode = _pWorldEditState->getEditMode();
   ButtonState::e eLmb = pFingers->getLmbState();
-  vec2 vMouse = pFingers->getMousePos();
+  vec2 vMouse = pFingers->getMousePos_Relative();
 
   _pWorldEditState->clearHover();
 
@@ -370,7 +364,7 @@ void WorldEditor::editWorldMouseDown(std::shared_ptr<InputManager> pFingers) {
   BlockMode::e eBlockMode = _pWorldEditState->getBlockMode();
   GridMeshLayer::e eGridMeshLayer = _pWorldEditState->getGridMeshLayer();
 
-  vec2 vMouse = pFingers->getMousePos();
+  vec2 vMouse = pFingers->getMousePos_Relative();
   Ray_t pr = _pWorld25->getMouseRay(vMouse);
 
   if (eEditMode == EditMode::e::Tile) {

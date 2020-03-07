@@ -112,9 +112,7 @@ void LightManager::updateRenderData() {
 }
 
 void LightManager::update(std::shared_ptr<ShadowBox> pf, std::shared_ptr<ShadowFrustum> mf) {
-  Gu::checkErrorsDbg();
   setupLights(pf, mf);
-  Gu::checkErrorsDbg();
   updateRenderData();
 }
 // - Main function to be called on the scene to set up all the lights.

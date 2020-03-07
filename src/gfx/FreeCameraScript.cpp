@@ -3,20 +3,20 @@
 #include "../base/Gu.h"
 #include "../base/Logger.h"
 #include "../gfx/CameraNode.h"
+#include "../gfx/LightNode.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/CameraNode.h"
 #include "../gfx/FrustumBase.h"
-#include "../gfx/FlyingCameraControls.h"
+#include "../gfx/FreeCameraScript.h"
 #include "../model/SceneNode.h"
 #include "../world/Scene.h"
 
 namespace BR2 {
-FlyingCameraControls::FlyingCameraControls() {
+FreeCameraScript::FreeCameraScript() {
 }
-FlyingCameraControls::~FlyingCameraControls() {
+FreeCameraScript::~FreeCameraScript() {
 }
-void FlyingCameraControls::onStart() {
-
+void FreeCameraScript::onStart() {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (cam == nullptr) {
     BRLogError("Script could not start, object node was not set.");
@@ -29,11 +29,14 @@ void FlyingCameraControls::onStart() {
   _vMoveVel.construct(0, 0, 0);
   cam->setPos(vec3(0, 0, 0));
 
+  std::shared_ptr<LightNodePoint> p = LightNodePoint::create("camLight",vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
+  cam->attachChild(std::dynamic_pointer_cast<TreeNode>(p));
+
   //cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
   _vCamNormal = cam->getViewNormal();
   _vCamPos = cam->getPos();
 }
-void FlyingCameraControls::onUpdate(float delta) {
+void FreeCameraScript::onUpdate(float delta) {
   std::shared_ptr<CameraNode> cn = getNode<CameraNode>();
   if (cn != nullptr) {
     std::shared_ptr<InputManager> im = cn->getInput();
@@ -51,9 +54,9 @@ void FlyingCameraControls::onUpdate(float delta) {
     BRLogErrorCycle("Node not found.");
   }
 }
-void FlyingCameraControls::onExit() {
+void FreeCameraScript::onExit() {
 }
-void FlyingCameraControls::moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta) {
+void FreeCameraScript::moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (!cam) {
     return;
@@ -86,7 +89,7 @@ void FlyingCameraControls::moveCameraWSAD(std::shared_ptr<InputManager> pInput, 
   _vMoveVel += vel;
   updateCameraPosition();
 }
-void FlyingCameraControls::updateCameraPosition() {
+void FreeCameraScript::updateCameraPosition() {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (!cam) {
     return;
@@ -101,7 +104,7 @@ void FlyingCameraControls::updateCameraPosition() {
   cam->setPos(std::move(_vCamPos));
   cam->setLookAt(std::move(vLookat));
 }
-void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt) {
+void FreeCameraScript::update(std::shared_ptr<InputManager> pInput, float dt) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (!cam) {
     return;
@@ -109,7 +112,7 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
 
   //Capture & u8pdate input
   ButtonState::e eLmb = pInput->getLmbState();
-  vec2 vLast = pInput->getLastMousePos();
+  vec2 vLast = pInput->getLastMousePos_Relative();
   t_timeval us = Gu::getMicroSeconds();
 
   updateRotate(pInput);
@@ -136,8 +139,8 @@ void FlyingCameraControls::update(std::shared_ptr<InputManager> pInput, float dt
   //This would run as a CSHarpScript (in the future) and get its update() method called.
   //cam->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
 }
-void FlyingCameraControls::updateRotate(std::shared_ptr<InputManager> pInput) {
-  vec2 vMouse = pInput->getMousePos();
+void FreeCameraScript::updateRotate(std::shared_ptr<InputManager> pInput) {
+  vec2 vMouse = pInput->getMousePos_Relative();
   ButtonState::e eRmb = pInput->getRmbState();
   vec2 vDelta(0, 0);
   if (eRmb == ButtonState::Press) {
@@ -174,7 +177,7 @@ void FlyingCameraControls::updateRotate(std::shared_ptr<InputManager> pInput) {
     rotateCameraNormal(_fPerUnitRotate * vDelta.x, _fPerUnitRotate * -vDelta.y);
   }
 }
-void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
+void FreeCameraScript::rotateCameraNormal(float rotX, float rotY) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
   if (!cam) {
     return;
@@ -226,7 +229,7 @@ void FlyingCameraControls::rotateCameraNormal(float rotX, float rotY) {
 
   updateCameraPosition();
 }
-void FlyingCameraControls::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
+void FreeCameraScript::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
   _vCamPos = pos;
   _vCamNormal = (lookat - pos).normalize();
 

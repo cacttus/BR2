@@ -9,6 +9,7 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/LightNode.h"
 #include "../gfx/ShadowBoxSide.h"
+#include "../gfx/FrustumBase.h"
 #include "../model/SceneNode.h"
 #include "../model/MeshNode.h"
 #include "../model/Model.h"
@@ -19,6 +20,7 @@
 #include "../world/Component.h"
 #include "../world/Scene.h"
 #include "../world/NodeUtils.h"
+#include "../world/RenderBucket.h"
 
 namespace BR2 {
 BaseSpec::BaseSpec(string_t strName) {
@@ -58,8 +60,8 @@ void BaseSpec::deserialize(std::shared_ptr<BinaryFile> fb) {
   fb->readVec3(std::move(_pBox->_min));
   fb->readVec3(std::move(_pBox->_max));
 }
-SceneNode::SceneNode(string_t name, std::shared_ptr<BaseSpec> ps) : _pSpec(ps) {
-  _name = name;
+SceneNode::SceneNode(string_t name, std::shared_ptr<BaseSpec> ps) : TreeNode(name) {
+  _pSpec = ps;
   _pBox = new Box3f();
   _pOBB = new OBB();
   _vPos = vec3(0, 0, 0);
@@ -169,8 +171,9 @@ void SceneNode::hide() {
 bool SceneNode::isHidden() {
   return _bHidden;
 }
-string_t SceneNode::name() { return _name; }
-
+bool SceneNode::isCulled() {
+  return _bCulled;
+}
 void SceneNode::init() {
   // ** WHY IS THIS HERE? -- READ BELOW ** 
   // All nodes require separate initialization due to the fact that shared_ptr cannot pass its own reference in a constructor.
@@ -497,6 +500,13 @@ void SceneNode::drawBox(std::shared_ptr<UtilMeshInline> mi) {
     mi->addBox(getOBB()->getVerts(), &cOBB);
   }
 }
+//void SceneNode::cull(CullParams& pf) {
+//  if (isHidden() == false) {
+//    if (pf.getCamera()->getFrustum()->hasBox(getBoundBoxObject())) {
+//      pf.getRenderBucket()->addObj(getThis<SceneNode>());
+//    }
+//  }
+//}
 void SceneNode::drawDeferred(RenderParams& rp) {
   if (getChildren()) {
     for (std::shared_ptr<TreeNode> tn : *getChildren()) {

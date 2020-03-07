@@ -453,9 +453,6 @@
     <ClCompile Include="src\gfx\RenderTarget.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\FlyingCameraControls.cpp">
-      <Filter>gfx</Filter>
-    </ClCompile>
     <ClCompile Include="src\world\NodeUtils.cpp">
       <Filter>world</Filter>
     </ClCompile>
@@ -557,6 +554,9 @@
     </ClCompile>
     <ClCompile Include="src\bottle\WorldSelect.cpp">
       <Filter>bottle</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FreeCameraScript.cpp">
+      <Filter>gfx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1112,9 +1112,6 @@
     <ClInclude Include="src\gfx\RenderTarget.h">
       <Filter>gfx</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\FlyingCameraControls.h">
-      <Filter>gfx</Filter>
-    </ClInclude>
     <ClInclude Include="src\world\NodeUtils.h">
       <Filter>world</Filter>
     </ClInclude>
@@ -1219,6 +1216,9 @@
     </ClInclude>
     <ClInclude Include="src\bottle\WorldSelect.h">
       <Filter>bottle</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FreeCameraScript.h">
+      <Filter>gfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

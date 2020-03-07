@@ -846,9 +846,12 @@ void ModelNode::init() {
   }
   //Create meshes
   for (std::shared_ptr<MeshSpec> pMeshSpec : getData<ModelSpec>()->getMeshes()) {
-    std::shared_ptr<MeshNode> pMeshnode = MeshNode::create(pMeshSpec->getName(), pMeshSpec, getThis<ModelNode>());
+    std::shared_ptr<MeshNode> pMeshnode = MeshNode::create(pMeshSpec->getName(), true, pMeshSpec, getThis<ModelNode>());
     _vecMeshes.push_back(pMeshnode);
     addNodeToCache(pMeshnode);
+
+    //**TODO: add the mesh to the ModelNode here.
+
   }
 
   buildNodeParents();

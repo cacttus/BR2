@@ -142,6 +142,15 @@ std::shared_ptr<LightNodePoint> LightNodePoint::create(string_t name, bool bhasS
   lp->_pSpec = std::make_shared<BaseSpec>("*LightNodePoint");
   return lp;
 }
+std::shared_ptr<LightNodePoint> LightNodePoint::create(string_t name, vec3&& pos, float radius, vec4&& color, string_t action, bool bShadowsEnabled) {
+  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create(name, bShadowsEnabled);
+  lp->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());
+  lp->setPos(std::move(pos));
+  lp->setLightRadius(radius);
+  lp->setLightColor(std::move(color));
+  lp->getShadowBox()->getSmallBoxSize() = 0.6f;
+  return lp;
+}
 
 LightNodePoint::~LightNodePoint() {
   _pShadowBox = nullptr;
@@ -182,7 +191,6 @@ bool LightNodePoint::renderShadows(std::shared_ptr<ShadowBox> pf) {
   //**Update shadow map frustum.
 
   _pShadowBox->renderShadows(pf);
-
 
   return true;
 }

@@ -1,6 +1,11 @@
 
 # Mine City Devlog
 
+*3/7/20*
+
+* Reimplemented the scene gathering technique.
+* Fixed the RTS camera's mouse movement when mouse is outside window.
+
 *3/6/20*
 
 * Finished the Node Naming system.
@@ -17,9 +22,10 @@
 * Made World25 REFERENCE PhysicsManager.  
 * Changed debug key combos to use Shift (Shift+F1)
 * Note now that we manually unload the physics world, we MUST remember to add back the scene objects to PhysicsWorld (somehow) or share their data with PhysicsWorld.
-* **********Scene's drawForward, drawDeferred, .. etc are WRONG.  Currently we are using PhysicsWorld::collect then drawing in a loop, THEN WE DRAW SceneNode::drawForward .. etc.
-The fix for this is to cull objects while traversing the scenegraph's draw routine.  OR cull them with a "flag".  This will correctly implement the draw() routine.
-This effectively also (maybe) will get rid of the RenderBucket.
+* removed create**Light from Scene. Added create**Light static method to LightNode.
+* Added some node insertion validation code, preventing duplicate nodes in trees.
+* Removed RenderBucket, in favor of rendering using the scenegraph (visitor) approach.
+* Removed LightManager's "update" in favor of updating lights with a scenegraph approach.
 
 *3/5/20*
 

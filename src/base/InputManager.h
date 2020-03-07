@@ -23,8 +23,10 @@ public:
 
   void init(); // Call this get initial input & prevent garbage data.
 
-  const vec2& getMousePos() { return _vMousePos; }
-  const vec2& getLastMousePos() { return _vLastMousePos; }
+  const vec2& getMousePos_Relative() { return _vMousePos_relative; }
+  const vec2& getLastMousePos_Relative() { return _vLastMousePos_relative; }
+  const vec2& getMousePos_Global() { return _vMousePos_global; }
+  const vec2& getLastMousePos_Global() { return _vLastMousePos_global; }
 
   bool mousePress(MouseButton::e);
   bool mouseDown(MouseButton::e);
@@ -60,8 +62,11 @@ private:
   ButtonState::e _eLmb = BR2::ButtonState::Up;
   ButtonState::e _eMmb = BR2::ButtonState::Up;
   ButtonState::e _kbKeys[SDL_NUM_SCANCODES];
-  vec2 _vLastMousePos;
-  vec2 _vMousePos;
+  vec2 _vLastMousePos_relative;
+  vec2 _vMousePos_relative;
+  vec2 _vLastMousePos_global;
+  vec2 _vMousePos_global;
+
   int _iMouseWheel;
 
   // bool _bMouseWarped = false;

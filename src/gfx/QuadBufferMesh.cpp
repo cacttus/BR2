@@ -82,7 +82,7 @@ void QuadBufferMesh::allocateQuads(int32_t count) {
 
   assignIndexes();
 
-  _pMesh = MeshNode::create("QuadMesh",
+  _pMesh = MeshNode::create("QuadMesh", false,
     std::make_shared<MeshSpec>(_verts.data(), _verts.size(),
       _indexes.data(), _indexes.size(),
       v_v3n3x2::getVertexFormat(), nullptr)

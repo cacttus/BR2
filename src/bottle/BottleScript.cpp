@@ -265,17 +265,18 @@ void BottleScript::onDrawForward(RenderParams& rp) {
   }
 }
 void BottleScript::onDrawDeferred(RenderParams& rp) {
-
   if (_eGameMode == GameMode::WorldSelect) {
   }
   else {
     _pWorld25->drawDeferred(rp);
   }
-
-  //sb->endRaster();
 }
 void BottleScript::onDrawTransparent(RenderParams& rp) {
-  //_pWorld25->drawTransparent(rp);
+  if (_eGameMode == GameMode::WorldSelect) {
+  }
+  else {
+    _pWorld25->drawTransparent(rp);
+  }
 }
 void BottleScript::onDrawShadow(RenderParams& rp) {
   //2/16/18 this will be needed if we wnt to render individual object shadows in the future.

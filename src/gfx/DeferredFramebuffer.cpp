@@ -1,5 +1,5 @@
 #include "../base/Logger.h"
-#include "../base/Logger.h"
+#include "../base/Perf.h"
 #include "../base/GLContext.h"
 #include "../math/BitHacks.h"
 #include "../gfx/DeferredFramebuffer.h"
@@ -111,8 +111,22 @@ void DeferredFramebuffer::beginRender() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   getContext()->chkErrDbg();
 
+  Perf::pushPerf();
+
+  getContext()->pushDepthTest();
+  getContext()->pushCullFace();
+  getContext()->pushBlend();
+  getContext()->enableBlend(false);
+  getContext()->enableCullFace(true);
+  getContext()->enableDepthTest(true);
 }
 void DeferredFramebuffer::endRender() {
+  getContext()->popBlend();
+  getContext()->popCullFace();
+  getContext()->popDepthTest();
+
+  Perf::popPerf();
+
   getContext()->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 

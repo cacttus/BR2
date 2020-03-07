@@ -21,10 +21,10 @@ public:
   typedef std::vector<std::shared_ptr<TreeNode>> NodeList;
   typedef std::function<bool(std::shared_ptr<TreeNode>)> NodeLambda;
 public:
-  TreeNode();
+  TreeNode(string_t name);
   virtual ~TreeNode()  override;
 
-  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild);  // calls insert()
+  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild, bool validateNoDupes=true);  // calls insert()
   virtual bool detachChild(std::shared_ptr<TreeNode> pChild);  //calls remove()
   bool detachFromParent();  //calls remove()
 
@@ -38,7 +38,7 @@ public:
   std::shared_ptr<TreeNode> find(std::shared_ptr<TreeNode> bt);
   template < class Tx >
   std::shared_ptr<Tx> findParent();
-
+  string_t name();
   size_t getNodeCountHierarchy();
   size_t getNodeCountParentOnly();
   bool getHasParent() { return _pParent != nullptr; }
@@ -47,6 +47,7 @@ public:
   virtual bool getIsLeaf() const;
   virtual bool canDelete() { return true; }    //override to check whether the node can be deleted.
 
+  std::shared_ptr<TreeNode> getRoot();
 protected:
   void addNullChildren(int32_t count);
   virtual void afterAttached(std::shared_ptr<TreeNode> parent) {}    //Override this - Called after THIS is appended.
@@ -56,6 +57,7 @@ protected:
   void attachToParent(std::shared_ptr<TreeNode> pParent);  // calls insert()
 
 private:
+  string_t _name;
   int32_t _iRecursionStamp = 0;
   std::shared_ptr<TreeNode> _pParent = nullptr;
   std::unique_ptr<NodeList> _mapChildren = nullptr;
@@ -69,6 +71,7 @@ private:
   void find_r(std::shared_ptr<TreeNode> bt, std::shared_ptr<TreeNode> parent, std::shared_ptr<TreeNode>& found);
   void internalAddChildNode(std::shared_ptr<TreeNode> pTreeNode);
   void internalRemoveChildNode(std::shared_ptr<TreeNode> pTreeNode);
+  bool validateBeforeAdd(std::shared_ptr<TreeNode> pChild);
 };
 template < class Tx >
 std::shared_ptr<Tx> TreeNode::findParent() {

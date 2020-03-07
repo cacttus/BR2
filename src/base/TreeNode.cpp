@@ -1,12 +1,11 @@
+#include "../base/Logger.h"
 #include "../base/TreeNode.h"
 #include "../base/Exception.h"
-#include "../base/Gu.h"   
+#include "../base/Gu.h"
 
 namespace BR2 {
-TreeNode::TreeNode() :
-  _pParent(NULL)
-  , _iRecursionStamp(0)
-  , _bUnloading(0) {
+TreeNode::TreeNode(string_t name) {
+  _name = name;
   _mapChildren = std::make_unique<std::vector<std::shared_ptr<TreeNode>>>();
 }
 TreeNode::~TreeNode() {
@@ -18,27 +17,55 @@ TreeNode::~TreeNode() {
   //_mapChildren->clear();
   //DEL_MEM(_mapChildren);
 }
-void TreeNode::attachToParent(std::shared_ptr<TreeNode> pParent)  // calls insert()
-{
+string_t TreeNode::name() {
+  return _name;
+}
+void TreeNode::attachToParent(std::shared_ptr<TreeNode> pParent) {
   AssertOrThrow2(pParent != nullptr);
   pParent->insert(getThis<TreeNode>());
 }
-bool TreeNode::detachFromParent()  //calls remove()
-{
+bool TreeNode::detachFromParent() {
   if (getParent() == nullptr) {
     return false;
   }
   getParent()->remove(getThis<TreeNode>());
   return true;
 }
-std::shared_ptr<TreeNode> TreeNode::attachChild(std::shared_ptr<TreeNode> pChild)  // calls insert()
-{
+std::shared_ptr<TreeNode> TreeNode::getRoot() {
+  std::shared_ptr<TreeNode> r = getThis<TreeNode>();
+  while (r->getParent() != nullptr) {
+    r = r->getParent();
+  }
+  return r;
+}
+std::shared_ptr<TreeNode> TreeNode::attachChild(std::shared_ptr<TreeNode> pChild, bool bValidateAdd) {
   AssertOrThrow2(pChild != nullptr);
   pChild->detachFromParent();
-  return this->insert(pChild);
+
+  if (bValidateAdd) {
+    if (validateBeforeAdd(pChild) == false) {
+      return nullptr;
+    }
+  }
+
+  return insert(pChild);
 }
-bool TreeNode::detachChild(std::shared_ptr<TreeNode> pChild)  //calls remove()
-{
+bool TreeNode::validateBeforeAdd(std::shared_ptr<TreeNode> pChild) {
+  //Validate that the node is not added to a tree already.
+  if (pChild->getParent() != nullptr) {
+    BRLogError("Node " + name() + " is already added to a different tree, with parent " + getParent()->name());
+    return false;
+  }
+
+  //Validate the node is not already in (this) tree being added to
+  std::shared_ptr<TreeNode> root = this->getRoot();
+  if (root->find(pChild) != nullptr) {
+    BRLogError("Node " + name() + " is already added to the current tree.");
+    return false;
+  }
+  return true;
+}
+bool TreeNode::detachChild(std::shared_ptr<TreeNode> pChild) {
   AssertOrThrow2(pChild != nullptr);
   return this->remove(pChild);
 }
@@ -59,7 +86,6 @@ void TreeNode::internalRemoveChildNode(std::shared_ptr<TreeNode> pTreeNode) {
   }
   //Failure
   Gu::debugBreak();
-
 }
 //void TreeNode::unlinkAllChildren(bool bRecursive)
 //{
@@ -81,7 +107,6 @@ void TreeNode::flattenBreadthFirst(TreeNode::NodeList& ret) {
   for (std::shared_ptr<TreeNode> item : (*_mapChildren)) {
     getBreadthFirstList_r(item, ret);
   }
-
 }
 //This returns the node you passed in, kind of pointlesss return value
 std::shared_ptr<TreeNode> TreeNode::insert(std::shared_ptr<TreeNode> txChild, std::shared_ptr<TreeNode> txParent) {
@@ -212,7 +237,6 @@ void TreeNode::find_r(std::shared_ptr<TreeNode> nodeToFind, std::shared_ptr<Tree
 
     find_r(nodeToFind, n, found);
   }
-
 }
 bool TreeNode::getIsLeaf() const {
   return _mapChildren->size() == 0;
@@ -233,7 +257,4 @@ void TreeNode::addNullChildren(int32_t count) {
 //        return true;
 //    });
 //}
-
-
-
 }

@@ -315,6 +315,7 @@ class VulkanContext;
 class GLContext;
 class GLProgramBinary;
 class VaoDataGeneric;
+class RenderBucket;
 
 //Classes to remove
 class MeshNode;
@@ -409,9 +410,29 @@ public:
   float _pad3;
 };
 
+
+class CullParams : public VirtualMemoryShared <CullParams> {
+public:
+  //void setFrustum(std::shared_ptr<FrustumBase> fb) { _pFrustum = fb; }
+  //std::shared_ptr<FrustumBase> getFrustum() { return _pFrustum; }
+  void setCamera(std::shared_ptr<CameraNode> fb) { _pCamera = fb; }
+  std::shared_ptr<CameraNode> getCamera() { return _pCamera; }
+
+  void setMaxObjectDistance(float f) { _maxObjectDistance = f; }
+  float getMaxObjectDistance() { return _maxObjectDistance; }
+  void setRenderBucket(std::shared_ptr<RenderBucket> r) { _pRenderBucket = r; }
+  std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
+private:
+  //std::shared_ptr<FrustumBase>_pFrustum = nullptr;
+  std::shared_ptr<CameraNode> _pCamera = nullptr;
+  std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
+  //Maximum distance from the camera an object may be.
+  float _maxObjectDistance = 9999999.0f;
+};
 //Goes here becauwse TreeNode inherits it.
 class Drawable : public VirtualMemoryShared<Drawable> {
 public:
+ // virtual void cull(CullParams& cp) = 0;
   virtual void drawDeferred(RenderParams& rp) = 0;
   virtual void drawForward(RenderParams& rp) = 0;
   virtual void drawShadow(RenderParams& rp) = 0;
@@ -421,18 +442,6 @@ public:
   virtual void drawUI(RenderParams& rp) = 0;
 };
 
-class CullParams : public VirtualMemoryShared <CullParams> {
-public:
-  void setCamera(std::shared_ptr<CameraNode> c) { _pCamera = c; }
-  std::shared_ptr<CameraNode> getCamera() { return _pCamera; }
-  void setMaxObjectDistance(float f) { _maxObjectDistance = f; }
-  float getMaxObjectDistance() { return _maxObjectDistance; }
-
-private:
-  std::shared_ptr<CameraNode> _pCamera = nullptr;
-  //Maximum distance from the camera an object may be.
-  float _maxObjectDistance = 9999999.0f;
-};
 
 
 }//ns game

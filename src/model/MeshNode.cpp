@@ -35,11 +35,12 @@
 #include <iostream>
 
 namespace BR2 {
-MeshNode::MeshNode(string_t name, std::shared_ptr<MeshSpec> ms) : MeshNode(name, ms, nullptr) {
+MeshNode::MeshNode(string_t name, bool pickable, std::shared_ptr<MeshSpec> ms) : MeshNode(name, pickable, ms, nullptr) {
   // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
 }
-MeshNode::MeshNode(string_t name, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(name,ps) {
+MeshNode::MeshNode(string_t name, bool pickable, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(name, ps) {
   _pModelNode = mn;
+  _bPickable = pickable;
 }
 MeshNode::~MeshNode() {
   //  DEL_MEM(_pVaoData);
@@ -48,13 +49,13 @@ MeshNode::~MeshNode() {
   _vecBoneNodesOrdered.resize(0);
   _vecArmaturesOrdered.resize(0);
 }
-std::shared_ptr<MeshNode> MeshNode::create(string_t name, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) {
-  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(name,ps, mn);
+std::shared_ptr<MeshNode> MeshNode::create(string_t name, bool pickable, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) {
+  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(name, pickable, ps, mn);
   m->init();
   return m;
 }
-std::shared_ptr<MeshNode> MeshNode::create(string_t name, std::shared_ptr<MeshSpec> pd) {
-  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(name,pd);
+std::shared_ptr<MeshNode> MeshNode::create(string_t name, bool pickable, std::shared_ptr<MeshSpec> pd) {
+  std::shared_ptr<MeshNode> m = std::make_shared<MeshNode>(name, pickable, pd);
   m->init();
   return m;
 }
@@ -65,8 +66,8 @@ void MeshNode::init() {
   if (getMeshSpec()->getHideRender()) {
     show();
   }
-  else { 
-    hide(); 
+  else {
+    hide();
   }
 
   //#ifdef _DEBUG
@@ -364,9 +365,9 @@ void MeshNode::draw(RenderParams& rp, bool bTransparent) {
     rp.getShader()->setCameraUf(bc, &mat_mesh);
 
     //Pick ID
-    uint32_t pickid = getPickId();
-    if (pickid == PICK_ID_NOT_SET) {
-      BRLogErrorCycle("Pick ID not set for model.");
+    uint32_t pickid = getPickId(); // if not pickable, then PICK_ID_NOT_SET is a valid uniform.
+    if (_bPickable && pickid == PICK_ID_NOT_SET) {
+      BRLogErrorCycle("Pick ID not set for model '" + name() + "'.");
     }
     rp.getShader()->setUf("_ufPickId", (void*)&pickid);
 
@@ -440,14 +441,14 @@ void MeshNode::drawShadow(RenderParams& rp) {
   rp.getShader()->draw(getThis<MeshNode>());
 }
 void MeshNode::afterAddedToScene(std::shared_ptr<Scene> scene) {
-   //We can't access picker here right now, just set this to "Not Set"
-  //Set pick ID after we've been added to the scene.
+  //We can't access picker here right now, just set this to "Not Set"
+ //Set pick ID after we've been added to the scene.
   std::shared_ptr<Picker> picker = NodeUtils::getPicker(getThis<SceneNode>());
   if (picker) {
     _iPickId = picker->genPickId();
   }
   else {
-    BRLogError("Could not set pick ID for node... afterAddedToScene SHOULD be called on all child nodes attached to the root added..");
+    BRLogError("Could not set pick ID for " + name() + "  afterAddedToScene SHOULD be called on all child nodes attached to the root added..");
   }
 
   SceneNode::afterAddedToScene(scene);

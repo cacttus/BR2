@@ -33,7 +33,7 @@ public:
   void setProjectionMode(ProjectionMode::e eMode) { _eProjectionMode = eMode; }
   vec3 getLookAtOffset();
 
-  virtual void drawForward(RenderParams& rp) override;
+  virtual void drawForwardDebug(RenderParams& rp) override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;            // - Main update function, must be called if you override it.
   void setupProjectionMatrix();// - Manipulate the view projection matrix to project points 

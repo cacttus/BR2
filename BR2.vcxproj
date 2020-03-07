@@ -101,7 +101,7 @@
     <ClCompile Include="src\gfx\BufferRenderTarget.cpp" />
     <ClCompile Include="src\gfx\CameraNode.cpp" />
     <ClCompile Include="src\gfx\DeferredFramebuffer.cpp" />
-    <ClCompile Include="src\gfx\FlyingCameraControls.cpp" />
+    <ClCompile Include="src\gfx\FreeCameraScript.cpp" />
     <ClCompile Include="src\gfx\FontTextBuffer.cpp" />
     <ClCompile Include="src\gfx\ForwardFramebuffer.cpp" />
     <ClCompile Include="src\gfx\FramebufferBase.cpp" />
@@ -301,7 +301,7 @@
     <ClInclude Include="src\gfx\BufferRenderTarget.h" />
     <ClInclude Include="src\gfx\CameraNode.h" />
     <ClInclude Include="src\gfx\DeferredFramebuffer.h" />
-    <ClInclude Include="src\gfx\FlyingCameraControls.h" />
+    <ClInclude Include="src\gfx\FreeCameraScript.h" />
     <ClInclude Include="src\gfx\FontTextBuffer.h" />
     <ClInclude Include="src\gfx\ForwardFramebuffer.h" />
     <ClInclude Include="src\gfx\FramebufferBase.h" />

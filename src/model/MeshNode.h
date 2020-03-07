@@ -18,11 +18,11 @@ namespace BR2 {
 */
 class MeshNode : public SceneNode {
 public:
-  static std::shared_ptr<MeshNode> create(string_t name,std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
-  static std::shared_ptr<MeshNode> create(string_t name,std::shared_ptr<MeshSpec> pd);
+  static std::shared_ptr<MeshNode> create(string_t name, bool pickable, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
+  static std::shared_ptr<MeshNode> create(string_t name, bool pickable, std::shared_ptr<MeshSpec> pd);
 
-  MeshNode(string_t name,std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
-  MeshNode(string_t name,std::shared_ptr<MeshSpec> pd);
+  MeshNode(string_t name, bool pickable, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn);
+  MeshNode(string_t name, bool pickable, std::shared_ptr<MeshSpec> pd);
   virtual ~MeshNode() override;
 
   virtual void init() override;
@@ -43,6 +43,7 @@ public:
   uint32_t getPickId() { return _iPickId; }
 
 protected:
+  uint32_t _bPickable = false;
   uint32_t _iPickId = PICK_ID_NOT_SET; //Pick Id must be separate from NodeId because non-node things can be picked.
   std::shared_ptr<ModelNode> _pModelNode = nullptr;
   std::shared_ptr<Material> _pMaterial = nullptr;

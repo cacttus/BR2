@@ -29,7 +29,7 @@ void CameraNode::init() {
   PhysicsNode::init();
 //  TODO:
 }
-void CameraNode::drawForward(RenderParams& rp) {
+void CameraNode::drawForwardDebug(RenderParams& rp) {
   Gu::getCoreContext()->setLineWidth(3.0f);
 
   std::shared_ptr<FrustumBase> pf = _pMainFrustum;

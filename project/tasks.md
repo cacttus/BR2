@@ -1,9 +1,27 @@
 # Mine City Task Log
 
-- [ ] Rendering Fix
+
+- [ ] Rendering Fixes
+	- [ ] DrawDeferred for Scene is a problem.  We are using the SG to draw the children, yet the RenderBucket is the main drawing list. So we are drawing twice.
+	- [ ] Fix shadows & Lights.
+		* Instead of LightManager->SetupLights (using RenderBucket) maybe it would be easier to cull lights through the scenegraph, and call
+		setup routines when we update() the light node.
+		
+		** ** Essentially LightManager can go away, and we just use it to store static light buffer data I.E it is just a buffer used to store lights
+		essentially, not even validating its own class, as it can just be part of the RenderPipe.
+
 	- [ ] Fix Scene draw..() methods by removing the loop over RenderBucket 
 	- [ ] remove PhysicsWorld CULL, and perhaps the RenderBucket collection code and use something like SceneNode::_bCulled to signal that a node was culled.
 	- [ ] Physics RenderBucket collect does not respect SceneGraph (_mapObjects)  Make it iterate the scenegraph, (testing for visibility) instead of loop over a vector.
+	- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
+		- [ ] Fix UI text squashing bug.
+		- [x] Implement the updated viewport class from the engine.
+			- [x] Make sure it has width/height defined.
+		- [x] Update everywhere where viewport is referenced.
+		- [ ] Fixed render squishing by boxing the render viewport in windowed mode.
+		- [ ] In fullscreen mode, force the w/h to be the screen.
+		- [ ] Fixed the squashed UI image problems.
+			- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
 - [ ] Bug in W25GridMesh::draw where we are drawing uncollected grids.  This is due to when we swap the camera.  
 The fix for this is to reset the node manifolds when the camera gets swapped.
@@ -98,15 +116,6 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 
 - [ ] Test loading a model with the old system.
 
-- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
-	- [ ] Fix UI text squashing bug.
-	- [x] Implement the updated viewport class from the engine.
-		- [x] Make sure it has width/height defined.
-	- [x] Update everywhere where viewport is referenced.
-	- [ ] Fixed render squishing by boxing the render viewport in windowed mode.
-	- [ ] In fullscreen mode, force the w/h to be the screen.
-	- [ ] Fixed the squashed UI image problems.
-		- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 
 ## Bottle World
 - [ ] Fix RTS cam rotation to move central to its Y axis (not aroudn the point it's looking at).  It's odd the way it rotates like that.'
@@ -163,6 +172,8 @@ The system will be rewritten in 3 areas:
 		* Place Mass, Shape, and all other PhysicsNode properties on the ColliderComponent
 		* Subclass ColliderComponent into SphereComponent, and HullComponent.
 			* We will only have 2 colliders for this game, there doesn't need to be more (yet).
+
+
 
 ## Model system
 
@@ -234,7 +245,9 @@ The system will be rewritten in 3 areas:
 
 ## Engine Enhancements
 - [ ] CMake integration. Test on iOS, Linux, Android.
+
 - [ ] Instanced Rendering. Merge all the uniform buffers, skin joint buffers. Reference by gl_InstanceID. (see PhysicsManager)
+	*    //2/24 in order to set up the rendering system to be instanced we gotta change a lot around, like merge all the uniform buffers, skin joint buffers, and stuff.  Then reference by gl_InstanceID
 - [ ] Move window update logic from AppRunner to GraphicsWindow so they can run async.
 - [ ] Remove SDLGLIncludes from headers.  (It includes Windows.h)
 - [ ] Further optimize engine building by implementing PIMPL in headers with big include files (such as SDL).

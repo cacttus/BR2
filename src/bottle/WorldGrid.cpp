@@ -232,6 +232,7 @@ void WorldGrid::drawGrid(RenderParams& rp, int32_t& __out_ dbgNumTrisDrawn) {
     return;
   }
 
+  //Draw the pick
   std::shared_ptr<FrustumBase> pf = rp.getCamera()->getFrustum();
   for (int iMatter = 0; iMatter < GridMeshLayer::e::MaxMatters; ++iMatter) {
     if (_pMeshes[iMatter] != nullptr) {
@@ -425,38 +426,28 @@ void WorldGrid::deleteMeshes() {
 //}
 void WorldGrid::getObjData(WorldCellFile* pFile) {
   //Fill the file with the obj data.
-
-  //std::vector<std::shared_ptr<ModelNode>> obList;
-  //for () {
-  //    //This should allow for all ponits to be included only in single cells.
-  //    std::shared_ptr<ModelNode> ob2 = std::dynamic_pointer_cast<ModelNode>(ob);
-  //    if(ob2 != nullptr){
-  //        if (getBoundBox()->containsBottomLeftInclusive(ob->getBoundBoxObject()->center())) {
-  //            obList.push_back(ob2);
-  //        }
-  //    }
-  //}
-
   pFile->getObjects().clear();
 
-  World25ObjectData* obd = nullptr;
-  for (std::shared_ptr<PhysicsNode> ob : *(getManifold()->getAll())) {
-    obd = new World25ObjectData();
-    if (ob != nullptr && ob->getSpec() != nullptr && ob->getSpec()->getNameHashed() > 0) {
-      obd->_iType = ob->getSpec()->getNameHashed();
-      obd->_vPos = ob->getPos();
-    }
-    else {
-      //Cannot be zero, but store the object so we can tell it's an error
-      BRLogError("Error, object was null or not found while saving glob");
-      Gu::debugBreak();
-      obd->_iType = 0;
-      obd->_vPos = vec3(0, 0, 0);
-    }
+  BRLogWarn("TODO: Fix the object data saving, using SceneNode serialization.");
 
-    //We must push back an invalid ID to keep the data in sync
-    pFile->getObjects().push_back(obd);
-  }
+  //World25ObjectData* obd = nullptr;
+  //for (std::shared_ptr<PhysicsNode> ob : *(getManifold()->getAll())) {
+  //  obd = new World25ObjectData();
+  //  if (ob != nullptr && ob->getSpec() != nullptr && ob->getSpec()->getNameHashed() > 0) {
+  //    obd->_iType = ob->getSpec()->getNameHashed();
+  //    obd->_vPos = ob->getPos();
+  //  }
+  //  else {
+  //    //Cannot be zero, but store the object so we can tell it's an error
+  //    BRLogError("Error, object was null or not found while saving glob");
+  //    Gu::debugBreak();
+  //    obd->_iType = 0;
+  //    obd->_vPos = vec3(0, 0, 0);
+  //  }
+
+  //  //We must push back an invalid ID to keep the data in sync
+  //  pFile->getObjects().push_back(obd);
+  //}
 }
 void WorldGrid::raycastCells(Ray_t* pr, std::multimap<float, WorldCell*>& outCells) {
   if (!getGenerated()) {
