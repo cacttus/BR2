@@ -188,6 +188,7 @@
     <ClCompile Include="src\world\CSharpScript.cpp" />
     <ClCompile Include="src\world\Manifold.cpp" />
     <ClCompile Include="src\world\NodeUtils.cpp" />
+    <ClCompile Include="src\world\Path.cpp" />
     <ClCompile Include="src\world\PhysicsGrid.cpp" />
     <ClCompile Include="src\world\PhysicsGridAwareness.cpp" />
     <ClCompile Include="src\world\PhysicsNode.cpp" />
@@ -409,6 +410,7 @@
     <ClInclude Include="src\world\CSharpScript.h" />
     <ClInclude Include="src\world\Manifold.h" />
     <ClInclude Include="src\world\NodeUtils.h" />
+    <ClInclude Include="src\world\Path.h" />
     <ClInclude Include="src\world\PhysicsGrid.h" />
     <ClInclude Include="src\world\PhysicsGridAwareness.h" />
     <ClInclude Include="src\world\PhysicsNode.h" />

@@ -10,9 +10,14 @@
 #include "../gfx/FrustumBase.h"
 #include "../bottle/BottleUtils.h"
 #include "../world/Scene.h"
+#include "../world/Path.h"
+#include "../bottle/World25.h"
 
 namespace BR2 {
-RTSCamScript::RTSCamScript() {
+RTSCamScript::RTSCamScript(std::shared_ptr<World25> pw) {
+  _pWorld25 = pw;
+  _fZoomHMax = BottleUtils::getNodeHeight() * 2;
+  _fZoomHMin = BottleUtils::getCellWidth() * 2;
 }
 RTSCamScript::~RTSCamScript() {
 }
@@ -189,21 +194,50 @@ void RTSCamScript::doRotateZ(std::shared_ptr<CameraNode> cam, float dRot) {
   updateCameraPosition(cam); // Recalc the camera position.
                           //updateCameraFollow();
 }
+bool RTSCamScript::focusMode() {
+  return _pFocusObject != nullptr;
+}
 void RTSCamScript::doZoom(std::shared_ptr<CameraNode> cam, float amt) {
-  float fZoomVal = 3.0;
-  _fCamDist -= amt * fZoomVal;
+  //Cap the zoom based on the HEIGHT of the camera from the current view layer.
+  vec3 p = cam->getPos();
+  float h = p.y -  (BottleUtils::getNodeHeight() * _pWorld25->getViewLayer());
+  if (h > _fZoomHMax) {
+    h = _fZoomHMax;
+  }
+  if (h < _fZoomHMin) {
+    h = _fZoomHMin;
+  }
+
+  _fZoomDist = (_vLookAt - p).length() + amt;
 
   updateCameraPosition(cam); // Recalc the camera position.
 }
-void RTSCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
-  if (_fCamDist >= _fCamDistMax) {
-    _fCamDist = _fCamDistMax;
-  }
-  if (_fCamDist < _fCamDistMin) {
-    _fCamDist = _fCamDistMin;
-  }
-  vec3 cp = _vLookAt + (_vCamNormal * _fCamDist);
+void RTSCamScript::setFocusObject(std::shared_ptr<SceneNode> s) {
+  if (s != _pFocusObject) {
+    _pFocusObject = s;
+    
+    std::shared_ptr<CameraNode> cam = std::dynamic_pointer_cast<CameraNode>(getNode());
+    if (cam) {
+      //TODO: using a Path, transition from one object to the next, smoothly.
+      BRThrowNotImplementedException();
+      //_pPath = std::make_shared<Path>({ vec3() })
+    }
+    else {
+      BRThrowException("Camera node was null.");
+    }
 
+  }
+}
+
+void RTSCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
+  vec3 cp;
+  if (focusMode()) {
+    cp = _vLookAt + (_vCamNormal * _fZoomDist);
+  }
+  else {
+
+  }
+  
   cam->setPos(std::move(cp));
   cam->setLookAt(std::move(_vLookAt));
 }
@@ -211,12 +245,12 @@ void RTSCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
 void RTSCamScript::moveCameraWSAD(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float delta) {
   //**Camera
   //Damp Slows us a bit when we zoom out.
-  float damp = fabsf(_fCamDist) * 0.001f;
+  float damp = fabsf(_fZoomDist) * 0.001f;
   float factor = 4.0f;
   if (pFingers->shiftHeld()) {
     factor = 12.0f;
   }
-  float strafeAmt = fabsf(_fCamDist) / (BottleUtils::getNodeWidth() + damp) * factor * delta;
+  float strafeAmt = fabsf(_fZoomDist) / (BottleUtils::getNodeWidth() + damp) * factor * delta;
 
   std::weak_ptr<CameraNode> cam_w = cam;
   std::function<void()> moveUp = [this, strafeAmt, cam_w]() {

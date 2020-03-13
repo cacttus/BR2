@@ -16,6 +16,9 @@ void UtilMeshInline::begin(GLenum type) {
   _pBuf.resize(0);
   setDrawMode(type);
 }
+void UtilMeshInline::vt1(vec3& v, vec4& c) {
+  vt1(v_v3c4(v, c));
+}
 void UtilMeshInline::vt1(v_v3c4& v1) {
   _curVert = v1;
   pushCurVert();
@@ -24,7 +27,7 @@ void UtilMeshInline::vt2(v_v3c4& v1, v_v3c4& v2) {
   vt1(v1);
   vt1(v2);
 }
-void UtilMeshInline::vt2(vec3& v1, vec3& v2, vec4* color) {
+void UtilMeshInline::vt2(const vec3& v1,const vec3& v2, vec4* color) {
   v_v3c4 a, b;
   a.v = v1;
   a.c = color ? *color : _vDefaultColor;
@@ -51,8 +54,11 @@ void UtilMeshInline::generate() {
 
   copyBuffersToVao();
 }
-void UtilMeshInline::end(std::shared_ptr<CameraNode> cam) {
+void UtilMeshInline::end() {
   init();
+}
+void UtilMeshInline::endAndDraw(std::shared_ptr<CameraNode> cam) {
+  end();
   draw(cam);
 }
 void UtilMeshInline::addBox(Box3f* b, vec4* color) {

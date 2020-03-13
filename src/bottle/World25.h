@@ -18,16 +18,17 @@ namespace BR2 {
 class World25 : public VirtualMemoryShared<World25> {
 public:
 
+
   /* TODO: Pass PhysicsWorld in as a member*/
   World25(std::shared_ptr<Scene> pscene, std::shared_ptr< BottleScript> pCallingScript);
   virtual ~World25() override;
   void init(std::shared_ptr<ObFile> ob);
 
   void updateTouch(std::shared_ptr<InputManager> pFingers);
-  void update(float delta) ;
-   void drawDeferred(RenderParams& rp) ;
-   void drawForward(RenderParams& rp);
-   void drawTransparent(RenderParams& rp);
+  void update(float delta);
+  void drawDeferred(RenderParams& rp);
+  void drawForward(RenderParams& rp);
+  void drawTransparent(RenderParams& rp);
 
   //*Raycast Tests**
   Ray_t getMouseRay(vec2& vMouse);
@@ -74,10 +75,15 @@ public:
   ivec3 v3Toi3CellLocal(vec3& v);
   GridShow::e toggleShowGrid();
 
+  float getViewLayer() { return _viewLayer; }
+  void setViewLayer(float f) { _viewLayer = f; }
+
 protected:
 
 private:
   bool _bAsyncGen = false;
+
+  float _viewLayer = 0; //the current glob layer we are viewing
 
   std::shared_ptr<Material> _pWorldMaterial = nullptr;
   std::shared_ptr<LightNodePoint> _pLight0 = nullptr;
@@ -101,7 +107,7 @@ private:
   std::set<std::shared_ptr<WorldGrid>> _setGenStage2;
 
   bool _bDisableLighting = true;
-  
+
   int32_t _nMeshTrisFrame = 0;
   int32_t _nQuadTrisFrame = 0;
   t_timeval _tvAverageOffline = 0;

@@ -15,22 +15,30 @@ namespace BR2 {
 /**
 *  @class RTSCamScript
 *  @brief An script to control a 2d-ish rotatable camera for viewing the world as an RTS.
+*  This class has 2 modes: Focus mode, and Free Mode.  Free mode is a camera that roams based on the current view layer.  Focus mode is when the camera is focused on an object in the world (for viewing closer).
+*  Controls: RMB+Drag = Left/Right rotates the camera left and right.  Up/Down changes the height of the camera.
 */
 class RTSCamScript : public Script {
 public:
-  RTSCamScript();
+  RTSCamScript(std::shared_ptr<World25> pw );
   virtual ~RTSCamScript() override;
+
 
   virtual void onStart() override;
   virtual void onUpdate(float dt) override;
   virtual void onExit() override;
 
+  void setFocusObject(std::shared_ptr<SceneNode> s);
+
 private:
-  vec3 _vCamNormal;
-  float _fCamDist = 40;
-  float _fCamDistMax = 500;
-  float _fCamDistMin = 3;
+  std::shared_ptr<SceneNode> _pFocusObject = nullptr;
+
+  float _fViewAngle = (float)M_PI * 0.25f;
+  float _fZoomDist=50;
+  float _fZoomHMax=100;
+  float _fZoomHMin=10;
   vec3 _vLookAt;
+  vec3 _vCamNormal;
 
   float _fPerUnitRotate = (float)M_PI / 3000.0f;
   float _fRotationVel = 0.0f; //current vel
@@ -47,12 +55,16 @@ private:
   bool _bUnsnapX, _bUnsnapY;
 
   std::shared_ptr<GLContext> _pContext = nullptr;
+  std::shared_ptr<World25> _pWorld25 = nullptr;
 
   TouchInfo _curTouchRmb;
   TouchInfo _lastTouchRmb;
   TouchInfo _curTouchLmb;
   TouchInfo _lastTouchLmb;
 
+  std::shared_ptr<Path> _pPath;
+
+  bool focusMode();
   void updateTouches(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float dt);
   void updateCameraPosition(std::shared_ptr<CameraNode> cam);
   void doRotate(std::shared_ptr<CameraNode> cam, float dRot);

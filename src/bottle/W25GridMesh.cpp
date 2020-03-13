@@ -101,7 +101,8 @@ void W25GridMesh::draw(RenderParams& rp, int& iDbgNumTrisDrawn) {
       if (nnnn == 0) {
         //This should never hit.
         //This means we are drawing a node that is not visible.
-        Gu::debugBreak();
+        BRLogError("**FAILURE** Grid mesh is not visible, but is being drawn.  Fix this (previously a DebugBreak here).");
+        //Gu::debugBreak();
       }
     }
 #endif

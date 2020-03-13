@@ -83,14 +83,6 @@ void BottleScript::onStart() {
   //Set game mode to world select
   _eGameMode = GameMode::WorldSelect;
 
-  //*Camera.  This must come first before world - because we use it
-  BRLogInfo("Creating the RTS camera.");
-  _pRTSCam = CameraNode::create("RTS cam", getScene()->getWindow()->getViewport());
-  std::shared_ptr<RTSCamScript> css = std::make_shared<RTSCamScript>();
-  _pRTSCam->addComponent(css);
- // getScene()->setActiveCamera(_pRTSCam);
-  getScene()->attachChild(_pRTSCam);
-
   //Must come before UI (assets)
   loadGameFile();
 
@@ -99,6 +91,16 @@ void BottleScript::onStart() {
   constructWorld();
   //_pGameUi = std::make_shared<GameUi>();
   //_pGameUi->constructUI(getThis<BottleScript>());
+
+  
+  //*Camera.  This must come first before world - because we use it
+  BRLogInfo("Creating the RTS camera.");
+  _pRTSCam = CameraNode::create("RTS cam", getScene()->getWindow()->getViewport());
+  std::shared_ptr<RTSCamScript> css = std::make_shared<RTSCamScript>(_pWorld25);
+  _pRTSCam->addComponent(css);
+ // getScene()->setActiveCamera(_pRTSCam);
+  getScene()->attachChild(_pRTSCam);
+
 
   //Must come last.
  // setDebugMode();

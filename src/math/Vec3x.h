@@ -46,36 +46,32 @@ public:
   FORCE_INLINE const Tx& g() const { return y; }
   FORCE_INLINE const Tx& b() const { return z; }
 
-
   //Swizzle ops
-  FORCE_INLINE Vec3x<Tx>    xz();
-  FORCE_INLINE Vec3x<Tx>    xy();
-  //
-  FORCE_INLINE Tx            length() const;
-  FORCE_INLINE Tx            length2() const;
-  FORCE_INLINE Tx            squaredLength() const;
+  FORCE_INLINE Vec3x<Tx> xz();
+  FORCE_INLINE Vec3x<Tx> xy();
+  
+  FORCE_INLINE Tx length() const;
+  FORCE_INLINE Tx length2() const;
+  FORCE_INLINE double lengthd() const;
+  FORCE_INLINE Tx squaredLength() const;
+  FORCE_INLINE void len_and_norm(vec3& __out_ n, float& __out_ len) const;
 
   FORCE_INLINE Vec3x<Tx>& normalize();
   FORCE_INLINE Vec3x<Tx>& normalize(float len);
-  FORCE_INLINE Vec3x<Tx>    normalized() const;
-  FORCE_INLINE Vec3x<Tx>    abs() const;
+  FORCE_INLINE Vec3x<Tx> normalized() const;
+  FORCE_INLINE Vec3x<Tx> abs() const;
 
-  FORCE_INLINE Tx          dot(const Vec3x<Tx>& v1) const;
-  FORCE_INLINE Vec3x<Tx>   cross(const Vec3x<Tx>& v1) const;
-  FORCE_INLINE Tx          distance(const Vec3x<Tx>& v1) const;
-  FORCE_INLINE Tx          distance2(const Vec3x<Tx>& v1) const;
-  FORCE_INLINE void        construct(Tx dx, Tx dy, Tx dz);
-  FORCE_INLINE void        construct(const Vec3x<Tx>& rhs);
-  FORCE_INLINE Tx          combine() const;
-  FORCE_INLINE Vec3x<Tx>   lerpTo(const Vec3x<Tx>& v1, const float t) const;
-  FORCE_INLINE Vec3x<Tx>   clampTo(const Vec3x<Tx>& vMin, const Vec3x<Tx>& vMax) const;
+  FORCE_INLINE Tx dot(const Vec3x<Tx>& v1) const;
+  FORCE_INLINE Vec3x<Tx> cross(const Vec3x<Tx>& v1) const;
+  FORCE_INLINE Tx distance(const Vec3x<Tx>& v1) const;
+  FORCE_INLINE Tx distance2(const Vec3x<Tx>& v1) const;
+  FORCE_INLINE void construct(Tx dx, Tx dy, Tx dz);
+  FORCE_INLINE void construct(const Vec3x<Tx>& rhs);
+  FORCE_INLINE Tx combine() const;
+  FORCE_INLINE Vec3x<Tx> lerpTo(const Vec3x<Tx>& v1, const float t) const;
+  FORCE_INLINE Vec3x<Tx> clampTo(const Vec3x<Tx>& vMin, const Vec3x<Tx>& vMax) const;
 
-  FORCE_INLINE void len_and_norm(vec3& __out_ n, float& __out_ len) const;
-
-  //static Vec3x<Tx> minv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b);    // - Returns the minimum vector from the given two
-  //static Vec3x<Tx> maxv(const Vec3x<Tx>& v_a, const Vec3x<Tx>& v_b);    // returns maximujm vector of given t2o
-
-  FORCE_INLINE string_t        toString(int precis = -1) const;
+  FORCE_INLINE string_t toString(int precis = -1) const;
 
   FORCE_INLINE static Vec3x<Tx> zero();
   FORCE_INLINE static Vec3x<Tx> VEC3X_MIN();
@@ -279,8 +275,16 @@ Vec3x<Tx> Vec3x<Tx>::VEC3X_MAX() {
 //#define VEC3_MAX (Vec3f(FLT_MAX,FLT_MAX,FLT_MAX))
 
 template < class Tx >
-Tx    Vec3x<Tx>::length() const {
+Tx Vec3x<Tx>::length() const {
   return MathUtils::brSqrt(x * x + y * y + z * z);
+}
+template < class Tx >
+double Vec3x<Tx>::lengthd() const {
+  double dx = (double)x;
+  double dy = (double)y;
+  double dz = (double)z;
+  
+  return MathUtils::brSqrt(dx * dx + dy * dy + dz * dz);
 }
 template < class Tx >
 Tx    Vec3x<Tx>::length2() const {

@@ -1,5 +1,16 @@
 # Mine City Task Log
 
+- [ ] UtilMesh really needs to be a node, we need to update it relative to the trasnform of the object its drawing
+
+- [ ] Move Path's Cubic Bezier code into a new CBSpline class to organize this better.  Path should support liner, and CB splines.
+	- [ ] Create CBSpline class.
+
+- [ ] RTS Camera Fixes
+	- [ ] Free Mode
+	- [ ] Focus Mode
+		- [ ] Implement focus movement (transition) between objects
+			- [ ] Paths
+				- [ ] Cubic Bezier Curves
 
 - [ ] Rendering Fixes
 	- [ ] DrawDeferred for Scene is a problem.  We are using the SG to draw the children, yet the RenderBucket is the main drawing list. So we are drawing twice.

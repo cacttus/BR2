@@ -558,6 +558,9 @@
     <ClCompile Include="src\gfx\FreeCameraScript.cpp">
       <Filter>gfx</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Path.cpp">
+      <Filter>world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -1219,6 +1222,9 @@
     </ClInclude>
     <ClInclude Include="src\gfx\FreeCameraScript.h">
       <Filter>gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\world\Path.h">
+      <Filter>world</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

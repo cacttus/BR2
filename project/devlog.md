@@ -1,5 +1,17 @@
 
 # Mine City Devlog
+*3/13/20*
+
+* Added dvec3.
+* Updated Bezier Path.
+
+
+*3/12/20*
+
+* Updating RTS Camera
+* Adding the "focus" mode for camera.
+* Adding Paths to allow the camera to transition between objects smoothly.
+* ***REMOVING BEZIER FROM ALGORITHM.h***
 
 *3/7/20*
 

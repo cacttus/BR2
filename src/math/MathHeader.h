@@ -196,6 +196,7 @@ typedef Vec2f vec2;
 typedef Vec2i ivec2;
 typedef Vec2ui uvec2;
 typedef Vec3f vec3;
+typedef Vec3d dvec3;
 typedef Vec3i ivec3;
 typedef Vec3ui uvec3;
 typedef Vec4f vec4;

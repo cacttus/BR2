@@ -977,7 +977,7 @@ void ModelNode::drawForward(RenderParams& rp) {
     for (std::shared_ptr<ArmatureNode> pa : _vecArmatures) {
       pa->drawForward(mi);
     }
-    mi->end(rp.getCamera());
+    mi->endAndDraw(rp.getCamera());
   }
   //Recursive!
   if (Gu::getRenderSettings()->getDebug()->getShowBoneBindBoxes()) {
@@ -988,7 +988,7 @@ void ModelNode::drawForward(RenderParams& rp) {
     for (std::shared_ptr<ArmatureNode> an : _vecArmatures) {
       an->getRoot()->drawBoneBindBoxes(an, mi);
     }
-    mi->end(rp.getCamera());
+    mi->endAndDraw(rp.getCamera());
   }
   if (Gu::getRenderSettings()->getDebug()->getShowBoneBoxes()) {
     Gu::getCoreContext()->setLineWidth(1.0f);
@@ -998,7 +998,7 @@ void ModelNode::drawForward(RenderParams& rp) {
     for (std::shared_ptr<ArmatureNode> an : _vecArmatures) {
       an->getRoot()->drawBoneBoxes(mi);
     }
-    mi->end(rp.getCamera());
+    mi->endAndDraw(rp.getCamera());
 
   }
   if (Gu::getRenderSettings()->getDebug()->getShowMeshBoxes()) {
@@ -1007,7 +1007,7 @@ void ModelNode::drawForward(RenderParams& rp) {
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     drawMeshBoxes(mi);
-    mi->end(rp.getCamera());
+    mi->endAndDraw(rp.getCamera());
   }
   if (Gu::getRenderSettings()->getDebug()->getShowModelBoxes()) {
     Gu::getCoreContext()->setLineWidth(1.0f);
@@ -1015,7 +1015,7 @@ void ModelNode::drawForward(RenderParams& rp) {
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     drawBoxes(mi);
-    mi->end(rp.getCamera());
+    mi->endAndDraw(rp.getCamera());
   }
   if (Gu::getRenderSettings()->getDebug()->getShowModelBoundBox()) {
     Gu::getCoreContext()->setLineWidth(1.0f);
@@ -1023,7 +1023,7 @@ void ModelNode::drawForward(RenderParams& rp) {
     mi->setDefaultColor(vec4(1, 1, 0, 1));
     mi->begin(GL_LINES);
     drawBox(mi);
-    mi->end(rp.getCamera());
+    mi->endAndDraw(rp.getCamera());
   }
 
   // mi.setModelMatrix(getFinal());

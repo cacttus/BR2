@@ -27,9 +27,11 @@ public:
 
   void begin(GLenum type);
   void vt1(v_v3c4& v1);
+  void vt1(vec3& v, vec4& c);
   void vt2(v_v3c4& v1, v_v3c4& v2);
-  void vt2(vec3& v1, vec3& v2, vec4* color = nullptr);
-  void end(std::shared_ptr<CameraNode> cam);//End vertex processing and draw the primitives
+  void vt2(const vec3& v1, const vec3& v2, vec4* color = nullptr);
+  void end();//End vertex processing and draw the primitives
+  void endAndDraw(std::shared_ptr<CameraNode> cam);//End vertex processing and draw the primitives
 
   void addBox(Box3f* b, vec4* color = nullptr);
   void addBox(vec3* points, vec4* color = nullptr);

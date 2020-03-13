@@ -469,99 +469,103 @@ static FORCE_INLINE void getSolidVolumeProjectionBounds(
     if(v3basis_in!=NULL) 
         *v3basis_in = v3basis;
 }
-/**
-*    @fn bezier2v
-*    @brief Returns a point along a bezier spline in 2d
-*    @param t [0,1] inclusive
-*    @param controlPoints - list of 2d control points.
-*/
-FORCE_INLINE static Vec2f bezier2v( std::vector<Vec2f>& controlPoints, float t )
-{
-    Vec2f v(0.0f,0.0f);
+///**
+//*    @fn bezier2v
+//*    @brief Returns a point along a bezier spline in 2d
+//*    @param t [0,1] inclusive
+//*    @param controlPoints - list of 2d control points.
+//*/
+//FORCE_INLINE static Vec2f bezier2v( std::vector<Vec2f>& controlPoints, float t )
+//{
+//    Vec2f v(0.0f,0.0f);
+//
+//    if( controlPoints.size() <2 )
+//        return v;
+//    
+//    float omt = 1.0f-t, te1, te2, dte, ni, ii, co;
+//    int32_t a, b, c, j, n = (int32_t)controlPoints.size()-1;
+//    //                [ n ]
+//    // - Sum[n,i=1] [ i ] * (1-t)^(n-i) * t^i * p[i]
+//    
+//
+//    // degree = n points -1
+//    for(int32_t i=0; i<(int32_t)(controlPoints.size()); ++i)
+//    {
+//        a=b=c=1;
+//
+//        for(j=2; j<=n; j++)
+//            a*=j;
+//        for(j=2; j<=i; j++)
+//            b*=j;
+//        for(j=2; j<=(n-i); j++)
+//            c*=j;
+//
+//        //TODO:OPTIMIZE: if needed, we could easily cache a large number of initial bezier coefficients.
+//        co = (float)a/((float)b*(float)c);    // - Bezier Coefficient n! / (i! * (n-i)!)
+//        
+//        te1 = powf( (float)omt, (float)(n-i) );
+//        te2 = powf( (float)t, (float)i );
+//        dte = te1*te2;
+//        ni = n*dte;
+//        ii = i*dte;
+//        v.x += co * dte * controlPoints[i].x;
+//        v.y += co * dte * controlPoints[i].y;
+//    }
+//    return v;
+//}
+///**
+//*    @fn bezier3v
+//*    @brief Returns a point along a bezier spline in 3d
+//*    @param t [0,1] inclusive
+//*    @param controlPoints - list of 2d control points.
 
-    if( controlPoints.size() <2 )
-        return v;
-    
-    float omt = 1.0f-t, te1, te2, dte, ni, ii, co;
-    int32_t a, b, c, j, n = (int32_t)controlPoints.size()-1;
-    //                [ n ]
-    // - Sum[n,i=1] [ i ] * (1-t)^(n-i) * t^i * p[i]
-    
+// THIS code is actually invalid. We will remove it in a later release.
 
-    // degree = n points -1
-    for(int32_t i=0; i<(int32_t)(controlPoints.size()); ++i)
-    {
-        a=b=c=1;
-
-        for(j=2; j<=n; j++)
-            a*=j;
-        for(j=2; j<=i; j++)
-            b*=j;
-        for(j=2; j<=(n-i); j++)
-            c*=j;
-
-        //TODO:OPTIMIZE: if needed, we could easily cache a large number of initial bezier coefficients.
-        co = (float)a/((float)b*(float)c);    // - Bezier Coefficient n! / (i! * (n-i)!)
-        
-        te1 = powf( (float)omt, (float)(n-i) );
-        te2 = powf( (float)t, (float)i );
-        dte = te1*te2;
-        ni = n*dte;
-        ii = i*dte;
-        v.x += co * dte * controlPoints[i].x;
-        v.y += co * dte * controlPoints[i].y;
-    }
-    return v;
-}
-/**
-*    @fn bezier3v
-*    @brief Returns a point along a bezier spline in 3d
-*    @param t [0,1] inclusive
-*    @param controlPoints - list of 2d control points.
-*/
-FORCE_INLINE static Vec3f bezier3v( std::vector<Vec3f>& controlPoints, float t )
-{
-    Vec3f v(0.0f,0.0f,0.0f);
-
-    if(controlPoints.size()<2)
-        return v;
-    
-    float omt = 1.0f-t, te1, te2, dte, ni, ii, co;
-    int32_t a, b, c, j, n = (int32_t)controlPoints.size()-1;
-    //                [ n ]
-    // - Sum[n,i=1] [ i ] * (1-t)^(n-i) * t^i * p[i]
-    
-
-    // degree = n points -1
-    for(int32_t i=0; i<(int32_t)(controlPoints.size()); ++i)
-    {
-        a=b=c=1;
-
-        //compute factorials n!, i! and (n-i)!
-        for(j=2; j<=n; j++)
-            a*=j;
-        for(j=2; j<=i; j++)
-            b*=j;
-        for(j=2; j<=(n-i); j++)
-            c*=j;
-
-        //TODO:OPTIMIZE: if needed, we could easily cache a large number of initial bezier coefficients.
-        co = (float)a/((float)b*(float)c);    // - Bezier Coefficient n! / (i! * (n-i)!)
-        
-        te1 = powf( (float)omt, (float)(n-i) );
-        te2 = powf( (float)t, (float)i );
-        
-        dte = te1*te2;
-
-        ni = n*dte;
-        ii = i*dte;
-
-        v.x += co * dte * controlPoints[i].x;
-        v.y += co * dte * controlPoints[i].y;
-        v.z += co * dte * controlPoints[i].z;
-    }
-    return v;
-}
+//*/
+//*/
+//FORCE_INLINE static Vec3f bezier3v( std::vector<Vec3f>& controlPoints, float t )
+//{
+//    Vec3f v(0.0f,0.0f,0.0f);
+//
+//    if(controlPoints.size()<2)
+//        return v;
+//    
+//    float omt = 1.0f-t, te1, te2, dte, ni, ii, co;
+//    int32_t a, b, c, j, n = (int32_t)controlPoints.size()-1;
+//    //                [ n ]
+//    // - Sum[n,i=1] [ i ] * (1-t)^(n-i) * t^i * p[i]
+//    
+//
+//    // degree = n points -1
+//    for(int32_t i=0; i<(int32_t)(controlPoints.size()); ++i)
+//    {
+//        a=b=c=1;
+//
+//        //compute factorials n!, i! and (n-i)!
+//        for(j=2; j<=n; j++)
+//            a*=j;
+//        for(j=2; j<=i; j++)
+//            b*=j;
+//        for(j=2; j<=(n-i); j++)
+//            c*=j;
+//
+//        //TODO:OPTIMIZE: if needed, we could easily cache a large number of initial bezier coefficients.
+//        co = (float)a/((float)b*(float)c);    // - Bezier Coefficient n! / (i! * (n-i)!)
+//        
+//        te1 = powf( (float)omt, (float)(n-i) );
+//        te2 = powf( (float)t, (float)i );
+//        
+//        dte = te1*te2;
+//
+//        ni = n*dte;
+//        ii = i*dte;
+//
+//        v.x += co * dte * controlPoints[i].x;
+//        v.y += co * dte * controlPoints[i].y;
+//        v.z += co * dte * controlPoints[i].z;
+//    }
+//    return v;
+//}
 
 FORCE_INLINE STATIC float calcCubeDiagonal(float cubeSide)
 {

@@ -442,8 +442,6 @@ public:
   virtual void drawUI(RenderParams& rp) = 0;
 };
 
-
-
 }//ns game
 
 #include "../gfx/RenderParams.h"

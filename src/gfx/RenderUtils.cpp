@@ -288,7 +288,7 @@ void RenderUtils::drawFrustumShader(std::shared_ptr<CameraNode> cam, std::shared
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntl), c4), v_v3c4(pf->PointAt(fpt_nbl), c4));
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntr), c4), v_v3c4(pf->PointAt(fpt_nbr), c4));
   }
-  mi.end(cam);
+  mi.endAndDraw(cam);
   Gu::getCoreContext()->setLineWidth(1.0f);
 
 }

@@ -60,7 +60,7 @@ void CameraNode::drawForwardDebug(RenderParams& rp) {
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntl), c4), v_v3c4(pf->PointAt(fpt_nbl), c4));
     mi.vt2(v_v3c4(pf->PointAt(fpt_ntr), c4), v_v3c4(pf->PointAt(fpt_nbr), c4));
   }
-  mi.end(getThis<CameraNode>());
+  mi.endAndDraw(getThis<CameraNode>());
   Gu::getCoreContext()->setLineWidth(1.0f);
 }
 Ray_t CameraNode::projectPoint2(vec2& mouse) {

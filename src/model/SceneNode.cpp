@@ -21,6 +21,7 @@
 #include "../world/Scene.h"
 #include "../world/NodeUtils.h"
 #include "../world/RenderBucket.h"
+#include "../world/Path.h"
 
 namespace BR2 {
 BaseSpec::BaseSpec(string_t strName) {
@@ -249,6 +250,9 @@ void SceneNode::compileWorldMatrix() {
 
 
 }
+bool SceneNode::isPathNode() {
+  return getThis<Path>() != nullptr;
+}
 bool SceneNode::isCameraNode() {
   return getThis<CameraNode>() != nullptr;
 }
@@ -305,7 +309,7 @@ void SceneNode::applyParent() {
       _mLocal = _mLocal * pParent->getLocal();
     }
   }
-  else if (isMeshNode() || isArmatureNode() || isLightNode() || isModelNode() || isCameraNode()) {
+  else if (isMeshNode() || isArmatureNode() || isLightNode() || isModelNode() || isCameraNode() || isPathNode()) {
     if (getSpec() == nullptr) {
       if (pParent != nullptr) {
         _mLocal = _mLocal * pParent->getLocal();

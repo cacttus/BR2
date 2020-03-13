@@ -17,6 +17,9 @@ namespace BR2 {
 namespace PhysicsGridSide { typedef enum { gL, gR, gB, gT, gA, gF, gC } e; }
 namespace PhysicsShapeType { typedef enum { None, Hull, Sphere, AABox } e; }
 
+enum class SplineType { Linear, QuadraticBezier, CubicBezier };
+enum class PathEasing { EaseIn, EaseOut, EaseInAndOut };
+
 class BoxCollision;
 class PhysicsNode;
 class CheckedSet;
@@ -32,6 +35,7 @@ class HullShape;
 class BvhCollectionParams;
 class Scene;
 class Component;
+class Path;
 
 class BoxCollision : public VirtualMemory {
 public:

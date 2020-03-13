@@ -111,6 +111,7 @@ public:
   void setBoneParent(std::shared_ptr<BoneNode> bn);
   std::shared_ptr<BoneNode> getBoneParent();
   bool isMeshNode();
+  bool isPathNode();
   bool isBoneNode();
   bool isArmatureNode();
   bool isSkinnedMesh();

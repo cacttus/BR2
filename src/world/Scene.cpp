@@ -27,12 +27,15 @@
 #include "../gfx/ShaderMaker.h"
 #include "../gfx/ShaderBase.h"
 #include "../gfx/MegaTex.h"
+#include "../gfx/RenderUtils.h"
 #include "../model/MeshUtils.h"
 #include "../model/Model.h"
 #include "../model/MeshNode.h"
+#include "../model/UtilMeshBox.h"
 #include "../world/RenderBucket.h"
 #include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
+#include "../world/Path.h"
 #include "../bottle/BottleUtils.h"
 #include "../bottle/World25.h"
 
@@ -145,6 +148,9 @@ void Scene::createUi() {
   //_pUiScreen->getTex()->compile();
   //Gu::checkErrorsDbg();
 }
+std::vector<std::shared_ptr<Path>> paths;
+std::vector<vec3> movePathPts;
+std::shared_ptr<Path> movePath;
 void Scene::update(float delta) {
   debugChangeRenderState();
 
@@ -157,6 +163,51 @@ void Scene::update(float delta) {
   //if (_pLightManager != nullptr) {
   //  _pLightManager->update(getWindow()->getDelta()->get());
   //}
+
+    //**TEST PATHS**
+  if (paths.size() == 0) {
+    std::shared_ptr<Path> path;
+    float y = BottleUtils::getNodeHeight();
+
+    path = std::make_shared<Path>("TestPath", std::vector({ vec3(0,0,0), vec3(1,0,0), vec3(1,0,1), vec3(0,0,1) }), false, false, 0.1);
+    path->setPos(std::move(vec3(10, y, 10)));
+    paths.push_back(path);
+    attachChild(path);
+
+    //Create a few paths for testing
+    std::vector<vec3> pts;
+    size_t jj;
+
+    //1
+    pts.clear();
+    jj = (size_t)Random::nextUint32(6, 10);
+    for (size_t j = 0; j < jj; ++j) {
+      pts.push_back(Random::nextVec3(std::move(vec3(-10, -10, -10)), std::move(vec3(10, 10, 10))));
+    }
+    path = std::make_shared<Path>(Stz "TestPath", pts, true, true, 0.1);
+    path->setPos(
+      Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
+    );
+    paths.push_back(path);
+    attachChild(path);
+
+    //2
+    pts.clear();
+    jj = (size_t)Random::nextUint32(8, 40);
+    for (size_t j = 0; j < jj; ++j) {
+      pts.push_back(Random::nextVec3(std::move(vec3(-20, -20, -20)), std::move(vec3(20, 20, 20))));
+    }
+    path = std::make_shared<Path>(Stz "TestPath", pts, true, false, 0.1);
+    path->setPos(
+      Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
+    );
+    paths.push_back(path);
+    attachChild(path);
+  }
+
+  for (std::shared_ptr<Path> p : paths) {
+    p->update(delta);
+  }
 
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
@@ -293,6 +344,12 @@ void Scene::debugChangeRenderState() {
 void Scene::drawDeferred(RenderParams& rp) {
   //TODO:
   //Deferred rendering goes here.
+
+  float m = 0.5f;
+  Box3f b(-m, -m, -m, m, m, m);
+  Color4f c(1, 1, 1, 1);
+  //RenderUtils::drawSolidBoxShaded(getActiveCamera(), &b, path->location(), c);
+
   SceneNode::drawDeferred(rp);
 }
 void Scene::drawForward(RenderParams& rp) {
