@@ -125,7 +125,6 @@ template < class Tx >
 class MinimaxParam;
 
 class Matrix4x4;
-class Line;
 class Line3f;
 class Plane3f;
 class Matrix3x3;
@@ -148,13 +147,15 @@ class MatrixStack3x;
 class RaycastHitList;
 class v_v3n3x2;
 class MpFloat;
-class  MpVec3;
+class MpVec3;
 class MpVec3i;
 class MpVec4;
-class  MpUint;
-class  MpInt;
-//TYPEDEFS
+class MpUint;
+class MpInt;
+class Spline;
+class CubicBezierSpline;
 
+//TYPEDEFS
 typedef Vec2x<double> Vec2d;
 typedef Vec2x<float> Vec2f;
 typedef Vec2x<t_byte> Vec2ub;

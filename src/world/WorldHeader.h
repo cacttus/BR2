@@ -13,11 +13,11 @@ namespace BR2 {
 #define PHY_MIN_VEL_LEN_2 (0.00003f)
 #define PHY_DELTA_P_LEN_2 (0.000003f)
 #define PHY_COLLIDE_PADDING_EPSILON (0.0003f)
+
 //Do not change order
 namespace PhysicsGridSide { typedef enum { gL, gR, gB, gT, gA, gF, gC } e; }
 namespace PhysicsShapeType { typedef enum { None, Hull, Sphere, AABox } e; }
 
-enum class SplineType { Linear, QuadraticBezier, CubicBezier };
 enum class PathEasing { EaseIn, EaseOut, EaseInAndOut };
 
 class BoxCollision;

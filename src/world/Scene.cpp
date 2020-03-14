@@ -36,6 +36,7 @@
 #include "../world/PhysicsWorld.h"
 #include "../world/Scene.h"
 #include "../world/Path.h"
+#include "../math/CubicBezierSpline.h"
 #include "../bottle/BottleUtils.h"
 #include "../bottle/World25.h"
 
@@ -167,16 +168,19 @@ void Scene::update(float delta) {
     //**TEST PATHS**
   if (paths.size() == 0) {
     std::shared_ptr<Path> path;
+    std::shared_ptr<CubicBezierSpline> spline;
     float y = BottleUtils::getNodeHeight();
+    size_t jj;
+    std::vector<vec3> pts;
 
-    path = std::make_shared<Path>("TestPath", std::vector({ vec3(0,0,0), vec3(1,0,0), vec3(1,0,1), vec3(0,0,1) }), false, false, 0.1);
+    pts = std::vector({ vec3(0,0,0), vec3(1,0,0), vec3(1,0,1), vec3(0,0,1) });
+    spline = std::make_shared<CubicBezierSpline>(pts, false, false);
+    path = std::make_shared<Path>("Path", spline, 1.0f, 0.0f);
     path->setPos(std::move(vec3(10, y, 10)));
     paths.push_back(path);
     attachChild(path);
 
     //Create a few paths for testing
-    std::vector<vec3> pts;
-    size_t jj;
 
     //1
     pts.clear();
@@ -184,7 +188,8 @@ void Scene::update(float delta) {
     for (size_t j = 0; j < jj; ++j) {
       pts.push_back(Random::nextVec3(std::move(vec3(-10, -10, -10)), std::move(vec3(10, 10, 10))));
     }
-    path = std::make_shared<Path>(Stz "TestPath", pts, true, true, 0.1);
+    spline = std::make_shared<CubicBezierSpline>(pts, true, false);
+    path = std::make_shared<Path>("Path", spline, 1.0f, 0.0f);
     path->setPos(
       Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
     );
@@ -197,7 +202,8 @@ void Scene::update(float delta) {
     for (size_t j = 0; j < jj; ++j) {
       pts.push_back(Random::nextVec3(std::move(vec3(-20, -20, -20)), std::move(vec3(20, 20, 20))));
     }
-    path = std::make_shared<Path>(Stz "TestPath", pts, true, false, 0.1);
+    spline = std::make_shared<CubicBezierSpline>(pts, true, false);
+    path = std::make_shared<Path>("Path", spline, 1.0f, 0.0f);
     path->setPos(
       Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
     );

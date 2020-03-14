@@ -16,7 +16,7 @@ void UtilMeshInline::begin(GLenum type) {
   _pBuf.resize(0);
   setDrawMode(type);
 }
-void UtilMeshInline::vt1(vec3& v, vec4& c) {
+void UtilMeshInline::vt1(const vec3& v, const vec4& c) {
   vt1(v_v3c4(v, c));
 }
 void UtilMeshInline::vt1(v_v3c4& v1) {

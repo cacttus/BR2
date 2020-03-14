@@ -561,6 +561,12 @@
     <ClCompile Include="src\world\Path.cpp">
       <Filter>world</Filter>
     </ClCompile>
+    <ClCompile Include="src\math\Spline.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\CubicBezierSpline.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -1225,6 +1231,12 @@
     </ClInclude>
     <ClInclude Include="src\world\Path.h">
       <Filter>world</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Spline.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\CubicBezierSpline.h">
+      <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

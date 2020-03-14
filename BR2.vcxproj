@@ -146,6 +146,7 @@
     <ClCompile Include="src\math\BoxUtils.cpp" />
     <ClCompile Include="src\math\CollisionEquations.cpp" />
     <ClCompile Include="src\math\ConvexAlgorithms.cpp" />
+    <ClCompile Include="src\math\CubicBezierSpline.cpp" />
     <ClCompile Include="src\math\MathUtils.cpp" />
     <ClCompile Include="src\math\Matrix3x3.cpp" />
     <ClCompile Include="src\math\Minimax.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="src\math\ProjectedRay.cpp" />
     <ClCompile Include="src\math\Quaternion.cpp" />
     <ClCompile Include="src\math\Random.cpp" />
+    <ClCompile Include="src\math\Spline.cpp" />
     <ClCompile Include="src\model\Animation.cpp" />
     <ClCompile Include="src\model\SceneNode.cpp" />
     <ClCompile Include="src\model\FragmentBufferData.cpp" />
@@ -353,6 +355,7 @@
     <ClInclude Include="src\math\BoxUtils.h" />
     <ClInclude Include="src\math\CollisionEquations.h" />
     <ClInclude Include="src\math\ConvexAlgorithms.h" />
+    <ClInclude Include="src\math\CubicBezierSpline.h" />
     <ClInclude Include="src\math\Line3.h" />
     <ClInclude Include="src\math\MathAll.h" />
     <ClInclude Include="src\math\MathHeader.h" />
@@ -368,6 +371,7 @@
     <ClInclude Include="src\math\Random.h" />
     <ClInclude Include="src\math\RaycastHit.h" />
     <ClInclude Include="src\math\Sphere3.h" />
+    <ClInclude Include="src\math\Spline.h" />
     <ClInclude Include="src\math\TriPlane.h" />
     <ClInclude Include="src\math\Vec2x.h" />
     <ClInclude Include="src\math\Vec3Basis.h" />

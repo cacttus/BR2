@@ -146,16 +146,17 @@ public:
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
 };
 class v_v3c4 {
+public:
+  v_v3c4() {}
+  v_v3c4(const vec3& v3, const vec4& c4) { v = v3; c = c4; }
+
   friend class RenderUtils;
   static std::shared_ptr<VertexFormat> _pVertexFormat;
-public:
+
   vec3 v;
   float v_pad;
   vec4 c;
   static std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexFormat; }
-
-  v_v3c4() {}
-  v_v3c4(vec3& v3, vec4& c4) { v = v3; c = c4; }
 };
 class v_v3c4x2n3 {
   friend class RenderUtils;
