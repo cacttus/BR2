@@ -4,7 +4,7 @@
 
 * Added dvec3.
 * Updated Bezier Path.
-* Split Path into a spline component and a Node component.  Added CubicBezierSpline and Spline.
+* Split Path into a spline component and a Node component.  Added CubicBezierSpline and Spline.  Need to fix the path movement internals.
 
 
 *3/12/20*
