@@ -18,19 +18,18 @@ class Spline : public VirtualMemoryShared<Spline> {
 public:
   Spline();
   virtual ~Spline() override;
-  
-  const std::vector<vec3>& points() { return _points; }
-  double length();
-  double length(size_t pointA, size_t pointB, double integral_t = 1.0 / 100.0);
-  void calculate();
 
+  double length() { return _length; }
+  const std::vector<vec3>& points() { return _points; }
+  virtual void calculate();
   virtual void setPoints(std::vector<vec3>& v, bool tangentialize, bool normalize) = 0;
-  virtual void iterate(size_t pointA, size_t pointB, std::function<void(const vec3 & vcur, const vec3 & vlast)> exec, double integral_t) = 0;
+  virtual void iterate(size_t pointA, size_t pointB, std::function<void(const vec3 & vcur, const vec3 & vlast, size_t pointIndex)> exec, double integral_t) = 0;
   virtual void eval(double t, vec3& __out_ pt) = 0;
 
 protected:
-  double _length = 1;
+  std::vector<double> _plens;
   std::vector<vec3> _points;
+  double _length = 0;
 };
 
 

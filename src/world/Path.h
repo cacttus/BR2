@@ -18,7 +18,7 @@ namespace BR2 {
 */
 class Path : public SceneNode {
 public:
-  Path(string_t name, std::shared_ptr<Spline> spline, float speed = 3, float accel = 1, PathEasing pe = PathEasing::EaseInAndOut);
+  Path(string_t name, std::shared_ptr<Spline> spline, float speed = 3, float accel = 1, PathEasing pe = PathEasing::None);
   virtual ~Path() override;
 
   void update(float dt);
@@ -29,32 +29,31 @@ public:
   void restart();
   void pause();
   vec3 tangent();
-  vec3 location() { return _location; }
+  vec3 location() { return _curPoint; }
   void setSpline(std::shared_ptr<Spline> sp);
 
 private:
   std::shared_ptr<Spline> _pSpline = nullptr;
 
-  float _curT = 0;
-  float _t = 0;
-  float _curSpeed = 0.0f;
-  vec3 _location;
+  float _curLen = 0;
+  float _curSpeed = 5.0f;
+  vec3 _curPoint= vec3(0,0,0);
 
-  int _iCurSegment = 0;//Current bezier segment
+  //int _iCurSegment = 0;//Current bezier segment
   float _curInterpolation = 0.f;
   float _maxSpeed = 1.0f;
   float _accelleration = 1.0f;
   PathEasing _easing = PathEasing::EaseInAndOut;
 
   bool _running = false;
-
   float _easeInPercent = 0.05;
   float _easeOutPercent = 0.05;
 
   std::shared_ptr<UtilMeshInline> _pDrawSpline = nullptr;
   std::shared_ptr<UtilMeshInline> _pDrawPoints = nullptr;
   std::shared_ptr<UtilMeshInline> _pDrawHandles = nullptr;
-
+  std::shared_ptr<UtilMeshBox> _pDrawBox = nullptr;
+  Box3f _box;
   void updateDebugDraw();
 };
 

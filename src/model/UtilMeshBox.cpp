@@ -6,11 +6,11 @@
 namespace BR2 {
 
 UtilMeshBox::UtilMeshBox(std::shared_ptr<GLContext> ctx, Box3f* pCube, vec3& vOffset, Color4f& color) :
-  UtilMesh(ctx, MeshUtils::MeshMakerVert::getVertexFormat(), nullptr, GL_TRIANGLES)
-  , _vOffset(vOffset)
-  , _vColor(color)
-  , _blnWireFrame(true)
-  , _pCube(pCube) {
+  UtilMesh(ctx, MeshUtils::MeshMakerVert::getVertexFormat(), nullptr, GL_TRIANGLES) {
+  _vOffset = vOffset;
+  _vColor = color;
+  _blnWireFrame = true;
+  _pCube = pCube;
   //wireframe isn't getting unloaded. 
 }
 UtilMeshBox::~UtilMeshBox() {

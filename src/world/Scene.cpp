@@ -173,25 +173,44 @@ void Scene::update(float delta) {
     size_t jj;
     std::vector<vec3> pts;
 
+    //Small path
+    pts.clear();
     pts = std::vector({ vec3(0,0,0), vec3(1,0,0), vec3(1,0,1), vec3(0,0,1) });
     spline = std::make_shared<CubicBezierSpline>(pts, false, false);
-    path = std::make_shared<Path>("Path", spline, 1.0f, 0.0f);
+    path = std::make_shared<Path>("Path", spline, 0.2f, 0.0f);
     path->setPos(std::move(vec3(10, y, 10)));
     paths.push_back(path);
     attachChild(path);
 
-    //Create a few paths for testing
+    //"circle"
+    pts.clear();
+    float m = 0.5f;
+    pts = std::vector({
+      vec3(0,0,-m), //pt
+      vec3(m * 1.5,0,-m),
+      vec3(m * 1.5,0,m),
+      vec3(0,0,m), //pt
+      vec3(-m * 1.5,0,m),
+      vec3(-m * 1.5,0,-m),
+      vec3(0,0,-m)//pt
+      });
+    spline = std::make_shared<CubicBezierSpline>(pts, false, false);
+    path = std::make_shared<Path>("Path", spline, 3.2f, 0.0f);
+    path->setPos(std::move(vec3(10, y, 13)));
+    paths.push_back(path);
+    attachChild(path);
 
     //1
     pts.clear();
-    jj = (size_t)Random::nextUint32(6, 10);
+    jj = (size_t)10;// Random::nextUint32(6, 10);
     for (size_t j = 0; j < jj; ++j) {
       pts.push_back(Random::nextVec3(std::move(vec3(-10, -10, -10)), std::move(vec3(10, 10, 10))));
     }
     spline = std::make_shared<CubicBezierSpline>(pts, true, false);
-    path = std::make_shared<Path>("Path", spline, 1.0f, 0.0f);
+    path = std::make_shared<Path>("Path", spline, 4.0f, 0.0f);
     path->setPos(
-      Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
+      vec3(-6,y,-6)
+      //Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
     );
     paths.push_back(path);
     attachChild(path);
@@ -203,7 +222,7 @@ void Scene::update(float delta) {
       pts.push_back(Random::nextVec3(std::move(vec3(-20, -20, -20)), std::move(vec3(20, 20, 20))));
     }
     spline = std::make_shared<CubicBezierSpline>(pts, true, false);
-    path = std::make_shared<Path>("Path", spline, 1.0f, 0.0f);
+    path = std::make_shared<Path>("Path", spline, 9.0f, 0.0f);
     path->setPos(
       Random::nextVec3(std::move(vec3(-10, y, -10)), std::move(vec3(10, y, 10)))
     );

@@ -1,8 +1,18 @@
 #include "../base/Logger.h"
 #include "../math/CubicBezierSpline.h"
 
+#include <algorithm>
 
 namespace BR2 {
+size_t seg_id(size_t pt_idx) {
+  size_t seg = pt_idx / 3;
+  return seg;
+}
+double seg_t(size_t pt_idx) {
+  size_t seg = seg_id(pt_idx);
+  double t = ((double)pt_idx - (double)(seg * 3)) / 3;
+  return t;
+}
 CubicBezierSpline::CubicBezierSpline(std::vector<vec3> points, bool tangentialize, bool normalize) {
   setPoints(points, tangentialize, normalize);
   if (tangentialize) {
@@ -13,15 +23,99 @@ CubicBezierSpline::CubicBezierSpline(std::vector<vec3> points, bool tangentializ
   }
 }
 CubicBezierSpline::~CubicBezierSpline() {
+}
+void CubicBezierSpline::eval(double len, vec3& __out_ out_pt) {
+  //Return a given point along the spline.
+  //in: length along the spline from 0 to length()
+  //out: point at that length
+  if (len < 0) {
+    len = 0;
+  }
+  if (len > length()) {
+    len = length();
+  }
+  if (_points.size() == 0) {
+    return;
+  }
+  if (_points.size() == 1) {
+    out_pt = _points[0];
+    return;
+  }
+
+  //Get spline segment
+  int64_t pt_id = 0;
+  for (int64_t pind = (int64_t)_plens.size() - 1; pind >= 0; --pind) {
+    //Must be >= here in order to capture the endpoint segment.
+    if (len >= _plens[pind]) {
+      pt_id = pind;
+      break;
+    }
+  }
+
+  //Round down to neareset segment, and check for special endpoint case.
+  size_t seg_a = pt_id / 3;
+  size_t seg_b = pt_id / 3 + 1;
+  size_t plen_idx_a = 0;
+  size_t plen_idx_b = 0;
+  size_t seg_count = (_points.size() / 3);
+  if (seg_b > seg_count - 1) {
+    plen_idx_b = _plens.size()-1;
+  }
+  else {
+    plen_idx_b = seg_b * 3;
+  }
+  plen_idx_a = seg_a * 3;
+
+  //Prevent crashing
+  if (plen_idx_a >= _plens.size() || plen_idx_b >= _plens.size()) {
+    BRLogError("Buffer overflow computing CB spline segment");
+    if (_points.size()) {
+      out_pt = _points[0];
+    }
+    Gu::debugBreak();
+    return;
+  }
+
+  //Compute t --element of-- [0,1].  This is actually *incorrect* as it produces speed artifacts, but for now, it works.
+  double len_a = _plens[plen_idx_a];
+  double len_b = _plens[plen_idx_b];
+  double segt = (len - len_a) / (len_b - len_a);
+  eval(segt, seg_a, out_pt);
+}
+void CubicBezierSpline::eval(double t, size_t segment, vec3& __out_ pt) {
+  if (t < 0.0 || t>1.0) {
+    static bool bvbb = true;
+    if (bvbb) {
+      Gu::debugBreak();
+    }
+  }
+  if (segment * 3 + 3 < _points.size()) {
+    eval(t,
+      _points[segment * 3 + 0],
+      _points[segment * 3 + 1],
+      _points[segment * 3 + 2],
+      _points[segment * 3 + 3], pt);
+  }
+  else {
+    BRLogError("Spline segment out of range.");
+    Gu::debugBreak();
+  }
+
 
 }
-void CubicBezierSpline::eval(double t, vec3& __out_ pt) {
-  //t is from 0, 1
-
-  //**TODO**
-  //double len  = length() * t;
-
+void CubicBezierSpline::eval(double t, vec3& p0, vec3& p1, vec3& p2, vec3& p3, vec3& __out_ out_pt) {
+  // Evaluate a bezier segment, returning the point along the curve as out_pt.
+  // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+  //  t e [0, 1]
+  //  CB = 
+  //  (1-t)^3 * p0 
+  //   + 3 * (1-t)^2 * t *p1
+  //   + 3 * (1-t) * t^2 * p2
+  //   + t^3 * p3.
+  double t1 = 1 - t;
+  out_pt = (p0 * (double)pow(t1, 3)) + (p1 * (double)(t * pow(t1, 2) * 3)) + (p2 * (double)(pow(t, 2) * 3 * t1)) + (p3 * (double)(pow(t, 3)));
 }
+
 void CubicBezierSpline::setPoints(std::vector<vec3>& v_in, bool tangentialize, bool normalize) {
   //copy points
   _points.clear();
@@ -36,9 +130,12 @@ void CubicBezierSpline::setPoints(std::vector<vec3>& v_in, bool tangentialize, b
       BRLogWarn("Bezier segment did not have at least 4 points.");
     }
 
-    if (m == 0) { m = 2; } //1 point missing, so remove 3
-    if (m == 1) {} //ok, satifies 3n + 1
-    if (m == 2) { m = 1; } // 3 points missing, remove 2
+    if (m == 0) {
+      m = 2;
+    }
+    else if (m == 2) {
+      m = 1;
+    }
     for (size_t n = 1; n <= m; n++) {
       _points.erase(_points.begin() + _points.size() - n);
     }
@@ -78,16 +175,8 @@ void CubicBezierSpline::normalizeControlPoints(std::vector<vec3>& __inout_ point
 size_t CubicBezierSpline::numSegments() {
   return _points.size() / 3;
 }
-void seg_t(size_t pt_idx, size_t& __out_ seg, float& __out_ t) {
-  //Returns the given segment number, and t [0,1] value of the given point.
-  seg = pt_idx / 3;
-  if (pt_idx > 0 && pt_idx % 3 == 0) {
-    //Keep segment endpoints within the previous segment
-    seg -= 1;
-  }
-  t = ((float)pt_idx - (float)(seg * 3)) / 3;
-}
-void CubicBezierSpline::iterate(size_t pointA, size_t pointB, std::function<void(const vec3 & vcur, const vec3 & vlast)> exec, double integral_t) {
+
+void CubicBezierSpline::iterate(size_t pointA, size_t pointB, std::function<void(const vec3 & vcur, const vec3 & vlast, size_t segmentIndex)> exec, double integral_t) {
   //Iterates over the spline integral, giving the lambda the cur, and last points.
   if (pointA >= _points.size()) {
     BRLogError("Point '" + pointA + "' outside range '" + (_points.size() == 0 ? 0 : (_points.size() - 1)) + "'");
@@ -99,52 +188,43 @@ void CubicBezierSpline::iterate(size_t pointA, size_t pointB, std::function<void
     Gu::debugBreak();
     return;
   }
-  if (integral_t < 0.00000001) {
+  if (integral_t < 0.000001) {
     BRLogError("Spline integral step was too small.");
     Gu::debugBreak();
     return;
   }
 
-  size_t segA, segB;
-  float tA, tB;
-  seg_t(pointA, segA, tA);
-  seg_t(pointB, segB, tB);
+  //Iterate all points (1/3) of bezier spline.
   size_t debug_nsteps = 0;
+  double debug_len = 0;
   if (_points.size() > 0) {
     vec3 vcur;
-    vec3 vlast;
-    eval(tA, segA, vcur); //init
-    vlast = vcur;
-    for (size_t iseg = segA; iseg <= segB; ++iseg) {
-      for (double t = 0; t <= 1; t += integral_t) {
-        eval(t, iseg, vcur);
-        exec(vcur, vlast);
-        //_length += (vcur - vlast).lengthd();
+    eval(seg_t(pointA), seg_id(pointA), vcur); //init
+    vec3 vlast = vcur;
+    for (size_t pt = pointA; pt < pointB; pt++) {
+      size_t seg = seg_id(pt);
+      double tPt = seg_t(pt);
+      //each a-b is 1/3 of a bezier spline
+      double maxt = (1.0 / 3.0);
+      for (double t = 0; t <= maxt; t += integral_t) {
+        t = std::min(t, maxt);
+        eval(tPt + t, seg, vcur);
+        exec(vcur, vlast, pt);
+        debug_len += (vcur - vlast).length();
         vlast = vcur;
         debug_nsteps++;
       }
     }
+
+    //Evaluate the spline endpoint.
+    eval(1, seg_id(pointB) - 1, vcur);
+    exec(vcur, vlast, pointB);
+    debug_len += (vcur - vlast).length();
+    debug_nsteps++;
+
   }
 
 }
-void CubicBezierSpline::eval(double t, size_t segment, vec3& __out_ pt) {
-  eval(t,
-    _points[segment * 3 + 0],
-    _points[segment * 3 + 1],
-    _points[segment * 3 + 2],
-    _points[segment * 3 + 3], pt);
-}
-void CubicBezierSpline::eval(double t, vec3& p0, vec3& p1, vec3& p2, vec3& p3, vec3& __out_ out_pt) {
-  // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-  // Honestly a dvec3 would provide greater precision.
-  //  t e [0, 1]
-  //  CB = 
-  //  (1-t)^3 * p0 
-  //   + 3 * (1-t)^2 * t *p1
-  //   + 3 * (1-t) * t^2 * p2
-  //   + t^3 * p3.
-  double t1 = 1 - t;
-  out_pt = (p0 * (float)pow(t1, 3)) + (p1 * (float)(t * pow(t1, 2) * 3)) + (p2 * (float)(pow(t, 2) * 3 * t1)) + (p3 * (float)(pow(t, 3)));
-}
+
 
 }//ns Game

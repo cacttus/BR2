@@ -18,7 +18,7 @@ namespace BR2 {
 namespace PhysicsGridSide { typedef enum { gL, gR, gB, gT, gA, gF, gC } e; }
 namespace PhysicsShapeType { typedef enum { None, Hull, Sphere, AABox } e; }
 
-enum class PathEasing { EaseIn, EaseOut, EaseInAndOut };
+enum class PathEasing { None, EaseIn, EaseOut, EaseInAndOut };
 
 class BoxCollision;
 class PhysicsNode;

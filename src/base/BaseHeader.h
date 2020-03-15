@@ -72,6 +72,13 @@ Gu::showMessageBox(msg, "Error"); \
 }; \
 __show=true; \
 }
+//Logassert is a shorthand for logging an assert, but letting the code continue.
+#define LogAssert(x) do { \
+if(!(x)) { \
+BRLogError("Log assertion failed '" + string_t(#x) + "'"); \
+Gu::debugBreak(); \
+}\
+} while(0)
 
 /************************************************************************/
 /* Casting                                                              */

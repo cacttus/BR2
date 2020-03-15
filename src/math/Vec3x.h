@@ -54,10 +54,10 @@ public:
   FORCE_INLINE Tx length2() const;
   FORCE_INLINE double lengthd() const;
   FORCE_INLINE Tx squaredLength() const;
-  FORCE_INLINE void len_and_norm(vec3& __out_ n, float& __out_ len) const;
+  FORCE_INLINE void len_and_norm(vec3& __out_ n, Tx& __out_ len) const;
 
   FORCE_INLINE Vec3x<Tx>& normalize();
-  FORCE_INLINE Vec3x<Tx>& normalize(float len);
+  FORCE_INLINE Vec3x<Tx>& normalize(Tx len);
   FORCE_INLINE Vec3x<Tx> normalized() const;
   FORCE_INLINE Vec3x<Tx> abs() const;
 
@@ -68,7 +68,7 @@ public:
   FORCE_INLINE void construct(Tx dx, Tx dy, Tx dz);
   FORCE_INLINE void construct(const Vec3x<Tx>& rhs);
   FORCE_INLINE Tx combine() const;
-  FORCE_INLINE Vec3x<Tx> lerpTo(const Vec3x<Tx>& v1, const float t) const;
+  FORCE_INLINE Vec3x<Tx> lerpTo(const Vec3x<Tx>& v1, const Tx t) const;
   FORCE_INLINE Vec3x<Tx> clampTo(const Vec3x<Tx>& vMin, const Vec3x<Tx>& vMax) const;
 
   FORCE_INLINE string_t toString(int precis = -1) const;
@@ -148,7 +148,7 @@ public:
   FORCE_INLINE STATIC Vec3x<Tx> normalize(const Vec3x<Tx>& v1);
   FORCE_INLINE STATIC Vec3x<Tx> cross(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
   //   FORCE_INLINE STATIC Vec3x<Tx> rotate(const Vec3x<Tx>& v1, const float& angle, const Vec3x<Tx>& aboutNormal);
-  FORCE_INLINE STATIC float dot(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
+  FORCE_INLINE STATIC Tx dot(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2);
   FORCE_INLINE STATIC void bilinear_interpolate(const Vec3x<Tx>& a,
     const Vec3x<Tx>& b,
     const Vec3x<Tx>& c,
@@ -304,7 +304,7 @@ Vec3x<Tx>& Vec3x<Tx>::normalize() {
   return *this;
 }
 template < class Tx >
-Vec3x<Tx>& Vec3x<Tx>::normalize(float len) {
+Vec3x<Tx>& Vec3x<Tx>::normalize(Tx len) {
   //we may be able to get away with rsqrt here...
   //but maybe not.
   // We should allow the float to hit infinity if we try to divide zero
@@ -320,7 +320,7 @@ Vec3x<Tx>& Vec3x<Tx>::normalize(float len) {
   return *this;
 }
 template < class Tx >
-void Vec3x<Tx>::len_and_norm(vec3& __out_ n, float& __out_ len) const {
+void Vec3x<Tx>::len_and_norm(vec3& __out_ n, Tx& __out_ len) const {
   //Computes length and normal to avoid having do do len() then norm()
   len = length();
   n = *this;
@@ -361,7 +361,7 @@ Vec3x<Tx> Vec3x<Tx>::cross(const Vec3x<Tx>& v1) const {
   return vt;
 }
 template < class Tx >
-Vec3x<Tx>  Vec3x<Tx>::lerpTo(const Vec3x<Tx>& v1, const float t) const {
+Vec3x<Tx>  Vec3x<Tx>::lerpTo(const Vec3x<Tx>& v1, const Tx t) const {
   vec3 ret = *this + (v1 - *this) * t;
   return ret;
 }
@@ -690,7 +690,7 @@ Vec3x<Tx> Vec3x<Tx>::cross(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2) {
 //    return ret;
 //}
 template < typename Tx >
-float Vec3x<Tx>::dot(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2) {
+Tx Vec3x<Tx>::dot(const Vec3x<Tx>& v1, const Vec3x<Tx>& v2) {
   return Vec3x<Tx>(v1).dot(Vec3x<Tx>(v2));
 }
 template < typename Tx >

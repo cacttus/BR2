@@ -1,5 +1,5 @@
 #include "../math/Spline.h"
-
+#include "../base/Logger.h"
 
 namespace BR2 {
 
@@ -8,19 +8,25 @@ Spline::Spline() {
 Spline::~Spline() {
 }
 void Spline::calculate() {
-  //Calculate length
-  _length = length(0, _points.size() - 1);
-}
-double Spline::length() {
-  return _length;
-}
-double Spline::length(size_t pointA, size_t pointB, double integral_t) {
+  const double integral_t = 1.0f / 100.0f;
+
+  //Calculate point lengths
+  _plens.clear();
   double len = 0;
-  iterate(pointA, pointB,
-    [&len](const vec3& cur, const vec3& last) {
-      len += (cur - last).lengthd();
+  int64_t ind = -1;
+  iterate(0, _points.size() - 1,
+    [&len, this, &ind](const vec3& cur, const vec3& last, size_t pointIndex) {
+      double dlen = (cur - last).lengthd();
+      len += dlen;
+      if (pointIndex != ind) {
+        _plens.push_back(len);
+        ind = pointIndex;
+      }
     }, integral_t);
-  return len;
+
+  _length = _plens[_plens.size() - 1];
+
+  LogAssert(_points.size() == _plens.size());
 }
 
 }//ns Game

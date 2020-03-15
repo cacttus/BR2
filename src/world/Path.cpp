@@ -2,9 +2,11 @@
 #include "../base/Gu.h"
 #include "../base/InputManager.h"
 #include "../model/UtilMeshInline.h"
+#include "../model/UtilMeshBox.h"
 #include "../base/BaseHeader.h"
 #include "../world/Path.h"
 #include "../math/CubicBezierSpline.h"
+
 
 #include <algorithm>
 
@@ -15,6 +17,7 @@ Path::Path(string_t name, std::shared_ptr<Spline> spline, float speed, float acc
   _easing = pe;
   _maxSpeed = speed;
   _accelleration = accel;
+  _curPoint = vec3(0, 0, 0);
 
   setSpline(spline);
   start();
@@ -26,7 +29,6 @@ void Path::setSpline(std::shared_ptr<Spline> sp) {
   updateDebugDraw();
 }
 void Path::start() {
-  _iCurSegment = 0;
   _curInterpolation = 0;
   if (_easing == PathEasing::EaseIn || _easing == PathEasing::EaseInAndOut) {
     _curSpeed = 0;
@@ -44,32 +46,11 @@ void Path::restart() {
 }
 void Path::update(float dt) {
   if (_pSpline) {
-
     if (_running) {
-
-      //if (_easing == PathEasing::EaseIn || _easing == PathEasing::EaseInAndOut) {
-      //  _curSpeed += _accelleration * dt;
-      //}
-      //_curT += dt;
-
-      ////update cur segment
-      //_curSpeed += _accelleration * dt;
-
-      //if (_easing == PathEasing::EaseIn) {
-      //  float easeInLength = _easeInPercent * _length;
-      //  //Let's say, we are going to ease in the first 10% of the path.  
-      //  //_accelleration
-      //}
-      //float easeOutLength = _easeOutPercent * _length;
-
-
-      ////We will just use a naieve implementation without incremental timesteps (in case of huge lags)
-      
-      //**TDOO: figure htis out.  T may be part of the length, or the location?  Probably the lenght
-      _pSpline->eval(_curT, _location);
+      _curLen = fmodf(_curLen, _pSpline->length());
+      _pSpline->eval(_curLen, _curPoint);
     }
   }
-
 }
 vec3 Path::tangent() {
   //B'(t) = 3 * (1-t)^2 * (p1-p0) + 6*(1-t) * t * (p2-p1) + 3 * t^2 * (p3-p2)
@@ -85,7 +66,7 @@ void Path::updateDebugDraw() {
   _pDrawSpline = std::make_shared<UtilMeshInline>(Gu::getCoreContext());
   _pDrawSpline->begin(GL_LINES);
   _pSpline->iterate(0, _pSpline->points().size() - 1,
-    [&](const vec3& cur, const vec3& last) {
+    [&](const vec3& cur, const vec3& last, size_t idx) {
       if ((cur - last).length2() > 0.00001f) {
         _pDrawSpline->vt2(last, cur, &color);
       }
@@ -125,6 +106,12 @@ void Path::updateDebugDraw() {
     }
   }
   _pDrawHandles->end();
+
+
+  float m = 0.5f;
+  _box = Box3f(-m, -m, -m, m, m, m);
+  _pDrawBox = std::make_shared<UtilMeshBox>(Gu::getCoreContext(), &_box, vec3(0, 0, 0), Random::nextVec4(vec4(0,0,0,1), vec4(1,1,1,1)));
+  _pDrawBox->init();
 }
 void Path::drawForwardDebug(RenderParams& rp) {
   glLineWidth(1.5);
@@ -143,6 +130,13 @@ void Path::drawForwardDebug(RenderParams& rp) {
       _pDrawHandles->draw(rp.getCamera());
     }
   }
+  if (_pDrawBox) {
+    mat4 w = getWorld();
+    w *= mat4::getTranslation(_curPoint);
+    _pDrawBox->setModelMatrix(w);
+    _pDrawBox->draw(rp.getCamera());
+  }
+
 
 }
 

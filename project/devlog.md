@@ -1,5 +1,13 @@
 
 # Mine City Devlog
+
+*3/14/20*
+
+* We ran into the same problem as last time with Beziers.  Endpoint ambiguity.  Which segment am I in if I am in the endpoint?  Prev, or next?  The way to clear this up is
+to duplicate the endpoints.  That would cause problems in algorithms, since the points and CP's are not sequential
+and not to mention possible data problesm (but HIGHLY unlikely that it would cause any data footprint issues).
+
+
 *3/13/20*
 
 * Added dvec3.
