@@ -47,6 +47,7 @@ void Path::restart() {
 void Path::update(float dt) {
   if (_pSpline) {
     if (_running) {
+      _curLen += _curSpeed * dt;
       _curLen = fmodf(_curLen, _pSpline->length());
       _pSpline->eval(_curLen, _curPoint);
     }
