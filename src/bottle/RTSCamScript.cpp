@@ -239,7 +239,7 @@ void RTSCamScript::updateCameraPosition(std::shared_ptr<CameraNode> cam) {
   }
   
   cam->setPos(std::move(cp));
-  cam->setLookAt(std::move(_vLookAt));
+  cam->setViewNormal(std::move(_vLookAt-cam->getPos()));
 }
 
 void RTSCamScript::moveCameraWSAD(std::shared_ptr<CameraNode> cam, std::shared_ptr<InputManager> pFingers, float delta) {

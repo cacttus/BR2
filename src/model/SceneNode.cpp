@@ -101,8 +101,11 @@ void SceneNode::setPos(const vec3&& p) {
 vec3 SceneNode::getViewNormal() {
   return _vViewNormal;
 }
-void SceneNode::setViewNormal(vec3& p) {
+void SceneNode::setViewNormal(const vec3& p, bool normalize) {
   _vViewNormal = p;
+  if (normalize) { 
+    _vViewNormal.normalize();
+  }
   _bTransformChanged = true;
 }
 void SceneNode::setScale(vec3& v) {

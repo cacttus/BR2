@@ -23,18 +23,11 @@ void FreeCameraScript::onStart() {
     Gu::debugBreak();
     return;
   }
-  // cam = std::make_shared<CameraNode>();// CameraNode::create(pv, pscene);
+
   cam->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.  
-  updateCameraPosition();
-  _vMoveVel.construct(0, 0, 0);
-  cam->setPos(vec3(0, 0, 0));
 
-  std::shared_ptr<LightNodePoint> p = LightNodePoint::create("camLight",vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
+  std::shared_ptr<LightNodePoint> p = LightNodePoint::create("camLight", vec3(0, 1, 0), 10, vec4(1, 1, 0.5, 1), "", true);
   cam->attachChild(std::dynamic_pointer_cast<TreeNode>(p));
-
-  //cam->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-  _vCamNormal = cam->getViewNormal();
-  _vCamPos = cam->getPos();
 }
 void FreeCameraScript::onUpdate(float delta) {
   std::shared_ptr<CameraNode> cn = getNode<CameraNode>();
@@ -62,13 +55,10 @@ void FreeCameraScript::moveCameraWSAD(std::shared_ptr<InputManager> pInput, floa
     return;
   }
 
-  //Damp Slows us a bit when we zoom out.
- // float damp = fabsf(_fCamDist)*0.001f;
-  float strafeAmt = 1.05; //fabsf(_fCamDist) / (CongaUtils::getNodeWidth() + damp) * factor;
-
+  float strafeAmt = 10.0; 
 
   if (pInput->shiftHeld()) {
-    strafeAmt = 2.1f;
+    strafeAmt *= 5;
   }
 
   strafeAmt *= delta;
@@ -86,23 +76,7 @@ void FreeCameraScript::moveCameraWSAD(std::shared_ptr<InputManager> pInput, floa
   if (pInput->keyPressOrDown(SDL_SCANCODE_D)) {
     vel += cam->getRightNormal() * strafeAmt;
   }
-  _vMoveVel += vel;
-  updateCameraPosition();
-}
-void FreeCameraScript::updateCameraPosition() {
-  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
-  if (!cam) {
-    return;
-  }
-  if (_vCamNormal.squaredLength() == 0.0f) {
-    //We have an error wit the camera normal because we're using the same normal from the
-    //camera to do calculations.  This is a HACK:
-    _vCamNormal.construct(1.0f, 0, 0);
-    Gu::debugBreak();
-  }
-  vec3 vLookat = _vCamPos + _vCamNormal;
-  cam->setPos(std::move(_vCamPos));
-  cam->setLookAt(std::move(vLookat));
+  cam->setVelocity(std::move(cam->getVelocity() + vel));
 }
 void FreeCameraScript::update(std::shared_ptr<InputManager> pInput, float dt) {
   std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
@@ -118,26 +92,18 @@ void FreeCameraScript::update(std::shared_ptr<InputManager> pInput, float dt) {
   updateRotate(pInput);
 
   //set cam pos
-  //vec3 pos = cam->getPos();
-  _vCamPos += _vMoveVel;
-  updateCameraPosition();
+  cam->setPos(std::move(cam->getPos() + cam->getVelocity() * dt));// += _vMoveVel;
 
   //dampen the velocity
   vec3 v_n;
   float v_len;
-  _vMoveVel.len_and_norm(v_n, v_len);
+  cam->getVelocity().len_and_norm(v_n, v_len);
   float v_new_len = v_len - v_len * _fMoveDamp * dt;
   v_new_len = MathUtils::brClamp(v_new_len, 0.0f, _fMaxMoveVel);
-  _vMoveVel = v_n * v_new_len;
+  cam->setVelocity(std::move(v_n * v_new_len));
 
   RenderParams rp;
   rp.setCamera(cam);
-
-  //Finalluy update camera
-
-  //**TODO: this should likely be done on the scene automatically.
-  //This would run as a CSHarpScript (in the future) and get its update() method called.
-  //cam->update(dt, std::map<Hash32, std::shared_ptr<Animator>>());
 }
 void FreeCameraScript::updateRotate(std::shared_ptr<InputManager> pInput) {
   vec2 vMouse = pInput->getMousePos_Relative();
@@ -153,26 +119,6 @@ void FreeCameraScript::updateRotate(std::shared_ptr<InputManager> pInput) {
   else if (eRmb == ButtonState::Release) {
   }
 
-  //Update Rotate
-  //float stop_e = 0.000001f;
-  //_fRotationVelX += _fPerUnitRotate * vDelta.x;
-  //_fRotationVelY += _fPerUnitRotate * -vDelta.y;
-  //_fRotationVelX = clamp(_fRotationVelX, _fRotationVelMin, _fRotationVelMax);
-  //_fRotationVelY = clamp(_fRotationVelY, _fRotationVelMin, _fRotationVelMax);
-  //if (_fRotationVelX*_fRotationVelX + _fRotationVelY*_fRotationVelY > 0.0f) {
-  //    _fRotationVelX = _fRotationVelX - (_fRotationVelX * _fRotationEase );
-  //    _fRotationVelY = _fRotationVelY - (_fRotationVelY * _fRotationEase );
-  //    _fRotationVelX = clamp(_fRotationVelX, _fRotationVelMin, _fRotationVelMax);
-  //    _fRotationVelY = clamp(_fRotationVelY, _fRotationVelMin, _fRotationVelMax);
-  //
-  //    if (_fRotationVelX*_fRotationVelX < stop_e) {
-  //        _fRotationVelX = 0.0f;
-  //    }
-  //    if (_fRotationVelY*_fRotationVelY < stop_e) {
-  //        _fRotationVelY = 0.0f;
-  //    }
-  //    rotateCameraNormal(_fRotationVelX, _fRotationVelY);
-  //}
   if (vDelta.x != 0 || vDelta.y != 0) {
     rotateCameraNormal(_fPerUnitRotate * vDelta.x, _fPerUnitRotate * -vDelta.y);
   }
@@ -185,20 +131,10 @@ void FreeCameraScript::rotateCameraNormal(float rotX, float rotY) {
 
   // mat4 rot = mat4::getRotationRad(dRot, vec3(0, 1, 0));
   vec3 camPos = getNode()->getScene()->getActiveCamera()->getPos();
-
-  // _vCamNormal = _pCamera->getViewNormal();
-
-   //vec4 mul =
-   //    vec4(_vCamNormal.x,
-   //        _vCamNormal.y,
-   //        _vCamNormal.z,
-   //        1.0f);
-   //vec4 res = rot * mul;
-
   vec3 rt = cam->getRightNormal();
   vec3 up = cam->getUpNormal();
 
-  vec3 vNewCamNormal = (_vCamNormal + rt * rotX + up * rotY).normalize();
+  vec3 vNewCamNormal = (cam->getViewNormal() + rt * rotX + up * rotY).normalize();
 
   float e = 0.0003;
 #define N_INR(a, b) ((a >= (b-e)) && (a <= (b+e)))
@@ -207,33 +143,34 @@ void FreeCameraScript::rotateCameraNormal(float rotX, float rotY) {
     //Keep vCamNormal - don't let the user rotate to -1, or 1
   }
   else {
-    _vCamNormal = vNewCamNormal;
+    cam->setViewNormal(vNewCamNormal);
   }
+
+  vec3 vn = cam->getViewNormal();
 
   //Additional checking to make sure we don't flip the UI
-  if (_vCamNormal.y == 1.0f) {
-    _vCamNormal.y = 0.98f;
-    _vCamNormal.x = 0.01f;
-    _vCamNormal.z = 0.01f;
-    _vCamNormal.normalize();
+  if (vn.y == 1.0f) {
+    vn.y = 0.98f;
+    vn.x = 0.01f;
+    vn.z = 0.01f;
+    vn.normalize();
   }
-  if (_vCamNormal.y == -1.0f) {
-    _vCamNormal.y = -0.98f;
-    _vCamNormal.x = -0.01f;
-    _vCamNormal.z = -0.01f;
-    _vCamNormal.normalize();
+  if (vn.y == -1.0f) {
+    vn.y = -0.98f;
+    vn.x = -0.01f;
+    vn.z = -0.01f;
+    vn.normalize();
   }
-
-  //_vCamNormal = vec3(res.x, res.y, res.z);
- // vec3 lookAt = camPos + _vCamNormal;
-
-  updateCameraPosition();
+  cam->setViewNormal(vn);
 }
 void FreeCameraScript::setPosAndLookAt(vec3&& pos, vec3&& lookat) {
-  _vCamPos = pos;
-  _vCamNormal = (lookat - pos).normalize();
+  std::shared_ptr<CameraNode> cam = getNode<CameraNode>();
+  if (!cam) {
+    return;
+  }
 
-  updateCameraPosition();
+  cam->setPos(std::move(pos));
+  cam->setViewNormal(std::move(lookat - pos));
 }
 
 }//ns BR2

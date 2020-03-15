@@ -28,12 +28,12 @@ public:
 private:
   std::shared_ptr<RenderViewport> _pViewport = nullptr;
   vec2 _vMousePress;
-  vec3 _vCamPos;
-  vec3 _vMoveVel;
+ // vec3 _vCamPos;
+  //vec3 _vMoveVel;
   float _fMaxMoveVel = 2.0f;
   float _fMoveDamp = 9.0f;  //m/s
 
-  vec3 _vCamNormal;
+  //vec3 _vCamNormal;
   float _fPerUnitRotate = (float)M_PI / 2000.0f;
   float _fRotationVelX = 0.0f; //current vel
   float _fRotationVelY = 0.0f; //current vel
@@ -42,7 +42,6 @@ private:
   float _fRotationEase = 15.50f; // % per second
 
   void rotateCameraNormal(float rotX, float rotY);
-  void updateCameraPosition();
   void updateRotate(std::shared_ptr<InputManager> pInput);
   void moveCameraWSAD(std::shared_ptr<InputManager> pInput, float delta);
   void update(std::shared_ptr<InputManager> pInput, float dt);

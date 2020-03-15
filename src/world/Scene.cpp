@@ -275,6 +275,14 @@ void Scene::createFlyingCamera() {
   _pDefaultCamera->addComponent(css);
   setActiveCamera(_pDefaultCamera);
   attachChild(_pDefaultCamera);
+
+  float nh = BottleUtils::getNodeHeight();
+  float nw = BottleUtils::getNodeWidth();
+  _pDefaultCamera->setPos(std::move(vec3(0, nh + nh * 0.5f, 0)));
+  _pDefaultCamera->lookAt(std::move(vec3(nw * 0.5, nh * 0.5, nw * 0.5)));
+
+
+
   // cn->init();
 
   //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.
@@ -291,6 +299,8 @@ void Scene::createFlyingCamera() {
   std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
   cam->addComponent(script);
 #endif
+  int n = 0;
+  n++;
 }
 void Scene::debugChangeRenderState() {
   std::shared_ptr<InputManager> inp = getInput();

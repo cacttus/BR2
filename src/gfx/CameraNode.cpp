@@ -14,7 +14,6 @@ CameraNode::CameraNode(string_t name, std::shared_ptr<RenderViewport> ppViewport
   _vWorldUp.construct(0, 1, 0);
   _pMainFrustum = std::make_shared<FrustumBase>(ppViewport, _f_hfov);
   _vUp = vec3(0, 1, 0);
-  _vLookAt = vec3(0, 0, 0);
   setPos(vec3(-100, -100, -100));
 }
 CameraNode::~CameraNode() {
@@ -99,18 +98,18 @@ void CameraNode::update(float dt, std::map<Hash32, std::shared_ptr<Animator>>& m
 
   //update view normal.
   vec3 vpos = getPos();
-  _vViewNormal = (_vLookAt - vpos).normalize();
+  vec3 vn = getViewNormal();
 
   //Update upd vector
-  vec3 rtvn = _vWorldUp.cross(_vViewNormal);
+  vec3 rtvn = _vWorldUp.cross(vn);
   if (rtvn.squaredLength() == 0) {
     //Prevents teh "lock" problem.
     rtvn = vec3(0, 0, 1);
-    rtvn = rtvn.cross(_vViewNormal);
+    rtvn = rtvn.cross(vn);
   }
-  _vUp = _vViewNormal.cross(rtvn).normalize();
+  _vUp = vn.cross(rtvn).normalize();
 
-  _vRight = _vUp.cross(_vViewNormal).normalize();
+  _vRight = _vUp.cross(vn).normalize();
 
   // Viewport
   //We force true here every frame because of shadow boxes changing viewport.
@@ -138,6 +137,13 @@ void CameraNode::setupViewMatrix() {
 vec3 CameraNode::getLookAtOffset() {
   return vec3(0, 14, 0);
 }
+const vec3 CameraNode::getLookAt() {
+  vec3 r = getPos() + getViewNormal();
+  return r;
+}
+void CameraNode::lookAt(vec3& v) {
+  setViewNormal(std::move(v-getPos()));
+}
 void CameraNode::zoom(float amt) {
   //This is useless now that we have scripts, however, this is a cool function that zooms camera with mouse wheel, so we could
   //use it in a script somewhere.
@@ -150,10 +156,12 @@ void CameraNode::zoom(float amt) {
   float f2 = _fMinZoomDist;
   float f3 = _fMaxZoomDist;
 
+  vec3 lookat = getLookAt();
+
   //Get the min PT
   vec3 ny = vec3(0, 1, 0);//This must be constant
   vec3 vp = getPos();
-  vec3 del = vp - _vLookAt;
+  vec3 del = vp - lookat;
   if (false) {
     del = vec3(0, 0, 1);
     ny = vec3(0, 1, 0);
@@ -178,7 +186,7 @@ void CameraNode::zoom(float amt) {
     Alg::cerp_1D(minPt.y, maxPt.y, tVal),
     Alg::cerp_1D(minPt.z, maxPt.z, tVal));
 
-  newP = _vLookAt + finalPt;
+  newP = lookat + finalPt;
 
   setPos(std::move(newP));
 }

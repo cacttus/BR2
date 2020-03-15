@@ -2,10 +2,11 @@
 
 - [ ] UtilMesh really needs to be a node, we need to update it relative to the trasnform of the object its drawing
 
-- [ ] Move Path's Cubic Bezier code into a new CBSpline class to organize this better.  Path should support liner, and CB splines.
-	- [ ] Create CBSpline class.
+- [x] Move Path's Cubic Bezier code into a new CBSpline class to organize this better.  Path should support liner, and CB splines.
+	- [x] Create CBSpline class.
 
 - [ ] RTS Camera Fixes
+	* Updates to the RTS camera will allow easier object navigation.
 	- [ ] Free Mode
 	- [ ] Focus Mode
 		- [ ] Implement focus movement (transition) between objects
@@ -13,6 +14,16 @@
 				- [ ] Cubic Bezier Curves
 
 - [ ] Rendering Fixes
+	- [ ] Get the UI to draw on the screen again.
+	- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
+		- [ ] Fix UI text squashing bug.
+		- [x] Implement the updated viewport class from the engine.
+			- [x] Make sure it has width/height defined.
+		- [x] Update everywhere where viewport is referenced.
+		- [ ] Fixed render squishing by boxing the render viewport in windowed mode.
+		- [ ] In fullscreen mode, force the w/h to be the whole screen.
+		- [ ] Fixed the squashed UI image problems.
+			- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 	- [ ] DrawDeferred for Scene is a problem.  We are using the SG to draw the children, yet the RenderBucket is the main drawing list. So we are drawing twice.
 	- [ ] Fix shadows & Lights.
 		* Instead of LightManager->SetupLights (using RenderBucket) maybe it would be easier to cull lights through the scenegraph, and call
@@ -24,15 +35,7 @@
 	- [ ] Fix Scene draw..() methods by removing the loop over RenderBucket 
 	- [ ] remove PhysicsWorld CULL, and perhaps the RenderBucket collection code and use something like SceneNode::_bCulled to signal that a node was culled.
 	- [ ] Physics RenderBucket collect does not respect SceneGraph (_mapObjects)  Make it iterate the scenegraph, (testing for visibility) instead of loop over a vector.
-	- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
-		- [ ] Fix UI text squashing bug.
-		- [x] Implement the updated viewport class from the engine.
-			- [x] Make sure it has width/height defined.
-		- [x] Update everywhere where viewport is referenced.
-		- [ ] Fixed render squishing by boxing the render viewport in windowed mode.
-		- [ ] In fullscreen mode, force the w/h to be the screen.
-		- [ ] Fixed the squashed UI image problems.
-			- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
+
 
 - [ ] Bug in W25GridMesh::draw where we are drawing uncollected grids.  This is due to when we swap the camera.  
 The fix for this is to reset the node manifolds when the camera gets swapped.

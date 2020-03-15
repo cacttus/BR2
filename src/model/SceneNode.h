@@ -90,14 +90,14 @@ public:
   void compileWorldMatrix();
 
   std::shared_ptr<Scene> getScene();
-  std::shared_ptr<InputManager> getInput(); 
+  std::shared_ptr<InputManager> getInput();
   NodeId getId();
   OBB* getOBB();
   Box3f* getBoundBoxObject();
   const vec3& getPos();
   void setPos(const vec3&& p);
   vec3 getViewNormal();
-  void setViewNormal(vec3& p);
+  void setViewNormal(const vec3& p, bool normalize = true);
   void setScale(vec3& v);
   vec3 getScale();
   bool getTransformChanged();
@@ -137,17 +137,16 @@ public:
   //void collect(std::shared_ptr<RenderBucket> rb);
 
   template < typename Tx > bool findNode(std::shared_ptr<Tx>& __out_ node);
-  template < typename Tx > std::shared_ptr<Tx> getData() {return std::dynamic_pointer_cast<Tx>(_pSpec);}
+  template < typename Tx > std::shared_ptr<Tx> getData() { return std::dynamic_pointer_cast<Tx>(_pSpec); }
 
 protected:
   std::vector<std::shared_ptr<Component>> _vecComponents;
   std::shared_ptr<BaseSpec> _pSpec = nullptr;
   Box3f* _pBox = nullptr;
   OBB* _pOBB = nullptr;
-  vec3 _vViewNormal;
-  vec3 _vRotationNormal;
+  vec3 _vRotationNormal = vec3(0, 1, 0);
   float _fRotation;
-  vec3 _vScale;
+  vec3 _vScale = vec3(1, 1, 1);
   mat4 _mWorld; //User manipulated PRS
   mat4 _mLocal;//Local animation outside of the manipulated PRS
   float _fCullDistance2 = FLT_MAX;//squared cull distance.  Defaults to ALWAYS show
@@ -156,7 +155,7 @@ protected:
   //  std::set<std::shared_ptr<ShadowBox>> _setShadowInfluences;
   bool _bHidden = false;
   bool _bCulled = false;
-  vec3 _velocity;
+  vec3 _velocity = vec3(0, 0, 0);
 
   void setLocalBind();
   void animate(std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators);
@@ -166,10 +165,11 @@ protected:
 
 private:
   NodeId _iNodeId = 0;//Note: this is also use for picking and must therefore be 32 bits (not 64)
-  vec3 _vPos;
-  vec3 _vLastPos;
+  vec3 _vPos = vec3(0, 0, 0);
+  vec3 _vLastPos = vec3(0, 0, 0);
   bool _bTransformChanged = true;
   bool _bInitialized = false;
+  vec3 _vViewNormal = vec3(0, 0, -1);
 
   void updateComponents(float delta);
   void startComponent(std::shared_ptr<Component> c, std::shared_ptr<Scene> s);

@@ -25,8 +25,9 @@ public:
   static std::shared_ptr<CameraNode> create(string_t name, std::shared_ptr<RenderViewport> ppViewport);
 
   void zoom(float amt);
-  const vec3& getLookAt() { return _vLookAt; }
-  void setLookAt(vec3&& v) { _vLookAt = v; }
+  const vec3 getLookAt();
+  void lookAt(vec3& v);
+  //void setLookAt(vec3&& v) { _vLookAt = v; }
   const mat4& getView() { return _mView; }
   const mat4& getProj() { return _mProj; }
   void setWorldUp(vec3&& v) { _vWorldUp = v; }
@@ -57,7 +58,7 @@ protected:
   std::shared_ptr<FrustumBase> _pMainFrustum = nullptr;
   mat4 _mView;
   mat4 _mProj;
-  vec3 _vLookAt;
+//  vec3 _vLookAt;
   vec3 _vUp;
   vec3 _vRight;
   bool _bRenderActive = false;
