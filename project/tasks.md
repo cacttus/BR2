@@ -14,9 +14,11 @@
 				- [ ] Cubic Bezier Curves
 
 - [ ] Rendering Fixes
-	- [ ] Get the UI to draw on the screen again.
+	- [x] Get the UI to draw on the screen again.
+		* Partially implemented.  The UI draws again.  We need to update it.
 	- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
 		- [ ] Fix UI text squashing bug.
+			* Viewport moves around incorrectly.  It should "wedge" between the TOP and BOTTOM of the screen, PROPORTIONALLY, in windowed mode.  In Fullscreen mode, just fill the whole screen..
 		- [x] Implement the updated viewport class from the engine.
 			- [x] Make sure it has width/height defined.
 		- [x] Update everywhere where viewport is referenced.

@@ -112,23 +112,21 @@ void Scene::afterAttachedToWindow() {
 }
 void Scene::createUi() {
   string_t DEBUG_FONT = "Lato-Regular.ttf";
-
   AssertOrThrow2(getWindow() != nullptr);
-
   _pUiScreen = UiScreen::create(getWindow());
   Gu::checkErrorsDbg();
 
   //Removing the 'built-in' UI due to the compile and load() conflicts due to GameUiaxis
   //skins first
-  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "20px");
+  std::shared_ptr<UiLabelSkin> debugTextSkin = UiLabelSkin::create(_pUiScreen, FileSystem::combinePath(Gu::getPackage()->getFontsFolder(), DEBUG_FONT), "12px");
   std::shared_ptr<UiCursorSkin> pCursorSkin = std::make_shared<UiCursorSkin>();
   pCursorSkin->_pTex = UiTex::create(_pUiScreen, Gu::getPackage()->makeAssetPath("ui", "wings-cursor.png"));
 
   //debug label
   _pDebugLabel = UiLabel::create("", debugTextSkin);
   _pDebugLabel->position() = UiPositionMode::e::Relative;
-  _pDebugLabel->left() = "20px";
-  _pDebugLabel->top() = "100px";
+  _pDebugLabel->left() = "10px";
+  _pDebugLabel->top() = "10px";
   _pDebugLabel->width() = "200px";
   _pDebugLabel->height() = "1800px";
   _pDebugLabel->enableWordWrap();
@@ -141,17 +139,8 @@ void Scene::createUi() {
   cs->height() = "auto"; // Auto?
   _pUiScreen->setCursor(cs);
   Gu::checkErrorsDbg();
-
-
-  //Removing loadImages and compile fom MegaTex
-  //_pUiScreen->getTex()->loadImages();
-//Gu::checkErrorsDbg();
-  //_pUiScreen->getTex()->compile();
-  //Gu::checkErrorsDbg();
 }
 std::vector<std::shared_ptr<Path>> paths;
-std::vector<vec3> movePathPts;
-std::shared_ptr<Path> movePath;
 void Scene::update(float delta) {
   debugChangeRenderState();
 
@@ -281,17 +270,6 @@ void Scene::createFlyingCamera() {
   _pDefaultCamera->setPos(std::move(vec3(0, nh + nh * 0.5f, 0)));
   _pDefaultCamera->lookAt(std::move(vec3(nw * 0.5, nh * 0.5, nw * 0.5)));
 
-
-
-  // cn->init();
-
-  //cn->getFrustum()->setZFar(1000.0f); //We need a SUPER long zFar in order to zoom up to the tiles.
-  //updateCameraPosition();
-  //_vMoveVel.construct(0, 0, 0);
-  //_pCamera->setPos(vec3(30, 30, 30));
-  //_pCamera->update(0.0f, std::map<Hash32, std::shared_ptr<Animator>>());//Make sure to create the frustum.
-  //_vCamNormal = _pCamera->getViewNormal();
-  //_vCamPos = _pCamera->getPos();
 #else
   //Sort of also a scripting test.
   std::shared_ptr<CameraNode> cam = CameraNode::create(getWindow()->getViewport(), getThis<Scene>());
@@ -307,14 +285,11 @@ void Scene::debugChangeRenderState() {
 
   //TODO: these should all be in rednersettings 1/22/18
 //SHIFT + X key combos!!
+  
+
   if (inp->shiftHeld()) {
     if (inp->keyPress(SDL_SCANCODE_F1)) {
-      if (inp->shiftHeld()) {
-        _bDebugDisableShadows = !_bDebugDisableShadows;
-      }
-      else {
-        _bShowDebugText = !_bShowDebugText;
-      }
+      _bShowDebugText = !_bShowDebugText;
     }
     if (inp->keyPress(SDL_SCANCODE_F2)) {
       _bDrawDebug = !_bDrawDebug;
@@ -332,6 +307,9 @@ void Scene::debugChangeRenderState() {
       _bDebugDisableDepthTest = !_bDebugDisableDepthTest;
     }
     if (inp->keyPress(SDL_SCANCODE_F7)) {
+      _bDebugDisableShadows = !_bDebugDisableShadows;
+    }
+    if (inp->keyPress(SDL_SCANCODE_F9)) {
       if (getWindow()->getFrameSync()->isEnabled()) {
         getWindow()->getFrameSync()->disable();
       }
@@ -475,35 +453,29 @@ void Scene::drawDebugText() {
   int dy = 16;//Also the font size
   int cy = 0;
 
-  //Commented out in favor of GameUi
+  //Clear
+  _pDebugLabel->setText("");
 
-//  if (_pDebugLabel != nullptr) {
-//    _pDebugLabel->setText("Debug\n");
-//  }
-//  if (_bShowDebugText) {
-//    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-//
-//#define DBGL(...) if (_pDebugLabel != nullptr) { \
-//      std::string dtxt = _pDebugLabel->getText(); \
-//      dtxt += (__VA_ARGS__);\
-//      dtxt += "\r\n"; \
-//      _pDebugLabel->setText(dtxt); \
-//      }
-//
-//      //DBGL("%.2f", Gu::getFpsMeter()->getFps());
-//
-//      //    _pContext->getTextBoss()->setColor(vec4(0, 0, b, 1));
-//    DBGL("Global");
-//    DBGL("  Debug: %s", _bDrawDebug ? "Enabled" : "Disabled");
-//    DBGL("  Culling: %s", _bDebugDisableCull ? "Disabled" : "Enabled");
-//    DBGL("  Depth Test: %s", _bDebugDisableDepthTest ? "Disabled" : "Enabled");
-//    DBGL("  Render: %s", _bDebugShowWireframe ? "Wire" : "Solid");
-//    DBGL("  Clear: %s", _bDebugClearWhite ? "White" : "Black-ish");
-//    // DBGL("  Vsync: %s", (Gu::getFrameSync()->isEnabled()) ? "Enabled" : "Disabled");
-//    DBGL("  Shadows: %s", (_bDebugDisableShadows) ? "Enabled" : "Disabled");
-//
-//    //DBGL("  Camera: %s", Gu::getCamera()->getPos().toString(5).c_str());
-  //}
+  if (_bShowDebugText) {
+    size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
+
+#define DBGL(x) if (_pDebugLabel != nullptr) { \
+      std::string dtxt = _pDebugLabel->getText(); \
+      dtxt += Stz x;\
+      dtxt += "\r\n"; \
+      _pDebugLabel->setText(dtxt); \
+      }
+
+    DBGL("Global Debug");
+    DBGL("  Debug: " + (_bDrawDebug ? "Enabled" : "Disabled"));
+    DBGL("  Culling: " + (_bDebugDisableCull ? "Disabled" : "Enabled"));
+    DBGL("  Depth Test: " + (_bDebugDisableDepthTest ? "Disabled" : "Enabled"));
+    DBGL("  Render: " + (_bDebugShowWireframe ? "Wire" : "Solid"));
+    DBGL("  Clear: " + (_bDebugClearWhite ? "White" : "Black-ish"));
+    DBGL("  Vsync: " + ((getWindow()->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled"));
+    DBGL("  Shadows: " + ((_bDebugDisableShadows) ? "Enabled" : "Disabled"));
+    DBGL("  Camera: " + getActiveCamera()->getPos().toString(5).c_str());
+  }
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pUiScreen->screenChanged(w, h);
