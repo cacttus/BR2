@@ -27,9 +27,11 @@
     <ClCompile Include="src\base\DebugHelper.cpp" />
     <ClCompile Include="src\base\Delta.cpp" />
     <ClCompile Include="src\base\DiskFile.cpp" />
+    <ClCompile Include="src\base\EngineConfig.cpp" />
     <ClCompile Include="src\base\EngineConfigFile.cpp" />
     <ClCompile Include="src\base\Exception.cpp" />
     <ClCompile Include="src\base\FileSystem.cpp" />
+    <ClCompile Include="src\base\GamePad.cpp" />
     <ClCompile Include="src\base\InputManager.cpp" />
     <ClCompile Include="src\base\FpsMeter.cpp" />
     <ClCompile Include="src\base\FrameSync.cpp" />
@@ -220,6 +222,7 @@
     <ClInclude Include="src\base\EngineConfigFile.h" />
     <ClInclude Include="src\base\Exception.h" />
     <ClInclude Include="src\base\FileSystem.h" />
+    <ClInclude Include="src\base\GamePad.h" />
     <ClInclude Include="src\base\InputManager.h" />
     <ClInclude Include="src\base\FpsMeter.h" />
     <ClInclude Include="src\base\FrameSync.h" />

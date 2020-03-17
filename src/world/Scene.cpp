@@ -255,9 +255,8 @@ void Scene::createFlyingCamera() {
   //In the future we will replace this witht he active object.
   BRLogInfo("Creating Flying Camera");
 
-#define NOSCRIPT
 
-#ifdef NOSCRIPT
+#ifdef BR_NOSCRIPT
   BRLogInfo("Creating Fly Camera.");
   _pDefaultCamera = CameraNode::create("FlyingCamera", _pGraphicsWindow->getViewport());
   std::shared_ptr<FreeCameraScript> css = std::make_shared<FreeCameraScript>();
@@ -265,10 +264,11 @@ void Scene::createFlyingCamera() {
   setActiveCamera(_pDefaultCamera);
   attachChild(_pDefaultCamera);
 
+  //Look at the 'top' of a glob, by default.
   float nh = BottleUtils::getNodeHeight();
   float nw = BottleUtils::getNodeWidth();
   _pDefaultCamera->setPos(std::move(vec3(0, nh + nh * 0.5f, 0)));
-  _pDefaultCamera->lookAt(std::move(vec3(nw * 0.5, nh * 0.5, nw * 0.5)));
+  _pDefaultCamera->lookAt(std::move(vec3(nw * 0.5, nh+BottleUtils::getCellHeight()*2, nw * 0.5)));
 
 #else
   //Sort of also a scripting test.
@@ -277,8 +277,6 @@ void Scene::createFlyingCamera() {
   std::shared_ptr<CSharpScript> getScriptManager()->loadScript(FileSystem::combinePath(Gu::getAppPackage()->getScriptsFolder(), "FlyCamera.cs"));
   cam->addComponent(script);
 #endif
-  int n = 0;
-  n++;
 }
 void Scene::debugChangeRenderState() {
   std::shared_ptr<InputManager> inp = getInput();
@@ -382,7 +380,7 @@ void Scene::drawBackgroundImage() {
   }
   std::shared_ptr<CameraNode> bc = getActiveCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport()->getWidth(), bc->getViewport()->getHeight());
+  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport());
   {
     //We want depth test so we can see what's in front.
     //glEnable(GL_DEPTH_TEST);
@@ -447,6 +445,12 @@ void Scene::setDebugMode() {
     //Keep this legit so we can test x , y
   }
 }
+void Scene::dbgl(string_t st) {
+  if (_pDebugLabel != nullptr) { 
+    std::string dtxt = _pDebugLabel->getText() + st + "\r\n"; 
+    _pDebugLabel->setText(dtxt); 
+  }
+}
 void Scene::drawDebugText() {
   int bx = 5;
   int by = 32 + 34;// 0 is the height of the font
@@ -455,26 +459,18 @@ void Scene::drawDebugText() {
 
   //Clear
   _pDebugLabel->setText("");
-
+  
+  dbgl(Stz "" + StringUtil::floatToStr2d(getWindow()->getFpsMeter()->getFps()));
   if (_bShowDebugText) {
     size_t iVisibleLights = 0;//_pWorld25->getFrameVisibleLights().size();
-
-#define DBGL(x) if (_pDebugLabel != nullptr) { \
-      std::string dtxt = _pDebugLabel->getText(); \
-      dtxt += Stz x;\
-      dtxt += "\r\n"; \
-      _pDebugLabel->setText(dtxt); \
-      }
-
-    DBGL("Global Debug");
-    DBGL("  Debug: " + (_bDrawDebug ? "Enabled" : "Disabled"));
-    DBGL("  Culling: " + (_bDebugDisableCull ? "Disabled" : "Enabled"));
-    DBGL("  Depth Test: " + (_bDebugDisableDepthTest ? "Disabled" : "Enabled"));
-    DBGL("  Render: " + (_bDebugShowWireframe ? "Wire" : "Solid"));
-    DBGL("  Clear: " + (_bDebugClearWhite ? "White" : "Black-ish"));
-    DBGL("  Vsync: " + ((getWindow()->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled"));
-    DBGL("  Shadows: " + ((_bDebugDisableShadows) ? "Enabled" : "Disabled"));
-    DBGL("  Camera: " + getActiveCamera()->getPos().toString(5).c_str());
+    dbgl(Stz "  Debug: " + (_bDrawDebug ? "Enabled" : "Disabled"));
+    dbgl(Stz "  Culling: " + (_bDebugDisableCull ? "Disabled" : "Enabled"));
+    dbgl(Stz "  Depth Test: " + (_bDebugDisableDepthTest ? "Disabled" : "Enabled"));
+    dbgl(Stz "  Render: " + (_bDebugShowWireframe ? "Wire" : "Solid"));
+    dbgl(Stz "  Clear: " + (_bDebugClearWhite ? "White" : "Black-ish"));
+    dbgl(Stz "  Vsync: " + ((getWindow()->getFrameSync()->isEnabled()) ? "Enabled" : "Disabled"));
+    dbgl(Stz "  Shadows: " + ((_bDebugDisableShadows) ? "Enabled" : "Disabled"));
+    dbgl(Stz "  Camera: " + getActiveCamera()->getPos().toString(5).c_str());
   }
 }
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {

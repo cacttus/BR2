@@ -5,7 +5,6 @@
 #include "../base/Allocator.h"
 #include "../base/FileSystem.h"
 #include "../base/oglErr.h"
-#include "../base/EngineConfigFile.h"
 #include "../base/EngineConfig.h"
 #include "../base/DiskFile.h"
 #include "../base/OperatingSystem.h"
@@ -236,9 +235,9 @@ void Gu::loadConfig(const std::vector<std::string>& args) {
     BRThrowException("Engine configuration file '" + configPath + "' does not exist.");
   }
   else {
-    EngineConfigFile ef;
-    ef.loadAndParse(configPath);
-    Gu::_pEngineConfig = ef.getConfig();
+    std::shared_ptr<EngineConfig> ef = std::make_shared<EngineConfig>();
+    ef->loadAndParse(configPath);
+    Gu::_pEngineConfig = ef;
   }
 
   //Override the EngineConfig

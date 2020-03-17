@@ -70,6 +70,7 @@ void GraphicsWindow_Internal::toggleFullscreen() {
 
     if (SDL_SetWindowFullscreen(_pSDLWindow, SDL_WINDOW_FULLSCREEN) != 0) {
       BRLogError("Failed to go fullscreen.");
+      _bFullscreen = false;
     }
     else {
       _bFullscreen = true;
@@ -93,10 +94,8 @@ void GraphicsWindow_Internal::toggleFullscreen() {
 void GraphicsWindow_Internal::updateWidthHeight(uint32_t w, uint32_t h, bool bForce) {
   //update view/cam
   if (_iLastWidth != w || bForce) {
-    _pViewport->setWidth(w);
-    if (_iLastHeight != h || bForce) {
-      _pViewport->setHeight(h);
-    }
+    _pViewport->updateBox(0, 0, w, h);
+
     if (_iLastHeight != h || _iLastWidth != w || bForce) {
       if (_pRenderPipe != nullptr) {
         _pRenderPipe->resizeScreenBuffers((int32_t)w, (int32_t)h);
@@ -167,7 +166,7 @@ GraphicsWindow::~GraphicsWindow() {
 void GraphicsWindow::init() {
   _pint->_iLastWidth = Gu::getConfig()->getDefaultScreenWidth();
   _pint->_iLastHeight = Gu::getConfig()->getDefaultScreenHeight();
-  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight);
+  _pint->_pViewport = std::make_shared<RenderViewport>(_pint->_iLastWidth, _pint->_iLastHeight, ViewportConstraint::Full);
   _pint->_pFrameSync = std::make_shared<FrameSync>(getThis<GraphicsWindow>());
   _pint->_pDelta = std::make_shared<Delta>();
   _pint->_pFpsMeter = std::make_shared<FpsMeter>();
@@ -297,8 +296,8 @@ bool GraphicsWindow::containsPoint_Global2D(const vec2& mp) {
 
   int client_left = posx;
   int client_top = posy;
-  int client_right = client_left + sizx ;
-  int client_bot = client_top + sizy ;
+  int client_right = client_left + sizx;
+  int client_bot = client_top + sizy;
 
   //mp must be a GLOBAL point (mouse pos) getting INputManager::getMousePos_Global
   if (mp.x < client_top) {

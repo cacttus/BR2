@@ -1,5 +1,5 @@
 #
-#    Derek page
+#    The BR Model Exporter
 #    20161221 
 #    20161221 
 #    2017 12 04  ----  This is version 2 of FK export using actions instead of the 'defined' in the editor.
@@ -439,7 +439,7 @@ class MobExport:
         strFile = ""
 
         strFile += "# Blender MOD/OBJ/SKN (MOB) file\n"
-        strFile += "# Derek Page\n"
+        strFile += "# MetalMario971\n"
         strFile += "# 20160507\n"
         
         strFile += "mod_beg \"" + self.strModelName + "\" \"" + str(self.fVersion) + "\"\n"

@@ -21,7 +21,6 @@
 #include "../world/PhysicsWorld.h"
 
 namespace BR2 {
-
 #pragma region ShadowFrustum_Internal
 class ShadowFrustum_Internal {
 public:
@@ -74,11 +73,9 @@ ShadowFrustum_Internal::~ShadowFrustum_Internal() {
 void ShadowFrustum_Internal::updateView() {
   AssertOrThrow2(_pLightSource != nullptr);
 
-  _pViewport->setY(0);
-  _pViewport->setX(0);
-  _pViewport->setWidth(_iFboWidthPixels);
-  _pViewport->setHeight(_iFboHeightPixels);
-  _pViewport->bind(nullptr);
+  //TODO: like in the shadowbox, side, we might want to add debug padding.
+  _pViewport->updateBox(0,0,_iFboWidthPixels, _iFboHeightPixels);
+  _pViewport->bind();
 
   float fNear = _pFrustum->getZNear();
   float fFar = _pFrustum->getZFar();
@@ -216,10 +213,8 @@ void ShadowFrustum_Internal::createFbo() {
   Gu::checkErrorsRt();
   // std::dynamic_pointer_cast<GLContext>(Gu::getGraphicsContext())->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, glSide, _glShadowCubeMapId, 0);
 
-
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _glDepthTextureId, 0);
   Gu::checkErrorsRt();
-
 
   glBindTexture(GL_TEXTURE_2D, 0);
   Gu::checkErrorsRt();
@@ -230,7 +225,6 @@ void ShadowFrustum_Internal::createFbo() {
   // Disable reads from the color buffer
   glReadBuffer(GL_NONE);
   Gu::checkErrorsRt();
-
 
   GLenum status = std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
@@ -301,7 +295,7 @@ void ShadowFrustum::setChanged() {
 
 void ShadowFrustum::init() {
   //**TODO: updated viewport, make sure it works with this.
-  _pint->_pViewport = std::make_shared<RenderViewport>(60, 60, ViewportConstraint::Fixed);
+  _pint->_pViewport = std::make_shared<RenderViewport>(60, 60, ViewportConstraint::Full);
   _pint->_pVisibleSet = std::make_shared<RenderBucket>();
   _pint->_pFrustum = std::make_shared<FrustumBase>(_pint->_pViewport, 90.0f);
 
@@ -354,10 +348,8 @@ void ShadowFrustum::updateAndCullAsync(CullParams& cp) {
 
    // Tell the viewport we've changed
 
-
-   // Copy and blend this into 
+   // Copy and blend this into
 }
-
 
 void ShadowFrustum::debugRender(RenderParams& rp) {
   RenderUtils::drawFrustumShader(rp.getCamera(), _pint->_pFrustum, Color4f(1, 0, 0, 1));
@@ -409,7 +401,6 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
         sb->setUf("_ufView", (void*)&_pint->_viewMatrix, 1, false);
         //TODO: - technically we need to sendt he light's model matrix into the shader as well.
         sb->setUf("_ufShadowLightPos", (void*)&vFinal, 1, false);
-
       },
         [](std::shared_ptr<ShaderBase> sb, std::shared_ptr<MeshNode> bn) {
         RenderParams rp;
@@ -417,7 +408,6 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
         bn->drawShadow(rp);
       }
       );
-
   }
   endRenderShadowFrustum();
   //pShadowFrustumMaster->endRenderShadowFrustum();
@@ -435,7 +425,4 @@ void ShadowFrustum::endRenderShadowFrustum() {
 }
 
 #pragma endregion
-
-
-
 }//ns Game

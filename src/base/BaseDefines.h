@@ -101,8 +101,9 @@ typedef enum {
 } e;
 }
 namespace RenderSystem { typedef enum { OpenGL, Vulkan } e; }
+enum class OpenGLProfile { Core, Compatibility, ES };
 enum class LineBreak { Unix, DOS };
-//namespace LineBreak { typedef enum { Unix, DOS }e; }
+enum class GamePadType { KeyboardAndMouse };
 
 /************************************************************************/
 /* Forward Decl                                                         */
@@ -129,7 +130,6 @@ class GameMemory;
 class AppRunner;
 class Delta;
 class EngineConfig;
-class EngineConfigFile;
 class TreeNode;
 class Crc32;
 class StreamBuffer;
@@ -149,6 +149,9 @@ class CSharpCompiler;
 class Packet;
 class ApplicationPackage;
 //Classes that will be removed
+class GamePad;
+class GamePadButton;
+class KeyboardGamePad;
 
 template < class Tx >
 class DynamicBuffer;
@@ -171,6 +174,7 @@ typedef uint32_t t_time;
 typedef std::vector<char> ByteBuffer;
 typedef GameMemory PureMemory;//Pure memory without a VPtr
 typedef PureMemory GpuMemory; //Pure memory without a VPtr
+
 
 /************************************************************************/
 /* Base Classes                                                         */

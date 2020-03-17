@@ -171,7 +171,7 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
 
   Gu::checkErrorsDbg();
 
-  cam->getViewport()->bind(_pWindow);
+  cam->getViewport()->bind();
 
   _pPicker->update(getWindow()->getInput());
   if (cam == nullptr) {
@@ -450,7 +450,7 @@ void RenderPipe::renderShadows(std::shared_ptr<LightManager> lightman, std::shar
   Gu::checkErrorsDbg();
 
   //Force refresh teh viewport.
-  cam->getViewport()->bind(nullptr);
+  cam->getViewport()->bind();
 }
 
 void RenderPipe::beginRenderDeferred() {
@@ -493,10 +493,7 @@ void RenderPipe::blitDeferredRender(std::shared_ptr<LightManager> lightman, std:
   getContext()->glBindRenderbuffer(GL_RENDERBUFFER, 0);
   getContext()->chkErrDbg();
 
-  int rasterW = cam->getViewport()->getWidth();
-  int rasterH = cam->getViewport()->getHeight();
-
-  _pDeferredShader->beginRaster(rasterW, rasterH);
+  _pDeferredShader->beginRaster(cam->getViewport());
   {
     //*The clear here isn't necessary. If we're copying all of the contents of the deferred buffer.
     // - Clear the color and depth buffers (back and front buffers not the Mrts)
@@ -654,7 +651,7 @@ void RenderPipe::postProcessDOF(std::shared_ptr<LightManager> lightman, std::sha
     std::shared_ptr<BufferRenderTarget> rtColor = _pMsaaForward->getTargetByName("Color");//**Note** Forward
 
     //Blend color + position and store it in the color.
-    pDofShader->beginRaster(cam->getViewport()->getWidth(), cam->getViewport()->getHeight());
+    pDofShader->beginRaster(cam->getViewport());
     {
       //This could be removed if we used Texture2DSpec for the RenderTarget texturs..
       GLuint i0;
@@ -730,7 +727,7 @@ void RenderPipe::endRenderAndBlit(std::shared_ptr<LightManager> lightman, std::s
   glBindTexture(GL_TEXTURE_2D, _pBlittedForward->getGlColorBufferTexId());
   getContext()->chkErrDbg();
 
-  _pForwardShader->beginRaster(pCam->getViewport()->getWidth(), pCam->getViewport()->getHeight());
+  _pForwardShader->beginRaster(pCam->getViewport());
   {
     saveScreenshot(lightman);
     getContext()->chkErrDbg();

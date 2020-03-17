@@ -1,6 +1,11 @@
 
 # Mine City Devlog
 
+*3/15/20*
+
+* We need to adjust the size of the renderer in addition to the size of the screen quad.  Rendering is done in multiple layers and steps and we need to adjust all viewports to correctly fit
+to the correct aspect ratio.
+
 *3/14/20*
 
 * We ran into the same problem as last time with Beziers.  Endpoint ambiguity.  Which segment am I in if I am in the endpoint?  Prev, or next?  The way to clear this up is

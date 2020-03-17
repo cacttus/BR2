@@ -1,4 +1,6 @@
 #include "../base/Logger.h"
+#include "../base/Gu.h"
+#include "../base/EngineConfig.h"
 #include "../gfx/RenderViewport.h"
 #include "../gfx/GfxHeader.h"
 #include "../gfx/RenderTarget.h"
@@ -8,85 +10,77 @@ namespace BR2 {
 class RenderViewport_Internal {
 public:
   std::unique_ptr<RenderViewport_Internal> _pint = nullptr;
-  Box3i _rect;
-  Box3i _lastRect;
+  double _x;
+  double _y;
+  double _w;
+  double _h;
   ViewportConstraint _constraint;
 };
-RenderViewport::RenderViewport(int32_t w, int32_t h, ViewportConstraint constraint) {
+RenderViewport::RenderViewport(double w, double h, ViewportConstraint constraint) {
   _pint = std::make_unique<RenderViewport_Internal>();
 
   _pint->_constraint = constraint;
-
-  _pint->_rect._max.x = w;
-  _pint->_rect._max.y = h;
-  _pint->_rect._min.x = 0;
-  _pint->_rect._min.y = 0;
-
-  setWidth(w); // - Constrains the window to the aspect ratio.
-  setHeight(h);
-
-  _pint->_lastRect = 0;
+  _pint->_x = 0;
+  _pint->_y = 0;
+  _pint->_w = w;
+  _pint->_h = h;
 }
 RenderViewport::~RenderViewport() {
   _pint = nullptr;
 }
-void RenderViewport::bind(std::shared_ptr<RenderTarget> target) {
-  if (target != nullptr) {
-    updateBox(target);
-  }
+void RenderViewport::bind() {
+  GLint ix = (GLint)getX();
+  GLint iy = (GLint)getY();
+  GLint iw = (GLint)getWidth();
+  GLint ih = (GLint)getHeight();
 
-  int32_t ix = getX();
-  int32_t iy = getY();
-  int32_t iw = getWidth();
-  int32_t ih = getHeight();
-
+  //Note: in GL x,y is the lower left corner.
   glViewport(ix, iy, iw, ih);
 
   //Scissor testing
+  glEnable(GL_SCISSOR_TEST);
   glScissor(ix, iy, iw, ih);
 }
-void RenderViewport::updateBox(std::shared_ptr<RenderTarget> target) {
-  if (_pint->_constraint == ViewportConstraint::Fixed) {
-    //Note: we should place viewport in the center of the screen.
-  }
-  else if (_pint->_constraint == ViewportConstraint::AdjustHeight) {
-  }
-  else if (_pint->_constraint == ViewportConstraint::Fullscreen) {
-    if (target) {
-      _pint->_rect._min.x = 0;
-      _pint->_rect._min.y = 0;
-      _pint->_rect._max.x = target->getWidth();
-      _pint->_rect._max.y = target->getHeight();
+void RenderViewport::updateBox(double sx, double sy, double sw, double sh) {
+  if (_pint->_constraint == ViewportConstraint::Adjust) {
+    double ar = Gu::getEngineConfig()->windowedAspectRatio();
+    double vh = 1;
+    double vw = 1;
+
+    if (sw >= sh) {
+      vh = sh;
+      vw = vh * ar;
+      _pint->_x = (sw - vw) * 0.5f;
+      _pint->_y = sh - 0; //Note: in GL x,y is the lower left corner, so we subtract sh.
     }
     else {
-      BRThrowException("Failed to find fullscreen target for updateBox");
+      vw = sw;
+      vh = sh / ar;
+      _pint->_x = 0;
+      _pint->_y = sh - ((sh - vh) * 0.5f); //Note: in GL x,y is the lower left corner, so we subtract sh.
     }
+
+    _pint->_w = vw;
+    _pint->_h = vh;
   }
-  _pint->_lastRect = _pint->_rect;
+  else if (_pint->_constraint == ViewportConstraint::Full) {
+    _pint->_x = sx;
+    _pint->_y = sy;
+    _pint->_w = sw;
+    _pint->_h = sh;
+  }
 }
-void RenderViewport::setX(int32_t x) {
-  _pint->_rect._min.x = x;
+double RenderViewport::getWidth() {
+  return _pint->_w;
 }
-void RenderViewport::setY(int32_t y) {
-  _pint->_rect._min.y = y;
+double RenderViewport::getHeight() {
+  return _pint->_h;
 }
-void RenderViewport::setHeight(int32_t h) {
-  _pint->_rect._max.y = h;
+double RenderViewport::getX() {
+  return _pint->_x;
 }
-void RenderViewport::setWidth(int32_t w) {
-  _pint->_rect._max.x = w;
-}
-int32_t RenderViewport::getWidth() {
-  return _pint->_rect._max.x;
-}
-int32_t RenderViewport::getHeight() {
-  return _pint->_rect._max.y;
-}
-int32_t RenderViewport::getX() {
-  return _pint->_rect._min.x;
-}
-int32_t RenderViewport::getY() {
-  return _pint->_rect._min.y;
+double RenderViewport::getY() {
+  return _pint->_y;
 }
 float RenderViewport::getAspectRatio() {
   float ar = 0;

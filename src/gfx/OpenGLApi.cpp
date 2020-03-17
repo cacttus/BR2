@@ -41,7 +41,7 @@ std::shared_ptr<GraphicsWindow> OpenGLApi::createWindow(std::string title) {
   iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY; // Deprecated Functions are allowed
   //iProfile = SDL_GL_CONTEXT_PROFILE_CORE;// No Deprecated functions allowed;
 #else
-  iProfile = SDL_GL_CONTEXT_PROFILE_CORE;
+  iProfile = SDL_GL_CONTEXT_PROFILE_COMPATIBILITY;// SDL_GL_CONTEXT_PROFILE_CORE;
 #endif
 #endif
 

@@ -567,6 +567,10 @@
     <ClCompile Include="src\math\CubicBezierSpline.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="src\base\GamePad.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base\EngineConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
@@ -1237,6 +1241,9 @@
     </ClInclude>
     <ClInclude Include="src\math\CubicBezierSpline.h">
       <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base\GamePad.h">
+      <Filter>base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

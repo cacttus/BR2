@@ -75,6 +75,7 @@ public:
   static string_t tabify(string_t str_to_tabify, int number_of_tabs, bool use_spaces = true, bool tab_newlines = true, LineBreak lineBreak = LineBreak::DOS);
   static string_t wStrToStr(std::wstring str);
   static wstring_t strToWStr(std::string str);
+  static string_t floatToStr2d(float f);
 };
 #define StrLn(a,...) TStr(a,__VA_ARGS__,"\n");
 

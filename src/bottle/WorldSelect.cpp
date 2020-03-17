@@ -119,7 +119,7 @@ void WorldSelect::draw2d() {
 void WorldSelect::drawBackgroundImage() {
   std::shared_ptr<CameraNode> bc = _pCongaRoom->getScene()->getActiveCamera();
   Gu::getShaderMaker()->getImageShader_F()->setCameraUf(bc);
-  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport()->getWidth(), bc->getViewport()->getHeight());
+  Gu::getShaderMaker()->getImageShader_F()->beginRaster(bc->getViewport());
   {
     //We want depth test so we can see what's in front.
     //glEnable(GL_DEPTH_TEST);

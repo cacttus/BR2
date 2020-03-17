@@ -1,5 +1,13 @@
 # Mine City Task Log
 
+
+## Engine Tasks
+
+- [x] Merge EngineConfig and EngineConfigFile into EngineConfig\
+
+- [ ] Test multiple graphics windows
+	- [ ] Get one scene to render to multiple windows from different cameras, at the same time.
+
 - [ ] UtilMesh really needs to be a node, we need to update it relative to the trasnform of the object its drawing
 
 - [x] Move Path's Cubic Bezier code into a new CBSpline class to organize this better.  Path should support liner, and CB splines.
@@ -68,7 +76,7 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 
 - [ ] Implement the STL math functions in MathHeader
 
-## Controller System
+### Controller System
 - [ ] Make WorldSelect part of the UI system.  (Remove it from BottleScript.h) 
 	- [ ] Allow for Ui Scripts.
 	- [ ] Make UiScreen part of the node system.
@@ -80,9 +88,10 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 	* `  DPad _pDPad` --> Maps to WSAD, or a controller DPAD
 	* `class KeyboardController : GamePad` --> the Joystick control would be driven by the mouse
 	* `class GameController : GamePad`
+	* `KeyMap`
 - [ ] Alter Global Input manager to remove the Mouse from it.  Mouse doesn't make sense globally.
 
-## World25 Integration
+### World25 Integration
 - [ ] Implement GodCam as a script.
 - [ ] PhysicsWorld is now referenced in World25, this lets us turn BottleRoom into a script run on Scene.
 - [ ] Make Atlas's "gsiz" paramater automatic.  Meaning, allow the atlas to automatically pack itself (like MegaTex does). Essentially turn Atlas into MegaTex.
@@ -101,7 +110,7 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 	- [ ] Reference this structure everywhere instead of BottleUtils::
 - [ ] move "getcellorobjectunderray" straight back to scene
 
-## Engine & Code Cleanup 
+### Code Cleanup 
 
 - [ ] Replace name in headers
 - [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (reorg) 
@@ -124,11 +133,11 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 		* Pass Scene, into PhysicsWorld and LightManager to manage the objects.
 	- [ ] Do the same with LightManager.
 
-## Sprite Management
+### Sprite Management
 
 - [ ] SpriteBucket needs to be more of a global class.  Like SpriteManager.
 
-## Models
+### Models
 
 - [ ] Test loading a model with the old system.
 

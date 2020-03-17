@@ -16,7 +16,7 @@ namespace BR2 {
 *  @class Fingers
 *  @brief  Manages user input.
 */
-class InputManager : public VirtualMemory {
+class InputManager : public VirtualMemoryShared<InputManager> {
 public:
   InputManager();
   virtual ~InputManager() override;
@@ -28,8 +28,11 @@ public:
   const vec2& getMousePos_Global() { return _vMousePos_global; }
   const vec2& getLastMousePos_Global() { return _vLastMousePos_global; }
 
+  std::shared_ptr<GamePad> gamePad() { return _pGamePad; }
+
   bool mousePress(MouseButton::e);
   bool mouseDown(MouseButton::e);
+
   bool keyPress(SDL_Scancode kc);
   bool keyPress(SDL_Scancode kc, int modFlags);
   bool keyPressOrDown(SDL_Scancode kc);
@@ -43,20 +46,23 @@ public:
 
   void setKeyDown(SDL_Scancode kc);
   void setKeyUp(SDL_Scancode kc);
+
   void setLmbState(ButtonState::e bs);
   void setRmbState(ButtonState::e bs);
   void setMouseWheel(int x) { _iMouseWheel = x; }
-
-  void preUpdate(); //before frame
-  void postUpdate(); //after frame
-  void updateButtState(BR2::ButtonState::e& eState);
-
   ButtonState::e getLmbState() { return _eLmb; }
   ButtonState::e getRmbState() { return _eRmb; }
   ButtonState::e getMmbState() { return _eMmb; }
   int getMouseWheel() { return _iMouseWheel; }
 
   void warpMouse(int x, int y);
+
+
+  void preUpdate(); //before frame
+  void postUpdate(); //after frame
+  void updateButtState(BR2::ButtonState::e& eState);
+
+
 private:
   ButtonState::e _eRmb = BR2::ButtonState::Up;
   ButtonState::e _eLmb = BR2::ButtonState::Up;
@@ -66,6 +72,8 @@ private:
   vec2 _vMousePos_relative;
   vec2 _vLastMousePos_global;
   vec2 _vMousePos_global;
+
+  std::shared_ptr<GamePad> _pGamePad = nullptr;
 
   int _iMouseWheel;
 

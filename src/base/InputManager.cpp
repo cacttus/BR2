@@ -1,5 +1,7 @@
 #include "../base/InputManager.h"
 #include "../base/Logger.h"
+#include "../base/EngineConfig.h"
+#include "../base/GamePad.h"
 
 namespace BR2 {
 InputManager::InputManager() {
@@ -17,6 +19,16 @@ void InputManager::init() {
   _vLastMousePos_global = 0.0f;
 
   _eRmb = _eLmb = _eMmb = ButtonState::e::Up;
+  
+  
+  if (Gu::getEngineConfig()->gamePadType() == GamePadType::KeyboardAndMouse) {
+    _pGamePad = std::make_shared<KeyboardGamePad>(getThis<InputManager>());
+  }
+  else {
+    BRLogError("Invalid gamepad type when creating input.");
+    _pGamePad = std::make_shared<KeyboardGamePad>(getThis<InputManager>());
+  }
+  
   //Pre + Post update to prevent garbage
   preUpdate();
   postUpdate();

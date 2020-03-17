@@ -9,11 +9,33 @@
 
 #include "../base/BaseHeader.h"
 #include "../gfx/GfxHeader.h"
+
 namespace BR2 {
+/*
+Technically there are 3 modes. "Full" wouldn't even be a mode if we wanted to correctly scale the aspect ratio.  But FULL is needed to render shadows, and other 
+rendering.
+  1. FIT INSIDE the window, maintaining AR or 
+  2. FILL the whole window, maintaining AR
+  To prevent the FILL from creating a massive buffer, then we just use glScissor to prevent drawing outside the box.
+
+  FIT
+  +---------------------+
+  |  *            *     |
+  |  |            |<game|
+  |  *            *     |
+  +--------------------+ < window. Game fits inside.  We see the whole game, but have black bars around it.
+
+  FILL
+  *--------------*
+  |    |     |   |
+  |    |window   |
+  |    |     |   |
+  *--------------* < game. Stretches beyond window to maintain AR, Centers the window.  No black bars, but, we lose some of the game.
+
+*/
 enum class ViewportConstraint {
-  Fixed,  //Does not scale with window.
-  AdjustHeight,   //Fixes to window height, with width maintained aspect ratio.
-  Fullscreen,   //Fixes to window width, and height.
+  Adjust,   //Fixes to window height.  Maintains aspect ratio of 1920//
+  Full,   //Fixes to window width, and height.
 };
 /**
 *  @class RenderViewport
@@ -22,20 +44,16 @@ enum class ViewportConstraint {
 class RenderViewport_Internal;
 class RenderViewport : public VirtualMemoryShared<RenderViewport> {
 public:
-  RenderViewport(int32_t w, int32_t h, ViewportConstraint constraint = ViewportConstraint::AdjustHeight);
+  RenderViewport(double w, double h, ViewportConstraint constraint);
   virtual ~RenderViewport() override;
 
-  void bind(std::shared_ptr<RenderTarget> target);
-  void setHeight(int32_t h);
-  void setWidth(int32_t w);
-  void setX(int32_t x);
-  void setY(int32_t y);
-  int32_t getWidth();
-  int32_t getHeight();
-  int32_t getX();
-  int32_t getY();
+  void bind();
+  double getWidth();
+  double getHeight();
+  double getX();
+  double getY();
   float getAspectRatio();
-  void updateBox(std::shared_ptr<RenderTarget> target);
+  void updateBox(double sx, double sy, double sw, double sh);
 
 private:
   std::unique_ptr<RenderViewport_Internal> _pint = nullptr;

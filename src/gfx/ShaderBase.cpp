@@ -352,7 +352,11 @@ void ShaderBase::setLightUf(std::shared_ptr<LightManager> pLightManager) {
   Gu::getShaderMaker()->setUfBlock("UfDeferredParams", dpPtr, dpSizeBytes, false);
 }
 
-void ShaderBase::beginRaster(int iOrthoWidth, int iOrthoHeight) {
+void ShaderBase::beginRaster(std::shared_ptr<RenderViewport> vp) {
+  beginRaster(vp->getX(), vp->getY(), vp->getWidth(), vp->getHeight());
+
+}
+void ShaderBase::beginRaster(float fOrthoX, float fOrthoY, float fOrthoWidth, float fOrthoHeight) {
   Gu::getCoreContext()->pushDepthTest();
   Gu::getCoreContext()->pushCullFace();
 
@@ -361,8 +365,10 @@ void ShaderBase::beginRaster(int iOrthoWidth, int iOrthoHeight) {
 
   mat4 ident = mat4::identity();
 
+
   //Do not use w-1 or h-1 or else you'll get that weird "wiggly line" across the screen
-  mat4 _mOrthoProj = mat4::getOrtho(0, (float)iOrthoWidth, 0, (float)iOrthoHeight, -1.0f, 1.0f);
+  // Left, R, top, bot
+  mat4 _mOrthoProj = mat4::getOrtho(fOrthoX, (float)fOrthoWidth, fOrthoY, (float)fOrthoHeight, -1.0f, 1.0f);
   bind();
   setUf("_ufProj", &_mOrthoProj);
   // setUf("_ufView", &ident);

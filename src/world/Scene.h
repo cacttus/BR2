@@ -96,6 +96,7 @@ private:
   void drawBackgroundImage();
   void createFlyingCamera();
   void makeParticles();
+  void dbgl(string_t);
 };
 }//ns BR2
 

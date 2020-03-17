@@ -85,7 +85,7 @@ string_t StringUtil::uppercase(const char* _in) {
     out += toupper(in[n]);
   }
   in = out;
-  return in; 
+  return in;
 }
 bool StringUtil::isWspaceEx(int c)//iswspace with newlines and unprintable chars
 {
@@ -163,6 +163,9 @@ string_t StringUtil::getZeroPaddedNumber(int32_t number, int32_t numberOfZeros) 
 string_t StringUtil::getLeftPaddedNumber(int32_t number, int32_t numberOfChars, char padChar) {
   return getPaddedNumber(number, numberOfChars, padChar);
 }
+string_t StringUtil::floatToStr2d(float f) {
+  return StringUtil::format("%.2f", f);
+}
 /**
 *  @fn
 *  @brief
@@ -180,35 +183,42 @@ string_t StringUtil::getPaddedNumber(int32_t number, int32_t maxNumberOfChars, c
 
   nDigits = MathUtils::getNumberOfDigits(number);
 
-  if (nDigits > maxNumberOfChars)
-    if (expand)
+  if (nDigits > maxNumberOfChars) {
+    if (expand) {
       maxNumberOfChars = nDigits;
+    }
+  }
 
   // fancy printf
   cbuf = new char[maxNumberOfChars + 1];
   memset(cbuf, 0, maxNumberOfChars + 1);
 
-  if (rightAlignNumber == (bool)true)
+  if (rightAlignNumber == (bool)true) {
     snprintf(cbuf, maxNumberOfChars + 1, "%0*d", maxNumberOfChars, number);
-  else    //right pad
+  }
+  else {    //right pad
     snprintf(cbuf, maxNumberOfChars + 1, "%-0*d", maxNumberOfChars, number);
+  }
 
   ret = string_t(cbuf);
   delete[] cbuf;
 
   // replace
   if (nDigits < maxNumberOfChars) {
-    if (rightAlignNumber == (bool)true)
+    if (rightAlignNumber == (bool)true) {
       std::replace(ret.begin(), ret.begin() + (ret.length() - nDigits), '0', padChar);
-    else
+    }
+    else {
       std::replace(ret.begin() + nDigits, ret.end(), '0', padChar);
+    }
   }
   return ret;
 }
 string_t StringUtil::repeat(string_t strToRepeat, int32_t nRepeats) {
   string_t ret;
-  for (int32_t i = 0; i < nRepeats; ++i)
+  for (int32_t i = 0; i < nRepeats; ++i) {
     ret.append(strToRepeat);
+  }
   return ret;
 }
 string_t StringUtil::empty() {
@@ -299,10 +309,12 @@ string_t StringUtil::addCommasToNumber(string_t __in_ str) {
 }
 string_t StringUtil::toHex(int value, bool bIncludePrefix) {
   std::stringstream ss;
-  if (bIncludePrefix)
+  if (bIncludePrefix) {
     ss << "0x" << std::hex << value;
-  else
+  }
+  else {
     ss << std::hex << value;
+  }
   return ss.str();
 }
 string_t StringUtil::toDec(int value) {

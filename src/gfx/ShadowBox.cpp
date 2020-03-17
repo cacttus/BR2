@@ -281,7 +281,7 @@ void ShadowBox::updateAndCullAsync(CullParams& cp) {
   }
 
   // Tell the viewport we've changed
-  _pint->_pShadowBoxSide[0]->getViewport()->bind(nullptr);
+  _pint->_pShadowBoxSide[0]->getViewport()->bind();
 
 }
 void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
@@ -327,7 +327,7 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
       std::shared_ptr<MeshNode> pQuadMesh = MeshUtils::createScreenQuadMesh(_pint->_iFboWidthPixels, _pint->_iFboHeightPixels);
 
       //Blend color + position and store it in the color.
-      pDofShader->beginRaster(_pint->_iFboWidthPixels, _pint->_iFboHeightPixels);
+      pDofShader->beginRaster(0, 0, _pint->_iFboWidthPixels, _pint->_iFboHeightPixels);
       {
         pBox->beginRenderShadowBox();
         for (int iSide = 0; iSide < 6; ++iSide) {

@@ -31,7 +31,7 @@ ShadowBoxSide::ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_
   _bMustUpdate = true;
   _pLightSource = pLightSource;
 
-  _pViewport = std::make_shared<RenderViewport>(_pParentBox->getFboWidth(), _pParentBox->getFboHeight(), ViewportConstraint::Fixed);
+  _pViewport = std::make_shared<RenderViewport>(_pParentBox->getFboWidth(), _pParentBox->getFboHeight(), ViewportConstraint::Full);
 
   _pVisibleSet = std::make_shared<RenderBucket>();
   _pFrustum = std::make_unique<FrustumBase>(_pViewport, 90.0f);
@@ -43,9 +43,6 @@ ShadowBoxSide::~ShadowBoxSide() {
 //   DEL_MEM(_pVisibleSet);
 //   DEL_MEM(_pViewport);
 }
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
 void ShadowBoxSide::updateView() {
   AssertOrThrow2(_pLightSource != nullptr);
 
@@ -54,16 +51,10 @@ void ShadowBoxSide::updateView() {
     //we alter the viewport here to show shadow lines
     //around the edges which demarcate the shadow box frustum boundaries.
     int pad = 15;
-    _pViewport->setY(pad);
-    _pViewport->setX(pad);
-    _pViewport->setWidth(_pParentBox->getFboWidth() - pad * 2);
-    _pViewport->setHeight(_pParentBox->getFboHeight() - pad * 2);
+    _pViewport->updateBox(pad,pad,_pParentBox->getFboWidth() - pad * 2, _pParentBox->getFboHeight() - pad * 2);
   }
   else {
-    _pViewport->setY(0);
-    _pViewport->setX(0);
-    _pViewport->setWidth(_pParentBox->getFboWidth());
-    _pViewport->setHeight(_pParentBox->getFboHeight());
+    _pViewport->updateBox(0,0,_pParentBox->getFboWidth(), _pParentBox->getFboHeight());
   }
 
   float fNear = _pParentBox->getSmallBoxSize() * 0.5f;

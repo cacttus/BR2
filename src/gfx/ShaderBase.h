@@ -62,7 +62,8 @@ public:
   void draw(std::shared_ptr<VaoShader> vao, int32_t iCount = -1, GLenum eDrawMode = GL_TRIANGLES);
   string_t debugGetUniformValues();
 
-  void beginRaster(int iOrthoWidth, int iOrthoHeight);
+  void beginRaster(std::shared_ptr<RenderViewport> vp);
+  void beginRaster(float fOrthoX, float fOrthoY, float fOrthoWidth, float fOrthoHeight);
   void endRaster();
 
   void dispatchCompute();//Compute Shader Only
