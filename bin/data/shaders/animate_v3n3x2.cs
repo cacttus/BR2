@@ -6,7 +6,6 @@
 //bind the vertex index to a list of joint matrixes and weight indexes
 //#extension GL_ARB_enhanced_layouts : enable
 
-
 struct t_vertex_v3n3x2 {
 	vec3 v;
 		float  _pad1;
@@ -16,7 +15,6 @@ struct t_vertex_v3n3x2 {
     float _pad3;
     float _pad4;
 };
-
 // - stores the initial offset of weight/bone influences for each vertex
 // do not modify
 struct wd_in_st {
@@ -31,13 +29,11 @@ struct jw_in_st {
 	float wt;
 	float pad[2];
 };
-
 // stores a list of computed joint matrixes.
 // do not modify
 struct j_in_man_st {
 	mat4 jmat;
 };
-
 
 // - std430 is required in order to pack the data together.  the std140 qualitifer really fucks with your data as it
 // puts everything on a vec4 boundary, for example if you just have a float in your buffer the std140 would align to 4 floats with 3 extra bytes of information.
@@ -82,7 +78,6 @@ wd_in_st getWeight(uint vpos)
 // }
 void doSkin(wd_in_st weight, inout vec3 in_v, inout vec3 in_n)
 {
-
 	vec4 vtmp = vec4(in_v,1);
 	vec4 ntmp = vec4(in_v + in_n,1);//Turn normal into a point
 	vec4 vt = vec4(0,0,0,0);
@@ -114,8 +109,7 @@ void doSkin(wd_in_st weight, inout vec3 in_v, inout vec3 in_n)
 
 void main()
 {
-	// get the position of the vertex
-
+	// get the position of the vertex via work group
 	uint vpos = 
 	gl_GlobalInvocationID.z*gl_NumWorkGroups.z*gl_NumWorkGroups.z + 
 	gl_GlobalInvocationID.y*gl_NumWorkGroups.y + 
@@ -126,12 +120,11 @@ void main()
 	vec3 in_n = getNormal(vpos);
 	wd_in_st wt = getWeight(vpos);
 	
-	// - Do some skin
+	// - Apply skin matrices
 	doSkin(wt,in_v,in_n);
 
 	// - STORE VERT
 	setVertex(vpos,in_v);
 	setNormal(vpos,in_n);
-
 }
 

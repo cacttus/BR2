@@ -261,7 +261,6 @@ void World25::loadWorld() {
 void World25::createHandCursor() {
   std::shared_ptr<ModelSpec> ms;
   std::shared_ptr<WorldObj> s;
-  //////////////////////////////////////////////////////////////////////////
   std::shared_ptr<ModelNode> wo;
   /*
   find chest
@@ -276,7 +275,11 @@ void World25::createHandCursor() {
   */
   //makeObj("cuddles_01b", vec3(-6, 0, 6), vec3(0.6f, 0.6f, 0.6f), "cuddles_01b.Idle");
 
-  makeObj("skeledug", vec3(BottleUtils::getCellWidth(), BottleUtils::getCellHeight() * 8, BottleUtils::getCellWidth()));
+  auto skel = makeObj("skeledug", vec3(BottleUtils::getCellWidth(), BottleUtils::getCellHeight() * 8, BottleUtils::getCellWidth()));
+  getScene()->attachChild(skel);
+  skel->playAction(Stz "skeledug.Idle");
+
+
   //   makeObj("grave_0", vec3(-10, 0, -10), vec3(1.2f, 1.2f, 1.2f), vec4(0, 1, 0, 0), "");
   //   wo = makeObj("chest_0", vec3(10, 0, -10), vec3(0.8f, 0.8f, 0.8f), vec4(0, 1, 0, 0), "");
   //   //*Chest "open" animation.
@@ -631,7 +634,8 @@ void World25::postGenerateNodes() {
 }
 void World25::drawDeferred(RenderParams& rp) {
   Perf::pushPerf();
-  drawSky(rp);
+  //drawSky(rp);
+
   drawWorldDeferred(rp);
   Perf::popPerf();
 }

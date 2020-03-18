@@ -17,7 +17,7 @@ namespace BR2 {
 class ShadowBox_Internal;
 class ShadowBox : public VirtualMemoryShared<ShadowBox> {
 public:
-  ShadowBox(std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight, bool bShadowMapEnabled);
+  ShadowBox(std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight);
   virtual ~ShadowBox() override;
   void init();
   void updateAndCullAsync(CullParams& rp);

@@ -37,6 +37,7 @@ void ShaderMaker::initialize() {
   _pShadowBlendShader = makeShader(std::vector<string_t> {"v2x2_shadow_blend.vs", "v2x2_shadow_blend.ps" });
   _pDepthOfField = makeShader(std::vector<string_t> {"v3x2_depth_of_field.vs", "v3x2_depth_of_field.ps" });
   _pSmoothGen = makeShader(std::vector<string_t> {"v3x2_smooth_gen.vs", "v3x2_smooth_gen.ps" });
+  
   //Multiple VT shaders
   _pShadowShaders.insert(std::make_pair(v_v3::getVertexFormat(), makeShader(std::vector<string_t> {"v3_shadowmap.vs", "v3_shadowmap.ps" })));
   _pShadowShaders.insert(std::make_pair(v_v3x2::getVertexFormat(), makeShader(std::vector<string_t> {"v3x2_shadowmap.vs", "v3x2_shadowmap.ps" })));
@@ -53,9 +54,8 @@ void ShaderMaker::initialize() {
   _pFlatShaders.insert(std::make_pair(v_v2c4::getVertexFormat(), makeShader(std::vector<string_t> { "f_v2c4_flat.vs", "f_v2c4_flat.ps" })));
   _pFlatShaders.insert(std::make_pair(v_v3c4::getVertexFormat(), makeShader(std::vector<string_t> { "f_v3c4_flat.vs", "f_v3c4_flat.ps" })));
 
-  //_pGuiShader = makeShader(std::vector<t_string> { "f_v2c4x2_gui.vs", "f_v2c4x2_gui.ps" });
+   _pSkinComputeShader = makeShader(std::vector<std::string> { "animate_v3n3x2.cs" });
   _pGuiShader = makeShader(std::vector<string_t> { "f_gui.vs", "f_gui.gs", "f_gui.ps" });
-
 
   //////////////////////////////////////////////////////////////////////////
   getComputeLimits();

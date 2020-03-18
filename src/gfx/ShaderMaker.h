@@ -34,7 +34,7 @@ public:
   std::shared_ptr<ShaderBase> getShadowShader(std::shared_ptr<VertexFormat> fmt);
 
   std::shared_ptr<ShaderBase> getImageShader_F() { return _pImageShader; }
-  //  std::shared_ptr<ShaderBase> getSkinComputeShader() { return _pSkinComputeShader; }
+  std::shared_ptr<ShaderBase> getSkinComputeShader() { return _pSkinComputeShader; }
   std::shared_ptr<ShaderBase> getNormalsShader_v3n3() { return _pNormalsShader; }
   std::shared_ptr<ShaderBase> getShadowBlendShader() { return _pShadowBlendShader; }
   std::shared_ptr<ShaderBase> getDepthOfFieldShader() { return _pDepthOfField; }
@@ -77,6 +77,7 @@ protected:
   std::shared_ptr<ShaderBase> _pShadowBlendShader = nullptr;
   std::shared_ptr<ShaderBase> _pSmoothGen = nullptr;
   std::shared_ptr<ShaderBase> _pDepthOfField = nullptr;
+  std::shared_ptr<ShaderBase> _pSkinComputeShader = nullptr;
   ShaderMap _pShadowShaders;
   ShaderMap _pDiffuseShaders;
   ShaderMap _pGlassShaders;

@@ -175,13 +175,13 @@ void Scene::update(float delta) {
     pts.clear();
     float m = 0.5f;
     pts = std::vector({
-      vec3(0,0,-m), //pt
-      vec3(m * 1.5,0,-m),
-      vec3(m * 1.5,0,m),
+      vec3(0,0,-m),//pt
+      vec3(m * 1.5f,0,-m),
+      vec3(m * 1.5f,0,m),
       vec3(0,0,m), //pt
-      vec3(-m * 1.5,0,m),
-      vec3(-m * 1.5,0,-m),
-      vec3(0,0,-m)//pt
+      vec3(-m * 1.5f,0,m),
+      vec3(-m * 1.5f,0,-m),
+      vec3(0,0,-m) //pt
       });
     spline = std::make_shared<CubicBezierSpline>(pts, false, false);
     path = std::make_shared<Path>("Path", spline, 3.2f, 0.0f);
@@ -225,10 +225,6 @@ void Scene::update(float delta) {
 
   SceneNode::update(delta, std::map<Hash32, std::shared_ptr<Animator>>());
 }
-//void Scene::cull(CullParams& cp) {
-//  SceneNode::cull(cp);
-//}
-
 void Scene::idle(int64_t us) {
 }
 std::shared_ptr<GLContext> Scene::getContext() {
@@ -268,7 +264,7 @@ void Scene::createFlyingCamera() {
   float nh = BottleUtils::getNodeHeight();
   float nw = BottleUtils::getNodeWidth();
   _pDefaultCamera->setPos(std::move(vec3(0, nh + nh * 0.5f, 0)));
-  _pDefaultCamera->lookAt(std::move(vec3(nw * 0.5, nh+BottleUtils::getCellHeight()*2, nw * 0.5)));
+  _pDefaultCamera->lookAt(std::move(vec3(nw * 0.5f, nh+BottleUtils::getCellHeight()*2, nw * 0.5f)));
 
 #else
   //Sort of also a scripting test.
@@ -369,7 +365,7 @@ void Scene::drawForward(RenderParams& rp) {
   //  std::shared_ptr<SceneNode> pm = p.second;
   //  pm->drawForward(rp);
   //}
-
+        
   SceneNode::drawForward(rp);
 }
 void Scene::drawBackgroundImage() {
@@ -476,29 +472,6 @@ void Scene::drawDebugText() {
 void Scene::updateWidthHeight(int32_t w, int32_t h, bool bForce) {
   _pUiScreen->screenChanged(w, h);
 }
-//std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms) {
-//  std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms);
-//  mn->update(0.0, std::map<Hash32, std::shared_ptr<Animator>>());
-//
-//  attachChild(mn);
-//
-//  return mn;
-//}
-//std::shared_ptr<ModelNode> Scene::createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action) {
-//  std::shared_ptr<ModelNode> mn = createObj(ms);
-//
-//  mn->stopAllActions();
-//  if (StringUtil::isNotEmpty(action)) {
-//    mn->playAction(action);
-//  }
-//
-//  mn->setScale(std::move(scale));
-//  mn->setRot(std::move(rot));
-//  mn->setPos(std::move(pos));
-//
-//  return mn;
-//}
-
 std::shared_ptr<TreeNode> Scene::attachChild(std::shared_ptr<TreeNode> pChild, bool bValidate) {
   std::shared_ptr<PhysicsNode> casted = std::dynamic_pointer_cast<PhysicsNode>(pChild);
   if (casted != nullptr) {

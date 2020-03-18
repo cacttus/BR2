@@ -22,19 +22,12 @@ std::shared_ptr<ModelNode> WorldObj::createInstance(std::shared_ptr<World25> pWo
   std::shared_ptr<ModelSpec> ms = getOrLoadModel();
   if (ms != nullptr) {
     vec3 vScale = boxFit(ms, _vBoxFit);
-    
-    //Does nothing
-    //vec3 vPos;
-    //vec4 vRot;
-    //place(r3Pos, vPos, vRot);
 
-
-    std::shared_ptr<ModelNode> mn = std::make_shared<ModelNode>(ms->getName(), ms);
-    mn->setScale(vScale);
+    std::shared_ptr<ModelNode> mn = ModelNode::create(ms->getName(), ms);
+    mn->setScale(vec3(.24,.24,.24));
+    mn->setPos(std::move(r3Pos));
 
     return mn;
-    //mn->setPos(vPos);
-    //mn->setRot(vRot);
   }
   else {
     BRLogError("Failed to load model.");

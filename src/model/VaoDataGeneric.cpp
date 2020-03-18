@@ -159,7 +159,6 @@ VaoDataGeneric::~VaoDataGeneric() {
    //}
   _mapVaoShaders.clear();
 }
-///////////////////////////////////////////////////////////////////
 void VaoDataGeneric::allocate(size_t vcount, size_t icount) {
   if (!_pVboData->isAllocated()) {
     _pVboData->allocate(vcount);
@@ -168,6 +167,17 @@ void VaoDataGeneric::allocate(size_t vcount, size_t icount) {
   if (!_pIboData->isAllocated()) {
     _pIboData->allocate(icount);
   }
+}
+void VaoDataGeneric::copyFrom(std::shared_ptr<VaoDataGeneric> v) {
+  char* verts = new char[v->getVbo()->getNumElements() * v->getVbo()->getEleSize()];
+  v->getVbo()->copyDataServerClient(v->getVbo()->getNumElements(), (void*)verts);
+  char* inds = new char[v->getVbo()->getNumElements() * v->getVbo()->getEleSize()];
+  v->getIbo()->copyDataServerClient(v->getIbo()->getNumElements(), (void*)inds);
+
+  fillData(verts, v->getVbo()->getNumElements(), inds, v->getIbo()->getNumElements());
+
+  delete[] verts;
+  delete[] inds;
 }
 void VaoDataGeneric::fillData(const void* verts, size_t vcount, const void* inds, size_t icount) {
   allocate(vcount, icount);

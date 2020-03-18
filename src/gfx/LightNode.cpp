@@ -75,7 +75,7 @@ void LightNodeDir::init() {
 
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
   _pShadowFrustum = std::make_shared<ShadowFrustum>(std::dynamic_pointer_cast<LightNodeDir>(shared_from_this()),
-    iShadowMapRes, iShadowMapRes, getIsShadowsEnabled());    //TEST
+    iShadowMapRes, iShadowMapRes);    //TEST
   _pShadowFrustum->init();
   _pShadowFrustum->getFrustum()->setZFar(500);
 
@@ -91,32 +91,38 @@ void LightNodeDir::setMaxDistance(float f) {
 void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   LightNodeBase::update(delta, mapAnimators);
 }
-void LightNodeDir::cullShadowVolumesAsync(CullParams& cp) {
-  if (isHidden() == true) {
-    return;
-  }
-  Perf::pushPerf();
-  {
-    if (_pShadowFrustum != nullptr) {
+std::future<bool> LightNodeDir::cullShadowVolumesAsync(CullParams& cp) {
+  //*Remove this.  It needs to be on the RenderBucket itself, per-frustum
+
+  /*
+
+      */
+  std::future<bool> fut = std::async(std::launch::async, [&] {
+    Perf::pushPerf();
+    {
+
       _pShadowFrustum->updateAndCullAsync(cp);
+
+      _vDir = (getLookAt() - getFinalPos()).normalized();
+      vec3 vUp = vec3(0, 1, 0);
+      _vRight = (vUp.cross(_vDir)).normalized();
+      _vUp = (_vDir.cross(_vRight)).normalized();
+
+      //update
+      _pGpuLight->_vPos = getFinalPos();
+      _pGpuLight->_vDir = _vDir;
+      _pGpuLight->_fMaxDistance = _pShadowFrustum->getFrustum()->getZFar();
+      _pGpuLight->_vDiffuseColor = _color;
+      _pGpuLight->_fLinearAttenuation = 0.0f;
+      _pGpuLight->_mView = *_pShadowFrustum->getViewMatrixPtr();
+      _pGpuLight->_mProj = *_pShadowFrustum->getProjMatrixPtr();
+      _pGpuLight->_mPVB = *_pShadowFrustum->getPVBPtr();
     }
+    Perf::popPerf();
 
-    _vDir = (getLookAt() - getFinalPos()).normalized();
-    vec3 vUp = vec3(0, 1, 0);
-    _vRight = (vUp.cross(_vDir)).normalized();
-    _vUp = (_vDir.cross(_vRight)).normalized();
-
-    //update
-    _pGpuLight->_vPos = getFinalPos();
-    _pGpuLight->_vDir = _vDir;
-    _pGpuLight->_fMaxDistance = _pShadowFrustum->getFrustum()->getZFar();
-    _pGpuLight->_vDiffuseColor = _color;
-    _pGpuLight->_fLinearAttenuation = 0.0f;
-    _pGpuLight->_mView = *_pShadowFrustum->getViewMatrixPtr();
-    _pGpuLight->_mProj = *_pShadowFrustum->getProjMatrixPtr();
-    _pGpuLight->_mPVB = *_pShadowFrustum->getPVBPtr();
-  }
-  Perf::popPerf();
+    return true;
+    });
+  return fut;
 }
 bool LightNodeDir::renderShadows(std::shared_ptr<ShadowFrustum> pf) {
   //**Update shadow map frustum.
@@ -137,7 +143,7 @@ void LightNodeDir::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float ext
 LightNodePoint::LightNodePoint(string_t name, bool bShadowBox) : LightNodeBase(name, bShadowBox) {
 }
 std::shared_ptr<LightNodePoint> LightNodePoint::create(string_t name, bool bhasShadowBox) {
-  std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(name,bhasShadowBox);
+  std::shared_ptr<LightNodePoint> lp = std::make_shared<LightNodePoint>(name, bhasShadowBox);
   lp->init();
   lp->_pSpec = std::make_shared<BaseSpec>("*LightNodePoint");
   return lp;
@@ -161,36 +167,37 @@ void LightNodePoint::init() {
   _pGpuLight = std::make_shared<GpuPointLight>();
 
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowBox = std::make_shared<ShadowBox>(std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes, getIsShadowsEnabled());    //TEST
+  _pShadowBox = std::make_shared<ShadowBox>(std::dynamic_pointer_cast<LightNodePoint>(shared_from_this()), iShadowMapRes, iShadowMapRes);    //TEST
   _pShadowBox->init();
 
 }
 void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) {
   LightNodeBase::update(delta, mapAnimators);
 }
-void LightNodePoint::cullShadowVolumesAsync(CullParams& cp) {
-  if (isHidden() == true) {
-    return;
-  }
-  Perf::pushPerf();
-  {
-    if (_pShadowBox != nullptr) {
+std::future<bool> LightNodePoint::cullShadowVolumesAsync(CullParams& cp) {
+  //*Remove this.  It needs to be on the RenderBucket itself, per-frustum
+  std::future<bool> fut = std::async(std::launch::async, [&] {
+    Perf::pushPerf();
+    {
       _pShadowBox->updateAndCullAsync(cp);
+
+      updateFlicker();
+
+      //update
+      _pGpuLight->_vPos = getFinalPos();
+      _pGpuLight->_fRadius = _fRadius;
+      _pGpuLight->_vDiffuseColor = _color;
     }
-    updateFlicker();
-
-    //update
-    _pGpuLight->_vPos = getFinalPos();
-    _pGpuLight->_fRadius = _fRadius;
-    _pGpuLight->_vDiffuseColor = _color;
-
-  }
-  Perf::popPerf();
+    Perf::popPerf();
+    return true;
+  });
+  return fut;
 }
 bool LightNodePoint::renderShadows(std::shared_ptr<ShadowBox> pf) {
   //**Update shadow map frustum.
-
-  _pShadowBox->renderShadows(pf);
+  if (getIsShadowsEnabled()) {
+    _pShadowBox->renderShadows(pf);
+  }
 
   return true;
 }

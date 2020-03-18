@@ -140,9 +140,9 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePat
   //These are here SOLELY for shadow map blending.
   //If we don't do any shadow blending then these are useless.
   int32_t iShadowMapRes = Gu::getEngineConfig()->getShadowMapResolution();
-  _pShadowBoxFboMaster = std::make_shared<ShadowBox>(nullptr, iShadowMapRes, iShadowMapRes, true);
+  _pShadowBoxFboMaster = std::make_shared<ShadowBox>(nullptr, iShadowMapRes, iShadowMapRes);
   _pShadowBoxFboMaster->init();
-  _pShadowFrustumMaster = std::make_shared<ShadowFrustum>(nullptr, iShadowMapRes, iShadowMapRes, true);
+  _pShadowFrustumMaster = std::make_shared<ShadowFrustum>(nullptr, iShadowMapRes, iShadowMapRes);
   _pShadowFrustumMaster->init();
 
   if (StringUtil::isNotEmpty(strEnvTexturePath)) {
@@ -192,7 +192,12 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
     BRLogError("Tried to render something while another render was currently in progress.");
     return;
   }
-
+  /*
+  LightNode->getCullParams()
+    std::vector<std::shared_ptr<RenderBucket>> buckets;
+  buckets.push_back(_pShadowFrustum->getCullParams())
+    CullParams->cullAsync
+    */
   //Cull objects
   //CullParams cparm;
   //cparm.setFrustum(cam->getFrustum());
@@ -212,6 +217,20 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
   //    toDraw->cull(cparm);
   //  }
   //}
+  /*
+  //*************THIS
+      std::vector<future> futs
+    foreach light {
+      futs.push_back(light->updateandcullasync())
+    }
+    //Fence
+    foreach(fut in futs){
+      fut.wait();
+    }
+
+  */
+
+
 
   _bRenderInProgress = true;
   {

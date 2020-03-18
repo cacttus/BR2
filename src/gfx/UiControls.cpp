@@ -3221,6 +3221,11 @@ void UiScreen::screenChanged(uint32_t uiWidth, uint32_t uiHeight) {
 }
 void UiScreen::drawForward() {
   RenderParams rp;
+  rp.setCamera(getWindow()->getScene()->getActiveCamera());
+  if (rp.getCamera() == nullptr) {
+    BRLogError("Scene ActiveCamera was not set (for UI Screen).");
+    return;
+  }
   Box2f b = getGLRasterQuad();
   drawForward(rp, b);
 }

@@ -411,6 +411,7 @@ public:
 };
 
 
+//TODO: Make this "CullBucket"
 class CullParams : public VirtualMemoryShared <CullParams> {
 public:
   //void setFrustum(std::shared_ptr<FrustumBase> fb) { _pFrustum = fb; }
@@ -422,6 +423,10 @@ public:
   float getMaxObjectDistance() { return _maxObjectDistance; }
   void setRenderBucket(std::shared_ptr<RenderBucket> r) { _pRenderBucket = r; }
   std::shared_ptr<RenderBucket> getRenderBucket() { return _pRenderBucket; }
+
+  ///TODO:
+  // std::future<bool> cullAsync(std::shared_ptr<PhysicsWorld> physics);
+
 private:
   //std::shared_ptr<FrustumBase>_pFrustum = nullptr;
   std::shared_ptr<CameraNode> _pCamera = nullptr;

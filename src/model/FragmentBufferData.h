@@ -13,7 +13,7 @@
 namespace BR2 {
 /**
 *  @class FragmentBufferData
-*  @brief Fragment Buffer Data. Stores vertexes (fragments) in a flexible buffer allowing multiple vertex formats.
+*  @brief Fragment Buffer Data. Stores CPU-side fragments in a flexible interleaved buffer allowing multiple vertex formats.
 */
 class FragmentBufferData : public VirtualMemory {
 public:

@@ -331,6 +331,7 @@ void BottleScript::testDraw2d() {
 }
 void BottleScript::toggleDebug(std::shared_ptr<InputManager> pFingers) {
 #define TOGGLECD(y, x) if(pFingers->keyPress(y)) { ((x) = (!x)); }
+#define TOGGLECD_CTL(y, x) if(pFingers->keyPress(y,KeyMod::Ctrl)) { ((x) = (!x)); }
   if (pFingers->modsHeld(KeyMod::Ctrl | KeyMod::AltDontCare | KeyMod::ShiftDontCare)) {
     //CTRL + x
     //This is not recommended for the future.
@@ -342,6 +343,7 @@ void BottleScript::toggleDebug(std::shared_ptr<InputManager> pFingers) {
   }
   else if (pFingers->modsHeld(KeyMod::None)) {
     //NONE
+    //TODO: add this stuff to Controller, or better yet, make it part of the UI
     TOGGLECD(SDL_SCANCODE_KP_0, Gu::getRenderSettings()->getDebug()->getShadowHelpVisible());
     TOGGLECD(SDL_SCANCODE_KP_1, Gu::getRenderSettings()->getDebug()->getShowBoneBoxes());
     TOGGLECD(SDL_SCANCODE_KP_2, Gu::getRenderSettings()->getDebug()->getShowMeshBoxes());
@@ -353,6 +355,7 @@ void BottleScript::toggleDebug(std::shared_ptr<InputManager> pFingers) {
     TOGGLECD(SDL_SCANCODE_KP_7, Gu::getRenderSettings()->getDebug()->getShowModelBoundBox());
     TOGGLECD(SDL_SCANCODE_KP_8, Gu::getRenderSettings()->getDebug()->getShowShadowBox());
     TOGGLECD(SDL_SCANCODE_KP_9, Gu::getRenderSettings()->getDebug()->getShowGuiBoxesAndDisableClipping());
+    TOGGLECD_CTL(SDL_SCANCODE_KP_0, Gu::getRenderSettings()->getDebug()->getShowPaths());
 
     //World Debug
 

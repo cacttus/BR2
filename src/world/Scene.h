@@ -42,7 +42,6 @@ public:
   void setWindow(std::shared_ptr<GraphicsWindow> x) { _pGraphicsWindow = x; }
   void setActiveCamera(std::shared_ptr<CameraNode> x);
 
-  //virtual void cull(CullParams& cp) override;
   virtual void drawDeferred(RenderParams& rp) override;
   virtual void drawForward(RenderParams& rp)override;
   virtual void drawShadow(RenderParams& rp) override;
@@ -51,14 +50,11 @@ public:
   virtual void drawTransparent(RenderParams& rp) override; //These come after the way after, the very end
   virtual void drawUI(RenderParams& rp) override;
 
-  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild, bool b = true) override;
+  virtual std::shared_ptr<TreeNode> attachChild(std::shared_ptr<TreeNode> pChild, bool bValidate = true) override;
   virtual bool detachChild(std::shared_ptr<TreeNode> pChild) override;
 
   void afterAttachedToWindow();
   uint64_t getFrameNumber();
-
-  //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms);
-  //std::shared_ptr<ModelNode> createObj(std::shared_ptr<ModelData> ms, vec3& pos, vec4& rot, vec3& scale, std::string action);
 
 private:
   bool _bDebugDisableCull = false;

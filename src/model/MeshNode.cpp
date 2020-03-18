@@ -81,11 +81,8 @@ void MeshNode::init() {
   if (getMeshSpec()->hasSkin()) {
     createSkin();
   }
-
 }
-
 std::shared_ptr<MeshSpec> MeshNode::getMeshSpec() { return std::dynamic_pointer_cast<MeshSpec>(SceneNode::getSpec()); }
-
 void MeshNode::printDataToStdout() {
   GpuAnimatedMeshWeightData* wdat = new GpuAnimatedMeshWeightData[getMeshSpec()->getWeightOffsetsGpu()->getNumElements()];
   getMeshSpec()->getWeightOffsetsGpu()->copyDataServerClient(getMeshSpec()->getWeightOffsetsGpu()->getNumElements(), wdat);
@@ -133,11 +130,15 @@ void MeshNode::createSkin() {
     }
   }
 
-  //  _pSkinCompute = new GpuComputeSync(Gu::getGraphicsContext());
+  _pSkinCompute = std::make_shared<GpuComputeSync>(Gu::getCoreContext());
 
   _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshSkinMatrix));
   _pArmJoints->allocate(iOrdCount);
   _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
+
+  //Copy the Spec's VAO data.  We need this in order to skin the model.
+  _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getCoreContext(), getMeshSpec()->getVaoData()->getVertexFormat());
+  _pVaoData->copyFrom(getMeshSpec()->getVaoData()); 
 
   orderBoneNodesForGpu();
 }
@@ -181,27 +182,23 @@ void MeshNode::orderBoneNodesForGpu() {
 }
 void MeshNode::computeAndDispatchSkin() {
   if (getMeshSpec()->hasSkin()) {
-    //  if (!_pSkinCompute->isDispatched() || _pSkinCompute->isComputeComplete()) {
-
-    if (false) {
-      printDataToStdout();
+    if (!_pSkinCompute->isDispatched() || _pSkinCompute->isComputeComplete()) {
+      if (false) {
+        printDataToStdout();
+      }
+      computeSkinFrame();
     }
-
-    computeSkinFrame();
-    // }
   }
-
 }
 void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) {
   SceneNode::update(delta, pAnimator);
 }
-
 void MeshNode::computeSkinFrame() {
   Perf::pushPerf();
   Gu::getCoreContext()->chkErrDbg();
   copyJointsToGpu();
   Perf::popPerf();
-  // dispatchSkinCompute();
+  dispatchSkinCompute();
 }
 void MeshNode::copyJointsToGpu() {
   Perf::pushPerf();
@@ -227,47 +224,43 @@ void MeshNode::copyJointsToGpu() {
   _pArmJoints->copyDataClientServer(mats.size(), mats.data());
   Perf::popPerf();
 }
-//void MeshNode::dispatchSkinCompute() {
-//    Gu::getGraphicsContext()->chkErrDbg();
-//
-//    std::shared_ptr<ShaderBase> pSkinShader = Gu::getShaderMaker()->getSkinComputeShader();
-//    AssertOrThrow2(pSkinShader != nullptr);
-//    pSkinShader->bind();
-//
-//    AssertOrThrow2(getMeshSpec()->getWeightOffsetsGpu() != nullptr);
-//    AssertOrThrow2(getMeshSpec()->getWeightsGpu() != nullptr);
-//    AssertOrThrow2(_pArmJoints != nullptr);
-//    AssertOrThrow2(getMeshSpec()->getVertsGpu() != nullptr);
-//    AssertOrThrow2(_pVaoData->getVbo() != nullptr);
-//    /*
-//    okay so each GPU has BLOCKs and BINDING POINTS
-//    binding poitns are particular to the program.  you specify them with layout(binding=..
-//    BLOCKS are specific to the GPU.  only the GPU can specify a BLOCK for you.  And YOU have to map the
-//    BINDIGN POINTS to the BLOCKS by calling glShaderSTorageBlockBinding
-//    */
-//    pSkinShader->bindSsbo(getMeshSpec()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
-//    //    Gu::checkErrorsDbg();
-//    pSkinShader->bindSsbo(getMeshSpec()->getWeightsGpu(), "ssInJointWeights", 1);
-//    //   Gu::checkErrorsDbg();
-//    pSkinShader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
-//    //   Gu::checkErrorsDbg();
-//    pSkinShader->bindSsbo(getMeshSpec()->getVertsGpu(), "v_v3n3x2_buf_in", 3);
-//    //  Gu::checkErrorsDbg();
-//    pSkinShader->bindSsbo(_pVaoData->getVbo(), "v_v3n3x2_buf_out", 4);
-//    // Gu::checkErrorsDbg();
-//
-//    pSkinShader->dispatchCompute(getMeshSpec()->getVertsGpu()->getNumElements(), 1, 1, _pSkinCompute);
-//    _pSkinCompute->isComputeComplete();
-//    //  Gu::checkErrorsDbg();
-//      //while(!){
-//      //    int nnn=0;
-//      //    nnn++;
-//      //}
-//
-//    if(false){
-//        printFragmentsToStdout();
-//    }
-//}
+void MeshNode::dispatchSkinCompute() {
+  Gu::getCoreContext()->chkErrDbg();
+
+  std::shared_ptr<ShaderBase> pSkinShader = Gu::getShaderMaker()->getSkinComputeShader();
+  AssertOrThrow2(pSkinShader != nullptr);
+  pSkinShader->bind();
+
+  AssertOrThrow2(getMeshSpec()->getWeightOffsetsGpu() != nullptr);
+  AssertOrThrow2(getMeshSpec()->getWeightsGpu() != nullptr);
+  AssertOrThrow2(_pArmJoints != nullptr);
+  AssertOrThrow2(getMeshSpec()->hasFrags());
+  AssertOrThrow2(_pVaoData->getVbo() != nullptr);
+
+  /*
+  okay so each GPU has BLOCKs and BINDING POINTS
+  binding poitns are particular to the program.  you specify them with layout(binding=..
+  BLOCKS are specific to the GPU.  only the GPU can specify a BLOCK for you.  And YOU have to map the
+  BINDIGN POINTS to the BLOCKS by calling glShaderSTorageBlockBinding
+  */
+  pSkinShader->bindSsbo(getMeshSpec()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
+  Gu::checkErrorsDbg();
+  pSkinShader->bindSsbo(getMeshSpec()->getWeightsGpu(), "ssInJointWeights", 1);
+  Gu::checkErrorsDbg();
+  pSkinShader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
+  Gu::checkErrorsDbg();
+  pSkinShader->bindSsbo(getMeshSpec()->getVaoData()->getVbo(), "v_v3n3x2_buf_in", 3);
+  Gu::checkErrorsDbg();
+  pSkinShader->bindSsbo(_pVaoData->getVbo(), "v_v3n3x2_buf_out", 4);
+  Gu::checkErrorsDbg();
+
+  pSkinShader->dispatchCompute((int32_t)_pVaoData->getVbo()->getNumElements(), (int32_t)1, (int32_t)1, _pSkinCompute);
+  _pSkinCompute->isComputeComplete();
+
+  if (false) {
+    printDataToStdout();
+  }
+}
 void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
   //debug
   std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
@@ -298,10 +291,12 @@ void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
   }
   if (mg->getSpec()->getParentType() == ParentType::e::Bone) {
     static int n = 0;
-    if (n == 0)
-      mat_mesh = mg->getLocal();;// * mat_model_world;
-    if (n == 1)
-      mat_mesh = mat4::identity();;// * mat_model_world;
+    if (n == 0) {
+      mat_mesh = mg->getLocal();// * mat_model_world
+    }
+    if (n == 1) {
+      mat_mesh = mat4::identity();// * mat_model_world;
+    }
   }
   else {
     mat_mesh = mg->getLocal();
@@ -396,7 +391,7 @@ void MeshNode::bindSkin(std::shared_ptr<ShaderBase> shader) {
     shader->bindSsbo(getMeshSpec()->getWeightsGpu(), "ssInJointWeights", 1);
     //   Gu::checkErrorsDbg();
     shader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
-    wc = 1;
+    wc = 1;//This appears only to be a conditional wc>0 
   }
   shader->setUf("_ufWeightCount", (void*)&wc);
 }

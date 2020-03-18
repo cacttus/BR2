@@ -41,9 +41,8 @@ public:
   std::shared_ptr<MeshNode> _pScreenQuadMesh = nullptr;
   bool _bMustUpdate = false;
   bool _bForceUpdate = false;
-  bool _bShadowMapEnabled = false;
 
-  ShadowBox_Internal(std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled);
+  ShadowBox_Internal(std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight);
   ~ShadowBox_Internal();
   void deleteFbo();
   void createFbo();
@@ -51,8 +50,7 @@ public:
   void smoothShadows();
 
 };
-ShadowBox_Internal::ShadowBox_Internal(std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
-  _bShadowMapEnabled = bShadowMapEnabled;
+ShadowBox_Internal::ShadowBox_Internal(std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight) {
   _vCachedLastPos = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
   _fCachedLastRadius = FLT_MAX;
   _iFboHeightPixels = iFboHeight;
@@ -71,9 +69,6 @@ ShadowBox_Internal::~ShadowBox_Internal() {
   }
 }
 void ShadowBox_Internal::createFbo() {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
   deleteFbo();
 
   RenderUtils::debugGetRenderState();
@@ -153,10 +148,6 @@ void ShadowBox_Internal::createFbo() {
 
 }
 void ShadowBox_Internal::deleteFbo() {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
-
   if (_glFrameBufferId != 0) {
     std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glDeleteFramebuffers(1, &_glFrameBufferId);
   }
@@ -217,8 +208,8 @@ void ShadowBox_Internal::smoothShadows() {
 #pragma endregion
 
 #pragma region ShadowBox
-ShadowBox::ShadowBox(std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
-  _pint = std::make_unique<ShadowBox_Internal>(pLightSource, iFboWidth, iFboHeight, bShadowMapEnabled);
+ShadowBox::ShadowBox(std::shared_ptr<LightNodePoint> pLightSource, int32_t iFboWidth, int32_t iFboHeight) {
+  _pint = std::make_unique<ShadowBox_Internal>(pLightSource, iFboWidth, iFboHeight);
 }
 ShadowBox::~ShadowBox() {
   _pint = nullptr;
@@ -231,7 +222,7 @@ GLuint ShadowBox::getGlTexId() { return _pint->_glShadowCubeMapId; }
 
 void ShadowBox::init() {
   for (int i = 0; i < 6; ++i) {
-    _pint->_pShadowBoxSide[i] = std::make_shared<ShadowBoxSide>(shared_from_this(), _pint->_pLightSource, (BoxSide::e)i, _pint->_bShadowMapEnabled);
+    _pint->_pShadowBoxSide[i] = std::make_shared<ShadowBoxSide>(shared_from_this(), _pint->_pLightSource, (BoxSide::e)i);
   }
   _pint->createFbo();
 
@@ -316,9 +307,6 @@ void ShadowBox::debugRender(RenderParams& rp) {
 
 
 void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
   //Here we can do shadowmap operations.
 
   if (pBox->getGlTexId() != 0) {
@@ -393,9 +381,6 @@ void ShadowBox::updateScreenQuad() {
 }
 
 void ShadowBox::beginRenderShadowBox() {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
   //Gd::verifyRenderThread();
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pint->_glFrameBufferId);
   Gu::checkErrorsDbg();
@@ -407,9 +392,6 @@ void ShadowBox::beginRenderShadowBox() {
   Gu::checkErrorsDbg();
 }
 void ShadowBox::beginRenderSide(BoxSide::e side) {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
   //Gd::verifyRenderThread();
   GLenum glSide = (GLenum)BoxUtils::cubeSideToGlCubeMapEnum(side);
 
@@ -438,17 +420,10 @@ void ShadowBox::beginRenderSide(BoxSide::e side) {
   //Note: we enable/disable everything in the lightmanager before rendering
 }
 void ShadowBox::endRenderSide() {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
   Gu::checkErrorsDbg();
 
 }
 void ShadowBox::endRenderShadowBox() {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
-
   //Gd::verifyRenderThread();
   glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);

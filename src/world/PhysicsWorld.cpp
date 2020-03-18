@@ -1403,7 +1403,7 @@ void PhysicsWorld::sweepGridFrustum_r(std::function<void(ivec3&)> func, std::sha
 //            }
 //        }
 //    }
-//}
+//}visible
 std::shared_ptr<PhysicsNode> PhysicsWorld::findNode(string_t specName) {
   //Returns the FIRST node by the given spec name.
   Hash32 h = STRHASH(specName);

@@ -13,6 +13,8 @@ namespace BR2 {
 class RenderDebug : public VirtualMemoryShared<RenderDebug> {
 public:
   bool& getShadowHelpVisible() { return _bShadowHelpVisible; }
+  bool& getShowPaths() { return _bShowPaths; }
+  bool& getShowPathControlPoints() { return _bShowPathControlPoints; }
   bool& getShowBoneBoxes() { return _bShowBoneBoxes; }
   bool& getShowMeshBoxes() { return _bShowMeshBoxes; }
   bool& getShowNormals() { return _bShowNormals; }
@@ -24,6 +26,7 @@ public:
   bool& getShowGuiBoxesAndDisableClipping() { return _bShowGuiBoxes; }
   bool& getPickGui() { return _bPickGui; }
 private:
+  bool _bShowPaths = false;
   bool _bShadowHelpVisible = false;
   bool _bShowBoneBoxes = false;
   bool _bShowMeshBoxes = false;
@@ -35,6 +38,7 @@ private:
   bool _bShowShadowBox = false;
   bool _bShowGuiBoxes = false;
   bool _bPickGui = false;
+  bool _bShowPathControlPoints = false;
 };
 /**
 *  @class RenderSettings

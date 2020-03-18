@@ -45,6 +45,7 @@ public:
   VaoDataGeneric(std::shared_ptr<GLContext> ctx, std::shared_ptr<VertexFormat> vf);
   virtual ~VaoDataGeneric() override;
 
+  void copyFrom(std::shared_ptr<VaoDataGeneric> v);
   std::shared_ptr<VboData> getVbo() { return _pVboData; }
   std::shared_ptr<IboData> getIbo() { return _pIboData; }
   const std::shared_ptr<VertexFormat> getVertexFormat() { return _pVertexInfo; }

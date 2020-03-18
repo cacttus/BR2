@@ -45,9 +45,8 @@ public:
   std::shared_ptr<RenderBucket> _pVisibleSet;
   std::shared_ptr<RenderBucket> _pLastSet;//TODO: check vs current set _bShadowDirty in BvhNOde
   //bool _bMustUpdate;
-  bool _bShadowMapEnabled = false;
 
-  ShadowFrustum_Internal(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled);
+  ShadowFrustum_Internal(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight);
   ~ShadowFrustum_Internal();
   void deleteFbo();
   void createFbo();
@@ -55,8 +54,7 @@ public:
   void updateView();
   void copyAndBlendToShadowMap(std::shared_ptr<ShadowFrustum> pBox);
 };
-ShadowFrustum_Internal::ShadowFrustum_Internal(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
-  _bShadowMapEnabled = bShadowMapEnabled;
+ShadowFrustum_Internal::ShadowFrustum_Internal(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight) {
   _vCachedLastPos = vec3(FLT_MAX, FLT_MAX, FLT_MAX);
   _fCachedLastRadius = FLT_MAX;
   _iFboHeightPixels = iFboHeight;
@@ -151,9 +149,6 @@ void ShadowFrustum_Internal::updateView() {
     //_viewProjMatrix = mat4(_viewMatrix * _projMatrix).transposed();
 }
 void ShadowFrustum_Internal::cullObjectsAsync(CullParams& cp) {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
   AssertOrThrow2(_pLightSource != nullptr);
   AssertOrThrow2(_pVisibleSet != nullptr);
 
@@ -176,9 +171,6 @@ void ShadowFrustum_Internal::cullObjectsAsync(CullParams& cp) {
   //}
 }
 void ShadowFrustum_Internal::createFbo() {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
   deleteFbo();
 
   RenderUtils::debugGetRenderState();
@@ -238,9 +230,6 @@ void ShadowFrustum_Internal::createFbo() {
   Gu::checkErrorsRt();
 }
 void ShadowFrustum_Internal::deleteFbo() {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
   if (_glFrameBufferId != 0) {
     std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glDeleteFramebuffers(1, &_glFrameBufferId);
   }
@@ -252,9 +241,6 @@ void ShadowFrustum_Internal::deleteFbo() {
   }
 }
 void ShadowFrustum_Internal::copyAndBlendToShadowMap(std::shared_ptr<ShadowFrustum> pBox) {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
   //Here we can do shadowmap operations.
 
   if (pBox->getGlTexId() != 0) {
@@ -277,8 +263,8 @@ void ShadowFrustum_Internal::copyAndBlendToShadowMap(std::shared_ptr<ShadowFrust
 #pragma endregion
 
 #pragma region ShadowFrustum
-ShadowFrustum::ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadowMapEnabled) {
-  _pint = std::make_unique<ShadowFrustum_Internal>(pLightSource, iFboWidth, iFboHeight, bShadowMapEnabled);
+ShadowFrustum::ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight) {
+  _pint = std::make_unique<ShadowFrustum_Internal>(pLightSource, iFboWidth, iFboHeight);
 }
 ShadowFrustum::~ShadowFrustum() {
   _pint = nullptr;
@@ -356,9 +342,6 @@ void ShadowFrustum::debugRender(RenderParams& rp) {
 }
 
 void ShadowFrustum::beginRenderShadowFrustum() {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
   //Gd::verifyRenderThread();
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pint->_glFrameBufferId);
   Gu::checkErrorsDbg();
@@ -381,10 +364,6 @@ void ShadowFrustum::beginRenderShadowFrustum() {
   Gu::checkErrorsDbg();
 }
 void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumMaster) {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
-
   // Update the shadow box.
   //pShadowFrustumMaster->beginRenderShadowFrustum();
   beginRenderShadowFrustum();
@@ -415,9 +394,6 @@ void ShadowFrustum::renderShadows(std::shared_ptr<ShadowFrustum> pShadowFrustumM
   // pShadowFrustumMaster->copyAndBlendToShadowMap(shared_from_this());
 }
 void ShadowFrustum::endRenderShadowFrustum() {
-  if (_pint->_bShadowMapEnabled == false) {
-    return;
-  }
   //Gd::verifyRenderThread();
   glBindTexture(GL_TEXTURE_2D, 0);
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);

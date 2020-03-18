@@ -21,7 +21,6 @@ public:
   BvhCollectionParams() {}
   BvhCollectionParams(RenderBucket* pSet, vec3& rootPt, std::shared_ptr<FrustumBase> collectionFrustum, bool createMissingNodes) {}
 };
-
 /**
 *  @class RenderBucket
 *  @brief Collects scene elements for rendering.

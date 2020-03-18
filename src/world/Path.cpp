@@ -5,6 +5,7 @@
 #include "../model/UtilMeshBox.h"
 #include "../base/BaseHeader.h"
 #include "../world/Path.h"
+#include "../gfx/RenderSettings.h"
 #include "../math/CubicBezierSpline.h"
 
 
@@ -115,29 +116,30 @@ void Path::updateDebugDraw() {
   _pDrawBox->init();
 }
 void Path::drawForwardDebug(RenderParams& rp) {
-  glLineWidth(1.5);
-  if (_pDrawSpline) {
-    _pDrawSpline->setModelMatrix(getWorld());
-    _pDrawSpline->draw(rp.getCamera());
-  }
-  if (Gu::getGlobalInput()->keyPressOrDown(SDL_SCANCODE_F7)) {
-    if (_pDrawPoints) {
-      _pDrawPoints->setModelMatrix(getWorld());
-      glPointSize(4.0);
-      _pDrawPoints->draw(rp.getCamera());
+  if (Gu::getRenderSettings()->getDebug()->getShowPaths()) {
+    glLineWidth(1.5);
+    if (_pDrawSpline) {
+      _pDrawSpline->setModelMatrix(getWorld());
+      _pDrawSpline->draw(rp.getCamera());
     }
-    if (_pDrawHandles) {
-      _pDrawHandles->setModelMatrix(getWorld());
-      _pDrawHandles->draw(rp.getCamera());
+    if (Gu::getRenderSettings()->getDebug()->getShowPathControlPoints()) {
+      if (_pDrawPoints) {
+        _pDrawPoints->setModelMatrix(getWorld());
+        glPointSize(4.0);
+        _pDrawPoints->draw(rp.getCamera());
+      }
+      if (_pDrawHandles) {
+        _pDrawHandles->setModelMatrix(getWorld());
+        _pDrawHandles->draw(rp.getCamera());
+      }
+    }
+    if (_pDrawBox) {
+      mat4 w = getWorld();
+      w *= mat4::getTranslation(_curPoint);
+      _pDrawBox->setModelMatrix(w);
+      _pDrawBox->draw(rp.getCamera());
     }
   }
-  if (_pDrawBox) {
-    mat4 w = getWorld();
-    w *= mat4::getTranslation(_curPoint);
-    _pDrawBox->setModelMatrix(w);
-    _pDrawBox->draw(rp.getCamera());
-  }
-
 
 }
 

@@ -1,6 +1,59 @@
 
 # Mine City Devlog
 
+Problem with animation is that we tried to make the generic "vao data" stick only to the generic VAO of the mesh spec. Ugh.
+So we lack the VAO on the mesh node.  Thus, we can't animate, because we need to copy this VAO to the another vao when animating'
+
+*3/17/20*
+
+* Removed "bShadowMapEnabled"  Makes no sense to apply control structures to the object itself.
+* We need to fix shadows before anything can be done with async culling.  Shadows are curren\tly broken to due half implemented async culling.
+* Made cull**async in LightNode(s) async returning a future.  We need ot implement
+
+# Generic Rendering
+
+We need to move the visible object collection to Scene.
+We need to integrate scnee with PhysicsWorld to have 1 object place.
+This does not support generic rendering however.  We can't render just anything with this design.
+Culling must take place hierarchically, this would mean, that we would need to attach globs to the scene.  Or at a minmum, instead of passing a Drawable to the
+Renderpipe, we pass a set of collected objects (first pass)
+The first pass set, will have all lights and such.
+There is no need for scenegraph.
+Scenegraph is useful for models themselves (Model Graph) but it is uselesss for speedy generic world rendering.
+
+So instead of calling Renderpipe->drawScene()
+we call RenderPipe->draw(RenderBucket.)
+
+SceneGraph + PhysicsWorld integration
+	Fix the "attached" methods after attached to scene
+		The same methods will exist (attached and detached) but instead of adding to scenegraph we will add it to object array.
+	Move UI to renderpipe
+	Move all other drawing to renderpipe
+	Move DrawBackgroundImage to renderpipe.
+
+	Then again, the ObjMap isn't used in any special way.  So why would it matter?
+
+	*****Object manifold determines object visibility*****
+		Just find all grids first
+		then find all nodes.
+		Object map is just a map that we can easily find all objects.
+
+	***** Physics should work using Dotsim *****
+		Point based simulation for all objects.
+		Asynchronous and easy to update.
+		Discrete.
+
+	Algorithm is..?
+	For each window.
+		For the active camera frustum
+			collect everything
+		for all things, ASYNC
+			for each additional frustum (mirror,  or light frustum) collect everything ASYNC
+		FENCE ( future.wait())
+
+
+
+
 *3/15/20*
 
 * We need to adjust the size of the renderer in addition to the size of the screen quad.  Rendering is done in multiple layers and steps and we need to adjust all viewports to correctly fit

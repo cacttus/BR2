@@ -108,6 +108,7 @@ class ActionGroup : public VirtualMemory {
 public:
   ActionGroup() {}
   ActionGroup(string_t strName, int32_t iBaseFps);
+
   int32_t getFps() { return _iBaseFps; }
   void setFps(int32_t x) { _iBaseFps = x; }
   string_t getName() { return _strName; }
@@ -344,6 +345,7 @@ public:
   static std::shared_ptr<ModelNode> create(string_t name, std::shared_ptr<ModelSpec>);
   virtual ~ModelNode();
 
+  void playAction(std::shared_ptr<ActionGroup> g);
   void playAction(string_t name);
   bool isPlaying();
   bool isPlaying(string_t actName);

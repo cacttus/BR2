@@ -12,6 +12,8 @@
 #include "../gfx/GfxHeader.h"
 #include "../math/MathAll.h"
 
+#include <future>
+
 namespace BR2 {
 /**
 *  @class LightNodeBase
@@ -23,7 +25,7 @@ public:
   virtual ~LightNodeBase() override;
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
-  virtual void cullShadowVolumesAsync(CullParams& cp) = 0;
+  virtual std::future<bool> cullShadowVolumesAsync(CullParams& cp) = 0;
 
   Color4f* getColorPtr() { return &_color; }
   Color4f& getColor() { return _color; }
@@ -52,7 +54,7 @@ public:
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
-  virtual void cullShadowVolumesAsync(CullParams& cp) override;
+  virtual std::future<bool> cullShadowVolumesAsync(CullParams& cp) override;
 
   bool renderShadows(std::shared_ptr<ShadowFrustum> pf);
 
@@ -89,7 +91,7 @@ public:
 
   virtual void update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& mapAnimators) override;
   virtual void calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_pad) override;
-  virtual void cullShadowVolumesAsync(CullParams& cp) override;
+  virtual std::future<bool> cullShadowVolumesAsync(CullParams& cp) override;
 
   bool renderShadows(std::shared_ptr<ShadowBox> pf); // - Called by lightmanager to set up the light
   

@@ -1030,6 +1030,9 @@ void ModelNode::drawForward(RenderParams& rp) {
 }
 
 
+void ModelNode::playAction(std::shared_ptr<ActionGroup> act) {
+  playAction(act->getName());
+}
 void ModelNode::playAction(string_t actName) {
   Hash32 anh = STRHASH(actName);
   std::map<Hash32, std::shared_ptr<Animator>>::iterator it = _mapAnimators.find(anh);
@@ -1165,7 +1168,6 @@ void ModelNode::calcBoundBox(Box3f& __out_ pBox, const vec3& obPos, float extra_
 
   SceneNode::calcBoundBox(pBox, obPos, extra_pad);
 }
-
 
 
 }//ns Game

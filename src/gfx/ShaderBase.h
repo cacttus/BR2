@@ -69,7 +69,7 @@ public:
   void dispatchCompute();//Compute Shader Only
   void dispatchCompute(int32_t elementCount);//Compute Shader Only
   void dispatchCompute(int32_t x, int32_t y, int32_t z);//Compute Shader Only
-  void dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync* sync);//Compute Shader Only
+  void dispatchCompute(int32_t x, int32_t y, int32_t z, std::shared_ptr<GpuComputeSync> sync);//Compute Shader Only
 
 private:
   ShaderStatus::e _eProgramStatus = ShaderStatus::e::Uninitialized;

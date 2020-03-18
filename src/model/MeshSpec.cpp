@@ -174,6 +174,7 @@ void MeshSpec::allocSkinMobFile(std::shared_ptr<ModelSpec> ms) {
   {
     if (_eSkinStatus == MeshSkinStatus::e::Uninitialized) {
       //2018/1/15 so we made all armatures be global in ModelSpec
+      //*Verts are in the VAO data, no longer need to call this.
       //sendVertsToGpu();
       //TODO - replace with new vao 1/26/18
 
@@ -427,6 +428,18 @@ vec3& MeshSpec::n3f(size_t index) {
     BRThrowException("Tried to edit mesh without beginEdit()");
   }
   return _pFrags->n3f(index);
+}
+bool MeshSpec::hasFrags() {
+  if (_pVaoData == nullptr) {
+    return false;
+  }
+  if (_pVaoData->getVbo() == nullptr) {
+    return false;
+  }
+  if (_pVaoData->getVbo()->getNumElements() == 0) {
+    return false;
+  }
+  return true;
 }
 std::shared_ptr<FragmentBufferData> MeshSpec::getFrags() {
   if (_pFrags == nullptr) {
@@ -942,10 +955,11 @@ void MeshSpec::serialize(std::shared_ptr<BinaryFile> fb) {
   }
 
 }
-//void MeshSpec::sendVertsToGpu(){
-//    _pVertsGpu = std::make_sVboData(Gu::getGraphicsContext(), _pVertexFormat->getSizeBytes());
-//    _pVertsGpu->allocate(_pFrags->count());
-//    _pVertsGpu->copyDataClientServer(_pFrags->count(), _pFrags->ptr());
+//void MeshSpec::sendVertsToGpu() {
+// Deprecatedk now verts are on Vao data
+//  _pVertsGpu = std::make_shared<VboData>(Gu::getCoreContext(), _pVertexFormat->getSizeBytes());
+//  _pVertsGpu->allocate(_pFrags->count());
+//  _pVertsGpu->copyDataClientServer(_pFrags->count(), _pFrags->ptr());
 //}
 
 

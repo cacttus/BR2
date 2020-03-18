@@ -1,17 +1,31 @@
 # Mine City Task Log
 
 
+Rendering Integration
+
+Dotsim design
+
+
+# More Generic Rendering Engine
+
+- [ ] Change Renderpipe to use the RenderBucket to draw (instead of a drawable).
+
+- [ ] Replace Scene with PhysicsManager
+	- [ ] Rename to Scene
+
+- [ ] Async Cull for all lights, and other sub-pass objects that have frustums.
+
+	Remove the async culling in the lightnode itself.  This needs to be on "renderbucket."
+	Collect all subpass Cull Buckets (RenderBuckets)
+		LightNode->getRenderBuckets() : vector<RenderBucket>
+
+	for each renderbucket -> future = cull async
+	foreach future
+		future.wait() // Our Fence
+
 ## Engine Tasks
 
-- [x] Merge EngineConfig and EngineConfigFile into EngineConfig\
-
-- [ ] Test multiple graphics windows
-	- [ ] Get one scene to render to multiple windows from different cameras, at the same time.
-
 - [ ] UtilMesh really needs to be a node, we need to update it relative to the trasnform of the object its drawing
-
-- [x] Move Path's Cubic Bezier code into a new CBSpline class to organize this better.  Path should support liner, and CB splines.
-	- [x] Create CBSpline class.
 
 - [ ] RTS Camera Fixes
 	* Updates to the RTS camera will allow easier object navigation.
@@ -22,8 +36,10 @@
 				- [ ] Cubic Bezier Curves
 
 - [ ] Rendering Fixes
-	- [x] Get the UI to draw on the screen again.
-		* Partially implemented.  The UI draws again.  We need to update it.
+	- [ ] Fix shadows & Lights.
+		* LightManager can go away, and we just use it to store static light buffer data I.E it is just a buffer used to store lights
+		essentially, not even validating its own class, as it can just be part of the RenderPipe.
+
 	- [ ] **CRITICAL** Squashed viewport Bug. Fix Viewport scaling issue.
 		- [ ] Fix UI text squashing bug.
 			* Viewport moves around incorrectly.  It should "wedge" between the TOP and BOTTOM of the screen, PROPORTIONALLY, in windowed mode.  In Fullscreen mode, just fill the whole screen..
@@ -35,12 +51,6 @@
 		- [ ] Fixed the squashed UI image problems.
 			- [ ] Fix SQUASHED text rendering.  Text must be rendered at the same w/h ratio no matter window size.
 	- [ ] DrawDeferred for Scene is a problem.  We are using the SG to draw the children, yet the RenderBucket is the main drawing list. So we are drawing twice.
-	- [ ] Fix shadows & Lights.
-		* Instead of LightManager->SetupLights (using RenderBucket) maybe it would be easier to cull lights through the scenegraph, and call
-		setup routines when we update() the light node.
-		
-		** ** Essentially LightManager can go away, and we just use it to store static light buffer data I.E it is just a buffer used to store lights
-		essentially, not even validating its own class, as it can just be part of the RenderPipe.
 
 	- [ ] Fix Scene draw..() methods by removing the loop over RenderBucket 
 	- [ ] remove PhysicsWorld CULL, and perhaps the RenderBucket collection code and use something like SceneNode::_bCulled to signal that a node was culled.
@@ -75,6 +85,10 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 - [ ] (CRITICAL) Deleted the Async Logger on accident.  Add it back (previous checkin).
 
 - [ ] Implement the STL math functions in MathHeader
+
+
+- [ ] Test multiple graphics windows
+	- [ ] Get one scene to render to multiple windows from different cameras, at the same time.
 
 ### Controller System
 - [ ] Make WorldSelect part of the UI system.  (Remove it from BottleScript.h) 

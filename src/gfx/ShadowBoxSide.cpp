@@ -21,8 +21,7 @@
 #include "../world/NodeUtils.h"
 
 namespace BR2 {
-ShadowBoxSide::ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_ptr<LightNodePoint> pLightSource, BoxSide::e eSide, bool bShadowMapEnabled) {
-  _bShadowMapEnabled = bShadowMapEnabled;
+ShadowBoxSide::ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_ptr<LightNodePoint> pLightSource, BoxSide::e eSide) {
   _eSide = eSide;
   _pFrustum = nullptr;
   _pViewport = nullptr;
@@ -85,8 +84,6 @@ void ShadowBoxSide::updateView() {
   else if (vCamNormal.z > 0.0f) { vCamUp = vec3(0, 1, 0); }
   else if (vCamNormal.z < 0.0f) { vCamUp = vec3(0, 1, 0); }
 
-
-
   //Calculate geometrric frustum
   _pFrustum->update(
     vCamNormal
@@ -112,8 +109,6 @@ void ShadowBoxSide::updateView() {
     vw, -vw,
     -vh, vh
   );
-
-
 }
 bool ShadowBoxSide::computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum) {
   //TODO:
@@ -123,9 +118,6 @@ bool ShadowBoxSide::computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum) {
   return pCamFrustum->hasFrustum(_pFrustum);
 }
 void ShadowBoxSide::cullObjectsAsync(CullParams& rp) {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
   AssertOrThrow2(_pLightSource != nullptr);
   AssertOrThrow2(_pVisibleSet != nullptr);
   // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
@@ -155,10 +147,6 @@ void ShadowBoxSide::cullObjectsAsync(CullParams& rp) {
 
 }
 void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bForce) {
-  if (_bShadowMapEnabled == false) {
-    return;
-  }
-
   Perf::pushPerf();
   static int n = 0; if (n == 1) { return; }
 

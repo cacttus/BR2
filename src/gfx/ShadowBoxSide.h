@@ -19,12 +19,7 @@ namespace BR2 {
 */
 class ShadowBoxSide : public VirtualMemory {
 public:
-  ShadowBoxSide(
-    std::shared_ptr<ShadowBox> pParentBox
-    , std::shared_ptr<LightNodePoint> rLightSource
-    , BoxSide::e eSide
-    , bool bShadowMapEnabled
-  );
+  ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_ptr<LightNodePoint> rLightSource, BoxSide::e eSide);
   virtual ~ShadowBoxSide() override;
 
   bool getMustUpdate() { return _bMustUpdate; }
@@ -50,7 +45,6 @@ private:
   std::shared_ptr<RenderBucket> _pLastSet;//TODO: check vs current set _bShadowDirty in BvhNOde
   std::shared_ptr<ShadowBox> _pParentBox = nullptr;
   bool _bMustUpdate;
-  bool _bShadowMapEnabled = false;
 };
 }//ns Game
 

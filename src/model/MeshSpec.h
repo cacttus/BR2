@@ -20,10 +20,8 @@ namespace BR2 {
 class MeshSpec : public BaseSpec {
 public:
   MeshSpec() {}//Serialize Version
-  MeshSpec(const void* cVerts, size_t vCount, const void* cIndexes, size_t iCount,
-    std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm);
-  MeshSpec(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile = nullptr,
-    std::shared_ptr<PhysicsShape> ps = nullptr);
+  MeshSpec(const void* cVerts, size_t vCount, const void* cIndexes, size_t iCount, std::shared_ptr<VertexFormat> fmt, std::shared_ptr<Material> pm);
+  MeshSpec(string_t strName, std::shared_ptr<VertexFormat> vf, std::shared_ptr<ObjFile> objFile = nullptr, std::shared_ptr<PhysicsShape> ps = nullptr);
 
   //Edit funcs.
   void beginEdit();
@@ -60,6 +58,7 @@ public:
   void calculateVertexNormals(); //Slow - Method recalculates normals and saves to GPU buffer.
 
   std::shared_ptr<VaoDataGeneric> getVaoData() { return _pVaoData; }
+  bool hasFrags();
   std::shared_ptr<FragmentBufferData> getFrags();
   std::shared_ptr<IndexBufferData> getIndexes();
 

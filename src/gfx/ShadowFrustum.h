@@ -18,7 +18,7 @@ namespace BR2 {
 class ShadowFrustum_Internal;
 class ShadowFrustum : public VirtualMemoryShared<ShadowFrustum> {
 public:
-  ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight, bool bShadows);
+  ShadowFrustum(std::shared_ptr<LightNodeDir> pLightSource, int32_t iFboWidth, int32_t iFboHeight);
   virtual ~ShadowFrustum() override;
 
   void init();

@@ -267,7 +267,13 @@ void ShaderBase::setTextureUf(uint32_t iChannel, bool bIgnoreIfNotFound) {
 void ShaderBase::draw(std::shared_ptr<MeshNode> mesh, int32_t iCount, GLenum eDrawMode) {
   Perf::pushPerf();
 
-  draw(mesh->getMeshSpec()->getVaoData(), iCount, eDrawMode);
+  //*IF the mesh has a VAO, draw that (likely, it's a skinned, or morphed mesh)
+  //*Otherwise, draw the mesh's SPEC vao.
+  std::shared_ptr<VaoDataGeneric> vao = mesh->getVaoData();
+  if (vao == nullptr) {
+    vao = mesh->getMeshSpec()->getVaoData();
+  }
+  draw(vao, iCount, eDrawMode);
   Perf::popPerf();
 }
 void ShaderBase::draw(std::shared_ptr<VaoDataGeneric> vao, int32_t iCount, GLenum eDrawMode) {
@@ -425,7 +431,7 @@ void ShaderBase::dispatchCompute(int32_t elementCount) {
   dispatchCompute(x, y, z);
 
 }
-void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z, GpuComputeSync* sync) {
+void ShaderBase::dispatchCompute(int32_t x, int32_t y, int32_t z, std::shared_ptr<GpuComputeSync> sync) {
   AssertOrThrow2(sync != NULL);
 
   dispatchCompute(x, y, z);
