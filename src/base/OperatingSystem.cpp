@@ -93,7 +93,7 @@ string_t  OperatingSystem::getOperatingSystemName() {
   }
 
   if (vex.wServicePackMajor != 0) {
-    res += Stz ", Service Pack ", vex.wServicePackMajor, ".", vex.wServicePackMinor;
+    res += Stz ", Service Pack " + vex.wServicePackMajor + "." + vex.wServicePackMinor;
   }
   else {
     res += Stz ", No service pack";

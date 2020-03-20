@@ -124,7 +124,7 @@ void SoundInst::checkPlayback() {
 #pragma endregion
 
 #pragma region SoundCache
-class SoundCache_Internal {
+class SoundCache_Internal { 
 public:
   typedef std::map<Hash32, std::shared_ptr<SoundSpec>> SoundMap;
   SoundMap _cache;

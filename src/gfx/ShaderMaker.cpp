@@ -54,7 +54,6 @@ void ShaderMaker::initialize() {
   _pFlatShaders.insert(std::make_pair(v_v2c4::getVertexFormat(), makeShader(std::vector<string_t> { "f_v2c4_flat.vs", "f_v2c4_flat.ps" })));
   _pFlatShaders.insert(std::make_pair(v_v3c4::getVertexFormat(), makeShader(std::vector<string_t> { "f_v3c4_flat.vs", "f_v3c4_flat.ps" })));
 
-   _pSkinComputeShader = makeShader(std::vector<std::string> { "animate_v3n3x2.cs" });
   _pGuiShader = makeShader(std::vector<string_t> { "f_gui.vs", "f_gui.gs", "f_gui.ps" });
 
   //////////////////////////////////////////////////////////////////////////

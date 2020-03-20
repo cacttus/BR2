@@ -269,10 +269,10 @@ void ShaderBase::draw(std::shared_ptr<MeshNode> mesh, int32_t iCount, GLenum eDr
 
   //*IF the mesh has a VAO, draw that (likely, it's a skinned, or morphed mesh)
   //*Otherwise, draw the mesh's SPEC vao.
-  std::shared_ptr<VaoDataGeneric> vao = mesh->getVaoData();
-  if (vao == nullptr) {
+  std::shared_ptr<VaoDataGeneric> vao;// = mesh->getVaoData();
+  //if (vao == nullptr) {
     vao = mesh->getMeshSpec()->getVaoData();
-  }
+  //}
   draw(vao, iCount, eDrawMode);
   Perf::popPerf();
 }

@@ -26,24 +26,19 @@ public:
   std::shared_ptr<ShaderUniformBlock> getUniformBlockByName(string_t& blockName);
 
   void initialize();
-  //std::shared_ptr<ShaderBase> getFlatShader_F() { return _pFlatShader; }
-  //std::shared_ptr<ShaderBase> getDiffuseShader_v3n3x2_d() { return _pDiffuseShader_v3n3x2_d; }
   std::shared_ptr<ShaderBase> getDiffuseShader(std::shared_ptr<VertexFormat> fmt);
   std::shared_ptr<ShaderBase> getGlassShader(std::shared_ptr<VertexFormat> fmt);
   std::shared_ptr<ShaderBase> getFlatShader(std::shared_ptr<VertexFormat> fmt);
   std::shared_ptr<ShaderBase> getShadowShader(std::shared_ptr<VertexFormat> fmt);
 
   std::shared_ptr<ShaderBase> getImageShader_F() { return _pImageShader; }
-  std::shared_ptr<ShaderBase> getSkinComputeShader() { return _pSkinComputeShader; }
   std::shared_ptr<ShaderBase> getNormalsShader_v3n3() { return _pNormalsShader; }
   std::shared_ptr<ShaderBase> getShadowBlendShader() { return _pShadowBlendShader; }
   std::shared_ptr<ShaderBase> getDepthOfFieldShader() { return _pDepthOfField; }
   std::shared_ptr<ShaderBase> getSmoothGenShader() { return _pSmoothGen; }
-  //std::shared_ptr<ShaderBase> getShadowShader() { return _pShadowShader; }
 
   std::shared_ptr<ShaderBase> getGuiShader() { return _pGuiShader; }
 
-  //std::shared_ptr<ShaderBase> getPickShader() { return _pPickShader; }
   std::shared_ptr<ShaderBase> getShaderById(GLuint glId);
   std::shared_ptr<ShaderBase> getShaderByName(const string_t& name);
   string_t getShaderNameForId(GLuint id);
@@ -77,7 +72,6 @@ protected:
   std::shared_ptr<ShaderBase> _pShadowBlendShader = nullptr;
   std::shared_ptr<ShaderBase> _pSmoothGen = nullptr;
   std::shared_ptr<ShaderBase> _pDepthOfField = nullptr;
-  std::shared_ptr<ShaderBase> _pSkinComputeShader = nullptr;
   ShaderMap _pShadowShaders;
   ShaderMap _pDiffuseShaders;
   ShaderMap _pGlassShaders;

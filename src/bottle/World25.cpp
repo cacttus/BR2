@@ -297,6 +297,7 @@ void World25::createHandCursor() {
   //    wo = makeObj("Tall_Lamp", vec3(0, 0, 0), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "");
    // if (wo != nullptr) {
   std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("light",vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
+  getScene()->attachChild(lp);
   //     wo->attachChild(lp);
       // turnOffLamp();//Default turn if otf
 //   }
@@ -311,7 +312,8 @@ void World25::createHandCursor() {
    // makeObj("appletree", vec3(-15, 0, -15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
    // makeObj("appletree", vec3(15, 0, -15), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "appletree.Idle");
   // makeObj("box_norm", vec3(3, 1, -3), vec3(0.7, 0.7, 0.7), vec4(0, 1, 0, 0), "box_norm.Rotate");
-  makeObj("box_glass", vec3(0, BottleUtils::getCellHeight() * 8, 0));
+  auto ob = makeObj("box_glass", vec3(0, BottleUtils::getCellHeight() * 8, 0));
+  getScene()->attachChild(ob);
 }
 
 std::shared_ptr<ModelNode> World25::makeObj(string_t mobName, vec3& vR3PosToSnap) {

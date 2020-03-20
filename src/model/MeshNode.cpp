@@ -36,7 +36,6 @@
 
 namespace BR2 {
 MeshNode::MeshNode(string_t name, bool pickable, std::shared_ptr<MeshSpec> ms) : MeshNode(name, pickable, ms, nullptr) {
-  // _pVaoData = std::make_shared<VaoDataGeneric>(pContext, fmt);
 }
 MeshNode::MeshNode(string_t name, bool pickable, std::shared_ptr<MeshSpec> ps, std::shared_ptr<ModelNode> mn) : SceneNode(name, ps) {
   _pModelNode = mn;
@@ -61,18 +60,12 @@ std::shared_ptr<MeshNode> MeshNode::create(string_t name, bool pickable, std::sh
 }
 void MeshNode::init() {
   SceneNode::init();
-
-  //    _pVaoData = std::make_shared<VaoDataGeneric>(pContext, ps->getVertexFormat());
   if (getMeshSpec()->getHideRender()) {
     show();
   }
   else {
     hide();
   }
-
-  //#ifdef _DEBUG
-  //    setVisible(true);
-  //#endif
 
   if (getMeshSpec()->getMaterial() != nullptr) {
     _pMaterial = getMeshSpec()->getMaterial()->makeCopy();
@@ -115,12 +108,10 @@ void MeshNode::printDataToStdout() {
   delete[] arms;
 }
 void MeshNode::createSkin() {
-
   AssertOrThrow2(_pModelNode != nullptr);
   AssertOrThrow2(getMeshSpec() != nullptr);
-  // AssertOrThrow2(getMeshSpec()->getArmatureMapOrdered().size() > 0);
 
-   //Fill identity buffer of skin mats
+  //Fill identity buffer of skin mats
   int32_t iOrdCount = 0;
   std::vector <mat4> idents;
   for (std::pair<Hash32, std::shared_ptr<Armature>> parm : _pModelNode->getModelSpec()->getArmatureMapOrdered()) {
@@ -130,15 +121,9 @@ void MeshNode::createSkin() {
     }
   }
 
-  _pSkinCompute = std::make_shared<GpuComputeSync>(Gu::getCoreContext());
-
   _pArmJoints = std::make_shared<ShaderStorageBuffer>(Gu::getCoreContext(), sizeof(GpuAnimatedMeshSkinMatrix));
   _pArmJoints->allocate(iOrdCount);
   _pArmJoints->copyDataClientServer(iOrdCount, (void*)idents.data());
-
-  //Copy the Spec's VAO data.  We need this in order to skin the model.
-  _pVaoData = std::make_shared<VaoDataGeneric>(Gu::getCoreContext(), getMeshSpec()->getVaoData()->getVertexFormat());
-  _pVaoData->copyFrom(getMeshSpec()->getVaoData()); 
 
   orderBoneNodesForGpu();
 }
@@ -182,12 +167,10 @@ void MeshNode::orderBoneNodesForGpu() {
 }
 void MeshNode::computeAndDispatchSkin() {
   if (getMeshSpec()->hasSkin()) {
-    if (!_pSkinCompute->isDispatched() || _pSkinCompute->isComputeComplete()) {
-      if (false) {
-        printDataToStdout();
-      }
-      computeSkinFrame();
+    if (false) {
+      printDataToStdout();
     }
+    computeSkinFrame();
   }
 }
 void MeshNode::update(float delta, std::map<Hash32, std::shared_ptr<Animator>>& pAnimator) {
@@ -198,7 +181,7 @@ void MeshNode::computeSkinFrame() {
   Gu::getCoreContext()->chkErrDbg();
   copyJointsToGpu();
   Perf::popPerf();
-  dispatchSkinCompute();
+  //dispatchSkinCompute();
 }
 void MeshNode::copyJointsToGpu() {
   Perf::pushPerf();
@@ -224,50 +207,9 @@ void MeshNode::copyJointsToGpu() {
   _pArmJoints->copyDataClientServer(mats.size(), mats.data());
   Perf::popPerf();
 }
-void MeshNode::dispatchSkinCompute() {
-  Gu::getCoreContext()->chkErrDbg();
-
-  std::shared_ptr<ShaderBase> pSkinShader = Gu::getShaderMaker()->getSkinComputeShader();
-  AssertOrThrow2(pSkinShader != nullptr);
-  pSkinShader->bind();
-
-  AssertOrThrow2(getMeshSpec()->getWeightOffsetsGpu() != nullptr);
-  AssertOrThrow2(getMeshSpec()->getWeightsGpu() != nullptr);
-  AssertOrThrow2(_pArmJoints != nullptr);
-  AssertOrThrow2(getMeshSpec()->hasFrags());
-  AssertOrThrow2(_pVaoData->getVbo() != nullptr);
-
-  /*
-  okay so each GPU has BLOCKs and BINDING POINTS
-  binding poitns are particular to the program.  you specify them with layout(binding=..
-  BLOCKS are specific to the GPU.  only the GPU can specify a BLOCK for you.  And YOU have to map the
-  BINDIGN POINTS to the BLOCKS by calling glShaderSTorageBlockBinding
-  */
-  pSkinShader->bindSsbo(getMeshSpec()->getWeightOffsetsGpu(), "ssInWeightOffsets", 0);
-  Gu::checkErrorsDbg();
-  pSkinShader->bindSsbo(getMeshSpec()->getWeightsGpu(), "ssInJointWeights", 1);
-  Gu::checkErrorsDbg();
-  pSkinShader->bindSsbo(_pArmJoints, "ssInSkinMatrices", 2);
-  Gu::checkErrorsDbg();
-  pSkinShader->bindSsbo(getMeshSpec()->getVaoData()->getVbo(), "v_v3n3x2_buf_in", 3);
-  Gu::checkErrorsDbg();
-  pSkinShader->bindSsbo(_pVaoData->getVbo(), "v_v3n3x2_buf_out", 4);
-  Gu::checkErrorsDbg();
-
-  pSkinShader->dispatchCompute((int32_t)_pVaoData->getVbo()->getNumElements(), (int32_t)1, (int32_t)1, _pSkinCompute);
-  _pSkinCompute->isComputeComplete();
-
-  if (false) {
-    printDataToStdout();
-  }
-}
 void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
   //debug
   std::shared_ptr<MeshNode> mg = getThis<MeshNode>();
-  if (false) {
-    //Spec
-    //mg->getMeshSpec()->printDataToStdout();
-  }
   if (false) {
     std::cout << std::endl;
     std::cout << std::endl;
@@ -275,10 +217,7 @@ void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
     std::cout << std::endl;
     std::cout << std::endl;
     //actual model.
-  //  mg->printDataToStdout();
   }
-  //debug
-
 
   //1/17/18 Node; removed model_world in order to prevent bullshit like having a unique model matrix
 
@@ -301,22 +240,7 @@ void MeshNode::getMeshLocalMatrix(mat4& __out_ mat_mesh) {
   else {
     mat_mesh = mg->getLocal();
   }
-  //This is a hack due to our using compute shader for skin! really this should all happen all at once by 
-  //multiply the bone skin matrices **(see copyJointsToGpu())**.  Either way we'd have to handle skin and
-  //static meshes different.  The optimal method would use a skin shader and we could do all this on the draw.
-  // mat_mesh = mat4::identity();
-  //HACK DEBUG
-  //  mat_mesh.setTranslation(0,0,0);
-  //  }
-  //  else
-
-  //  else {
-  //      //For parent type of BONE we treat the mesh as a bone vertex
-  //      mat_mesh = mg->getLocal();// * mat_model_world;
-  //      //  mat_mesh = mat_model_world;
-  //  }
 }
-
 void MeshNode::drawDeferred(RenderParams& rp) {
   //Children.
   SceneNode::drawDeferred(rp);

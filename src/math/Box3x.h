@@ -762,7 +762,7 @@ FORCE_INLINE float Box3x<Tx>::innerRadius() {
 }
 template < class Tx >
 FORCE_INLINE string_t Box3x<Tx>::toString() {
-  return Stz ("{", _min.toString(), "},{", _max.toString(), "}");
+  return Stz "{"+ _min.toString()+ "},{"+ _max.toString()+ "}";
 }
 template < class Tx >
 FORCE_INLINE bool Box3x<Tx>::limitSizeForEachAxis(const vec3& vBasePos, const float& fSize) {

@@ -570,7 +570,9 @@
     <ClCompile Include="src\base\GamePad.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="src\base\EngineConfig.cpp" />
+    <ClCompile Include="src\base\EngineConfig.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\base\AppRunner.h">
