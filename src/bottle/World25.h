@@ -17,8 +17,6 @@ namespace BR2 {
 */
 class World25 : public VirtualMemoryShared<World25> {
 public:
-
-
   /* TODO: Pass PhysicsWorld in as a member*/
   World25(std::shared_ptr<Scene> pscene, std::shared_ptr< BottleScript> pCallingScript);
   virtual ~World25() override;

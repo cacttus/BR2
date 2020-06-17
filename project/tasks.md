@@ -1,10 +1,24 @@
-# Mine City Task Log
+# Global Critical Tasks
 
+- [x] Fix Lights.
+	* This is due to cullShadowVolumesAsync not being called in the lights because of shadows..
+	* Must uncomment updateAndCullAsync
+	* DISABLE_ALL_SHADOW_BOXES_AND_SUCH added to disable shadows.
+	* Lights are choppy, disappear often.
+	- [ ] Fix the lights disappearing.
 
-Rendering Integration
+# Goal Tasks
 
-Dotsim design
+- [ ] PBR
 
+- [ ] Render fence, to prevent gl* methods from being called by any thread that is a non-render thread.
+
+- [ ] ShowModelBoxes is not working for lights.
+	- [ ] Merge Model + Light, and inherit light from mdoel.
+
+- [ ] Rendering Integration
+
+- [ ] Dotsim design
 
 # More Generic Rendering Engine
 
@@ -126,7 +140,6 @@ The fix for this is to reset the node manifolds when the camera gets swapped.
 
 ### Code Cleanup 
 
-- [ ] Replace name in headers
 - [ ] Combine Gu into ApplicationPackage.  They are basically the same thing. (reorg) 
 - [ ] See if we can make ParticleManager part of PhysicsWorld (reorg)
 - [ ] Remove Graphics and Config defines in Gu (reorg)

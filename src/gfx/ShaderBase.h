@@ -51,6 +51,7 @@ public:
 
   std::shared_ptr<ShaderUniform> getUniformByName(string_t name);
   void setUf(string_t name, void* value, GLint count = -1, bool bIgnore = false);//SetUniformByName
+  void clearUf(string_t name, bool bIgnore = false);
   void setCameraUf(std::shared_ptr<CameraNode> cam, mat4* model = nullptr);
   void setAtlasUf(std::shared_ptr<Atlas> pa);
   void verifyBound();

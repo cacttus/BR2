@@ -18,6 +18,7 @@
 #include "../gfx/RenderPipe.h"
 #include "../base/SDLIncludes.h"
 #include "../world/Scene.h"
+#include "../world/PhysicsWorld.h"
 #include "../bottle/BottleScript.h"
 
 
@@ -239,7 +240,7 @@ void GraphicsWindow::step() {
         _pint->setFrameState(FrameState::Render);
         PipeBits p;
         p.set();
-        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getActiveCamera(), getScene()->getLightManager(), p);
+        _pint->_pRenderPipe->renderScene(getScene(), getScene()->getPhysicsManager()->getRenderBucket(), getScene()->getActiveCamera(), getScene()->getLightManager(), p);
       }
       else {
         BRLogErrorCycle("Scene was not set on graphics window " + getTitle());

@@ -60,7 +60,7 @@ ShadowBox_Internal::ShadowBox_Internal(std::shared_ptr<LightNodePoint> pLightSou
   //used for interpolating frames.
   static int64_t idGen = 0;
   _iShadowBoxId = ++idGen;
-  
+
 }
 ShadowBox_Internal::~ShadowBox_Internal() {
   deleteFbo();
@@ -231,71 +231,70 @@ void ShadowBox::init() {
 
   Gu::checkErrorsRt(); //Rt error check - this is called only once.
 }
-void ShadowBox::updateAndCullAsync(CullParams& cp) {
+std::future<bool> ShadowBox::updateAndCullAsync(CullParams& cp) {
   AssertOrThrow2(_pint->_pLightSource != nullptr);
-  // 2 optimizations here
-  // frame modulus
-  // checking for changed objects (per-side)
-  int iStartDebug = 0;
   _pint->_bForceUpdate = false;
-  //Note: even better performance would be to poll object
-  //positions - if nothing moved then don't update the shadowmap.
-  //TEST - update every x frames. usign ID allows sequential frame updates for shadow boxes.
-  
-  //** Don't do any metering in here, we will do this in controlling threads. **
-  //if (!Gu::getFpsMeter()->frameMod(1 + _iShadowBoxId)) {
-  //  _bMustUpdate = false;
-  //  return;
-  //}
 
   std::shared_ptr<LightManager> pLightMan = _pint->_pLightSource->getLightManager();
 
   //Update the camera for each shadowbox side if the light has changed position or radius.
-  //See also: debugInvalidateAllLightProjections
   if (_pint->_vCachedLastPos != _pint->_pLightSource->getFinalPos() || _pint->_fCachedLastRadius != _pint->_pLightSource->getLightRadius()) {
     _pint->_vCachedLastPos = _pint->_pLightSource->getFinalPos();
     _pint->_fCachedLastRadius = _pint->_pLightSource->getLightRadius();
-
-    for (int iFace = iStartDebug; iFace < 6; ++iFace) {
-      _pint->_pShadowBoxSide[iFace]->updateView();
-    }
-
     _pint->_bMustUpdate = true;
     _pint->_bForceUpdate = true;
   }
-
-  // Collect all objects for each frustum.
-  // if objects don't change don't render that frustum (bMustUpate)
-  for (int iFace = iStartDebug; iFace < 6; ++iFace) {
-    _pint->_pShadowBoxSide[iFace]->cullObjectsAsync(cp);
-    _pint->_bMustUpdate = _pint->_bMustUpdate || _pint->_pShadowBoxSide[iFace]->getMustUpdate();
+  
+  std::weak_ptr<ShadowBoxSide> sides_weak[6];
+  for (size_t i = 0; i < 6; ++i) {
+    sides_weak[i] = _pint->_pShadowBoxSide[i];
   }
 
-  // Tell the viewport we've changed
-  _pint->_pShadowBoxSide[0]->getViewport()->bind();
+  _pint->_bMustUpdate = true;
 
+  std::future<bool> fut = std::async(std::launch::async, [&sides_weak, &cp] {
+    // Collect all objects for each frustum.
+    int iStartDebug = 0;
+    std::vector<std::future<bool>> futs;
+    for (int iFace = iStartDebug; iFace < 6; ++iFace) {
+     std::weak_ptr<ShadowBoxSide> ss_weak = sides_weak[iFace];
+      std::future<bool> fut_face = std::async(std::launch::async, [&ss_weak, &cp] {
+        if (std::shared_ptr<ShadowBoxSide> ss = ss_weak.lock()) {
+          ss->cullObjectsAsync(cp);
+        }
+        return true;
+      });
+      futs.push_back(std::move(fut_face));
+    }
+
+    for (size_t ifut = 0; ifut < futs.size(); ++ifut) {
+      futs[ifut].wait();
+    }
+    return true;
+  });
+  return fut;
 }
 void ShadowBox::renderShadows(std::shared_ptr<ShadowBox> pShadowBoxMaster) {
   Perf::pushPerf();
-  if (_pint->_bMustUpdate == false) {
-    return;
-  }
-
-  int iStartDebug = 0;
-  // Update the shadow box.
-  pShadowBoxMaster->beginRenderShadowBox();
   {
-    for (int iFace = iStartDebug; iFace < 6; ++iFace) {
-      _pint->_pShadowBoxSide[iFace]->renderShadows(pShadowBoxMaster, _pint->_bForceUpdate);
+    if (_pint->_bMustUpdate == false) {
+      return;
     }
-  }
-  pShadowBoxMaster->endRenderShadowBox();
+    // Update the shadow box.
+    int iStartDebug = 0;
+    pShadowBoxMaster->beginRenderShadowBox();
+    {
+      for (int iFace = iStartDebug; iFace < 6; ++iFace) {
+        _pint->_pShadowBoxSide[iFace]->renderShadows(pShadowBoxMaster, _pint->_bForceUpdate);
+      }
+    }
+    pShadowBoxMaster->endRenderShadowBox();
 
-  // Copy and blend this into 
-  pShadowBoxMaster->copyAndBlendToShadowMap(shared_from_this());
+    // Copy and blend this into 
+    pShadowBoxMaster->copyAndBlendToShadowMap(shared_from_this());
+  }
   Perf::popPerf();
 }
-
 void ShadowBox::debugRender(RenderParams& rp) {
   RenderUtils::drawFrustumShader(rp.getCamera(), _pint->_pShadowBoxSide[BoxSide::Right]->getFrustum(), Color4f(1, 0, 0, 1));
   RenderUtils::drawFrustumShader(rp.getCamera(), _pint->_pShadowBoxSide[BoxSide::Left]->getFrustum(), Color4f(1, 0, 0, 1));
@@ -304,11 +303,7 @@ void ShadowBox::debugRender(RenderParams& rp) {
   RenderUtils::drawFrustumShader(rp.getCamera(), _pint->_pShadowBoxSide[BoxSide::Back]->getFrustum(), Color4f(0, 0, 1, 1));
   RenderUtils::drawFrustumShader(rp.getCamera(), _pint->_pShadowBoxSide[BoxSide::Front]->getFrustum(), Color4f(0, 0, 1, 1));
 }
-
-
 void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
-  //Here we can do shadowmap operations.
-
   if (pBox->getGlTexId() != 0) {
     if (Gu::getRenderSettings()->getSmoothShadows()) {
       std::shared_ptr<ShaderBase> pDofShader = Gu::getShaderMaker()->getSmoothGenShader();
@@ -333,19 +328,14 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
 
             pDofShader->draw(pQuadMesh);
             Gu::checkErrorsDbg();
-
           }
           pBox->endRenderSide();
-
         }
         pBox->endRenderShadowBox();
         Gu::checkErrorsDbg();
       }
       pDofShader->endRaster();
       Gu::checkErrorsDbg();
-
-
-
     }
     else {
       std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glCopyImageSubData(
@@ -362,12 +352,8 @@ void ShadowBox::copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox) {
         , 6
       );
     }
-
-
-
     Gu::checkErrorsDbg();
   }
-
 }
 //Basically implementing the screen quead deferred lighting here.
 void ShadowBox::updateScreenQuad() {
@@ -379,7 +365,6 @@ void ShadowBox::updateScreenQuad() {
   //Quad2f c = Gu::getViewport()->getClientQuad();//DirectCast(Gu::GetRenderManager(), GLRenderSystem*)->getViewport()->getClientQuad();
   //_pScreenQuadMesh->updateScreenQuad(&c);
 }
-
 void ShadowBox::beginRenderShadowBox() {
   //Gd::verifyRenderThread();
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pint->_glFrameBufferId);
@@ -412,8 +397,8 @@ void ShadowBox::beginRenderSide(BoxSide::e side) {
   /*
   Alternatively, if you want to render the cube in a single pass, you can attach the entire cubemap using
   glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture_id, 0);
-  The second method is a single pass approach. You bind the entire cubemap as a target, and only perform a single render pass. This method requires a geometry
-  shader that will duplicate each primitive six times, projecting it onto all six cubemap
+  The second method is a single pass approach. You bind the entire cubemap as a target, and only perform a single render pass.
+  This method requires a geometry shader that will duplicate each primitive six times, projecting it onto all six cubemap
   faces simultaneously (through your six view-projection matrices). The geometry shader
   directs each duplicated primitive to the appropriate cube target face using the gl_Layer variable.
   */
@@ -421,7 +406,6 @@ void ShadowBox::beginRenderSide(BoxSide::e side) {
 }
 void ShadowBox::endRenderSide() {
   Gu::checkErrorsDbg();
-
 }
 void ShadowBox::endRenderShadowBox() {
   //Gd::verifyRenderThread();
@@ -429,7 +413,6 @@ void ShadowBox::endRenderShadowBox() {
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_FRAMEBUFFER, 0);
   Gu::checkErrorsDbg();
 }
-
 
 #pragma endregion
 

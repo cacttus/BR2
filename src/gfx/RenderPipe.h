@@ -32,7 +32,7 @@ public:
   void init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePath);
   std::shared_ptr<DeferredFramebuffer> getBlittedDeferred() { return _pBlittedDeferred; }
   void renderSceneTexture(PipeBits _pipeBits);
-  void renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<CameraNode> pCam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits);
+  void renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<RenderBucket> b, std::shared_ptr<CameraNode> pCam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits);
   void resizeScreenBuffers(int32_t w, int32_t h);
 
   std::shared_ptr<Img32> getResultAsImage();
@@ -89,7 +89,7 @@ protected:
   void saveScreenshot(std::shared_ptr<LightManager> lightman);
   void copyMsaaSamples(std::shared_ptr<FramebufferBase> msaa, std::shared_ptr<FramebufferBase> blitted);
   void releaseFbosAndMesh();
-  void setShadowUf(std::shared_ptr<LightManager> lightman);
+  void setShadowEnvUf(std::shared_ptr<LightManager> lightman);
 
   void beginRenderDeferred();
   void endRenderDeferred();

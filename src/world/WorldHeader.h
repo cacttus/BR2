@@ -32,7 +32,6 @@ class PhysicsGridAwareness;
 class PhysicsShape;
 class SphereShape;
 class HullShape;
-class BvhCollectionParams;
 class Scene;
 class Component;
 class Path;

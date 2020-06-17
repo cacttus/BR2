@@ -72,7 +72,7 @@ void ShadowFrustum_Internal::updateView() {
   AssertOrThrow2(_pLightSource != nullptr);
 
   //TODO: like in the shadowbox, side, we might want to add debug padding.
-  _pViewport->updateBox(0,0,_iFboWidthPixels, _iFboHeightPixels);
+  _pViewport->updateBox(0, 0, _iFboWidthPixels, _iFboHeightPixels);
   _pViewport->bind();
 
   float fNear = _pFrustum->getZNear();
@@ -152,23 +152,14 @@ void ShadowFrustum_Internal::cullObjectsAsync(CullParams& cp) {
   AssertOrThrow2(_pLightSource != nullptr);
   AssertOrThrow2(_pVisibleSet != nullptr);
 
-  _pVisibleSet->clear(cp.getCamera());
-
   std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(_pLightSource);
 
-  BvhCollectionParams p;
-  p._fMaxDist = MathUtils::brMin(_pFrustum->getZFar(), Gu::getEngineConfig()->getMaxPointLightShadowDistance());
-  p._pFrustum = _pFrustum;
-  p._pRenderBucket = _pVisibleSet;
-  p._pVisibleCamera = cp.getCamera();
-  physics->collectVisibleNodes(&p);
+  _pVisibleSet->start(MathUtils::brMin(
+    cp.getMaxObjectDistance() * cp.getMaxObjectDistance(),
+    Gu::getEngineConfig()->getMaxPointLightShadowDistance() * Gu::getEngineConfig()->getMaxPointLightShadowDistance()), 
+    cp.getCamera());
 
-  ////Loop through objects and find whether they have changed since last update.
-  //_bMustUpdate = false;
-
-  //if (_pVisibleSet->getGrids().size() > 0 || _pVisibleSet->getObjs().size() > 0) {
-  //  _bMustUpdate = true;
-  //}
+  physics->collectVisibleNodes(_pVisibleSet);
 }
 void ShadowFrustum_Internal::createFbo() {
   deleteFbo();
@@ -293,54 +284,17 @@ void ShadowFrustum::updateAndCullAsync(CullParams& cp) {
   static int n = 0;
   if (n == 1) { return; }
   AssertOrThrow2(_pint->_pLightSource != nullptr);
-  // 2 optimizations here
-  // frame modulus
-  // checking for changed objects (per-side)
+
   bool bMustUpdate = false;
   bool bForceUpdate = false;
   int iStartDebug = 0;
 
-  //Note: even better performance would be to poll object
-  //positions - if nothing moved then don't update the shadowmap.
-  //TEST - update every x frames. usign ID allows sequential frame updates for shadow boxes.
-  //if (!Gu::getFpsMeter()->frameMod(1 + _iShadowFrustumId)) {
-  //    return;
-  //}
-
-  //std::shared_ptr<LightManager> pLightMan = _pint->_pLightSource->getLightManager();
-
-  //Update the camera for each ShadowFrustum side if the light has changed position or radius.
-  //See also: debugInvalidateAllLightProjections
-//   if (_vCachedLastPos != _pLightSource->getFinalPos() ) {
-//       _vCachedLastPos = _pLightSource->getFinalPos();
-
-   //it's skippin this..ujust whatever..
   _pint->updateView();
-
-  //       bForceUpdate = true;
-  //       bMustUpdate = true;
-  //   }
-
-     // Collect all objects for each frustum.
-     // if objects don't change don't render that frustum (bMustUpate)
-
   _pint->cullObjectsAsync(cp);
-
-  //If we don't need to update then return.
-//   if (bMustUpdate == false){
-//       return;
-
-//   }
-
-   // Tell the viewport we've changed
-
-   // Copy and blend this into
 }
-
 void ShadowFrustum::debugRender(RenderParams& rp) {
   RenderUtils::drawFrustumShader(rp.getCamera(), _pint->_pFrustum, Color4f(1, 0, 0, 1));
 }
-
 void ShadowFrustum::beginRenderShadowFrustum() {
   //Gd::verifyRenderThread();
   std::dynamic_pointer_cast<GLContext>(Gu::getCoreContext())->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _pint->_glFrameBufferId);

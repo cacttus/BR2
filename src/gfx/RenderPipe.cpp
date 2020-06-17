@@ -22,6 +22,7 @@
 #include "../gfx/CameraNode.h"
 #include "../gfx/RenderSettings.h"
 #include "../gfx/Picker.h"
+#include "../gfx/LightNode.h"
 #include "../base/GraphicsWindow.h"
 #include "../model/MeshNode.h"
 #include "../model/MeshUtils.h"
@@ -149,8 +150,7 @@ void RenderPipe::init(int32_t iWidth, int32_t iHeight, string_t strEnvTexturePat
     _pEnvTex = Gu::getTexCache()->getOrLoad(TexFile("renderpipe_env_tex", strEnvTexturePath), false, true, true);
   }
 }
-
-void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<CameraNode> cam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits) {
+void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<RenderBucket> b, std::shared_ptr<CameraNode> cam, std::shared_ptr<LightManager> lightman, PipeBits pipeBits) {
   //Input: Camera, Node
   //Output: Rendered scene image
   //Light Manager may not really be necessary.
@@ -227,10 +227,18 @@ void RenderPipe::renderScene(std::shared_ptr<Drawable> toDraw, std::shared_ptr<C
     foreach(fut in futs){
       fut.wait();
     }
-
   */
-
-
+  //TODO: 
+  CullParams p;
+  std::vector<std::future<bool>> futs;
+  for (auto light_pair : b->getLights()) {
+    p.setCamera(cam);
+    std::future<bool> bf = light_pair.second->cullShadowVolumesAsync(p);
+    futs.push_back(std::move(bf));
+  }
+  for (size_t i=0; i<futs.size();++i) {
+    futs[i].wait();
+  }
 
   _bRenderInProgress = true;
   {
@@ -533,15 +541,28 @@ void RenderPipe::blitDeferredRender(std::shared_ptr<LightManager> lightman, std:
 
     //Set the light uniform blocks for the deferred shader.
     _pDeferredShader->setLightUf(lightman);
-    setShadowUf(lightman);
+    setShadowEnvUf(lightman);
     _pDeferredShader->draw(_pQuadMesh);
     getContext()->chkErrDbg();
   }
   _pDeferredShader->endRaster();
 }
-void RenderPipe::setShadowUf(std::shared_ptr<LightManager> lightman) {
+void RenderPipe::setShadowEnvUf(std::shared_ptr<LightManager> lightman) {
+  //Set Shadow and Environment map Uniforms.
   int32_t iMaxTexs = 0;
   glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &iMaxTexs);
+
+  //TEST
+  //TEST
+  //TEST
+  //TEST
+  //This is to get the lights to work again.  
+  //
+  bool DISABLE_ALL_SHADOW_BOXES_AND_SUCH = true;
+  //TEST
+  //TEST
+  //TEST
+  //TEST
 
   std::vector<GLint> boxSamples;
   std::vector<GLint> frustSamples;
@@ -559,8 +580,9 @@ void RenderPipe::setShadowUf(std::shared_ptr<LightManager> lightman) {
   for (int iShadowBox = 0; iShadowBox < iNumGpuShadowBoxes; ++iShadowBox) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
     if (iTextureIndex < iMaxTexs) {
-      GLuint texId = Gu::getTexCache()->getDummy1x1TextureCube();;
-      if (iShadowBox < lightman->getGpuShadowBoxes().size()) {
+      //Ok, so we are using textureSize in the pixel shader to indicate that the shadow here is "used"
+      GLuint texId = Gu::getTexCache()->getDummy1x1TextureCube();
+      if (!DISABLE_ALL_SHADOW_BOXES_AND_SUCH && iShadowBox < lightman->getGpuShadowBoxes().size()) {
         std::shared_ptr<ShadowBox> pBox = lightman->getGpuShadowBoxes()[iShadowBox];
         if (pBox != nullptr) {
           texId = pBox->getGlTexId();
@@ -588,7 +610,7 @@ void RenderPipe::setShadowUf(std::shared_ptr<LightManager> lightman) {
     iTextureIndex = _pMsaaDeferred->getNumNonDepthTargets() + iIndex;
     if (iTextureIndex < iMaxTexs) {
       GLuint texId = Gu::getTexCache()->getDummy1x1Texture2D();
-      if (iShadowFrustum < lightman->getGpuShadowFrustums().size()) {
+      if (!DISABLE_ALL_SHADOW_BOXES_AND_SUCH && iShadowFrustum < lightman->getGpuShadowFrustums().size()) {
         std::shared_ptr<ShadowFrustum> pFrust = lightman->getGpuShadowFrustums()[iShadowFrustum];
         if (pFrust != nullptr) {
           texId = pFrust->getGlTexId();

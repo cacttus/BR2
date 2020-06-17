@@ -35,7 +35,7 @@ public:
   virtual void update(float delta);
   void unloadWorld();
   void getNodeBoxForGridPos(const ivec3& pt, Box3f& __out_ box) const;
-  void collectVisibleNodes(BvhCollectionParams* collectionParams);
+  void collectVisibleNodes(std::shared_ptr<RenderBucket> rb);
 
   std::multimap<float, std::shared_ptr<PhysicsGrid>>& getVisibleGrids();
   std::multimap<float, std::shared_ptr<SceneNode>>& getVisibleNodes();
@@ -78,7 +78,6 @@ public:
 private:
   float _fNodeWidth = 0;
   float _fNodeHeight = 0;
-  //*New Grid stuff
   GridMap _gridMap;
   ObjMap _mapObjects;
   std::set<ivec3*, ivec3::Vec3xCompLess> _setEmpty;
@@ -87,8 +86,6 @@ private:
   int32_t _frameStamp = 0;
   vec3 _vUp;  //For world25 This should be 0,0,-1, for any real 3D world use 0,1,0
   std::set<std::shared_ptr<PhysicsNode>> _vecActiveFrame; //Activated objects per frame.
-  //std::set<std::shared_ptr<PhysicsGrid>> _setVisibleGrids;
-  //std::set<std::shared_ptr<PhysicsNode>> _setVisibleNodes;
   std::shared_ptr<PhysicsGridAwareness> _pAwareness = nullptr;
   MpInt _mpNodesY;
   uint32_t _iGridCountLimit = 100;
@@ -119,32 +116,20 @@ private:
   void unstick_ob_v2(vec3& ob_in_p, vec3& ob_in_v, Box3f* boxA, Box3f* boxB,
     float move_t, float ob_friction, vec3& __out_ out_new_v);
   void calc_obj_manifold(std::shared_ptr<PhysicsNode> ob);
-
-  /*void bb_resolve_setup_data(Phy25* obA, Phy25* obB, vec3& v_last_a, vec3& v_last_b, vec3& a_last_a, vec3& a_last_b,
-  Box3f* boxA, Box3f* boxB, float move_t, int ax_t0);*/
   void bb_resolve_setup_data(std::shared_ptr<PhysicsNode> obA, std::shared_ptr<PhysicsNode> obB, vec3& v_last_a, vec3& v_last_b,
     Box3f* boxA, Box3f* boxB, float move_t, int ax_t0);
-  //void bb_move_and_slide(const vec3& ob_last_p, const vec3& ob_last_v, const vec3& ob_last_a,
-  //    const vec3& ob_new_p0, const vec3& ob_new_p1, Box3f* boxA, Box3f* boxB,
-  //    float move_t, float ob_friction, vec3& __out_ out_new_v, vec3& __out_ out_new_a, const int ax_t0);
   void bb_move_and_slide(
     const vec3& ob_last_p, const vec3& ob_last_v,
     const vec3& ob_new_p, const vec3& ob_move_v, Box3f* boxA, Box3f* boxB,
     float move_t, float ob_friction, vec3& __out_ out_new_v, const int ax_t0);
-
-  //  void clear_obj_manifold(Phy25* ob);
-
   void makeGrid();
   void makeOrCollectGridForPos(ivec3& cv, std::vector<std::shared_ptr<PhysicsGrid>>& vecGenerated);
   void calcGridManifold(std::shared_ptr<PhysicsGrid> pGrid);
   void addNodeToGrid(std::shared_ptr<PhysicsNode> ob, std::shared_ptr<PhysicsGrid> pGrid);
   bool collideMesh(std::shared_ptr<PhysicsNode> ob, vec3* verts, size_t vOffBytes, size_t vStrideBytes, size_t vCount, v_index32* inds,
     int32_t iOff, int32_t iCount);
-
   void sweepGridBox(std::function<void(ivec3&)> func, ivec3& viMin, ivec3& viMax);
   void sweepGridFrustum(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2);
-  void sweepGridFrustum_r(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pf, float fMaxDist2, vec3& pt,
-    std::set<ivec3*, ivec3::Vec3xCompLess>& grids, int32_t& iDebugSweepCount);
 };
 
 }//ns Game

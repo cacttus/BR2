@@ -47,7 +47,7 @@ void ShaderUniform::copyUniformData(void* pData, GLint count) {
       Gu::debugBreak();
     }
 
-    count = 1; //prevent buffer overrunds.
+    count = 1; //prevent buffer overruns.
 
   }
   _iLastCount = count;

@@ -22,6 +22,7 @@ public:
   Hash32 getNameHashed() { return _iNameHashed; }
   string_t getName() { return _strName; }
   void copyUniformData(void* pData, GLint count = -1);
+  void clearUniformData();
   OpenGLShaderVarType::e getSystemType();
   void setIgnore(bool bIgnore) { _bIgnoreVariable = true; }
   bool getIgnore() { return _bIgnoreVariable; }

@@ -338,11 +338,7 @@ void PhysicsWorld::update(float delta) {
   makeGrid();
   collisionLoopDual(delta);
 
-  //Collect all nodes
-  BvhCollectionParams bcp;
-  bcp._pFrustum = _pScene->getActiveCamera()->getFrustum();
-  bcp._pRenderBucket = _pRenderBucket;
-  bcp._pVisibleCamera = _pScene->getActiveCamera();
+  //Compute max dist.
   float nw = getNodeWidth();
   float nh = getNodeHeight();
   float dd = Gu::getRenderSettings()->drawDistance();
@@ -352,8 +348,9 @@ void PhysicsWorld::update(float delta) {
   if (dd > 1000) {
     dd = 1000;
   }
-  bcp._fMaxDist = vec3(nw, nh, nw).length2() * dd; // 15 cubes I guess.
-  collectVisibleNodes(&bcp);
+  _pRenderBucket->start(vec3(nw, nh, nw).length2() * dd, _pScene->getActiveCamera());
+
+  collectVisibleNodes(_pRenderBucket);
   Perf::popPerf();
 }
 void PhysicsWorld::collisionLoopDual(float delta) {
@@ -1202,38 +1199,28 @@ vec3 PhysicsWorld::i3tov3Node(const ivec3& iNode) {
   return vOut;
 }
 
-void PhysicsWorld::collectVisibleNodes(BvhCollectionParams* parms) {
-  AssertOrThrow2(parms->_pFrustum != nullptr);
-  AssertOrThrow2(parms->_pRenderBucket != nullptr);
-  AssertOrThrow2(parms->_pVisibleCamera != nullptr);
-
-
-  if (parms->_pRenderBucket->hasItems()) {
-    BRLogWarnCycle("Render bucket had items while collecting nodes.");
-  }
-
-  parms->_pRenderBucket->clear(parms->_pVisibleCamera);
+void PhysicsWorld::collectVisibleNodes(std::shared_ptr<RenderBucket> rb) {
   std::set<ivec3*, ivec3::Vec3xCompLess> grids;
 
   //Get All Grids
   sweepGridFrustum([&](ivec3& cv) {
     std::shared_ptr<PhysicsGrid> pGrid = getNodeAtPos(cv);
     if (pGrid != nullptr) {
-      std::shared_ptr<FrustumBase> frust = parms->_pVisibleCamera->getFrustum();
+      std::shared_ptr<FrustumBase> frust = rb->getCamera()->getFrustum();
       Box3f* box = pGrid->getBoundBox();
       if (frust->hasBox(box)) {
-        parms->_pRenderBucket->addGrid(pGrid);
+        rb->addGrid(pGrid);
       }
     }
-    }, parms->_pFrustum, parms->_fMaxDist);
+    }, rb->getCamera()->getFrustum(), rb->getMaxDist2());
 
   //Add meshes to render bucket
   int32_t dbgHidden = 0;
   for (std::pair<NodeId, std::shared_ptr<PhysicsNode>> p : _mapObjects) {
     if (p.second->isHidden() == false) {
-      if (parms->_pFrustum->hasBox(p.second->getBoundBoxObject())) {
-        float fDist2 = (parms->_pFrustum->getNearPlaneCenterPoint() - p.second->getBoundBoxObject()->center()).length2();
-        parms->_pRenderBucket->addObj(p.second);
+      if (rb->getCamera()->getFrustum()->hasBox(p.second->getBoundBoxObject())) {
+        float fDist2 = (rb->getCamera()->getFrustum()->getNearPlaneCenterPoint() - p.second->getBoundBoxObject()->center()).length2();
+        rb->addObj(p.second);
       }
       else {
         dbgHidden++;
@@ -1305,63 +1292,6 @@ void PhysicsWorld::sweepGridFrustum(std::function<void(ivec3&)> func, std::share
     delete vi;
   }
 }
-void PhysicsWorld::sweepGridFrustum_r(std::function<void(ivec3&)> func, std::shared_ptr<FrustumBase> pFrust, float fMaxDist2,
-  vec3& pt, std::set<ivec3*, ivec3::Vec3xCompLess>& grids, int32_t& iDebugSweepCount) {
-  //What this does:
-  //for point P - snap to the ivec3 grid.
-  // check if box intersects frustum,
-  // repeat for all 6 neighbors
-  // *we don't use physicsgrid here!*  it's a 'virtual' box because the grids are not contiguous
-  // Testing: enters about 400 times.
-
-  //Box3f box;
-  //ivec3 vi = v3Toi3Node(pt);
-  //iDebugSweepCount++;
-
-  //if (grids.find(&vi) == grids.end()) {
-  //    //TODO: fix this because we're getting stack overflows
-  //    //Shitty.. but what else could we do?
-  //    grids.insert(new ivec3(vi));
-
-  //    // if the grid right here intersects the frustum
-  //    getNodeBoxForGridPos(vi, box);
-
-  //    vec3 node_center = box.center();
-
-  //    float fDist2 = (pFrust->getNearPlaneCenterPoint() - node_center).length2();
-
-  //    if (fDist2 < fMaxDist2) {
-  //        if (pFrust->hasBox(&box)) {
-  //            func(vi);
-
-  //            //Sweep Neighbors
-  //            vec3 n[6];
-  //            n[0] = node_center + vec3(-getNodeWidth(), 0, 0);
-  //            n[1] = node_center + vec3(getNodeWidth(), 0, 0);
-  //            n[2] = node_center + vec3(0, -getNodeHeight(), 0);
-  //            n[3] = node_center + vec3(0, getNodeHeight(), 0);
-  //            n[4] = node_center + vec3(0, 0, -getNodeWidth());
-  //            n[5] = node_center + vec3(0, 0, getNodeWidth());
-  //            sweepGridFrustum_r(func, pFrust, fMaxDist2, n[0], grids, iDebugSweepCount);
-  //            sweepGridFrustum_r(func, pFrust, fMaxDist2, n[1], grids, iDebugSweepCount);
-  //            sweepGridFrustum_r(func, pFrust, fMaxDist2, n[2], grids, iDebugSweepCount);
-  //            sweepGridFrustum_r(func, pFrust, fMaxDist2, n[3], grids, iDebugSweepCount);
-  //            sweepGridFrustum_r(func, pFrust, fMaxDist2, n[4], grids, iDebugSweepCount);
-  //            sweepGridFrustum_r(func, pFrust, fMaxDist2, n[5], grids, iDebugSweepCount);
-
-  //        }
-  //        else {
-  //            int nnn = 0;
-  //            nnn++;
-  //        }
-  //    }
-  //    else {
-  //        int nnn = 0;
-  //        nnn++;
-  //    }
-  //}
-}
-
 //void World25::getAllNodesForRayBoxSLOW(Ray_t* pr, float fBoxWidth2, float fBoxHeight2,
 //    std::vector<std::shared_ptr<WorldGrid>>& __out_ grids, bool bLoadIfNotLoaded) {
 //

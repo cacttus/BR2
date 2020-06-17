@@ -23,46 +23,38 @@
 namespace BR2 {
 ShadowBoxSide::ShadowBoxSide(std::shared_ptr<ShadowBox> pParentBox, std::shared_ptr<LightNodePoint> pLightSource, BoxSide::e eSide) {
   _eSide = eSide;
-  _pFrustum = nullptr;
-  _pViewport = nullptr;
-  _pVisibleSet = nullptr;
   _pParentBox = pParentBox;
-  _bMustUpdate = true;
   _pLightSource = pLightSource;
 
   _pViewport = std::make_shared<RenderViewport>(_pParentBox->getFboWidth(), _pParentBox->getFboHeight(), ViewportConstraint::Full);
 
   _pVisibleSet = std::make_shared<RenderBucket>();
   _pFrustum = std::make_unique<FrustumBase>(_pViewport, 90.0f);
-  // _pBvhCollectionResults = new BvhCollectionResults();
 }
 ShadowBoxSide::~ShadowBoxSide() {
-  // DEL_MEM(_pBvhCollectionResults);
-//   DEL_MEM(_pFrustum);
-//   DEL_MEM(_pVisibleSet);
-//   DEL_MEM(_pViewport);
 }
-void ShadowBoxSide::updateView() {
+void ShadowBoxSide::updateView(/*send junk in instead*/) {
   AssertOrThrow2(_pLightSource != nullptr);
+  AssertOrThrow2(_pParentBox != nullptr);
 
   if (Gu::getRenderSettings()->getDebug()->getShadowHelpVisible()) {
     //Debug - If shadow help is visible
     //we alter the viewport here to show shadow lines
     //around the edges which demarcate the shadow box frustum boundaries.
     int pad = 15;
-    _pViewport->updateBox(pad,pad,_pParentBox->getFboWidth() - pad * 2, _pParentBox->getFboHeight() - pad * 2);
+    _pViewport->updateBox(pad, pad, _pParentBox->getFboWidth() - pad * 2, _pParentBox->getFboHeight() - pad * 2);
   }
   else {
-    _pViewport->updateBox(0,0,_pParentBox->getFboWidth(), _pParentBox->getFboHeight());
+    _pViewport->updateBox(0, 0, _pParentBox->getFboWidth(), _pParentBox->getFboHeight());
   }
 
   float fNear = _pParentBox->getSmallBoxSize() * 0.5f;
-  float fFar;
+  float fFar = 0;
 
   // make sure frustum isn't **d uip
   if (_pLightSource->getLightRadius() < fNear) {
-      std::shared_ptr<CameraNode> cam = NodeUtils::getActiveCamera(_pLightSource->getLightManager());
-      fFar = cam->getFrustum()->getZFar();
+    std::shared_ptr<CameraNode> cam = NodeUtils::getActiveCamera(_pLightSource->getLightManager());
+    fFar = cam->getFrustum()->getZFar();
   }
   else {
     fFar = _pLightSource->getLightRadius();
@@ -73,7 +65,7 @@ void ShadowBoxSide::updateView() {
   vec3 vLightPos = _pLightSource->getFinalPos();
   vec3 vCamNormal = BoxUtils::normalForSide(_eSide);
 
-  //**This value is super important.  If we render with teh camera oriented down the wrong axis 
+  //**This value is super important.  If we render with teh camera oriented down the wrong axis
   //the render texture will be oriented incorrectly.
   vec3 vCamUp;
 
@@ -117,22 +109,20 @@ bool ShadowBoxSide::computeIsVisible(std::shared_ptr<FrustumBase> pCamFrustum) {
 
   return pCamFrustum->hasFrustum(_pFrustum);
 }
-void ShadowBoxSide::cullObjectsAsync(CullParams& rp) {
-  AssertOrThrow2(_pLightSource != nullptr);
-  AssertOrThrow2(_pVisibleSet != nullptr);
-  // AssertOrThrow2(_pBvhCollectionResults!=nullptr);
+void ShadowBoxSide::cullObjectsAsync(CullParams& cp) {
+  // AssertOrThrow2(_pLightSource != nullptr);
+  //AssertOrThrow2(_pVisibleSet != nullptr);
 
-  std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(_pLightSource);
+  updateView();
 
-  _pVisibleSet->clear(rp.getCamera());
+  _pVisibleSet->start(MathUtils::brMin(
+    cp.getMaxObjectDistance() * cp.getMaxObjectDistance(),
+    Gu::getEngineConfig()->getMaxPointLightShadowDistance() * Gu::getEngineConfig()->getMaxPointLightShadowDistance()),
+    cp.getCamera());
 
-  BvhCollectionParams p;
-  //fmaxdist is SQUARED
-  p._fMaxDist = powf(MathUtils::brMin(_pLightSource->getLightRadius(), Gu::getEngineConfig()->getMaxPointLightShadowDistance()), 2);
-  p._pFrustum = _pFrustum;
-  p._pRenderBucket = _pVisibleSet;
-  p._pVisibleCamera = rp.getCamera();
-  physics->collectVisibleNodes(&p);
+  if (std::shared_ptr<PhysicsWorld> physics = NodeUtils::getPhysicsWorld(_pLightSource)) {
+    physics->collectVisibleNodes(_pVisibleSet);
+  }
 
   //////////////////////////////////////////////////////////////////////////
   //Loop through objects and find whether they have changed since last update.
@@ -141,10 +131,6 @@ void ShadowBoxSide::cullObjectsAsync(CullParams& rp) {
   if (_pVisibleSet->getGrids().size() > 0 || _pVisibleSet->getObjs().size() > 0) {
     _bMustUpdate = true;
   }
-
-  //*Transform checking won't work for skinned meshes.
-  //We need a visibility delta.
-
 }
 void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bForce) {
   Perf::pushPerf();
@@ -154,6 +140,8 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
   if (_bMustUpdate == false && bForce == false) {
     return;
   }
+
+  getViewport()->bind();
 
   pMasterBox->beginRenderSide(_eSide);
   {
@@ -184,7 +172,6 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
           sb = Gu::getShaderMaker()->getShadowShader(fmt);
           if (sb != nullptr) {
             break;
-
           }
         }
       }
@@ -210,16 +197,11 @@ void ShadowBoxSide::renderShadows(std::shared_ptr<ShadowBox> pMasterBox, bool bF
           }
         }
       }
-
     }
-
-
-
   }
   pMasterBox->endRenderSide();
 
   Gu::checkErrorsDbg();
   Perf::popPerf();
 }
-
 }//ns Game

@@ -11,16 +11,16 @@
 #include "../world/WorldHeader.h"
 
 namespace BR2 {
-class BvhCollectionParams : public VirtualMemory {
-public:
-  std::shared_ptr<FrustumBase> _pFrustum = nullptr;    // the frustum to collect from
-  std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
-  std::shared_ptr<CameraNode> _pVisibleCamera = nullptr;
-  float _fMaxDist = 80;// max distance that we collect
-
-  BvhCollectionParams() {}
-  BvhCollectionParams(RenderBucket* pSet, vec3& rootPt, std::shared_ptr<FrustumBase> collectionFrustum, bool createMissingNodes) {}
-};
+//class BvhCollectionParams : public VirtualMemory {
+//public:
+//  std::shared_ptr<FrustumBase> _pFrustum = nullptr;    // the frustum to collect from
+//  std::shared_ptr<RenderBucket> _pRenderBucket = nullptr;
+//  std::shared_ptr<CameraNode> _pVisibleCamera = nullptr;
+//  float _fMaxDist = 80;// max distance that we collect
+//
+//  BvhCollectionParams() {}
+//  BvhCollectionParams(RenderBucket* pSet, vec3& rootPt, std::shared_ptr<FrustumBase> collectionFrustum, bool createMissingNodes) {}
+//};
 /**
 *  @class RenderBucket
 *  @brief Collects scene elements for rendering.
@@ -30,13 +30,14 @@ public:
   RenderBucket();
   virtual ~RenderBucket() override;
 
+  float getMaxDist2() { return _fMaxDist2; }
   void collect(std::shared_ptr<SceneNode> bn);
-  void clear(std::shared_ptr<CameraNode> visible_camera);
-  
+  void start(float maxdist2, std::shared_ptr<CameraNode> n);
   void addObj(std::shared_ptr<SceneNode> bn);
   void addGrid(std::shared_ptr<PhysicsGrid> bn);
   bool hasItems();
-
+  void setCamera(std::shared_ptr<CameraNode> cam) { _cam = cam; }
+  std::shared_ptr<CameraNode> getCamera() { return _cam; }
   void sortAndDrawMeshes(std::function<std::shared_ptr<ShaderBase>(std::shared_ptr<VertexFormat>)> shaderSearch,
     std::function<void(std::shared_ptr<ShaderBase>)> shaderBind,
     std::function<void(std::shared_ptr<ShaderBase>, std::shared_ptr<MeshNode>)> shaderDraw);
@@ -58,13 +59,12 @@ private:
   std::multimap<float, std::shared_ptr<LightNodeBase>> _mapLights;
   std::multimap<float, std::shared_ptr<MeshNode>> _mapMeshes;
   std::multimap<float, std::shared_ptr<MeshNode>> _mapMeshesTransparent;
+  std::shared_ptr<CameraNode> _cam = nullptr;
   RenderMap _renderMap;
-  std::shared_ptr<CameraNode> _pVisibleCamera = nullptr;
   vec3 _vCachedCamPos;
+  float _fMaxDist2 = 999999;
 
-  // RenderMap _renderMap;
   float distToCam(Box3f* n);
-  //  void addToRenderMap(std::shared_ptr<MeshNode> bn);
 };
 
 }//ns Game

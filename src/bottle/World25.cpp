@@ -296,7 +296,12 @@ void World25::createHandCursor() {
 
   //    wo = makeObj("Tall_Lamp", vec3(0, 0, 0), vec3(0.5, 0.5, 0.5), vec4(0, 1, 0, 0), "");
    // if (wo != nullptr) {
-  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("light",vec3(0, 35.0, 0), 50.0f, vec4(1, 1, 1, 1), "", true);
+  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("light",
+    vec3(BottleUtils::getCellWidth()*3, BottleUtils::getCellHeight() * 10, 
+    BottleUtils::getCellWidth() * 3),
+    BottleUtils::getCellWidth() * 10,
+    vec4(1, 1, 1, 1), "", 
+    true);
   getScene()->attachChild(lp);
   //     wo->attachChild(lp);
       // turnOffLamp();//Default turn if otf

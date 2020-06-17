@@ -204,14 +204,13 @@ void ShaderBase::setUf(string_t name, void* value, GLint count, bool bIgnore) {
   std::shared_ptr<ShaderUniform> uf = getUniformByName(name);
   if (uf == nullptr) {
     if (bIgnore == false) {
-      BRLogWarnCycle("Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
+      BRLogWarnCycle("Set, Shader uniform '" + name + "' could not be found for shader " + getProgramName() + "");
     }
   }
   else {
     uf->copyUniformData(value, count);
   }
 }
-
 void ShaderBase::verifyBound() {
   //This is a sanity system.
 

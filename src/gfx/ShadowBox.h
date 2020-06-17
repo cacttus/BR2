@@ -9,6 +9,7 @@
 
 #include "../gfx/GfxHeader.h"
 
+#include <future>
 namespace BR2 {
 /**
 *  @class PointLightShadowBox
@@ -20,7 +21,7 @@ public:
   ShadowBox(std::shared_ptr<LightNodePoint> refLightSource, int32_t iWidth, int32_t iHeight);
   virtual ~ShadowBox() override;
   void init();
-  void updateAndCullAsync(CullParams& rp);
+  std::future<bool> updateAndCullAsync(CullParams& rp);
   void renderShadows(std::shared_ptr<ShadowBox> pMaster);
   void debugRender(RenderParams& rp);
   void copyAndBlendToShadowMap(std::shared_ptr<ShadowBox> pBox);

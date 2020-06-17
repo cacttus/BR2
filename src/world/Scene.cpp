@@ -92,12 +92,25 @@ void Scene::afterAttachedToWindow() {
   makeParticles();
 
   //TEst
+  //TEst
+  //TEst
+  //TEst
+  //TEst
 
-  std::shared_ptr<MeshNode> c = MeshNode::create("Ball", true,
+  std::shared_ptr<MeshNode> ec = MeshNode::create("Ball", true,
     MeshUtils::makeSphere(2, 20, 20)
   );
-  attachChild(c);
+  attachChild(ec);
 
+  std::shared_ptr<LightNodePoint> lp = LightNodePoint::create("hi", false);
+  lp->setPos(std::move(vec3(20, 20, 20)));
+  lp->setLightRadius(100);
+  attachChild(lp);
+
+  //TEst
+  //TEst
+  //TEst
+  //TEst
   //TEst
 
 
@@ -125,10 +138,12 @@ void Scene::createUi() {
   //debug label
   _pDebugLabel = UiLabel::create("", debugTextSkin);
   _pDebugLabel->position() = UiPositionMode::e::Relative;
+
   _pDebugLabel->left() = "10px";
   _pDebugLabel->top() = "10px";
   _pDebugLabel->width() = "200px";
   _pDebugLabel->height() = "1800px";
+
   _pDebugLabel->enableWordWrap();
   _pUiScreen->addChild(_pDebugLabel);
   Gu::checkErrorsDbg();

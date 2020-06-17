@@ -21,7 +21,6 @@ namespace BR2 {
 LightNodeBase::LightNodeBase(string_t name, bool bShadow) : PhysicsNode(name, nullptr) {
   _bEnableShadows = bShadow;
   _color = vec4(1, 1, 1, 1);
-  //    _vSpecColor = vec3(1, 1, 1);
 }
 LightNodeBase::~LightNodeBase() {
 }
@@ -42,7 +41,6 @@ bool LightNodeBase::getIsShadowsEnabled() {
   return _bEnableShadows && (Gu::getEngineConfig()->getEnableObjectShadows() ||
     Gu::getEngineConfig()->getEnableTerrainShadows());
 }
-
 #pragma endregion
 
 #pragma region LightNodeDir
@@ -56,7 +54,6 @@ std::shared_ptr<LightNodeDir> LightNodeDir::create(string_t name, bool bShadow) 
 
   return lp;
 }
-
 LightNodeDir::~LightNodeDir() {
   //DEL_MEM(_pGpuLight);
   //DEL_MEM(_pShadowFrustum);
@@ -93,14 +90,9 @@ void LightNodeDir::update(float delta, std::map<Hash32, std::shared_ptr<Animator
 }
 std::future<bool> LightNodeDir::cullShadowVolumesAsync(CullParams& cp) {
   //*Remove this.  It needs to be on the RenderBucket itself, per-frustum
-
-  /*
-
-      */
   std::future<bool> fut = std::async(std::launch::async, [&] {
     Perf::pushPerf();
     {
-
       _pShadowFrustum->updateAndCullAsync(cp);
 
       _vDir = (getLookAt() - getFinalPos()).normalized();
@@ -175,11 +167,19 @@ void LightNodePoint::update(float delta, std::map<Hash32, std::shared_ptr<Animat
   LightNodeBase::update(delta, mapAnimators);
 }
 std::future<bool> LightNodePoint::cullShadowVolumesAsync(CullParams& cp) {
+
   //*Remove this.  It needs to be on the RenderBucket itself, per-frustum
   std::future<bool> fut = std::async(std::launch::async, [&] {
     Perf::pushPerf();
     {
-      _pShadowBox->updateAndCullAsync(cp);
+      //**TODO: Uncomment
+      //**TODO: Uncomment
+      //**TODO: Uncomment
+      //std::future<bool> b = _pShadowBox->updateAndCullAsync(cp);
+      //b.wait();
+      //**TODO: Uncomment
+      //**TODO: Uncomment
+      //**TODO: Uncomment
 
       updateFlicker();
 

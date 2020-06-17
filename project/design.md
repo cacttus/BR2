@@ -3,32 +3,23 @@
 
 ## Overview
 
-BR2 ('Mine-Maker') started off as a small game that used Minecraft-like world-building.  It incorporates a fusion of many kinds of games.  The graphics engine grew out of this development.  Of course, since the game itself
-has somewhat been put on hiatus, for the purpose of getting this engine to a working, and stable state, all systems that are added are added with the purpose of completing the game.  Meaning, that any unnecessary
-game systems are going to be left for later development.  
-
-Globally, the game is contained in an application Package.  The Package is an application of which all game data is appended to the end of the executable.  Packages are equivalent to project files.   Each package
-represents a different game, so there is one package per game. Package configuration data are stored in Package.xml in the *game root folder*. The *game root folder* is the folder in which the application is currently
-executing.  During development, we keep all of the  game's data in this folder, '/data/'. These directories can be changed by changing the Package.xml.  Additionally, any engine-specific configurations can be changed
+The compiled game is contained in an "application package" but this is not yet fully implemented. Game's data in this folder, '/data/'. 
+These directories can be changed by changing the Package.xml.  Additionally, any engine-specific configurations can be changed
 by updating engine.xml in the root folder.
 
-BR2's systems are controlled by a set of managers.  Each manager controls a set of objects.  The engine is separated into a set of windows.  Each window contains its own OpenGL context, and a Rendering Pipeline.  
-
-#### Scenes
+BR2's systems are controlled by a set of managers.  Each manager controls a set of objects.  The engine is separated into a set of windows. 
+Each window contains its own OpenGL context, and a Rendering Pipeline.  
 
 The game world is separated into Scenes.   Each scene is a 'scenegraph', and is a directed acyclic graph.  Rendering is performed by running a PVS, Frustum pruning, and collection routine after the physics
-system has settled all the physical objects in the scene.  For the purpose of the game design, we are using an infinite-world type of system.  Sort of like Minecraft.  The world is separated into a massive
-grid of cube-blocks.  Unlike Minecraft (AFAIK) our grid is infinite across all 3 axes.  This means, there is no limit to how deep you can mine in the game.  
+system has settled all the physical objects in the scene.
 
 Scenes can be moved in between Windows, which gives us the ability to render the same scene across multiple windows.  This is currently the
 goal for Phase 1 of the engine.   Each scene contains a user interface defined by a UiScreen.  Each window user interfaces is separate from each other window's.  The UI is currently under development, and the goal is to get multiple windows 
-to render alternate user interfaces seamlessly, in separate contexts'
+to render alternate user interfaces in separate contexts.
 
-The game also contains a physics system.  The physics system runs an iterative solver which computes a 'best fit' for the game objects, within some parameters.  The physics engine is definitely going 
-to be ported to the GPU, in the future, in another rendering context.  There are many enhancements that can be made to the current state of the physics engine itself, but because the game design is 
-mostly tile-based, an excessive level of detail in the iterative solving engine is unnecessary.
+Mine Maker also contains a physics system.  The physics system runs an iterative 'best fit' for the game objects.
 
-### Details
+### Folders
 
 |  Folder | Contents|
 |---------|----------------------------------------------------------------------------------------------------------
@@ -38,7 +29,7 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
 |  math   | vectors, matrices, boxes, geometry, hulls, algorithms.													|
 |  model  | meshes, animation, models, characters, skeletons, bones.												|
 |  world  | physics, scenegraph. 																					|
-|  bottle  | contains world rendering data.                                                                         |
+|  bottle | contains world rendering data.                                                                         |
 
 | Class            | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -48,7 +39,7 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
 |     Scene        | Scenegraph for all items in the currently loaded game world.  Areas are separated into scenes in order to minimize memory footprint.  In the case of the designed game, scene differentiation is really unnecessary, as the world is "minecraft" infinite and it loads dynamically.  However, for a more linear game model the Scene would be used to separate game areas in order to reduce memory footprint.                                                       |
 |     Gu           | Global utility class used to access commonly used pieces of the engine (textures, meshes) through simple static methods.                                                      |
 
-### Class Hierarchy
+### Hierarchy
 
 * Gu
 	* Texture Manager (1, GLOBAL)
@@ -85,7 +76,6 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
 "https://www.khronos.org/opengl/wiki/OpenGL_and_multithreading"
 * GL contexts can share most data.  VAOs and Framebuffers cannot be shared.  For this reason, RenderPipeline, and Picker (which uses a pipe buffer), exist only on GraphicsWindow.
 
-
 - [ ] Scene Removal.  
 	- [ ] Convert PhysicsWorld into the scene.
 	- [ ] Replace Scnee with PhysicsWorld on Window
@@ -103,14 +93,12 @@ mostly tile-based, an excessive level of detail in the iterative solving engine 
 		bind Uniforms
 		draw the mesh
 
-
 * Orphan Support
 	* All grids need to be created where the camera is.  We need a way to allow for objects to be present outside of grids.
 	* Currently we only support objects that are fully enclosed in the world.  This poses a problem for instance if an object gets launched, or totally empty nodes.
 	* Add a "dirty" flag on the object to tell if the object manifold is dirty.
 
-* We are not going to remove all draw calls from all nodes.  All nodes have the ability to draw when they are iterated.
-	Even though it doesn't make sense.
+* We are not going to remove all draw calls from all nodes.  All nodes have the ability to draw when they are iterated. (Even though it doesn't make sense)
 
 * We will remove Scene (scenegraph) and replace it with PhysicsManager.   
 	* Scene has literally no use.  
@@ -182,3 +170,46 @@ One thing is that we can modularize the rendering system by removing the draw ca
 				Bind uniforms
 			D->draw
 	endDrawDeferred
+	
+# Rendering Notes
+
+We need to move the visible object collection to Scene.
+We need to integrate scnee with PhysicsWorld to have 1 object place.
+This does not support generic rendering however.  We can't render just anything with this design.
+Culling must take place hierarchically, this would mean, that we would need to attach globs to the scene.  Or at a minmum, instead of passing a Drawable to the
+Renderpipe, we pass a set of collected objects (first pass)
+The first pass set, will have all lights and such.
+There is no need for scenegraph.
+Scenegraph is useful for models themselves (Model Graph) but it is uselesss for speedy generic world rendering.
+
+So instead of calling Renderpipe->drawScene()
+we call RenderPipe->draw(RenderBucket.)
+
+SceneGraph + PhysicsWorld integration
+	Fix the "attached" methods after attached to scene
+		The same methods will exist (attached and detached) but instead of adding to scenegraph we will add it to object array.
+	Move UI to renderpipe
+	Move all other drawing to renderpipe
+	Move DrawBackgroundImage to renderpipe.
+
+	Then again, the ObjMap isn't used in any special way.  So why would it matter?
+
+	*****Object manifold determines object visibility*****
+		Just find all grids first
+		then find all nodes.
+		Object map is just a map that we can easily find all objects.
+
+	***** Physics should work using Dotsim *****
+		Point based simulation for all objects.
+		Asynchronous and easy to update.
+		Discrete.
+
+	Algorithm is..?
+	For each window.
+		For the active camera frustum
+			collect everything
+		for all things, ASYNC
+			for each additional frustum (mirror,  or light frustum) collect everything ASYNC
+		FENCE ( future.wait())
+
+

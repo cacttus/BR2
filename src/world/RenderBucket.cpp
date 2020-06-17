@@ -26,7 +26,7 @@ bool RenderBucket::hasItems() {
     (_mapMeshes.size() > 0)
     ;
 }
-void RenderBucket::clear(std::shared_ptr<CameraNode> visible_camera) {
+void RenderBucket::start(float maxdist2, std::shared_ptr<CameraNode> n) {
   _mapObjs.clear();
   _mapGrids.clear();
 
@@ -34,10 +34,12 @@ void RenderBucket::clear(std::shared_ptr<CameraNode> visible_camera) {
   _mapLights.clear();
   _mapPointLights.clear();
   _mapMeshes.clear();
-  _vCachedCamPos = visible_camera->getFinalPos();
+
+  _fMaxDist2 = maxdist2;
+  _cam = n;
 }
 float RenderBucket::distToCam(Box3f* bn) {
-  float dist = _vCachedCamPos.distance2(bn->center());
+  float dist = _cam->getPos().distance2(bn->center());
   return dist;
 }
 void RenderBucket::addObj(std::shared_ptr<SceneNode> bn) {
