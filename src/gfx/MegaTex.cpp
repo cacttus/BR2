@@ -361,10 +361,14 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::shared_ptr<Img32> tx) {
 
   return p;
 }
+/**
+* @fn getTex
+* @brief Returns the given texture image by name, separated into patches. not case sensitive.
+* @param nPatches - number of patches to expect - this is more of a debug thing to prevent invalid patches
+* @param bPreloaded - if we already loaded the image (skips validation and texture coords)
+* @param bLoadNow - Load the image immediately in this function (skips validation of texture coords)
+*/
 std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, bool bPreloaded, bool bLoadNow) {
-  //nPatches - number of patches to expect - this is more of a debug thing to prevent invalid patches
-  //bPreloaded - if we already loaded the image (skips validation and texture coords)
-  //bLoadNow - Load the image immediately in this function (skips validation of texture coords)
   AssertOrThrow2(nPatches > 0);
   std::string imgNameLow = StringUtil::lowercase(img);
 
@@ -395,7 +399,14 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
   }
 
   //**MUST return nPatches number of textures, never return a different number
-  AssertOrThrow2(ret && (ret->getTexs().size() == (size_t)nPatches));
+  if (ret == nullptr) {
+    BRLogError("Could not find MegaTex Texture " + img);
+    Gu::debugBreak();
+  }
+  else if (ret->getTexs().size() != (size_t)nPatches)     {
+    BRLogError("Failed to return an appropriate number of texture patches.");
+    Gu::debugBreak();
+  }
 
   return ret;
 }

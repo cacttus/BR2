@@ -504,6 +504,10 @@ std::shared_ptr<UiWindow> GameUi::createAssetWindow() {
   //Note moved the grid code to "cutcode"
   //////////////////////////////////////////////////////////////////////////
   //Add Asset item
+
+  BRLogDebug("Skipping the asset items, because thumb generation is currently disabled.");
+
+  /*
   std::shared_ptr<UiTex> coinImg = _pGuiSkin->pCoinImg;
   for (auto ws : _pScript->getGameFile()->getMobSpecs()) {
     std::shared_ptr<ModelSpec> ms = Gu::getModelCache()->getOrLoadModel(ws->getMobName());
@@ -522,7 +526,7 @@ std::shared_ptr<UiWindow> GameUi::createAssetWindow() {
     }
   }
   _pScript->getScene()->getUiScreen()->addChild(winObjects);
-
+  */
   return winObjects;
 }
 std::shared_ptr<UiWindow> GameUi::createConfigWindow() {

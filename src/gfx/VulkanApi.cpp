@@ -113,6 +113,7 @@ public:
     //You can log every vulkan call to stdout.
   }
   void loadExtensions() {
+    //Quick macro.
 #define VkLoadExt(_v) do{\
 _v = (PFN_##_v)vkGetInstanceProcAddr(instance, #_v); \
 if (_v == nullptr) { \
@@ -120,6 +121,7 @@ if (_v == nullptr) { \
 } \
 } while(0)
 
+    //Load Extensions
     VkLoadExt(vkCreateDebugUtilsMessengerEXT);
     VkLoadExt(vkDestroyDebugUtilsMessengerEXT);
 

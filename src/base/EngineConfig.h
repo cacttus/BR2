@@ -66,6 +66,7 @@ class EngineConfig  ..  {
 */
 
 #define XMLCONFIG_PROP(x) const string_t ##(x) = #x
+
 class EngineConfig_Internal;
 class EngineConfig : public XmlFile {
 public:

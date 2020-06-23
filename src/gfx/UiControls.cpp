@@ -50,15 +50,13 @@ UiElement::~UiElement() {
 void UiElement::init() {
   setName("UiElement");
 }
-std::shared_ptr<Picker> UiElement::getPicker() {
-  return getScreen()->getWindow()->getRenderPipe()->getPicker();
-}
 std::shared_ptr<UiScreen> UiElement::getScreen() {
-  //TODO: we need to pass the Screen to eadch element (and update the nodes when attached, as neceswsary), or, alternatively
-  // go up the node root until we reach a UiScreen element.
-  return nullptr;
+  std::shared_ptr<UiElement> pe = getParent();
+  while (pe != nullptr && pe->getThis<UiScreen>() == nullptr) {
+    pe = pe->getParent();
+  }
+  return std::dynamic_pointer_cast<UiScreen>(pe);
 }
-
 vec4 UiElement::makeClipRectForRender(const Box2f& b2ClipRect) {
   vec4 clipRect;
 
@@ -929,7 +927,18 @@ void UiElement::drawBoundBox(std::shared_ptr<UtilMeshInline2d> mi, vec4& color, 
   mi->vt2(vec2(p1.x, p1.y), vec2(p0.x, p1.y));
   mi->vt2(vec2(p0.x, p1.y), vec2(p0.x, p0.y));
 }
-std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uint32_t uiSort, bool bUpdateLayout, bool bCheckDupes) {
+void UiElement::checkCycle(std::shared_ptr<UiElement> e, bool& bResult) {
+  //Make sure this is a DAG, no cycles allowed.
+  UISortedMap::iterator it = _mapChildren.begin();
+  for (; it != _mapChildren.end(); it++) {
+    if (it->second == e) {
+      bResult = true;
+      break;
+    }
+    it->second->checkCycle(e, bResult);
+  }
+}
+std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uint32_t uiSort, bool bUpdateLayout, bool bCheckDupes, bool bCheckCycles) {
   if (c == nullptr) {
     //Allow this to simply fail this may happen if you fail to specify certain skin requirements.
     UiScreen::error(Stz "Tried to add a null child to UI element " + _strName);
@@ -937,11 +946,22 @@ std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uin
   }
 
   bool bCheckDupesResult = false;
+  bool bCheckCycleResult = false;
+
   if (bCheckDupes) {
+    //We can only have 1 child in the tree, becasue we update their contents individually.
     bCheckDupesResult = checkDupes(c);
   }
-  //We can only have 1 child in the tree, becasue we update their contents individually.
-  if (bCheckDupesResult == false) {
+
+  if (bCheckCycles) {
+    //Search for a cycle by finding whether this element is a child of the added child
+    checkCycle(c, bCheckCycleResult);
+    if (bCheckCycleResult) {
+      UiScreen::error(Stz "Tried to add a parent node to a child, cycle would result.");
+    }
+  }
+
+  if (bCheckDupesResult == false && bCheckCycleResult == false) {
     //We're good... add it
     _mapChildren.insert(std::make_pair(uiSort, c));
     c->_pParent = getThis<UiElement>();
@@ -949,6 +969,12 @@ std::shared_ptr<UiElement> UiElement::addChild(std::shared_ptr<UiElement> c, uin
       setLayoutChanged();
     }
   }
+
+  if (getThis<UiScreen>() != nullptr) {
+    //We are UiScreen, send an event to all aded children that they have been attached.  This is needed for generation of pick data.
+    afterAdded();
+  }
+
   return c;
 }
 bool UiElement::checkDupes(std::shared_ptr<UiElement> childTree) {
@@ -1004,20 +1030,24 @@ void UiElement::setSort(uint32_t uisort) {
   setLayoutChanged();
 }
 bool UiElement::removeChild(std::shared_ptr<UiElement> ele, bool bUpdateLayout) {
-  std::multimap<uint32_t, std::shared_ptr<UiElement>>::iterator it = _mapChildren.begin();
+  //Removes selected child from THIS node.
+  UISortedMap::iterator it = _mapChildren.begin();
   for (; it != _mapChildren.end(); it++) {
     if (it->second == ele) {
       _mapChildren.erase(it);
       if (bUpdateLayout == true) {
         setLayoutChanged();
       }
+      ele->afterRemoved();
       return true;
     }
   }
+
+
   return false;
 }
 bool UiElement::hasChild(std::shared_ptr<UiElement> ele) {
-  std::multimap<uint32_t, std::shared_ptr<UiElement>>::iterator it = _mapChildren.begin();
+  UISortedMap::iterator it = _mapChildren.begin();
   for (; it != _mapChildren.end(); it++) {
     if (it->second == ele) {
       return true;
@@ -1227,7 +1257,18 @@ void UiElement::bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLa
   }
   addChild(child, iMaxLayer);
 }
-
+void UiElement::afterAdded() {
+  UISortedMap::iterator it = _mapChildren.begin();
+  for (; it != _mapChildren.end(); it++) {
+    it->second->afterAdded();
+  }
+}
+void UiElement::afterRemoved() {
+  UISortedMap::iterator it = _mapChildren.begin();
+  for (; it != _mapChildren.end(); it++) {
+    it->second->afterRemoved();
+  }
+}
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiImage
@@ -1243,7 +1284,8 @@ std::shared_ptr<UiImage> UiImage::create(std::shared_ptr<UiTex> tex, UiImageSize
   pImg->_fTileWidthPx = fWidthPx;
   pImg->_fTileHeightPx = fHeightPx;
   pImg->setSizeMode(eSizeX, eSizeY);
-  pImg->_iPickId = pImg->getPicker()->genPickId();
+  //*Pick ID generation moved to "after attached" for UI element.
+
   return pImg;
 }
 UiImage::UiImage() {
@@ -1253,6 +1295,11 @@ UiImage::~UiImage() {
 void UiImage::init() {
   UiElement::init();
   setName("UiImage");
+}
+void UiImage::afterAdded() {
+  UiElement::afterAdded();
+  AssertOrThrow2(getScreen() != nullptr);
+  _iPickId = getScreen()->getPicker()->genPickId();
 }
 void UiImage::getQuadVerts(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) {
   if (getLayoutVisible() == false) {
@@ -1407,7 +1454,7 @@ bool UiImage::pick(std::shared_ptr<InputManager> fingers, std::shared_ptr<UiScre
   if (getLayoutVisible()) {
     if (getRenderVisible()) {
       if (_iPickId > 0) {
-        uint32_t pixid = getPicker()->getSelectedPixelId();
+        uint32_t pixid = this->getScreen()->getPicker()->getSelectedPixelId();
         if (pixid != 0) {
           if (pixid == _iPickId) {
             _iPickedFrameId = pscreen->getFrameNumber();
@@ -2632,8 +2679,10 @@ void UiDropdown::init() {
   _pSelectedContainer->height() = "100%";
   getContentContainer()->addChild(_pSelectedContainer);
 
+  //6/23/20 - this is  invalid. I'm not sure why I added it to UiScreen.  Check this again when normal.
   //**This will have errors because until now we assueme gui2d has only windows as children
-  getScreen()->addChild(_pListContainer);
+  //getScreen()->addChild(_pListContainer);
+  addChild(_pListContainer);
 
   std::weak_ptr<Ui9Grid> cont_w = _pListContainer;
   std::weak_ptr<UiDropdown> dd_w = getThis<UiDropdown>();
@@ -3051,9 +3100,9 @@ void UiToolbar::init() {
   display() = UiDisplayMode::InlineNoWrap;
   //Set some default position stuff so we can see it.
   top() = "0px";
-  left() = uDim(getScreen()->getDesignSize().getWidth() * 0.1f, UiDimUnit::e::Pixel);
-  width() = "auto";//uDim(getScreen()->getDesignSize().getWidth() * 0.8f, UiDimUnit::e::Pixel);
-  height() = "auto";//uDim(getScreen()->getDesignSize().getHeight() * 0.1f, UiDimUnit::e::Pixel);
+  left() = "10px";
+  width() = "auto";
+  height() = "auto";
 }
 void UiToolbar::update(std::shared_ptr<InputManager> pFingers) {
   UiWindow::update(pFingers);
@@ -3085,6 +3134,7 @@ void UiCursor::performLayout(std::shared_ptr<UiScreen> pscreen, bool bForce) {
   UiImage::performLayout(pscreen, bForce);
 }
 #pragma endregion
+
 //////////////////////////////////////////////////////////////////////////
 #pragma region UiScreen
 class UiScreen_Internal {
@@ -3104,7 +3154,6 @@ public:
   std::shared_ptr<GraphicsWindow> _pWindow = nullptr;
   //std::shared_ptr<UiFastQuads> _pFastQuads = nullptr;
 };
-
 UiScreen::UiScreen(std::shared_ptr<GraphicsWindow> pw) : UiElement() {
   _pint = std::make_unique<UiScreen_Internal>();
   _pint->_pWindow = pw;
@@ -3286,6 +3335,8 @@ float UiScreen::getDesignMultiplierH() {
 uint64_t UiScreen::getFrameNumber() {
   return getWindow()->getFpsMeter()->getFrameNumber();
 }
-
+std::shared_ptr<Picker> UiScreen::getPicker() {
+  return this->_pint->_pWindow->getRenderPipe()->getPicker();
+}
 #pragma endregion
 }//ns Game

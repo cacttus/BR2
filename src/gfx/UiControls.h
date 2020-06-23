@@ -34,29 +34,28 @@ public:
   typedef std::map<UiEventId::e, EventFuncList> EventMap;
   static const uint32_t c_uiBaseLayer0SortId = 1000;
   typedef std::function<void()> MouseFunc;
+  typedef std::multimap<uint32_t, std::shared_ptr<UiElement>> UISortedMap; //children sorted by sort order.
 public:
   static std::shared_ptr<UiElement> create();
   UiElement();
   virtual ~UiElement() override;
 
-  std::shared_ptr<UiScreen> getScreen();
-
-  std::string getName() { return _strName; }
+  virtual void init();
   virtual void update(std::shared_ptr<InputManager> pFingers);
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce);
 
+  std::shared_ptr<UiScreen> getScreen();
+  std::string getName() { return _strName; }
+  void setName(std::string n) { _strName = n; }
+  std::shared_ptr<UiElement> getParent() { return _pParent; }
+
   virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect);
   void drawDebug(RenderParams& rp, std::shared_ptr<UiScreen> pscreen);
-  virtual std::shared_ptr<UiElement> addChild(std::shared_ptr<UiElement> c, uint32_t uiSort = UiElement::c_uiBaseLayer0SortId, bool bUpdateLayout = true, bool bCheckDupes = true);
-  std::shared_ptr<UiElement> getParent() { return _pParent; }
+  virtual std::shared_ptr<UiElement> addChild(std::shared_ptr<UiElement> c, uint32_t uiSort = UiElement::c_uiBaseLayer0SortId, bool bUpdateLayout = true, bool bCheckDupes = true, bool bCheckCycles = true);
   virtual void setLayoutChanged(bool bChildren = false);//Don't use bChildren unless we're Gui2D
 
   void enableDrag(UiDragInfo::DragFunc func);
 
-  std::shared_ptr<Picker> getPicker();
-
-  void setName(std::string n) { _strName = n; }
-  virtual void init();
   uDim& top() { return _top; }          //**These are only ever pixels
   uDim& right() { return _right; }      //**These are only ever pixels
   uDim& bottom() { return _bottom; }    //**These are only ever pixels
@@ -80,13 +79,7 @@ public:
   UiPositionMode::e& position() { return _ePosition; }
   UiOverflowMode::e& overflow() { return _eOverflowMode; }
   UiDisplayMode::e& display() { return _eDisplayMode; }
-  ///void setOverflowMode(UiOverflowMode::e ee) { _eOverflowMode = ee; }
-  ///::e getDisplayMode() { return _eDisplayMode; }
-  ///void setDisplayMode(UiDisplayMode::e ee) { _eDisplayMode = ee; }
-  //UiAutoSizeMode::e getAutoSizeModeX() { return _eAutoSizeModeX; }
-  //void setAutoSizeModeX(UiAutoSizeMode::e m) { _eAutoSizeModeX = m; }
-  //UiAutoSizeMode::e getAutoSizeModeY() { return _eAutoSizeModeY; }
-  //void setAutoSizeModeY(UiAutoSizeMode::e m) { _eAutoSizeModeY = m; }
+
   std::multimap<uint32_t, std::shared_ptr<UiElement>>& getChildren() { return _mapChildren; }
   void clearChildren();
   bool removeChild(std::shared_ptr<UiElement> ele, bool bUpdateLayout = true);
@@ -118,7 +111,7 @@ public:
 
   ButtonState::e getMouseState() { return _eMouseState; }
 
-  void setPickRoot() { _bPickRoot = true; }
+  void setPickRoot() { _bPickRoot = true; } //Prevents the pick event from flowing downwards.
   bool getPickRoot() { return _bPickRoot; }
   void bringToFront(std::shared_ptr<UiElement> child, bool bCreateNewLayer);
   uDim& padBottom() { return _padBottom; }
@@ -141,10 +134,18 @@ protected:
   virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect);
   bool getPickedLastFrame() { return _bPickedLastFrame; }
 
+  //Override these to implement after add/remove logi
+  virtual void afterAdded();
+  virtual void afterRemoved();
+
 private:
   std::string _strName = "";
   std::shared_ptr<UiElement> _pParent = nullptr;
-  std::multimap<uint32_t, std::shared_ptr<UiElement>> _mapChildren; //Sorted Children
+  UISortedMap _mapChildren; //Sorted Children
+
+  void checkCycle(std::shared_ptr<UiElement> e, bool& bResult);
+
+  int32_t _iTreeLevel = -1; //This is used to prevent cycles.
   uDim _left = "0px";   //**These may only ever be pixel units.
   uDim _top = "0px";    //**These may only ever be pixel units.
   uDim _right = "0px";  //**These may only ever be pixel units.
@@ -218,21 +219,6 @@ private:
   void computeContentQuad();
 };
 class UiImage : public UiElement {
-  // std::shared_ptr<MeshNode> _pMesh = nullptr;
-  std::shared_ptr<UiTex> _pTexture = nullptr;
-  UiImageSizeMode::e _eSizeModeX = UiImageSizeMode::e::Expand;//tile = GL_REPEAT, Clamp = GL_CLAMP, Expand - expand tex coords.
-  UiImageSizeMode::e _eSizeModeY = UiImageSizeMode::e::Expand;//tile = GL_REPEAT, Clamp = GL_CLAMP, Expand - expand tex coords.
-  float _fTileWidthPx = 32;//Determines image size  for tiling
-  float _fTileHeightPx = 32; //Determines image size for tiling
-  Box2f _q2Tex = Box2f(vec2(0, 0), vec2(1, 1));
-  uint32_t _iPickId = 0;
-
-protected:
-  virtual float getAutoWidth()  override;
-  virtual float getAutoHeight() override;
-  virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) override;
-  //virtual void setQuad() override;
-
 public:
   UiImage();
   virtual ~UiImage() override;
@@ -252,9 +238,23 @@ public:
   Box2f& getTexs() { return  _q2Tex; }
   void regenMeshExposed(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) { regenMesh(verts, inds, b2ClipRect); }
 
+protected:
+  virtual float getAutoWidth()  override;
+  virtual float getAutoHeight() override;
+  virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) override;
+  virtual void afterAdded() override;
+
+private:
+  // std::shared_ptr<MeshNode> _pMesh = nullptr;
+  std::shared_ptr<UiTex> _pTexture = nullptr;
+  UiImageSizeMode::e _eSizeModeX = UiImageSizeMode::e::Expand;//tile = GL_REPEAT, Clamp = GL_CLAMP, Expand - expand tex coords.
+  UiImageSizeMode::e _eSizeModeY = UiImageSizeMode::e::Expand;//tile = GL_REPEAT, Clamp = GL_CLAMP, Expand - expand tex coords.
+  float _fTileWidthPx = 32;//Determines image size  for tiling
+  float _fTileHeightPx = 32; //Determines image size for tiling
+  Box2f _q2Tex = Box2f(vec2(0, 0), vec2(1, 1));
+  uint32_t _iPickId = 0;
 };
 class UiGlyph : public UiImage {
-  uint32_t _iChar = 0x20;
 public:
   static std::shared_ptr<UiGlyph> UiGlyph::create(uint32_t iChar);
   UiGlyph() {}
@@ -262,17 +262,10 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
   virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) override;
 
+private:
+  uint32_t _iChar = 0x20;
 };
 class UiLabel : public UiElement {
-  std::vector<std::shared_ptr<UiGlyph>> _vecGlyphs;
-  std::string _strText = "";
-  std::string _strTextLast = "";
-  std::shared_ptr<MeshNode> _pMesh = nullptr;
-  std::shared_ptr<UiLabelSkin> _pFontInfo = nullptr;
-  bool _bWordWrap = false;
-  void createGlyphs();
-protected:
-  virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) override;
 public:
   static std::shared_ptr<UiLabel> create(std::string text, std::shared_ptr<UiLabelSkin> inf);
   UiLabel() {}
@@ -283,36 +276,40 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
   void enableWordWrap() { _bWordWrap = true; }
   virtual void update(std::shared_ptr<InputManager> pFingers) override;
+
+protected:
+  virtual void regenMesh(std::vector<v_GuiVert>& verts, std::vector<v_index32>& inds, Box2f& b2ClipRect) override;
+
+private:
+  std::vector<std::shared_ptr<UiGlyph>> _vecGlyphs;
+  std::string _strText = "";
+  std::string _strTextLast = "";
+  std::shared_ptr<MeshNode> _pMesh = nullptr;
+  std::shared_ptr<UiLabelSkin> _pFontInfo = nullptr;
+  bool _bWordWrap = false;
+  void createGlyphs();
 };
 namespace ImageState { typedef enum { Up, Down, Hover } e; }
 class UiButtonBase : public UiElement {
-public:
-
-private:
-  //      ButtonState::e _eButtonState = ButtonState::e::Up;
-    //bool _bHoverdLastFrame = false;
-protected:
-  static int layerIdUp();
-  static int layerIdHover();
-  static int layerIdDown();
-  ImageState::e _eImageState = ImageState::e::Up;
-
 public:
   void init() override;
   virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void showHover() = 0;
   virtual void showUp() = 0;
   virtual void showDown() = 0;
+protected:
+  static int layerIdUp();
+  static int layerIdHover();
+  static int layerIdDown();
+  ImageState::e _eImageState = ImageState::e::Up;
+
+private:
+  //      ButtonState::e _eButtonState = ButtonState::e::Up;
+    //bool _bHoverdLastFrame = false;
+
+
 };
 class UiImageButton : public UiButtonBase {
-  std::shared_ptr<UiImage> _pUp = nullptr;
-  std::shared_ptr<UiImage> _pHover = nullptr;
-  std::shared_ptr<UiImage> _pDown = nullptr;
-  std::shared_ptr<UiButtonSkin> _pSkin = nullptr;
-
-  void setHover(std::shared_ptr<UiImage> img);
-  void setUp(std::shared_ptr<UiImage> img);
-  void setDown(std::shared_ptr<UiImage> img);
 public:
   //create the same 9 grid
   static std::shared_ptr<UiImageButton> create(std::shared_ptr<UiButtonSkin> pSkin);
@@ -321,10 +318,19 @@ public:
   virtual void showHover() override;
   virtual void showUp() override;
   virtual void showDown() override;
+
+private:
+  std::shared_ptr<UiImage> _pUp = nullptr;
+  std::shared_ptr<UiImage> _pHover = nullptr;
+  std::shared_ptr<UiImage> _pDown = nullptr;
+  std::shared_ptr<UiButtonSkin> _pSkin = nullptr;
+
+  void setHover(std::shared_ptr<UiImage> img);
+  void setUp(std::shared_ptr<UiImage> img);
+  void setDown(std::shared_ptr<UiImage> img);
+
 };
 class UiGridRow : public UiElement {
-  std::vector<std::shared_ptr<UiElement>> _cols;
-  void resizeCols();
 public:
   UiGridRow() {}
   virtual ~UiGridRow() override {}
@@ -332,11 +338,13 @@ public:
   std::shared_ptr<UiElement> addCol(int nCount = 1, bool bAutoSizeCols = false, uint32_t iSort = UiElement::c_uiBaseLayer0SortId);
   std::shared_ptr<UiElement> getCol(size_t iCol);
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
+
+private:
+  std::vector<std::shared_ptr<UiElement>> _cols;
+  void resizeCols();
+
 };
 class UiGrid : public UiElement {
-protected:
-  std::vector<std::shared_ptr<UiGridRow>> _rows;
-  void resizeRows();
 public:
   static std::shared_ptr<UiGrid> create(int nRow, int nCol);
   static std::shared_ptr<UiGrid> createImageStack(std::shared_ptr<Ui3Tex> tex, uDim uWorHPx, Orientation::e eOr);
@@ -347,14 +355,13 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
   std::shared_ptr<UiGridRow> addRow(int nr = 1, int nc = 0, bool bAutoSizeRows = false, uint32_t iSort = UiElement::c_uiBaseLayer0SortId);
   std::shared_ptr<UiElement> getCell(size_t iRow, size_t iCol);
+
+protected:
+  std::vector<std::shared_ptr<UiGridRow>> _rows;
+  void resizeRows();
+
 };
 class Ui9Grid : public UiGrid {
-  std::shared_ptr<UiElement> _pContentContainer = nullptr;
-  uint32_t getContentSortLayer() { return 10; }
-protected:
-  //uDim _borderWidth[4];//Top, Right, bottom, left
-  std::shared_ptr<UiBorderDim> _pBorder;
-  //std::vector<std::shared_ptr<Texture2DSpec>> _vecImages;
 public:
   void setBorder(std::shared_ptr<UiBorderDim> d) { _pBorder = d; }
   static std::shared_ptr<Ui9Grid> create(std::shared_ptr<UiBorderDim> dims);
@@ -367,17 +374,19 @@ public:
   static size_t cellOff(int i, int j) { return (size_t)(j * 3 + i); }
   void iterateCells(std::function<void(std::shared_ptr<UiElement>)>);
   std::shared_ptr<UiElement> getContentContainer() { return _pContentContainer; }//If adding stuff, only add to content containers.
+
+protected:
+  //uDim _borderWidth[4];//Top, Right, bottom, left
+  std::shared_ptr<UiBorderDim> _pBorder;
+  //std::vector<std::shared_ptr<Texture2DSpec>> _vecImages;
+
+private:
+  std::shared_ptr<UiElement> _pContentContainer = nullptr;
+  uint32_t getContentSortLayer() { return 10; }
+
 };
 
 class UiFlexButton : public UiButtonBase {
-public:
-protected:
-  std::shared_ptr<UiLabelSkin> _pLabelSkin = nullptr;
-  std::shared_ptr<Ui9Grid> _pGrid = nullptr;
-  //std::shared_ptr<UiFlexGrid> _pPadGrid = nullptr;
-  std::shared_ptr<UiLabel> _pLabel = nullptr;
-  void setButtonImages(std::shared_ptr<Ui9Tex> vecUp, std::shared_ptr<Ui9Tex> vecHv, std::shared_ptr<Ui9Tex> vecDn);
-  //void setContent(std::shared_ptr<UiElement> cont);
 public:
   static std::shared_ptr<UiFlexButton> create(std::shared_ptr<UiFlexButtonSkin> skin);
   UiFlexButton() {}
@@ -388,15 +397,16 @@ public:
   virtual void showDown() override;
   void setLabel(std::string strText, std::shared_ptr<UiLabelSkin> labelFont = nullptr);
   std::shared_ptr<UiElement> getContentContainer();//PassThru for PadGrid->getContet
+
+protected:
+  std::shared_ptr<UiLabelSkin> _pLabelSkin = nullptr;
+  std::shared_ptr<Ui9Grid> _pGrid = nullptr;
+  //std::shared_ptr<UiFlexGrid> _pPadGrid = nullptr;
+  std::shared_ptr<UiLabel> _pLabel = nullptr;
+  void setButtonImages(std::shared_ptr<Ui9Tex> vecUp, std::shared_ptr<Ui9Tex> vecHv, std::shared_ptr<Ui9Tex> vecDn);
+  //void setContent(std::shared_ptr<UiElement> cont);
 };
 class UiScrubGenThumb : public UiElement {
-  //***Generic scroll thumb
-  float _fBarLeftOrTopY = 0;
-  bool _bPlayerDrag = false;
-  float _fBarSizePct = 0.0f;  //the ratio of width to height -- Hidden for trackbars
-  float _fScrollPct = 0.0f;  //the ratio of width to height
-protected:
-  Orientation::e _eOrientation = Orientation::e::Horizontal;
 public:
   bool scrubChanged() { return _bPlayerDrag; }
   void resetScrubChanged() { _bPlayerDrag = false; }
@@ -407,31 +417,21 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
   void setBarSizePct(float pos01);
   float getScrollPct();
+
+protected:
+  Orientation::e _eOrientation = Orientation::e::Horizontal;
+
+private:
+  //***Generic scroll thumb
+  float _fBarLeftOrTopY = 0;
+  bool _bPlayerDrag = false;
+  float _fBarSizePct = 0.0f;  //the ratio of width to height -- Hidden for trackbars
+  float _fScrollPct = 0.0f;  //the ratio of width to height
 };
 class UiScrubGen : public UiElement {
 public:
   typedef std::function<float(std::shared_ptr<UiScrubGen> pScrollbar)> BarWidthFunc;
   typedef std::function<void(std::shared_ptr<UiScrubGen> pScrollbar, float scroll)> ScrollFunc;
-private:
-  //***Generic scroll
-  std::shared_ptr<UiScrubGenThumb> _pThumb = nullptr;
-  std::shared_ptr<UiElement> _pContainerObject = nullptr;
-  bool _bCanScrollPastEof = false;
-  BarWidthFunc _barWidthFunc = nullptr;
-  ScrollFunc _scrollFunc = nullptr;
-  float _fMin = 0.0f;//should be 0,1 for scrollbars
-  float _fMax = 1.0f;//should be 0,1 for scrollbars
-  float _fVal = 0.0f;//should be 0,1 for scrollbars
-  float _fIncrement = 0.1f;
-protected:
-  std::shared_ptr<UiScrubGenThumb> getThumb() { return _pThumb; }
-  Orientation::e _eOrientation = Orientation::e::Horizontal;
-  bool _bAutoHideWhenMaxed = true;
-  // virtual std::shared_ptr<UiElement> getContainerObject() = 0; // This should be set by the Scrollbar implementation, return Null for a Trackbar
-  virtual std::shared_ptr<UiScrubGenThumb> createThumb() = 0; // return a thumb to the fiv
-  void setBarSizePct(float pos01);
-  void setBarWidthFunc(BarWidthFunc b) { _barWidthFunc = b; }
-  virtual void setScrollFunc(ScrollFunc b) { _scrollFunc = b; }
 public:
   virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void init() override;
@@ -443,6 +443,28 @@ public:
   float& maxVal() { return _fMax; }
   float& val() { return _fVal; }
   float& increment() { return _fIncrement; }
+
+protected:
+  std::shared_ptr<UiScrubGenThumb> getThumb() { return _pThumb; }
+  Orientation::e _eOrientation = Orientation::e::Horizontal;
+  bool _bAutoHideWhenMaxed = true;
+  // virtual std::shared_ptr<UiElement> getContainerObject() = 0; // This should be set by the Scrollbar implementation, return Null for a Trackbar
+  virtual std::shared_ptr<UiScrubGenThumb> createThumb() = 0; // return a thumb to the fiv
+  void setBarSizePct(float pos01);
+  void setBarWidthFunc(BarWidthFunc b) { _barWidthFunc = b; }
+  virtual void setScrollFunc(ScrollFunc b) { _scrollFunc = b; }
+
+private:
+  //***Generic scroll
+  std::shared_ptr<UiScrubGenThumb> _pThumb = nullptr;
+  std::shared_ptr<UiElement> _pContainerObject = nullptr;
+  bool _bCanScrollPastEof = false;
+  BarWidthFunc _barWidthFunc = nullptr;
+  ScrollFunc _scrollFunc = nullptr;
+  float _fMin = 0.0f;//should be 0,1 for scrollbars
+  float _fMax = 1.0f;//should be 0,1 for scrollbars
+  float _fVal = 0.0f;//should be 0,1 for scrollbars
+  float _fIncrement = 0.1f;
 };
 class UiScrollbarThumb : public UiScrubGenThumb {
   std::shared_ptr<UiGrid> _pImage = nullptr;
@@ -468,13 +490,6 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
 };
 class UiCheckbox : public UiElement {
-  bool _bChecked = false;
-  std::shared_ptr<UiLabel> _pLabel = nullptr;
-  std::shared_ptr<UiFlexButton> _pButton = nullptr;
-  std::shared_ptr<UiCheckboxSkin> _pSkin = nullptr;
-  std::shared_ptr<UiImage> _pCheckImg = nullptr;
-  std::function<void(bool bNewValue)> _checkFunc = nullptr;
-  void doCheck();
 public:
   UiCheckbox() {}
   virtual ~UiCheckbox() override {}
@@ -484,9 +499,17 @@ public:
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
   void setCheckFunc(std::function<void(bool bNewValue)> func) { _checkFunc = func; }
   void setChecked(bool b);
+
+private:
+  bool _bChecked = false;
+  std::shared_ptr<UiLabel> _pLabel = nullptr;
+  std::shared_ptr<UiFlexButton> _pButton = nullptr;
+  std::shared_ptr<UiCheckboxSkin> _pSkin = nullptr;
+  std::shared_ptr<UiImage> _pCheckImg = nullptr;
+  std::function<void(bool bNewValue)> _checkFunc = nullptr;
+  void doCheck();
 };
 class UiSliderThumb : public UiScrubGenThumb {
-  std::shared_ptr<UiGrid> _pImage = nullptr;
 public:
   static std::shared_ptr<UiSliderThumb> create(std::shared_ptr<UiSliderSkin> pSkin);
   UiSliderThumb() {}
@@ -494,14 +517,11 @@ public:
   virtual void init() override;
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
   virtual void update(std::shared_ptr<InputManager> pFingers) override;
+
+private:
+  std::shared_ptr<UiGrid> _pImage = nullptr;
 };
 class UiSlider : public UiScrubGen {
-  std::shared_ptr<UiGrid> _pImage = nullptr;
-  std::shared_ptr<UiSliderSkin> _pSkin = nullptr;
-  uDim _uWidthOrHeightPx;
-  std::shared_ptr<UiLabel> _pValueLabel = nullptr;
-protected:
-  virtual std::shared_ptr<UiScrubGenThumb> createThumb() override;
 public:
   UiSlider() {}
   virtual ~UiSlider() override {}
@@ -512,30 +532,30 @@ public:
   std::shared_ptr<UiLabel> getValueLabel() { return _pValueLabel; }
   void setValueLabel(std::shared_ptr<UiLabel> v) { _pValueLabel = v; }
 
+protected:
+  virtual std::shared_ptr<UiScrubGenThumb> createThumb() override;
+
+private:
+  std::shared_ptr<UiGrid> _pImage = nullptr;
+  std::shared_ptr<UiSliderSkin> _pSkin = nullptr;
+  uDim _uWidthOrHeightPx;
+  std::shared_ptr<UiLabel> _pValueLabel = nullptr;
 };
 class UiContainer : public UiGrid {
-  float _fBorderWidthPx = 32;
-  std::shared_ptr<UiGrid> _pGrid = nullptr;
-  std::shared_ptr<UiScrollbar> _pVScrollBar = nullptr;
-  std::shared_ptr<UiScrollbar> _pHScrollBar = nullptr;
-  //std::shared_ptr<UiElement> _pCorner = nullptr;
-  //std::shared_ptr<UiElement> _pRight = nullptr;
-  //std::shared_ptr<UiElement> _pBot = nullptr;
-  //std::shared_ptr<UiElement> _pBot = nullptr;
 public:
   std::shared_ptr<UiElement> getContentContainer();
   static std::shared_ptr<UiContainer> create();
   void enableScrollbar(std::shared_ptr<UiScrollbarSkin> pSkin);
   void enableResize();
   virtual void init() override;
+
+private:
+  float _fBorderWidthPx = 32;
+  std::shared_ptr<UiGrid> _pGrid = nullptr;
+  std::shared_ptr<UiScrollbar> _pVScrollBar = nullptr;
+  std::shared_ptr<UiScrollbar> _pHScrollBar = nullptr;
 };
 class UiDropdown : public Ui9Grid {
-  std::shared_ptr<UiDropdwonSkin> _pSkin = nullptr;
-  std::shared_ptr<Ui9Grid> _pListContainer = nullptr;
-  std::shared_ptr<UiElement> _pSelectedContainer = nullptr;
-  std::shared_ptr<UiFlexButton> _pArrowButton = nullptr;
-  std::shared_ptr<UiElement> _pSelected = nullptr;
-  uDim _uListContainerWidth = "auto";//sets it to be auto size
 public:
   static std::shared_ptr<UiDropdown> create(std::shared_ptr<UiDropdwonSkin> pSkin);
   virtual void init() override;
@@ -545,16 +565,17 @@ public:
   //virtual std::shared_ptr<UiElement> addChild(std::shared_ptr<UiElement> c, uint32_t uiSort = UiElement::c_uiBaseLayer0SortId, bool bUpdateLayout = true, bool bCheckDupes = true) override;
   void setContainerWidth(uDim w) { _uListContainerWidth = w; }
 
+private:
+  std::shared_ptr<UiDropdwonSkin> _pSkin = nullptr;
+  std::shared_ptr<Ui9Grid> _pListContainer = nullptr;
+  std::shared_ptr<UiElement> _pSelectedContainer = nullptr;
+  std::shared_ptr<UiFlexButton> _pArrowButton = nullptr;
+  std::shared_ptr<UiElement> _pSelected = nullptr;
+  uDim _uListContainerWidth = "auto";//sets it to be auto size
+
+
 };
 class UiWindow : public UiElement {
-  std::shared_ptr<Ui9Grid> _pBackground = nullptr;
-  std::shared_ptr<UiElement> _pContentArea = nullptr;
-  std::shared_ptr<UiContainer> _pContainer = nullptr;
-  std::shared_ptr<UiLabel> _lblTitle = nullptr;
-  std::shared_ptr<UiImageButton> _pCloseButton = nullptr;
-protected:
-  std::shared_ptr<UiWindowSkin> _pWindowSkin = nullptr;
-  std::shared_ptr<UiElement> _pTitleBar = nullptr;
 public:
   UiWindow() {}
   virtual ~UiWindow() override {}
@@ -569,21 +590,34 @@ public:
   void enableDrag();
   void setTitleLabel(std::string lbl);
   std::shared_ptr<UiElement> getContentContainer();
-};
 
+protected:
+  std::shared_ptr<UiWindowSkin> _pWindowSkin = nullptr;
+  std::shared_ptr<UiElement> _pTitleBar = nullptr;
+
+private:
+  std::shared_ptr<Ui9Grid> _pBackground = nullptr;
+  std::shared_ptr<UiElement> _pContentArea = nullptr;
+  std::shared_ptr<UiContainer> _pContainer = nullptr;
+  std::shared_ptr<UiLabel> _lblTitle = nullptr;
+  std::shared_ptr<UiImageButton> _pCloseButton = nullptr;
+};
 class UiToolbar : public UiWindow {
-  std::shared_ptr<UiToolbarSkin> _pToolbarSkin = nullptr;
 public:
   static std::shared_ptr<UiToolbar> create(std::shared_ptr<UiToolbarSkin> skin);
   virtual void init() override;
   virtual void update(std::shared_ptr<InputManager> pFingers) override;
   virtual void performLayout(std::shared_ptr<UiScreen> s, bool bForce) override;
+
+private:
+  std::shared_ptr<UiToolbarSkin> _pToolbarSkin = nullptr;
 };
 class UiCursor : public UiImage {
 protected:
   virtual bool getShouldScalePositionToDesign() override { return false; }
   virtual bool getIsPickEnabled() override { return false; }
   std::shared_ptr<UiCursorSkin> _pSkin = nullptr;
+
 public:
   static std::shared_ptr<UiCursor> create(std::shared_ptr<UiCursorSkin> tex);
   UiCursor() {}
@@ -594,6 +628,7 @@ public:
 /**
 * @class UiScreen
 * @brief A screen, the root of a UI hierarchy, for a window.
+* Only one UiScreen per system Window.
 */
 class UiScreen_Internal;
 class UiScreen : public UiElement {
@@ -601,14 +636,16 @@ public:
   UiScreen(std::shared_ptr<GraphicsWindow> pw);
   virtual ~UiScreen() override;
 
+  virtual void init() override;
+  virtual void update(std::shared_ptr<InputManager> pInputManager) override;
   static std::shared_ptr<UiScreen> create(std::shared_ptr<GraphicsWindow> g);
+
   bool getIsPicked();
   const UiDesignSize& getDesignSize();
   std::shared_ptr<UiCursor> getCursor();
   std::shared_ptr<MegaTex> getTex();
+  std::shared_ptr<Picker> getPicker();
 
-  virtual void init() override;
-  virtual void update(std::shared_ptr<InputManager> pInputManager) override;
   void drawForward();
   virtual void drawForward(RenderParams& rp, Box2f& b2ClipRect) override;
   void setCursor(std::shared_ptr<UiCursor> c);
@@ -626,8 +663,8 @@ public:
   void debugForceLayoutChanged();
   void performForcedLayout();
   uint64_t getFrameNumber();
-
   std::shared_ptr<GraphicsWindow> getWindow();
+
 private:
   std::unique_ptr<UiScreen_Internal> _pint = nullptr;
   void updateMesh();

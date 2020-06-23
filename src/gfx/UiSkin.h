@@ -10,7 +10,6 @@
 #include "../gfx/UiBase.h"
 
 namespace BR2 {
-
 class UiSkinElement : public VirtualMemoryShared<UiSkinElement> {
 public:
   Hash32 _iNameHash;
@@ -36,8 +35,6 @@ public:
   virtual bool validate() override {
     return _pTex != nullptr;
   }
-
-
 };
 class Ui3Tex : public UiSkinElement {
 public:

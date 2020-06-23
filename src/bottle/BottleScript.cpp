@@ -89,8 +89,10 @@ void BottleScript::onStart() {
 
   //Must come after camera created
   constructWorld();
-  //_pGameUi = std::make_shared<GameUi>();
-  //_pGameUi->constructUI(getThis<BottleScript>());
+
+  BRLogInfo("Creating GameUI");
+  _pGameUi = std::make_shared<GameUi>();
+  _pGameUi->constructUI(getThis<BottleScript>());
 
   
   //*Camera.  This must come first before world - because we use it

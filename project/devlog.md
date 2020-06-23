@@ -1,6 +1,10 @@
 
 # Devlog
 
+*6/23/20*
+
+* A working UI is crucial for implementing the Dynamic lighting (and PBR ..).  We are going to keep the implemented UI and likely use XAML for the layout.
+
 *6/8/20*
 
 * Commented out the shadow culling code that was breaking the engine
