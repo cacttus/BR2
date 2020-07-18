@@ -134,7 +134,7 @@ void MtFont::createFont() {
     //Compute size for a 20x20 pixel han character
     _iBakedCharSizePixels = 20;
     float ch_w = ceilf(sqrtf((float)_charCount));
-    _atlasWidth = _atlasHeight = ((ch_w) * (_iBakedCharSizePixels + _oversampleX));
+    _atlasWidth = _atlasHeight = (uint32_t)((ch_w) * (_iBakedCharSizePixels + _oversampleX));
 
     //Test "huan"
     //_firstChar = 0x6B61;// 喜..喜欢 0x559C, 0x6B61.. correct.. seems to work..Note: 欢 prints, 歡.. the traditioanl character
@@ -175,7 +175,7 @@ void MtFont::createFont() {
   }
 
   stbtt_PackSetOversampling(&context, _oversampleX, _oversampleY);
-  if (!stbtt_PackFontRange(&context, (unsigned char*)_pFontBuffer->getData().ptr(), 0, _iBakedCharSizePixels, _firstChar, _charCount, _charInfo.get())) {
+  if (!stbtt_PackFontRange(&context, (unsigned char*)_pFontBuffer->getData().ptr(), 0, (float)_iBakedCharSizePixels, _firstChar, _charCount, _charInfo.get())) {
     BRLogError("Failed to pack font");
     Gu::debugBreak();
     return;
@@ -407,7 +407,6 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
     BRLogError("Failed to return an appropriate number of texture patches.");
     Gu::debugBreak();
   }
-
   return ret;
 }
 void MegaTex::loadImages() {
