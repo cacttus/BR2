@@ -1,4 +1,5 @@
 ﻿#include "../base/Img32.h"
+#include "../base/Img32.h"
 #include "../base/Logger.h"
 #include "../base/FileSystem.h"
 #include "../base/EngineConfig.h"
@@ -19,7 +20,6 @@
 
 namespace BR2 {
 #pragma region MtTex
-
 void MtTex::setImg(std::shared_ptr<Img32> img) {
   _pImg = img;
   //We don't save the img data on the CPU, so just store what we need
@@ -31,7 +31,6 @@ void MtTex::freeTmp() {
   _pImg = nullptr;
   _pMtNode = nullptr;
 }
-
 #pragma endregion
 #pragma region MtTexPatch
 void MtTexPatch::addTexImage(std::string img, int32_t iPatch) {

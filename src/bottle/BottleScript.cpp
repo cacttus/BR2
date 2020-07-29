@@ -86,7 +86,6 @@ void BottleScript::onStart() {
   //Must come before UI (assets)
   loadGameFile();
 
-
   //Must come after camera created
   constructWorld();
 
@@ -102,10 +101,6 @@ void BottleScript::onStart() {
   _pRTSCam->addComponent(css);
  // getScene()->setActiveCamera(_pRTSCam);
   getScene()->attachChild(_pRTSCam);
-
-
-  //Must come last.
- // setDebugMode();
 
   _pWorldEditor = std::make_shared<WorldEditor>(_pWorld25);
   _pWorldEditor->init();

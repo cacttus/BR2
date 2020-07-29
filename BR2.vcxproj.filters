@@ -1253,4 +1253,7 @@
     <None Include="project\design.md" />
     <None Include="project\tasks.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="notes.md" />
+  </ItemGroup>
 </Project>

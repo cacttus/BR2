@@ -7,7 +7,6 @@
 #ifndef __RENDERHEADER_H__
 #define __RENDERHEADER_H__
 
-
 #include "../base/BaseHeader.h"
 #include "../math/Vec3x.h"
 #include "../math/Vec4x.h"
@@ -109,7 +108,6 @@ typedef enum {
   fp_near, fp_far, fp_left, fp_right, fp_top, fp_bottom
   /*fp_near, fp_far, fp_right, fp_left, fp_bottom, fp_top*/
 }frustum_plane_index;
-
 
 namespace ShaderStatus {
 typedef enum {
@@ -320,8 +318,6 @@ class RenderBucket;
 //Classes to remove
 class MeshNode;
 
-
-
 namespace UiEventId {
 typedef enum {
   Mouse_Lmb_Up
@@ -343,8 +339,7 @@ typedef enum {
 } e;
 }
 
-
-
+//Classes prefixed with GPU must be 16-byte.
 class GpuPointLight : public GpuMemory {
 public:
   // Packed into GPU FLOAT4

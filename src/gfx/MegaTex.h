@@ -23,6 +23,10 @@ public:
   Box2i _b2Rect;
   std::shared_ptr<MtNode> plop(std::shared_ptr<MtTex> tex);
 };
+/**
+* @class MtTex
+* @brief Texture region in mega texture.
+*/
 class MtTex : public VirtualMemoryShared<MtTex> {
 public:
   MtTex(std::string imgName, int32_t iPatch) { _strImgName = imgName; _iPatchImg = iPatch; }
@@ -53,9 +57,11 @@ private:
   vec2 _uv_p0, _uv_p1;
   std::string _strImgName;
   int32_t _iPatchImg = 0; //0-8 for 9p, or 0-2 for 3p
-
-
 };
+/**
+* @class MtTexPatch
+* @brief A set of texture images in mega texture.
+*/
 class MtTexPatch : public VirtualMemoryShared<MtTexPatch> {
 public:
   void addTexImage(std::string img, int32_t iPatch);
@@ -86,17 +92,14 @@ private:
   uint32_t _oversampleY = 2;
   uint32_t _firstChar = ' ';
   uint32_t _charCount = '~' - ' ';
-  float _fAscent;
-  float _fDescent;
-  float _fLineGap;
+  float _fAscent = 0;
+  float _fDescent = 0;
+  float _fLineGap = 0;
   std::unique_ptr<stbtt_packedchar[]> _charInfo;
   stbtt_fontinfo _fontInfo;
-  float _fScaleForPixelHeight;//return value of stbtt_ScaleForPixelHeight\
-    
-
+  float _fScaleForPixelHeight;//return value of stbtt_ScaleForPixelHeight
   std::shared_ptr<BinaryFile> _pFontBuffer;// STB:  "Load" a font file from a memory buffer (you have to keep the buffer loaded)
   bool _bInitialized = false;
-  //GLuint _texture = 0;
   float fontSizeToFontScale(float fontSz);
   void scaleStbQuad(const stbtt_aligned_quad* const stbQuad, Box2f* __out_ worldQuad, const vec2& basePos, float fScale);
   std::shared_ptr<Img32> createFontImage(std::unique_ptr<uint8_t[]>& pData);
@@ -116,9 +119,7 @@ public:
   std::shared_ptr<MtTexPatch> getTex(std::shared_ptr<Img32> tx);
   std::shared_ptr<MtTexPatch> getTex(std::string img, int32_t nPatches = 1, bool bPreloaded = false, bool bLoadNow = false);
   std::shared_ptr<MtFont> getFont(std::string fontName);
-
   virtual bool bind(TextureChannel::e eChannel, std::shared_ptr<ShaderBase> pShader, bool bIgnoreIfNotFound = false)  override;
-
   void loadImages();
   std::shared_ptr<Img32> compile();
 
@@ -133,7 +134,6 @@ private:
   std::shared_ptr<MtNode> _pRoot = nullptr;
   MegaTexCompileState _eState = MegaTexCompileState::NotCompiled;
   bool _bCache = false;
-  //bool _bImagesLoaded = false;
 };
 
 }//ns Game

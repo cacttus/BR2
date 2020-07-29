@@ -57,26 +57,12 @@ public:
   GridShow::e toggleShowGrid();
   void placeObject(std::shared_ptr<ModelSpec> ms);
 
-  //Deleted, PackageManager, or WorldMaker
-  //virtual string_t getAssetsDir();
-//virtual string_t getShadersDir() { return "shr"; }
-//virtual string_t getModelsTextDir() { return "mob"; }
-//virtual string_t getModelsBinDir() { return "mbi"; }
-//virtual string_t getCacheDir() { return "cache"; }
-  //virtual bool getStartFullscreen();
-//virtual uint32_t getStartWidth();
-//virtual uint32_t getStartHeight();
-//virtual bool getForceAspectRatio();
-//virtual string_t getIconFullPath();
-//virtual string_t getConfigPath();
-
 private:
   std::shared_ptr<World25> _pWorld25 = nullptr;
   std::shared_ptr<WorldSelect> _pWorldSelect = nullptr;
   std::shared_ptr<GameUi> _pGameUi = nullptr;
   std::shared_ptr<ObFile> _pGameFile = nullptr;
   std::shared_ptr<WorldEditor> _pWorldEditor = nullptr;
-  //std::shared_ptr<GodCamScript> _pSnapRooter = nullptr;
   std::shared_ptr<CameraNode> _pRTSCam = nullptr;
   std::shared_ptr<TouchInfo> _curTouchRmb = nullptr;
   std::shared_ptr<TouchInfo> _lastTouchRmb = nullptr;
