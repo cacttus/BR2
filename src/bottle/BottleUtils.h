@@ -28,7 +28,7 @@ public:
   static uint32_t getMaxGridCount() { return 200; }
 
   static float getCellWidth() { return 2.0f; /*Does this need to be 2^x?  I think it does because we use Binary division*/ }
-  static float getCellHeight() { return getCellWidth() * 1.0f; } // ** full cell widths seem to look spikey
+  static float getCellHeight() { return getCellWidth() * 0.5f; } // ** full cell widths seem to look spikey
   static float getNumCellsWidth() { return  8; /* must be 2^x*/ }//8 Significantly reduces memory footprint compared to 16, but it's slower to generate.  Possibly just because the topology is simpler.
   static float getCellWidth_1() { return 1.0f / getCellWidth(); }
   static float getCellHeight_1() { return 1.0f / getCellHeight(); }

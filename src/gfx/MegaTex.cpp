@@ -373,7 +373,7 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
 
   if (bPreloaded == false) {
     if (!FileSystem::fileExists(imgNameLow)) {
-      BRLogError("Image file " + img + " did not exist, compiling MegaTex.");
+      BRLogError("Image file " + imgNameLow + " did not exist, compiling MegaTex.");
       return nullptr;
     }
   }
@@ -385,7 +385,7 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
   if (it == _mapTexs.end()) {
     ret = std::make_shared<MtTexPatch>(imgNameLow, hImg);
     for (int i = 0; i < nPatches; ++i) {
-      ret->addTexImage(img, i);//we could do "preloaded' as a bool, but it's probably nto necessary
+      ret->addTexImage(imgNameLow, i);//we could do "preloaded' as a bool, but it's probably nto necessary
     }
     _mapTexs.insert(std::make_pair(hImg, ret));
     _eState = MegaTexCompileState::Dirty;
@@ -396,13 +396,16 @@ std::shared_ptr<MtTexPatch> MegaTex::getTex(std::string img, int32_t nPatches, b
 
     it = _mapTexs.find(hImg);
   }
+  else {
+    ret = it->second;
+  }
 
   //**MUST return nPatches number of textures, never return a different number
   if (ret == nullptr) {
-    BRLogError("Could not find MegaTex Texture " + img);
+    BRLogError("Could not find MegaTex Texture " + imgNameLow);
     Gu::debugBreak();
   }
-  else if (ret->getTexs().size() != (size_t)nPatches)     {
+  else if (ret->getTexs().size() != (size_t)nPatches) {
     BRLogError("Failed to return an appropriate number of texture patches.");
     Gu::debugBreak();
   }
